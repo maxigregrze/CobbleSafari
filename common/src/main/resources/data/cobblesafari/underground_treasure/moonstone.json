@@ -1,0 +1,8 @@
+{
+  "itemId": "cobblemon:moon_stone",
+  "textureId": "moonstone",
+  "shape": "cobblesafari:moonstone",
+  "weight": 9,
+  "minQty": 1,
+  "maxQty": 1
+}

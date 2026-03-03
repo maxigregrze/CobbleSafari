@@ -1,0 +1,8 @@
+{
+  "itemId": "mega_showdown:flame_plate",
+  "textureId": "plateflame",
+  "shape": "cobblesafari:4x3",
+  "weight": 1,
+  "minQty": 1,
+  "maxQty": 1
+}

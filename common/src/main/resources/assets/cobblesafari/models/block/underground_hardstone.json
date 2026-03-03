@@ -1,0 +1,9 @@
+{
+	"parent": "minecraft:block/cube_bottom_top",
+	"textures": {
+		"top": "cobblesafari:block/underground_hardstone_bottom",
+		"side": "cobblesafari:block/underground_hardstone",
+		"bottom": "cobblesafari:block/underground_hardstone_bottom",
+		"particle": "cobblesafari:block/underground_hardstone"
+	}
+}

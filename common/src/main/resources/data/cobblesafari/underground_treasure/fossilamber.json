@@ -1,0 +1,8 @@
+{
+  "itemId": "cobblemon:old_amber_fossil",
+  "textureId": "fossilamber",
+  "shape": "cobblesafari:fossilamber",
+  "weight": 8,
+  "minQty": 1,
+  "maxQty": 1
+}

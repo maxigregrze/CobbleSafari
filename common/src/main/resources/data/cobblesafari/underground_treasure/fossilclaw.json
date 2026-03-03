@@ -1,0 +1,8 @@
+{
+  "itemId": "cobblemon:claw_fossil",
+  "textureId": "fossilclaw",
+  "shape": "cobblesafari:fossilclaw",
+  "weight": 8,
+  "minQty": 1,
+  "maxQty": 1
+}

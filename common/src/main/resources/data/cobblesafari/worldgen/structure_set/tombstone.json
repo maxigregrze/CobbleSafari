@@ -1,0 +1,14 @@
+{
+    "structures": [
+        {
+            "structure": "cobblesafari:tombstone",
+            "weight": 1
+        }
+    ],
+    "placement": {
+        "type": "minecraft:random_spread",
+        "salt": 584721,
+        "spacing": 4,
+        "separation": 2
+    }
+}

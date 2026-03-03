@@ -1,0 +1,8 @@
+{
+  "itemId": "cobblemon:dawn_stone",
+  "textureId": "dawnstone",
+  "shape": "cobblesafari:3x3",
+  "weight": 18,
+  "minQty": 1,
+  "maxQty": 1
+}

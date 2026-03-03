@@ -1,0 +1,26 @@
+{
+  "enabled": true,
+  "neededInstalledMods": [],
+  "neededUninstalledMods": [],
+  "spawns": [
+    {
+      "id": "totodile-safarispawn",
+      "pokemon": "totodile",
+      "presets": [
+        "natural",
+        "wild"
+      ],
+      "type": "pokemon",
+      "context": "grounded",
+      "bucket": "ultra-rare",
+      "level": "5-10",
+      "weight": 1.0,
+      "condition": {
+        "canSeeSky": true,
+        "biomes": [
+          "cobblesafari:dragon"
+        ]
+      }
+    }
+  ]
+}

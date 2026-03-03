@@ -1,0 +1,8 @@
+{
+  "itemId": "cobblemon:dusk_stone",
+  "textureId": "duskstone",
+  "shape": "cobblesafari:duskstone",
+  "weight": 18,
+  "minQty": 1,
+  "maxQty": 1
+}

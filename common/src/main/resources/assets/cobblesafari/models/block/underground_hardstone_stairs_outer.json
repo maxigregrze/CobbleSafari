@@ -1,0 +1,8 @@
+{
+	"parent": "minecraft:block/outer_stairs",
+	"textures": {
+		"bottom": "cobblesafari:block/underground_hardstone_bottom",
+		"top": "cobblesafari:block/underground_hardstone_bottom",
+		"side": "cobblesafari:block/underground_hardstone"
+	}
+}

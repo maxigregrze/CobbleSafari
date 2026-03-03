@@ -1,0 +1,10 @@
+{
+	"variants": {
+		"has_egg=true": {
+			"model": "cobblesafari:block/safari_egg_nest"
+		},
+		"has_egg=false": {
+			"model": "cobblesafari:block/safari_egg_nest_empty"
+		}
+	}
+}

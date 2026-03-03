@@ -1,0 +1,44 @@
+{
+  "schemaVersion": 1,
+  "id": "${mod_id}",
+  "version": "${version}",
+  "name": "${mod_name}",
+  "description": "${description}",
+  "authors": [
+    "${mod_author}"
+  ],
+  "contact": {
+    "homepage": "https://modrinth.com/mod/cobblesafari"
+  },
+  "license": "${license}",
+  "icon": "assets/cobblesafari/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "maxigregrze.cobblesafari.CobbleSafariFabric"
+    ],
+    "client": [
+      "maxigregrze.cobblesafari.CobbleSafariClientFabric"
+    ],
+    "jade": [
+      "maxigregrze.cobblesafari.compat.jade.CobbleSafariJadePlugin"
+    ]
+  },
+  "mixins": [
+    "${mod_id}.mixins.json"
+  ],
+  "accessWidener": "cobblesafari.accesswidener",
+  "depends": {
+    "fabricloader": ">=${fabric_loader_version}",
+    "minecraft": "~1.21.1",
+    "java": ">=${java_version}",
+    "fabric-api": "*",
+    "cobblemon": ">=1.7.1 <1.8.0"
+  },
+  "suggests": {
+    "jade": "*",
+    "wthit": "*",
+    "mega-showdown": "*",
+    "cobblemontrialsedition": ">=1.2.0"
+  }
+}

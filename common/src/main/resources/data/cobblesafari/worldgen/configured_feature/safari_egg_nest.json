@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:simple_block",
+  "config": {
+    "to_place": {
+      "type": "minecraft:simple_state_provider",
+      "state": {
+        "Name": "cobblesafari:safari_egg_nest",
+        "Properties": {
+          "has_egg": "true"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "replace": false,
+  "values": [
+    "cobblesafari:underground_flag_regular",
+    "cobblesafari:underground_flag_bronze",
+    "cobblesafari:underground_flag_silver",
+    "cobblesafari:underground_flag_gold",
+    "cobblesafari:underground_flag_platinum",
+    "cobblesafari:underground_flag_creative"
+  ]
+}

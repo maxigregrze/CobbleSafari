@@ -1,0 +1,23 @@
+{
+    "input": "cobblesafari:wildegg",
+    "hatchtime":14400,"shinyboost":64,"outputs": [
+        "audino", "chansey", "happiny", "miltank", "munchlax",
+        "charcadet", "magby", "litleo", "torkoal", "turtonator",
+        "alomomola", "chinchou", "feebas", "mantine",
+        "pichu", "elekid", "mareep", "pachirisu", "shinx",
+        "carnivine", "ferroseed", "maractus", "tropius",
+        "darumaka form=galar", "frigibax", "jynx", "lapras", "smoochum",
+        "mienfoo", "riolu", "sawk", "throh", "timburr",
+        "skorupi", "toxel", "glimmet", "trubbish",
+        "gible", "gligar", "larvitar", "onix", "trapinch",
+        "chatot", "emolga", "noibat", "rufflet",
+        "chimecho", "chingling", "elgyem", "espurr", "sigilyph",
+        "larvesta", "nincada", "pineco", "pinsir", "scyther",
+        "relicanth", "rockruff", "bonsly", "growlithe form=hisui",
+        "dreepy", "drifloon", "golett", "honedge", "litwick",
+        "axew", "bagon", "dratini", "druddigon", "goomy", "jangmo-o",
+        "absol", "deino", "pawniard", "sableye",
+        "beldum", "klink", "shieldon", "skarmory", "togedemaru",
+        "carbink", "mawile", "mr_mime", "ralts", "tinkatink"
+    ]
+}

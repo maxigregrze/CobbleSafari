@@ -1,0 +1,8 @@
+{
+  "itemId": "mega_showdown:splash_plate",
+  "textureId": "platesplash",
+  "shape": "cobblesafari:4x3",
+  "weight": 1,
+  "minQty": 1,
+  "maxQty": 1
+}

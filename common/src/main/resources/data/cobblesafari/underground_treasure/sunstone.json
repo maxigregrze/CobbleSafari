@@ -1,0 +1,8 @@
+{
+  "itemId": "cobblemon:sun_stone",
+  "textureId": "sunstone",
+  "shape": "cobblesafari:sunstone",
+  "weight": 9,
+  "minQty": 1,
+  "maxQty": 1
+}

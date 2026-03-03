@@ -1,0 +1,33 @@
+{
+    "feature": "cobblesafari:magnetic_crystal",
+    "placement": [
+        {
+            "type": "minecraft:rarity_filter",
+            "chance": 2
+        },
+        {
+            "type": "minecraft:count",
+            "count": 5
+        },
+        {
+            "type": "minecraft:in_square"
+        },
+        {
+            "type": "minecraft:heightmap",
+            "heightmap": "WORLD_SURFACE"
+        },
+        {
+            "type": "minecraft:block_predicate_filter",
+            "predicate": {
+                "type": "minecraft:not",
+                "predicate": {
+                    "type": "minecraft:matching_fluids",
+                    "fluids": "minecraft:water"
+                }
+            }
+        },
+        {
+            "type": "minecraft:biome"
+        }
+    ]
+}

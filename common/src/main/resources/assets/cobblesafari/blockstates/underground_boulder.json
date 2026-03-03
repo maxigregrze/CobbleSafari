@@ -1,0 +1,12 @@
+{
+	"variants": {
+		"facing=north,hanging=false": {"model": "cobblesafari:block/underground_boulder"},
+		"facing=south,hanging=false": {"model": "cobblesafari:block/underground_boulder", "y": 180},
+		"facing=east,hanging=false": {"model": "cobblesafari:block/underground_boulder", "y": 90},
+		"facing=west,hanging=false": {"model": "cobblesafari:block/underground_boulder", "y": 270},
+		"facing=north,hanging=true": {"model": "cobblesafari:block/underground_boulder", "x": 180},
+		"facing=south,hanging=true": {"model": "cobblesafari:block/underground_boulder", "x": 180, "y": 180},
+		"facing=east,hanging=true": {"model": "cobblesafari:block/underground_boulder", "x": 180, "y": 90},
+		"facing=west,hanging=true": {"model": "cobblesafari:block/underground_boulder", "x": 180, "y": 270}
+	}
+}

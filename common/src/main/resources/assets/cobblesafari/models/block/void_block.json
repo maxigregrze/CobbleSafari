@@ -1,0 +1,7 @@
+{
+	"parent": "minecraft:block/cube_all",
+	"textures": {
+		"all": "cobblesafari:block/void_block",
+		"particle": "cobblesafari:block/void_block"
+	}
+}

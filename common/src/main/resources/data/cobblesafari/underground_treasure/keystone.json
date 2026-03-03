@@ -1,0 +1,8 @@
+{
+  "itemId": "mega_showdown:keystone",
+  "textureId": "keystone",
+  "shape": "cobblesafari:2x2",
+  "weight": 5,
+  "minQty": 1,
+  "maxQty": 1
+}

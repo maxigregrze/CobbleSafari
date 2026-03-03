@@ -1,0 +1,26 @@
+{
+  "enabled": true,
+  "neededInstalledMods": [],
+  "neededUninstalledMods": [],
+  "spawns": [
+    {
+      "id": "ferrothorn-safarispawn",
+      "pokemon": "ferrothorn",
+      "presets": [
+        "natural",
+        "wild"
+      ],
+      "type": "pokemon",
+      "context": "grounded",
+      "bucket": "uncommon",
+      "level": "5-15",
+      "weight": 1.0,
+      "condition": {
+        "canSeeSky": true,
+        "biomes": [
+          "cobblesafari:steel"
+        ]
+      }
+    }
+  ]
+}

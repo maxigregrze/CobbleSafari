@@ -1,0 +1,8 @@
+{
+  "itemId": "cobblemon:revive",
+  "textureId": "revive",
+  "shape": "cobblesafari:star",
+  "weight": 10,
+  "minQty": 1,
+  "maxQty": 1
+}

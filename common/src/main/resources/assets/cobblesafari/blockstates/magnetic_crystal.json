@@ -1,0 +1,20 @@
+{
+    "variants": {
+        "facing=north,half=lower,hanging=false": {"model": "cobblesafari:block/magnetic_crystal"},
+        "facing=north,half=upper,hanging=false": {"model": "cobblesafari:block/magnetic_crystal_upper"},
+        "facing=south,half=lower,hanging=false": {"model": "cobblesafari:block/magnetic_crystal", "y": 180},
+        "facing=south,half=upper,hanging=false": {"model": "cobblesafari:block/magnetic_crystal_upper", "y": 180},
+        "facing=east,half=lower,hanging=false": {"model": "cobblesafari:block/magnetic_crystal", "y": 90},
+        "facing=east,half=upper,hanging=false": {"model": "cobblesafari:block/magnetic_crystal_upper", "y": 90},
+        "facing=west,half=lower,hanging=false": {"model": "cobblesafari:block/magnetic_crystal", "y": 270},
+        "facing=west,half=upper,hanging=false": {"model": "cobblesafari:block/magnetic_crystal_upper", "y": 270},
+        "facing=north,half=lower,hanging=true": {"model": "cobblesafari:block/magnetic_crystal_ceiling_lower", "x": 180},
+        "facing=north,half=upper,hanging=true": {"model": "cobblesafari:block/magnetic_crystal", "x": 180},
+        "facing=south,half=lower,hanging=true": {"model": "cobblesafari:block/magnetic_crystal_ceiling_lower", "x": 180, "y": 180},
+        "facing=south,half=upper,hanging=true": {"model": "cobblesafari:block/magnetic_crystal", "x": 180, "y": 180},
+        "facing=east,half=lower,hanging=true": {"model": "cobblesafari:block/magnetic_crystal_ceiling_lower", "x": 180, "y": 90},
+        "facing=east,half=upper,hanging=true": {"model": "cobblesafari:block/magnetic_crystal", "x": 180, "y": 90},
+        "facing=west,half=lower,hanging=true": {"model": "cobblesafari:block/magnetic_crystal_ceiling_lower", "x": 180, "y": 270},
+        "facing=west,half=upper,hanging=true": {"model": "cobblesafari:block/magnetic_crystal", "x": 180, "y": 270}
+    }
+}

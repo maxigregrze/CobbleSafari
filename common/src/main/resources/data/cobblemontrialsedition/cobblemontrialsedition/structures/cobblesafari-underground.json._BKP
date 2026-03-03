@@ -1,0 +1,441 @@
+{
+  "structureId": "cobblesafari:underground/oasis/underground_oasis_1",
+  "spawnerProperties": [
+    {
+      "blockEntityTypesToReplace": ["minecraft:mob_spawner"],
+      "mobEntitiesInSpawnerToReplace": ["minecraft:rabbit"],
+      "playerDetectionRange": 8,
+      "spawnRange": 6,
+      "maximumNumberOfSimultaneousPokemon": 2,
+      "totalNumberOfPokemonPerTrial": 3,
+      "lootTables": ["cobblesafari:underground_oasis"],
+      "ominousLootTables": ["cobblesafari:underground_ominous_oasis"],
+      "doPokemonSpawnedGlow": false,
+      "listOfPokemonToSpawn": [
+        {
+          "species": "cacnea",
+          "weight": 1,
+          "level": 15,
+          "isUncatchable": false,
+          "mustBeDefeatedInBattle": true,
+          "isAggressive": false
+        },
+        {
+          "species": "gligar",
+          "weight": 1,
+          "level": 15,
+          "isUncatchable": false,
+          "mustBeDefeatedInBattle": true,
+          "isAggressive": false
+        },
+        {
+          "species": "numel",
+          "weight": 1,
+          "level": 15,
+          "isUncatchable": false,
+          "mustBeDefeatedInBattle": true,
+          "isAggressive": false
+        }
+      ],
+      "listOfOminousPokemonToSpawn": [
+        {
+          "species": "cacturne",
+          "weight": 2,
+          "level": 30,
+          "isUncatchable": false,
+          "mustBeDefeatedInBattle": true,
+          "isAggressive": true
+        },
+        {
+          "species": "gliscor",
+          "weight": 2,
+          "level": 30,
+          "isUncatchable": false,
+          "mustBeDefeatedInBattle": true,
+          "isAggressive": true
+        },
+        {
+          "species": "camerupt",
+          "weight": 2,
+          "level": 30,
+          "isUncatchable": false,
+          "mustBeDefeatedInBattle": true,
+          "isAggressive": true
+        },
+        {
+          "species": "camerupt",
+          "weight": 1,
+          "level": 30,
+          "form": "mega",
+          "isUncatchable": false,
+          "mustBeDefeatedInBattle": true,
+          "isAggressive": true
+        }
+      ]
+    },
+    {
+      "blockEntityTypesToReplace": ["minecraft:mob_spawner"],
+      "mobEntitiesInSpawnerToReplace": ["minecraft:snow_golem"],
+      "playerDetectionRange": 8,
+      "spawnRange": 6,
+      "maximumNumberOfSimultaneousPokemon": 2,
+      "totalNumberOfPokemonPerTrial": 3,
+      "lootTables": ["cobblesafari:underground_oasis"],
+      "ominousLootTables": ["cobblesafari:underground_ominous_oasis"],
+      "doPokemonSpawnedGlow": false,
+      "listOfPokemonToSpawn": [
+        {
+          "species": "spheal",
+          "weight": 1,
+          "level": 15,
+          "isUncatchable": false,
+          "mustBeDefeatedInBattle": true,
+          "isAggressive": false
+        },
+        {
+          "species": "seel",
+          "weight": 1,
+          "level": 15,
+          "isUncatchable": false,
+          "mustBeDefeatedInBattle": true,
+          "isAggressive": false
+        },
+        {
+          "species": "snorunt",
+          "weight": 1,
+          "level": 15,
+          "isUncatchable": false,
+          "mustBeDefeatedInBattle": true,
+          "isAggressive": false
+        }
+      ],
+      "listOfOminousPokemonToSpawn": [
+        {
+          "species": "sealeo",
+          "weight": 2,
+          "level": 30,
+          "isUncatchable": false,
+          "mustBeDefeatedInBattle": true,
+          "isAggressive": true
+        },
+        {
+          "species": "walrein",
+          "weight": 2,
+          "level": 30,
+          "isUncatchable": false,
+          "mustBeDefeatedInBattle": true,
+          "isAggressive": true
+        },
+        {
+          "species": "froslass",
+          "weight": 2,
+          "level": 30,
+          "isUncatchable": false,
+          "mustBeDefeatedInBattle": true,
+          "isAggressive": true
+        },
+        {
+          "species": "glalie",
+          "weight": 1,
+          "level": 30,
+          "form": "mega",
+          "isUncatchable": false,
+          "mustBeDefeatedInBattle": true,
+          "isAggressive": true
+        }
+      ]
+    },
+    {
+      "blockEntityTypesToReplace": ["minecraft:mob_spawner"],
+      "mobEntitiesInSpawnerToReplace": ["minecraft:tadpole"],
+      "playerDetectionRange": 8,
+      "spawnRange": 6,
+      "maximumNumberOfSimultaneousPokemon": 2,
+      "totalNumberOfPokemonPerTrial": 3,
+      "lootTables": ["cobblesafari:underground_oasis"],
+      "ominousLootTables": ["cobblesafari:underground_ominous_oasis"],
+      "doPokemonSpawnedGlow": false,
+      "listOfPokemonToSpawn": [
+        {
+          "species": "voltorb",
+          "weight": 1,
+          "level": 15,
+          "isUncatchable": false,
+          "mustBeDefeatedInBattle": true,
+          "isAggressive": false
+        },
+        {
+          "species": "geodude",
+          "weight": 1,
+          "level": 15,
+          "isUncatchable": false,
+          "mustBeDefeatedInBattle": true,
+          "isAggressive": false,
+          "form": "alolan"
+        },
+        {
+          "species": "electrike",
+          "weight": 1,
+          "level": 15,
+          "isUncatchable": false,
+          "mustBeDefeatedInBattle": true,
+          "isAggressive": false
+        }
+      ],
+      "listOfOminousPokemonToSpawn": [
+        {
+          "species": "electrode",
+          "weight": 2,
+          "level": 30,
+          "isUncatchable": false,
+          "mustBeDefeatedInBattle": true,
+          "isAggressive": true
+        },
+        {
+          "species": "graveler",
+          "weight": 2,
+          "level": 30,
+          "isUncatchable": false,
+          "mustBeDefeatedInBattle": true,
+          "isAggressive": true,
+          "form": "alolan"
+        },
+        {
+          "species": "manectric",
+          "weight": 2,
+          "level": 30,
+          "isUncatchable": false,
+          "mustBeDefeatedInBattle": true,
+          "isAggressive": true
+        },
+        {
+          "species": "manectric",
+          "weight": 1,
+          "level": 30,
+          "form": "mega",
+          "isUncatchable": false,
+          "mustBeDefeatedInBattle": true,
+          "isAggressive": true
+        }
+      ]
+    },
+    {
+      "blockEntityTypesToReplace": ["minecraft:mob_spawner"],
+      "mobEntitiesInSpawnerToReplace": ["minecraft:frog"],
+      "playerDetectionRange": 8,
+      "spawnRange": 6,
+      "maximumNumberOfSimultaneousPokemon": 2,
+      "totalNumberOfPokemonPerTrial": 3,
+      "lootTables": ["cobblesafari:underground_oasis"],
+      "ominousLootTables": ["cobblesafari:underground_ominous_oasis"],
+      "doPokemonSpawnedGlow": false,
+      "listOfPokemonToSpawn": [
+        {
+          "species": "tangela",
+          "weight": 1,
+          "level": 15,
+          "isUncatchable": false,
+          "mustBeDefeatedInBattle": true,
+          "isAggressive": false
+        },
+        {
+          "species": "exeggcute",
+          "weight": 1,
+          "level": 15,
+          "isUncatchable": false,
+          "mustBeDefeatedInBattle": true,
+          "isAggressive": false
+        },
+        {
+          "species": "capsakid",
+          "weight": 1,
+          "level": 15,
+          "isUncatchable": false,
+          "mustBeDefeatedInBattle": true,
+          "isAggressive": false
+        }
+      ],
+      "listOfOminousPokemonToSpawn": [
+        {
+          "species": "tangrowth",
+          "weight": 2,
+          "level": 30,
+          "isUncatchable": false,
+          "mustBeDefeatedInBattle": true,
+          "isAggressive": true
+        },
+        {
+          "species": "exeggutor",
+          "weight": 2,
+          "level": 30,
+          "isUncatchable": false,
+          "mustBeDefeatedInBattle": true,
+          "isAggressive": true
+        },
+        {
+          "species": "scovillain",  
+          "weight": 2,
+          "level": 30,
+          "isUncatchable": false,
+          "mustBeDefeatedInBattle": true,
+          "isAggressive": true
+        },
+        {
+          "species": "scovillain",
+          "weight": 1,
+          "level": 30,
+          "form": "mega",
+          "isUncatchable": false,
+          "mustBeDefeatedInBattle": true,
+          "isAggressive": true
+        }
+      ]
+    },
+    {
+      "blockEntityTypesToReplace": ["minecraft:mob_spawner"],
+      "mobEntitiesInSpawnerToReplace": ["minecraft:sniffer"],
+      "playerDetectionRange": 8,
+      "spawnRange": 6,
+      "maximumNumberOfSimultaneousPokemon": 2,
+      "totalNumberOfPokemonPerTrial": 3,
+      "lootTables": ["cobblesafari:underground_oasis"],
+      "ominousLootTables": ["cobblesafari:underground_ominous_oasis"],
+      "doPokemonSpawnedGlow": false,
+      "listOfPokemonToSpawn": [
+        {
+          "species": "sluggma",
+          "weight": 1,
+          "level": 15,
+          "isUncatchable": false,
+          "mustBeDefeatedInBattle": true,
+          "isAggressive": false
+        },
+        {
+          "species": "salandit",
+          "weight": 1,
+          "level": 15,
+          "isUncatchable": false,
+          "mustBeDefeatedInBattle": true,
+          "isAggressive": false,
+          "gender": "male"
+        },
+        {
+          "species": "houndour",
+          "weight": 1,
+          "level": 15,
+          "isUncatchable": false,
+          "mustBeDefeatedInBattle": true,
+          "isAggressive": false
+        }
+      ],
+      "listOfOminousPokemonToSpawn": [
+        {
+          "species": "magcargo",
+          "weight": 2,
+          "level": 30,
+          "isUncatchable": false,
+          "mustBeDefeatedInBattle": true,
+          "isAggressive": true
+        },
+        {
+          "species": "salazzle",
+          "weight": 2,
+          "level": 30,
+          "isUncatchable": false,
+          "mustBeDefeatedInBattle": true,
+          "isAggressive": true
+        },
+        {
+          "species": "houndoom",  
+          "weight": 2,
+          "level": 30,
+          "isUncatchable": false,
+          "mustBeDefeatedInBattle": true,
+          "isAggressive": true
+        },
+        {
+          "species": "houndoom",
+          "weight": 1,
+          "level": 30,
+          "form": "mega",
+          "isUncatchable": false,
+          "mustBeDefeatedInBattle": true,
+          "isAggressive": true
+        }
+      ]
+    },
+    {
+      "blockEntityTypesToReplace": ["minecraft:mob_spawner"],
+      "mobEntitiesInSpawnerToReplace": ["minecraft:glow_squid"],
+      "playerDetectionRange": 8,
+      "spawnRange": 6,
+      "maximumNumberOfSimultaneousPokemon": 2,
+      "totalNumberOfPokemonPerTrial": 3,
+      "lootTables": ["cobblesafari:underground_oasis"],
+      "ominousLootTables": ["cobblesafari:underground_ominous_oasis"],
+      "doPokemonSpawnedGlow": false,
+      "listOfPokemonToSpawn": [
+        {
+          "species": "finneon",
+          "weight": 1,
+          "level": 15,
+          "isUncatchable": false,
+          "mustBeDefeatedInBattle": true,
+          "isAggressive": false
+        },
+        {
+          "species": "mareanie",
+          "weight": 1,
+          "level": 15,
+          "isUncatchable": false,
+          "mustBeDefeatedInBattle": true,
+          "isAggressive": false,
+          "gender": "male"
+        },
+        {
+          "species": "carvanha",
+          "weight": 1,
+          "level": 15,
+          "isUncatchable": false,
+          "mustBeDefeatedInBattle": true,
+          "isAggressive": false
+        }
+      ],
+      "listOfOminousPokemonToSpawn": [
+        {
+          "species": "lumineon",
+          "weight": 2,
+          "level": 30,
+          "isUncatchable": false,
+          "mustBeDefeatedInBattle": true,
+          "isAggressive": true
+        },
+        {
+          "species": "toxapex",
+          "weight": 2,
+          "level": 30,
+          "isUncatchable": false,
+          "mustBeDefeatedInBattle": true,
+          "isAggressive": true
+        },
+        {
+          "species": "sharpedo",  
+          "weight": 2,
+          "level": 30,
+          "isUncatchable": false,
+          "mustBeDefeatedInBattle": true,
+          "isAggressive": true
+        },
+        {
+          "species": "sharpedo",
+          "weight": 1,
+          "level": 30,
+          "form": "mega",
+          "isUncatchable": false,
+          "mustBeDefeatedInBattle": true,
+          "isAggressive": true
+        }
+      ]
+    }
+  ]
+}

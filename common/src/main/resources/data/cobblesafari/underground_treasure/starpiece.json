@@ -1,0 +1,8 @@
+{
+  "itemId": "cobblesafari:starpiece",
+  "textureId": "starpiece",
+  "shape": "cobblesafari:star",
+  "weight": 5,
+  "minQty": 1,
+  "maxQty": 1
+}

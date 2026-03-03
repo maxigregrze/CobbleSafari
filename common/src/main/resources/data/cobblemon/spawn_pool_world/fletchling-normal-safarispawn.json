@@ -1,0 +1,26 @@
+{
+  "enabled": true,
+  "neededInstalledMods": [],
+  "neededUninstalledMods": [],
+  "spawns": [
+    {
+      "id": "fletchling-normal-safarispawn",
+      "pokemon": "fletchling",
+      "presets": [
+        "natural",
+        "wild"
+      ],
+      "type": "pokemon",
+      "context": "grounded",
+      "bucket": "common",
+      "level": "5-15",
+      "weight": 1.0,
+      "condition": {
+        "canSeeSky": true,
+        "biomes": [
+          "cobblesafari:normal"
+        ]
+      }
+    }
+  ]
+}

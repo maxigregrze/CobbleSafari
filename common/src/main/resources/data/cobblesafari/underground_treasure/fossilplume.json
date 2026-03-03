@@ -1,0 +1,8 @@
+{
+  "itemId": "cobblemon:plume_fossil",
+  "textureId": "fossilplume",
+  "shape": "cobblesafari:fossilplume",
+  "weight": 8,
+  "minQty": 1,
+  "maxQty": 1
+}

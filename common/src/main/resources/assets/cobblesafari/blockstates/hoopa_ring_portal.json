@@ -1,0 +1,19 @@
+{
+	"variants": {
+		"facing=north": {
+			"model": "cobblesafari:block/hoopa_ring_portal"
+		},
+		"facing=south": {
+			"model": "cobblesafari:block/hoopa_ring_portal",
+			"y": 180
+		},
+		"facing=west": {
+			"model": "cobblesafari:block/hoopa_ring_portal",
+			"y": 270
+		},
+		"facing=east": {
+			"model": "cobblesafari:block/hoopa_ring_portal",
+			"y": 90
+		}
+	}
+}

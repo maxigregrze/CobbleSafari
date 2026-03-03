@@ -1,0 +1,8 @@
+{
+  "itemId": "cobblemon:relic_coin",
+  "textureId": "reliccoin",
+  "shape": "cobblesafari:2x2",
+  "weight": 150,
+  "minQty": 1,
+  "maxQty": 8
+}

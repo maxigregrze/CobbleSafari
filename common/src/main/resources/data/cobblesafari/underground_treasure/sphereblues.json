@@ -1,0 +1,8 @@
+{
+  "itemId": "cobblesafari:sphere_blue_s",
+  "textureId": "sphereblues",
+  "shape": "cobblesafari:2x2",
+  "weight": 137,
+  "minQty": 1,
+  "maxQty": 9
+}

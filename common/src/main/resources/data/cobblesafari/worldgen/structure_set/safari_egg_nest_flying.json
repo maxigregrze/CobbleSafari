@@ -1,0 +1,14 @@
+{
+    "structures": [
+        {
+            "structure": "cobblesafari:safari_egg_nest_flying",
+            "weight": 1
+        }
+    ],
+    "placement": {
+        "type": "minecraft:random_spread",
+        "salt": 584721,
+        "spacing": 24,
+        "separation": 12
+    }
+}

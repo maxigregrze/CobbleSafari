@@ -1,0 +1,8 @@
+{
+  "itemId": "cobblemon:sail_fossil",
+  "textureId": "fossilsail",
+  "shape": "cobblesafari:fossilsail",
+  "weight": 8,
+  "minQty": 1,
+  "maxQty": 1
+}

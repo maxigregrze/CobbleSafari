@@ -1,0 +1,8 @@
+{
+	"variants": {
+		"facing=north": { "model": "cobblesafari:block/underground_timber_corner_vertical" },
+		"facing=south": { "model": "cobblesafari:block/underground_timber_corner_vertical", "y": 180 },
+		"facing=east": { "model": "cobblesafari:block/underground_timber_corner_vertical", "y": 90 },
+		"facing=west": { "model": "cobblesafari:block/underground_timber_corner_vertical", "y": 270 }
+	}
+}

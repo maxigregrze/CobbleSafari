@@ -1,0 +1,10 @@
+{
+	"replace": false,
+	"values": [
+		"cobblesafari:magnetic_crystal",
+		"cobblesafari:magnetic_cluster",
+		"cobblesafari:underground_boulder",
+		"cobblesafari:icicle",
+		"cobblesafari:safari_teleporter"
+	]
+}

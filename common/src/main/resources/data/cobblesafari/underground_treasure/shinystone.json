@@ -1,0 +1,8 @@
+{
+  "itemId": "cobblemon:shiny_stone",
+  "textureId": "shinystone",
+  "shape": "cobblesafari:shinystone",
+  "weight": 18,
+  "minQty": 1,
+  "maxQty": 1
+}

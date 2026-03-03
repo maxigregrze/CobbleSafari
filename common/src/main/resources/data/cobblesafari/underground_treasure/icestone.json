@@ -1,0 +1,8 @@
+{
+  "itemId": "cobblemon:ice_stone",
+  "textureId": "icestone",
+  "shape": "cobblesafari:icestone",
+  "weight": 18,
+  "minQty": 1,
+  "maxQty": 1
+}

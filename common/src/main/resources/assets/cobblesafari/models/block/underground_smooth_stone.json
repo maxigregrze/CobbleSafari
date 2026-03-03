@@ -1,0 +1,7 @@
+{
+	"parent": "minecraft:block/cube_all",
+	"textures": {
+		"all": "cobblesafari:block/underground_smoothstone",
+		"particle": "cobblesafari:block/underground_smoothstone"
+	}
+}

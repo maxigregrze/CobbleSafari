@@ -1,0 +1,8 @@
+{
+  "itemId": "cobblesafari:sphere_green_s",
+  "textureId": "spheregreens",
+  "shape": "cobblesafari:2x2",
+  "weight": 107,
+  "minQty": 1,
+  "maxQty": 9
+}

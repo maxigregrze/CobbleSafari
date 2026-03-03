@@ -1,0 +1,5 @@
+{
+    "parent": "cobblesafari:block/magnetic_crystal",
+    "display": {},
+    "transform": {"origin": "corner", "translation": [0, 1, 0]}
+}

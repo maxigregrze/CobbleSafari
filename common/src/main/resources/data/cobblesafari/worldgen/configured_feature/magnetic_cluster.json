@@ -1,0 +1,50 @@
+{
+    "type": "minecraft:simple_block",
+    "config": {
+        "to_place": {
+            "type": "minecraft:weighted_state_provider",
+            "entries": [
+                {
+                    "weight": 1,
+                    "data": {
+                        "Name": "cobblesafari:magnetic_cluster",
+                        "Properties": {
+                            "facing": "north",
+                            "hanging": "false"
+                        }
+                    }
+                },
+                {
+                    "weight": 1,
+                    "data": {
+                        "Name": "cobblesafari:magnetic_cluster",
+                        "Properties": {
+                            "facing": "south",
+                            "hanging": "false"
+                        }
+                    }
+                },
+                {
+                    "weight": 1,
+                    "data": {
+                        "Name": "cobblesafari:magnetic_cluster",
+                        "Properties": {
+                            "facing": "east",
+                            "hanging": "false"
+                        }
+                    }
+                },
+                {
+                    "weight": 1,
+                    "data": {
+                        "Name": "cobblesafari:magnetic_cluster",
+                        "Properties": {
+                            "facing": "west",
+                            "hanging": "false"
+                        }
+                    }
+                }
+            ]
+        }
+    }
+}

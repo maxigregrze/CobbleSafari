@@ -1,0 +1,8 @@
+{
+  "itemId": "cobblesafari:sphere_prism_s",
+  "textureId": "sphereprisms",
+  "shape": "cobblesafari:2x2",
+  "weight": 100,
+  "minQty": 1,
+  "maxQty": 9
+}

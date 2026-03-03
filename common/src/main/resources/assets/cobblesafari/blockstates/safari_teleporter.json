@@ -1,0 +1,19 @@
+{
+	"variants": {
+		"facing=north": {
+			"model": "cobblesafari:block/safari_teleporter"
+		},
+		"facing=south": {
+			"model": "cobblesafari:block/safari_teleporter",
+			"y": 180
+		},
+		"facing=west": {
+			"model": "cobblesafari:block/safari_teleporter",
+			"y": 270
+		},
+		"facing=east": {
+			"model": "cobblesafari:block/safari_teleporter",
+			"y": 90
+		}
+	}
+}

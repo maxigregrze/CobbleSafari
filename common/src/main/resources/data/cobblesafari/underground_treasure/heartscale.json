@@ -1,0 +1,8 @@
+{
+  "itemId": "cobblesafari:heartscale",
+  "textureId": "heartscale",
+  "shape": "cobblesafari:heartscale",
+  "weight": 30,
+  "minQty": 1,
+  "maxQty": 1
+}

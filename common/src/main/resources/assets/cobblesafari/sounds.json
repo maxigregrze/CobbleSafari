@@ -1,0 +1,29 @@
+{
+    "entity.generic.incense_spray": {
+        "sounds": [
+            {
+                "name": "cobblesafari:entity/generic/incense_spray",
+                "stream": false
+            }
+        ],
+        "subtitle": "subtitles.entity.generic.incense_spray"
+    },
+    "safari.flee": {
+        "sounds": [
+            {
+                "name": "cobblesafari:safari/flee",
+                "stream": false
+            }
+        ],
+        "subtitle": "subtitles.cobblesafari.safari.flee"
+    },
+    "safari.spray": {
+        "sounds": [
+            {
+                "name": "cobblesafari:safari/spray",
+                "stream": false
+            }
+        ],
+        "subtitle": "subtitles.cobblesafari.safari.spray"
+    }
+}

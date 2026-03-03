@@ -1,0 +1,8 @@
+{
+  "itemId": "cobblemon:thunder_stone",
+  "textureId": "thunderstone",
+  "shape": "cobblesafari:thunderstone",
+  "weight": 18,
+  "minQty": 1,
+  "maxQty": 1
+}

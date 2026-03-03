@@ -1,0 +1,86 @@
+{
+  "fallback": "cobblesafari:underground/fallback",
+  "elements": [
+    {
+      "weight": 15,
+      "element": {
+        "location": "cobblesafari:underground/corridors/underground_corridor_sm",
+        "processors": "cobblesafari:underground_digsite_scatter",
+        "projection": "rigid",
+        "element_type": "minecraft:single_pool_element"
+      }
+    },
+    {
+      "weight": 15,
+      "element": {
+        "location": "cobblesafari:underground/corners/underground_corner_sm_1",
+        "processors": "cobblesafari:underground_digsite_scatter",
+        "projection": "rigid",
+        "element_type": "minecraft:single_pool_element"
+      }
+    },
+    {
+      "weight": 15,
+      "element": {
+        "location": "cobblesafari:underground/corners/underground_corner_sm_2",
+        "processors": "cobblesafari:underground_digsite_scatter",
+        "projection": "rigid",
+        "element_type": "minecraft:single_pool_element"
+      }
+    },
+    {
+      "weight": 15,
+      "element": {
+        "location": "cobblesafari:underground/corners/underground_corner_lg_secret_1",
+        "processors": "cobblesafari:underground_digsite_scatter",
+        "projection": "rigid",
+        "element_type": "minecraft:single_pool_element"
+      }
+    },
+    {
+      "weight": 15,
+      "element": {
+        "location": "cobblesafari:underground/corners/underground_corner_lg_secret_2",
+        "processors": "cobblesafari:underground_digsite_scatter",
+        "projection": "rigid",
+        "element_type": "minecraft:single_pool_element"
+      }
+    },
+    {
+      "weight": 20,
+      "element": {
+        "location": "cobblesafari:underground/ends/underground_end_1",
+        "processors": "cobblesafari:underground_digsite_scatter",
+        "projection": "rigid",
+        "element_type": "minecraft:single_pool_element"
+      }
+    },
+    {
+      "weight": 10,
+      "element": {
+        "location": "cobblesafari:underground/ends/underground_end_2",
+        "processors": "cobblesafari:underground_digsite_scatter",
+        "projection": "rigid",
+        "element_type": "minecraft:single_pool_element"
+      }
+    },
+    {
+      "weight": 10,
+      "element": {
+        "location": "cobblesafari:underground/ends/underground_end_3",
+        "processors": "cobblesafari:underground_digsite_scatter",
+        "projection": "rigid",
+        "element_type": "minecraft:single_pool_element"
+      }
+    },
+    {
+      "weight": 10,
+      "element": {
+        "location": "cobblesafari:underground/ends/underground_end_4",
+        "processors": "cobblesafari:underground_digsite_scatter",
+        "projection": "rigid",
+        "element_type": "minecraft:single_pool_element"
+      }
+    }
+  ]
+}

@@ -1,0 +1,8 @@
+{
+  "itemId": "cobblemon:leaf_stone",
+  "textureId": "leafstone",
+  "shape": "cobblesafari:leafstone",
+  "weight": 18,
+  "minQty": 1,
+  "maxQty": 1
+}

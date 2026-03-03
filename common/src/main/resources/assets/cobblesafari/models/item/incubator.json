@@ -1,0 +1,10 @@
+{
+    "parent": "minecraft:item/generated",
+    "textures": {
+        "layer0": "cobblesafari:item/incubator"
+    },
+    "overrides": [
+        {"predicate": {"custom_model_data": 1}, "model": "cobblesafari:item/incubator_working"},
+        {"predicate": {"custom_model_data": 2}, "model": "cobblesafari:item/incubator_done"}
+    ]
+}

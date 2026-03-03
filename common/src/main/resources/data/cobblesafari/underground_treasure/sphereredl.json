@@ -1,0 +1,8 @@
+{
+  "itemId": "cobblesafari:sphere_red_l",
+  "textureId": "sphereredl",
+  "shape": "cobblesafari:3x3",
+  "weight": 68,
+  "minQty": 1,
+  "maxQty": 2
+}

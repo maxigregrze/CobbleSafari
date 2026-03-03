@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "IDI",
+    "GFG",
+    "III"
+  ],
+  "key": {
+    "I": { "item": "minecraft:iron_ingot" },
+    "G": { "item": "minecraft:glass" },
+    "D": { "item": "minecraft:diamond" },
+    "F": { "item": "minecraft:fire_charge" }
+  },
+  "result": {
+    "id": "cobblesafari:incubator",
+    "count": 1
+  }
+}

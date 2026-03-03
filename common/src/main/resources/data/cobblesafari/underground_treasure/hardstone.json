@@ -1,0 +1,8 @@
+{
+  "itemId": "cobblemon:hard_stone",
+  "textureId": "hardstone",
+  "shape": "cobblesafari:2x2",
+  "weight": 20,
+  "minQty": 1,
+  "maxQty": 1
+}

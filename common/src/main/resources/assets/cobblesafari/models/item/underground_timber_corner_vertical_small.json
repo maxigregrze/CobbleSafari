@@ -1,0 +1,10 @@
+{
+	"parent": "cobblesafari:block/underground_timber_corner_vertical_small",
+	"display": {
+		"gui": {
+			"rotation": [30, 225, 0],
+			"translation": [0, 0, 0],
+			"scale": [0.625, 0.625, 0.625]
+		}
+	}
+}

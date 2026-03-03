@@ -1,0 +1,71 @@
+{
+    "type": "minecraft:random_patch",
+    "config": {
+        "tries": 64,
+        "xz_spread": 7,
+        "y_spread": 3,
+        "feature": {
+            "feature": {
+                "type": "minecraft:simple_block",
+                "config": {
+                    "to_place": {
+                        "type": "minecraft:weighted_state_provider",
+                        "entries": [
+                            {
+                                "weight": 1,
+                                "data": {
+                                    "Name": "cobblesafari:air_tube_coral",
+                                    "Properties": {
+                                        "facing": "north",
+                                        "hanging": "false"
+                                    }
+                                }
+                            },
+                            {
+                                "weight": 1,
+                                "data": {
+                                    "Name": "cobblesafari:air_brain_coral",
+                                    "Properties": {
+                                        "facing": "north",
+                                        "hanging": "false"
+                                    }
+                                }
+                            },
+                            {
+                                "weight": 1,
+                                "data": {
+                                    "Name": "cobblesafari:air_bubble_coral",
+                                    "Properties": {
+                                        "facing": "north",
+                                        "hanging": "false"
+                                    }
+                                }
+                            },
+                            {
+                                "weight": 1,
+                                "data": {
+                                    "Name": "cobblesafari:air_fire_coral",
+                                    "Properties": {
+                                        "facing": "north",
+                                        "hanging": "false"
+                                    }
+                                }
+                            },
+                            {
+                                "weight": 1,
+                                "data": {
+                                    "Name": "cobblesafari:air_horn_coral",
+                                    "Properties": {
+                                        "facing": "north",
+                                        "hanging": "false"
+                                    }
+                                }
+                            }
+                        ]
+                    }
+                }
+            },
+            "placement": []
+        }
+    }
+}

@@ -1,0 +1,8 @@
+{
+  "itemId": "cobblemon:fire_stone",
+  "textureId": "firestone",
+  "shape": "cobblesafari:3x3",
+  "weight": 18,
+  "minQty": 1,
+  "maxQty": 1
+}

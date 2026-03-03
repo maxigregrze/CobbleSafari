@@ -1,0 +1,8 @@
+{
+    "cobblesafari:wthit": {
+        "entrypoints": {
+            "common": "maxigregrze.cobblesafari.compat.wthit.CobbleSafariWTHITCommonPlugin",
+            "client": "maxigregrze.cobblesafari.compat.wthit.CobbleSafariWTHITClientPlugin"
+        }
+    }
+}

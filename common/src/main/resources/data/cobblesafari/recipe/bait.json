@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    { "tag": "cobblemon:berries" },
+    { "tag": "cobblemon:berries" },
+    { "tag": "cobblemon:berries" },
+    { "tag": "cobblemon:berries" }
+  ],
+  "result": {
+    "id": "cobblesafari:bait",
+    "count": 16
+  }
+}

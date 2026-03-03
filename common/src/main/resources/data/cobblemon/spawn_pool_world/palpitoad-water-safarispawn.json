@@ -1,0 +1,31 @@
+{
+  "enabled": true,
+  "neededInstalledMods": [],
+  "neededUninstalledMods": [],
+  "spawns": [
+    {
+      "id": "palpitoad-water-safarispawn",
+      "pokemon": "palpitoad",
+      "presets": [
+        "natural",
+        "wild"
+      ],
+      "type": "pokemon",
+      "context": "grounded",
+      "bucket": "uncommon",
+      "level": "5-15",
+      "weight": 1.0,
+      "condition": {
+        "canSeeSky": true,
+        "biomes": [
+          "cobblesafari:water"
+        ],
+        "neededBaseBlocks": [
+          "minecraft:prismarine",
+          "minecraft:prismarine_bricks",
+          "minecraft:dark_prismarine"
+        ]
+      }
+    }
+  ]
+}

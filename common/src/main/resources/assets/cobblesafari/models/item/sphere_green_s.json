@@ -1,0 +1,6 @@
+{
+	"parent": "minecraft:item/generated",
+	"textures": {
+		"layer0": "cobblesafari:item/sphere_green_s"
+	}
+}
