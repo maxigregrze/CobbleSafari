@@ -1,0 +1,11 @@
+﻿{
+    "type": "minecraft:crafting_shaped",
+    "pattern": ["###", "###", "###"],
+    "key": {
+        "#": { "item": "cobblesafari:sphere_pale_l" }
+    },
+    "result": {
+        "id": "cobblesafari:sphere_pale_l_block",
+        "count": 1
+    }
+}

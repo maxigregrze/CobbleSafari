@@ -67,6 +67,12 @@ public class ModCreativeTabs {
                 output.accept(ModItems.FOSSIL_IV_MAX);
                 output.accept(ModItems.FOSSIL_HIDDEN_ABILITY);
                 output.accept(ModItems.FOSSIL_SHINY);
+                output.accept(ModItems.LUCKY_MINING_HELMET);
+                for (String type : ModBlocks.SPHERE_BLOCKS.keySet()) {
+                    output.accept(ModBlocks.SPHERE_BLOCKS.get(type));
+                    output.accept(ModBlocks.SPHERE_SLABS.get(type));
+                    output.accept(ModBlocks.SPHERE_STAIRS.get(type));
+                }
             })
             .build();
 

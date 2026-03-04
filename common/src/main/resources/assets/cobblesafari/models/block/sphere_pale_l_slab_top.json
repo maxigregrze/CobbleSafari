@@ -1,0 +1,8 @@
+﻿{
+    "parent": "minecraft:block/slab_top",
+    "textures": {
+        "bottom": "cobblesafari:block/sphere_pale_l",
+        "top":    "cobblesafari:block/sphere_pale_l",
+        "side":   "cobblesafari:block/sphere_pale_l"
+    }
+}

@@ -1,0 +1,5 @@
+﻿{
+    "type": "minecraft:stonecutting",
+    "ingredient": { "item": "cobblesafari:sphere_blue_s_block" },
+    "result": { "id": "cobblesafari:sphere_blue_s_slab", "count": 2 }
+}

@@ -68,11 +68,15 @@ public final class TreasureDataLoader {
         int weight = json.get("weight").getAsInt();
         int minQty = json.has("minQty") ? json.get("minQty").getAsInt() : 1;
         int maxQty = json.has("maxQty") ? json.get("maxQty").getAsInt() : 1;
+        boolean isDisabled = json.has("isDisabled") && json.get("isDisabled").getAsBoolean();
 
-        if (weight <= 0) {
-            CobbleSafari.LOGGER.warn("[TreasureDataLoader] File {} has weight <= 0, skipping", fileId);
+        if (weight < 0) {
+            CobbleSafari.LOGGER.warn("[TreasureDataLoader] File {} has negative weight, skipping", fileId);
             skippedCount++;
             return;
+        }
+        if (weight == 0) {
+            CobbleSafari.LOGGER.info("[TreasureDataLoader] File {} has weight=0 (luck-exclusive item)", fileId);
         }
 
         if (minQty < 1) minQty = 1;
@@ -92,7 +96,7 @@ public final class TreasureDataLoader {
         }
 
         TreasureDefinition def = new TreasureDefinition(
-                textureId, textureId, shape.getMatrix(), item, weight, minQty, maxQty
+                textureId, textureId, shape.getMatrix(), item, weight, minQty, maxQty, isDisabled
         );
         TreasureRegistry.register(def);
         loadedCount++;

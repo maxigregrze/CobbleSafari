@@ -12,6 +12,7 @@ import maxigregrze.cobblesafari.underground.screen.UndergroundScreenHandler;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.ItemStack;
@@ -41,8 +42,9 @@ public class UndergroundMinigame {
     public static void startSession(ServerPlayer player) {
         UUID sessionId = UUID.randomUUID();
         long seed = player.level().getRandom().nextLong();
+        int luckLevel = (int) player.getAttributeValue(Attributes.LUCK);
 
-        MiningSession session = new MiningSession(sessionId, seed);
+        MiningSession session = new MiningSession(sessionId, seed, luckLevel);
         activeSessions.put(sessionId, session);
 
         Services.PLATFORM.openUndergroundMenu(player, session);
@@ -100,7 +102,7 @@ public class UndergroundMinigame {
         for (TreasureDefinition def : allTreasures) {
             entries.add(new UndergroundPayloads.TreasureEntryData(
                     def.getId(), def.getTextureId(), def.getWeight(),
-                    def.getMinQty(), def.getMaxQty(), def.getShapeMatrix()
+                    def.getMinQty(), def.getMaxQty(), def.isDisabled(), def.getShapeMatrix()
             ));
         }
         Services.PLATFORM.sendPayloadToPlayer(player,

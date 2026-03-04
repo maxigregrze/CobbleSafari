@@ -16,8 +16,12 @@ public class MiningSession {
     private boolean complete;
     
     public MiningSession(UUID sessionId, long seed) {
+        this(sessionId, seed, 0);
+    }
+
+    public MiningSession(UUID sessionId, long seed, int luckLevel) {
         this.sessionId = sessionId;
-        this.grid = new MiningGrid(seed);
+        this.grid = new MiningGrid(seed, luckLevel);
         this.grid.generateContent();
         this.usingHammer = false;
         this.complete = false;

@@ -6,12 +6,20 @@ import maxigregrze.cobblesafari.item.BaitItem;
 import maxigregrze.cobblesafari.item.CreativeEggItem;
 import maxigregrze.cobblesafari.item.CreativeFlagItem;
 import maxigregrze.cobblesafari.item.IncenseItem;
+import maxigregrze.cobblesafari.item.LuckyMiningHelmetItem;
 import maxigregrze.cobblesafari.item.MudBallItem;
+import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.item.ArmorItem;
+import net.minecraft.world.item.ArmorMaterial;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.Rarity;
+import net.minecraft.world.item.crafting.Ingredient;
+import java.util.function.Supplier;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -83,6 +91,8 @@ public class ModItems {
 
     public static final Item MUD_BALL = new MudBallItem(new Item.Properties().stacksTo(64));
     public static final Item BAIT = new BaitItem(new Item.Properties().stacksTo(64));
+
+    public static Item LUCKY_MINING_HELMET;
 
     public static final List<Item> BATCH_ITEMS = new ArrayList<>();
 
@@ -182,6 +192,27 @@ public class ModItems {
 
         registerItem("mud_ball", MUD_BALL);
         registerItem("bait", BAIT);
+
+        Holder<ArmorMaterial> luckyHelmetMaterial = Registry.registerForHolder(
+                BuiltInRegistries.ARMOR_MATERIAL,
+                ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, "lucky_mining_helmet"),
+                new ArmorMaterial(
+                        Map.of(ArmorItem.Type.HELMET, 2),
+                        25,
+                        SoundEvents.ARMOR_EQUIP_CHAIN,
+                        () -> Ingredient.of(BuiltInRegistries.ITEM.getOptional(
+                                ResourceLocation.fromNamespaceAndPath("cobblemon", "hard_stone")
+                        ).orElse(Items.IRON_INGOT)),
+                        List.of(new ArmorMaterial.Layer(
+                                ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, "lucky_mining_helmet")
+                        )),
+                        0.0f,
+                        0.0f
+                )
+        );
+
+        LUCKY_MINING_HELMET = registerItem("lucky_mining_helmet",
+                new LuckyMiningHelmetItem(luckyHelmetMaterial, new Item.Properties().stacksTo(1)));
 
         BATCH_ITEMS.add(AURORA_DIAL);
         BATCH_ITEMS.add(BLOOD_DIAL);

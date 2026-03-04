@@ -30,12 +30,16 @@ import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Rarity;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.SlabBlock;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.StairBlock;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.level.material.PushReaction;
 import net.minecraft.world.phys.shapes.VoxelShape;
+
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 public class ModBlocks {
 
@@ -360,6 +364,49 @@ public class ModBlocks {
                     .sound(SoundType.METAL)
                     .noOcclusion()
             ));
+
+    public static final Map<String, Block> SPHERE_BLOCKS = new LinkedHashMap<>();
+    public static final Map<String, Block> SPHERE_SLABS = new LinkedHashMap<>();
+    public static final Map<String, Block> SPHERE_STAIRS = new LinkedHashMap<>();
+
+    private static final String[] SPHERE_TYPES_ARRAY = {
+        "blue_s", "blue_l", "red_s", "red_l", "green_s", "green_l",
+        "pale_s", "pale_l", "prism_s", "prism_l"
+    };
+
+    static {
+        for (String type : SPHERE_TYPES_ARRAY) {
+            MapColor color = getSphereMapColor(type);
+            Block base = registerBlock("sphere_" + type + "_block",
+                    new Block(BlockBehaviour.Properties.of()
+                            .mapColor(color)
+                            .strength(1.5f, 6.0f)
+                            .sound(SoundType.STONE)
+                    ));
+            SPHERE_BLOCKS.put(type, base);
+        }
+        for (String type : SPHERE_TYPES_ARRAY) {
+            Block base = SPHERE_BLOCKS.get(type);
+            SPHERE_SLABS.put(type, registerBlock("sphere_" + type + "_slab",
+                    new SlabBlock(BlockBehaviour.Properties.ofFullCopy(base))));
+        }
+        for (String type : SPHERE_TYPES_ARRAY) {
+            Block base = SPHERE_BLOCKS.get(type);
+            SPHERE_STAIRS.put(type, registerBlock("sphere_" + type + "_stairs",
+                    new StairBlock(base.defaultBlockState(), BlockBehaviour.Properties.ofFullCopy(base))));
+        }
+    }
+
+    private static MapColor getSphereMapColor(String type) {
+        return switch (type) {
+            case "blue_s", "blue_l"   -> MapColor.COLOR_BLUE;
+            case "red_s", "red_l"     -> MapColor.COLOR_RED;
+            case "green_s", "green_l" -> MapColor.COLOR_GREEN;
+            case "pale_s", "pale_l"   -> MapColor.QUARTZ;
+            case "prism_s", "prism_l" -> MapColor.DIAMOND;
+            default -> MapColor.STONE;
+        };
+    }
 
     private static Block registerBlock(String name, Block block) {
         registerBlockItem(name, block);

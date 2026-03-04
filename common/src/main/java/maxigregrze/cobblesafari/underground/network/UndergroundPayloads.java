@@ -217,6 +217,7 @@ public class UndergroundPayloads {
                 buf.writeInt(entry.weight());
                 buf.writeInt(entry.minQty());
                 buf.writeInt(entry.maxQty());
+                buf.writeBoolean(entry.isDisabled());
                 buf.writeInt(entry.shapeMatrix().length);
                 if (entry.shapeMatrix().length > 0) {
                     buf.writeInt(entry.shapeMatrix()[0].length);
@@ -238,6 +239,7 @@ public class UndergroundPayloads {
                 int weight = buf.readInt();
                 int minQty = buf.readInt();
                 int maxQty = buf.readInt();
+                boolean isDisabled = buf.readBoolean();
                 int rows = buf.readInt();
                 boolean[][] matrix;
                 if (rows > 0) {
@@ -251,7 +253,7 @@ public class UndergroundPayloads {
                 } else {
                     matrix = new boolean[0][0];
                 }
-                entries.add(new TreasureEntryData(id, textureId, weight, minQty, maxQty, matrix));
+                entries.add(new TreasureEntryData(id, textureId, weight, minQty, maxQty, isDisabled, matrix));
             }
             return new TreasureRegistrySyncPayload(entries);
         }
@@ -263,5 +265,5 @@ public class UndergroundPayloads {
     }
 
     public record TreasureEntryData(String id, String textureId, int weight,
-                                     int minQty, int maxQty, boolean[][] shapeMatrix) {}
+                                     int minQty, int maxQty, boolean isDisabled, boolean[][] shapeMatrix) {}
 }

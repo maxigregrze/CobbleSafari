@@ -1,0 +1,8 @@
+﻿{
+    "parent": "minecraft:block/stairs",
+    "textures": {
+        "bottom": "cobblesafari:block/sphere_blue_s",
+        "top":    "cobblesafari:block/sphere_blue_s",
+        "side":   "cobblesafari:block/sphere_blue_s"
+    }
+}

@@ -35,13 +35,19 @@ public class MiningGrid {
     private final WallStability stability;
     private final Random random;
     private final PerlinNoise tierNoise;
+    private final int luckLevel;
 
     public MiningGrid(long seed) {
+        this(seed, 0);
+    }
+
+    public MiningGrid(long seed, int luckLevel) {
         this.cells = new MiningCell[HEIGHT][WIDTH];
         this.treasures = new ArrayList<>();
         this.stability = new WallStability();
         this.random = new Random(seed);
         this.tierNoise = new PerlinNoise(seed);
+        this.luckLevel = luckLevel;
         initializeGrid();
     }
 
@@ -166,7 +172,7 @@ public class MiningGrid {
      * Attempt to place a random treasure on the grid.
      */
     private void placeTreasure() {
-        TreasureDefinition treasure = TreasureRegistry.getRandomTreasure(random);
+        TreasureDefinition treasure = TreasureRegistry.getRandomTreasure(random, luckLevel);
         if (treasure == null) return;
 
         for (int attempt = 0; attempt < PLACEMENT_ATTEMPTS; attempt++) {

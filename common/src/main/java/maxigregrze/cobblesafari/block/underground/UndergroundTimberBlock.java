@@ -131,56 +131,39 @@ public class UndergroundTimberBlock extends Block {
 
     public static VoxelShape cornerHorizontal(Direction facing) {
         return switch (facing) {
-            case SOUTH -> Shapes.or(
-                    Block.box(0, 3, 13, 16, 7, 16),
-                    Block.box(0, 3, 6, 9, 7, 10)
-            );
             case EAST -> Shapes.or(
                     Block.box(13, 3, 0, 16, 7, 16),
-                    Block.box(6, 3, 0, 10, 7, 9)
+                    Block.box(0, 3, 13, 16, 7, 16),
+                    Block.box(14, 0, 14, 16, 16, 16)
+            );
+            case SOUTH -> Shapes.or(
+                    Block.box(0, 3, 13, 16, 7, 16),
+                    Block.box(0, 3, 0, 3, 7, 16),
+                    Block.box(0, 0, 14, 2, 16, 16)
             );
             case WEST -> Shapes.or(
                     Block.box(0, 3, 0, 3, 7, 16),
-                    Block.box(7, 3, 6, 10, 7, 16)
+                    Block.box(0, 3, 0, 16, 7, 3),
+                    Block.box(0, 0, 0, 2, 16, 2)
             );
             default -> Shapes.or(
                     Block.box(0, 3, 0, 16, 7, 3),
-                    Block.box(7, 3, 7, 16, 7, 10)
+                    Block.box(13, 3, 0, 16, 7, 16),
+                    Block.box(14, 0, 0, 16, 16, 2)
             );
         };
     }
 
     public static VoxelShape cornerVerticalSmall(Direction facing) {
         return switch (facing) {
-            case SOUTH -> Block.box(14, 0, 14, 16, 16, 16);
-            case EAST -> Block.box(14, 0, 0, 16, 16, 2);
-            case WEST -> Block.box(0, 0, 14, 2, 16, 16);
-            default -> Block.box(0, 0, 0, 2, 16, 2);
+            case EAST -> Block.box(14, 0, 14, 16, 16, 16);
+            case SOUTH -> Block.box(0, 0, 14, 2, 16, 16);
+            case WEST -> Block.box(0, 0, 0, 2, 16, 2);
+            default -> Block.box(14, 0, 0, 16, 16, 2);
         };
     }
 
     public static VoxelShape cornerVertical(Direction facing) {
-        return switch (facing) {
-            case SOUTH -> Shapes.or(
-                    Block.box(0, 3, 13, 16, 7, 16),
-                    Block.box(13, 3, 0, 16, 7, 16),
-                    Block.box(14, 0, 14, 16, 16, 16)
-            );
-            case EAST -> Shapes.or(
-                    Block.box(13, 3, 0, 16, 7, 16),
-                    Block.box(0, 3, 0, 16, 7, 3),
-                    Block.box(14, 0, 0, 16, 16, 2)
-            );
-            case WEST -> Shapes.or(
-                    Block.box(0, 3, 0, 3, 7, 16),
-                    Block.box(0, 3, 13, 16, 7, 16),
-                    Block.box(0, 0, 14, 2, 16, 16)
-            );
-            default -> Shapes.or(
-                    Block.box(0, 3, 0, 16, 7, 3),
-                    Block.box(0, 3, 0, 3, 7, 16),
-                    Block.box(0, 0, 0, 2, 16, 2)
-            );
-        };
+        return cornerVerticalSmall(facing);
     }
 }

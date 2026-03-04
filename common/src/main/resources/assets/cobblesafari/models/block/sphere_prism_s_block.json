@@ -1,0 +1,6 @@
+﻿{
+    "parent": "minecraft:block/cube_all",
+    "textures": {
+        "all": "cobblesafari:block/sphere_prism_s"
+    }
+}

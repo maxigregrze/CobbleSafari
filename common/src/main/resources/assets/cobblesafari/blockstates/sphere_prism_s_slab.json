@@ -1,0 +1,7 @@
+﻿{
+    "variants": {
+        "type=bottom": { "model": "cobblesafari:block/sphere_prism_s_slab" },
+        "type=double": { "model": "cobblesafari:block/sphere_prism_s_block" },
+        "type=top":    { "model": "cobblesafari:block/sphere_prism_s_slab_top" }
+    }
+}

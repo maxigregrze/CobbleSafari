@@ -2,6 +2,7 @@ package maxigregrze.cobblesafari;
 
 import maxigregrze.cobblesafari.command.CobbleSafariCommand;
 import maxigregrze.cobblesafari.command.SafariExitCommand;
+import maxigregrze.cobblesafari.item.LuckyMiningHelmetItem;
 import maxigregrze.cobblesafari.dungeon.DungeonTeleportCountdown;
 import maxigregrze.cobblesafari.entity.BalloonSpawnHandler;
 import maxigregrze.cobblesafari.init.ModEntities;
@@ -204,6 +205,7 @@ public class CobbleSafariNeoForge {
         TeleporterTickHandler.onServerTick(event.getServer());
         DungeonTeleportCountdown.onServerTick(event.getServer());
         BalloonSpawnHandler.onServerTick(event.getServer());
+        event.getServer().getPlayerList().getPlayers().forEach(LuckyMiningHelmetItem::tickEffect);
     }
 
     private void onPlayerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {

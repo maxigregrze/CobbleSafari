@@ -2,7 +2,7 @@
   "itemId": "cobblesafari:fossil_perfect",
   "textureId": "fossilperfect",
   "shape": "cobblesafari:safarifossil",
-  "weight": 1,
+  "weight": 0,
   "minQty": 1,
   "maxQty": 1
 }

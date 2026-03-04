@@ -14,8 +14,15 @@ public class TreasureDefinition {
     private final int minQty;
     private final int maxQty;
 
+    private final boolean isDisabled;
+
     public TreasureDefinition(String id, String textureId, boolean[][] shapeMatrix,
                               Item rewardItem, int weight, int minQty, int maxQty) {
+        this(id, textureId, shapeMatrix, rewardItem, weight, minQty, maxQty, false);
+    }
+
+    public TreasureDefinition(String id, String textureId, boolean[][] shapeMatrix,
+                              Item rewardItem, int weight, int minQty, int maxQty, boolean isDisabled) {
         this.id = id;
         this.textureId = textureId;
         this.shapeMatrix = shapeMatrix;
@@ -23,6 +30,7 @@ public class TreasureDefinition {
         this.weight = weight;
         this.minQty = minQty;
         this.maxQty = maxQty;
+        this.isDisabled = isDisabled;
     }
 
     public String getId() {
@@ -56,6 +64,10 @@ public class TreasureDefinition {
 
     public int getWeight() {
         return weight;
+    }
+
+    public boolean isDisabled() {
+        return isDisabled;
     }
 
     public int getRarity() {

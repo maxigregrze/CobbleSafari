@@ -1,0 +1,8 @@
+﻿{
+    "parent": "minecraft:block/inner_stairs",
+    "textures": {
+        "bottom": "cobblesafari:block/sphere_green_l",
+        "top":    "cobblesafari:block/sphere_green_l",
+        "side":   "cobblesafari:block/sphere_green_l"
+    }
+}

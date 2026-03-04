@@ -1,0 +1,11 @@
+﻿{
+    "type": "minecraft:crafting_shaped",
+    "pattern": ["###", "###", "###"],
+    "key": {
+        "#": { "item": "cobblesafari:sphere_prism_s" }
+    },
+    "result": {
+        "id": "cobblesafari:sphere_prism_s_block",
+        "count": 1
+    }
+}

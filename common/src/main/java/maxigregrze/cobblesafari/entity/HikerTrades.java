@@ -144,6 +144,12 @@ public class HikerTrades {
                 new ItemCost(ModItems.SPHERE_PALE_L, 1),
                 new ItemStack(ModItems.SPHERE_PALE_S, 60),
                 8, 0, 0.0f));
+
+        allPossibleTrades.add(new MerchantOffer(
+                new ItemCost(ModItems.SPHERE_PRISM_S, 8),
+                Optional.of(new ItemCost(ModItems.SPHERE_PALE_S, 8)),
+                new ItemStack(ModItems.LUCKY_MINING_HELMET, 1),
+                4, 0, 0.0f));
         
         allPossibleTrades.removeIf(offer -> offer == null || !isValidOffer(offer));
         Collections.shuffle(allPossibleTrades, new Random(random.nextLong()));

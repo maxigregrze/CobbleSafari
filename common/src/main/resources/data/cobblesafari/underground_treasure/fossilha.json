@@ -2,7 +2,7 @@
   "itemId": "cobblesafari:fossil_hidden_ability",
   "textureId": "fossilha",
   "shape": "cobblesafari:safarifossil",
-  "weight": 5,
+  "weight": 2,
   "minQty": 1,
   "maxQty": 1
 }

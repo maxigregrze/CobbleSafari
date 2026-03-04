@@ -168,6 +168,13 @@ public class DungeonTeleportHandler {
 
         TimerManager.setPlayerOrigin(player, prep.dimensionId(), prep.playerOriginPos(), prep.playerOriginDimension());
 
+        if (player.isRemoved()) {
+            CobbleSafari.LOGGER.warn("Player {} is already removed ({}), aborting dungeon teleport",
+                    player.getName().getString(), player.getRemovalReason());
+            PLAYER_ORIGINS.remove(player.getUUID());
+            return;
+        }
+
         DimensionTransition transition = new DimensionTransition(
                 prep.dungeonLevel(),
                 new Vec3(prep.playerSpawnPos().getX() + 0.5, prep.playerSpawnPos().getY(), prep.playerSpawnPos().getZ() + 0.5),
@@ -177,7 +184,17 @@ public class DungeonTeleportHandler {
                 DimensionTransition.DO_NOTHING
         );
 
-        player.changeDimension(transition);
+        try {
+            player.changeDimension(transition);
+        } catch (NullPointerException e) {
+            CobbleSafari.LOGGER.error("Failed to teleport player {} to dungeon due to chunk tracking inconsistency: {}",
+                    player.getName().getString(), e.getMessage());
+            PLAYER_ORIGINS.remove(player.getUUID());
+            if (instance != null) {
+                instance.removePlayer(player.getUUID());
+            }
+            return;
+        }
 
         TimerManager.startTimer(player, prep.dimensionId());
         player.sendSystemMessage(Component.translatable("cobblesafari.dungeon.teleport.entrance"));

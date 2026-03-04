@@ -1,0 +1,10 @@
+﻿{
+    "type": "minecraft:crafting_shapeless",
+    "ingredients": [
+        { "item": "cobblesafari:sphere_blue_l_block" }
+    ],
+    "result": {
+        "id": "cobblesafari:sphere_blue_l",
+        "count": 9
+    }
+}

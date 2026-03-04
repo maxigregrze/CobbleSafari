@@ -2,7 +2,7 @@
   "itemId": "cobblesafari:fossil_shiny",
   "textureId": "fossilshiny",
   "shape": "cobblesafari:safarifossil",
-  "weight": 5,
+  "weight": 4,
   "minQty": 1,
   "maxQty": 1
 }

@@ -2,6 +2,7 @@ package maxigregrze.cobblesafari;
 
 import maxigregrze.cobblesafari.command.CobbleSafariCommand;
 import maxigregrze.cobblesafari.command.SafariExitCommand;
+import maxigregrze.cobblesafari.item.LuckyMiningHelmetItem;
 import maxigregrze.cobblesafari.dungeon.DungeonTeleportCountdown;
 import maxigregrze.cobblesafari.entity.BalloonSpawnHandler;
 import maxigregrze.cobblesafari.init.ModEntities;
@@ -167,6 +168,7 @@ public class CobbleSafariFabric implements ModInitializer {
             TeleporterTickHandler.onServerTick(server);
             DungeonTeleportCountdown.onServerTick(server);
             BalloonSpawnHandler.onServerTick(server);
+            server.getPlayerList().getPlayers().forEach(LuckyMiningHelmetItem::tickEffect);
         });
 
         ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {
