@@ -105,6 +105,7 @@ public class ModBlocks {
                     .noOcclusion()
             ));
 
+
     public static final Block UNDERGROUND_SMOOTH_STONE = registerBlock("underground_smooth_stone",
             new Block(BlockBehaviour.Properties.of()
                     .mapColor(MapColor.TERRACOTTA_PINK)
@@ -348,6 +349,22 @@ public class ModBlocks {
                     .sound(SoundType.METAL)
                     .noOcclusion()
                     .lightLevel(state -> state.getValue(BasePCBlock.PART) == BlockPart.TOP ? 15 : 0)
+            ));
+
+    public static final Block DISTORTION_ROCK = registerBlock("distortion_rock",
+            new Block(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.SAND)
+                    .strength(3.0f, 9.0f)
+                    .sound(SoundType.STONE)
+                    .requiresCorrectToolForDrops()
+            ));
+
+    public static final Block SUSPICIOUS_DISTORTION_ROCK = registerBlock("suspicious_distortion_rock",
+            new Block(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.SAND)
+                    .strength(3.0f, 9.0f)
+                    .sound(SoundType.STONE)
+                    .requiresCorrectToolForDrops()
             ));
 
     public static final Block BELLTOWER_TRELLIS = registerBlock("belltower_trellis",

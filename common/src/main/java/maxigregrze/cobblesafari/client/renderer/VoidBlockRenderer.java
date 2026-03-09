@@ -15,9 +15,9 @@ import org.joml.Matrix4f;
 
 public class VoidBlockRenderer implements BlockEntityRenderer<VoidBlockEntity> {
 
-    private static final float SHADER_RED = 0.075f;
-    private static final float SHADER_GREEN = 0.15f;
-    private static final float SHADER_BLUE = 0.2f;
+    private static final float SHADER_RED = 126f / 255f;
+    private static final float SHADER_GREEN = 2f / 255f;
+    private static final float SHADER_BLUE = 190f / 255f;
 
     public VoidBlockRenderer(BlockEntityRendererProvider.Context context) {
     }
@@ -29,7 +29,7 @@ public class VoidBlockRenderer implements BlockEntityRenderer<VoidBlockEntity> {
         poseStack.pushPose();
 
         if (ShaderCompatHelper.isIrisShaderActive()) {
-            renderShaderCompat(poseStack, bufferSource, packedLight, packedOverlay);
+            renderShaderCompat(poseStack, bufferSource, packedOverlay);
         } else {
             renderVanilla(poseStack, bufferSource);
         }
@@ -49,8 +49,7 @@ public class VoidBlockRenderer implements BlockEntityRenderer<VoidBlockEntity> {
         renderFaceXZ(matrix, vertexConsumer, 1.0f, 0.0f, 1.0f, 0.0f, 0.0f);
     }
 
-    private void renderShaderCompat(PoseStack poseStack, MultiBufferSource bufferSource,
-                                    int packedLight, int packedOverlay) {
+    private void renderShaderCompat(PoseStack poseStack, MultiBufferSource bufferSource, int packedOverlay) {
         VertexConsumer vertexConsumer = bufferSource.getBuffer(
                 RenderType.entitySolid(TheEndPortalRenderer.END_PORTAL_LOCATION));
 

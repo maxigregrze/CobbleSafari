@@ -97,6 +97,8 @@ public class ModCreativeTabs {
                 output.accept(ModBlocks.AIR_BUBBLE_CORAL);
                 output.accept(ModBlocks.AIR_FIRE_CORAL);
                 output.accept(ModBlocks.AIR_HORN_CORAL);
+                output.accept(ModBlocks.DISTORTION_ROCK);
+                output.accept(ModBlocks.SUSPICIOUS_DISTORTION_ROCK);
                 output.accept(ModItems.MUD_BALL);
                 output.accept(ModItems.BAIT);
             })

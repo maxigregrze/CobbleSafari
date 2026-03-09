@@ -331,5 +331,7 @@
 	"block.cobblesafari.sphere_prism_s_stairs": "Small Prism Sphere Stairs",
 	"block.cobblesafari.sphere_prism_l_block": "Large Prism Sphere Block",
 	"block.cobblesafari.sphere_prism_l_slab": "Large Prism Sphere Slab",
-	"block.cobblesafari.sphere_prism_l_stairs": "Large Prism Sphere Stairs"
+	"block.cobblesafari.sphere_prism_l_stairs": "Large Prism Sphere Stairs",
+	"block.cobblesafari.distortion_rock": "Distortion Rock",
+	"block.cobblesafari.suspicious_distortion_rock": "Suspicious Distortion Rock"
 }

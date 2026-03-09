@@ -23,9 +23,9 @@ public class HoopaRingPortalBlockEntityRenderer implements BlockEntityRenderer<H
     private static final float CENTER_Y = 1.0f;
     private static final float CENTER_Z = 0.5f;
 
-    private static final float SHADER_RED = 0.075f;
-    private static final float SHADER_GREEN = 0.15f;
-    private static final float SHADER_BLUE = 0.2f;
+    private static final float SHADER_RED = 126f / 255f;
+    private static final float SHADER_GREEN = 2f / 255f;
+    private static final float SHADER_BLUE = 190f / 255f;
 
     public HoopaRingPortalBlockEntityRenderer(BlockEntityRendererProvider.Context context) {
     }
