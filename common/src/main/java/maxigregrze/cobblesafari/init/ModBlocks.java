@@ -11,6 +11,7 @@ import maxigregrze.cobblesafari.block.misc.AirKelpBlock;
 import maxigregrze.cobblesafari.block.misc.AquaticDecorationBlock;
 import maxigregrze.cobblesafari.block.misc.BelltowerTrellisBlock;
 import maxigregrze.cobblesafari.block.misc.IcicleBlock;
+import maxigregrze.cobblesafari.block.misc.DistortionRockVerticalBlock;
 import maxigregrze.cobblesafari.block.misc.MagneticClusterBlock;
 import maxigregrze.cobblesafari.block.misc.MagneticCrystalBlock;
 import maxigregrze.cobblesafari.block.misc.SafariEggNestBlock;
@@ -360,6 +361,22 @@ public class ModBlocks {
             ));
 
     public static final Block SUSPICIOUS_DISTORTION_ROCK = registerBlock("suspicious_distortion_rock",
+            new Block(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.SAND)
+                    .strength(3.0f, 9.0f)
+                    .sound(SoundType.STONE)
+                    .requiresCorrectToolForDrops()
+            ));
+
+    public static final Block DISTORTION_ROCK_VERTICAL = registerBlock("distortion_rock_vertical",
+            new DistortionRockVerticalBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.SAND)
+                    .strength(3.0f, 9.0f)
+                    .sound(SoundType.STONE)
+                    .requiresCorrectToolForDrops()
+            ));
+
+    public static final Block DISTORTION_ROCK_UPSIDEDOWN = registerBlock("distortion_rock_upsidedown",
             new Block(BlockBehaviour.Properties.of()
                     .mapColor(MapColor.SAND)
                     .strength(3.0f, 9.0f)

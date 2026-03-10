@@ -333,5 +333,7 @@
 	"block.cobblesafari.sphere_prism_l_slab": "Dalle de Grande Sphère Prisme",
 	"block.cobblesafari.sphere_prism_l_stairs": "Escalier de Grande Sphère Prisme",
 	"block.cobblesafari.distortion_rock": "Roche de Distorsion",
+	"block.cobblesafari.distortion_rock_vertical": "Roche de Distorsion Verticale",
+	"block.cobblesafari.distortion_rock_upsidedown": "Roche de Distorsion Inversee",
 	"block.cobblesafari.suspicious_distortion_rock": "Roche de Distorsion Suspecte"
 }
