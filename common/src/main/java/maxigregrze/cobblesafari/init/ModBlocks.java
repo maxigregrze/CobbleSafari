@@ -4,13 +4,15 @@ import maxigregrze.cobblesafari.CobbleSafari;
 import maxigregrze.cobblesafari.block.basepc.BasePCBlock;
 import maxigregrze.cobblesafari.block.basepc.BasePCBlockItem;
 import maxigregrze.cobblesafari.block.BlockPart;
-import maxigregrze.cobblesafari.block.*;
 import maxigregrze.cobblesafari.block.dungeon.DungeonPortalBlock;
 import maxigregrze.cobblesafari.block.dungeon.HoopaRingPortalBlock;
 import maxigregrze.cobblesafari.block.misc.AirKelpBlock;
 import maxigregrze.cobblesafari.block.misc.AquaticDecorationBlock;
 import maxigregrze.cobblesafari.block.misc.BelltowerTrellisBlock;
 import maxigregrze.cobblesafari.block.misc.IcicleBlock;
+import maxigregrze.cobblesafari.block.misc.DistortionBoulderBlock;
+import maxigregrze.cobblesafari.block.misc.DistortionRockBlock;
+import maxigregrze.cobblesafari.block.misc.DistortionRockDirectionalBlock;
 import maxigregrze.cobblesafari.block.misc.DistortionRockVerticalBlock;
 import maxigregrze.cobblesafari.block.misc.MagneticClusterBlock;
 import maxigregrze.cobblesafari.block.misc.MagneticCrystalBlock;
@@ -377,7 +379,71 @@ public class ModBlocks {
             ));
 
     public static final Block DISTORTION_ROCK_UPSIDEDOWN = registerBlock("distortion_rock_upsidedown",
-            new Block(BlockBehaviour.Properties.of()
+            new DistortionRockBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.SAND)
+                    .strength(3.0f, 9.0f)
+                    .sound(SoundType.STONE)
+                    .requiresCorrectToolForDrops()
+            ));
+
+    public static final Block DISTORTION_ROCK_DEEP = registerBlock("distortion_rock_deep",
+            new DistortionRockBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.SAND)
+                    .strength(3.0f, 9.0f)
+                    .sound(SoundType.STONE)
+                    .requiresCorrectToolForDrops()
+            ));
+
+    public static final Block DISTORTION_ROCK_DEEP_VERTICAL = registerBlock("distortion_rock_deep_vertical",
+            new DistortionRockDirectionalBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.SAND)
+                    .strength(3.0f, 9.0f)
+                    .sound(SoundType.STONE)
+                    .requiresCorrectToolForDrops()
+            ));
+
+    public static final Block DISTORTION_ROCK_DEEP_UPSIDEDOWN = registerBlock("distortion_rock_deep_upsidedown",
+            new DistortionRockBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.SAND)
+                    .strength(3.0f, 9.0f)
+                    .sound(SoundType.STONE)
+                    .requiresCorrectToolForDrops()
+            ));
+
+    public static final Block DISTORTION_ROCK_FLAT = registerBlock("distortion_rock_flat",
+            new DistortionRockBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.SAND)
+                    .strength(3.0f, 9.0f)
+                    .sound(SoundType.STONE)
+                    .requiresCorrectToolForDrops()
+            ));
+
+    public static final Block DISTORTION_ROCK_FLAT_VERTICAL = registerBlock("distortion_rock_flat_vertical",
+            new DistortionRockDirectionalBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.SAND)
+                    .strength(3.0f, 9.0f)
+                    .sound(SoundType.STONE)
+                    .requiresCorrectToolForDrops()
+            ));
+
+    public static final Block DISTORTION_ROCK_FLAT_UPSIDEDOWN = registerBlock("distortion_rock_flat_upsidedown",
+            new DistortionRockBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.SAND)
+                    .strength(3.0f, 9.0f)
+                    .sound(SoundType.STONE)
+                    .requiresCorrectToolForDrops()
+            ));
+
+    public static final Block DISTORTION_BOULDER = registerBlock("distortion_boulder",
+            new DistortionBoulderBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.SAND)
+                    .strength(3.0f, 9.0f)
+                    .sound(SoundType.STONE)
+                    .requiresCorrectToolForDrops()
+            ));
+
+    public static final Block DISTORTION_ROCK_FLOATING = registerBlock("distortion_rock_floating",
+            new DistortionRockDirectionalBlock(BlockBehaviour.Properties.of()
                     .mapColor(MapColor.SAND)
                     .strength(3.0f, 9.0f)
                     .sound(SoundType.STONE)

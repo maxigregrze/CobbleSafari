@@ -22,6 +22,9 @@ public class ModCreativeTabs {
     public static final ResourceKey<CreativeModeTab> MISC_KEY = ResourceKey.create(
             BuiltInRegistries.CREATIVE_MODE_TAB.key(),
             ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, "misc"));
+    public static final ResourceKey<CreativeModeTab> DISTORTION_KEY = ResourceKey.create(
+            BuiltInRegistries.CREATIVE_MODE_TAB.key(),
+            ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, "distortion"));
 
     public static final CreativeModeTab SAFARI_UNDERGROUND_TAB = CreativeModeTab.builder(CreativeModeTab.Row.TOP, 0)
             .title(Component.translatable("itemGroup.cobblesafari.safari_underground"))
@@ -97,16 +100,31 @@ public class ModCreativeTabs {
                 output.accept(ModBlocks.AIR_BUBBLE_CORAL);
                 output.accept(ModBlocks.AIR_FIRE_CORAL);
                 output.accept(ModBlocks.AIR_HORN_CORAL);
-                output.accept(ModBlocks.DISTORTION_ROCK);
-                output.accept(ModBlocks.DISTORTION_ROCK_VERTICAL);
-                output.accept(ModBlocks.DISTORTION_ROCK_UPSIDEDOWN);
-                output.accept(ModBlocks.SUSPICIOUS_DISTORTION_ROCK);
                 output.accept(ModItems.MUD_BALL);
                 output.accept(ModItems.BAIT);
             })
             .build();
 
-    public static final CreativeModeTab MISC_TAB = CreativeModeTab.builder(CreativeModeTab.Row.TOP, 2)
+    public static final CreativeModeTab DISTORTION_TAB = CreativeModeTab.builder(CreativeModeTab.Row.TOP, 2)
+            .icon(() -> new ItemStack(ModBlocks.DISTORTION_BOULDER))
+            .title(Component.translatable("itemGroup.cobblesafari.distortion"))
+            .displayItems((params, output) -> {
+                output.accept(ModBlocks.DISTORTION_ROCK);
+                output.accept(ModBlocks.DISTORTION_ROCK_VERTICAL);
+                output.accept(ModBlocks.DISTORTION_ROCK_UPSIDEDOWN);
+                output.accept(ModBlocks.DISTORTION_ROCK_DEEP);
+                output.accept(ModBlocks.DISTORTION_ROCK_DEEP_VERTICAL);
+                output.accept(ModBlocks.DISTORTION_ROCK_DEEP_UPSIDEDOWN);
+                output.accept(ModBlocks.DISTORTION_ROCK_FLAT);
+                output.accept(ModBlocks.DISTORTION_ROCK_FLAT_VERTICAL);
+                output.accept(ModBlocks.DISTORTION_ROCK_FLAT_UPSIDEDOWN);
+                output.accept(ModBlocks.DISTORTION_ROCK_FLOATING);
+                output.accept(ModBlocks.DISTORTION_BOULDER);
+                output.accept(ModBlocks.SUSPICIOUS_DISTORTION_ROCK);
+            })
+            .build();
+
+    public static final CreativeModeTab MISC_TAB = CreativeModeTab.builder(CreativeModeTab.Row.TOP, 3)
             .icon(() -> new ItemStack(ModItems.REPEL))
             .title(Component.translatable("itemGroup.cobblesafari.misc"))
             .displayItems((params, output) -> {
@@ -130,6 +148,7 @@ public class ModCreativeTabs {
     public static void register() {
         Registry.register(BuiltInRegistries.CREATIVE_MODE_TAB, SAFARI_UNDERGROUND_KEY, SAFARI_UNDERGROUND_TAB);
         Registry.register(BuiltInRegistries.CREATIVE_MODE_TAB, SAFARI_DIMENSION_KEY, SAFARI_DIMENSION_TAB);
+        Registry.register(BuiltInRegistries.CREATIVE_MODE_TAB, DISTORTION_KEY, DISTORTION_TAB);
         Registry.register(BuiltInRegistries.CREATIVE_MODE_TAB, MISC_KEY, MISC_TAB);
     }
 }

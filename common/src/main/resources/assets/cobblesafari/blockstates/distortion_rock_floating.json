@@ -1,0 +1,28 @@
+{
+	"variants": {
+		"facing=north": [
+			{ "model": "cobblesafari:block/distortionblock_floating_1" },
+			{ "model": "cobblesafari:block/distortionblock_floating_2" },
+			{ "model": "cobblesafari:block/distortionblock_floating_3" },
+			{ "model": "cobblesafari:block/distortionblock_floating_4" }
+		],
+		"facing=south": [
+			{ "model": "cobblesafari:block/distortionblock_floating_1", "y": 180 },
+			{ "model": "cobblesafari:block/distortionblock_floating_2", "y": 180 },
+			{ "model": "cobblesafari:block/distortionblock_floating_3", "y": 180 },
+			{ "model": "cobblesafari:block/distortionblock_floating_4", "y": 180 }
+		],
+		"facing=east": [
+			{ "model": "cobblesafari:block/distortionblock_floating_1", "y": 90 },
+			{ "model": "cobblesafari:block/distortionblock_floating_2", "y": 90 },
+			{ "model": "cobblesafari:block/distortionblock_floating_3", "y": 90 },
+			{ "model": "cobblesafari:block/distortionblock_floating_4", "y": 90 }
+		],
+		"facing=west": [
+			{ "model": "cobblesafari:block/distortionblock_floating_1", "y": 270 },
+			{ "model": "cobblesafari:block/distortionblock_floating_2", "y": 270 },
+			{ "model": "cobblesafari:block/distortionblock_floating_3", "y": 270 },
+			{ "model": "cobblesafari:block/distortionblock_floating_4", "y": 270 }
+		]
+	}
+}

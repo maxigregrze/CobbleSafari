@@ -1,8 +1,8 @@
 {
 	"itemGroup.cobblesafari.safari": "Safari Cobblesafari",
-	"itemGroup.cobblesafari.dungeons": "DonjonsCobblesafari",
+	"itemGroup.cobblesafari.dungeons": "Donjons Cobblesafari",
 	"itemGroup.cobblesafari.items": "Objets Cobblesafari",
-	"itemGroup.cobblesafari.safari_underground": "Safari Souterrain",
+	"itemGroup.cobblesafari.safari_underground": "Cobblesafari - Souterrain",
 	"block.cobblesafari.underground_smooth_stone": "Pierre lisse souterraine",
 	"block.cobblesafari.underground_stone": "Pierre souterraine",
 	"block.cobblesafari.underground_stone_transition": "Pierre souterraine",
@@ -332,8 +332,11 @@
 	"block.cobblesafari.sphere_prism_l_block": "Bloc de Grande Sphère Prisme",
 	"block.cobblesafari.sphere_prism_l_slab": "Dalle de Grande Sphère Prisme",
 	"block.cobblesafari.sphere_prism_l_stairs": "Escalier de Grande Sphère Prisme",
+
 	"block.cobblesafari.distortion_rock": "Roche de Distorsion",
 	"block.cobblesafari.distortion_rock_vertical": "Roche de Distorsion Verticale",
 	"block.cobblesafari.distortion_rock_upsidedown": "Roche de Distorsion Inversee",
-	"block.cobblesafari.suspicious_distortion_rock": "Roche de Distorsion Suspecte"
+	"block.cobblesafari.suspicious_distortion_rock": "Roche de Distorsion Suspecte",
+	"block.cobblesafari.distortion_boulder": "Rocher de Distorsion",
+	"itemGroup.cobblesafari.distortion": "CobbleSafari - Distorsion"
 }

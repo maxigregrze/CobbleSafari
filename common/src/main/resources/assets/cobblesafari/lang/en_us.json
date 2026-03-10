@@ -2,7 +2,7 @@
 	"itemGroup.cobblesafari.safari": "Cobblesafari Safari",
 	"itemGroup.cobblesafari.dungeons": "Cobblesafari Dungeons",
 	"itemGroup.cobblesafari.items": "Cobblesafari Items",
-	"itemGroup.cobblesafari.safari_underground": "Safari Underground",
+	"itemGroup.cobblesafari.safari_underground": "Cobblesafari - Underground",
 	"block.cobblesafari.underground_smooth_stone": "Underground Smooth Stone",
 	"block.cobblesafari.underground_stone": "Underground Stone",
 	"block.cobblesafari.underground_stone_transition": "Underground Stone",
@@ -335,5 +335,7 @@
 	"block.cobblesafari.distortion_rock": "Distortion Rock",
 	"block.cobblesafari.distortion_rock_vertical": "Vertical Distortion Rock",
 	"block.cobblesafari.distortion_rock_upsidedown": "Upside Down Distortion Rock",
-	"block.cobblesafari.suspicious_distortion_rock": "Suspicious Distortion Rock"
+	"block.cobblesafari.suspicious_distortion_rock": "Suspicious Distortion Rock",
+	"block.cobblesafari.distortion_boulder": "Distortion Boulder",
+	"itemGroup.cobblesafari.distortion": "CobbleSafari - Distortion"
 }
