@@ -7,8 +7,10 @@ import maxigregrze.cobblesafari.block.BlockPart;
 import maxigregrze.cobblesafari.block.dungeon.DungeonPortalBlock;
 import maxigregrze.cobblesafari.block.dungeon.HoopaRingPortalBlock;
 import maxigregrze.cobblesafari.block.misc.AirKelpBlock;
+import maxigregrze.cobblesafari.block.misc.AppearingDistortionFlowerBlock;
 import maxigregrze.cobblesafari.block.misc.AquaticDecorationBlock;
 import maxigregrze.cobblesafari.block.misc.BelltowerTrellisBlock;
+import maxigregrze.cobblesafari.block.misc.DistortionFlowerBlock;
 import maxigregrze.cobblesafari.block.misc.IcicleBlock;
 import maxigregrze.cobblesafari.block.misc.DistortionBoulderBlock;
 import maxigregrze.cobblesafari.block.misc.DistortionRockBlock;
@@ -17,6 +19,7 @@ import maxigregrze.cobblesafari.block.misc.DistortionRockVerticalBlock;
 import maxigregrze.cobblesafari.block.misc.MagneticClusterBlock;
 import maxigregrze.cobblesafari.block.misc.MagneticCrystalBlock;
 import maxigregrze.cobblesafari.block.misc.SafariEggNestBlock;
+import maxigregrze.cobblesafari.block.misc.VanishingDistortionFlowerBlock;
 import maxigregrze.cobblesafari.block.misc.VoidBlock;
 import maxigregrze.cobblesafari.block.teleporter.SafariTeleporterBlock;
 import maxigregrze.cobblesafari.block.underground.UndergroundBoulderBlock;
@@ -440,6 +443,30 @@ public class ModBlocks {
                     .strength(3.0f, 9.0f)
                     .sound(SoundType.STONE)
                     .requiresCorrectToolForDrops()
+            ));
+
+    public static final Block DISTORTION_FLOWER = registerBlock("distortion_flower",
+            new DistortionFlowerBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.PLANT)
+                    .instabreak()
+                    .sound(SoundType.GRASS)
+                    .noLootTable()
+            ));
+
+    public static final Block VANISHING_DISTORTION_FLOWER = registerBlock("vanishing_distortion_flower",
+            new VanishingDistortionFlowerBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.PLANT)
+                    .instabreak()
+                    .sound(SoundType.GRASS)
+                    .noLootTable()
+            ));
+
+    public static final Block APPEARING_DISTORTION_FLOWER = registerBlock("appearing_distortion_flower",
+            new AppearingDistortionFlowerBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.PLANT)
+                    .instabreak()
+                    .sound(SoundType.GRASS)
+                    .noLootTable()
             ));
 
     public static final Block DISTORTION_ROCK_FLOATING = registerBlock("distortion_rock_floating",

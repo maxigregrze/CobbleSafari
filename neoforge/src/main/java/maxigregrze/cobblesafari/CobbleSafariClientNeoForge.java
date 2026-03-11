@@ -94,6 +94,21 @@ public class CobbleSafariClientNeoForge {
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.UNDERGROUND_PC, RenderType.cutout());
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.SECRETBASE_PC, RenderType.cutout());
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.INCUBATOR, RenderType.translucent());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.DISTORTION_ROCK, RenderType.cutout());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.DISTORTION_ROCK_VERTICAL, RenderType.cutout());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.DISTORTION_ROCK_UPSIDEDOWN, RenderType.cutout());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.DISTORTION_ROCK_DEEP, RenderType.cutout());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.DISTORTION_ROCK_DEEP_VERTICAL, RenderType.cutout());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.DISTORTION_ROCK_DEEP_UPSIDEDOWN, RenderType.cutout());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.DISTORTION_ROCK_FLAT, RenderType.cutout());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.DISTORTION_ROCK_FLAT_VERTICAL, RenderType.cutout());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.DISTORTION_ROCK_FLAT_UPSIDEDOWN, RenderType.cutout());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.DISTORTION_ROCK_FLOATING, RenderType.cutout());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.SUSPICIOUS_DISTORTION_ROCK, RenderType.cutout());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.DISTORTION_BOULDER, RenderType.cutout());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.DISTORTION_FLOWER, RenderType.cutout());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.VANISHING_DISTORTION_FLOWER, RenderType.cutout());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.APPEARING_DISTORTION_FLOWER, RenderType.cutout());
 
             BlockEntityRenderers.register(ModBlockEntities.HOOPA_RING_PORTAL, HoopaRingPortalBlockEntityRenderer::new);
             BlockEntityRenderers.register(ModBlockEntities.DUNGEON_PORTAL, DungeonPortalBlockEntityRenderer::new);

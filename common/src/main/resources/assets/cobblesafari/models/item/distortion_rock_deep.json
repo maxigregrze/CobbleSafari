@@ -1,3 +1,6 @@
 {
-	"parent": "cobblesafari:block/distortionblock_deep"
+	"parent": "minecraft:item/generated",
+	"textures": {
+		"layer0": "cobblesafari:item/distortion_rock_deep_icon"
+	}
 }

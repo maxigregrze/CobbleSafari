@@ -338,5 +338,8 @@
 	"block.cobblesafari.distortion_rock_upsidedown": "Roche de Distorsion Inversee",
 	"block.cobblesafari.suspicious_distortion_rock": "Roche de Distorsion Suspecte",
 	"block.cobblesafari.distortion_boulder": "Rocher de Distorsion",
+	"block.cobblesafari.distortion_flower": "Fleur de Distorsion",
+	"block.cobblesafari.vanishing_distortion_flower": "Fleur de Distorsion Evanescente",
+	"block.cobblesafari.appearing_distortion_flower": "Fleur de Distorsion Apparente",
 	"itemGroup.cobblesafari.distortion": "CobbleSafari - Distorsion"
 }

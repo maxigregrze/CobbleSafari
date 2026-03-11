@@ -1,5 +1,10 @@
 {
 	"variants": {
-		"": { "model": "cobblesafari:block/distortionblock_deep", "x": 180 }
+		"": [
+			{ "model": "cobblesafari:block/distortionblock_deep_1", "x": 180 },
+			{ "model": "cobblesafari:block/distortionblock_deep_2", "x": 180 },
+			{ "model": "cobblesafari:block/distortionblock_deep_3", "x": 180 },
+			{ "model": "cobblesafari:block/distortionblock_deep_4", "x": 180 }
+		]
 	}
 }

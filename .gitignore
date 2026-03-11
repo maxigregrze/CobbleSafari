@@ -25,3 +25,4 @@ runs
 
 # Folders whose name starts with a dot (files like .gitignore are not ignored)
 .*/
+.private

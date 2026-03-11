@@ -1,0 +1,8 @@
+{
+  "variants": {
+    "part=base": { "model": "cobblesafari:block/distortionplant_base" },
+    "part=stem": { "model": "cobblesafari:block/distortionplant_stem" },
+    "part=flower": { "model": "cobblesafari:block/distortionplant_flower" }
+  }
+}
+

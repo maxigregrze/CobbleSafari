@@ -1,5 +1,10 @@
 {
 	"variants": {
-		"": { "model": "cobblesafari:block/distortionblock_flat" }
+		"": [
+			{ "model": "cobblesafari:block/distortionblock_flat_1" },
+			{ "model": "cobblesafari:block/distortionblock_flat_2" },
+			{ "model": "cobblesafari:block/distortionblock_flat_3" },
+			{ "model": "cobblesafari:block/distortionblock_flat_4" }
+		]
 	}
 }

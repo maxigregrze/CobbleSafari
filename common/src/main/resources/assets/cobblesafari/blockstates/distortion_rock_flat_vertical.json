@@ -1,8 +1,28 @@
 {
 	"variants": {
-		"facing=north": { "model": "cobblesafari:block/distortionblock_flat", "x": 90 },
-		"facing=south": { "model": "cobblesafari:block/distortionblock_flat", "x": 90, "y": 180 },
-		"facing=east":  { "model": "cobblesafari:block/distortionblock_flat", "x": 90, "y": 90 },
-		"facing=west":  { "model": "cobblesafari:block/distortionblock_flat", "x": 90, "y": 270 }
+		"facing=north": [
+			{ "model": "cobblesafari:block/distortionblock_flat_1", "x": 90 },
+			{ "model": "cobblesafari:block/distortionblock_flat_2", "x": 90 },
+			{ "model": "cobblesafari:block/distortionblock_flat_3", "x": 90 },
+			{ "model": "cobblesafari:block/distortionblock_flat_4", "x": 90 }
+		],
+		"facing=south": [
+			{ "model": "cobblesafari:block/distortionblock_flat_1", "x": 90, "y": 180 },
+			{ "model": "cobblesafari:block/distortionblock_flat_2", "x": 90, "y": 180 },
+			{ "model": "cobblesafari:block/distortionblock_flat_3", "x": 90, "y": 180 },
+			{ "model": "cobblesafari:block/distortionblock_flat_4", "x": 90, "y": 180 }
+		],
+		"facing=east": [
+			{ "model": "cobblesafari:block/distortionblock_flat_1", "x": 90, "y": 90 },
+			{ "model": "cobblesafari:block/distortionblock_flat_2", "x": 90, "y": 90 },
+			{ "model": "cobblesafari:block/distortionblock_flat_3", "x": 90, "y": 90 },
+			{ "model": "cobblesafari:block/distortionblock_flat_4", "x": 90, "y": 90 }
+		],
+		"facing=west": [
+			{ "model": "cobblesafari:block/distortionblock_flat_1", "x": 90, "y": 270 },
+			{ "model": "cobblesafari:block/distortionblock_flat_2", "x": 90, "y": 270 },
+			{ "model": "cobblesafari:block/distortionblock_flat_3", "x": 90, "y": 270 },
+			{ "model": "cobblesafari:block/distortionblock_flat_4", "x": 90, "y": 270 }
+		]
 	}
 }

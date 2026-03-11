@@ -1,0 +1,11 @@
+{
+  "variants": {
+    "part=base,visible=true": { "model": "cobblesafari:block/distortionplant_base" },
+    "part=stem,visible=true": { "model": "cobblesafari:block/distortionplant_stem" },
+    "part=flower,visible=true": { "model": "cobblesafari:block/distortionplant_flower" },
+    "part=base,visible=false": { "model": "cobblesafari:block/distortionplant_base" },
+    "part=stem,visible=false": { "model": "cobblesafari:block/distortionplant_stem" },
+    "part=flower,visible=false": { "model": "cobblesafari:block/distortionplant_flower" }
+  }
+}
+

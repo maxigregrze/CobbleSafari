@@ -108,6 +108,21 @@ public class CobbleSafariClientFabric implements ClientModInitializer {
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.UNDERGROUND_PC, RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.SECRETBASE_PC, RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.INCUBATOR, RenderType.translucent());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.DISTORTION_ROCK, RenderType.cutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.DISTORTION_ROCK_VERTICAL, RenderType.cutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.DISTORTION_ROCK_UPSIDEDOWN, RenderType.cutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.DISTORTION_ROCK_DEEP, RenderType.cutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.DISTORTION_ROCK_DEEP_VERTICAL, RenderType.cutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.DISTORTION_ROCK_DEEP_UPSIDEDOWN, RenderType.cutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.DISTORTION_ROCK_FLAT, RenderType.cutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.DISTORTION_ROCK_FLAT_VERTICAL, RenderType.cutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.DISTORTION_ROCK_FLAT_UPSIDEDOWN, RenderType.cutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.DISTORTION_ROCK_FLOATING, RenderType.cutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.SUSPICIOUS_DISTORTION_ROCK, RenderType.cutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.DISTORTION_BOULDER, RenderType.cutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.DISTORTION_FLOWER, RenderType.cutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.VANISHING_DISTORTION_FLOWER, RenderType.cutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.APPEARING_DISTORTION_FLOWER, RenderType.cutout());
     }
 
     private void registerRenderers() {

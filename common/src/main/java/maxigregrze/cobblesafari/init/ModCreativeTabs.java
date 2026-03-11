@@ -120,6 +120,9 @@ public class ModCreativeTabs {
                 output.accept(ModBlocks.DISTORTION_ROCK_FLAT_UPSIDEDOWN);
                 output.accept(ModBlocks.DISTORTION_ROCK_FLOATING);
                 output.accept(ModBlocks.DISTORTION_BOULDER);
+                output.accept(ModBlocks.DISTORTION_FLOWER);
+                output.accept(ModBlocks.VANISHING_DISTORTION_FLOWER);
+                output.accept(ModBlocks.APPEARING_DISTORTION_FLOWER);
                 output.accept(ModBlocks.SUSPICIOUS_DISTORTION_ROCK);
             })
             .build();

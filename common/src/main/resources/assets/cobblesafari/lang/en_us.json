@@ -337,5 +337,8 @@
 	"block.cobblesafari.distortion_rock_upsidedown": "Upside Down Distortion Rock",
 	"block.cobblesafari.suspicious_distortion_rock": "Suspicious Distortion Rock",
 	"block.cobblesafari.distortion_boulder": "Distortion Boulder",
+	"block.cobblesafari.distortion_flower": "Distortion Flower",
+	"block.cobblesafari.vanishing_distortion_flower": "Vanishing Distortion Flower",
+	"block.cobblesafari.appearing_distortion_flower": "Appearing Distortion Flower",
 	"itemGroup.cobblesafari.distortion": "CobbleSafari - Distortion"
 }
