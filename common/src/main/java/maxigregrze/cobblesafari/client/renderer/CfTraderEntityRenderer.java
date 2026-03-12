@@ -1,24 +1,24 @@
 package maxigregrze.cobblesafari.client.renderer;
 
 import maxigregrze.cobblesafari.CobbleSafari;
-import maxigregrze.cobblesafari.entity.HikerEntity;
+import maxigregrze.cobblesafari.entity.CfTraderEntity;
 import net.minecraft.client.model.VillagerModel;
 import net.minecraft.client.model.geom.ModelLayers;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.resources.ResourceLocation;
 
-public class HikerEntityRenderer extends MobRenderer<HikerEntity, VillagerModel<HikerEntity>> {
+public class CfTraderEntityRenderer extends MobRenderer<CfTraderEntity, VillagerModel<CfTraderEntity>> {
 
     private static final ResourceLocation FALLBACK_TEXTURE =
             ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, "textures/entity/mob_hiker.png");
 
-    public HikerEntityRenderer(EntityRendererProvider.Context context) {
+    public CfTraderEntityRenderer(EntityRendererProvider.Context context) {
         super(context, new VillagerModel<>(context.bakeLayer(ModelLayers.VILLAGER)), 0.5f);
     }
 
     @Override
-    public ResourceLocation getTextureLocation(HikerEntity entity) {
+    public ResourceLocation getTextureLocation(CfTraderEntity entity) {
         String textureFile = entity.getTextureFile();
         if (textureFile == null || textureFile.isBlank()) {
             return FALLBACK_TEXTURE;

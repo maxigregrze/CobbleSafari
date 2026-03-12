@@ -1,0 +1,60 @@
+{
+  "schemaVersion": 1,
+  "name": "hexmaniac",
+  "displayName": "Hex Maniac",
+  "textureFile": "hiker",
+  "isKilleable": false,
+  "variants": [
+    {
+      "id": "ghost_relics",
+      "minTrades": 4,
+      "maxTrades": 6,
+      "trades": [
+        {
+          "sourceItem1": "cobblesafari:sphere_pale_s",
+          "sourceQty1": 8,
+          "sourceItem2": "cobblesafari:sphere_prism_s",
+          "sourceQty2": 8,
+          "resultItems": ["cobblemon:spell_tag"],
+          "resultQty": 1,
+          "maxUses": 8
+        },
+        {
+          "sourceItem1": "cobblesafari:sphere_blue_s",
+          "sourceQty1": 12,
+          "resultItems": ["cobblemon:dusk_stone"],
+          "resultQty": 1,
+          "maxUses": 6
+        },
+        {
+          "sourceItem1": "cobblesafari:sphere_red_s",
+          "sourceQty1": 12,
+          "resultItems": ["cobblemon:reaper_cloth"],
+          "resultQty": 1,
+          "maxUses": 6
+        },
+        {
+          "sourceItem1": "cobblesafari:sphere_green_s",
+          "sourceQty1": 16,
+          "resultItems": ["cobblemon:twisted_spoon"],
+          "resultQty": 1,
+          "maxUses": 6
+        },
+        {
+          "sourceItem1": "cobblesafari:sphere_pale_l",
+          "sourceQty1": 2,
+          "resultItems": ["cobblemon:ability_capsule"],
+          "resultQty": 1,
+          "maxUses": 2
+        },
+        {
+          "sourceItem1": "cobblesafari:sphere_prism_l",
+          "sourceQty1": 2,
+          "resultItems": ["cobblemon:ability_patch"],
+          "resultQty": 1,
+          "maxUses": 2
+        }
+      ]
+    }
+  ]
+}

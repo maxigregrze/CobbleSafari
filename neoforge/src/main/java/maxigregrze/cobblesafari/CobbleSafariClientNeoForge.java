@@ -14,6 +14,7 @@ import maxigregrze.cobblesafari.network.TimerSyncPayload;
 import maxigregrze.cobblesafari.client.renderer.DungeonPortalBlockEntityRenderer;
 import maxigregrze.cobblesafari.client.renderer.BalloonEntityRenderer;
 import maxigregrze.cobblesafari.client.renderer.BalloonSafariRenderer;
+import maxigregrze.cobblesafari.client.renderer.CfTraderEntityRenderer;
 import maxigregrze.cobblesafari.client.renderer.HikerEntityRenderer;
 import maxigregrze.cobblesafari.client.renderer.HoopaRingPortalBlockEntityRenderer;
 import maxigregrze.cobblesafari.client.renderer.VoidBlockRenderer;
@@ -122,6 +123,7 @@ public class CobbleSafariClientNeoForge {
     @SubscribeEvent
     public static void onRegisterEntityRenderers(EntityRenderersEvent.RegisterRenderers event) {
         event.registerEntityRenderer(ModEntities.HIKER, HikerEntityRenderer::new);
+        event.registerEntityRenderer(ModEntities.CFTRADER_NPC, CfTraderEntityRenderer::new);
         event.registerEntityRenderer(ModEntities.BALLOON, BalloonEntityRenderer::new);
         event.registerEntityRenderer(ModEntities.BALLOON_SAFARI, BalloonSafariRenderer::new);
         event.registerEntityRenderer(ModEntities.THROWN_MUD_BALL, net.minecraft.client.renderer.entity.ThrownItemRenderer::new);

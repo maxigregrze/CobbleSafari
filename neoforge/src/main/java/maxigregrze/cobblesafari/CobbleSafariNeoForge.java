@@ -99,6 +99,7 @@ public class CobbleSafariNeoForge {
 
     private void onEntityAttributeCreation(EntityAttributeCreationEvent event) {
         event.put(ModEntities.HIKER, ModEntities.getHikerAttributes().build());
+        event.put(ModEntities.CFTRADER_NPC, ModEntities.getCfTraderAttributes().build());
         event.put(ModEntities.BALLOON, ModEntities.getBalloonAttributes().build());
         event.put(ModEntities.BALLOON_SAFARI, ModEntities.getBalloonSafariAttributes().build());
     }

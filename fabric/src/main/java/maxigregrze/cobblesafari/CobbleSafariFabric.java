@@ -5,6 +5,7 @@ import maxigregrze.cobblesafari.command.SafariExitCommand;
 import maxigregrze.cobblesafari.item.LuckyMiningHelmetItem;
 import maxigregrze.cobblesafari.dungeon.DungeonTeleportCountdown;
 import maxigregrze.cobblesafari.entity.BalloonSpawnHandler;
+import maxigregrze.cobblesafari.cftrader.logic.CfTraderDataLoader;
 import maxigregrze.cobblesafari.init.ModEntities;
 import maxigregrze.cobblesafari.event.DimensionEvents;
 import maxigregrze.cobblesafari.event.DimensionalBanEventHandler;
@@ -69,6 +70,7 @@ public class CobbleSafariFabric implements ModInitializer {
 
     private void registerEntityAttributes() {
         FabricDefaultAttributeRegistry.register(ModEntities.HIKER, ModEntities.getHikerAttributes());
+        FabricDefaultAttributeRegistry.register(ModEntities.CFTRADER_NPC, ModEntities.getCfTraderAttributes());
         FabricDefaultAttributeRegistry.register(ModEntities.BALLOON, ModEntities.getBalloonAttributes());
         FabricDefaultAttributeRegistry.register(ModEntities.BALLOON_SAFARI, ModEntities.getBalloonSafariAttributes());
     }
@@ -159,6 +161,7 @@ public class CobbleSafariFabric implements ModInitializer {
         ServerLifecycleEvents.SERVER_STOPPING.register(DimensionEvents::onServerStopping);
         ServerLifecycleEvents.END_DATA_PACK_RELOAD.register((server, resourceManager, success) -> {
             if (success) {
+                CfTraderDataLoader.load(server);
                 UndergroundMinigame.loadDatapacks(server);
                 UndergroundMinigame.syncRegistryToAllPlayers(server);
             }

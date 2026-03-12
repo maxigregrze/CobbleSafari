@@ -2,7 +2,7 @@ package maxigregrze.cobblesafari.command;
 
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.context.CommandContext;
-import maxigregrze.cobblesafari.entity.HikerEntity;
+import maxigregrze.cobblesafari.entity.CfTraderEntity;
 import maxigregrze.cobblesafari.init.ModEntities;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.network.chat.Component;
@@ -33,10 +33,11 @@ public class UndergroundCommand {
         }
 
         ServerLevel level = player.serverLevel();
-        HikerEntity hiker = new HikerEntity(ModEntities.HIKER, level);
-        hiker.moveTo(player.getX(), player.getY(), player.getZ(), player.getYRot(), 0.0f);
-        hiker.initTradesForType(type.toLowerCase());
-        level.addFreshEntity(hiker);
+        CfTraderEntity traderEntity = new CfTraderEntity(ModEntities.CFTRADER_NPC, level);
+        traderEntity.moveTo(player.getX(), player.getY(), player.getZ(), player.getYRot(), 0.0f);
+        traderEntity.setTraderName("hiker");
+        traderEntity.initTradesForType(type.toLowerCase());
+        level.addFreshEntity(traderEntity);
 
         context.getSource().sendSuccess(
                 () -> Component.translatable("cobblesafari.command.underground.summon.success", type),

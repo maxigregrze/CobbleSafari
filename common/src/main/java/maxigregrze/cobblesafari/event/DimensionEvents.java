@@ -1,6 +1,7 @@
 package maxigregrze.cobblesafari.event;
 
 import maxigregrze.cobblesafari.config.DimensionalBanConfig;
+import maxigregrze.cobblesafari.cftrader.logic.CfTraderDataLoader;
 import maxigregrze.cobblesafari.dungeon.DungeonTeleportHandler;
 import maxigregrze.cobblesafari.dungeon.PortalSpawnManager;
 import maxigregrze.cobblesafari.manager.SafariResetManager;
@@ -18,6 +19,7 @@ public class DimensionEvents {
         TimerManager.setServer(server);
         PortalSpawnManager.setServer(server);
         maxigregrze.cobblesafari.incubator.EggIncubatorRegistry.load(server);
+        CfTraderDataLoader.load(server);
         maxigregrze.cobblesafari.underground.UndergroundMinigame.loadDatapacks(server);
     }
 

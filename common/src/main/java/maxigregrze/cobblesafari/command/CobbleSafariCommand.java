@@ -7,8 +7,9 @@ import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.suggestion.SuggestionProvider;
+import maxigregrze.cobblesafari.cftrader.logic.CfTraderRegistry;
 import maxigregrze.cobblesafari.config.SafariTimerConfig;
-import maxigregrze.cobblesafari.entity.HikerEntity;
+import maxigregrze.cobblesafari.entity.CfTraderEntity;
 import maxigregrze.cobblesafari.init.ModEntities;
 import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.CommandSourceStack;
@@ -19,16 +20,32 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
+import java.util.Objects;
 
 public class CobbleSafariCommand {
+
+    private static final String ARG_TYPE = "type";
+    private static final String ARG_VARIANT = "variant";
+    private static final String ARG_PLAYER = "player";
+    private static final String ARG_SECONDS = "seconds";
+    private static final String ARG_DIMENSION = "dimension";
+    private static final String VARIANT_SMALL = "small_sphere";
+    private static final String VARIANT_LARGE = "large_sphere";
+    private static final String VARIANT_TREASURES = "treasures";
 
     private static final List<String> SUMMON_TYPES = List.of("underground_small", "underground_large", "underground_treasure");
     private static final List<String> SUMMON_TEMPLATE_TYPES = List.of("underground_small_template", "underground_large_template", "underground_treasure_template");
     private static final SuggestionProvider<CommandSourceStack> SUMMON_TYPE_SUGGESTIONS =
-            (context, builder) -> SharedSuggestionProvider.suggest(SUMMON_TYPES, builder);
+            (context, builder) -> SharedSuggestionProvider.suggest(getDynamicSummonSuggestions(false), builder);
     private static final SuggestionProvider<CommandSourceStack> SUMMON_TEMPLATE_SUGGESTIONS =
-            (context, builder) -> SharedSuggestionProvider.suggest(SUMMON_TEMPLATE_TYPES, builder);
+            (context, builder) -> SharedSuggestionProvider.suggest(getDynamicSummonSuggestions(true), builder);
+    private static final SuggestionProvider<CommandSourceStack> SUMMON_VARIANT_SUGGESTIONS =
+            (context, builder) -> SharedSuggestionProvider.suggest(getVariantSuggestions(context, false), builder);
+    private static final SuggestionProvider<CommandSourceStack> SUMMON_TEMPLATE_VARIANT_SUGGESTIONS =
+            (context, builder) -> SharedSuggestionProvider.suggest(getVariantSuggestions(context, true), builder);
     private static final SuggestionProvider<CommandSourceStack> DIMENSION_SUGGESTIONS =
             (context, builder) -> SharedSuggestionProvider.suggest(SafariTimerConfig.getConfiguredDimensionIds(), builder);
 
@@ -39,6 +56,7 @@ public class CobbleSafariCommand {
     }
 
     public static void registerCommands(CommandDispatcher<CommandSourceStack> dispatcher, CommandBuildContext registryAccess) {
+        Objects.requireNonNull(registryAccess);
         dispatcher.register(
                 Commands.literal("cobblesafari")
                         .requires(source -> source.hasPermission(2))
@@ -49,57 +67,63 @@ public class CobbleSafariCommand {
                                 .then(Commands.literal("dungeon")
                                         .executes(CobbleSafariCommand::executeResetDungeon)))
                         .then(Commands.literal("summon")
-                                .then(Commands.argument("type", StringArgumentType.word())
+                                .then(Commands.argument(ARG_TYPE, StringArgumentType.word())
                                         .suggests(SUMMON_TYPE_SUGGESTIONS)
-                                        .executes(CobbleSafariCommand::executeSummon)))
+                                        .executes(CobbleSafariCommand::executeSummon)
+                                        .then(Commands.argument(ARG_VARIANT, StringArgumentType.word())
+                                                .suggests(SUMMON_VARIANT_SUGGESTIONS)
+                                                .executes(CobbleSafariCommand::executeSummon))))
                         .then(Commands.literal("summon_template")
-                                .then(Commands.argument("type", StringArgumentType.word())
+                                .then(Commands.argument(ARG_TYPE, StringArgumentType.word())
                                         .suggests(SUMMON_TEMPLATE_SUGGESTIONS)
-                                        .executes(CobbleSafariCommand::executeSummonTemplate)))
+                                        .executes(CobbleSafariCommand::executeSummonTemplate)
+                                        .then(Commands.argument(ARG_VARIANT, StringArgumentType.word())
+                                                .suggests(SUMMON_TEMPLATE_VARIANT_SUGGESTIONS)
+                                                .executes(CobbleSafariCommand::executeSummonTemplate))))
                         .then(Commands.literal("timer")
                                 .then(Commands.literal("safari")
                                         .then(Commands.literal("add")
-                                                .then(Commands.argument("player", EntityArgument.player())
-                                                        .then(Commands.argument("seconds", IntegerArgumentType.integer(1))
+                                                .then(Commands.argument(ARG_PLAYER, EntityArgument.player())
+                                                        .then(Commands.argument(ARG_SECONDS, IntegerArgumentType.integer(1))
                                                                 .executes(CobbleSafariCommand::executeTimerSafariAdd))))
                                         .then(Commands.literal("remove")
-                                                .then(Commands.argument("player", EntityArgument.player())
-                                                        .then(Commands.argument("seconds", IntegerArgumentType.integer(1))
+                                                .then(Commands.argument(ARG_PLAYER, EntityArgument.player())
+                                                        .then(Commands.argument(ARG_SECONDS, IntegerArgumentType.integer(1))
                                                                 .executes(CobbleSafariCommand::executeTimerSafariRemove))))
                                         .then(Commands.literal("set")
-                                                .then(Commands.argument("player", EntityArgument.player())
-                                                        .then(Commands.argument("seconds", IntegerArgumentType.integer(0))
+                                                .then(Commands.argument(ARG_PLAYER, EntityArgument.player())
+                                                        .then(Commands.argument(ARG_SECONDS, IntegerArgumentType.integer(0))
                                                                 .executes(CobbleSafariCommand::executeTimerSafariSet))))
                                         .then(Commands.literal("get")
-                                                .then(Commands.argument("player", EntityArgument.player())
+                                                .then(Commands.argument(ARG_PLAYER, EntityArgument.player())
                                                         .executes(CobbleSafariCommand::executeTimerSafariGet)))
                                         .then(Commands.literal("toggle")
-                                                .then(Commands.argument("player", EntityArgument.player())
+                                                .then(Commands.argument(ARG_PLAYER, EntityArgument.player())
                                                         .executes(CobbleSafariCommand::executeTimerSafariToggle)
                                                         .then(Commands.argument("state", BoolArgumentType.bool())
                                                                 .executes(CobbleSafariCommand::executeTimerSafariToggleWithState)))))
-                                .then(Commands.literal("dimension")
+                                .then(Commands.literal(ARG_DIMENSION)
                                         .then(Commands.literal("add")
-                                                .then(Commands.argument("player", EntityArgument.player())
-                                                        .then(Commands.argument("seconds", IntegerArgumentType.integer(1))
-                                                                .then(Commands.argument("dimension", StringArgumentType.greedyString())
+                                                .then(Commands.argument(ARG_PLAYER, EntityArgument.player())
+                                                        .then(Commands.argument(ARG_SECONDS, IntegerArgumentType.integer(1))
+                                                                .then(Commands.argument(ARG_DIMENSION, StringArgumentType.greedyString())
                                                                         .suggests(DIMENSION_SUGGESTIONS)
                                                                         .executes(CobbleSafariCommand::executeTimerDimensionAdd)))))
                                         .then(Commands.literal("remove")
-                                                .then(Commands.argument("player", EntityArgument.player())
-                                                        .then(Commands.argument("seconds", IntegerArgumentType.integer(1))
-                                                                .then(Commands.argument("dimension", StringArgumentType.greedyString())
+                                                .then(Commands.argument(ARG_PLAYER, EntityArgument.player())
+                                                        .then(Commands.argument(ARG_SECONDS, IntegerArgumentType.integer(1))
+                                                                .then(Commands.argument(ARG_DIMENSION, StringArgumentType.greedyString())
                                                                         .suggests(DIMENSION_SUGGESTIONS)
                                                                         .executes(CobbleSafariCommand::executeTimerDimensionRemove)))))
                                         .then(Commands.literal("set")
-                                                .then(Commands.argument("player", EntityArgument.player())
-                                                        .then(Commands.argument("seconds", IntegerArgumentType.integer(0))
-                                                                .then(Commands.argument("dimension", StringArgumentType.greedyString())
+                                                .then(Commands.argument(ARG_PLAYER, EntityArgument.player())
+                                                        .then(Commands.argument(ARG_SECONDS, IntegerArgumentType.integer(0))
+                                                                .then(Commands.argument(ARG_DIMENSION, StringArgumentType.greedyString())
                                                                         .suggests(DIMENSION_SUGGESTIONS)
                                                                         .executes(CobbleSafariCommand::executeTimerDimensionSet)))))
                                         .then(Commands.literal("get")
-                                                .then(Commands.argument("player", EntityArgument.player())
-                                                        .then(Commands.argument("dimension", StringArgumentType.greedyString())
+                                                .then(Commands.argument(ARG_PLAYER, EntityArgument.player())
+                                                        .then(Commands.argument(ARG_DIMENSION, StringArgumentType.greedyString())
                                                                 .suggests(DIMENSION_SUGGESTIONS)
                                                                 .executes(CobbleSafariCommand::executeTimerDimensionGet))))))
                         .then(Commands.literal("refresh")
@@ -110,9 +134,9 @@ public class CobbleSafariCommand {
                                         .executes(CobbleSafariCommand::executeDungeonSpawnSelf)
                                         .then(Commands.literal("force")
                                                 .executes(CobbleSafariCommand::executeDungeonSpawnForceSelf)
-                                                .then(Commands.argument("player", EntityArgument.player())
+                                                .then(Commands.argument(ARG_PLAYER, EntityArgument.player())
                                                         .executes(CobbleSafariCommand::executeDungeonSpawnForce)))
-                                        .then(Commands.argument("player", EntityArgument.player())
+                                        .then(Commands.argument(ARG_PLAYER, EntityArgument.player())
                                                 .executes(CobbleSafariCommand::executeDungeonSpawn)))
                                 .then(Commands.literal("list")
                                         .executes(CobbleSafariCommand::executeDungeonList)
@@ -136,22 +160,32 @@ public class CobbleSafariCommand {
     }
 
     private static int executeSummon(CommandContext<CommandSourceStack> context) {
-        String type = StringArgumentType.getString(context, "type");
-        if (!SUMMON_TYPES.contains(type.toLowerCase())) {
-            context.getSource().sendFailure(
-                    Component.translatable("cobblesafari.command.underground.invalid_type", type));
-            return 0;
-        }
+        String type = StringArgumentType.getString(context, ARG_TYPE);
+        String variant = context.getNodes().stream().anyMatch(n -> ARG_VARIANT.equals(n.getNode().getName()))
+                ? StringArgumentType.getString(context, ARG_VARIANT)
+                : null;
         ServerPlayer player = context.getSource().getPlayer();
         if (player == null) {
             context.getSource().sendFailure(Component.literal("This command must be run by a player"));
             return 0;
         }
         ServerLevel level = player.serverLevel();
-        HikerEntity hiker = new HikerEntity(ModEntities.HIKER, level);
-        hiker.moveTo(player.getX(), player.getY(), player.getZ(), player.getYRot(), 0.0f);
-        hiker.initTradesForType(toInternalTradeType(type.toLowerCase()));
-        level.addFreshEntity(hiker);
+        CfTraderEntity traderEntity = new CfTraderEntity(ModEntities.CFTRADER_NPC, level);
+        traderEntity.moveTo(player.getX(), player.getY(), player.getZ(), player.getYRot(), 0.0f);
+        String traderName = resolveTraderName(type, false);
+        if (traderName == null) {
+            context.getSource().sendFailure(
+                    Component.translatable("cobblesafari.command.underground.invalid_type", type));
+            return 0;
+        }
+        traderEntity.setTraderName(traderName);
+        String resolvedVariantRaw = variant;
+        if (resolvedVariantRaw == null || resolvedVariantRaw.isBlank()) {
+            resolvedVariantRaw = defaultVariantForType(type, traderName);
+        }
+        final String resolvedVariant = resolvedVariantRaw;
+        traderEntity.initTradesForType(resolvedVariant);
+        level.addFreshEntity(traderEntity);
         context.getSource().sendSuccess(
                 () -> Component.translatable("cobblesafari.command.underground.summon.success", type),
                 true);
@@ -159,36 +193,79 @@ public class CobbleSafariCommand {
     }
     
     private static int executeSummonTemplate(CommandContext<CommandSourceStack> context) {
-        String type = StringArgumentType.getString(context, "type");
-        if (!SUMMON_TEMPLATE_TYPES.contains(type.toLowerCase())) {
-            context.getSource().sendFailure(
-                    Component.translatable("cobblesafari.command.underground.invalid_type", type));
-            return 0;
-        }
+        String type = StringArgumentType.getString(context, ARG_TYPE);
+        String variant = context.getNodes().stream().anyMatch(n -> ARG_VARIANT.equals(n.getNode().getName()))
+                ? StringArgumentType.getString(context, ARG_VARIANT)
+                : null;
         ServerPlayer player = context.getSource().getPlayer();
         if (player == null) {
             context.getSource().sendFailure(Component.literal("This command must be run by a player"));
             return 0;
         }
         ServerLevel level = player.serverLevel();
-        HikerEntity hiker = new HikerEntity(ModEntities.HIKER, level);
-        hiker.moveTo(player.getX(), player.getY(), player.getZ(), player.getYRot(), 0.0f);
-        String internalType = toInternalTradeType(type.toLowerCase().replace("_template", ""));
-        hiker.setTradeType(internalType);
-        level.addFreshEntity(hiker);
+        CfTraderEntity traderEntity = new CfTraderEntity(ModEntities.CFTRADER_NPC, level);
+        traderEntity.moveTo(player.getX(), player.getY(), player.getZ(), player.getYRot(), 0.0f);
+        String traderName = resolveTraderName(type, true);
+        if (traderName == null) {
+            context.getSource().sendFailure(
+                    Component.translatable("cobblesafari.command.underground.invalid_type", type));
+            return 0;
+        }
+        traderEntity.setTraderName(traderName);
+        String resolvedVariantRaw = variant;
+        if (resolvedVariantRaw == null || resolvedVariantRaw.isBlank()) {
+            resolvedVariantRaw = defaultVariantForType(type, traderName);
+        }
+        final String resolvedVariant = resolvedVariantRaw;
+        traderEntity.setTradeType(resolvedVariant);
+        level.addFreshEntity(traderEntity);
         context.getSource().sendSuccess(
-                () -> Component.literal("Summoned a Hiker template (type: " + internalType + ") - trades will be randomized when placed in structures"),
+                () -> Component.literal("Summoned a CFTrader template (trader: " + traderName + ", variant: " + resolvedVariant + ") - trades will be randomized when placed in structures"),
                 true);
         return 1;
     }
 
-    private static String toInternalTradeType(String type) {
-        return switch (type) {
-            case "underground_small" -> "small";
-            case "underground_large" -> "large";
-            case "underground_treasure" -> "treasure";
-            default -> "small";
+    private static String resolveTraderName(String rawType, boolean templateMode) {
+        if (rawType == null || rawType.isBlank()) return null;
+        String normalized = rawType.toLowerCase(Locale.ROOT);
+        if (templateMode) {
+            normalized = normalized.replace("_template", "");
+        }
+        if (SUMMON_TYPES.contains(normalized)) {
+            return "hiker";
+        }
+        if (CfTraderRegistry.getTrader(normalized) != null) {
+            return normalized;
+        }
+        return null;
+    }
+
+    private static String defaultVariantForType(String rawType, String traderName) {
+        String normalized = rawType.toLowerCase(Locale.ROOT).replace("_template", "");
+        return switch (normalized) {
+            case "underground_small", "small" -> VARIANT_SMALL;
+            case "underground_large", "large" -> VARIANT_LARGE;
+            case "underground_treasure", "treasure" -> VARIANT_TREASURES;
+            default -> CfTraderRegistry.getDefaultVariantId(traderName);
         };
+    }
+
+    private static List<String> getDynamicSummonSuggestions(boolean templateMode) {
+        List<String> suggestions = new ArrayList<>();
+        suggestions.addAll(templateMode ? SUMMON_TEMPLATE_TYPES : SUMMON_TYPES);
+        suggestions.addAll(CfTraderRegistry.getTraderNames());
+        return suggestions;
+    }
+
+    private static List<String> getVariantSuggestions(CommandContext<CommandSourceStack> context, boolean templateMode) {
+        String type = StringArgumentType.getString(context, ARG_TYPE);
+        String traderName = resolveTraderName(type, templateMode);
+        if (traderName == null) return List.of();
+        var trader = CfTraderRegistry.getTrader(traderName);
+        if (trader == null) return List.of(VARIANT_SMALL, VARIANT_LARGE, VARIANT_TREASURES);
+        List<String> variants = new ArrayList<>();
+        trader.getVariants().forEach(v -> variants.add(v.getId()));
+        return variants;
     }
 
     private static int executeTimerSafariAdd(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {

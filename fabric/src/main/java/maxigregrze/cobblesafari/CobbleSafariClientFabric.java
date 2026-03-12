@@ -12,6 +12,7 @@ import maxigregrze.cobblesafari.network.TimerSyncPayload;
 import maxigregrze.cobblesafari.client.renderer.DungeonPortalBlockEntityRenderer;
 import maxigregrze.cobblesafari.client.renderer.BalloonEntityRenderer;
 import maxigregrze.cobblesafari.client.renderer.BalloonSafariRenderer;
+import maxigregrze.cobblesafari.client.renderer.CfTraderEntityRenderer;
 import maxigregrze.cobblesafari.client.renderer.HikerEntityRenderer;
 import maxigregrze.cobblesafari.client.renderer.HoopaRingPortalBlockEntityRenderer;
 import maxigregrze.cobblesafari.client.renderer.VoidBlockRenderer;
@@ -130,6 +131,7 @@ public class CobbleSafariClientFabric implements ClientModInitializer {
         BlockEntityRenderers.register(ModBlockEntities.DUNGEON_PORTAL, DungeonPortalBlockEntityRenderer::new);
         BlockEntityRenderers.register(ModBlockEntities.VOID_BLOCK, VoidBlockRenderer::new);
         EntityRendererRegistry.register(ModEntities.HIKER, HikerEntityRenderer::new);
+        EntityRendererRegistry.register(ModEntities.CFTRADER_NPC, CfTraderEntityRenderer::new);
         EntityRendererRegistry.register(ModEntities.BALLOON, BalloonEntityRenderer::new);
         EntityRendererRegistry.register(ModEntities.BALLOON_SAFARI, BalloonSafariRenderer::new);
         EntityRendererRegistry.register(ModEntities.THROWN_MUD_BALL, net.minecraft.client.renderer.entity.ThrownItemRenderer::new);
