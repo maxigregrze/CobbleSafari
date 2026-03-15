@@ -25,6 +25,7 @@ import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.EntityCollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.Nullable;
@@ -239,12 +240,22 @@ public abstract class AbstractReactiveDistortionFlowerBlock extends Block {
 
     @Override
     public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+        boolean visible = state.getValue(VISIBLE);
+        if (!visible) {
+            if (!(context instanceof EntityCollisionContext entityContext)) {
+                return Shapes.empty();
+            }
+            if (!(entityContext.getEntity() instanceof Player player) || !player.isCreative()) {
+                return Shapes.empty();
+            }
+        }
         return SHAPE;
     }
 
     @Override
     public VoxelShape getCollisionShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
-        if (!state.getValue(VISIBLE).booleanValue() && !this.collisionWhenInvisible) {
+        boolean visible = state.getValue(VISIBLE);
+        if (!visible && !this.collisionWhenInvisible) {
             return Shapes.empty();
         }
         return SHAPE;

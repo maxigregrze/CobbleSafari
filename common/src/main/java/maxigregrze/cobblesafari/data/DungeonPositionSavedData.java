@@ -130,9 +130,9 @@ public class DungeonPositionSavedData extends SavedData {
     public int getAndIncrementSlotZOffset(String dimensionId, int slot) {
         Map<Integer, Integer> dimCounts = slotUseCounts.computeIfAbsent(dimensionId, k -> new ConcurrentHashMap<>());
         int zOffset = dimCounts.getOrDefault(slot, 0);
-        dimCounts.put(slot, zOffset + 1);
+        dimCounts.put(slot, zOffset + 16);
         setDirty();
-        CobbleSafari.LOGGER.debug("Slot {} Z offset {} (next will be {}) for dimension {}", slot, zOffset, zOffset + 1, dimensionId);
+        CobbleSafari.LOGGER.debug("Slot {} Z offset {} (next will be {}) for dimension {}", slot, zOffset, zOffset + 16, dimensionId);
         return zOffset;
     }
 

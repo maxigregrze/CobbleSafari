@@ -1,0 +1,12 @@
+{
+  "fallback": "minecraft:empty",
+  "elements": [
+    {"weight": 1, "element": {"location": "cobblesafari:underground/oasis_spawner/underground_oasis_spawner_5_1", "processors": "minecraft:empty", "projection": "rigid", "element_type": "minecraft:single_pool_element"}},
+    {"weight": 1, "element": {"location": "cobblesafari:underground/oasis_spawner/underground_oasis_spawner_5_2", "processors": "minecraft:empty", "projection": "rigid", "element_type": "minecraft:single_pool_element"}},
+    {"weight": 1, "element": {"location": "cobblesafari:underground/oasis_spawner/underground_oasis_spawner_5_3", "processors": "minecraft:empty", "projection": "rigid", "element_type": "minecraft:single_pool_element"}},
+    {"weight": 1, "element": {"location": "cobblesafari:underground/oasis_spawner/underground_oasis_spawner_5_4", "processors": "minecraft:empty", "projection": "rigid", "element_type": "minecraft:single_pool_element"}},
+    {"weight": 1, "element": {"location": "cobblesafari:underground/oasis_spawner/underground_oasis_spawner_5_5", "processors": "minecraft:empty", "projection": "rigid", "element_type": "minecraft:single_pool_element"}},
+    {"weight": 1, "element": {"location": "cobblesafari:underground/oasis_spawner/underground_oasis_spawner_5_6", "processors": "minecraft:empty", "projection": "rigid", "element_type": "minecraft:single_pool_element"}},
+    {"weight": 1, "element": {"location": "cobblesafari:underground/oasis_spawner/underground_oasis_spawner_5_7", "processors": "minecraft:empty", "projection": "rigid", "element_type": "minecraft:single_pool_element"}}
+  ]
+}

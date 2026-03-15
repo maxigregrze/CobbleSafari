@@ -2,7 +2,7 @@ package maxigregrze.cobblesafari.command;
 
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.context.CommandContext;
-import maxigregrze.cobblesafari.entity.CfTraderEntity;
+import maxigregrze.cobblesafari.entity.CsTraderEntity;
 import maxigregrze.cobblesafari.init.ModEntities;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.network.chat.Component;
@@ -33,7 +33,7 @@ public class UndergroundCommand {
         }
 
         ServerLevel level = player.serverLevel();
-        CfTraderEntity traderEntity = new CfTraderEntity(ModEntities.CFTRADER_NPC, level);
+        CsTraderEntity traderEntity = new CsTraderEntity(ModEntities.CSTRADER_NPC, level);
         traderEntity.moveTo(player.getX(), player.getY(), player.getZ(), player.getYRot(), 0.0f);
         traderEntity.setTraderName("hiker");
         traderEntity.initTradesForType(type.toLowerCase());

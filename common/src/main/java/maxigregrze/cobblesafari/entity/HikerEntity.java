@@ -5,11 +5,11 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.Level;
 
-public class HikerEntity extends CfTraderEntity {
+public class HikerEntity extends CsTraderEntity {
 
     private boolean migrated = false;
 
-    public HikerEntity(EntityType<? extends CfTraderEntity> entityType, Level level) {
+    public HikerEntity(EntityType<? extends CsTraderEntity> entityType, Level level) {
         super(entityType, level);
         setTraderName(DEFAULT_TRADER_NAME);
     }
@@ -24,7 +24,7 @@ public class HikerEntity extends CfTraderEntity {
             return;
         }
 
-        CfTraderEntity replacement = new CfTraderEntity(ModEntities.CFTRADER_NPC, serverLevel);
+        CsTraderEntity replacement = new CsTraderEntity(ModEntities.CSTRADER_NPC, serverLevel);
         replacement.moveTo(this.getX(), this.getY(), this.getZ(), this.getYRot(), this.getXRot());
         replacement.setYBodyRot(this.yBodyRot);
         replacement.setYHeadRot(this.getYHeadRot());

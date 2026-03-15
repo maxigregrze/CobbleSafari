@@ -1,19 +1,19 @@
-package maxigregrze.cobblesafari.cftrader.logic;
+package maxigregrze.cobblesafari.cstrader.logic;
 
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
-public class CfTraderVariantDefinition {
+public class CsTraderVariantDefinition {
     private final String id;
     private final Set<String> aliases;
     private final int minTrades;
     private final int maxTrades;
-    private final List<CfTraderTradeDefinition> trades;
+    private final List<CsTraderTradeDefinition> trades;
 
-    public CfTraderVariantDefinition(String id, List<String> aliases, int minTrades, int maxTrades,
-                                     List<CfTraderTradeDefinition> trades) {
+    public CsTraderVariantDefinition(String id, List<String> aliases, int minTrades, int maxTrades,
+                                     List<CsTraderTradeDefinition> trades) {
         this.id = id;
         this.aliases = new HashSet<>();
         this.aliases.add(id.toLowerCase(Locale.ROOT));
@@ -41,7 +41,7 @@ public class CfTraderVariantDefinition {
         return maxTrades;
     }
 
-    public List<CfTraderTradeDefinition> getTrades() {
+    public List<CsTraderTradeDefinition> getTrades() {
         return trades;
     }
 

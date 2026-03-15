@@ -1,16 +1,16 @@
-package maxigregrze.cobblesafari.cftrader.logic;
+package maxigregrze.cobblesafari.cstrader.logic;
 
 import net.minecraft.world.item.Item;
 
 import java.util.List;
 
-public record CfTraderTradeDefinition(
+public record CsTraderTradeDefinition(
         Item sourceItem1,
         int sourceQty1,
         Item sourceItem2,
         int sourceQty2,
         List<Item> resultItems,
-        List<CfTraderResultOption> resultOptions,
+        List<CsTraderResultOption> resultOptions,
         int resultQty,
         int resultQtyMin,
         int resultQtyMax,

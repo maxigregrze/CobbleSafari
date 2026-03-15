@@ -1,4 +1,4 @@
-package maxigregrze.cobblesafari.cftrader.logic;
+package maxigregrze.cobblesafari.cstrader.logic;
 
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.Item;
@@ -12,16 +12,16 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 
-public final class CfTraderOfferFactory {
-    private CfTraderOfferFactory() {}
+public final class CsTraderOfferFactory {
+    private CsTraderOfferFactory() {}
 
     public static List<MerchantOffer> generateOffers(String traderName, String variantId, RandomSource random) {
-        CfTraderDefinition trader = CfTraderRegistry.getTrader(traderName);
+        CsTraderDefinition trader = CsTraderRegistry.getTrader(traderName);
         if (trader == null) return List.of();
-        CfTraderVariantDefinition variant = trader.resolveVariant(variantId);
+        CsTraderVariantDefinition variant = trader.resolveVariant(variantId);
         if (variant == null) return List.of();
 
-        List<CfTraderTradeDefinition> pool = new ArrayList<>(variant.getTrades());
+        List<CsTraderTradeDefinition> pool = new ArrayList<>(variant.getTrades());
         if (pool.isEmpty()) return List.of();
 
         Collections.shuffle(pool, new Random(random.nextLong()));
@@ -39,11 +39,11 @@ public final class CfTraderOfferFactory {
         return offers;
     }
 
-    private static MerchantOffer buildOffer(CfTraderTradeDefinition trade, RandomSource random) {
+    private static MerchantOffer buildOffer(CsTraderTradeDefinition trade, RandomSource random) {
         Item resultItem;
         int resultQty;
         if (trade.hasResultOptions()) {
-            CfTraderResultOption chosen = trade.resultOptions().get(random.nextInt(trade.resultOptions().size()));
+            CsTraderResultOption chosen = trade.resultOptions().get(random.nextInt(trade.resultOptions().size()));
             resultItem = chosen.item();
             resultQty = chosen.qty();
         } else {

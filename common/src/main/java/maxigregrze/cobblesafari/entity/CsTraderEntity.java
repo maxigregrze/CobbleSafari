@@ -1,11 +1,12 @@
 package maxigregrze.cobblesafari.entity;
 
 import maxigregrze.cobblesafari.CobbleSafari;
-import maxigregrze.cobblesafari.cftrader.logic.CfTraderDefinition;
-import maxigregrze.cobblesafari.cftrader.logic.CfTraderOfferFactory;
-import maxigregrze.cobblesafari.cftrader.logic.CfTraderRegistry;
+import maxigregrze.cobblesafari.cstrader.logic.CsTraderDefinition;
+import maxigregrze.cobblesafari.cstrader.logic.CsTraderOfferFactory;
+import maxigregrze.cobblesafari.cstrader.logic.CsTraderRegistry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -30,7 +31,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.Locale;
 
-public class CfTraderEntity extends AbstractVillager {
+public class CsTraderEntity extends AbstractVillager {
 
     protected static final String TRADE_TYPE_KEY = "TradeType";
     protected static final String INITIALIZED_KEY = "TradesInitialized";
@@ -38,11 +39,11 @@ public class CfTraderEntity extends AbstractVillager {
     protected static final String TRADER_VARIANT_KEY = "TraderVariantId";
 
     private static final EntityDataAccessor<String> DATA_VARIANT_ID =
-            SynchedEntityData.defineId(CfTraderEntity.class, EntityDataSerializers.STRING);
+            SynchedEntityData.defineId(CsTraderEntity.class, EntityDataSerializers.STRING);
     private static final EntityDataAccessor<String> DATA_TRADER_NAME =
-            SynchedEntityData.defineId(CfTraderEntity.class, EntityDataSerializers.STRING);
+            SynchedEntityData.defineId(CsTraderEntity.class, EntityDataSerializers.STRING);
     private static final EntityDataAccessor<String> DATA_TEXTURE_FILE =
-            SynchedEntityData.defineId(CfTraderEntity.class, EntityDataSerializers.STRING);
+            SynchedEntityData.defineId(CsTraderEntity.class, EntityDataSerializers.STRING);
 
     private static final ResourceLocation AIR_KEY = BuiltInRegistries.ITEM.getDefaultKey();
 
@@ -55,7 +56,7 @@ public class CfTraderEntity extends AbstractVillager {
 
     private boolean tradesInitialized = false;
 
-    public CfTraderEntity(EntityType<? extends AbstractVillager> entityType, Level level) {
+    public CsTraderEntity(EntityType<? extends AbstractVillager> entityType, Level level) {
         super(entityType, level);
         this.setPersistenceRequired();
     }
@@ -89,9 +90,11 @@ public class CfTraderEntity extends AbstractVillager {
     public void setTraderName(String traderName) {
         if (traderName == null || traderName.isBlank()) {
             this.entityData.set(DATA_TRADER_NAME, DEFAULT_TRADER_NAME);
+            applyDisplayName();
             return;
         }
         this.entityData.set(DATA_TRADER_NAME, traderName.toLowerCase(Locale.ROOT));
+        applyDisplayName();
     }
 
     public String getTextureFile() {
@@ -123,7 +126,7 @@ public class CfTraderEntity extends AbstractVillager {
             ResourceLocation resultKey = BuiltInRegistries.ITEM.getKey(result.getItem());
             if (AIR_KEY.equals(resultKey)) return true;
         } catch (Exception e) {
-            CobbleSafari.LOGGER.warn("Invalid CFTrader offer detected during validation", e);
+            CobbleSafari.LOGGER.warn("Invalid CSTrader offer detected during validation", e);
             return true;
         }
         return false;
@@ -136,7 +139,7 @@ public class CfTraderEntity extends AbstractVillager {
         setTradeType(tradeType);
         refreshDefinitionData();
         this.getOffers().clear();
-        List<MerchantOffer> trades = CfTraderOfferFactory.generateOffers(getTraderName(), getTradeType(), this.getRandom());
+        List<MerchantOffer> trades = CsTraderOfferFactory.generateOffers(getTraderName(), getTradeType(), this.getRandom());
         for (MerchantOffer offer : trades) {
             if (!isOfferInvalid(offer)) {
                 this.getOffers().add(offer);
@@ -146,7 +149,7 @@ public class CfTraderEntity extends AbstractVillager {
     }
 
     public void refreshDefinitionData() {
-        CfTraderDefinition definition = CfTraderRegistry.getTrader(getTraderName());
+        CsTraderDefinition definition = CsTraderRegistry.getTrader(getTraderName());
         if (definition != null) {
             setTextureFile(definition.getTextureFile());
             if (getTradeType() == null || getTradeType().isBlank()) {
@@ -155,6 +158,7 @@ public class CfTraderEntity extends AbstractVillager {
         } else {
             setTextureFile(DEFAULT_TEXTURE_FILE);
         }
+        applyDisplayName();
     }
 
     @Override
@@ -181,7 +185,7 @@ public class CfTraderEntity extends AbstractVillager {
                 return InteractionResult.PASS;
             }
             this.setTradingPlayer(player);
-            this.openTradingScreen(player, this.getDisplayName(), 1);
+            this.openTradingScreen(player, getTraderDisplayName(), 0);
             return InteractionResult.SUCCESS;
         }
         return InteractionResult.sidedSuccess(this.level().isClientSide);
@@ -194,7 +198,10 @@ public class CfTraderEntity extends AbstractVillager {
 
     @Override
     public boolean isInvulnerableTo(DamageSource source) {
-        CfTraderDefinition definition = CfTraderRegistry.getTrader(getTraderName());
+        if (source.getEntity() instanceof Player player && player.isCreative()) {
+            return false;
+        }
+        CsTraderDefinition definition = CsTraderRegistry.getTrader(getTraderName());
         boolean killeable = definition == null || definition.isKilleable();
         if (killeable) {
             return super.isInvulnerableTo(source);
@@ -204,7 +211,7 @@ public class CfTraderEntity extends AbstractVillager {
 
     @Override
     public void addAdditionalSaveData(CompoundTag tag) {
-        this.getOffers().removeIf(CfTraderEntity::isOfferInvalid);
+        this.getOffers().removeIf(CsTraderEntity::isOfferInvalid);
 
         for (int i = 0; i < this.getInventory().getContainerSize(); i++) {
             ItemStack stack = this.getInventory().getItem(i);
@@ -216,7 +223,7 @@ public class CfTraderEntity extends AbstractVillager {
         try {
             super.addAdditionalSaveData(tag);
         } catch (Exception e) {
-            CobbleSafari.LOGGER.error("Failed to save CFTrader offers, clearing offers as fallback", e);
+            CobbleSafari.LOGGER.error("Failed to save CSTrader offers, clearing offers as fallback", e);
             this.getOffers().clear();
             super.addAdditionalSaveData(tag);
         }
@@ -245,7 +252,7 @@ public class CfTraderEntity extends AbstractVillager {
         }
         refreshDefinitionData();
 
-        this.getOffers().removeIf(CfTraderEntity::isOfferInvalid);
+        this.getOffers().removeIf(CsTraderEntity::isOfferInvalid);
 
         if (!level().isClientSide && !tradesInitialized) {
             String type = getTradeType();
@@ -276,5 +283,18 @@ public class CfTraderEntity extends AbstractVillager {
             case "treasures", LEGACY_TREASURE, "underground_treasure" -> LEGACY_TREASURE;
             default -> variantId;
         };
+    }
+
+    private Component getTraderDisplayName() {
+        CsTraderDefinition definition = CsTraderRegistry.getTrader(getTraderName());
+        String fallbackName = definition == null ? getTraderName() : definition.getDisplayName();
+        String translationKey = "entity.cobblesafari.cstrader_npc." + getTraderName();
+        return Component.translatableWithFallback(translationKey, fallbackName);
+    }
+
+    private void applyDisplayName() {
+        Component displayName = getTraderDisplayName();
+        this.setCustomName(displayName);
+        this.setCustomNameVisible(true);
     }
 }

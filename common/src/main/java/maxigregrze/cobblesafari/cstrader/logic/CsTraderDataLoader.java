@@ -1,4 +1,4 @@
-package maxigregrze.cobblesafari.cftrader.logic;
+package maxigregrze.cobblesafari.cstrader.logic;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -18,13 +18,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public final class CfTraderDataLoader {
-    private CfTraderDataLoader() {}
+public final class CsTraderDataLoader {
+    private CsTraderDataLoader() {}
 
-    private static final String DATA_DIR = "cftrader";
+    private static final String DATA_DIR = "cstrader";
 
     public static void load(MinecraftServer server) {
-        CfTraderRegistry.clear();
+        CsTraderRegistry.clear();
         ResourceManager manager = server.getResourceManager();
         Map<ResourceLocation, Resource> resources = manager.listResources(DATA_DIR,
                 id -> id.getPath().endsWith(".json"));
@@ -34,30 +34,30 @@ public final class CfTraderDataLoader {
         for (Map.Entry<ResourceLocation, Resource> entry : resources.entrySet()) {
             ResourceLocation fileId = entry.getKey();
             try (InputStreamReader reader = new InputStreamReader(entry.getValue().open())) {
-                CfTraderDefinition definition = loadSingle(fileId, reader);
+                CsTraderDefinition definition = loadSingle(fileId, reader);
                 if (definition == null) {
                     skipped++;
                     continue;
                 }
-                CfTraderRegistry.register(definition);
+                CsTraderRegistry.register(definition);
                 loaded++;
             } catch (Exception e) {
-                CobbleSafari.LOGGER.error("[CFTrader] Failed to load {}", fileId, e);
+                CobbleSafari.LOGGER.error("[CSTrader] Failed to load {}", fileId, e);
                 skipped++;
             }
         }
-        CobbleSafari.LOGGER.info("Loaded {} cftrader definitions ({} skipped)", loaded, skipped);
+        CobbleSafari.LOGGER.info("Loaded {} cstrader definitions ({} skipped)", loaded, skipped);
     }
 
-    private static CfTraderDefinition loadSingle(ResourceLocation fileId, InputStreamReader reader) {
+    private static CsTraderDefinition loadSingle(ResourceLocation fileId, InputStreamReader reader) {
         JsonElement root = JsonParser.parseReader(reader);
         if (!root.isJsonObject()) {
-            CobbleSafari.LOGGER.warn("[CFTrader] {} is not an object, skipped", fileId);
+            CobbleSafari.LOGGER.warn("[CSTrader] {} is not an object, skipped", fileId);
             return null;
         }
         JsonObject json = root.getAsJsonObject();
         if (!json.has("name") || !json.has("textureFile") || !json.has("variants")) {
-            CobbleSafari.LOGGER.warn("[CFTrader] {} missing required fields (name/textureFile/variants), skipped", fileId);
+            CobbleSafari.LOGGER.warn("[CSTrader] {} missing required fields (name/textureFile/variants), skipped", fileId);
             return null;
         }
 
@@ -67,32 +67,32 @@ public final class CfTraderDataLoader {
         boolean isKilleable = !json.has("isKilleable") || json.get("isKilleable").getAsBoolean();
 
         JsonArray variantsArray = json.getAsJsonArray("variants");
-        List<CfTraderVariantDefinition> variants = new ArrayList<>();
+        List<CsTraderVariantDefinition> variants = new ArrayList<>();
         int variantIndex = 0;
         for (JsonElement variantElement : variantsArray) {
             variantIndex++;
             if (!variantElement.isJsonObject()) {
-                CobbleSafari.LOGGER.warn("[CFTrader] {} variant #{} is invalid, skipped", fileId, variantIndex);
+                CobbleSafari.LOGGER.warn("[CSTrader] {} variant #{} is invalid, skipped", fileId, variantIndex);
                 continue;
             }
             JsonObject variantJson = variantElement.getAsJsonObject();
-            CfTraderVariantDefinition variant = parseVariant(fileId, name, variantJson, variantIndex);
+            CsTraderVariantDefinition variant = parseVariant(fileId, name, variantJson, variantIndex);
             if (variant != null) {
                 variants.add(variant);
             }
         }
 
         if (variants.isEmpty()) {
-            CobbleSafari.LOGGER.warn("[CFTrader] {} has no valid variants, skipped", fileId);
+            CobbleSafari.LOGGER.warn("[CSTrader] {} has no valid variants, skipped", fileId);
             return null;
         }
 
-        return new CfTraderDefinition(name, displayName, textureFile, isKilleable, variants);
+        return new CsTraderDefinition(name, displayName, textureFile, isKilleable, variants);
     }
 
-    private static CfTraderVariantDefinition parseVariant(ResourceLocation fileId, String traderName, JsonObject variantJson, int variantIndex) {
+    private static CsTraderVariantDefinition parseVariant(ResourceLocation fileId, String traderName, JsonObject variantJson, int variantIndex) {
         if (!variantJson.has("id") || !variantJson.has("trades")) {
-            CobbleSafari.LOGGER.warn("[CFTrader] {} trader={} variant #{} missing id/trades, skipped",
+            CobbleSafari.LOGGER.warn("[CSTrader] {} trader={} variant #{} missing id/trades, skipped",
                     fileId, traderName, variantIndex);
             return null;
         }
@@ -107,33 +107,33 @@ public final class CfTraderDataLoader {
         }
 
         JsonArray tradesArray = variantJson.getAsJsonArray("trades");
-        List<CfTraderTradeDefinition> trades = new ArrayList<>();
+        List<CsTraderTradeDefinition> trades = new ArrayList<>();
         int tradeIndex = 0;
         for (JsonElement tradeElement : tradesArray) {
             tradeIndex++;
             if (!tradeElement.isJsonObject()) {
-                CobbleSafari.LOGGER.warn("[CFTrader] {} trader={} variant={} trade #{} invalid object, skipped",
+                CobbleSafari.LOGGER.warn("[CSTrader] {} trader={} variant={} trade #{} invalid object, skipped",
                         fileId, traderName, id, tradeIndex);
                 continue;
             }
-            CfTraderTradeDefinition trade = parseTrade(fileId, traderName, id, tradeIndex, tradeElement.getAsJsonObject());
+            CsTraderTradeDefinition trade = parseTrade(fileId, traderName, id, tradeIndex, tradeElement.getAsJsonObject());
             if (trade != null) {
                 trades.add(trade);
             }
         }
 
         if (trades.isEmpty()) {
-            CobbleSafari.LOGGER.warn("[CFTrader] {} trader={} variant={} has no valid trades, skipped",
+            CobbleSafari.LOGGER.warn("[CSTrader] {} trader={} variant={} has no valid trades, skipped",
                     fileId, traderName, id);
             return null;
         }
 
         int clampedMax = Math.max(1, Math.min(maxTrades, trades.size()));
         int clampedMin = Math.max(1, Math.min(minTrades, clampedMax));
-        return new CfTraderVariantDefinition(id, aliases, clampedMin, clampedMax, trades);
+        return new CsTraderVariantDefinition(id, aliases, clampedMin, clampedMax, trades);
     }
 
-    private static CfTraderTradeDefinition parseTrade(ResourceLocation fileId, String traderName, String variantId, int tradeIndex, JsonObject tradeJson) {
+    private static CsTraderTradeDefinition parseTrade(ResourceLocation fileId, String traderName, String variantId, int tradeIndex, JsonObject tradeJson) {
         if (!tradeJson.has("sourceItem1") || !tradeJson.has("sourceQty1")) {
             warnSkip(fileId, traderName, variantId, tradeIndex, "missing sourceItem1/sourceQty1");
             return null;
@@ -151,7 +151,7 @@ public final class CfTraderDataLoader {
         }
 
         List<Item> resultItems = new ArrayList<>();
-        List<CfTraderResultOption> resultOptions = new ArrayList<>();
+        List<CsTraderResultOption> resultOptions = new ArrayList<>();
 
         boolean hasResultItems = tradeJson.has("resultItems") && tradeJson.get("resultItems").isJsonArray();
         boolean hasResultOptions = tradeJson.has("resultOptions") && tradeJson.get("resultOptions").isJsonArray();
@@ -176,7 +176,7 @@ public final class CfTraderDataLoader {
                 Item optionItem = resolveItemStrict(fileId, traderName, variantId, tradeIndex, "resultOptions.itemId", optionJson.get("itemId").getAsString());
                 if (optionItem == null) continue;
                 int qty = Math.max(1, optionJson.get("qty").getAsInt());
-                resultOptions.add(new CfTraderResultOption(optionItem, qty));
+                resultOptions.add(new CsTraderResultOption(optionItem, qty));
             }
         }
 
@@ -193,7 +193,7 @@ public final class CfTraderDataLoader {
         int xp = tradeJson.has("xp") ? Math.max(0, tradeJson.get("xp").getAsInt()) : 0;
         float priceMultiplier = tradeJson.has("priceMultiplier") ? tradeJson.get("priceMultiplier").getAsFloat() : 0.0f;
 
-        return new CfTraderTradeDefinition(
+        return new CsTraderTradeDefinition(
                 sourceItem1,
                 sourceQty1,
                 sourceItem2,
@@ -241,7 +241,7 @@ public final class CfTraderDataLoader {
     }
 
     private static void warnSkip(ResourceLocation fileId, String traderName, String variantId, int tradeIndex, String reason) {
-        CobbleSafari.LOGGER.warn("[CFTrader] Skipping trade file={} trader={} variant={} tradeIndex={} reason={}",
+        CobbleSafari.LOGGER.warn("[CSTrader] Skipping trade file={} trader={} variant={} tradeIndex={} reason={}",
                 fileId, traderName, variantId, tradeIndex, reason);
     }
 }

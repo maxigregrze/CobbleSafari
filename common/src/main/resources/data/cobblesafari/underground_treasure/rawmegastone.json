@@ -1,0 +1,8 @@
+{
+  "itemId": "mega_showdown:mega_stone",
+  "textureId": "rawmegastone",
+  "shape": "cobblesafari:2x2",
+  "weight": 6,
+  "minQty": 1,
+  "maxQty": 1
+}

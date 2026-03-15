@@ -419,6 +419,7 @@ public class ModBlocks {
                     .strength(3.0f, 9.0f)
                     .sound(SoundType.STONE)
                     .requiresCorrectToolForDrops()
+                    .noOcclusion()
             ));
 
     public static final Block DISTORTION_ROCK_FLAT_VERTICAL = registerBlock("distortion_rock_flat_vertical",
@@ -427,6 +428,7 @@ public class ModBlocks {
                     .strength(3.0f, 9.0f)
                     .sound(SoundType.STONE)
                     .requiresCorrectToolForDrops()
+                    .noOcclusion()
             ));
 
     public static final Block DISTORTION_ROCK_FLAT_UPSIDEDOWN = registerBlock("distortion_rock_flat_upsidedown",
@@ -435,6 +437,7 @@ public class ModBlocks {
                     .strength(3.0f, 9.0f)
                     .sound(SoundType.STONE)
                     .requiresCorrectToolForDrops()
+                    .noOcclusion()
             ));
 
     public static final Block DISTORTION_BOULDER = registerBlock("distortion_boulder",

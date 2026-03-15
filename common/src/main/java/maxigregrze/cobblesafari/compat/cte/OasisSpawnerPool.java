@@ -34,8 +34,8 @@ public record OasisSpawnerPool(
     private static final int MAX_SIMULTANEOUS = 2;
     private static final int TOTAL_PER_TRIAL = 3;
     private static final int COOLDOWN = 36000;
-    private static final String LOOT = "cobblesafari:underground_oasis";
-    private static final String OMINOUS_LOOT = "cobblesafari:underground_ominous_oasis";
+    private static final String LOOT = "cobblesafari:underground_oasis_small_spheres";
+    private static final String OMINOUS_LOOT = "cobblesafari:underground_oasis_large_spheres";
 
     public static final Map<String, OasisSpawnerPool> POOLS = Map.of(
 
@@ -43,15 +43,22 @@ public record OasisSpawnerPool(
                     DETECTION_RANGE, SPAWN_RANGE, MAX_SIMULTANEOUS, TOTAL_PER_TRIAL, COOLDOWN, false,
                     LOOT, OMINOUS_LOOT,
                     List.of(
-                            new PokemonEntry("cacnea", 1, 15, null, null, false, true, false),
-                            new PokemonEntry("gligar", 1, 15, null, null, false, true, false),
-                            new PokemonEntry("numel", 1, 15, null, null, false, true, false)
+                            new PokemonEntry("cacnea", 1, 20, null, null, false, true, false),
+                            new PokemonEntry("maractus", 1, 20, null, null, false, true, false),
+                            new PokemonEntry("yamask", 1, 20, null, null, false, true, false),
+                            new PokemonEntry("sandshrew", 1, 20, null, null, false, true, false),
+                            new PokemonEntry("golett", 1, 20, null, null, false, true, false),
+                            new PokemonEntry("sableye", 1, 20, null, null, false, true, false),
+                            new PokemonEntry("baltoy", 1, 20, null, null, false, true, false)
                     ),
                     List.of(
-                            new PokemonEntry("cacturne", 2, 30, null, null, false, true, true),
-                            new PokemonEntry("gliscor", 2, 30, null, null, false, true, true),
-                            new PokemonEntry("camerupt", 2, 30, null, null, false, true, true),
-                            new PokemonEntry("camerupt mega", 1, 30, null, null, false, true, true)
+                        new PokemonEntry("cacturne", 1, 60, null, null, false, true, false),
+                        new PokemonEntry("maractus", 1, 60, null, null, false, true, false),
+                        new PokemonEntry("cofagrigus", 1, 60, null, null, false, true, false),
+                        new PokemonEntry("sandslash", 1, 60, null, null, false, true, false),
+                        new PokemonEntry("golurk", 1, 60, null, null, false, true, false),
+                        new PokemonEntry("sableye", 1, 60, null, null, false, true, false),
+                        new PokemonEntry("claydol", 1, 60, null, null, false, true, false)
                     )
             ),
 
@@ -59,15 +66,21 @@ public record OasisSpawnerPool(
                     DETECTION_RANGE, SPAWN_RANGE, MAX_SIMULTANEOUS, TOTAL_PER_TRIAL, COOLDOWN, false,
                     LOOT, OMINOUS_LOOT,
                     List.of(
-                            new PokemonEntry("spheal", 1, 15, null, null, false, true, false),
-                            new PokemonEntry("seel", 1, 15, null, null, false, true, false),
-                            new PokemonEntry("snorunt", 1, 15, null, null, false, true, false)
+                            new PokemonEntry("spheal", 1, 20, null, null, false, true, false),
+                            new PokemonEntry("glalie", 1, 20, null, null, false, true, false),
+                            new PokemonEntry("snorunt", 1, 20, null, null, false, true, false),
+                            new PokemonEntry("cryogonal", 1, 20, null, null, false, true, false),
+                            new PokemonEntry("eiscue", 1, 20, null, null, false, true, false),
+                            new PokemonEntry("froslass", 1, 20, null, null, false, true, false),
+                            new PokemonEntry("swinub", 1, 20, null, null, false, true, false)
                     ),
                     List.of(
-                            new PokemonEntry("sealeo", 2, 30, null, null, false, true, true),
-                            new PokemonEntry("walrein", 2, 30, null, null, false, true, true),
-                            new PokemonEntry("froslass", 2, 30, null, null, false, true, true),
-                            new PokemonEntry("glalie mega", 1, 30, null, null, false, true, true)
+                        new PokemonEntry("sealeo", 1, 60, null, null, false, true, false),
+                        new PokemonEntry("glalie", 1, 60, null, null, false, true, false),
+                        new PokemonEntry("cryogonal", 1, 60, null, null, false, true, false),
+                        new PokemonEntry("eiscue", 1, 60, null, null, false, true, false),
+                        new PokemonEntry("froslass", 1, 60, null, null, false, true, false),
+                        new PokemonEntry("piloswine", 1, 60, null, null, false, true, false)
                     )
             ),
 
@@ -75,15 +88,23 @@ public record OasisSpawnerPool(
                     DETECTION_RANGE, SPAWN_RANGE, MAX_SIMULTANEOUS, TOTAL_PER_TRIAL, COOLDOWN, false,
                     LOOT, OMINOUS_LOOT,
                     List.of(
-                            new PokemonEntry("voltorb", 1, 15, null, null, false, true, false),
-                            new PokemonEntry("geodude alolan", 1, 15, null, null, false, true, false),
-                            new PokemonEntry("electrike", 1, 15, null, null, false, true, false)
+                            new PokemonEntry("geodude alolan", 1, 20, null, null, false, true, false),
+                            new PokemonEntry("roggenrola", 1, 20, null, null, false, true, false),
+                            new PokemonEntry("joltik", 1, 20, null, null, false, true, false),
+                            new PokemonEntry("electrike", 1, 20, null, null, false, true, false),
+                            new PokemonEntry("beldum", 1, 20, null, null, false, true, false),
+                            new PokemonEntry("ferroseed", 1, 20, null, null, false, true, false),
+                            new PokemonEntry("magnemite", 1, 20, null, null, false, true, false)
+
                     ),
                     List.of(
-                            new PokemonEntry("electrode", 2, 30, null, null, false, true, true),
-                            new PokemonEntry("graveler alolan", 2, 30, null, null, false, true, true),
-                            new PokemonEntry("manectric", 2, 30, null, null, false, true, true),
-                            new PokemonEntry("manectric mega", 1, 30, null, null, false, true, true)
+                        new PokemonEntry("graveler alolan", 1, 60, null, null, false, true, false),
+                        new PokemonEntry("boldore", 1, 60, null, null, false, true, false),
+                        new PokemonEntry("galvantula", 1, 60, null, null, false, true, false),
+                        new PokemonEntry("manectric", 1, 60, null, null, false, true, false),
+                        new PokemonEntry("metang", 1, 60, null, null, false, true, false),
+                        new PokemonEntry("ferrothorn", 1, 60, null, null, false, true, false),
+                        new PokemonEntry("magneton", 1, 60, null, null, false, true, false)
                     )
             ),
 
@@ -91,15 +112,22 @@ public record OasisSpawnerPool(
                     DETECTION_RANGE, SPAWN_RANGE, MAX_SIMULTANEOUS, TOTAL_PER_TRIAL, COOLDOWN, false,
                     LOOT, OMINOUS_LOOT,
                     List.of(
-                            new PokemonEntry("tangela", 1, 15, null, null, false, true, false),
-                            new PokemonEntry("exeggcute", 1, 15, null, null, false, true, false),
-                            new PokemonEntry("capsakid", 1, 15, null, null, false, true, false)
+                            new PokemonEntry("tangela", 1, 20, null, null, false, true, false),
+                            new PokemonEntry("paras", 1, 20, null, null, false, true, false),
+                            new PokemonEntry("yanma", 1, 20, null, null, false, true, false),
+                            new PokemonEntry("shuckle", 1, 20, null, null, false, true, false),
+                            new PokemonEntry("carnivine", 1, 20, null, null, false, true, false),
+                            new PokemonEntry("morelull", 1, 20, null, null, false, true, false),
+                            new PokemonEntry("tropius", 1, 20, null, null, false, true, false)
                     ),
                     List.of(
-                            new PokemonEntry("tangrowth", 2, 30, null, null, false, true, true),
-                            new PokemonEntry("exeggutor", 2, 30, null, null, false, true, true),
-                            new PokemonEntry("scovillain", 2, 30, null, null, false, true, true),
-                            new PokemonEntry("scovillain mega", 1, 30, null, null, false, true, true)
+                        new PokemonEntry("tangrowth", 1, 60, null, null, false, true, false),
+                        new PokemonEntry("parasect", 1, 60, null, null, false, true, false),
+                        new PokemonEntry("yanmega", 1, 60, null, null, false, true, false),
+                        new PokemonEntry("shuckle", 1, 60, null, null, false, true, false),
+                        new PokemonEntry("carnivine", 1, 60, null, null, false, true, false),
+                        new PokemonEntry("shiinotic", 1, 60, null, null, false, true, false),
+                        new PokemonEntry("tropius", 1, 60, null, null, false, true, false)
                     )
             ),
 
@@ -107,15 +135,22 @@ public record OasisSpawnerPool(
                     DETECTION_RANGE, SPAWN_RANGE, MAX_SIMULTANEOUS, TOTAL_PER_TRIAL, COOLDOWN, false,
                     LOOT, OMINOUS_LOOT,
                     List.of(
-                            new PokemonEntry("slugma", 1, 15, null, null, false, true, false),
-                            new PokemonEntry("salandit", 1, 15, null, "male", false, true, false),
-                            new PokemonEntry("houndour", 1, 15, null, null, false, true, false)
+                        new PokemonEntry("torkoal", 1, 20, null, null, false, true, false),
+                        new PokemonEntry("slugma", 1, 20, null, null, false, true, false),
+                        new PokemonEntry("turtonator", 1, 20, null, null, false, true, false),
+                        new PokemonEntry("salandit", 1, 20, null, "male", false, true, false),
+                        new PokemonEntry("growlithe hisuian", 1, 20, null, null, false, true, false),
+                        new PokemonEntry("darumaka", 1, 20, null, null, false, true, false),
+                        new PokemonEntry("houndour", 1, 20, null, null, false, true, false)
                     ),
                     List.of(
-                            new PokemonEntry("magcargo", 2, 30, null, null, false, true, true),
-                            new PokemonEntry("salazzle", 2, 30, null, null, false, true, true),
-                            new PokemonEntry("houndoom", 2, 30, null, null, false, true, true),
-                            new PokemonEntry("houndoom mega", 1, 30, null, null, false, true, true)
+                        new PokemonEntry("torkoal", 1, 60, null, null, false, true, false),
+                        new PokemonEntry("magcargo", 1, 60, null, null, false, true, false),
+                        new PokemonEntry("turtonator", 1, 60, null, null, false, true, false),
+                        new PokemonEntry("salazzle", 1, 60, null, null, false, true, false),
+                        new PokemonEntry("arcanine hisuian", 1, 60, null, null, false, true, false),
+                        new PokemonEntry("darmanitan", 1, 60, null, null, false, true, false),
+                        new PokemonEntry("houndoom", 1, 60, null, null, false, true, false)
                     )
             ),
 
@@ -123,15 +158,20 @@ public record OasisSpawnerPool(
                     DETECTION_RANGE, SPAWN_RANGE, MAX_SIMULTANEOUS, TOTAL_PER_TRIAL, COOLDOWN, false,
                     LOOT, OMINOUS_LOOT,
                     List.of(
-                            new PokemonEntry("finneon", 1, 15, null, null, false, true, false),
-                            new PokemonEntry("mareanie", 1, 15, null, null, false, true, false),
-                            new PokemonEntry("carvanha", 1, 15, null, null, false, true, false)
+                        new PokemonEntry("wailmer", 1, 20, null, null, false, true, false),
+                        new PokemonEntry("finneon", 1, 20, null, null, false, true, false),
+                        new PokemonEntry("wiglett", 1, 20, null, null, false, true, false),
+                        new PokemonEntry("corsola", 1, 20, null, null, false, true, false),
+                        new PokemonEntry("frillish", 2, 20, null, null, false, true, false),
+                        new PokemonEntry("mareanie", 1, 20, null, null, false, true, false)
                     ),
                     List.of(
-                            new PokemonEntry("lumineon", 2, 30, null, null, false, true, true),
-                            new PokemonEntry("toxapex", 2, 30, null, null, false, true, true),
-                            new PokemonEntry("sharpedo", 2, 30, null, null, false, true, true),
-                            new PokemonEntry("sharpedo mega", 1, 30, null, null, false, true, true)
+                        new PokemonEntry("wailord", 1, 60, null, null, false, true, false),
+                        new PokemonEntry("lumineon", 1, 60, null, null, false, true, false),
+                        new PokemonEntry("wugtrio", 1, 60, null, null, false, true, false),
+                        new PokemonEntry("corsola", 1, 60, null, null, false, true, false),
+                        new PokemonEntry("jellicent", 2, 60, null, null, false, true, false),
+                        new PokemonEntry("toxapex", 1, 60, null, null, false, true, false)
                     )
             )
     );

@@ -7,9 +7,10 @@ import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.suggestion.SuggestionProvider;
-import maxigregrze.cobblesafari.cftrader.logic.CfTraderRegistry;
+import maxigregrze.cobblesafari.cstrader.logic.CsTraderDefinition;
+import maxigregrze.cobblesafari.cstrader.logic.CsTraderRegistry;
 import maxigregrze.cobblesafari.config.SafariTimerConfig;
-import maxigregrze.cobblesafari.entity.CfTraderEntity;
+import maxigregrze.cobblesafari.entity.CsTraderEntity;
 import maxigregrze.cobblesafari.init.ModEntities;
 import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.CommandSourceStack;
@@ -22,30 +23,19 @@ import net.minecraft.server.level.ServerPlayer;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 import java.util.Objects;
 
 public class CobbleSafariCommand {
 
-    private static final String ARG_TYPE = "type";
+    private static final String ARG_NAME = "name";
     private static final String ARG_VARIANT = "variant";
     private static final String ARG_PLAYER = "player";
     private static final String ARG_SECONDS = "seconds";
     private static final String ARG_DIMENSION = "dimension";
-    private static final String VARIANT_SMALL = "small_sphere";
-    private static final String VARIANT_LARGE = "large_sphere";
-    private static final String VARIANT_TREASURES = "treasures";
-
-    private static final List<String> SUMMON_TYPES = List.of("underground_small", "underground_large", "underground_treasure");
-    private static final List<String> SUMMON_TEMPLATE_TYPES = List.of("underground_small_template", "underground_large_template", "underground_treasure_template");
-    private static final SuggestionProvider<CommandSourceStack> SUMMON_TYPE_SUGGESTIONS =
-            (context, builder) -> SharedSuggestionProvider.suggest(getDynamicSummonSuggestions(false), builder);
-    private static final SuggestionProvider<CommandSourceStack> SUMMON_TEMPLATE_SUGGESTIONS =
-            (context, builder) -> SharedSuggestionProvider.suggest(getDynamicSummonSuggestions(true), builder);
+    private static final SuggestionProvider<CommandSourceStack> SUMMON_NAME_SUGGESTIONS =
+            (context, builder) -> SharedSuggestionProvider.suggest(CsTraderRegistry.getTraderNames(), builder);
     private static final SuggestionProvider<CommandSourceStack> SUMMON_VARIANT_SUGGESTIONS =
-            (context, builder) -> SharedSuggestionProvider.suggest(getVariantSuggestions(context, false), builder);
-    private static final SuggestionProvider<CommandSourceStack> SUMMON_TEMPLATE_VARIANT_SUGGESTIONS =
-            (context, builder) -> SharedSuggestionProvider.suggest(getVariantSuggestions(context, true), builder);
+            (context, builder) -> SharedSuggestionProvider.suggest(getVariantSuggestions(context), builder);
     private static final SuggestionProvider<CommandSourceStack> DIMENSION_SUGGESTIONS =
             (context, builder) -> SharedSuggestionProvider.suggest(SafariTimerConfig.getConfiguredDimensionIds(), builder);
 
@@ -67,18 +57,16 @@ public class CobbleSafariCommand {
                                 .then(Commands.literal("dungeon")
                                         .executes(CobbleSafariCommand::executeResetDungeon)))
                         .then(Commands.literal("summon")
-                                .then(Commands.argument(ARG_TYPE, StringArgumentType.word())
-                                        .suggests(SUMMON_TYPE_SUGGESTIONS)
-                                        .executes(CobbleSafariCommand::executeSummon)
+                                .then(Commands.argument(ARG_NAME, StringArgumentType.word())
+                                        .suggests(SUMMON_NAME_SUGGESTIONS)
                                         .then(Commands.argument(ARG_VARIANT, StringArgumentType.word())
                                                 .suggests(SUMMON_VARIANT_SUGGESTIONS)
                                                 .executes(CobbleSafariCommand::executeSummon))))
                         .then(Commands.literal("summon_template")
-                                .then(Commands.argument(ARG_TYPE, StringArgumentType.word())
-                                        .suggests(SUMMON_TEMPLATE_SUGGESTIONS)
-                                        .executes(CobbleSafariCommand::executeSummonTemplate)
+                                .then(Commands.argument(ARG_NAME, StringArgumentType.word())
+                                        .suggests(SUMMON_NAME_SUGGESTIONS)
                                         .then(Commands.argument(ARG_VARIANT, StringArgumentType.word())
-                                                .suggests(SUMMON_TEMPLATE_VARIANT_SUGGESTIONS)
+                                                .suggests(SUMMON_VARIANT_SUGGESTIONS)
                                                 .executes(CobbleSafariCommand::executeSummonTemplate))))
                         .then(Commands.literal("timer")
                                 .then(Commands.literal("safari")
@@ -160,109 +148,67 @@ public class CobbleSafariCommand {
     }
 
     private static int executeSummon(CommandContext<CommandSourceStack> context) {
-        String type = StringArgumentType.getString(context, ARG_TYPE);
-        String variant = context.getNodes().stream().anyMatch(n -> ARG_VARIANT.equals(n.getNode().getName()))
-                ? StringArgumentType.getString(context, ARG_VARIANT)
-                : null;
+        String traderName = StringArgumentType.getString(context, ARG_NAME);
+        String variant = StringArgumentType.getString(context, ARG_VARIANT);
         ServerPlayer player = context.getSource().getPlayer();
         if (player == null) {
             context.getSource().sendFailure(Component.literal("This command must be run by a player"));
             return 0;
         }
         ServerLevel level = player.serverLevel();
-        CfTraderEntity traderEntity = new CfTraderEntity(ModEntities.CFTRADER_NPC, level);
-        traderEntity.moveTo(player.getX(), player.getY(), player.getZ(), player.getYRot(), 0.0f);
-        String traderName = resolveTraderName(type, false);
-        if (traderName == null) {
-            context.getSource().sendFailure(
-                    Component.translatable("cobblesafari.command.underground.invalid_type", type));
+        CsTraderDefinition trader = CsTraderRegistry.getTrader(traderName);
+        if (trader == null) {
+            context.getSource().sendFailure(Component.translatable("cobblesafari.command.cstrader.invalid_name", traderName));
             return 0;
         }
-        traderEntity.setTraderName(traderName);
-        String resolvedVariantRaw = variant;
-        if (resolvedVariantRaw == null || resolvedVariantRaw.isBlank()) {
-            resolvedVariantRaw = defaultVariantForType(type, traderName);
+        if (trader.resolveVariant(variant) == null) {
+            context.getSource().sendFailure(Component.translatable("cobblesafari.command.cstrader.invalid_variant", variant, traderName));
+            return 0;
         }
-        final String resolvedVariant = resolvedVariantRaw;
-        traderEntity.initTradesForType(resolvedVariant);
+        CsTraderEntity traderEntity = new CsTraderEntity(ModEntities.CSTRADER_NPC, level);
+        traderEntity.moveTo(player.getX(), player.getY(), player.getZ(), player.getYRot(), 0.0f);
+        traderEntity.setTraderName(traderName);
+        traderEntity.initTradesForType(variant);
         level.addFreshEntity(traderEntity);
         context.getSource().sendSuccess(
-                () -> Component.translatable("cobblesafari.command.underground.summon.success", type),
+                () -> Component.translatable("cobblesafari.command.cstrader.summon.success", traderName, variant),
                 true);
         return 1;
     }
     
     private static int executeSummonTemplate(CommandContext<CommandSourceStack> context) {
-        String type = StringArgumentType.getString(context, ARG_TYPE);
-        String variant = context.getNodes().stream().anyMatch(n -> ARG_VARIANT.equals(n.getNode().getName()))
-                ? StringArgumentType.getString(context, ARG_VARIANT)
-                : null;
+        String traderName = StringArgumentType.getString(context, ARG_NAME);
+        String variant = StringArgumentType.getString(context, ARG_VARIANT);
         ServerPlayer player = context.getSource().getPlayer();
         if (player == null) {
             context.getSource().sendFailure(Component.literal("This command must be run by a player"));
             return 0;
         }
         ServerLevel level = player.serverLevel();
-        CfTraderEntity traderEntity = new CfTraderEntity(ModEntities.CFTRADER_NPC, level);
-        traderEntity.moveTo(player.getX(), player.getY(), player.getZ(), player.getYRot(), 0.0f);
-        String traderName = resolveTraderName(type, true);
-        if (traderName == null) {
-            context.getSource().sendFailure(
-                    Component.translatable("cobblesafari.command.underground.invalid_type", type));
+        CsTraderDefinition trader = CsTraderRegistry.getTrader(traderName);
+        if (trader == null) {
+            context.getSource().sendFailure(Component.translatable("cobblesafari.command.cstrader.invalid_name", traderName));
             return 0;
         }
-        traderEntity.setTraderName(traderName);
-        String resolvedVariantRaw = variant;
-        if (resolvedVariantRaw == null || resolvedVariantRaw.isBlank()) {
-            resolvedVariantRaw = defaultVariantForType(type, traderName);
+        if (trader.resolveVariant(variant) == null) {
+            context.getSource().sendFailure(Component.translatable("cobblesafari.command.cstrader.invalid_variant", variant, traderName));
+            return 0;
         }
-        final String resolvedVariant = resolvedVariantRaw;
-        traderEntity.setTradeType(resolvedVariant);
+        CsTraderEntity traderEntity = new CsTraderEntity(ModEntities.CSTRADER_NPC, level);
+        traderEntity.moveTo(player.getX(), player.getY(), player.getZ(), player.getYRot(), 0.0f);
+        traderEntity.setTraderName(traderName);
+        traderEntity.setTradeType(variant);
         level.addFreshEntity(traderEntity);
         context.getSource().sendSuccess(
-                () -> Component.literal("Summoned a CFTrader template (trader: " + traderName + ", variant: " + resolvedVariant + ") - trades will be randomized when placed in structures"),
+                () -> Component.translatable("cobblesafari.command.cstrader.template.success", traderName, variant),
                 true);
         return 1;
     }
 
-    private static String resolveTraderName(String rawType, boolean templateMode) {
-        if (rawType == null || rawType.isBlank()) return null;
-        String normalized = rawType.toLowerCase(Locale.ROOT);
-        if (templateMode) {
-            normalized = normalized.replace("_template", "");
-        }
-        if (SUMMON_TYPES.contains(normalized)) {
-            return "hiker";
-        }
-        if (CfTraderRegistry.getTrader(normalized) != null) {
-            return normalized;
-        }
-        return null;
-    }
-
-    private static String defaultVariantForType(String rawType, String traderName) {
-        String normalized = rawType.toLowerCase(Locale.ROOT).replace("_template", "");
-        return switch (normalized) {
-            case "underground_small", "small" -> VARIANT_SMALL;
-            case "underground_large", "large" -> VARIANT_LARGE;
-            case "underground_treasure", "treasure" -> VARIANT_TREASURES;
-            default -> CfTraderRegistry.getDefaultVariantId(traderName);
-        };
-    }
-
-    private static List<String> getDynamicSummonSuggestions(boolean templateMode) {
-        List<String> suggestions = new ArrayList<>();
-        suggestions.addAll(templateMode ? SUMMON_TEMPLATE_TYPES : SUMMON_TYPES);
-        suggestions.addAll(CfTraderRegistry.getTraderNames());
-        return suggestions;
-    }
-
-    private static List<String> getVariantSuggestions(CommandContext<CommandSourceStack> context, boolean templateMode) {
-        String type = StringArgumentType.getString(context, ARG_TYPE);
-        String traderName = resolveTraderName(type, templateMode);
-        if (traderName == null) return List.of();
-        var trader = CfTraderRegistry.getTrader(traderName);
-        if (trader == null) return List.of(VARIANT_SMALL, VARIANT_LARGE, VARIANT_TREASURES);
+    private static List<String> getVariantSuggestions(CommandContext<CommandSourceStack> context) {
+        String traderName = StringArgumentType.getString(context, ARG_NAME);
+        var trader = CsTraderRegistry.getTrader(traderName);
+        if (trader == null) return List.of();
         List<String> variants = new ArrayList<>();
         trader.getVariants().forEach(v -> variants.add(v.getId()));
         return variants;

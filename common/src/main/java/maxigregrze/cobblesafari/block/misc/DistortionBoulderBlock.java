@@ -51,7 +51,7 @@ public class DistortionBoulderBlock extends FaceAttachedHorizontalDirectionalBlo
         switch (clickedFace) {
             case DOWN -> { face = AttachFace.CEILING; facing = context.getHorizontalDirection().getOpposite(); }
             case UP   -> { face = AttachFace.FLOOR;   facing = context.getHorizontalDirection().getOpposite(); }
-            default   -> { face = AttachFace.WALL;    facing = clickedFace.getOpposite(); }
+            default   -> { face = AttachFace.WALL;    facing = clickedFace; }
         }
 
         return this.defaultBlockState()
@@ -76,15 +76,15 @@ public class DistortionBoulderBlock extends FaceAttachedHorizontalDirectionalBlo
     @Override
     public boolean canSurvive(BlockState state, LevelReader level, BlockPos pos) {
         Direction attachDir = getConnectedDirection(state);
-        BlockPos supportPos = pos.relative(attachDir);
+        BlockPos supportPos = pos.relative(attachDir.getOpposite());
         BlockState supportState = level.getBlockState(supportPos);
-        return supportState.isFaceSturdy(level, supportPos, attachDir.getOpposite());
+        return supportState.isFaceSturdy(level, supportPos, attachDir);
     }
 
     @Override
     public BlockState updateShape(BlockState state, Direction direction, BlockState neighborState,
                                   LevelAccessor level, BlockPos pos, BlockPos neighborPos) {
-        if (direction == getConnectedDirection(state) && !canSurvive(state, level, pos)) {
+        if (direction == getConnectedDirection(state).getOpposite() && !canSurvive(state, level, pos)) {
             return Blocks.AIR.defaultBlockState();
         }
         return super.updateShape(state, direction, neighborState, level, pos, neighborPos);

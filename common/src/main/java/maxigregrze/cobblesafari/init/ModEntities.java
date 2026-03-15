@@ -3,7 +3,7 @@ package maxigregrze.cobblesafari.init;
 import maxigregrze.cobblesafari.CobbleSafari;
 import maxigregrze.cobblesafari.entity.BalloonEntity;
 import maxigregrze.cobblesafari.entity.BalloonSafariEntity;
-import maxigregrze.cobblesafari.entity.CfTraderEntity;
+import maxigregrze.cobblesafari.entity.CsTraderEntity;
 import maxigregrze.cobblesafari.entity.HikerEntity;
 import maxigregrze.cobblesafari.entity.projectile.ThrownBaitEntity;
 import maxigregrze.cobblesafari.entity.projectile.ThrownMudBallEntity;
@@ -27,13 +27,13 @@ public class ModEntities {
                     .build(CobbleSafari.MOD_ID + ":hiker")
     );
 
-    public static final EntityType<CfTraderEntity> CFTRADER_NPC = Registry.register(
+    public static final EntityType<CsTraderEntity> CSTRADER_NPC = Registry.register(
             BuiltInRegistries.ENTITY_TYPE,
-            ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, "cftrader_npc"),
-            EntityType.Builder.<CfTraderEntity>of(CfTraderEntity::new, MobCategory.MISC)
+            ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, "cstrader_npc"),
+            EntityType.Builder.<CsTraderEntity>of(CsTraderEntity::new, MobCategory.MISC)
                     .sized(0.6f, 1.95f)
                     .clientTrackingRange(10)
-                    .build(CobbleSafari.MOD_ID + ":cftrader_npc")
+                    .build(CobbleSafari.MOD_ID + ":cstrader_npc")
     );
 
     public static final EntityType<BalloonEntity> BALLOON = Registry.register(
@@ -62,8 +62,8 @@ public class ModEntities {
         return HikerEntity.createAttributes();
     }
 
-    public static AttributeSupplier.Builder getCfTraderAttributes() {
-        return CfTraderEntity.createAttributes();
+    public static AttributeSupplier.Builder getCsTraderAttributes() {
+        return CsTraderEntity.createAttributes();
     }
 
     public static AttributeSupplier.Builder getBalloonAttributes() {
