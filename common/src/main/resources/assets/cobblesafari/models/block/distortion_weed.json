@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/coral_fan",
+  "textures": {
+    "fan": "cobblesafari:block/distortion_weed"
+  }
+}

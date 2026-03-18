@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/cube_bottom_top",
+  "textures": {
+    "side": "cobblesafari:block/distortion_stonebricks",
+    "bottom": "cobblesafari:block/distortion_stonebricks_bottom",
+    "top": "cobblesafari:block/distortion_stonebricks_top"
+  }
+}

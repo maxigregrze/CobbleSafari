@@ -19,6 +19,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -168,6 +169,20 @@ public class PortalSpawnManager {
         }
         savedData.setDirty();
         CobbleSafari.LOGGER.debug("Saved {} portals to persistent storage", ACTIVE_PORTALS.size());
+    }
+
+    public static List<String> getEnabledDungeonIdsForCycle() {
+        List<String> ids = new ArrayList<>();
+        for (DungeonConfig dungeon : DungeonDimensions.getAllDungeons()) {
+            boolean enabled = PortalSpawnConfig.getDimensionConfig(dungeon.getId())
+                    .map(DungeonDimensionEntry::isEnabled)
+                    .orElse(true);
+            if (enabled) {
+                ids.add(dungeon.getId());
+            }
+        }
+        ids.sort(Comparator.naturalOrder());
+        return ids;
     }
 
     public static void tick(MinecraftServer server) {
@@ -418,14 +433,128 @@ public class PortalSpawnManager {
 
             ServerLevel level = server.getLevel(portal.dimension());
             if (level != null) {
-                level.removeBlock(portal.pos(), false);
-                CobbleSafari.LOGGER.debug("Removed expired portal at {}", portal.pos());
+                BlockEntity blockEntity = level.getBlockEntity(portal.pos());
+                if (blockEntity instanceof DungeonPortalBlockEntity portalEntity && portalEntity.isAutoRenewPortal()) {
+                    renewCreativePortal(server, level, portal.pos(), portalEntity);
+                } else {
+                    level.removeBlock(portal.pos(), false);
+                    CobbleSafari.LOGGER.debug("Removed expired portal at {}", portal.pos());
+                }
             } else {
                 ACTIVE_PORTALS.remove(portalId);
                 clearDungeonForPortal(server, portal);
                 PortalSavedData.get(server).removePortal(portalId);
             }
         }
+    }
+
+    private static DungeonConfig resolveDungeonForPortalEntity(DungeonPortalBlockEntity portalEntity) {
+        if (!portalEntity.isRandomDestinationMode()) {
+            String fixedDungeonId = portalEntity.getFixedDungeonId();
+            if (fixedDungeonId != null) {
+                DungeonConfig fixedConfig = DungeonDimensions.getDungeonById(fixedDungeonId);
+                if (fixedConfig != null) {
+                    boolean enabled = PortalSpawnConfig.getDimensionConfig(fixedConfig.getId())
+                            .map(DungeonDimensionEntry::isEnabled)
+                            .orElse(true);
+                    if (enabled) {
+                        return fixedConfig;
+                    }
+                }
+            }
+        }
+        return DungeonDimensions.getRandomDungeon();
+    }
+
+    public static boolean registerCreativePortal(ServerLevel level, BlockPos pos) {
+        BlockEntity blockEntity = level.getBlockEntity(pos);
+        if (!(blockEntity instanceof DungeonPortalBlockEntity portalEntity)) {
+            return false;
+        }
+
+        ACTIVE_PORTALS.values().removeIf(portal -> portal.pos().equals(pos) && portal.dimension().equals(level.dimension()));
+        PortalSavedData savedData = PortalSavedData.get(level.getServer());
+        List<UUID> idsToRemove = new ArrayList<>();
+        for (PortalSavedData.PortalData portalData : savedData.getPortals().values()) {
+            if (portalData.pos().equals(pos) && portalData.dimension().equals(level.dimension())) {
+                idsToRemove.add(portalData.portalId());
+            }
+        }
+        for (UUID id : idsToRemove) {
+            savedData.removePortal(id);
+        }
+
+        DungeonConfig dungeon = resolveDungeonForPortalEntity(portalEntity);
+        if (dungeon != null) {
+            portalEntity.setDungeonDimensionId(dungeon.getId());
+        } else {
+            portalEntity.setDungeonDimensionId(null);
+        }
+        portalEntity.setSpawnTick(level.getGameTime());
+        portalEntity.setChanged();
+
+        UUID portalId = portalEntity.getPortalId();
+        ACTIVE_PORTALS.put(portalId, new ActivePortal(
+                portalId,
+                pos,
+                level.dimension(),
+                level.getGameTime(),
+                dungeon != null ? dungeon.getId() : "random"
+        ));
+        savePortals();
+
+        if (dungeon != null) {
+            var callback = DungeonRegistrationAPI.getPortalSpawnCallback(dungeon.getId());
+            if (callback != null) {
+                try {
+                    callback.onPortalSpawned(level, portalEntity);
+                } catch (Exception e) {
+                    CobbleSafari.LOGGER.error("Portal spawn callback failed for dungeon {}", dungeon.getId(), e);
+                }
+            }
+        }
+        return true;
+    }
+
+    private static void renewCreativePortal(MinecraftServer server, ServerLevel level, BlockPos pos, DungeonPortalBlockEntity portalEntity) {
+        UUID oldPortalId = portalEntity.getPortalId();
+        ActivePortal oldPortal = ACTIVE_PORTALS.get(oldPortalId);
+
+        onPortalBlockRemoved(portalEntity);
+
+        UUID newPortalId = UUID.randomUUID();
+        portalEntity.setPortalId(newPortalId);
+        portalEntity.resetDungeonRuntimeData();
+
+        DungeonConfig dungeon = resolveDungeonForPortalEntity(portalEntity);
+        if (dungeon != null) {
+            portalEntity.setDungeonDimensionId(dungeon.getId());
+        } else {
+            portalEntity.setDungeonDimensionId(null);
+        }
+        portalEntity.setSpawnTick(level.getGameTime());
+        portalEntity.setChanged();
+
+        ACTIVE_PORTALS.put(newPortalId, new ActivePortal(
+                newPortalId,
+                pos,
+                level.dimension(),
+                level.getGameTime(),
+                dungeon != null ? dungeon.getId() : (oldPortal != null ? oldPortal.dungeonId() : "random")
+        ));
+        savePortals();
+
+        if (dungeon != null) {
+            var callback = DungeonRegistrationAPI.getPortalSpawnCallback(dungeon.getId());
+            if (callback != null) {
+                try {
+                    callback.onPortalSpawned(level, portalEntity);
+                } catch (Exception e) {
+                    CobbleSafari.LOGGER.error("Portal spawn callback failed for dungeon {}", dungeon.getId(), e);
+                }
+            }
+        }
+        CobbleSafari.LOGGER.info("Renewed creative portal at {} with new portal id {}", pos, newPortalId);
     }
 
     public static void removePortal(UUID portalId) {

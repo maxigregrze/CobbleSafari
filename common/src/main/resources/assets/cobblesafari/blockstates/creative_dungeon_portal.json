@@ -1,0 +1,34 @@
+{
+	"variants": {
+		"facing=north,portal_type=entrance": {
+			"model": "cobblesafari:block/hoopa_ring_portal"
+		},
+		"facing=south,portal_type=entrance": {
+			"model": "cobblesafari:block/hoopa_ring_portal",
+			"y": 180
+		},
+		"facing=west,portal_type=entrance": {
+			"model": "cobblesafari:block/hoopa_ring_portal",
+			"y": 270
+		},
+		"facing=east,portal_type=entrance": {
+			"model": "cobblesafari:block/hoopa_ring_portal",
+			"y": 90
+		},
+		"facing=north,portal_type=exit": {
+			"model": "cobblesafari:block/hoopa_ring_portal"
+		},
+		"facing=south,portal_type=exit": {
+			"model": "cobblesafari:block/hoopa_ring_portal",
+			"y": 180
+		},
+		"facing=west,portal_type=exit": {
+			"model": "cobblesafari:block/hoopa_ring_portal",
+			"y": 270
+		},
+		"facing=east,portal_type=exit": {
+			"model": "cobblesafari:block/hoopa_ring_portal",
+			"y": 90
+		}
+	}
+}

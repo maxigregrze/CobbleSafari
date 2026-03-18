@@ -39,6 +39,9 @@ public class DungeonPortalBlockEntity extends BlockEntity {
     private int dungeonChunkMaxX;
     private int dungeonChunkMaxZ;
     private boolean hasDungeonChunkBounds = false;
+    private boolean autoRenewPortal = false;
+    private boolean randomDestinationMode = true;
+    private String fixedDungeonId;
     private final Set<UUID> enteredPlayers = new HashSet<>();
 
     public DungeonPortalBlockEntity(BlockPos pos, BlockState state) {
@@ -167,6 +170,14 @@ public class DungeonPortalBlockEntity extends BlockEntity {
             tag.putInt("DungeonChunkMaxZ", dungeonChunkMaxZ);
         }
 
+        if (autoRenewPortal) {
+            tag.putBoolean("AutoRenewPortal", true);
+        }
+        tag.putBoolean("RandomDestinationMode", randomDestinationMode);
+        if (fixedDungeonId != null) {
+            tag.putString("FixedDungeonId", fixedDungeonId);
+        }
+
         if (!enteredPlayers.isEmpty()) {
             ListTag playerList = new ListTag();
             for (UUID playerId : enteredPlayers) {
@@ -247,6 +258,10 @@ public class DungeonPortalBlockEntity extends BlockEntity {
             dungeonChunkMaxX = tag.getInt("DungeonChunkMaxX");
             dungeonChunkMaxZ = tag.getInt("DungeonChunkMaxZ");
         }
+
+        autoRenewPortal = tag.contains("AutoRenewPortal") && tag.getBoolean("AutoRenewPortal");
+        randomDestinationMode = !tag.contains("RandomDestinationMode") || tag.getBoolean("RandomDestinationMode");
+        fixedDungeonId = tag.contains("FixedDungeonId") ? tag.getString("FixedDungeonId") : null;
 
         enteredPlayers.clear();
         if (tag.contains("EnteredPlayers", Tag.TAG_LIST)) {
@@ -381,5 +396,53 @@ public class DungeonPortalBlockEntity extends BlockEntity {
 
     public Set<UUID> getEnteredPlayers() {
         return enteredPlayers;
+    }
+
+    public void clearEnteredPlayers() {
+        enteredPlayers.clear();
+        setChanged();
+    }
+
+    public void resetDungeonRuntimeData() {
+        dungeonStructurePos = null;
+        dungeonExitPortalPos = null;
+        dungeonChunkMinX = 0;
+        dungeonChunkMinZ = 0;
+        dungeonChunkMaxX = 0;
+        dungeonChunkMaxZ = 0;
+        hasDungeonChunkBounds = false;
+        enteredPlayers.clear();
+        setChanged();
+    }
+
+    public boolean isAutoRenewPortal() {
+        return autoRenewPortal;
+    }
+
+    public void setAutoRenewPortal(boolean autoRenewPortal) {
+        this.autoRenewPortal = autoRenewPortal;
+        setChanged();
+    }
+
+    public boolean isRandomDestinationMode() {
+        return randomDestinationMode;
+    }
+
+    public void setRandomDestinationMode(boolean randomDestinationMode) {
+        this.randomDestinationMode = randomDestinationMode;
+        if (randomDestinationMode) {
+            this.fixedDungeonId = null;
+        }
+        setChanged();
+    }
+
+    public String getFixedDungeonId() {
+        return fixedDungeonId;
+    }
+
+    public void setFixedDungeonId(String fixedDungeonId) {
+        this.fixedDungeonId = fixedDungeonId;
+        this.randomDestinationMode = fixedDungeonId == null;
+        setChanged();
     }
 }

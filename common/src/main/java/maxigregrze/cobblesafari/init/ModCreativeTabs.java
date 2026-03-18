@@ -110,6 +110,8 @@ public class ModCreativeTabs {
             .title(Component.translatable("itemGroup.cobblesafari.distortion"))
             .displayItems((params, output) -> {
                 output.accept(ModBlocks.DISTORTION_ROCK);
+                output.accept(ModBlocks.DISTORTION_STONE);
+                output.accept(ModBlocks.DISTORTION_STONE_BRICKS);
                 output.accept(ModBlocks.DISTORTION_ROCK_VERTICAL);
                 output.accept(ModBlocks.DISTORTION_ROCK_UPSIDEDOWN);
                 output.accept(ModBlocks.DISTORTION_ROCK_DEEP);
@@ -120,6 +122,8 @@ public class ModCreativeTabs {
                 output.accept(ModBlocks.DISTORTION_ROCK_FLAT_UPSIDEDOWN);
                 output.accept(ModBlocks.DISTORTION_ROCK_FLOATING);
                 output.accept(ModBlocks.DISTORTION_BOULDER);
+                output.accept(ModBlocks.GIRATINA_CORE);
+                output.accept(ModBlocks.DISTORTION_WEED);
                 output.accept(ModBlocks.DISTORTION_FLOWER);
                 output.accept(ModBlocks.VANISHING_DISTORTION_FLOWER);
                 output.accept(ModBlocks.APPEARING_DISTORTION_FLOWER);
@@ -133,6 +137,7 @@ public class ModCreativeTabs {
             .displayItems((params, output) -> {
                 output.accept(ModBlocks.VOID_BLOCK);
                 output.accept(ModBlocks.HOOPA_RING_PORTAL);
+                output.accept(ModBlocks.CREATIVE_DUNGEON_PORTAL);
                 output.accept(ModItems.TICKET_DUNGEON);
                 output.accept(ModItems.SHINY_INCENSE);
                 output.accept(ModItems.SUPER_SHINY_INCENSE);

@@ -17,6 +17,7 @@ import maxigregrze.cobblesafari.client.renderer.BalloonSafariRenderer;
 import maxigregrze.cobblesafari.client.renderer.CsTraderEntityRenderer;
 import maxigregrze.cobblesafari.client.renderer.HikerEntityRenderer;
 import maxigregrze.cobblesafari.client.renderer.HoopaRingPortalBlockEntityRenderer;
+import maxigregrze.cobblesafari.client.renderer.GiratinaCoreBlockEntityRenderer;
 import maxigregrze.cobblesafari.client.renderer.VoidBlockRenderer;
 import maxigregrze.cobblesafari.client.model.BalloonEntityModel;
 import maxigregrze.cobblesafari.block.basepc.BasePCMenu;
@@ -77,6 +78,17 @@ public class CobbleSafariClientNeoForge {
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.SAFARI_EGG_NEST, RenderType.cutout());
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.HOOPA_RING_PORTAL, RenderType.cutout());
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.DUNGEON_PORTAL, RenderType.cutout());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.CREATIVE_DUNGEON_PORTAL, RenderType.cutout());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.GIRATINA_CORE, RenderType.translucent());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.GIRATINA_CORE_N, RenderType.translucent());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.GIRATINA_CORE_NE, RenderType.translucent());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.GIRATINA_CORE_E, RenderType.translucent());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.GIRATINA_CORE_SE, RenderType.translucent());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.GIRATINA_CORE_S, RenderType.translucent());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.GIRATINA_CORE_SW, RenderType.translucent());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.GIRATINA_CORE_W, RenderType.translucent());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.GIRATINA_CORE_NW, RenderType.translucent());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.GIRATINA_CORE_MOVING, RenderType.translucent());
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.MAGNETIC_CRYSTAL, RenderType.translucent());
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.MAGNETIC_CLUSTER, RenderType.translucent());
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.UNDERGROUND_SECRET, RenderType.translucent());
@@ -105,6 +117,7 @@ public class CobbleSafariClientNeoForge {
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.DISTORTION_ROCK_FLAT_VERTICAL, RenderType.cutout());
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.DISTORTION_ROCK_FLAT_UPSIDEDOWN, RenderType.cutout());
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.DISTORTION_ROCK_FLOATING, RenderType.cutout());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.DISTORTION_WEED, RenderType.cutout());
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.SUSPICIOUS_DISTORTION_ROCK, RenderType.cutout());
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.DISTORTION_BOULDER, RenderType.cutout());
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.DISTORTION_FLOWER, RenderType.cutout());
@@ -114,6 +127,7 @@ public class CobbleSafariClientNeoForge {
             BlockEntityRenderers.register(ModBlockEntities.HOOPA_RING_PORTAL, HoopaRingPortalBlockEntityRenderer::new);
             BlockEntityRenderers.register(ModBlockEntities.DUNGEON_PORTAL, DungeonPortalBlockEntityRenderer::new);
             BlockEntityRenderers.register(ModBlockEntities.VOID_BLOCK, VoidBlockRenderer::new);
+            BlockEntityRenderers.register(ModBlockEntities.GIRATINA_CORE, GiratinaCoreBlockEntityRenderer::new);
         });
 
         NeoForge.EVENT_BUS.addListener(CobbleSafariClientNeoForge::onRenderGuiLayer);
@@ -144,6 +158,10 @@ public class CobbleSafariClientNeoForge {
     public static void onItemTooltip(ItemTooltipEvent event) {
         if (getUnimplementedItems().contains(event.getItemStack().getItem())) {
             event.getToolTip().add(Component.translatable("tooltip.cobblesafari.not_implemented").withStyle(ChatFormatting.RED));
+        }
+        if (event.getItemStack().is(ModBlocks.CREATIVE_DUNGEON_PORTAL.asItem())) {
+            event.getToolTip().add(Component.translatable("tooltip.cobblesafari.creative_dungeon_portal.line1").withStyle(ChatFormatting.GRAY));
+            event.getToolTip().add(Component.translatable("tooltip.cobblesafari.creative_dungeon_portal.line2").withStyle(ChatFormatting.GRAY));
         }
     }
 

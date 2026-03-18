@@ -5,17 +5,21 @@ import maxigregrze.cobblesafari.block.basepc.BasePCBlock;
 import maxigregrze.cobblesafari.block.basepc.BasePCBlockItem;
 import maxigregrze.cobblesafari.block.BlockPart;
 import maxigregrze.cobblesafari.block.dungeon.DungeonPortalBlock;
+import maxigregrze.cobblesafari.block.dungeon.CreativeDungeonPortalBlock;
 import maxigregrze.cobblesafari.block.dungeon.HoopaRingPortalBlock;
 import maxigregrze.cobblesafari.block.misc.AirKelpBlock;
 import maxigregrze.cobblesafari.block.misc.AppearingDistortionFlowerBlock;
 import maxigregrze.cobblesafari.block.misc.AquaticDecorationBlock;
 import maxigregrze.cobblesafari.block.misc.BelltowerTrellisBlock;
 import maxigregrze.cobblesafari.block.misc.DistortionFlowerBlock;
+import maxigregrze.cobblesafari.block.misc.DistortionWeedBlock;
 import maxigregrze.cobblesafari.block.misc.IcicleBlock;
 import maxigregrze.cobblesafari.block.misc.DistortionBoulderBlock;
 import maxigregrze.cobblesafari.block.misc.DistortionRockBlock;
 import maxigregrze.cobblesafari.block.misc.DistortionRockDirectionalBlock;
 import maxigregrze.cobblesafari.block.misc.DistortionRockVerticalBlock;
+import maxigregrze.cobblesafari.block.misc.GiratinaCoreBlock;
+import maxigregrze.cobblesafari.block.misc.GiratinaCoreSideBlock;
 import maxigregrze.cobblesafari.block.misc.MagneticClusterBlock;
 import maxigregrze.cobblesafari.block.misc.MagneticCrystalBlock;
 import maxigregrze.cobblesafari.block.misc.SafariEggNestBlock;
@@ -83,6 +87,14 @@ public class ModBlocks {
                     .noCollission()
             ));
 
+    public static final Block CREATIVE_DUNGEON_PORTAL = registerBlock("creative_dungeon_portal",
+            new CreativeDungeonPortalBlock(BlockBehaviour.Properties.of()
+                    .strength(-1.0f, 3600000.0f)
+                    .lightLevel(state -> 10)
+                    .noOcclusion()
+                    .noCollission()
+            ));
+
     public static final Block MAGNETIC_CRYSTAL = registerBlock("magnetic_crystal",
             new MagneticCrystalBlock(BlockBehaviour.Properties.of()
                     .mapColor(MapColor.DEEPSLATE)
@@ -109,6 +121,96 @@ public class ModBlocks {
                     .strength(-1.0f, 3600000.0f)
                     .noLootTable()
                     .noOcclusion()
+            ));
+
+    public static final Block GIRATINA_CORE = registerBlock("giratina_core",
+            new GiratinaCoreBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.COLOR_PURPLE)
+                    .strength(50.0f, 3600000.0f)
+                    .sound(SoundType.STONE)
+                    .noOcclusion()
+                    .requiresCorrectToolForDrops()
+            ));
+
+    public static final Block GIRATINA_CORE_N = registerBlock("giratina_core_n",
+            new GiratinaCoreSideBlock(0, -1, BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.COLOR_PURPLE)
+                    .strength(50.0f, 3600000.0f)
+                    .sound(SoundType.STONE)
+                    .noOcclusion()
+                    .requiresCorrectToolForDrops()
+            ));
+
+    public static final Block GIRATINA_CORE_NE = registerBlock("giratina_core_ne",
+            new GiratinaCoreSideBlock(1, -1, BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.COLOR_PURPLE)
+                    .strength(50.0f, 3600000.0f)
+                    .sound(SoundType.STONE)
+                    .noOcclusion()
+                    .requiresCorrectToolForDrops()
+            ));
+
+    public static final Block GIRATINA_CORE_E = registerBlock("giratina_core_e",
+            new GiratinaCoreSideBlock(1, 0, BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.COLOR_PURPLE)
+                    .strength(50.0f, 3600000.0f)
+                    .sound(SoundType.STONE)
+                    .noOcclusion()
+                    .requiresCorrectToolForDrops()
+            ));
+
+    public static final Block GIRATINA_CORE_SE = registerBlock("giratina_core_se",
+            new GiratinaCoreSideBlock(1, 1, BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.COLOR_PURPLE)
+                    .strength(50.0f, 3600000.0f)
+                    .sound(SoundType.STONE)
+                    .noOcclusion()
+                    .requiresCorrectToolForDrops()
+            ));
+
+    public static final Block GIRATINA_CORE_S = registerBlock("giratina_core_s",
+            new GiratinaCoreSideBlock(0, 1, BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.COLOR_PURPLE)
+                    .strength(50.0f, 3600000.0f)
+                    .sound(SoundType.STONE)
+                    .noOcclusion()
+                    .requiresCorrectToolForDrops()
+            ));
+
+    public static final Block GIRATINA_CORE_SW = registerBlock("giratina_core_sw",
+            new GiratinaCoreSideBlock(-1, 1, BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.COLOR_PURPLE)
+                    .strength(50.0f, 3600000.0f)
+                    .sound(SoundType.STONE)
+                    .noOcclusion()
+                    .requiresCorrectToolForDrops()
+            ));
+
+    public static final Block GIRATINA_CORE_W = registerBlock("giratina_core_w",
+            new GiratinaCoreSideBlock(-1, 0, BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.COLOR_PURPLE)
+                    .strength(50.0f, 3600000.0f)
+                    .sound(SoundType.STONE)
+                    .noOcclusion()
+                    .requiresCorrectToolForDrops()
+            ));
+
+    public static final Block GIRATINA_CORE_NW = registerBlock("giratina_core_nw",
+            new GiratinaCoreSideBlock(-1, -1, BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.COLOR_PURPLE)
+                    .strength(50.0f, 3600000.0f)
+                    .sound(SoundType.STONE)
+                    .noOcclusion()
+                    .requiresCorrectToolForDrops()
+            ));
+
+    public static final Block GIRATINA_CORE_MOVING = registerBlockWithoutItem("giratina_core_moving",
+            new Block(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.COLOR_PURPLE)
+                    .strength(3.0f, 9.0f)
+                    .sound(SoundType.STONE)
+                    .noOcclusion()
+                    .requiresCorrectToolForDrops()
             ));
 
 
@@ -365,6 +467,22 @@ public class ModBlocks {
                     .requiresCorrectToolForDrops()
             ));
 
+    public static final Block DISTORTION_STONE = registerBlock("distortion_stone",
+            new Block(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.STONE)
+                    .strength(1.5f, 6.0f)
+                    .sound(SoundType.STONE)
+                    .requiresCorrectToolForDrops()
+            ));
+
+    public static final Block DISTORTION_STONE_BRICKS = registerBlock("distortion_stone_bricks",
+            new Block(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.STONE)
+                    .strength(1.5f, 6.0f)
+                    .sound(SoundType.STONE)
+                    .requiresCorrectToolForDrops()
+            ));
+
     public static final Block SUSPICIOUS_DISTORTION_ROCK = registerBlock("suspicious_distortion_rock",
             new Block(BlockBehaviour.Properties.of()
                     .mapColor(MapColor.SAND)
@@ -454,6 +572,15 @@ public class ModBlocks {
                     .instabreak()
                     .sound(SoundType.GRASS)
                     .noLootTable()
+            ));
+
+    public static final Block DISTORTION_WEED = registerBlock("distortion_weed",
+            new DistortionWeedBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.PLANT)
+                    .instabreak()
+                    .sound(SoundType.WET_GRASS)
+                    .noOcclusion()
+                    .noCollission()
             ));
 
     public static final Block VANISHING_DISTORTION_FLOWER = registerBlock("vanishing_distortion_flower",

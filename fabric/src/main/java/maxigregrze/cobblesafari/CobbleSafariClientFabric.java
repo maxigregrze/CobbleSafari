@@ -15,6 +15,7 @@ import maxigregrze.cobblesafari.client.renderer.BalloonSafariRenderer;
 import maxigregrze.cobblesafari.client.renderer.CsTraderEntityRenderer;
 import maxigregrze.cobblesafari.client.renderer.HikerEntityRenderer;
 import maxigregrze.cobblesafari.client.renderer.HoopaRingPortalBlockEntityRenderer;
+import maxigregrze.cobblesafari.client.renderer.GiratinaCoreBlockEntityRenderer;
 import maxigregrze.cobblesafari.client.renderer.VoidBlockRenderer;
 import maxigregrze.cobblesafari.client.model.BalloonEntityModel;
 import maxigregrze.cobblesafari.block.basepc.BasePCMenu;
@@ -63,6 +64,10 @@ public class CobbleSafariClientFabric implements ClientModInitializer {
             if (UNIMPLEMENTED_ITEMS.contains(stack.getItem())) {
                 lines.add(Component.translatable("tooltip.cobblesafari.not_implemented").withStyle(ChatFormatting.RED));
             }
+            if (stack.is(ModBlocks.CREATIVE_DUNGEON_PORTAL.asItem())) {
+                lines.add(Component.translatable("tooltip.cobblesafari.creative_dungeon_portal.line1").withStyle(ChatFormatting.GRAY));
+                lines.add(Component.translatable("tooltip.cobblesafari.creative_dungeon_portal.line2").withStyle(ChatFormatting.GRAY));
+            }
         });
     }
 
@@ -91,6 +96,17 @@ public class CobbleSafariClientFabric implements ClientModInitializer {
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.SAFARI_EGG_NEST, RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.HOOPA_RING_PORTAL, RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.DUNGEON_PORTAL, RenderType.cutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.CREATIVE_DUNGEON_PORTAL, RenderType.cutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.GIRATINA_CORE, RenderType.translucent());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.GIRATINA_CORE_N, RenderType.translucent());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.GIRATINA_CORE_NE, RenderType.translucent());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.GIRATINA_CORE_E, RenderType.translucent());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.GIRATINA_CORE_SE, RenderType.translucent());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.GIRATINA_CORE_S, RenderType.translucent());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.GIRATINA_CORE_SW, RenderType.translucent());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.GIRATINA_CORE_W, RenderType.translucent());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.GIRATINA_CORE_NW, RenderType.translucent());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.GIRATINA_CORE_MOVING, RenderType.translucent());
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.MAGNETIC_CRYSTAL, RenderType.translucent());
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.MAGNETIC_CLUSTER, RenderType.translucent());
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.UNDERGROUND_SECRET, RenderType.translucent());
@@ -119,6 +135,7 @@ public class CobbleSafariClientFabric implements ClientModInitializer {
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.DISTORTION_ROCK_FLAT_VERTICAL, RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.DISTORTION_ROCK_FLAT_UPSIDEDOWN, RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.DISTORTION_ROCK_FLOATING, RenderType.cutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.DISTORTION_WEED, RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.SUSPICIOUS_DISTORTION_ROCK, RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.DISTORTION_BOULDER, RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.DISTORTION_FLOWER, RenderType.cutout());
@@ -130,6 +147,7 @@ public class CobbleSafariClientFabric implements ClientModInitializer {
         BlockEntityRenderers.register(ModBlockEntities.HOOPA_RING_PORTAL, HoopaRingPortalBlockEntityRenderer::new);
         BlockEntityRenderers.register(ModBlockEntities.DUNGEON_PORTAL, DungeonPortalBlockEntityRenderer::new);
         BlockEntityRenderers.register(ModBlockEntities.VOID_BLOCK, VoidBlockRenderer::new);
+        BlockEntityRenderers.register(ModBlockEntities.GIRATINA_CORE, GiratinaCoreBlockEntityRenderer::new);
         EntityRendererRegistry.register(ModEntities.HIKER, HikerEntityRenderer::new);
         EntityRendererRegistry.register(ModEntities.CSTRADER_NPC, CsTraderEntityRenderer::new);
         EntityRendererRegistry.register(ModEntities.BALLOON, BalloonEntityRenderer::new);

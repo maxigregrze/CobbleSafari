@@ -1,0 +1,42 @@
+{
+  "format_version": "1.9.0",
+  "credit": "Made with Blockbench",
+  "texture_size": [80, 32],
+  "textures": {
+    "0": "cobblesafari:block/giratinablock",
+    "particle": "cobblesafari:block/giratinablock"
+  },
+  "elements": [
+    {
+      "from": [0, 0, 0],
+      "to": [16, 11, 16],
+      "faces": {
+        "north": {"uv": [3.2, 10.5, 6.4, 16], "texture": "#0"},
+        "east": {"uv": [3.2, 10.5, 6.4, 16], "texture": "#0"},
+        "south": {"uv": [3.2, 10.5, 6.4, 16], "texture": "#0"},
+        "west": {"uv": [3.2, 10.5, 6.4, 16], "texture": "#0"},
+        "up": {"uv": [14.2, 8, 14.4, 8.5], "texture": "#0"},
+        "down": {"uv": [3.2, 8, 6.4, 16], "texture": "#0"}
+      }
+    },
+    {
+      "from": [0, 11, 0],
+      "to": [16, 16, 16],
+      "rotation": {"angle": 0, "axis": "y", "origin": [0, 11, 0]},
+      "faces": {
+        "south": {"uv": [3.2, 8, 6.4, 10.5], "texture": "#0"},
+        "west": {"uv": [3.2, 8, 6.4, 10.5], "texture": "#0"},
+        "up": {"uv": [9.6, 0, 12.8, 8], "texture": "#0"}
+      }
+    },
+    {
+      "from": [0, 16, 0],
+      "to": [16, 11, 16],
+      "rotation": {"angle": 0, "axis": "y", "origin": [0, 16, 0]},
+      "faces": {
+        "south": {"uv": [14.2, 8, 14.4, 8.5], "texture": "#0"},
+        "west": {"uv": [14.2, 8, 14.4, 8.5], "texture": "#0"}
+      }
+    }
+  ]
+}
