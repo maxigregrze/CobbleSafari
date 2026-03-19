@@ -1,0 +1,34 @@
+{
+  "type": "minecraft:gift",
+  "pools": [
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "cobblesafari:redchain_random_ball"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "cobblesafari:redchain_random_ev"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "cobblesafari:redchain_random_gender"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "cobblesafari:redchain_random_iv"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "cobblesafari:redchain_random_level"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "cobblesafari:redchain_random_shiny"
+        }
+      ]
+    }
+  ]
+}

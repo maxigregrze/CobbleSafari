@@ -25,5 +25,14 @@
             }
         ],
         "subtitle": "subtitles.cobblesafari.safari.spray"
+    },
+    "giratina.trade": {
+        "sounds": [
+            {
+                "name": "cobblesafari:giratina/trade",
+                "stream": false
+            }
+        ],
+        "subtitle": "subtitles.cobblesafari.giratina.trade"
     }
 }

@@ -3,7 +3,16 @@ package maxigregrze.cobblesafari.block.misc;
 import com.mojang.serialization.MapCodec;
 import maxigregrze.cobblesafari.init.ModBlockEntities;
 import maxigregrze.cobblesafari.init.ModBlocks;
+import maxigregrze.cobblesafari.init.ModItems;
+import maxigregrze.cobblesafari.init.ModSounds;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -18,6 +27,12 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.loot.LootParams;
+import net.minecraft.world.level.storage.loot.LootTable;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.Nullable;
@@ -33,6 +48,7 @@ public class GiratinaCoreBlock extends BaseEntityBlock {
             {-1, 0},            {1, 0},
             {-1, 1},  {0, 1},  {1, 1}
     };
+    private static final ResourceLocation GIRATINA_CORE_TRADE_LOOT_TABLE = ResourceLocation.fromNamespaceAndPath("cobblesafari", "blocks/giratina_core_trade");
 
     public GiratinaCoreBlock(Properties properties) {
         super(properties);
@@ -114,6 +130,46 @@ public class GiratinaCoreBlock extends BaseEntityBlock {
 
     public static boolean isRemovingMultiblock() {
         return removingMultiblock;
+    }
+
+    @Override
+    protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
+        if (level.isClientSide()) {
+            return ItemInteractionResult.SUCCESS;
+        }
+        if (!stack.is(ModItems.REDCHAIN_FRAGMENT)) {
+            return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+        }
+        if (!(level instanceof ServerLevel serverLevel)) {
+            return ItemInteractionResult.FAIL;
+        }
+
+        if (!(level.getBlockEntity(pos) instanceof GiratinaCoreBlockEntity coreBlockEntity)) {
+            return ItemInteractionResult.FAIL;
+        }
+        if (!coreBlockEntity.canTrade(level)) {
+            return ItemInteractionResult.FAIL;
+        }
+
+        if (!player.getAbilities().instabuild) {
+            stack.shrink(1);
+        }
+        coreBlockEntity.markTrade(level);
+
+        serverLevel.playSound(null, pos, ModSounds.GIRATINA_TRADE, SoundSource.BLOCKS, 1.0f, 1.0f);
+        serverLevel.sendParticles(ParticleTypes.CAMPFIRE_COSY_SMOKE, pos.getX() + 0.5, pos.getY() + 1.1, pos.getZ() + 0.5, 20, 0.2, 0.2, 0.2, 0.02);
+
+        LootTable lootTable = serverLevel.getServer().reloadableRegistries()
+                .getLootTable(ResourceKey.create(Registries.LOOT_TABLE, GIRATINA_CORE_TRADE_LOOT_TABLE));
+        LootParams lootParams = new LootParams.Builder(serverLevel)
+                .withParameter(LootContextParams.ORIGIN, pos.getCenter())
+                .withParameter(LootContextParams.THIS_ENTITY, player)
+                .create(LootContextParamSets.GIFT);
+        for (ItemStack reward : lootTable.getRandomItems(lootParams)) {
+            Block.popResource(serverLevel, pos.above(), reward);
+        }
+
+        return ItemInteractionResult.CONSUME;
     }
 
     public static void breakMultiblock(Level level, BlockPos centerPos) {

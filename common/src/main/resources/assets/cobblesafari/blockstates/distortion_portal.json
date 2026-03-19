@@ -1,0 +1,6 @@
+{
+  "variants": {
+    "mode=top": { "model": "cobblesafari:block/distortion_portal_empty" },
+    "mode=bottom": { "model": "cobblesafari:block/distortion_portal_empty" }
+  }
+}

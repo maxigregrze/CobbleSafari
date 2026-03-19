@@ -16,6 +16,7 @@ import maxigregrze.cobblesafari.client.renderer.CsTraderEntityRenderer;
 import maxigregrze.cobblesafari.client.renderer.HikerEntityRenderer;
 import maxigregrze.cobblesafari.client.renderer.HoopaRingPortalBlockEntityRenderer;
 import maxigregrze.cobblesafari.client.renderer.GiratinaCoreBlockEntityRenderer;
+import maxigregrze.cobblesafari.client.renderer.DistortionPortalBlockEntityRenderer;
 import maxigregrze.cobblesafari.client.renderer.VoidBlockRenderer;
 import maxigregrze.cobblesafari.client.model.BalloonEntityModel;
 import maxigregrze.cobblesafari.block.basepc.BasePCMenu;
@@ -107,6 +108,8 @@ public class CobbleSafariClientFabric implements ClientModInitializer {
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.GIRATINA_CORE_W, RenderType.translucent());
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.GIRATINA_CORE_NW, RenderType.translucent());
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.GIRATINA_CORE_MOVING, RenderType.translucent());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.DISTORTION_PORTAL, RenderType.translucent());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.DISTORTION_PORTAL_MOVING, RenderType.translucent());
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.MAGNETIC_CRYSTAL, RenderType.translucent());
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.MAGNETIC_CLUSTER, RenderType.translucent());
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.UNDERGROUND_SECRET, RenderType.translucent());
@@ -141,6 +144,7 @@ public class CobbleSafariClientFabric implements ClientModInitializer {
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.DISTORTION_FLOWER, RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.VANISHING_DISTORTION_FLOWER, RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.APPEARING_DISTORTION_FLOWER, RenderType.cutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.DISTORTION_STONEBRICKS_DOOR, RenderType.cutout());
     }
 
     private void registerRenderers() {
@@ -148,6 +152,7 @@ public class CobbleSafariClientFabric implements ClientModInitializer {
         BlockEntityRenderers.register(ModBlockEntities.DUNGEON_PORTAL, DungeonPortalBlockEntityRenderer::new);
         BlockEntityRenderers.register(ModBlockEntities.VOID_BLOCK, VoidBlockRenderer::new);
         BlockEntityRenderers.register(ModBlockEntities.GIRATINA_CORE, GiratinaCoreBlockEntityRenderer::new);
+        BlockEntityRenderers.register(ModBlockEntities.DISTORTION_PORTAL, DistortionPortalBlockEntityRenderer::new);
         EntityRendererRegistry.register(ModEntities.HIKER, HikerEntityRenderer::new);
         EntityRendererRegistry.register(ModEntities.CSTRADER_NPC, CsTraderEntityRenderer::new);
         EntityRendererRegistry.register(ModEntities.BALLOON, BalloonEntityRenderer::new);

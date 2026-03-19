@@ -10,6 +10,7 @@ import maxigregrze.cobblesafari.config.SafariConfig;
 import maxigregrze.cobblesafari.config.SecretBasePCConfig;
 import maxigregrze.cobblesafari.config.SafariTimerConfig;
 import maxigregrze.cobblesafari.config.SpawnBoostConfig;
+import maxigregrze.cobblesafari.config.RandomizerItemsConfig;
 import maxigregrze.cobblesafari.dungeon.DungeonDimensions;
 import maxigregrze.cobblesafari.dungeon.PortalSpawnConfig;
 import maxigregrze.cobblesafari.event.DimensionalBanEventHandler;
@@ -53,6 +54,7 @@ public class CobbleSafari {
         DimensionalBanConfig.load();
         MiscConfig.load();
         SecretBasePCConfig.load();
+        RandomizerItemsConfig.load();
 
         DungeonDimensions.register();
         CobbleSafariCommand.register();

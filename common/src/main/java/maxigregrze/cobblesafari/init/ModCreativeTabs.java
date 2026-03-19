@@ -112,6 +112,8 @@ public class ModCreativeTabs {
                 output.accept(ModBlocks.DISTORTION_ROCK);
                 output.accept(ModBlocks.DISTORTION_STONE);
                 output.accept(ModBlocks.DISTORTION_STONE_BRICKS);
+                output.accept(ModBlocks.DISTORTION_STONE_BRICKS_STAIRS);
+                output.accept(ModBlocks.DISTORTION_STONEBRICKS_DOOR);
                 output.accept(ModBlocks.DISTORTION_ROCK_VERTICAL);
                 output.accept(ModBlocks.DISTORTION_ROCK_UPSIDEDOWN);
                 output.accept(ModBlocks.DISTORTION_ROCK_DEEP);
@@ -123,11 +125,32 @@ public class ModCreativeTabs {
                 output.accept(ModBlocks.DISTORTION_ROCK_FLOATING);
                 output.accept(ModBlocks.DISTORTION_BOULDER);
                 output.accept(ModBlocks.GIRATINA_CORE);
+                output.accept(ModBlocks.DISTORTION_PORTAL);
                 output.accept(ModBlocks.DISTORTION_WEED);
                 output.accept(ModBlocks.DISTORTION_FLOWER);
                 output.accept(ModBlocks.VANISHING_DISTORTION_FLOWER);
                 output.accept(ModBlocks.APPEARING_DISTORTION_FLOWER);
                 output.accept(ModBlocks.SUSPICIOUS_DISTORTION_ROCK);
+                output.accept(ModItems.REDCHAIN_RANDOM_BALL);
+                output.accept(ModItems.REDCHAIN_RANDOM_EV);
+                output.accept(ModItems.REDCHAIN_RANDOM_GENDER);
+                output.accept(ModItems.REDCHAIN_RANDOM_IV);
+                output.accept(ModItems.REDCHAIN_RANDOM_LEVEL);
+                output.accept(ModItems.REDCHAIN_RANDOM_SHINY);
+                output.accept(ModItems.REDCHAIN_FRAGMENT);
+                output.accept(ModItems.HYPERBERRY_ENIGMA);
+                output.accept(ModItems.HYPERBERRY_TAMATO);
+                output.accept(ModItems.HYPERBERRY_GREPA);
+                output.accept(ModItems.HYPERBERRY_HONDEW);
+                output.accept(ModItems.HYPERBERRY_QUALOT);
+                output.accept(ModItems.HYPERBERRY_KELPSY);
+                output.accept(ModItems.HYPERBERRY_POMEG);
+                output.accept(ModItems.HYPERBERRY_SALAC);
+                output.accept(ModItems.HYPERBERRY_APICOT);
+                output.accept(ModItems.HYPERBERRY_PETAYA);
+                output.accept(ModItems.HYPERBERRY_GANLON);
+                output.accept(ModItems.HYPERBERRY_LIECHI);
+                output.accept(ModItems.HYPERBERRY_STARF);
             })
             .build();
 

@@ -3,6 +3,8 @@ package maxigregrze.cobblesafari.block.misc;
 import maxigregrze.cobblesafari.init.ModBlockEntities;
 import maxigregrze.cobblesafari.init.ModBlocks;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
@@ -18,6 +20,7 @@ public class GiratinaCoreBlockEntity extends BlockEntity {
     private float currentYaw;
     private float previousYaw;
     private float targetYaw;
+    private long lastTradeGameTime = Long.MIN_VALUE;
 
     public GiratinaCoreBlockEntity(BlockPos pos, BlockState state) {
         super(ModBlockEntities.GIRATINA_CORE, pos, state);
@@ -59,5 +62,26 @@ public class GiratinaCoreBlockEntity extends BlockEntity {
 
     public float getPreviousYaw() {
         return previousYaw;
+    }
+
+    public boolean canTrade(Level level) {
+        return level.getGameTime() - lastTradeGameTime >= 100L;
+    }
+
+    public void markTrade(Level level) {
+        lastTradeGameTime = level.getGameTime();
+        setChanged();
+    }
+
+    @Override
+    protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
+        super.saveAdditional(tag, registries);
+        tag.putLong("LastTradeGameTime", lastTradeGameTime);
+    }
+
+    @Override
+    protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
+        super.loadAdditional(tag, registries);
+        lastTradeGameTime = tag.contains("LastTradeGameTime") ? tag.getLong("LastTradeGameTime") : Long.MIN_VALUE;
     }
 }

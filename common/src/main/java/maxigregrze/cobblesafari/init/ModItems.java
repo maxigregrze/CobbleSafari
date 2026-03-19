@@ -1,13 +1,24 @@
 package maxigregrze.cobblesafari.init;
 
+import com.cobblemon.mod.common.api.pokemon.stats.Stats;
 import maxigregrze.cobblesafari.CobbleSafari;
 import maxigregrze.cobblesafari.config.SpawnBoostConfig;
 import maxigregrze.cobblesafari.item.BaitItem;
 import maxigregrze.cobblesafari.item.CreativeEggItem;
 import maxigregrze.cobblesafari.item.CreativeFlagItem;
+import maxigregrze.cobblesafari.item.HyperBerryEVItem;
+import maxigregrze.cobblesafari.item.HyperBerryFriendshipItem;
+import maxigregrze.cobblesafari.item.HyperBerryIVItem;
 import maxigregrze.cobblesafari.item.IncenseItem;
 import maxigregrze.cobblesafari.item.LuckyMiningHelmetItem;
 import maxigregrze.cobblesafari.item.MudBallItem;
+import maxigregrze.cobblesafari.item.RedChainFragmentItem;
+import maxigregrze.cobblesafari.item.RedChainRandomBallItem;
+import maxigregrze.cobblesafari.item.RedChainRandomEVItem;
+import maxigregrze.cobblesafari.item.RedChainRandomGenderItem;
+import maxigregrze.cobblesafari.item.RedChainRandomIVItem;
+import maxigregrze.cobblesafari.item.RedChainRandomLevelItem;
+import maxigregrze.cobblesafari.item.RedChainRandomShinyItem;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -91,6 +102,28 @@ public class ModItems {
 
     public static final Item MUD_BALL = new MudBallItem(new Item.Properties().stacksTo(64));
     public static final Item BAIT = new BaitItem(new Item.Properties().stacksTo(64));
+
+    public static final Item REDCHAIN_RANDOM_BALL = new RedChainRandomBallItem(new Item.Properties().stacksTo(1), "redchain_random_ball");
+    public static final Item REDCHAIN_RANDOM_EV = new RedChainRandomEVItem(new Item.Properties().stacksTo(1), "redchain_random_ev");
+    public static final Item REDCHAIN_RANDOM_GENDER = new RedChainRandomGenderItem(new Item.Properties().stacksTo(1), "redchain_random_gender");
+    public static final Item REDCHAIN_RANDOM_IV = new RedChainRandomIVItem(new Item.Properties().stacksTo(1), "redchain_random_iv");
+    public static final Item REDCHAIN_RANDOM_LEVEL = new RedChainRandomLevelItem(new Item.Properties().stacksTo(1), "redchain_random_level");
+    public static final Item REDCHAIN_RANDOM_SHINY = new RedChainRandomShinyItem(new Item.Properties().stacksTo(1), "redchain_random_shiny");
+    public static final Item REDCHAIN_FRAGMENT = new RedChainFragmentItem(new Item.Properties().stacksTo(64));
+
+    public static final Item HYPERBERRY_ENIGMA = new HyperBerryFriendshipItem(new Item.Properties().stacksTo(1).rarity(Rarity.RARE), "hyperberry_enigma");
+    public static final Item HYPERBERRY_TAMATO = new HyperBerryEVItem(new Item.Properties().stacksTo(1).rarity(Rarity.RARE), "hyperberry_tamato", Stats.SPEED);
+    public static final Item HYPERBERRY_GREPA = new HyperBerryEVItem(new Item.Properties().stacksTo(1).rarity(Rarity.RARE), "hyperberry_grepa", Stats.SPECIAL_DEFENCE);
+    public static final Item HYPERBERRY_HONDEW = new HyperBerryEVItem(new Item.Properties().stacksTo(1).rarity(Rarity.RARE), "hyperberry_hondew", Stats.SPECIAL_ATTACK);
+    public static final Item HYPERBERRY_QUALOT = new HyperBerryEVItem(new Item.Properties().stacksTo(1).rarity(Rarity.RARE), "hyperberry_qualot", Stats.DEFENCE);
+    public static final Item HYPERBERRY_KELPSY = new HyperBerryEVItem(new Item.Properties().stacksTo(1).rarity(Rarity.RARE), "hyperberry_kelpsy", Stats.ATTACK);
+    public static final Item HYPERBERRY_POMEG = new HyperBerryEVItem(new Item.Properties().stacksTo(1).rarity(Rarity.RARE), "hyperberry_pomeg", Stats.HP);
+    public static final Item HYPERBERRY_SALAC = new HyperBerryIVItem(new Item.Properties().stacksTo(1).rarity(Rarity.RARE), "hyperberry_salac", Stats.SPEED);
+    public static final Item HYPERBERRY_APICOT = new HyperBerryIVItem(new Item.Properties().stacksTo(1).rarity(Rarity.RARE), "hyperberry_apicot", Stats.SPECIAL_DEFENCE);
+    public static final Item HYPERBERRY_PETAYA = new HyperBerryIVItem(new Item.Properties().stacksTo(1).rarity(Rarity.RARE), "hyperberry_petaya", Stats.SPECIAL_ATTACK);
+    public static final Item HYPERBERRY_GANLON = new HyperBerryIVItem(new Item.Properties().stacksTo(1).rarity(Rarity.RARE), "hyperberry_ganlon", Stats.DEFENCE);
+    public static final Item HYPERBERRY_LIECHI = new HyperBerryIVItem(new Item.Properties().stacksTo(1).rarity(Rarity.RARE), "hyperberry_liechi", Stats.ATTACK);
+    public static final Item HYPERBERRY_STARF = new HyperBerryIVItem(new Item.Properties().stacksTo(1).rarity(Rarity.RARE), "hyperberry_starf", Stats.HP);
 
     public static Item LUCKY_MINING_HELMET;
 
@@ -192,6 +225,26 @@ public class ModItems {
 
         registerItem("mud_ball", MUD_BALL);
         registerItem("bait", BAIT);
+        registerItem("redchain_random_ball", REDCHAIN_RANDOM_BALL);
+        registerItem("redchain_random_ev", REDCHAIN_RANDOM_EV);
+        registerItem("redchain_random_gender", REDCHAIN_RANDOM_GENDER);
+        registerItem("redchain_random_iv", REDCHAIN_RANDOM_IV);
+        registerItem("redchain_random_level", REDCHAIN_RANDOM_LEVEL);
+        registerItem("redchain_random_shiny", REDCHAIN_RANDOM_SHINY);
+        registerItem("redchain_fragment", REDCHAIN_FRAGMENT);
+        registerItem("hyperberry_enigma", HYPERBERRY_ENIGMA);
+        registerItem("hyperberry_tamato", HYPERBERRY_TAMATO);
+        registerItem("hyperberry_grepa", HYPERBERRY_GREPA);
+        registerItem("hyperberry_hondew", HYPERBERRY_HONDEW);
+        registerItem("hyperberry_qualot", HYPERBERRY_QUALOT);
+        registerItem("hyperberry_kelpsy", HYPERBERRY_KELPSY);
+        registerItem("hyperberry_pomeg", HYPERBERRY_POMEG);
+        registerItem("hyperberry_salac", HYPERBERRY_SALAC);
+        registerItem("hyperberry_apicot", HYPERBERRY_APICOT);
+        registerItem("hyperberry_petaya", HYPERBERRY_PETAYA);
+        registerItem("hyperberry_ganlon", HYPERBERRY_GANLON);
+        registerItem("hyperberry_liechi", HYPERBERRY_LIECHI);
+        registerItem("hyperberry_starf", HYPERBERRY_STARF);
 
         Holder<ArmorMaterial> luckyHelmetMaterial = Registry.registerForHolder(
                 BuiltInRegistries.ARMOR_MATERIAL,
@@ -246,5 +299,25 @@ public class ModItems {
         BATCH_ITEMS.add(FOSSIL_SHINY);
         BATCH_ITEMS.add(MUD_BALL);
         BATCH_ITEMS.add(BAIT);
+        BATCH_ITEMS.add(REDCHAIN_RANDOM_BALL);
+        BATCH_ITEMS.add(REDCHAIN_RANDOM_EV);
+        BATCH_ITEMS.add(REDCHAIN_RANDOM_GENDER);
+        BATCH_ITEMS.add(REDCHAIN_RANDOM_IV);
+        BATCH_ITEMS.add(REDCHAIN_RANDOM_LEVEL);
+        BATCH_ITEMS.add(REDCHAIN_RANDOM_SHINY);
+        BATCH_ITEMS.add(REDCHAIN_FRAGMENT);
+        BATCH_ITEMS.add(HYPERBERRY_ENIGMA);
+        BATCH_ITEMS.add(HYPERBERRY_TAMATO);
+        BATCH_ITEMS.add(HYPERBERRY_GREPA);
+        BATCH_ITEMS.add(HYPERBERRY_HONDEW);
+        BATCH_ITEMS.add(HYPERBERRY_QUALOT);
+        BATCH_ITEMS.add(HYPERBERRY_KELPSY);
+        BATCH_ITEMS.add(HYPERBERRY_POMEG);
+        BATCH_ITEMS.add(HYPERBERRY_SALAC);
+        BATCH_ITEMS.add(HYPERBERRY_APICOT);
+        BATCH_ITEMS.add(HYPERBERRY_PETAYA);
+        BATCH_ITEMS.add(HYPERBERRY_GANLON);
+        BATCH_ITEMS.add(HYPERBERRY_LIECHI);
+        BATCH_ITEMS.add(HYPERBERRY_STARF);
     }
 }

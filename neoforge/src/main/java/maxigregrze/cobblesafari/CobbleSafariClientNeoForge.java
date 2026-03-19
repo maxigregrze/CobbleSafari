@@ -18,6 +18,7 @@ import maxigregrze.cobblesafari.client.renderer.CsTraderEntityRenderer;
 import maxigregrze.cobblesafari.client.renderer.HikerEntityRenderer;
 import maxigregrze.cobblesafari.client.renderer.HoopaRingPortalBlockEntityRenderer;
 import maxigregrze.cobblesafari.client.renderer.GiratinaCoreBlockEntityRenderer;
+import maxigregrze.cobblesafari.client.renderer.DistortionPortalBlockEntityRenderer;
 import maxigregrze.cobblesafari.client.renderer.VoidBlockRenderer;
 import maxigregrze.cobblesafari.client.model.BalloonEntityModel;
 import maxigregrze.cobblesafari.block.basepc.BasePCMenu;
@@ -89,6 +90,8 @@ public class CobbleSafariClientNeoForge {
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.GIRATINA_CORE_W, RenderType.translucent());
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.GIRATINA_CORE_NW, RenderType.translucent());
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.GIRATINA_CORE_MOVING, RenderType.translucent());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.DISTORTION_PORTAL, RenderType.translucent());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.DISTORTION_PORTAL_MOVING, RenderType.translucent());
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.MAGNETIC_CRYSTAL, RenderType.translucent());
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.MAGNETIC_CLUSTER, RenderType.translucent());
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.UNDERGROUND_SECRET, RenderType.translucent());
@@ -123,11 +126,13 @@ public class CobbleSafariClientNeoForge {
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.DISTORTION_FLOWER, RenderType.cutout());
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.VANISHING_DISTORTION_FLOWER, RenderType.cutout());
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.APPEARING_DISTORTION_FLOWER, RenderType.cutout());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.DISTORTION_STONEBRICKS_DOOR, RenderType.cutout());
 
             BlockEntityRenderers.register(ModBlockEntities.HOOPA_RING_PORTAL, HoopaRingPortalBlockEntityRenderer::new);
             BlockEntityRenderers.register(ModBlockEntities.DUNGEON_PORTAL, DungeonPortalBlockEntityRenderer::new);
             BlockEntityRenderers.register(ModBlockEntities.VOID_BLOCK, VoidBlockRenderer::new);
             BlockEntityRenderers.register(ModBlockEntities.GIRATINA_CORE, GiratinaCoreBlockEntityRenderer::new);
+            BlockEntityRenderers.register(ModBlockEntities.DISTORTION_PORTAL, DistortionPortalBlockEntityRenderer::new);
         });
 
         NeoForge.EVENT_BUS.addListener(CobbleSafariClientNeoForge::onRenderGuiLayer);

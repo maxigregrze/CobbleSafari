@@ -12,5 +12,8 @@ public class ModSounds {
     public static final SoundEvent SPRAY_SOUND = SoundEvent.createVariableRangeEvent(
             ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, "safari.spray"));
 
+    public static final SoundEvent GIRATINA_TRADE = SoundEvent.createVariableRangeEvent(
+            ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, "giratina.trade"));
+
     private ModSounds() {}
 }

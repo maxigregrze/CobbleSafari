@@ -12,6 +12,8 @@ import maxigregrze.cobblesafari.block.misc.AppearingDistortionFlowerBlock;
 import maxigregrze.cobblesafari.block.misc.AquaticDecorationBlock;
 import maxigregrze.cobblesafari.block.misc.BelltowerTrellisBlock;
 import maxigregrze.cobblesafari.block.misc.DistortionFlowerBlock;
+import maxigregrze.cobblesafari.block.misc.DistortionDoorBlock;
+import maxigregrze.cobblesafari.block.misc.DistortionPortalBlock;
 import maxigregrze.cobblesafari.block.misc.DistortionWeedBlock;
 import maxigregrze.cobblesafari.block.misc.IcicleBlock;
 import maxigregrze.cobblesafari.block.misc.DistortionBoulderBlock;
@@ -481,6 +483,36 @@ public class ModBlocks {
                     .strength(1.5f, 6.0f)
                     .sound(SoundType.STONE)
                     .requiresCorrectToolForDrops()
+            ));
+
+    public static final Block DISTORTION_STONE_BRICKS_STAIRS = registerBlock("distortion_stone_bricks_stairs",
+            new StairBlock(DISTORTION_STONE_BRICKS.defaultBlockState(), BlockBehaviour.Properties.ofFullCopy(DISTORTION_STONE_BRICKS)));
+
+    public static final Block DISTORTION_STONEBRICKS_DOOR = registerBlock("distortion_stonebricks_door",
+            new DistortionDoorBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.STONE)
+                    .strength(1.5f, 6.0f)
+                    .sound(SoundType.STONE)
+                    .requiresCorrectToolForDrops()
+                    .noOcclusion()
+            ));
+
+    public static final Block DISTORTION_PORTAL = registerBlock("distortion_portal",
+            new DistortionPortalBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.COLOR_PURPLE)
+                    .strength(3.0f, 9.0f)
+                    .sound(SoundType.GLASS)
+                    .noOcclusion()
+                    .noCollission()
+            ));
+
+    public static final Block DISTORTION_PORTAL_MOVING = registerBlockWithoutItem("distortion_portal_moving",
+            new Block(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.COLOR_PURPLE)
+                    .strength(3.0f, 9.0f)
+                    .sound(SoundType.GLASS)
+                    .noOcclusion()
+                    .noCollission()
             ));
 
     public static final Block SUSPICIOUS_DISTORTION_ROCK = registerBlock("suspicious_distortion_rock",

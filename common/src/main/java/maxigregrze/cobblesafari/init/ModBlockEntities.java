@@ -4,6 +4,7 @@ import maxigregrze.cobblesafari.block.basepc.BasePCBlockEntity;
 import maxigregrze.cobblesafari.block.dungeon.DungeonPortalBlockEntity;
 import maxigregrze.cobblesafari.block.dungeon.HoopaRingPortalBlockEntity;
 import maxigregrze.cobblesafari.block.misc.GiratinaCoreBlockEntity;
+import maxigregrze.cobblesafari.block.misc.DistortionPortalBlockEntity;
 import maxigregrze.cobblesafari.block.misc.SafariEggNestBlockEntity;
 import maxigregrze.cobblesafari.block.misc.VoidBlockEntity;
 import maxigregrze.cobblesafari.CobbleSafari;
@@ -22,6 +23,7 @@ public class ModBlockEntities {
     public static BlockEntityType<DungeonPortalBlockEntity> DUNGEON_PORTAL;
     public static BlockEntityType<VoidBlockEntity> VOID_BLOCK;
     public static BlockEntityType<GiratinaCoreBlockEntity> GIRATINA_CORE;
+    public static BlockEntityType<DistortionPortalBlockEntity> DISTORTION_PORTAL;
     public static BlockEntityType<BasePCBlockEntity> SECRETBASE_PC;
     public static BlockEntityType<IncubatorBlockEntity> INCUBATOR;
 
@@ -56,6 +58,12 @@ public class ModBlockEntities {
                 BuiltInRegistries.BLOCK_ENTITY_TYPE,
                 ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, "giratina_core"),
                 BlockEntityType.Builder.of(GiratinaCoreBlockEntity::new, ModBlocks.GIRATINA_CORE).build(null)
+        );
+
+        DISTORTION_PORTAL = Registry.register(
+                BuiltInRegistries.BLOCK_ENTITY_TYPE,
+                ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, "distortion_portal"),
+                BlockEntityType.Builder.of(DistortionPortalBlockEntity::new, ModBlocks.DISTORTION_PORTAL).build(null)
         );
 
         SECRETBASE_PC = Registry.register(
