@@ -134,6 +134,10 @@ public class GiratinaCoreBlock extends BaseEntityBlock {
 
     @Override
     protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
+        return tryUseRedchainFragmentOnCore(stack, level, pos, player, hand);
+    }
+
+    public static ItemInteractionResult tryUseRedchainFragmentOnCore(ItemStack stack, Level level, BlockPos corePos, Player player, InteractionHand hand) {
         if (level.isClientSide()) {
             return ItemInteractionResult.SUCCESS;
         }
@@ -144,7 +148,7 @@ public class GiratinaCoreBlock extends BaseEntityBlock {
             return ItemInteractionResult.FAIL;
         }
 
-        if (!(level.getBlockEntity(pos) instanceof GiratinaCoreBlockEntity coreBlockEntity)) {
+        if (!(level.getBlockEntity(corePos) instanceof GiratinaCoreBlockEntity coreBlockEntity)) {
             return ItemInteractionResult.FAIL;
         }
         if (!coreBlockEntity.canTrade(level)) {
@@ -156,17 +160,17 @@ public class GiratinaCoreBlock extends BaseEntityBlock {
         }
         coreBlockEntity.markTrade(level);
 
-        serverLevel.playSound(null, pos, ModSounds.GIRATINA_TRADE, SoundSource.BLOCKS, 1.0f, 1.0f);
-        serverLevel.sendParticles(ParticleTypes.CAMPFIRE_COSY_SMOKE, pos.getX() + 0.5, pos.getY() + 1.1, pos.getZ() + 0.5, 20, 0.2, 0.2, 0.2, 0.02);
+        serverLevel.playSound(null, corePos, ModSounds.GIRATINA_TRADE, SoundSource.BLOCKS, 1.0f, 1.0f);
+        serverLevel.sendParticles(ParticleTypes.CAMPFIRE_COSY_SMOKE, corePos.getX() + 0.5, corePos.getY() + 1.1, corePos.getZ() + 0.5, 20, 0.2, 0.2, 0.2, 0.02);
 
         LootTable lootTable = serverLevel.getServer().reloadableRegistries()
                 .getLootTable(ResourceKey.create(Registries.LOOT_TABLE, GIRATINA_CORE_TRADE_LOOT_TABLE));
         LootParams lootParams = new LootParams.Builder(serverLevel)
-                .withParameter(LootContextParams.ORIGIN, pos.getCenter())
+                .withParameter(LootContextParams.ORIGIN, corePos.getCenter())
                 .withParameter(LootContextParams.THIS_ENTITY, player)
                 .create(LootContextParamSets.GIFT);
         for (ItemStack reward : lootTable.getRandomItems(lootParams)) {
-            Block.popResource(serverLevel, pos.above(), reward);
+            Block.popResource(serverLevel, corePos.above(), reward);
         }
 
         return ItemInteractionResult.CONSUME;

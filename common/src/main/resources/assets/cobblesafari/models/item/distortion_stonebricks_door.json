@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "cobblesafari:block/distortion_stonebricks_door"
+    "layer0": "cobblesafari:item/distortion_stonebricks_door"
   }
 }

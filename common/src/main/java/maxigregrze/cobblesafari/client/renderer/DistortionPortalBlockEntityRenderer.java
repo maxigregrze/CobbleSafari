@@ -20,11 +20,13 @@ public class DistortionPortalBlockEntityRenderer implements BlockEntityRenderer<
     @Override
     public void render(DistortionPortalBlockEntity blockEntity, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight, int packedOverlay) {
         float yaw = Mth.rotLerp(partialTick, blockEntity.getPreviousYaw(), blockEntity.getCurrentYaw());
+        float spinZ = Mth.rotLerp(partialTick, blockEntity.getPreviousSpinZ(), blockEntity.getCurrentSpinZ());
 
         poseStack.pushPose();
-        poseStack.translate(0.5, 0.5, 0.5);
+        poseStack.translate(0.5, 1.0, 0.5);
         poseStack.mulPose(Axis.YP.rotationDegrees(yaw));
-        poseStack.translate(-0.5, -0.5, -0.5);
+        poseStack.mulPose(Axis.ZP.rotationDegrees(spinZ));
+        poseStack.translate(-0.5, -1.0, -0.5);
         blockRenderDispatcher.renderSingleBlock(
                 ModBlocks.DISTORTION_PORTAL_MOVING.defaultBlockState(),
                 poseStack,

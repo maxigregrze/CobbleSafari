@@ -138,19 +138,6 @@ public class ModCreativeTabs {
                 output.accept(ModItems.REDCHAIN_RANDOM_LEVEL);
                 output.accept(ModItems.REDCHAIN_RANDOM_SHINY);
                 output.accept(ModItems.REDCHAIN_FRAGMENT);
-                output.accept(ModItems.HYPERBERRY_ENIGMA);
-                output.accept(ModItems.HYPERBERRY_TAMATO);
-                output.accept(ModItems.HYPERBERRY_GREPA);
-                output.accept(ModItems.HYPERBERRY_HONDEW);
-                output.accept(ModItems.HYPERBERRY_QUALOT);
-                output.accept(ModItems.HYPERBERRY_KELPSY);
-                output.accept(ModItems.HYPERBERRY_POMEG);
-                output.accept(ModItems.HYPERBERRY_SALAC);
-                output.accept(ModItems.HYPERBERRY_APICOT);
-                output.accept(ModItems.HYPERBERRY_PETAYA);
-                output.accept(ModItems.HYPERBERRY_GANLON);
-                output.accept(ModItems.HYPERBERRY_LIECHI);
-                output.accept(ModItems.HYPERBERRY_STARF);
             })
             .build();
 
@@ -173,6 +160,19 @@ public class ModCreativeTabs {
                 output.accept(ModItems.EGG_CREATIVE);
                 output.accept(ModItems.WILD_EGG_BASE);
                 ModItems.WILD_EGGS.values().forEach(output::accept);
+                output.accept(ModItems.HYPERBERRY_ENIGMA);
+                output.accept(ModItems.HYPERBERRY_TAMATO);
+                output.accept(ModItems.HYPERBERRY_GREPA);
+                output.accept(ModItems.HYPERBERRY_HONDEW);
+                output.accept(ModItems.HYPERBERRY_QUALOT);
+                output.accept(ModItems.HYPERBERRY_KELPSY);
+                output.accept(ModItems.HYPERBERRY_POMEG);
+                output.accept(ModItems.HYPERBERRY_SALAC);
+                output.accept(ModItems.HYPERBERRY_APICOT);
+                output.accept(ModItems.HYPERBERRY_PETAYA);
+                output.accept(ModItems.HYPERBERRY_GANLON);
+                output.accept(ModItems.HYPERBERRY_LIECHI);
+                output.accept(ModItems.HYPERBERRY_STARF);
             })
             .build();
 

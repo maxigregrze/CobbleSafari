@@ -14,9 +14,13 @@ public class DistortionPortalBlockEntity extends BlockEntity {
     private static final float IDLE_SPIN_DEGREES = 0.5f;
     private static final float TRACKING_SMOOTHING = 0.25f;
 
+    private static final float SPIN_Z_DEGREES_PER_TICK = 1.5f;
+
     private float currentYaw;
     private float previousYaw;
     private float targetYaw;
+    private float currentSpinZ;
+    private float previousSpinZ;
 
     public DistortionPortalBlockEntity(BlockPos pos, BlockState state) {
         super(ModBlockEntities.DISTORTION_PORTAL, pos, state);
@@ -31,6 +35,8 @@ public class DistortionPortalBlockEntity extends BlockEntity {
         }
 
         blockEntity.previousYaw = blockEntity.currentYaw;
+        blockEntity.previousSpinZ = blockEntity.currentSpinZ;
+        blockEntity.currentSpinZ += SPIN_Z_DEGREES_PER_TICK;
         Player nearestPlayer = level.getNearestPlayer(
                 pos.getX() + 0.5,
                 pos.getY() + 0.5,
@@ -57,5 +63,13 @@ public class DistortionPortalBlockEntity extends BlockEntity {
 
     public float getPreviousYaw() {
         return previousYaw;
+    }
+
+    public float getCurrentSpinZ() {
+        return currentSpinZ;
+    }
+
+    public float getPreviousSpinZ() {
+        return previousSpinZ;
     }
 }

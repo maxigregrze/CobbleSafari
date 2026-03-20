@@ -131,6 +131,7 @@ public class ModBlocks {
                     .strength(50.0f, 3600000.0f)
                     .sound(SoundType.STONE)
                     .noOcclusion()
+                    .lightLevel(state -> 8)
                     .requiresCorrectToolForDrops()
             ));
 
@@ -140,6 +141,7 @@ public class ModBlocks {
                     .strength(50.0f, 3600000.0f)
                     .sound(SoundType.STONE)
                     .noOcclusion()
+                    .lightLevel(state -> 8)
                     .requiresCorrectToolForDrops()
             ));
 
@@ -158,6 +160,7 @@ public class ModBlocks {
                     .strength(50.0f, 3600000.0f)
                     .sound(SoundType.STONE)
                     .noOcclusion()
+                    .lightLevel(state -> 8)
                     .requiresCorrectToolForDrops()
             ));
 
@@ -176,6 +179,7 @@ public class ModBlocks {
                     .strength(50.0f, 3600000.0f)
                     .sound(SoundType.STONE)
                     .noOcclusion()
+                    .lightLevel(state -> 8)
                     .requiresCorrectToolForDrops()
             ));
 
@@ -185,6 +189,7 @@ public class ModBlocks {
                     .strength(50.0f, 3600000.0f)
                     .sound(SoundType.STONE)
                     .noOcclusion()
+                    .lightLevel(state -> 8)
                     .requiresCorrectToolForDrops()
             ));
 
@@ -194,6 +199,7 @@ public class ModBlocks {
                     .strength(50.0f, 3600000.0f)
                     .sound(SoundType.STONE)
                     .noOcclusion()
+                    .lightLevel(state -> 8)
                     .requiresCorrectToolForDrops()
             ));
 
@@ -203,6 +209,7 @@ public class ModBlocks {
                     .strength(50.0f, 3600000.0f)
                     .sound(SoundType.STONE)
                     .noOcclusion()
+                    .lightLevel(state -> 8)
                     .requiresCorrectToolForDrops()
             ));
 
@@ -504,6 +511,8 @@ public class ModBlocks {
                     .sound(SoundType.GLASS)
                     .noOcclusion()
                     .noCollission()
+                    .dynamicShape()
+                    .lightLevel(state -> 15)
             ));
 
     public static final Block DISTORTION_PORTAL_MOVING = registerBlockWithoutItem("distortion_portal_moving",
@@ -513,6 +522,8 @@ public class ModBlocks {
                     .sound(SoundType.GLASS)
                     .noOcclusion()
                     .noCollission()
+                    .dynamicShape()
+                    .lightLevel(state -> 15)
             ));
 
     public static final Block SUSPICIOUS_DISTORTION_ROCK = registerBlock("suspicious_distortion_rock",

@@ -20,7 +20,8 @@ public class GiratinaCoreBlockEntity extends BlockEntity {
     private float currentYaw;
     private float previousYaw;
     private float targetYaw;
-    private long lastTradeGameTime = Long.MIN_VALUE;
+    private static final long NO_TRADE_YET = -1L;
+    private long lastTradeGameTime = NO_TRADE_YET;
 
     public GiratinaCoreBlockEntity(BlockPos pos, BlockState state) {
         super(ModBlockEntities.GIRATINA_CORE, pos, state);
@@ -65,6 +66,9 @@ public class GiratinaCoreBlockEntity extends BlockEntity {
     }
 
     public boolean canTrade(Level level) {
+        if (lastTradeGameTime < 0L) {
+            return true;
+        }
         return level.getGameTime() - lastTradeGameTime >= 100L;
     }
 
@@ -82,6 +86,9 @@ public class GiratinaCoreBlockEntity extends BlockEntity {
     @Override
     protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
-        lastTradeGameTime = tag.contains("LastTradeGameTime") ? tag.getLong("LastTradeGameTime") : Long.MIN_VALUE;
+        lastTradeGameTime = tag.contains("LastTradeGameTime") ? tag.getLong("LastTradeGameTime") : NO_TRADE_YET;
+        if (lastTradeGameTime == Long.MIN_VALUE) {
+            lastTradeGameTime = NO_TRADE_YET;
+        }
     }
 }
