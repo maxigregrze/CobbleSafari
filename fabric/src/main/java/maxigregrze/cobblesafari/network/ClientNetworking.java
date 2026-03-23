@@ -1,11 +1,13 @@
 package maxigregrze.cobblesafari.network;
 
 import maxigregrze.cobblesafari.client.screen.TpAcceptScreen;
+import maxigregrze.cobblesafari.client.screen.DistortionStoneBricksRuneScreen;
 import maxigregrze.cobblesafari.underground.UndergroundScreen;
 import maxigregrze.cobblesafari.underground.logic.TreasureRegistry;
 import maxigregrze.cobblesafari.underground.network.UndergroundPayloads;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.inventory.BookViewScreen;
 
 public class ClientNetworking {
 
@@ -35,6 +37,25 @@ public class ClientNetworking {
                         if (Minecraft.getInstance().screen instanceof TpAcceptScreen tpScreen) {
                             tpScreen.closeFromServer();
                         }
+                    });
+                }
+        );
+
+        ClientPlayNetworking.registerGlobalReceiver(
+                OpenRuneEditorPayload.TYPE,
+                (payload, context) -> {
+                    context.client().execute(() -> {
+                        Minecraft.getInstance().setScreen(new DistortionStoneBricksRuneScreen(payload.pos(), payload.text()));
+                    });
+                }
+        );
+
+        ClientPlayNetworking.registerGlobalReceiver(
+                OpenLostNoteBookPayload.TYPE,
+                (payload, context) -> {
+                    context.client().execute(() -> {
+                        BookViewScreen.BookAccess access = BookViewScreen.BookAccess.fromItem(payload.book());
+                        Minecraft.getInstance().setScreen(new BookViewScreen(access));
                     });
                 }
         );

@@ -1,0 +1,8 @@
+{
+    "keys": [
+      "distortion"
+    ],
+    "type": "flag",
+    "isAspect": true,
+    "default": false
+  }

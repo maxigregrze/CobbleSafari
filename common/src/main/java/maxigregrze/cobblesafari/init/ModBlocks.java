@@ -11,6 +11,7 @@ import maxigregrze.cobblesafari.block.misc.AirKelpBlock;
 import maxigregrze.cobblesafari.block.misc.AppearingDistortionFlowerBlock;
 import maxigregrze.cobblesafari.block.misc.AquaticDecorationBlock;
 import maxigregrze.cobblesafari.block.misc.BelltowerTrellisBlock;
+import maxigregrze.cobblesafari.block.misc.DistortionCarpetFlowerBlock;
 import maxigregrze.cobblesafari.block.misc.DistortionFlowerBlock;
 import maxigregrze.cobblesafari.block.misc.DistortionDoorBlock;
 import maxigregrze.cobblesafari.block.misc.DistortionPortalBlock;
@@ -20,10 +21,15 @@ import maxigregrze.cobblesafari.block.misc.DistortionBoulderBlock;
 import maxigregrze.cobblesafari.block.misc.DistortionRockBlock;
 import maxigregrze.cobblesafari.block.misc.DistortionRockDirectionalBlock;
 import maxigregrze.cobblesafari.block.misc.DistortionRockVerticalBlock;
+import maxigregrze.cobblesafari.block.misc.DistortionStoneBricksRuneBlock;
+import maxigregrze.cobblesafari.block.misc.DistortionStonebricksRubbleBlock;
 import maxigregrze.cobblesafari.block.misc.GiratinaCoreBlock;
 import maxigregrze.cobblesafari.block.misc.GiratinaCoreSideBlock;
+import maxigregrze.cobblesafari.block.misc.LostNotesBlock;
+import maxigregrze.cobblesafari.block.misc.LostItemBlock;
 import maxigregrze.cobblesafari.block.misc.MagneticClusterBlock;
 import maxigregrze.cobblesafari.block.misc.MagneticCrystalBlock;
+import maxigregrze.cobblesafari.block.misc.LiquidBarrierBlock;
 import maxigregrze.cobblesafari.block.misc.SafariEggNestBlock;
 import maxigregrze.cobblesafari.block.misc.VanishingDistortionFlowerBlock;
 import maxigregrze.cobblesafari.block.misc.VoidBlock;
@@ -120,6 +126,14 @@ public class ModBlocks {
     public static final Block VOID_BLOCK = registerBlock("void_block",
             new VoidBlock(BlockBehaviour.Properties.of()
                     .mapColor(MapColor.COLOR_BLACK)
+                    .strength(-1.0f, 3600000.0f)
+                    .noLootTable()
+                    .noOcclusion()
+            ));
+
+    public static final Block LIQUID_BARRIER = registerBlock("liquid_barrier",
+            new LiquidBarrierBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.NONE)
                     .strength(-1.0f, 3600000.0f)
                     .noLootTable()
                     .noOcclusion()
@@ -492,6 +506,23 @@ public class ModBlocks {
                     .requiresCorrectToolForDrops()
             ));
 
+    public static final Block DISTORTION_STONE_BRICKS_RUNE = registerBlock("distortion_stone_bricks_rune",
+            new DistortionStoneBricksRuneBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.STONE)
+                    .strength(1.5f, 6.0f)
+                    .sound(SoundType.STONE)
+                    .requiresCorrectToolForDrops()
+            ));
+
+    public static final Block DISTORTION_STONEBRICKS_RUBBLE = registerBlock("distortion_stonebricks_rubble",
+            new DistortionStonebricksRubbleBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.STONE)
+                    .instabreak()
+                    .sound(SoundType.STONE)
+                    .noOcclusion()
+                    .noCollission()
+            ));
+
     public static final Block DISTORTION_STONE_BRICKS_STAIRS = registerBlock("distortion_stone_bricks_stairs",
             new StairBlock(DISTORTION_STONE_BRICKS.defaultBlockState(), BlockBehaviour.Properties.ofFullCopy(DISTORTION_STONE_BRICKS)));
 
@@ -504,13 +535,30 @@ public class ModBlocks {
                     .noOcclusion()
             ));
 
+    public static final Block LOST_NOTES = registerBlock("lost_notes",
+            new LostNotesBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.PLANT)
+                    .instabreak()
+                    .sound(SoundType.GRASS)
+                    .noOcclusion()
+                    .noCollission()
+            ));
+
+    public static final Block LOST_ITEM = registerBlock("lost_item",
+            new LostItemBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.STONE)
+                    .instabreak()
+                    .sound(SoundType.STONE)
+                    .noOcclusion()
+                    .noCollission()
+            ));
+
     public static final Block DISTORTION_PORTAL = registerBlock("distortion_portal",
             new DistortionPortalBlock(BlockBehaviour.Properties.of()
                     .mapColor(MapColor.COLOR_PURPLE)
                     .strength(3.0f, 9.0f)
                     .sound(SoundType.GLASS)
                     .noOcclusion()
-                    .noCollission()
                     .dynamicShape()
                     .lightLevel(state -> 15)
             ));
@@ -617,6 +665,14 @@ public class ModBlocks {
                     .noLootTable()
             ));
 
+    public static final Block DISTORTION_FLOWER_CARPET = registerBlock("distortion_flower_carpet",
+            new DistortionCarpetFlowerBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.PLANT)
+                    .instabreak()
+                    .sound(SoundType.GRASS)
+                    .noOcclusion()
+            ));
+
     public static final Block DISTORTION_WEED = registerBlock("distortion_weed",
             new DistortionWeedBlock(BlockBehaviour.Properties.of()
                     .mapColor(MapColor.PLANT)
@@ -624,6 +680,16 @@ public class ModBlocks {
                     .sound(SoundType.WET_GRASS)
                     .noOcclusion()
                     .noCollission()
+            ));
+
+    public static final Block DISTORTION_WEED_SPAWN = registerBlock("distortion_weed_spawn",
+            new DistortionWeedBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.PLANT)
+                    .instabreak()
+                    .sound(SoundType.WET_GRASS)
+                    .noOcclusion()
+                    .noCollission(),
+                    false
             ));
 
     public static final Block VANISHING_DISTORTION_FLOWER = registerBlock("vanishing_distortion_flower",

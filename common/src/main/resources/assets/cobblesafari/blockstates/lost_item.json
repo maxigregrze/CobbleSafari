@@ -1,0 +1,28 @@
+{
+  "variants": {
+    "face=floor,facing=north,has_item=true": { "model": "cobblesafari:block/lost_item_full" },
+    "face=floor,facing=south,has_item=true": { "model": "cobblesafari:block/lost_item_full", "y": 180 },
+    "face=floor,facing=east,has_item=true": { "model": "cobblesafari:block/lost_item_full", "y": 90 },
+    "face=floor,facing=west,has_item=true": { "model": "cobblesafari:block/lost_item_full", "y": 270 },
+    "face=ceiling,facing=north,has_item=true": { "model": "cobblesafari:block/lost_item_full", "x": 180 },
+    "face=ceiling,facing=south,has_item=true": { "model": "cobblesafari:block/lost_item_full", "x": 180, "y": 180 },
+    "face=ceiling,facing=east,has_item=true": { "model": "cobblesafari:block/lost_item_full", "x": 180, "y": 90 },
+    "face=ceiling,facing=west,has_item=true": { "model": "cobblesafari:block/lost_item_full", "x": 180, "y": 270 },
+    "face=wall,facing=north,has_item=true": { "model": "cobblesafari:block/lost_item_full", "x": 90 },
+    "face=wall,facing=south,has_item=true": { "model": "cobblesafari:block/lost_item_full", "x": 90, "y": 180 },
+    "face=wall,facing=east,has_item=true": { "model": "cobblesafari:block/lost_item_full", "x": 90, "y": 90 },
+    "face=wall,facing=west,has_item=true": { "model": "cobblesafari:block/lost_item_full", "x": 90, "y": 270 },
+    "face=floor,facing=north,has_item=false": { "model": "cobblesafari:block/lost_item_empty" },
+    "face=floor,facing=south,has_item=false": { "model": "cobblesafari:block/lost_item_empty", "y": 180 },
+    "face=floor,facing=east,has_item=false": { "model": "cobblesafari:block/lost_item_empty", "y": 90 },
+    "face=floor,facing=west,has_item=false": { "model": "cobblesafari:block/lost_item_empty", "y": 270 },
+    "face=ceiling,facing=north,has_item=false": { "model": "cobblesafari:block/lost_item_empty", "x": 180 },
+    "face=ceiling,facing=south,has_item=false": { "model": "cobblesafari:block/lost_item_empty", "x": 180, "y": 180 },
+    "face=ceiling,facing=east,has_item=false": { "model": "cobblesafari:block/lost_item_empty", "x": 180, "y": 90 },
+    "face=ceiling,facing=west,has_item=false": { "model": "cobblesafari:block/lost_item_empty", "x": 180, "y": 270 },
+    "face=wall,facing=north,has_item=false": { "model": "cobblesafari:block/lost_item_empty", "x": 90 },
+    "face=wall,facing=south,has_item=false": { "model": "cobblesafari:block/lost_item_empty", "x": 90, "y": 180 },
+    "face=wall,facing=east,has_item=false": { "model": "cobblesafari:block/lost_item_empty", "x": 90, "y": 90 },
+    "face=wall,facing=west,has_item=false": { "model": "cobblesafari:block/lost_item_empty", "x": 90, "y": 270 }
+  }
+}

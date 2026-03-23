@@ -1,0 +1,25 @@
+{
+  "target": "cobblemon:magmortar",
+  "features": ["distortion"],
+  "forms": [
+    {
+      "name": "Distortion",
+      "aspects": ["distortion"],
+      "baseStats": {
+        "hp": 113,
+        "attack": 143,
+        "defence": 101,
+        "special_attack": 188,
+        "special_defence": 143,
+        "speed": 125
+      },
+      "catchRate": 0,
+      "baseScale": 1.2,
+      "hitbox": {
+        "width": 0.96,
+        "height": 2.28,
+        "fixed": false
+      }
+    }
+  ]
+}

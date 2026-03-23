@@ -112,8 +112,12 @@ public class ModCreativeTabs {
                 output.accept(ModBlocks.DISTORTION_ROCK);
                 output.accept(ModBlocks.DISTORTION_STONE);
                 output.accept(ModBlocks.DISTORTION_STONE_BRICKS);
+                output.accept(ModBlocks.DISTORTION_STONE_BRICKS_RUNE);
+                output.accept(ModBlocks.DISTORTION_STONEBRICKS_RUBBLE);
                 output.accept(ModBlocks.DISTORTION_STONE_BRICKS_STAIRS);
                 output.accept(ModBlocks.DISTORTION_STONEBRICKS_DOOR);
+                output.accept(ModBlocks.LOST_NOTES);
+                output.accept(ModBlocks.LOST_ITEM);
                 output.accept(ModBlocks.DISTORTION_ROCK_VERTICAL);
                 output.accept(ModBlocks.DISTORTION_ROCK_UPSIDEDOWN);
                 output.accept(ModBlocks.DISTORTION_ROCK_DEEP);
@@ -127,7 +131,9 @@ public class ModCreativeTabs {
                 output.accept(ModBlocks.GIRATINA_CORE);
                 output.accept(ModBlocks.DISTORTION_PORTAL);
                 output.accept(ModBlocks.DISTORTION_WEED);
+                output.accept(ModBlocks.DISTORTION_WEED_SPAWN);
                 output.accept(ModBlocks.DISTORTION_FLOWER);
+                output.accept(ModBlocks.DISTORTION_FLOWER_CARPET);
                 output.accept(ModBlocks.VANISHING_DISTORTION_FLOWER);
                 output.accept(ModBlocks.APPEARING_DISTORTION_FLOWER);
                 output.accept(ModBlocks.SUSPICIOUS_DISTORTION_ROCK);
@@ -146,6 +152,7 @@ public class ModCreativeTabs {
             .title(Component.translatable("itemGroup.cobblesafari.misc"))
             .displayItems((params, output) -> {
                 output.accept(ModBlocks.VOID_BLOCK);
+                output.accept(ModBlocks.LIQUID_BARRIER);
                 output.accept(ModBlocks.HOOPA_RING_PORTAL);
                 output.accept(ModBlocks.CREATIVE_DUNGEON_PORTAL);
                 output.accept(ModItems.TICKET_DUNGEON);

@@ -1,0 +1,18 @@
+{
+  "species": "cobblemon:electivire",
+  "order": 1,
+  "variations": [
+    {
+      "aspects": ["distortion"],
+      "texture": "cobblesafari:textures/pokemon/electivire_distortion.png",
+      "layers": [
+        {
+          "name": "distortion_glow",
+          "texture": "cobblesafari:textures/pokemon/electivire_distortion_emissives.png",
+          "emissive": true,
+          "translucent": true
+        }
+      ]
+    }
+  ]
+}

@@ -12,8 +12,12 @@ import maxigregrze.cobblesafari.dungeon.DungeonTpAcceptHandler;
 import maxigregrze.cobblesafari.network.CloseTpAcceptPayload;
 import maxigregrze.cobblesafari.network.DimensionalBanSyncPayload;
 import maxigregrze.cobblesafari.network.OpenTpAcceptPayload;
+import maxigregrze.cobblesafari.network.OpenLostNoteBookPayload;
+import maxigregrze.cobblesafari.network.OpenRuneEditorPayload;
+import maxigregrze.cobblesafari.network.SaveRuneTextPayload;
 import maxigregrze.cobblesafari.network.TimerSyncPayload;
 import maxigregrze.cobblesafari.network.TpAcceptResponsePayload;
+import maxigregrze.cobblesafari.block.misc.DistortionStoneBricksRuneBlockEntity;
 import maxigregrze.cobblesafari.teleporter.TeleporterTickHandler;
 import maxigregrze.cobblesafari.underground.UndergroundMinigame;
 import maxigregrze.cobblesafari.underground.network.UndergroundNetworking;
@@ -22,6 +26,7 @@ import maxigregrze.cobblesafari.underground.screen.UndergroundOpenData;
 import maxigregrze.cobblesafari.underground.screen.UndergroundScreenHandler;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionResult;
@@ -128,10 +133,18 @@ public class CobbleSafariNeoForge {
                     CobbleSafariClientNeoForge::handleOpenTpAccept);
             registrar.playToClient(CloseTpAcceptPayload.TYPE, CloseTpAcceptPayload.STREAM_CODEC,
                     CobbleSafariClientNeoForge::handleCloseTpAccept);
+            registrar.playToClient(OpenRuneEditorPayload.TYPE, OpenRuneEditorPayload.STREAM_CODEC,
+                    CobbleSafariClientNeoForge::handleOpenRuneEditor);
+            registrar.playToClient(OpenLostNoteBookPayload.TYPE, OpenLostNoteBookPayload.STREAM_CODEC,
+                    CobbleSafariClientNeoForge::handleOpenLostNoteBook);
         } else {
             registrar.playToClient(OpenTpAcceptPayload.TYPE, OpenTpAcceptPayload.STREAM_CODEC,
                     (payload, context) -> {});
             registrar.playToClient(CloseTpAcceptPayload.TYPE, CloseTpAcceptPayload.STREAM_CODEC,
+                    (payload, context) -> {});
+            registrar.playToClient(OpenRuneEditorPayload.TYPE, OpenRuneEditorPayload.STREAM_CODEC,
+                    (payload, context) -> {});
+            registrar.playToClient(OpenLostNoteBookPayload.TYPE, OpenLostNoteBookPayload.STREAM_CODEC,
                     (payload, context) -> {});
         }
 
@@ -144,6 +157,29 @@ public class CobbleSafariNeoForge {
                             } else {
                                 TeleporterTickHandler.handleAcceptResponse(sp, payload.accepted());
                             }
+                        }
+                    });
+                });
+
+        registrar.playToServer(SaveRuneTextPayload.TYPE, SaveRuneTextPayload.STREAM_CODEC,
+                (payload, context) -> {
+                    context.enqueueWork(() -> {
+                        if (!(context.player() instanceof ServerPlayer sp)) {
+                            return;
+                        }
+                        if (!sp.isCreative()) {
+                            return;
+                        }
+                        if (!sp.blockPosition().closerThan(payload.pos(), 8.0D)) {
+                            return;
+                        }
+                        if (sp.level().getBlockEntity(payload.pos()) instanceof DistortionStoneBricksRuneBlockEntity runeBlockEntity) {
+                            String text = payload.text();
+                            if (text.length() > 1024) {
+                                text = text.substring(0, 1024);
+                            }
+                            runeBlockEntity.setRuneText(text);
+                            sp.displayClientMessage(Component.translatable("message.cobblesafari.distortion_rune.saved"), true);
                         }
                     });
                 });

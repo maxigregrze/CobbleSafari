@@ -13,8 +13,12 @@ import maxigregrze.cobblesafari.dungeon.DungeonTpAcceptHandler;
 import maxigregrze.cobblesafari.network.CloseTpAcceptPayload;
 import maxigregrze.cobblesafari.network.DimensionalBanSyncPayload;
 import maxigregrze.cobblesafari.network.OpenTpAcceptPayload;
+import maxigregrze.cobblesafari.network.OpenLostNoteBookPayload;
+import maxigregrze.cobblesafari.network.OpenRuneEditorPayload;
+import maxigregrze.cobblesafari.network.SaveRuneTextPayload;
 import maxigregrze.cobblesafari.network.TimerSyncPayload;
 import maxigregrze.cobblesafari.network.TpAcceptResponsePayload;
+import maxigregrze.cobblesafari.block.misc.DistortionStoneBricksRuneBlockEntity;
 import maxigregrze.cobblesafari.teleporter.TeleporterTickHandler;
 import maxigregrze.cobblesafari.underground.UndergroundMinigame;
 import maxigregrze.cobblesafari.underground.network.UndergroundNetworking;
@@ -36,6 +40,7 @@ import net.fabricmc.fabric.api.object.builder.v1.entity.FabricDefaultAttributeRe
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerType;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionResult;
 
@@ -79,11 +84,17 @@ public class CobbleSafariFabric implements ModInitializer {
         PayloadTypeRegistry.playS2C().register(TimerSyncPayload.TYPE, TimerSyncPayload.STREAM_CODEC);
         PayloadTypeRegistry.playS2C().register(OpenTpAcceptPayload.TYPE, OpenTpAcceptPayload.STREAM_CODEC);
         PayloadTypeRegistry.playS2C().register(CloseTpAcceptPayload.TYPE, CloseTpAcceptPayload.STREAM_CODEC);
+        PayloadTypeRegistry.playS2C().register(OpenRuneEditorPayload.TYPE, OpenRuneEditorPayload.STREAM_CODEC);
+        PayloadTypeRegistry.playS2C().register(OpenLostNoteBookPayload.TYPE, OpenLostNoteBookPayload.STREAM_CODEC);
         PayloadTypeRegistry.playS2C().register(DimensionalBanSyncPayload.TYPE, DimensionalBanSyncPayload.STREAM_CODEC);
 
         PayloadTypeRegistry.playC2S().register(
                 TpAcceptResponsePayload.TYPE,
                 TpAcceptResponsePayload.STREAM_CODEC
+        );
+        PayloadTypeRegistry.playC2S().register(
+                SaveRuneTextPayload.TYPE,
+                SaveRuneTextPayload.STREAM_CODEC
         );
         PayloadTypeRegistry.playC2S().register(
                 UndergroundPayloads.MineActionPayload.TYPE,
@@ -126,6 +137,28 @@ public class CobbleSafariFabric implements ModInitializer {
                             DungeonTpAcceptHandler.handleAcceptResponse(context.player(), payload.accepted());
                         } else {
                             TeleporterTickHandler.handleAcceptResponse(context.player(), payload.accepted());
+                        }
+                    });
+                }
+        );
+
+        ServerPlayNetworking.registerGlobalReceiver(
+                SaveRuneTextPayload.TYPE,
+                (payload, context) -> {
+                    context.server().execute(() -> {
+                        if (!context.player().isCreative()) {
+                            return;
+                        }
+                        if (!context.player().blockPosition().closerThan(payload.pos(), 8.0D)) {
+                            return;
+                        }
+                        if (context.player().level().getBlockEntity(payload.pos()) instanceof DistortionStoneBricksRuneBlockEntity runeBlockEntity) {
+                            String text = payload.text();
+                            if (text.length() > 1024) {
+                                text = text.substring(0, 1024);
+                            }
+                            runeBlockEntity.setRuneText(text);
+                            context.player().displayClientMessage(Component.translatable("message.cobblesafari.distortion_rune.saved"), true);
                         }
                     });
                 }

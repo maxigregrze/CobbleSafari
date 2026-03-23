@@ -1,0 +1,12 @@
+{
+    "pokemon": [
+      "gengar",
+      "porygon",
+      "scizor",
+      "magmortar",
+      "electivire"
+    ],
+    "features": [
+      "distortion"
+    ]
+  }

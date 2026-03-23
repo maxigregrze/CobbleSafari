@@ -20,6 +20,8 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.AttachFace;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
@@ -30,12 +32,19 @@ public class DistortionFlowerBlock extends Block {
 
     public static final MapCodec<DistortionFlowerBlock> CODEC = simpleCodec(DistortionFlowerBlock::new);
     public static final EnumProperty<DistortionFlowerPart> PART = EnumProperty.create("part", DistortionFlowerPart.class);
-    private static final VoxelShape SHAPE = Block.box(3, 0, 3, 13, 16, 13);
+    public static final EnumProperty<AttachFace> FACE = BlockStateProperties.ATTACH_FACE;
+    public static final net.minecraft.world.level.block.state.properties.DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
+    private static final VoxelShape SHAPE_FLOOR_CEILING = Block.box(3, 0, 3, 13, 16, 13);
+    private static final VoxelShape SHAPE_WALL_NORTH_SOUTH = Block.box(3, 3, 0, 13, 13, 16);
+    private static final VoxelShape SHAPE_WALL_EAST_WEST = Block.box(0, 3, 3, 16, 13, 13);
     private static final float TOUCH_DAMAGE = 1.0F;
 
     public DistortionFlowerBlock(Properties properties) {
         super(properties);
-        this.registerDefaultState(this.stateDefinition.any().setValue(PART, DistortionFlowerPart.FLOWER));
+        this.registerDefaultState(this.stateDefinition.any()
+                .setValue(PART, DistortionFlowerPart.FLOWER)
+                .setValue(FACE, AttachFace.FLOOR)
+                .setValue(FACING, Direction.NORTH));
     }
 
     @Override
@@ -45,27 +54,44 @@ public class DistortionFlowerBlock extends Block {
 
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
-        builder.add(PART);
+        builder.add(PART, FACE, FACING);
     }
 
     @Override
     public BlockState getStateForPlacement(BlockPlaceContext context) {
         BlockPos pos = context.getClickedPos();
         Level level = context.getLevel();
-        if (pos.getY() >= level.getMaxBuildHeight() - 1) {
+        Direction clickedFace = context.getClickedFace();
+        AttachFace face = faceForDirection(clickedFace);
+        Direction horizontalFacing = face == AttachFace.WALL ? clickedFace : Direction.NORTH;
+        BlockState candidate = this.defaultBlockState()
+                .setValue(PART, DistortionFlowerPart.BASE)
+                .setValue(FACE, face)
+                .setValue(FACING, horizontalFacing);
+        Direction growthDirection = growthDirection(candidate);
+        BlockPos flowerPos = pos.relative(growthDirection);
+        if (level.isOutsideBuildHeight(flowerPos)) {
             return null;
         }
-        if (!level.getBlockState(pos.above()).canBeReplaced(context)) {
+        if (!level.getBlockState(flowerPos).canBeReplaced(context)) {
             return null;
         }
-        return this.defaultBlockState().setValue(PART, DistortionFlowerPart.BASE);
+        if (this.canSurvive(candidate, level, pos)) {
+            return candidate;
+        }
+        return null;
     }
 
     @Override
     public void setPlacedBy(Level level, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
         super.setPlacedBy(level, pos, state, placer, stack);
         if (!level.isClientSide() && state.getValue(PART) == DistortionFlowerPart.BASE) {
-            level.setBlock(pos.above(), this.defaultBlockState().setValue(PART, DistortionFlowerPart.FLOWER), Block.UPDATE_ALL);
+            Direction growthDirection = growthDirection(state);
+            BlockState topState = this.defaultBlockState()
+                    .setValue(PART, DistortionFlowerPart.FLOWER)
+                    .setValue(FACE, state.getValue(FACE))
+                    .setValue(FACING, state.getValue(FACING));
+            level.setBlock(pos.relative(growthDirection), topState, Block.UPDATE_ALL);
         }
     }
 
@@ -78,9 +104,10 @@ public class DistortionFlowerBlock extends Block {
             return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
         }
 
-        BlockPos topPos = findTop(level, pos);
-        BlockPos newTopPos = topPos.above();
-        if (newTopPos.getY() >= level.getMaxBuildHeight()) {
+        Direction growthDirection = growthDirection(state);
+        BlockPos topPos = findTop(level, pos, growthDirection);
+        BlockPos newTopPos = topPos.relative(growthDirection);
+        if (level.isOutsideBuildHeight(newTopPos)) {
             return ItemInteractionResult.FAIL;
         }
         BlockState newTopState = level.getBlockState(newTopPos);
@@ -93,7 +120,10 @@ public class DistortionFlowerBlock extends Block {
         if (topPart == DistortionFlowerPart.FLOWER) {
             level.setBlock(topPos, topState.setValue(PART, DistortionFlowerPart.STEM), Block.UPDATE_ALL);
         }
-        level.setBlock(newTopPos, this.defaultBlockState().setValue(PART, DistortionFlowerPart.FLOWER), Block.UPDATE_ALL);
+        level.setBlock(newTopPos, this.defaultBlockState()
+                .setValue(PART, DistortionFlowerPart.FLOWER)
+                .setValue(FACE, state.getValue(FACE))
+                .setValue(FACING, state.getValue(FACING)), Block.UPDATE_ALL);
         if (!player.isCreative()) {
             stack.shrink(1);
         }
@@ -103,11 +133,14 @@ public class DistortionFlowerBlock extends Block {
     @Override
     public boolean canSurvive(BlockState state, LevelReader level, BlockPos pos) {
         DistortionFlowerPart part = state.getValue(PART);
+        Direction growthDirection = growthDirection(state);
         if (part == DistortionFlowerPart.BASE) {
-            BlockPos below = pos.below();
-            return level.getBlockState(below).isFaceSturdy(level, below, Direction.UP);
+            Direction supportDirection = supportDirection(state);
+            BlockPos supportPos = pos.relative(supportDirection.getOpposite());
+            return level.getBlockState(supportPos).isFaceSturdy(level, supportPos, supportDirection);
         }
-        return level.getBlockState(pos.below()).is(this);
+        BlockState previousState = level.getBlockState(pos.relative(growthDirection.getOpposite()));
+        return previousState.is(this) && sameOrientation(state, previousState);
     }
 
     @Override
@@ -125,45 +158,49 @@ public class DistortionFlowerBlock extends Block {
     public BlockState playerWillDestroy(Level level, BlockPos pos, BlockState state, Player player) {
         if (!level.isClientSide()) {
             boolean dropItems = !player.isCreative();
-            removeFromBrokenToTop(level, pos, dropItems);
-            updateBlockBelowAfterBreak(level, pos.below());
+            Direction growthDirection = growthDirection(state);
+            removeFromBrokenToTop(level, pos, growthDirection, dropItems);
+            updateBlockBehindAfterBreak(level, pos.relative(growthDirection.getOpposite()), state);
             return state;
         }
         return super.playerWillDestroy(level, pos, state, player);
     }
 
-    private void removeFromBrokenToTop(Level level, BlockPos brokenPos, boolean dropItems) {
-        BlockPos top = findTop(level, brokenPos);
-        for (int y = top.getY(); y >= brokenPos.getY(); y--) {
-            BlockPos currentPos = new BlockPos(brokenPos.getX(), y, brokenPos.getZ());
+    private void removeFromBrokenToTop(Level level, BlockPos brokenPos, Direction growthDirection, boolean dropItems) {
+        BlockPos top = findTop(level, brokenPos, growthDirection);
+        BlockPos.MutableBlockPos currentPos = top.mutable();
+        while (true) {
             BlockState currentState = level.getBlockState(currentPos);
-            if (!currentState.is(this)) {
-                continue;
-            }
-            if (dropItems && currentState.getValue(PART) != DistortionFlowerPart.BASE) {
+            if (currentState.is(this) && dropItems && currentState.getValue(PART) != DistortionFlowerPart.BASE) {
                 Block.popResource(level, currentPos, new ItemStack(this));
             }
-            level.setBlock(currentPos, Blocks.AIR.defaultBlockState(), 35);
+            if (currentState.is(this)) {
+                level.setBlock(currentPos, Blocks.AIR.defaultBlockState(), 35);
+            }
+            if (currentPos.equals(brokenPos)) {
+                break;
+            }
+            currentPos.move(growthDirection.getOpposite());
         }
     }
 
-    private void updateBlockBelowAfterBreak(Level level, BlockPos belowPos) {
-        BlockState belowState = level.getBlockState(belowPos);
-        if (!belowState.is(this)) {
+    private void updateBlockBehindAfterBreak(Level level, BlockPos previousPos, BlockState brokenState) {
+        BlockState previousState = level.getBlockState(previousPos);
+        if (!previousState.is(this) || !sameOrientation(previousState, brokenState)) {
             return;
         }
-        DistortionFlowerPart belowPart = belowState.getValue(PART);
-        if (belowPart == DistortionFlowerPart.BASE) {
-            level.setBlock(belowPos, Blocks.AIR.defaultBlockState(), 35);
-        } else if (belowPart != DistortionFlowerPart.FLOWER) {
-            level.setBlock(belowPos, belowState.setValue(PART, DistortionFlowerPart.FLOWER), Block.UPDATE_ALL);
+        DistortionFlowerPart previousPart = previousState.getValue(PART);
+        if (previousPart == DistortionFlowerPart.BASE) {
+            level.setBlock(previousPos, Blocks.AIR.defaultBlockState(), 35);
+        } else if (previousPart != DistortionFlowerPart.FLOWER) {
+            level.setBlock(previousPos, previousState.setValue(PART, DistortionFlowerPart.FLOWER), Block.UPDATE_ALL);
         }
     }
 
-    private BlockPos findTop(Level level, BlockPos start) {
+    private BlockPos findTop(Level level, BlockPos start, Direction growthDirection) {
         BlockPos.MutableBlockPos cursor = start.mutable();
-        while (cursor.getY() < level.getMaxBuildHeight() - 1 && level.getBlockState(cursor.above()).is(this)) {
-            cursor.move(Direction.UP);
+        while (!level.isOutsideBuildHeight(cursor.relative(growthDirection)) && level.getBlockState(cursor.relative(growthDirection)).is(this)) {
+            cursor.move(growthDirection);
         }
         return cursor.immutable();
     }
@@ -178,17 +215,58 @@ public class DistortionFlowerBlock extends Block {
 
     @Override
     public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
-        return SHAPE;
+        return shapeFor(state);
     }
 
     @Override
     public VoxelShape getCollisionShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
-        return SHAPE;
+        return shapeFor(state);
+    }
+
+    private static VoxelShape shapeFor(BlockState state) {
+        return switch (state.getValue(FACE)) {
+            case FLOOR, CEILING -> SHAPE_FLOOR_CEILING;
+            case WALL -> switch (state.getValue(FACING)) {
+                case NORTH, SOUTH -> SHAPE_WALL_NORTH_SOUTH;
+                case EAST, WEST -> SHAPE_WALL_EAST_WEST;
+                default -> SHAPE_WALL_NORTH_SOUTH;
+            };
+        };
     }
 
     @Override
     public RenderShape getRenderShape(BlockState state) {
         return RenderShape.MODEL;
+    }
+
+    private static AttachFace faceForDirection(Direction direction) {
+        if (direction == Direction.UP) {
+            return AttachFace.FLOOR;
+        }
+        if (direction == Direction.DOWN) {
+            return AttachFace.CEILING;
+        }
+        return AttachFace.WALL;
+    }
+
+    private static Direction growthDirection(BlockState state) {
+        return switch (state.getValue(FACE)) {
+            case FLOOR -> Direction.UP;
+            case CEILING -> Direction.DOWN;
+            case WALL -> state.getValue(FACING);
+        };
+    }
+
+    private static Direction supportDirection(BlockState state) {
+        return switch (state.getValue(FACE)) {
+            case FLOOR -> Direction.UP;
+            case CEILING -> Direction.DOWN;
+            case WALL -> state.getValue(FACING);
+        };
+    }
+
+    private static boolean sameOrientation(BlockState first, BlockState second) {
+        return first.getValue(FACE) == second.getValue(FACE) && first.getValue(FACING) == second.getValue(FACING);
     }
 }
 

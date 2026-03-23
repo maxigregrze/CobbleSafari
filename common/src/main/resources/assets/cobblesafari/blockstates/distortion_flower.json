@@ -1,8 +1,43 @@
 {
   "variants": {
-    "part=base": { "model": "cobblesafari:block/distortionplant_base" },
-    "part=stem": { "model": "cobblesafari:block/distortionplant_stem" },
-    "part=flower": { "model": "cobblesafari:block/distortionplant_flower" }
+    "face=floor,facing=north,part=base": { "model": "cobblesafari:block/distortionplant_base" },
+    "face=floor,facing=east,part=base": { "model": "cobblesafari:block/distortionplant_base", "y": 90 },
+    "face=floor,facing=south,part=base": { "model": "cobblesafari:block/distortionplant_base", "y": 180 },
+    "face=floor,facing=west,part=base": { "model": "cobblesafari:block/distortionplant_base", "y": 270 },
+    "face=ceiling,facing=north,part=base": { "model": "cobblesafari:block/distortionplant_base", "x": 180 },
+    "face=ceiling,facing=east,part=base": { "model": "cobblesafari:block/distortionplant_base", "x": 180, "y": 90 },
+    "face=ceiling,facing=south,part=base": { "model": "cobblesafari:block/distortionplant_base", "x": 180, "y": 180 },
+    "face=ceiling,facing=west,part=base": { "model": "cobblesafari:block/distortionplant_base", "x": 180, "y": 270 },
+    "face=wall,facing=north,part=base": { "model": "cobblesafari:block/distortionplant_base", "x": 90 },
+    "face=wall,facing=east,part=base": { "model": "cobblesafari:block/distortionplant_base", "x": 90, "y": 90 },
+    "face=wall,facing=south,part=base": { "model": "cobblesafari:block/distortionplant_base", "x": 90, "y": 180 },
+    "face=wall,facing=west,part=base": { "model": "cobblesafari:block/distortionplant_base", "x": 90, "y": 270 },
+
+    "face=floor,facing=north,part=stem": { "model": "cobblesafari:block/distortionplant_stem" },
+    "face=floor,facing=east,part=stem": { "model": "cobblesafari:block/distortionplant_stem", "y": 90 },
+    "face=floor,facing=south,part=stem": { "model": "cobblesafari:block/distortionplant_stem", "y": 180 },
+    "face=floor,facing=west,part=stem": { "model": "cobblesafari:block/distortionplant_stem", "y": 270 },
+    "face=ceiling,facing=north,part=stem": { "model": "cobblesafari:block/distortionplant_stem", "x": 180 },
+    "face=ceiling,facing=east,part=stem": { "model": "cobblesafari:block/distortionplant_stem", "x": 180, "y": 90 },
+    "face=ceiling,facing=south,part=stem": { "model": "cobblesafari:block/distortionplant_stem", "x": 180, "y": 180 },
+    "face=ceiling,facing=west,part=stem": { "model": "cobblesafari:block/distortionplant_stem", "x": 180, "y": 270 },
+    "face=wall,facing=north,part=stem": { "model": "cobblesafari:block/distortionplant_stem", "x": 90 },
+    "face=wall,facing=east,part=stem": { "model": "cobblesafari:block/distortionplant_stem", "x": 90, "y": 90 },
+    "face=wall,facing=south,part=stem": { "model": "cobblesafari:block/distortionplant_stem", "x": 90, "y": 180 },
+    "face=wall,facing=west,part=stem": { "model": "cobblesafari:block/distortionplant_stem", "x": 90, "y": 270 },
+
+    "face=floor,facing=north,part=flower": { "model": "cobblesafari:block/distortionplant_flower" },
+    "face=floor,facing=east,part=flower": { "model": "cobblesafari:block/distortionplant_flower", "y": 90 },
+    "face=floor,facing=south,part=flower": { "model": "cobblesafari:block/distortionplant_flower", "y": 180 },
+    "face=floor,facing=west,part=flower": { "model": "cobblesafari:block/distortionplant_flower", "y": 270 },
+    "face=ceiling,facing=north,part=flower": { "model": "cobblesafari:block/distortionplant_flower", "x": 180 },
+    "face=ceiling,facing=east,part=flower": { "model": "cobblesafari:block/distortionplant_flower", "x": 180, "y": 90 },
+    "face=ceiling,facing=south,part=flower": { "model": "cobblesafari:block/distortionplant_flower", "x": 180, "y": 180 },
+    "face=ceiling,facing=west,part=flower": { "model": "cobblesafari:block/distortionplant_flower", "x": 180, "y": 270 },
+    "face=wall,facing=north,part=flower": { "model": "cobblesafari:block/distortionplant_flower", "x": 90 },
+    "face=wall,facing=east,part=flower": { "model": "cobblesafari:block/distortionplant_flower", "x": 90, "y": 90 },
+    "face=wall,facing=south,part=flower": { "model": "cobblesafari:block/distortionplant_flower", "x": 90, "y": 180 },
+    "face=wall,facing=west,part=flower": { "model": "cobblesafari:block/distortionplant_flower", "x": 90, "y": 270 }
   }
 }
 

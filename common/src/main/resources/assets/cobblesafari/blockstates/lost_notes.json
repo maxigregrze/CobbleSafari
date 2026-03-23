@@ -1,0 +1,8 @@
+{
+  "variants": {
+    "facing=north": { "model": "cobblesafari:block/lost_notes" },
+    "facing=east": { "model": "cobblesafari:block/lost_notes", "y": 90 },
+    "facing=south": { "model": "cobblesafari:block/lost_notes", "y": 180 },
+    "facing=west": { "model": "cobblesafari:block/lost_notes", "y": 270 }
+  }
+}

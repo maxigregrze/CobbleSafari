@@ -1,0 +1,25 @@
+{
+  "target": "cobblemon:gengar",
+  "features": ["distortion"],
+  "forms": [
+    {
+      "name": "Distortion",
+      "aspects": ["distortion"],
+      "baseStats": {
+        "hp": 90,
+        "attack": 98,
+        "defence": 90,
+        "special_attack": 195,
+        "special_defence": 113,
+        "speed": 165
+      },
+      "catchRate": 0,
+      "baseScale": 1.8,
+      "hitbox": {
+        "width": 1.56,
+        "height": 1.92,
+        "fixed": false
+      }
+    }
+  ]
+}

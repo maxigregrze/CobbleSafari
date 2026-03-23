@@ -1,0 +1,25 @@
+{
+  "target": "cobblemon:electivire",
+  "features": ["distortion"],
+  "forms": [
+    {
+      "name": "Distortion",
+      "aspects": ["distortion"],
+      "baseStats": {
+        "hp": 113,
+        "attack": 185,
+        "defence": 101,
+        "special_attack": 143,
+        "special_defence": 128,
+        "speed": 143
+      },
+      "catchRate": 0,
+      "baseScale": 1.2,
+      "hitbox": {
+        "width": 0.96,
+        "height": 2.16,
+        "fixed": false
+      }
+    }
+  ]
+}

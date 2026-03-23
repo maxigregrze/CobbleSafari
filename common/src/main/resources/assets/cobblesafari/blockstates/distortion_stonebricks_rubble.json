@@ -1,0 +1,16 @@
+{
+  "variants": {
+    "face=floor,facing=north": { "model": "cobblesafari:block/distortion_stonebricks_rubble" },
+    "face=floor,facing=south": { "model": "cobblesafari:block/distortion_stonebricks_rubble", "y": 180 },
+    "face=floor,facing=east": { "model": "cobblesafari:block/distortion_stonebricks_rubble", "y": 90 },
+    "face=floor,facing=west": { "model": "cobblesafari:block/distortion_stonebricks_rubble", "y": 270 },
+    "face=ceiling,facing=north": { "model": "cobblesafari:block/distortion_stonebricks_rubble", "x": 180 },
+    "face=ceiling,facing=south": { "model": "cobblesafari:block/distortion_stonebricks_rubble", "x": 180, "y": 180 },
+    "face=ceiling,facing=east": { "model": "cobblesafari:block/distortion_stonebricks_rubble", "x": 180, "y": 90 },
+    "face=ceiling,facing=west": { "model": "cobblesafari:block/distortion_stonebricks_rubble", "x": 180, "y": 270 },
+    "face=wall,facing=north": { "model": "cobblesafari:block/distortion_stonebricks_rubble", "x": 90 },
+    "face=wall,facing=south": { "model": "cobblesafari:block/distortion_stonebricks_rubble", "x": 90, "y": 180 },
+    "face=wall,facing=east": { "model": "cobblesafari:block/distortion_stonebricks_rubble", "x": 90, "y": 90 },
+    "face=wall,facing=west": { "model": "cobblesafari:block/distortion_stonebricks_rubble", "x": 90, "y": 270 }
+  }
+}

@@ -4,6 +4,8 @@ import com.mojang.serialization.MapCodec;
 import maxigregrze.cobblesafari.init.ModBlockEntities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
@@ -26,10 +28,17 @@ import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Map;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
+
 public class DistortionPortalBlock extends BaseEntityBlock {
     public static final MapCodec<DistortionPortalBlock> CODEC = simpleCodec(DistortionPortalBlock::new);
     public static final EnumProperty<Mode> MODE = EnumProperty.create("mode", Mode.class);
     private static final VoxelShape SHAPE = Block.box(0, 0, 0, 16, 16, 16);
+    private static final int TELEPORT_OFFSET_BLOCKS = 128;
+    private static final int TELEPORT_COOLDOWN_TICKS = 60;
+    private static final Map<UUID, Long> LAST_TELEPORT_GAME_TIME = new ConcurrentHashMap<>();
 
     public DistortionPortalBlock(Properties properties) {
         super(properties);
@@ -67,6 +76,14 @@ public class DistortionPortalBlock extends BaseEntityBlock {
     }
 
     @Override
+    public void stepOn(Level level, BlockPos pos, BlockState state, Entity entity) {
+        if (!level.isClientSide() && entity instanceof ServerPlayer serverPlayer && level instanceof ServerLevel serverLevel) {
+            handlePlayerInPortalVolume(serverLevel, pos, state, serverPlayer);
+        }
+        super.stepOn(level, pos, state, entity);
+    }
+
+    @Override
     protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hitResult) {
         if (level.isClientSide()) {
             return InteractionResult.SUCCESS;
@@ -81,22 +98,25 @@ public class DistortionPortalBlock extends BaseEntityBlock {
         return InteractionResult.CONSUME;
     }
 
-    @Override
-    protected void entityInside(BlockState state, Level level, BlockPos pos, Entity entity) {
-        if (!level.isClientSide() && entity instanceof net.minecraft.server.level.ServerPlayer serverPlayer) {
-            int targetY = pos.getY() + (state.getValue(MODE) == Mode.TOP ? 128 : -128);
-            int clampedY = Math.clamp(targetY, level.getMinBuildHeight(), level.getMaxBuildHeight() - 1);
-            serverPlayer.teleportTo(
-                    (net.minecraft.server.level.ServerLevel) level,
-                    pos.getX() + 0.5,
-                    clampedY + 0.1,
-                    pos.getZ() + 0.5,
-                    serverPlayer.getYRot(),
-                    serverPlayer.getXRot()
-            );
-            serverPlayer.resetFallDistance();
+    public static void handlePlayerInPortalVolume(ServerLevel serverLevel, BlockPos pos, BlockState state, ServerPlayer serverPlayer) {
+        long gameTime = serverLevel.getGameTime();
+        UUID id = serverPlayer.getUUID();
+        long last = LAST_TELEPORT_GAME_TIME.getOrDefault(id, Long.MIN_VALUE);
+        if (gameTime - last < TELEPORT_COOLDOWN_TICKS) {
+            return;
         }
-        super.entityInside(state, level, pos, entity);
+
+        int delta = state.getValue(MODE) == Mode.TOP ? TELEPORT_OFFSET_BLOCKS : -TELEPORT_OFFSET_BLOCKS;
+        int targetY = pos.getY() + delta;
+        int clampedY = Math.clamp(targetY, serverLevel.getMinBuildHeight() + 1, serverLevel.getMaxBuildHeight() - 2);
+
+        double destX = pos.getX() + 0.5D;
+        double destZ = pos.getZ() + 0.5D;
+        double destY = clampedY + 0.01D;
+
+        serverPlayer.teleportTo(serverLevel, destX, destY, destZ, serverPlayer.getYRot(), serverPlayer.getXRot());
+        serverPlayer.resetFallDistance();
+        LAST_TELEPORT_GAME_TIME.put(id, gameTime);
     }
 
     @Nullable
@@ -108,10 +128,7 @@ public class DistortionPortalBlock extends BaseEntityBlock {
     @Nullable
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
-        if (level.isClientSide()) {
-            return createTickerHelper(type, ModBlockEntities.DISTORTION_PORTAL, DistortionPortalBlockEntity::clientTick);
-        }
-        return null;
+        return createTickerHelper(type, ModBlockEntities.DISTORTION_PORTAL, DistortionPortalBlockEntity::tick);
     }
 
     public enum Mode implements StringRepresentable {

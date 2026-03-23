@@ -21,9 +21,13 @@ public class DistortionBoulderBlock extends FaceAttachedHorizontalDirectionalBlo
 
     public static final MapCodec<DistortionBoulderBlock> CODEC = simpleCodec(DistortionBoulderBlock::new);
 
-    private static final VoxelShape SHAPE_FLOOR   = Block.box(-2,  0, -2, 18, 18, 18);
-    private static final VoxelShape SHAPE_CEILING = Block.box(-2, -2, -2, 18, 16, 18);
-    private static final VoxelShape SHAPE_WALL    = Block.box(-2, -2, -2, 18, 18, 18);
+    private static final int FENCE_TOP = 24;
+    private static final VoxelShape SHAPE_FLOOR   = Block.box(-2,  0, -2, 18, FENCE_TOP, 18);
+    private static final VoxelShape SHAPE_CEILING = Block.box(-2, 16 - FENCE_TOP, -2, 18, 16, 18);
+    private static final VoxelShape SHAPE_WALL_NORTH = Block.box(-2, -2, 12, 18, 18, 16);
+    private static final VoxelShape SHAPE_WALL_SOUTH = Block.box(-2, -2, 0, 18, 18, 4);
+    private static final VoxelShape SHAPE_WALL_EAST = Block.box(0, -2, -2, 4, 18, 18);
+    private static final VoxelShape SHAPE_WALL_WEST = Block.box(12, -2, -2, 16, 18, 18);
 
     public DistortionBoulderBlock(Properties properties) {
         super(properties);
@@ -64,7 +68,13 @@ public class DistortionBoulderBlock extends FaceAttachedHorizontalDirectionalBlo
         return switch (state.getValue(FACE)) {
             case FLOOR   -> SHAPE_FLOOR;
             case CEILING -> SHAPE_CEILING;
-            case WALL    -> SHAPE_WALL;
+            case WALL    -> switch (state.getValue(FACING)) {
+                case NORTH -> SHAPE_WALL_NORTH;
+                case SOUTH -> SHAPE_WALL_SOUTH;
+                case EAST -> SHAPE_WALL_EAST;
+                case WEST -> SHAPE_WALL_WEST;
+                default -> SHAPE_WALL_NORTH;
+            };
         };
     }
 

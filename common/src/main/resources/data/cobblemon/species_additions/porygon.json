@@ -1,0 +1,25 @@
+{
+  "target": "cobblemon:porygon",
+  "features": ["distortion"],
+  "forms": [
+    {
+      "name": "Distortion",
+      "aspects": ["distortion"],
+      "baseStats": {
+        "hp": 98,
+        "attack": 90,
+        "defence": 105,
+        "special_attack": 128,
+        "special_defence": 113,
+        "speed": 60
+      },
+      "catchRate": 0,
+      "baseScale": 1.2,
+      "hitbox": {
+        "width": 0.96,
+        "height": 1.08,
+        "fixed": false
+      }
+    }
+  ]
+}

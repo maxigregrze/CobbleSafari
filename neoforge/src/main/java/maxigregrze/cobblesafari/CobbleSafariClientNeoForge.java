@@ -5,11 +5,14 @@ import maxigregrze.cobblesafari.init.ModBlockEntities;
 import maxigregrze.cobblesafari.init.ModBlocks;
 import maxigregrze.cobblesafari.init.ModEntities;
 import maxigregrze.cobblesafari.init.ModItems;
+import maxigregrze.cobblesafari.client.screen.DistortionStoneBricksRuneScreen;
 import maxigregrze.cobblesafari.client.screen.TpAcceptScreen;
 import maxigregrze.cobblesafari.config.DimensionalBanConfig;
 import maxigregrze.cobblesafari.network.CloseTpAcceptPayload;
 import maxigregrze.cobblesafari.network.DimensionalBanSyncPayload;
 import maxigregrze.cobblesafari.network.OpenTpAcceptPayload;
+import maxigregrze.cobblesafari.network.OpenLostNoteBookPayload;
+import maxigregrze.cobblesafari.network.OpenRuneEditorPayload;
 import maxigregrze.cobblesafari.network.TimerSyncPayload;
 import maxigregrze.cobblesafari.client.renderer.DungeonPortalBlockEntityRenderer;
 import maxigregrze.cobblesafari.client.renderer.BalloonEntityRenderer;
@@ -19,6 +22,7 @@ import maxigregrze.cobblesafari.client.renderer.HikerEntityRenderer;
 import maxigregrze.cobblesafari.client.renderer.HoopaRingPortalBlockEntityRenderer;
 import maxigregrze.cobblesafari.client.renderer.GiratinaCoreBlockEntityRenderer;
 import maxigregrze.cobblesafari.client.renderer.DistortionPortalBlockEntityRenderer;
+import maxigregrze.cobblesafari.client.renderer.LostItemBlockEntityRenderer;
 import maxigregrze.cobblesafari.client.renderer.VoidBlockRenderer;
 import maxigregrze.cobblesafari.client.model.BalloonEntityModel;
 import maxigregrze.cobblesafari.block.basepc.BasePCMenu;
@@ -28,6 +32,7 @@ import maxigregrze.cobblesafari.underground.UndergroundScreen;
 import maxigregrze.cobblesafari.underground.network.UndergroundPayloads;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.inventory.BookViewScreen;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
@@ -121,18 +126,24 @@ public class CobbleSafariClientNeoForge {
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.DISTORTION_ROCK_FLAT_UPSIDEDOWN, RenderType.cutout());
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.DISTORTION_ROCK_FLOATING, RenderType.cutout());
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.DISTORTION_WEED, RenderType.cutout());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.DISTORTION_WEED_SPAWN, RenderType.cutout());
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.SUSPICIOUS_DISTORTION_ROCK, RenderType.cutout());
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.DISTORTION_BOULDER, RenderType.cutout());
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.DISTORTION_FLOWER, RenderType.cutout());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.DISTORTION_FLOWER_CARPET, RenderType.cutout());
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.VANISHING_DISTORTION_FLOWER, RenderType.cutout());
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.APPEARING_DISTORTION_FLOWER, RenderType.cutout());
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.DISTORTION_STONEBRICKS_DOOR, RenderType.cutout());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.DISTORTION_STONEBRICKS_RUBBLE, RenderType.cutout());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.LOST_NOTES, RenderType.cutout());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.LOST_ITEM, RenderType.cutout());
 
             BlockEntityRenderers.register(ModBlockEntities.HOOPA_RING_PORTAL, HoopaRingPortalBlockEntityRenderer::new);
             BlockEntityRenderers.register(ModBlockEntities.DUNGEON_PORTAL, DungeonPortalBlockEntityRenderer::new);
             BlockEntityRenderers.register(ModBlockEntities.VOID_BLOCK, VoidBlockRenderer::new);
             BlockEntityRenderers.register(ModBlockEntities.GIRATINA_CORE, GiratinaCoreBlockEntityRenderer::new);
             BlockEntityRenderers.register(ModBlockEntities.DISTORTION_PORTAL, DistortionPortalBlockEntityRenderer::new);
+            BlockEntityRenderers.register(ModBlockEntities.LOST_ITEM, LostItemBlockEntityRenderer::new);
         });
 
         NeoForge.EVENT_BUS.addListener(CobbleSafariClientNeoForge::onRenderGuiLayer);
@@ -202,6 +213,19 @@ public class CobbleSafariClientNeoForge {
             if (Minecraft.getInstance().screen instanceof TpAcceptScreen tpScreen) {
                 tpScreen.closeFromServer();
             }
+        });
+    }
+
+    public static void handleOpenRuneEditor(OpenRuneEditorPayload payload, IPayloadContext context) {
+        context.enqueueWork(() -> {
+            Minecraft.getInstance().setScreen(new DistortionStoneBricksRuneScreen(payload.pos(), payload.text()));
+        });
+    }
+
+    public static void handleOpenLostNoteBook(OpenLostNoteBookPayload payload, IPayloadContext context) {
+        context.enqueueWork(() -> {
+            BookViewScreen.BookAccess access = BookViewScreen.BookAccess.fromItem(payload.book());
+            Minecraft.getInstance().setScreen(new BookViewScreen(access));
         });
     }
 

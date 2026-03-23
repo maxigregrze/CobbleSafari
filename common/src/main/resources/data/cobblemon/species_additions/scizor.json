@@ -1,0 +1,25 @@
+{
+  "target": "cobblemon:scizor",
+  "features": ["distortion"],
+  "forms": [
+    {
+      "name": "Distortion",
+      "aspects": ["distortion"],
+      "baseStats": {
+        "hp": 105,
+        "attack": 195,
+        "defence": 150,
+        "special_attack": 83,
+        "special_defence": 120,
+        "speed": 98
+      },
+      "catchRate": 0,
+      "baseScale": 1.2,
+      "hitbox": {
+        "width": 0.96,
+        "height": 2.16,
+        "fixed": false
+      }
+    }
+  ]
+}

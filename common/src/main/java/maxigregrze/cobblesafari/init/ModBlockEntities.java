@@ -5,6 +5,9 @@ import maxigregrze.cobblesafari.block.dungeon.DungeonPortalBlockEntity;
 import maxigregrze.cobblesafari.block.dungeon.HoopaRingPortalBlockEntity;
 import maxigregrze.cobblesafari.block.misc.GiratinaCoreBlockEntity;
 import maxigregrze.cobblesafari.block.misc.DistortionPortalBlockEntity;
+import maxigregrze.cobblesafari.block.misc.DistortionStoneBricksRuneBlockEntity;
+import maxigregrze.cobblesafari.block.misc.LostNotesBlockEntity;
+import maxigregrze.cobblesafari.block.misc.LostItemBlockEntity;
 import maxigregrze.cobblesafari.block.misc.SafariEggNestBlockEntity;
 import maxigregrze.cobblesafari.block.misc.VoidBlockEntity;
 import maxigregrze.cobblesafari.CobbleSafari;
@@ -24,6 +27,9 @@ public class ModBlockEntities {
     public static BlockEntityType<VoidBlockEntity> VOID_BLOCK;
     public static BlockEntityType<GiratinaCoreBlockEntity> GIRATINA_CORE;
     public static BlockEntityType<DistortionPortalBlockEntity> DISTORTION_PORTAL;
+    public static BlockEntityType<DistortionStoneBricksRuneBlockEntity> DISTORTION_STONEBRICKS_RUNE;
+    public static BlockEntityType<LostNotesBlockEntity> LOST_NOTES;
+    public static BlockEntityType<LostItemBlockEntity> LOST_ITEM;
     public static BlockEntityType<BasePCBlockEntity> SECRETBASE_PC;
     public static BlockEntityType<IncubatorBlockEntity> INCUBATOR;
 
@@ -64,6 +70,24 @@ public class ModBlockEntities {
                 BuiltInRegistries.BLOCK_ENTITY_TYPE,
                 ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, "distortion_portal"),
                 BlockEntityType.Builder.of(DistortionPortalBlockEntity::new, ModBlocks.DISTORTION_PORTAL).build(null)
+        );
+
+        DISTORTION_STONEBRICKS_RUNE = Registry.register(
+                BuiltInRegistries.BLOCK_ENTITY_TYPE,
+                ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, "distortion_stone_bricks_rune"),
+                BlockEntityType.Builder.of(DistortionStoneBricksRuneBlockEntity::new, ModBlocks.DISTORTION_STONE_BRICKS_RUNE).build(null)
+        );
+
+        LOST_NOTES = Registry.register(
+                BuiltInRegistries.BLOCK_ENTITY_TYPE,
+                ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, "lost_notes"),
+                BlockEntityType.Builder.of(LostNotesBlockEntity::new, ModBlocks.LOST_NOTES).build(null)
+        );
+
+        LOST_ITEM = Registry.register(
+                BuiltInRegistries.BLOCK_ENTITY_TYPE,
+                ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, "lost_item"),
+                BlockEntityType.Builder.of(LostItemBlockEntity::new, ModBlocks.LOST_ITEM).build(null)
         );
 
         SECRETBASE_PC = Registry.register(
