@@ -6,7 +6,7 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "cobblesafari:star_piece",
+          "name": "cobblesafari:starpiece",
           "weight": 5
         },
         {

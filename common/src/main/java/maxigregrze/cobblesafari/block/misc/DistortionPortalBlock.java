@@ -80,20 +80,9 @@ public class DistortionPortalBlock extends BaseEntityBlock {
 
     @Override
     protected void entityInside(BlockState state, Level level, BlockPos pos, Entity entity) {
-        LOGGER.info("[DistortionPortal] entityInside triggered - entity: {}, level type: {}", 
-            entity.getClass().getSimpleName(), level.getClass().getSimpleName());
-        
-        if (level.isClientSide()) {
-            LOGGER.info("[DistortionPortal] Client side, skipping");
-            return;
-        }
-        
-        LOGGER.info("[DistortionPortal] Server side, checking if ServerPlayer...");
-        if (entity instanceof ServerPlayer serverPlayer) {
-            LOGGER.info("[DistortionPortal] ServerPlayer detected: {}, attempting teleport", serverPlayer.getName().getString());
-            if (level instanceof ServerLevel serverLevel) {
-                handlePlayerInPortalVolume(serverLevel, pos, state, serverPlayer);
-            }
+        if (level.isClientSide()) return;
+        if (entity instanceof ServerPlayer serverPlayer && level instanceof ServerLevel serverLevel) {
+            handlePlayerInPortalVolume(serverLevel, pos, state, serverPlayer);
         }
     }
 
@@ -128,6 +117,7 @@ public class DistortionPortalBlock extends BaseEntityBlock {
         double destZ = pos.getZ() + 0.5D;
         double destY = clampedY + 0.01D;
 
+        LOGGER.info("[DistortionPortal] Teleporting {} ({}) to y={}", serverPlayer.getName().getString(), state.getValue(MODE), clampedY);
         serverPlayer.teleportTo(serverLevel, destX, destY, destZ, serverPlayer.getYRot(), serverPlayer.getXRot());
         serverPlayer.resetFallDistance();
         LAST_TELEPORT_GAME_TIME.put(id, gameTime);

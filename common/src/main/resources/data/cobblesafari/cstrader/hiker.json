@@ -377,7 +377,7 @@
           "maxUses": 8
         },
         {
-          "sourceItem1": "cobblemon:old_amber",
+          "sourceItem1": "cobblemon:old_amber_fossil",
           "sourceQty1": 1,
           "resultOptions": [
             {"itemId": "cobblesafari:sphere_green_l", "qty": 16},

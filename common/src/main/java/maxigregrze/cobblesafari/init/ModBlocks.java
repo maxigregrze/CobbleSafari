@@ -27,6 +27,7 @@ import maxigregrze.cobblesafari.block.misc.GiratinaCoreBlock;
 import maxigregrze.cobblesafari.block.misc.GiratinaCoreSideBlock;
 import maxigregrze.cobblesafari.block.misc.LostNotesBlock;
 import maxigregrze.cobblesafari.block.misc.LostItemBlock;
+import maxigregrze.cobblesafari.block.misc.LostItemVisualBlock;
 import maxigregrze.cobblesafari.block.misc.MagneticClusterBlock;
 import maxigregrze.cobblesafari.block.misc.MagneticCrystalBlock;
 import maxigregrze.cobblesafari.block.misc.LiquidBarrierBlock;
@@ -546,6 +547,15 @@ public class ModBlocks {
 
     public static final Block LOST_ITEM = registerBlock("lost_item",
             new LostItemBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.STONE)
+                    .instabreak()
+                    .sound(SoundType.STONE)
+                    .noOcclusion()
+                    .noCollission()
+            ));
+
+    public static final Block LOST_ITEM_VISUAL = registerBlockWithoutItem("lost_item_visual",
+            new LostItemVisualBlock(BlockBehaviour.Properties.of()
                     .mapColor(MapColor.STONE)
                     .instabreak()
                     .sound(SoundType.STONE)
