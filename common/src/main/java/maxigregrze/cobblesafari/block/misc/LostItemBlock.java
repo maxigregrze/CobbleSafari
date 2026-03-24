@@ -1,7 +1,7 @@
 package maxigregrze.cobblesafari.block.misc;
 
+import com.mojang.logging.LogUtils;
 import com.mojang.serialization.MapCodec;
-import maxigregrze.cobblesafari.platform.Services;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.Registries;
@@ -10,9 +10,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Containers;
-import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -41,8 +39,12 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.Nullable;
+import org.slf4j.Logger;
+
+import java.util.UUID;
 
 public class LostItemBlock extends BaseEntityBlock {
+    private static final Logger LOGGER = LogUtils.getLogger();
     public static final MapCodec<LostItemBlock> CODEC = simpleCodec(LostItemBlock::new);
     public static final EnumProperty<AttachFace> FACE = BlockStateProperties.ATTACH_FACE;
     public static final EnumProperty<Direction> FACING = HorizontalDirectionalBlock.FACING;
@@ -82,7 +84,9 @@ public class LostItemBlock extends BaseEntityBlock {
     public BlockState getStateForPlacement(BlockPlaceContext context) {
         Direction clickedFace = context.getClickedFace();
         AttachFace face = faceForDirection(clickedFace);
-        Direction horizontalFacing = face == AttachFace.WALL ? clickedFace : Direction.NORTH;
+        Direction horizontalFacing = face == AttachFace.WALL
+                ? clickedFace
+                : context.getHorizontalDirection().getOpposite();
         BlockPos pos = context.getClickedPos();
         BlockState candidate = this.defaultBlockState()
                 .setValue(FACE, face)
@@ -96,7 +100,7 @@ public class LostItemBlock extends BaseEntityBlock {
 
     @Override
     public RenderShape getRenderShape(BlockState state) {
-        return RenderShape.INVISIBLE;
+        return RenderShape.ENTITYBLOCK_ANIMATED;
     }
 
     @Override
@@ -133,54 +137,46 @@ public class LostItemBlock extends BaseEntityBlock {
 
     @Override
     protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hitResult) {
-        return this.handleUse(state, level, pos, player);
-    }
-
-    @Override
-    protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
-        InteractionResult result = this.handleUse(state, level, pos, player);
-        if (result.consumesAction()) {
-            return ItemInteractionResult.SUCCESS;
-        }
-        return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
-    }
-
-    private InteractionResult handleUse(BlockState state, Level level, BlockPos pos, Player player) {
+        LOGGER.info("[LostItem] useWithoutItem - player: {}, isClientSide: {}", player.getName().getString(), level.isClientSide());
+        
         if (level.isClientSide()) {
             return InteractionResult.SUCCESS;
         }
+        
+        LOGGER.info("[LostItem] Server side, checking entities...");
+        if (!(player instanceof ServerPlayer serverPlayer)) {
+            LOGGER.warn("[LostItem] Player is not ServerPlayer!");
+            return InteractionResult.PASS;
+        }
         if (!(level.getBlockEntity(pos) instanceof LostItemBlockEntity blockEntity)) {
+            LOGGER.warn("[LostItem] No BlockEntity found at position!");
             return InteractionResult.PASS;
         }
         if (!(level instanceof ServerLevel serverLevel)) {
+            LOGGER.warn("[LostItem] Level is not ServerLevel!");
             return InteractionResult.PASS;
         }
 
-        if (player instanceof ServerPlayer serverPlayer && blockEntity.hasClaimed(serverPlayer.getUUID())) {
-            return InteractionResult.CONSUME;
-        }
-
-        boolean hasItem = state.getValue(HAS_ITEM);
-        if (player.isCreative() && player.getMainHandItem().isEmpty() && !hasItem) {
-            level.setBlock(pos, state.setValue(HAS_ITEM, true), Block.UPDATE_ALL);
+        LOGGER.info("[LostItem] All checks passed. Creative: {}, Shift: {}", player.isCreative(), player.isShiftKeyDown());
+        
+        if (player.isCreative() && player.isShiftKeyDown()) {
+            LOGGER.info("[LostItem] Resetting claims...");
             blockEntity.resetClaims();
             return InteractionResult.CONSUME;
         }
 
-        if (!hasItem) {
+        UUID playerId = serverPlayer.getUUID();
+        boolean alreadyClaimed = blockEntity.hasClaimed(playerId);
+        LOGGER.info("[LostItem] Player {} already claimed: {}", player.getName().getString(), alreadyClaimed);
+        
+        if (alreadyClaimed) {
             return InteractionResult.CONSUME;
         }
 
-        if (player instanceof ServerPlayer serverPlayer && !blockEntity.tryClaim(serverPlayer.getUUID())) {
-            return InteractionResult.CONSUME;
-        }
-
+        LOGGER.info("[LostItem] Claiming and dropping loot for player {}", player.getName().getString());
+        blockEntity.tryClaim(playerId);
         dropFromLootTable(serverLevel, pos);
-
-        if (!isLootrLoaded()) {
-            level.setBlock(pos, state.setValue(HAS_ITEM, false), Block.UPDATE_ALL);
-        }
-
+        LOGGER.info("[LostItem] Loot dropped successfully");
         return InteractionResult.CONSUME;
     }
 
@@ -192,10 +188,6 @@ public class LostItemBlock extends BaseEntityBlock {
         for (ItemStack stack : lootTable.getRandomItems(params)) {
             Containers.dropItemStack(level, pos.getX() + 0.5, pos.getY() + 1.05, pos.getZ() + 0.5, stack);
         }
-    }
-
-    private static boolean isLootrLoaded() {
-        return Services.PLATFORM.isModLoaded("lootr");
     }
 
     @Nullable

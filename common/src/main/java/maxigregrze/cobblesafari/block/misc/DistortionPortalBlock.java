@@ -1,5 +1,6 @@
 package maxigregrze.cobblesafari.block.misc;
 
+import com.mojang.logging.LogUtils;
 import com.mojang.serialization.MapCodec;
 import maxigregrze.cobblesafari.init.ModBlockEntities;
 import net.minecraft.core.BlockPos;
@@ -27,12 +28,14 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.Nullable;
+import org.slf4j.Logger;
 
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class DistortionPortalBlock extends BaseEntityBlock {
+    private static final Logger LOGGER = LogUtils.getLogger();
     public static final MapCodec<DistortionPortalBlock> CODEC = simpleCodec(DistortionPortalBlock::new);
     public static final EnumProperty<Mode> MODE = EnumProperty.create("mode", Mode.class);
     private static final VoxelShape SHAPE = Block.box(0, 0, 0, 16, 16, 16);
@@ -76,20 +79,31 @@ public class DistortionPortalBlock extends BaseEntityBlock {
     }
 
     @Override
-    public void stepOn(Level level, BlockPos pos, BlockState state, Entity entity) {
-        if (!level.isClientSide() && entity instanceof ServerPlayer serverPlayer && level instanceof ServerLevel serverLevel) {
-            handlePlayerInPortalVolume(serverLevel, pos, state, serverPlayer);
+    protected void entityInside(BlockState state, Level level, BlockPos pos, Entity entity) {
+        LOGGER.info("[DistortionPortal] entityInside triggered - entity: {}, level type: {}", 
+            entity.getClass().getSimpleName(), level.getClass().getSimpleName());
+        
+        if (level.isClientSide()) {
+            LOGGER.info("[DistortionPortal] Client side, skipping");
+            return;
         }
-        super.stepOn(level, pos, state, entity);
+        
+        LOGGER.info("[DistortionPortal] Server side, checking if ServerPlayer...");
+        if (entity instanceof ServerPlayer serverPlayer) {
+            LOGGER.info("[DistortionPortal] ServerPlayer detected: {}, attempting teleport", serverPlayer.getName().getString());
+            if (level instanceof ServerLevel serverLevel) {
+                handlePlayerInPortalVolume(serverLevel, pos, state, serverPlayer);
+            }
+        }
     }
 
     @Override
     protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hitResult) {
+        if (!player.isCreative() || !player.isShiftKeyDown() || !player.getMainHandItem().isEmpty()) {
+            return InteractionResult.PASS;
+        }
         if (level.isClientSide()) {
             return InteractionResult.SUCCESS;
-        }
-        if (!player.isCreative()) {
-            return InteractionResult.PASS;
         }
 
         Mode nextMode = state.getValue(MODE) == Mode.TOP ? Mode.BOTTOM : Mode.TOP;

@@ -112,7 +112,7 @@ public class DistortionWeedBlock extends HorizontalDirectionalBlock {
         return super.updateShape(state, direction, neighborState, level, pos, neighborPos);
     }
 
-    private static AttachFace faceForDirection(Direction direction) {
+    protected static AttachFace faceForDirection(Direction direction) {
         if (direction == Direction.UP) {
             return AttachFace.FLOOR;
         }
