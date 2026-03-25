@@ -1,4 +1,4 @@
-package maxigregrze.cobblesafari.block.misc;
+package maxigregrze.cobblesafari.block.distortion;
 
 import maxigregrze.cobblesafari.block.DistortionFlowerPart;
 import net.minecraft.core.BlockPos;

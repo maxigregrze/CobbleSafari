@@ -12,7 +12,6 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
@@ -137,13 +136,11 @@ public class LostItemBlock extends BaseEntityBlock {
 
     @Override
     protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hitResult) {
-        LOGGER.info("[LostItem] useWithoutItem - player: {}, isClientSide: {}", player.getName().getString(), level.isClientSide());
         
         if (level.isClientSide()) {
             return InteractionResult.SUCCESS;
         }
         
-        LOGGER.info("[LostItem] Server side, checking entities...");
         if (!(player instanceof ServerPlayer serverPlayer)) {
             LOGGER.warn("[LostItem] Player is not ServerPlayer!");
             return InteractionResult.PASS;
@@ -156,38 +153,39 @@ public class LostItemBlock extends BaseEntityBlock {
             LOGGER.warn("[LostItem] Level is not ServerLevel!");
             return InteractionResult.PASS;
         }
-
-        LOGGER.info("[LostItem] All checks passed. Creative: {}, Shift: {}", player.isCreative(), player.isShiftKeyDown());
         
         if (player.isCreative() && player.isShiftKeyDown()) {
-            LOGGER.info("[LostItem] Resetting claims...");
+            LOGGER.info("[LostItem] Player {} is resetting claims...", player.getName().getString());
             blockEntity.resetClaims();
             return InteractionResult.CONSUME;
         }
 
         UUID playerId = serverPlayer.getUUID();
         boolean alreadyClaimed = blockEntity.hasClaimed(playerId);
-        LOGGER.info("[LostItem] Player {} already claimed: {}", player.getName().getString(), alreadyClaimed);
         
         if (alreadyClaimed) {
             return InteractionResult.CONSUME;
         }
 
-        LOGGER.info("[LostItem] Claiming and dropping loot for player {}", player.getName().getString());
         blockEntity.tryClaim(playerId);
-        dropFromLootTable(serverLevel, pos);
-        LOGGER.info("[LostItem] Loot dropped successfully");
+        giveOrDropFromLootTable(serverLevel, pos, serverPlayer);
         return InteractionResult.CONSUME;
     }
 
-    private static void dropFromLootTable(ServerLevel level, BlockPos pos) {
+    private static void giveOrDropFromLootTable(ServerLevel level, BlockPos pos, ServerPlayer player) {
         LootParams params = new LootParams.Builder(level)
                 .withParameter(LootContextParams.ORIGIN, Vec3.atCenterOf(pos))
                 .create(LootContextParamSets.CHEST);
         LootTable lootTable = level.getServer().reloadableRegistries().getLootTable(LOST_ITEM_LOOT_TABLE);
-        for (ItemStack stack : lootTable.getRandomItems(params)) {
-            Containers.dropItemStack(level, pos.getX() + 0.5, pos.getY() + 1.05, pos.getZ() + 0.5, stack);
-        }
+        
+        lootTable.getRandomItems(params).stream().findFirst().ifPresent(stack -> {
+            if (!stack.isEmpty()) {
+                boolean added = player.getInventory().add(stack);
+                if (!added) {
+                    Containers.dropItemStack(level, pos.getX() + 0.5, pos.getY() + 1.05, pos.getZ() + 0.5, stack);
+                }
+            }
+        });
     }
 
     @Nullable

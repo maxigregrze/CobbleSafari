@@ -18,7 +18,7 @@ import maxigregrze.cobblesafari.network.OpenRuneEditorPayload;
 import maxigregrze.cobblesafari.network.SaveRuneTextPayload;
 import maxigregrze.cobblesafari.network.TimerSyncPayload;
 import maxigregrze.cobblesafari.network.TpAcceptResponsePayload;
-import maxigregrze.cobblesafari.block.misc.DistortionStoneBricksRuneBlockEntity;
+import maxigregrze.cobblesafari.block.distortion.DistortionStoneBricksRuneBlockEntity;
 import maxigregrze.cobblesafari.teleporter.TeleporterTickHandler;
 import maxigregrze.cobblesafari.underground.UndergroundMinigame;
 import maxigregrze.cobblesafari.underground.network.UndergroundNetworking;

@@ -1,4 +1,4 @@
-package maxigregrze.cobblesafari.block.misc;
+package maxigregrze.cobblesafari.block.distortion;
 
 import com.mojang.serialization.MapCodec;
 import maxigregrze.cobblesafari.network.OpenRuneEditorPayload;
@@ -9,6 +9,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundClearTitlesPacket;
 import net.minecraft.network.protocol.game.ClientboundSetTitleTextPacket;
 import net.minecraft.network.protocol.game.ClientboundSetTitlesAnimationPacket;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -93,7 +94,8 @@ public class DistortionStoneBricksRuneBlock extends BaseEntityBlock {
             String partial = titleText.substring(0, i);
             SafariStateManager.scheduleTickDelay(delay, () -> {
                 if (!player.isRemoved()) {
-                    player.connection.send(new ClientboundSetTitleTextPacket(Component.literal(partial)));
+                    player.connection.send(new ClientboundSetTitleTextPacket(Component.literal(partial).withStyle(style -> style.withFont(ResourceLocation.fromNamespaceAndPath("cobblesafari", "unown")))));
+                    
                 }
             });
         }

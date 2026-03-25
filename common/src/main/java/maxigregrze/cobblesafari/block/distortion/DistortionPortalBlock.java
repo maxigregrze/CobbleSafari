@@ -1,4 +1,4 @@
-package maxigregrze.cobblesafari.block.misc;
+package maxigregrze.cobblesafari.block.distortion;
 
 import com.mojang.logging.LogUtils;
 import com.mojang.serialization.MapCodec;
@@ -23,16 +23,14 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
+import net.minecraft.world.level.portal.DimensionTransition;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
-
-import java.util.Map;
-import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
 
 public class DistortionPortalBlock extends BaseEntityBlock {
     private static final Logger LOGGER = LogUtils.getLogger();
@@ -40,8 +38,6 @@ public class DistortionPortalBlock extends BaseEntityBlock {
     public static final EnumProperty<Mode> MODE = EnumProperty.create("mode", Mode.class);
     private static final VoxelShape SHAPE = Block.box(0, 0, 0, 16, 16, 16);
     private static final int TELEPORT_OFFSET_BLOCKS = 128;
-    private static final int TELEPORT_COOLDOWN_TICKS = 60;
-    private static final Map<UUID, Long> LAST_TELEPORT_GAME_TIME = new ConcurrentHashMap<>();
 
     public DistortionPortalBlock(Properties properties) {
         super(properties);
@@ -80,7 +76,9 @@ public class DistortionPortalBlock extends BaseEntityBlock {
 
     @Override
     protected void entityInside(BlockState state, Level level, BlockPos pos, Entity entity) {
-        if (level.isClientSide()) return;
+        if (level.isClientSide()) {
+            return;
+        }        
         if (entity instanceof ServerPlayer serverPlayer && level instanceof ServerLevel serverLevel) {
             handlePlayerInPortalVolume(serverLevel, pos, state, serverPlayer);
         }
@@ -102,14 +100,9 @@ public class DistortionPortalBlock extends BaseEntityBlock {
     }
 
     public static void handlePlayerInPortalVolume(ServerLevel serverLevel, BlockPos pos, BlockState state, ServerPlayer serverPlayer) {
-        long gameTime = serverLevel.getGameTime();
-        UUID id = serverPlayer.getUUID();
-        long last = LAST_TELEPORT_GAME_TIME.getOrDefault(id, Long.MIN_VALUE);
-        if (gameTime - last < TELEPORT_COOLDOWN_TICKS) {
-            return;
-        }
 
-        int delta = state.getValue(MODE) == Mode.TOP ? TELEPORT_OFFSET_BLOCKS : -TELEPORT_OFFSET_BLOCKS;
+        Mode mode = state.getValue(MODE);
+        int delta = mode == Mode.TOP ? TELEPORT_OFFSET_BLOCKS : -TELEPORT_OFFSET_BLOCKS;
         int targetY = pos.getY() + delta;
         int clampedY = Math.clamp(targetY, serverLevel.getMinBuildHeight() + 1, serverLevel.getMaxBuildHeight() - 2);
 
@@ -117,10 +110,27 @@ public class DistortionPortalBlock extends BaseEntityBlock {
         double destZ = pos.getZ() + 0.5D;
         double destY = clampedY + 0.01D;
 
-        LOGGER.info("[DistortionPortal] Teleporting {} ({}) to y={}", serverPlayer.getName().getString(), state.getValue(MODE), clampedY);
-        serverPlayer.teleportTo(serverLevel, destX, destY, destZ, serverPlayer.getYRot(), serverPlayer.getXRot());
-        serverPlayer.resetFallDistance();
-        LAST_TELEPORT_GAME_TIME.put(id, gameTime);
+        DimensionTransition transition = new DimensionTransition(
+                serverLevel,
+                new Vec3(destX, destY, destZ),
+                Vec3.ZERO,
+                serverPlayer.getYRot(),
+                serverPlayer.getXRot(),
+                DimensionTransition.DO_NOTHING
+        );
+
+        try {
+            Entity result = serverPlayer.changeDimension(transition);
+            
+            if (result instanceof ServerPlayer resultPlayer) {
+
+                resultPlayer.resetFallDistance();
+            } else {
+                LOGGER.warn("[DistortionPortal] changeDimension did not return a ServerPlayer!");
+            }
+        } catch (Exception e) {
+            LOGGER.error("[DistortionPortal] Exception during changeDimension: {}", e.getMessage(), e);
+        }
     }
 
     @Nullable

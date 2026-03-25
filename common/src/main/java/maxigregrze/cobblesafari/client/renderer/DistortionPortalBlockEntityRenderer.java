@@ -2,7 +2,7 @@ package maxigregrze.cobblesafari.client.renderer;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
-import maxigregrze.cobblesafari.block.misc.DistortionPortalBlockEntity;
+import maxigregrze.cobblesafari.block.distortion.DistortionPortalBlockEntity;
 import maxigregrze.cobblesafari.init.ModBlocks;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.block.BlockRenderDispatcher;

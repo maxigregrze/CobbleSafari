@@ -1,4 +1,4 @@
-package maxigregrze.cobblesafari.block.misc;
+package maxigregrze.cobblesafari.block.distortion;
 
 import net.minecraft.world.level.block.Block;
 

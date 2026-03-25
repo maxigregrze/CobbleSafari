@@ -1,4 +1,4 @@
-package maxigregrze.cobblesafari.block.misc;
+package maxigregrze.cobblesafari.block.distortion;
 
 import maxigregrze.cobblesafari.init.ModBlocks;
 import net.minecraft.core.BlockPos;

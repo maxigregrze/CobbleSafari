@@ -1,4 +1,4 @@
-package maxigregrze.cobblesafari.block.misc;
+package maxigregrze.cobblesafari.block.distortion;
 
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.Direction;
@@ -8,11 +8,11 @@ import net.minecraft.world.level.block.HorizontalDirectionalBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 
-public class DistortionRockVerticalBlock extends HorizontalDirectionalBlock {
+public class DistortionRockDirectionalBlock extends HorizontalDirectionalBlock {
 
-    public static final MapCodec<DistortionRockVerticalBlock> CODEC = simpleCodec(DistortionRockVerticalBlock::new);
+    public static final MapCodec<DistortionRockDirectionalBlock> CODEC = simpleCodec(DistortionRockDirectionalBlock::new);
 
-    public DistortionRockVerticalBlock(Properties properties) {
+    public DistortionRockDirectionalBlock(Properties properties) {
         super(properties);
         this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.NORTH));
     }
