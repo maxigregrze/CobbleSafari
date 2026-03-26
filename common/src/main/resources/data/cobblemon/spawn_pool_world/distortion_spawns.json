@@ -32,14 +32,11 @@
         "type": "pokemon",
         "context": "grounded",
         "bucket": "common",
-        "level": "70-80",
+        "level": "25-50",
         "weight": 0.5,
         "condition": {
           "dimensions": [
             "cobblesafari:dungeon_distortion"
-          ],
-          "neededNearbyBlocks": [
-            "cobblesafari:distortion_weed"
           ]
         }
       },

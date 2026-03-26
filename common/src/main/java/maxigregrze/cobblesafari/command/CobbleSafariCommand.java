@@ -10,6 +10,7 @@ import com.mojang.brigadier.suggestion.SuggestionProvider;
 import maxigregrze.cobblesafari.cstrader.logic.CsTraderDefinition;
 import maxigregrze.cobblesafari.cstrader.logic.CsTraderRegistry;
 import maxigregrze.cobblesafari.config.SafariTimerConfig;
+import maxigregrze.cobblesafari.dungeon.DungeonDimensions;
 import maxigregrze.cobblesafari.entity.CsTraderEntity;
 import maxigregrze.cobblesafari.init.ModEntities;
 import net.minecraft.commands.CommandBuildContext;
@@ -38,6 +39,8 @@ public class CobbleSafariCommand {
             (context, builder) -> SharedSuggestionProvider.suggest(getVariantSuggestions(context), builder);
     private static final SuggestionProvider<CommandSourceStack> DIMENSION_SUGGESTIONS =
             (context, builder) -> SharedSuggestionProvider.suggest(SafariTimerConfig.getConfiguredDimensionIds(), builder);
+    private static final SuggestionProvider<CommandSourceStack> DUNGEON_SPAWN_SUGGESTIONS =
+            (context, builder) -> SharedSuggestionProvider.suggest(DungeonDimensions.getRegisteredDungeonIdsSorted(), builder);
 
     private CobbleSafariCommand() {}
 
@@ -258,12 +261,20 @@ public class CobbleSafariCommand {
         return DungeonCommand.executeSpawn(context);
     }
 
+    private static int executeDungeonSpawnWithDungeon(CommandContext<CommandSourceStack> context) {
+        return DungeonCommand.executeSpawnWithDungeon(context);
+    }
+
     private static int executeDungeonSpawnSelf(CommandContext<CommandSourceStack> context) {
         return DungeonCommand.executeSpawnSelf(context);
     }
 
     private static int executeDungeonSpawnForce(CommandContext<CommandSourceStack> context) {
         return DungeonCommand.executeSpawnForce(context);
+    }
+
+    private static int executeDungeonSpawnForceWithDungeon(CommandContext<CommandSourceStack> context) {
+        return DungeonCommand.executeSpawnForceWithDungeon(context);
     }
 
     private static int executeDungeonSpawnForceSelf(CommandContext<CommandSourceStack> context) {

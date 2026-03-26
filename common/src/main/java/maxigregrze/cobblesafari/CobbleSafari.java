@@ -57,6 +57,7 @@ public class CobbleSafari {
         RandomizerItemsConfig.load();
 
         DungeonDimensions.register();
+        SafariTimerConfig.syncDungeonDimensionTimersFromRegistry();
         CobbleSafariCommand.register();
         SafariExitCommand.register();
         UndergroundMinigame.registerCommon();

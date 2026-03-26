@@ -24,8 +24,10 @@ import maxigregrze.cobblesafari.block.basepc.BasePCMenu;
 import maxigregrze.cobblesafari.client.screen.BasePCScreen;
 import maxigregrze.cobblesafari.underground.UndergroundMinigame;
 import maxigregrze.cobblesafari.underground.UndergroundScreen;
+import maxigregrze.cobblesafari.client.audio.DungeonMusicHandler;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.item.v1.ItemTooltipCallback;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry;
@@ -59,6 +61,7 @@ public class CobbleSafariClientFabric implements ClientModInitializer {
         registerBlockRenderLayers();
         registerRenderers();
         registerScreens();
+        registerDungeonMusic();
     }
 
     private void registerTooltips() {
@@ -173,5 +176,9 @@ public class CobbleSafariClientFabric implements ClientModInitializer {
     private void registerScreens() {
         MenuScreens.register(UndergroundMinigame.MENU_TYPE, UndergroundScreen::new);
         MenuScreens.register(BasePCMenu.MENU_TYPE, BasePCScreen::new);
+    }
+
+    private void registerDungeonMusic() {
+        ClientTickEvents.END_CLIENT_TICK.register(DungeonMusicHandler::onClientTick);
     }
 }

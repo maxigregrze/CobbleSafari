@@ -7,7 +7,9 @@
         "height": 16,
         "chars": [
           "ABCDEFGHIJKLMNOP",
-          "QRSTUVWXYZ?!\u0000ù@#"
+          "QRSTUVWXYZ?!ù@#$",
+          "abcdefghijklmnop",
+          "qrstuvwxyz ....."
         ]
       }
     ]

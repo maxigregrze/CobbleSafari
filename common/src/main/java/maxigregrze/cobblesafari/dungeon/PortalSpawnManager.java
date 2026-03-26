@@ -219,7 +219,7 @@ public class PortalSpawnManager {
             BlockPos portalPos = findValidSpawnPosition(overworld, targetPlayer.blockPosition());
 
             if (portalPos != null) {
-                spawnPortal(overworld, portalPos, targetPlayer);
+                spawnPortal(overworld, portalPos, targetPlayer, null);
                 return;
             }
         }
@@ -232,6 +232,10 @@ public class PortalSpawnManager {
     }
 
     public static boolean spawnPortalNearPlayer(ServerPlayer player, boolean force) {
+        return spawnPortalNearPlayer(player, force, null);
+    }
+
+    public static boolean spawnPortalNearPlayer(ServerPlayer player, boolean force, String dungeonId) {
         if (!(player.level() instanceof ServerLevel level)) {
             CobbleSafari.LOGGER.warn("Cannot spawn portal: player {} is not in a ServerLevel", player.getName().getString());
             return false;
@@ -241,6 +245,15 @@ public class PortalSpawnManager {
             player.sendSystemMessage(Component.translatable("cobblesafari.command.dungeon.spawn.overworld_only"));
             CobbleSafari.LOGGER.warn("Cannot spawn portal: player {} is not in the Overworld", player.getName().getString());
             return false;
+        }
+
+        DungeonConfig fixedDungeon = null;
+        if (dungeonId != null && !dungeonId.isBlank()) {
+            fixedDungeon = DungeonDimensions.getDungeonById(dungeonId.trim());
+            if (fixedDungeon == null) {
+                CobbleSafari.LOGGER.warn("Cannot spawn portal: unknown dungeon id {}", dungeonId);
+                return false;
+            }
         }
 
         BlockPos portalPos;
@@ -256,7 +269,7 @@ public class PortalSpawnManager {
             }
         }
 
-        spawnPortal(level, portalPos, player);
+        spawnPortal(level, portalPos, player, fixedDungeon);
         return true;
     }
 
@@ -334,8 +347,11 @@ public class PortalSpawnManager {
         return null;
     }
 
-    private static void spawnPortal(ServerLevel level, BlockPos pos, ServerPlayer nearestPlayer) {
-        DungeonConfig dungeon = DungeonDimensions.getRandomDungeon();
+    private static void spawnPortal(ServerLevel level, BlockPos pos, ServerPlayer nearestPlayer, DungeonConfig dungeonOrNull) {
+        DungeonConfig dungeon = dungeonOrNull;
+        if (dungeon == null) {
+            dungeon = DungeonDimensions.getRandomDungeon();
+        }
         if (dungeon == null) {
             CobbleSafari.LOGGER.error("No dungeon configuration available");
             return;

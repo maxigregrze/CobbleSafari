@@ -34,5 +34,37 @@
             }
         ],
         "subtitle": "subtitles.cobblesafari.giratina.trade"
+    },
+    "music.distortion.intro": {
+        "sounds": [
+            {
+                "name": "cobblesafari:music/bgm_distortion_intro",
+                "stream": true
+            }
+        ]
+    },
+    "music.distortion.loop": {
+        "sounds": [
+            {
+                "name": "cobblesafari:music/bgm_distortion_loop",
+                "stream": true
+            }
+        ]
+    },
+    "music.underground.intro": {
+        "sounds": [
+            {
+                "name": "cobblesafari:music/bgm_underground_intro",
+                "stream": true
+            }
+        ]
+    },
+    "music.underground.loop": {
+        "sounds": [
+            {
+                "name": "cobblesafari:music/bgm_underground_loop",
+                "stream": true
+            }
+        ]
     }
 }

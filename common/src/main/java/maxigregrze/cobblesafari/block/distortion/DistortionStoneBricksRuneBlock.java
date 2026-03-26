@@ -18,7 +18,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BaseEntityBlock;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -95,7 +94,6 @@ public class DistortionStoneBricksRuneBlock extends BaseEntityBlock {
             SafariStateManager.scheduleTickDelay(delay, () -> {
                 if (!player.isRemoved()) {
                     player.connection.send(new ClientboundSetTitleTextPacket(Component.literal(partial).withStyle(style -> style.withFont(ResourceLocation.fromNamespaceAndPath("cobblesafari", "unown")))));
-                    
                 }
             });
         }

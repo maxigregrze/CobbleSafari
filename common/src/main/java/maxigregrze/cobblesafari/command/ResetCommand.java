@@ -82,6 +82,7 @@ public class ResetCommand {
         CommandSourceStack source = context.getSource();
 
         SafariTimerConfig.load();
+        SafariTimerConfig.syncDungeonDimensionTimersFromRegistry();
         IncubatorConfig.load();
         SafariConfig.load();
         SpawnBoostConfig.load();

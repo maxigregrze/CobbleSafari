@@ -7,6 +7,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Random;
 
@@ -22,6 +23,11 @@ public class DungeonDimensions {
     public static final ResourceKey<Level> DUNGEON_UNDERGROUND = ResourceKey.create(
             Registries.DIMENSION,
             ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, "dungeon_underground")
+    );
+
+    public static final ResourceKey<Level> DUNGEON_DISTORTION = ResourceKey.create(
+            Registries.DIMENSION,
+            ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, "dungeon_distortion")
     );
 
     private static final List<DungeonConfig> REGISTERED_DUNGEONS = new ArrayList<>();
@@ -42,6 +48,17 @@ public class DungeonDimensions {
                 "dungeon_underground",
                 DUNGEON_UNDERGROUND,
                 "cobblesafari:underground/start",
+                9, 3, 3,
+                900,
+                1,
+                DungeonConfig.StructureType.JIGSAW,
+                5
+        ));
+
+        REGISTERED_DUNGEONS.add(new DungeonConfig(
+                "dungeon_distortion",
+                DUNGEON_DISTORTION,
+                "cobblesafari:distortion/entrance",
                 9, 3, 3,
                 900,
                 1,
@@ -121,6 +138,13 @@ public class DungeonDimensions {
 
     public static List<DungeonConfig> getAllDungeons() {
         return new ArrayList<>(REGISTERED_DUNGEONS);
+    }
+
+    public static List<String> getRegisteredDungeonIdsSorted() {
+        return REGISTERED_DUNGEONS.stream()
+                .map(DungeonConfig::getId)
+                .sorted(Comparator.naturalOrder())
+                .toList();
     }
 
     public static void addDungeon(DungeonConfig config) {

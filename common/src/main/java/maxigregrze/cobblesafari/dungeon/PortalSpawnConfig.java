@@ -23,6 +23,7 @@ public class PortalSpawnConfig {
 
     private static final String DUNGEON_UNDERGROUND_ID = "dungeon_underground";
     private static final String DUNGEON_JUMP_ID = "dungeon_jump";
+    private static final String DUNGEON_DISTORTION_ID = "dungeon_distortion";
 
     private static PortalSpawnConfig INSTANCE;
 
@@ -37,6 +38,7 @@ public class PortalSpawnConfig {
     public PortalSpawnConfig() {
         dimensions.add(new DungeonDimensionEntry(DUNGEON_UNDERGROUND_ID, true, 1));
         dimensions.add(new DungeonDimensionEntry(DUNGEON_JUMP_ID, false, 1));
+        dimensions.add(new DungeonDimensionEntry(DUNGEON_DISTORTION_ID, true, 1));
     }
 
     private static void migrateOldConfigPath() {
@@ -91,6 +93,7 @@ public class PortalSpawnConfig {
         boolean modified = false;
         modified |= ensureDimensionConfig(DUNGEON_UNDERGROUND_ID, true, 1);
         modified |= ensureDimensionConfig(DUNGEON_JUMP_ID, false, 1);
+        modified |= ensureDimensionConfig(DUNGEON_DISTORTION_ID, true, 1);
 
         if (modified) {
             save();

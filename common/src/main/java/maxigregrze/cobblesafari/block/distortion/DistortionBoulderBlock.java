@@ -14,7 +14,9 @@ import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.AttachFace;
+import net.minecraft.world.phys.shapes.BooleanOp;
 import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
 public class DistortionBoulderBlock extends FaceAttachedHorizontalDirectionalBlock {
@@ -28,6 +30,8 @@ public class DistortionBoulderBlock extends FaceAttachedHorizontalDirectionalBlo
     private static final VoxelShape SHAPE_WALL_SOUTH = Block.box(-2, -2, 0, 18, 18, 4);
     private static final VoxelShape SHAPE_WALL_EAST = Block.box(0, -2, -2, 4, 18, 18);
     private static final VoxelShape SHAPE_WALL_WEST = Block.box(12, -2, -2, 16, 18, 18);
+
+    private static final VoxelShape BLOCK_CUBE = Block.box(0, 0, 0, 16, 16, 16);
 
     public DistortionBoulderBlock(Properties properties) {
         super(properties);
@@ -76,6 +80,11 @@ public class DistortionBoulderBlock extends FaceAttachedHorizontalDirectionalBlo
                 default -> SHAPE_WALL_NORTH;
             };
         };
+    }
+
+    @Override
+    public VoxelShape getCollisionShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+        return Shapes.join(getShape(state, level, pos, context), BLOCK_CUBE, BooleanOp.AND);
     }
 
     @Override

@@ -5,6 +5,8 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import maxigregrze.cobblesafari.CobbleSafari;
+import maxigregrze.cobblesafari.dungeon.DungeonConfig;
+import maxigregrze.cobblesafari.dungeon.DungeonDimensions;
 import maxigregrze.cobblesafari.platform.Services;
 
 import java.io.IOException;
@@ -81,6 +83,27 @@ public class SafariTimerConfig {
         }
     }
 
+    public static void syncDungeonDimensionTimersFromRegistry() {
+        if (INSTANCE == null) {
+            load();
+        }
+        boolean modified = false;
+        modified |= ensureDimensionConfig(SAFARI_DIMENSION_ID, 900);
+        modified |= ensureDimensionConfig(DUNGEON_JUMP_DIMENSION_ID, 900);
+        modified |= ensureDimensionConfig(DUNGEON_UNDERGROUND_DIMENSION_ID, 900);
+        for (DungeonConfig dungeon : DungeonDimensions.getAllDungeons()) {
+            if (!dungeon.isExternallyManaged()) {
+                modified |= ensureDimensionConfig(dungeon.getDimensionId(), dungeon.getTimerDurationSeconds());
+            }
+        }
+        for (DimensionTimerEntry entry : INSTANCE.dimensions) {
+            modified |= entry.initializeDefaults();
+        }
+        if (modified) {
+            save();
+        }
+    }
+
     private static boolean ensureDimensionConfig(String dimensionId, int defaultDurationSeconds) {
         return ensureDimensionConfig(dimensionId, defaultDurationSeconds, 0);
     }
@@ -111,11 +134,6 @@ public class SafariTimerConfig {
             return true;
         }
         return false;
-    }
-
-    private static boolean hasDimensionInList(String dimensionId) {
-        return INSTANCE.dimensions.stream()
-                .anyMatch(entry -> entry.getDimensionId().equals(dimensionId));
     }
 
     private static SafariTimerConfig migrateOldConfig(JsonObject oldConfig) {

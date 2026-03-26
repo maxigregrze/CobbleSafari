@@ -65,6 +65,13 @@ public class DimensionalBanData {
         dungeonUndergroundRestrictions.allowBlockPlacing = false;
         dungeonUndergroundRestrictions.bannedItems.add("minecraft:bone_meal");
         dimensions.put("cobblesafari:dungeon_underground", dungeonUndergroundRestrictions);
+
+        DimensionRestrictions dungeonDistortionRestrictions = new DimensionRestrictions();
+        dungeonDistortionRestrictions.allowBattle = true;
+        dungeonDistortionRestrictions.allowBlockBreaking = false;
+        dungeonDistortionRestrictions.allowBlockPlacing = false;
+        dungeonDistortionRestrictions.bannedItems.add("minecraft:firework_rocket");
+        dimensions.put("cobblesafari:dungeon_distortion", dungeonDistortionRestrictions);
     }
 
     public static class DimensionRestrictions {

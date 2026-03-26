@@ -30,6 +30,7 @@ import maxigregrze.cobblesafari.client.screen.BasePCScreen;
 import maxigregrze.cobblesafari.underground.UndergroundMinigame;
 import maxigregrze.cobblesafari.underground.UndergroundScreen;
 import maxigregrze.cobblesafari.underground.network.UndergroundPayloads;
+import maxigregrze.cobblesafari.client.audio.DungeonMusicHandler;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.inventory.BookViewScreen;
@@ -149,6 +150,7 @@ public class CobbleSafariClientNeoForge {
 
         NeoForge.EVENT_BUS.addListener(CobbleSafariClientNeoForge::onRenderGuiLayer);
         NeoForge.EVENT_BUS.addListener(CobbleSafariClientNeoForge::onItemTooltip);
+        NeoForge.EVENT_BUS.addListener(CobbleSafariClientNeoForge::onClientTick);
     }
 
     @SubscribeEvent
@@ -164,6 +166,10 @@ public class CobbleSafariClientNeoForge {
     @SubscribeEvent
     public static void onRegisterLayerDefinitions(EntityRenderersEvent.RegisterLayerDefinitions event) {
         event.registerLayerDefinition(BalloonEntityModel.LAYER_LOCATION, BalloonEntityModel::createBodyLayer);
+    }
+
+    public static void onClientTick(net.neoforged.neoforge.client.event.ClientTickEvent.Post event) {
+        DungeonMusicHandler.onClientTick(Minecraft.getInstance());
     }
 
     public static void onRenderGuiLayer(RenderGuiLayerEvent.Post event) {
