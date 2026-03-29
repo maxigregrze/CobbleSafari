@@ -7,8 +7,7 @@
       "id": "emolga-flying-safarispawn",
       "pokemon": "emolga",
       "presets": [
-        "natural",
-        "wild"
+        "cobblesafari"
       ],
       "type": "pokemon",
       "context": "grounded",

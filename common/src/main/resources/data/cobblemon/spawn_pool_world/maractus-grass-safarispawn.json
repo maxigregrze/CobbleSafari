@@ -7,8 +7,7 @@
       "id": "maractus-safarispawn",
       "pokemon": "maractus",
       "presets": [
-        "natural",
-        "wild"
+        "cobblesafari"
       ],
       "type": "pokemon",
       "context": "grounded",

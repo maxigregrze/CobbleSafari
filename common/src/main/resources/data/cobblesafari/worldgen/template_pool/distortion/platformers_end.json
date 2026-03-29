@@ -1,0 +1,23 @@
+{
+  "fallback": "minecraft:empty",
+  "elements": [
+    {
+      "weight": 1,
+      "element": {
+        "element_type": "minecraft:single_pool_element",
+        "location": "cobblesafari:distortion/platformers/end_1",
+        "processors": "cobblesafari:distortion_lostitem_scatter",
+        "projection": "rigid"
+      }
+    },
+    {
+      "weight": 1,
+      "element": {
+        "element_type": "minecraft:single_pool_element",
+        "location": "cobblesafari:distortion/platformers/end_2",
+        "processors": "cobblesafari:distortion_lostitem_scatter",
+        "projection": "rigid"
+      }
+    }
+  ]
+}

@@ -7,8 +7,7 @@
       "id": "pansear-safarispawn",
       "pokemon": "pansear",
       "presets": [
-        "natural",
-        "wild"
+        "cobblesafari"
       ],
       "type": "pokemon",
       "context": "grounded",

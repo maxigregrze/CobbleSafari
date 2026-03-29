@@ -7,8 +7,7 @@
       "id": "mudsdale-safarispawn",
       "pokemon": "mudsdale",
       "presets": [
-        "natural",
-        "wild"
+        "cobblesafari"
       ],
       "type": "pokemon",
       "context": "grounded",

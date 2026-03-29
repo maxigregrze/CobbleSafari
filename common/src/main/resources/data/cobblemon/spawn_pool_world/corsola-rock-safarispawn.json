@@ -7,8 +7,7 @@
       "id": "corsola-safarispawn",
       "pokemon": "corsola",
       "presets": [
-        "natural",
-        "wild"
+        "cobblesafari"
       ],
       "type": "pokemon",
       "context": "grounded",

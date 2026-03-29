@@ -7,8 +7,7 @@
       "id": "umbreon-safarispawn",
       "pokemon": "umbreon",
       "presets": [
-        "natural",
-        "wild"
+        "cobblesafari"
       ],
       "type": "pokemon",
       "context": "grounded",

@@ -7,8 +7,7 @@
       "id": "vivillon-safarispawn",
       "pokemon": "vivillon",
       "presets": [
-        "natural",
-        "wild"
+        "cobblesafari"
       ],
       "type": "pokemon",
       "context": "grounded",

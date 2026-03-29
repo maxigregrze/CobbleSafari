@@ -7,8 +7,7 @@
       "id": "diglett-safarispawn",
       "pokemon": "diglett",
       "presets": [
-        "natural",
-        "wild"
+        "cobblesafari"
       ],
       "type": "pokemon",
       "context": "grounded",

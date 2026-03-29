@@ -7,8 +7,7 @@
       "id": "oddish-grass-safarispawn",
       "pokemon": "oddish",
       "presets": [
-        "natural",
-        "wild"
+        "cobblesafari"
       ],
       "type": "pokemon",
       "context": "grounded",

@@ -7,8 +7,7 @@
       "id": "drifblim-safarispawn",
       "pokemon": "drifblim",
       "presets": [
-        "natural",
-        "wild"
+        "cobblesafari"
       ],
       "type": "pokemon",
       "context": "grounded",

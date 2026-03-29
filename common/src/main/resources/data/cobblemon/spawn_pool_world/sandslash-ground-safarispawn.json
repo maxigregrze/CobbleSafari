@@ -7,8 +7,7 @@
       "id": "sandslash-safarispawn",
       "pokemon": "sandslash",
       "presets": [
-        "natural",
-        "wild"
+        "cobblesafari"
       ],
       "type": "pokemon",
       "context": "grounded",

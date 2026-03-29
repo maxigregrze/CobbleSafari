@@ -7,8 +7,7 @@
       "id": "pumpkaboo-safarispawn",
       "pokemon": "pumpkaboo",
       "presets": [
-        "natural",
-        "wild"
+        "cobblesafari"
       ],
       "type": "pokemon",
       "context": "grounded",

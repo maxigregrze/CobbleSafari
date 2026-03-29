@@ -13,6 +13,8 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
@@ -120,6 +122,23 @@ public class DimensionalBanEventHandler {
                     dimension.location(), pos, player.getName().getString(),
                     player.getMainHandItem().getItem().getDescriptionId()
             );
+            return false;
+        }
+        return true;
+    }
+
+    public static boolean onLivingHurt(LivingEntity target, DamageSource source) {
+        if (target instanceof Player) {
+            return true;
+        }
+        if (!(source.getEntity() instanceof Player attacker)) {
+            return true;
+        }
+        if (attacker.isCreative()) {
+            return true;
+        }
+        Level world = target.level();
+        if (!BannedItemsManager.isBlockBreakingAllowed(world.dimension())) {
             return false;
         }
         return true;

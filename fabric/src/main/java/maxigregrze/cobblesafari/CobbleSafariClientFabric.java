@@ -17,6 +17,8 @@ import maxigregrze.cobblesafari.client.renderer.HikerEntityRenderer;
 import maxigregrze.cobblesafari.client.renderer.HoopaRingPortalBlockEntityRenderer;
 import maxigregrze.cobblesafari.client.renderer.GiratinaCoreBlockEntityRenderer;
 import maxigregrze.cobblesafari.client.renderer.DistortionPortalBlockEntityRenderer;
+import maxigregrze.cobblesafari.client.DungeonDistortionDimensionEffects;
+import maxigregrze.cobblesafari.mixin.client.DimensionSpecialEffectsAccessor;
 import maxigregrze.cobblesafari.client.renderer.LostItemBlockEntityRenderer;
 import maxigregrze.cobblesafari.client.renderer.VoidBlockRenderer;
 import maxigregrze.cobblesafari.client.model.BalloonEntityModel;
@@ -35,8 +37,10 @@ import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.screens.MenuScreens;
+import net.minecraft.client.renderer.DimensionSpecialEffects;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.Item;
 
@@ -55,6 +59,10 @@ public class CobbleSafariClientFabric implements ClientModInitializer {
 
     @Override
     public void onInitializeClient() {
+        DimensionSpecialEffectsAccessor.getEffects().put(
+                ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, "dungeon_distortion"),
+                new DungeonDistortionDimensionEffects()
+        );
         registerTooltips();
         registerClientNetworking();
         registerHud();

@@ -63,7 +63,9 @@ public class DistortionWeedBlock extends HorizontalDirectionalBlock {
             return null;
         }
 
-        Direction horizontalFacing = face == AttachFace.WALL ? clickedFace : Direction.NORTH;
+        Direction horizontalFacing = face == AttachFace.WALL
+                ? clickedFace
+                : context.getHorizontalDirection();
         BlockPos pos = context.getClickedPos();
         BlockState candidate = this.defaultBlockState()
                 .setValue(FACING, horizontalFacing)

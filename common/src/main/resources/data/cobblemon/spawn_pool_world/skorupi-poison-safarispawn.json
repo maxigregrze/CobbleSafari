@@ -7,8 +7,7 @@
       "id": "skorupi-safarispawn",
       "pokemon": "skorupi",
       "presets": [
-        "natural",
-        "wild"
+        "cobblesafari"
       ],
       "type": "pokemon",
       "context": "grounded",

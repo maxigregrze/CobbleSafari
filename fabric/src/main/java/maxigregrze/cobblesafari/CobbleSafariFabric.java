@@ -33,6 +33,7 @@ import net.fabricmc.fabric.api.event.player.AttackBlockCallback;
 import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
 import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.fabricmc.fabric.api.event.player.UseItemCallback;
+import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
@@ -231,5 +232,7 @@ public class CobbleSafariFabric implements ModInitializer {
         PlayerBlockBreakEvents.BEFORE.register((world, player, pos, state, entity) -> {
             return DimensionalBanEventHandler.onBlockBreakTry(world.dimension(), player, pos);
         });
+        ServerLivingEntityEvents.ALLOW_DAMAGE.register((entity, source, amount) ->
+                DimensionalBanEventHandler.onLivingHurt(entity, source));
     }
 }

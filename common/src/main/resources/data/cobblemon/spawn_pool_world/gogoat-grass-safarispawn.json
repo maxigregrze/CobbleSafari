@@ -7,8 +7,7 @@
       "id": "gogoat-safarispawn",
       "pokemon": "gogoat",
       "presets": [
-        "natural",
-        "wild"
+        "cobblesafari"
       ],
       "type": "pokemon",
       "context": "grounded",

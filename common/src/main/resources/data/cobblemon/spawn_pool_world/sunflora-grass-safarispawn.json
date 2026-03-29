@@ -7,8 +7,7 @@
       "id": "sunflora-safarispawn",
       "pokemon": "sunflora",
       "presets": [
-        "natural",
-        "wild"
+        "cobblesafari"
       ],
       "type": "pokemon",
       "context": "grounded",

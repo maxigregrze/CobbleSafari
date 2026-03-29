@@ -7,8 +7,7 @@
       "id": "golurk-safarispawn",
       "pokemon": "golurk",
       "presets": [
-        "natural",
-        "wild"
+        "cobblesafari"
       ],
       "type": "pokemon",
       "context": "grounded",

@@ -7,8 +7,7 @@
       "id": "turtwig-safarispawn",
       "pokemon": "turtwig",
       "presets": [
-        "natural",
-        "wild"
+        "cobblesafari"
       ],
       "type": "pokemon",
       "context": "grounded",

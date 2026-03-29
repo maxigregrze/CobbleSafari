@@ -7,8 +7,7 @@
       "id": "scraggy-dark-safarispawn",
       "pokemon": "scraggy",
       "presets": [
-        "natural",
-        "wild"
+        "cobblesafari"
       ],
       "type": "pokemon",
       "context": "grounded",

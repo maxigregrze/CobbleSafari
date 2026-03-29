@@ -2,10 +2,28 @@
   "fallback": "minecraft:empty",
   "elements": [
     {
+      "weight": 6,
+      "element": {
+        "element_type": "minecraft:single_pool_element",
+        "location": "cobblesafari:distortion/cave/teleporter_1",
+        "processors": "minecraft:empty",
+        "projection": "rigid"
+      }
+    },
+    {
+      "weight": 3,
+      "element": {
+        "element_type": "minecraft:single_pool_element",
+        "location": "cobblesafari:distortion/cave/teleporter_2",
+        "processors": "minecraft:empty",
+        "projection": "rigid"
+      }
+    },
+    {
       "weight": 1,
       "element": {
         "element_type": "minecraft:single_pool_element",
-        "location": "cobblesafari:distortion/cave/teleporter",
+        "location": "cobblesafari:distortion/cave/teleporter_3",
         "processors": "minecraft:empty",
         "projection": "rigid"
       }

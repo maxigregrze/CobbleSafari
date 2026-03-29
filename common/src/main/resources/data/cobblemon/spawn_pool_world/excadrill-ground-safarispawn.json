@@ -7,8 +7,7 @@
       "id": "excadrill-ground-safarispawn",
       "pokemon": "excadrill",
       "presets": [
-        "natural",
-        "wild"
+        "cobblesafari"
       ],
       "type": "pokemon",
       "context": "grounded",

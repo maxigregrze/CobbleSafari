@@ -7,8 +7,7 @@
       "id": "mamoswine-safarispawn",
       "pokemon": "mamoswine",
       "presets": [
-        "natural",
-        "wild"
+        "cobblesafari"
       ],
       "type": "pokemon",
       "context": "grounded",

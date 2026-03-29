@@ -7,8 +7,7 @@
       "id": "pansage-safarispawn",
       "pokemon": "pansage",
       "presets": [
-        "natural",
-        "wild"
+        "cobblesafari"
       ],
       "type": "pokemon",
       "context": "grounded",

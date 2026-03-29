@@ -7,8 +7,7 @@
       "id": "torkoal-safarispawn",
       "pokemon": "torkoal",
       "presets": [
-        "natural",
-        "wild"
+        "cobblesafari"
       ],
       "type": "pokemon",
       "context": "grounded",

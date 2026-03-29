@@ -7,8 +7,7 @@
       "id": "drampa-safarispawn",
       "pokemon": "drampa",
       "presets": [
-        "natural",
-        "wild"
+        "cobblesafari"
       ],
       "type": "pokemon",
       "context": "grounded",

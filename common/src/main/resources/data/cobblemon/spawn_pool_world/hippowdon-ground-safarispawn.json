@@ -7,8 +7,7 @@
       "id": "hippowdon-safarispawn",
       "pokemon": "hippowdon",
       "presets": [
-        "natural",
-        "wild"
+        "cobblesafari"
       ],
       "type": "pokemon",
       "context": "grounded",

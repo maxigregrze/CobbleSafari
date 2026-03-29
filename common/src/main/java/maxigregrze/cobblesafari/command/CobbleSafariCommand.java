@@ -40,7 +40,7 @@ public class CobbleSafariCommand {
     private static final SuggestionProvider<CommandSourceStack> DIMENSION_SUGGESTIONS =
             (context, builder) -> SharedSuggestionProvider.suggest(SafariTimerConfig.getConfiguredDimensionIds(), builder);
     private static final SuggestionProvider<CommandSourceStack> DUNGEON_SPAWN_SUGGESTIONS =
-            (context, builder) -> SharedSuggestionProvider.suggest(DungeonDimensions.getRegisteredDungeonIdsSorted(), builder);
+            (context, builder) -> SharedSuggestionProvider.suggest(DungeonDimensions.getEnabledDungeonIdsSorted(), builder);
 
     private CobbleSafariCommand() {}
 
@@ -121,14 +121,20 @@ public class CobbleSafariCommand {
                                 .requires(source -> source.hasPermission(4))
                                 .executes(CobbleSafariCommand::executeRefresh))
                         .then(Commands.literal("dungeon")
-                                .then(Commands.literal("spawn")
-                                        .executes(CobbleSafariCommand::executeDungeonSpawnSelf)
-                                        .then(Commands.literal("force")
-                                                .executes(CobbleSafariCommand::executeDungeonSpawnForceSelf)
-                                                .then(Commands.argument(ARG_PLAYER, EntityArgument.player())
-                                                        .executes(CobbleSafariCommand::executeDungeonSpawnForce)))
+                        .then(Commands.literal("spawn")
+                                .executes(CobbleSafariCommand::executeDungeonSpawnSelf)
+                                .then(Commands.literal("force")
+                                        .executes(CobbleSafariCommand::executeDungeonSpawnForceSelf)
+                                        .then(Commands.argument(DungeonCommand.ARG_DUNGEON_ID, StringArgumentType.word())
+                                                .suggests(DUNGEON_SPAWN_SUGGESTIONS)
+                                                .executes(CobbleSafariCommand::executeDungeonSpawnForceSelfSpecific))
                                         .then(Commands.argument(ARG_PLAYER, EntityArgument.player())
-                                                .executes(CobbleSafariCommand::executeDungeonSpawn)))
+                                                .executes(CobbleSafariCommand::executeDungeonSpawnForce)
+                                                .then(Commands.argument(DungeonCommand.ARG_DUNGEON_ID, StringArgumentType.word())
+                                                        .suggests(DUNGEON_SPAWN_SUGGESTIONS)
+                                                        .executes(CobbleSafariCommand::executeDungeonSpawnForceSpecific))))
+                                .then(Commands.argument(ARG_PLAYER, EntityArgument.player())
+                                        .executes(CobbleSafariCommand::executeDungeonSpawn)))
                                 .then(Commands.literal("list")
                                         .executes(CobbleSafariCommand::executeDungeonList)
                                         .then(Commands.literal("force")
@@ -261,10 +267,6 @@ public class CobbleSafariCommand {
         return DungeonCommand.executeSpawn(context);
     }
 
-    private static int executeDungeonSpawnWithDungeon(CommandContext<CommandSourceStack> context) {
-        return DungeonCommand.executeSpawnWithDungeon(context);
-    }
-
     private static int executeDungeonSpawnSelf(CommandContext<CommandSourceStack> context) {
         return DungeonCommand.executeSpawnSelf(context);
     }
@@ -273,12 +275,16 @@ public class CobbleSafariCommand {
         return DungeonCommand.executeSpawnForce(context);
     }
 
-    private static int executeDungeonSpawnForceWithDungeon(CommandContext<CommandSourceStack> context) {
-        return DungeonCommand.executeSpawnForceWithDungeon(context);
-    }
-
     private static int executeDungeonSpawnForceSelf(CommandContext<CommandSourceStack> context) {
         return DungeonCommand.executeSpawnForceSelf(context);
+    }
+
+    private static int executeDungeonSpawnForceSelfSpecific(CommandContext<CommandSourceStack> context) {
+        return DungeonCommand.executeSpawnForceSelfWithDungeon(context);
+    }
+
+    private static int executeDungeonSpawnForceSpecific(CommandContext<CommandSourceStack> context) {
+        return DungeonCommand.executeSpawnForceWithDungeon(context);
     }
 
     private static int executeDungeonList(CommandContext<CommandSourceStack> context) {

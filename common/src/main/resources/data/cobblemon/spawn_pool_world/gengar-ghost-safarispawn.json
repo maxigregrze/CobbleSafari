@@ -7,8 +7,7 @@
       "id": "gengar-safarispawn",
       "pokemon": "gengar",
       "presets": [
-        "natural",
-        "wild"
+        "cobblesafari"
       ],
       "type": "pokemon",
       "context": "grounded",

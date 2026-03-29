@@ -16,6 +16,7 @@ import java.util.List;
 public class DungeonCommand {
 
     public static final String ARG_DUNGEON_ID = "dungeon_id";
+    private static final String MSG_PLAYER_ONLY = "This command must be run by a player";
 
     private DungeonCommand() {}
 
@@ -49,7 +50,7 @@ public class DungeonCommand {
 
     static int executeSpawnSelf(CommandContext<CommandSourceStack> context) {
         if (context.getSource().getPlayer() == null) {
-            context.getSource().sendFailure(Component.literal("This command must be run by a player"));
+            context.getSource().sendFailure(Component.literal(MSG_PLAYER_ONLY));
             return 0;
         }
         return spawnPortalForPlayer(context.getSource(), context.getSource().getPlayer(), false, null);
@@ -57,10 +58,19 @@ public class DungeonCommand {
 
     static int executeSpawnForceSelf(CommandContext<CommandSourceStack> context) {
         if (context.getSource().getPlayer() == null) {
-            context.getSource().sendFailure(Component.literal("This command must be run by a player"));
+            context.getSource().sendFailure(Component.literal(MSG_PLAYER_ONLY));
             return 0;
         }
         return spawnPortalForPlayer(context.getSource(), context.getSource().getPlayer(), true, null);
+    }
+
+    static int executeSpawnForceSelfWithDungeon(CommandContext<CommandSourceStack> context) {
+        if (context.getSource().getPlayer() == null) {
+            context.getSource().sendFailure(Component.literal(MSG_PLAYER_ONLY));
+            return 0;
+        }
+        String dungeonId = StringArgumentType.getString(context, ARG_DUNGEON_ID);
+        return spawnPortalForPlayer(context.getSource(), context.getSource().getPlayer(), true, dungeonId);
     }
 
     private static int spawnPortalForPlayer(CommandSourceStack source, ServerPlayer player, boolean force, String dungeonId) {

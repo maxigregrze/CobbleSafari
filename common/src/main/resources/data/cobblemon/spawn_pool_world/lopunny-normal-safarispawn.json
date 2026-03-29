@@ -7,8 +7,7 @@
       "id": "lopunny-safarispawn",
       "pokemon": "lopunny",
       "presets": [
-        "natural",
-        "wild"
+        "cobblesafari"
       ],
       "type": "pokemon",
       "context": "grounded",

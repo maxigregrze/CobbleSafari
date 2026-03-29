@@ -6,7 +6,7 @@
       "element": {
         "element_type": "minecraft:single_pool_element",
         "location": "cobblesafari:distortion/arena/arena",
-        "processors": "minecraft:empty",
+        "processors": "cobblesafari:distortion_lostitem_scatter",
         "projection": "rigid"
       }
     }

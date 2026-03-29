@@ -7,8 +7,7 @@
       "id": "charjabug-electric-safarispawn",
       "pokemon": "charjabug",
       "presets": [
-        "natural",
-        "wild"
+        "cobblesafari"
       ],
       "type": "pokemon",
       "context": "grounded",

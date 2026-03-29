@@ -7,8 +7,7 @@
       "id": "muk-safarispawn",
       "pokemon": "muk",
       "presets": [
-        "natural",
-        "wild"
+        "cobblesafari"
       ],
       "type": "pokemon",
       "context": "grounded",

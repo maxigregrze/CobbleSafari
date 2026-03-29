@@ -27,7 +27,7 @@ public class DistortionStoneBricksRuneScreen extends Screen {
         int centerY = this.height / 2;
 
         this.textBox = new EditBox(this.font, centerX - 120, centerY - 28, 240, 20, Component.translatable("gui.cobblesafari.distortion_rune.input"));
-        this.textBox.setMaxLength(1024);
+        this.textBox.setMaxLength(32);
         this.textBox.setValue(this.initialText);
         this.addRenderableWidget(this.textBox);
 

@@ -7,8 +7,7 @@
       "id": "gible-safarispawn",
       "pokemon": "gible",
       "presets": [
-        "natural",
-        "wild"
+        "cobblesafari"
       ],
       "type": "pokemon",
       "context": "grounded",

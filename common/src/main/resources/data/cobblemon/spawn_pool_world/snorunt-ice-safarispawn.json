@@ -7,8 +7,7 @@
       "id": "snorunt-safarispawn",
       "pokemon": "snorunt",
       "presets": [
-        "natural",
-        "wild"
+        "cobblesafari"
       ],
       "type": "pokemon",
       "context": "grounded",

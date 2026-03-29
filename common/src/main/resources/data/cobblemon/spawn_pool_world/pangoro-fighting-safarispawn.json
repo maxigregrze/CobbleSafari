@@ -7,8 +7,7 @@
       "id": "pangoro-safarispawn",
       "pokemon": "pangoro",
       "presets": [
-        "natural",
-        "wild"
+        "cobblesafari"
       ],
       "type": "pokemon",
       "context": "grounded",

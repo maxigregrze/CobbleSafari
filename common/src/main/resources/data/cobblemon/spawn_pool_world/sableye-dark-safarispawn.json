@@ -7,8 +7,7 @@
       "id": "sableye-safarispawn",
       "pokemon": "sableye",
       "presets": [
-        "natural",
-        "wild"
+        "cobblesafari"
       ],
       "type": "pokemon",
       "context": "grounded",

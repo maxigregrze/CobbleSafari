@@ -7,8 +7,7 @@
       "id": "spewpa-bug-safarispawn",
       "pokemon": "spewpa",
       "presets": [
-        "natural",
-        "wild"
+        "cobblesafari"
       ],
       "type": "pokemon",
       "context": "grounded",

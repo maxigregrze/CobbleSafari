@@ -7,8 +7,7 @@
       "id": "poliwhirl-safarispawn",
       "pokemon": "poliwhirl",
       "presets": [
-        "natural",
-        "wild"
+        "cobblesafari"
       ],
       "type": "pokemon",
       "context": "grounded",

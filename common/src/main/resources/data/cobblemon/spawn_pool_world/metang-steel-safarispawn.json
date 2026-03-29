@@ -7,8 +7,7 @@
       "id": "metang-safarispawn",
       "pokemon": "metang",
       "presets": [
-        "natural",
-        "wild"
+        "cobblesafari"
       ],
       "type": "pokemon",
       "context": "grounded",

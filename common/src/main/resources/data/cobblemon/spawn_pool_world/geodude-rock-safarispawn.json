@@ -7,8 +7,7 @@
       "id": "geodude-safarispawn",
       "pokemon": "geodude",
       "presets": [
-        "natural",
-        "wild"
+        "cobblesafari"
       ],
       "type": "pokemon",
       "context": "grounded",

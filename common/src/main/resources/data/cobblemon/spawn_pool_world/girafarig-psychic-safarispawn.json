@@ -7,8 +7,7 @@
       "id": "girafarig-safarispawn",
       "pokemon": "girafarig",
       "presets": [
-        "natural",
-        "wild"
+        "cobblesafari"
       ],
       "type": "pokemon",
       "context": "grounded",

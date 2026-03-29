@@ -10,7 +10,7 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class RedChainRandomIVItem extends PokemonModifierItem {
     public RedChainRandomIVItem(Properties properties, String itemId) {
-        super(properties, itemId, true);
+        super(properties, itemId, true, 'I');
     }
 
     @Override

@@ -7,8 +7,7 @@
       "id": "wobbuffet-safarispawn",
       "pokemon": "wobbuffet",
       "presets": [
-        "natural",
-        "wild"
+        "cobblesafari"
       ],
       "type": "pokemon",
       "context": "grounded",

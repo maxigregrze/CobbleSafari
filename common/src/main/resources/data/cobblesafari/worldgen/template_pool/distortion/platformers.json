@@ -2,11 +2,29 @@
   "fallback": "minecraft:empty",
   "elements": [
     {
-      "weight": 1,
+      "weight": 2,
       "element": {
         "element_type": "minecraft:single_pool_element",
         "location": "cobblesafari:distortion/platformers/platformers_1",
-        "processors": "minecraft:empty",
+        "processors": "cobblesafari:distortion_lostitem_scatter",
+        "projection": "rigid"
+      }
+    },
+    {
+      "weight": 1,
+      "element": {
+        "element_type": "minecraft:single_pool_element",
+        "location": "cobblesafari:distortion/platformers/platformers_2",
+        "processors": "cobblesafari:distortion_lostitem_scatter",
+        "projection": "rigid"
+      }
+    },
+    {
+      "weight": 1,
+      "element": {
+        "element_type": "minecraft:single_pool_element",
+        "location": "cobblesafari:distortion/platformers/platformers_3",
+        "processors": "cobblesafari:distortion_lostitem_scatter",
         "projection": "rigid"
       }
     }

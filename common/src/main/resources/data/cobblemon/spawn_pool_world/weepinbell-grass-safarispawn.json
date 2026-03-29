@@ -7,8 +7,7 @@
       "id": "weepinbell-safarispawn",
       "pokemon": "weepinbell",
       "presets": [
-        "natural",
-        "wild"
+        "cobblesafari"
       ],
       "type": "pokemon",
       "context": "grounded",

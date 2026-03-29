@@ -7,8 +7,7 @@
       "id": "scorbunny-safarispawn",
       "pokemon": "scorbunny",
       "presets": [
-        "natural",
-        "wild"
+        "cobblesafari"
       ],
       "type": "pokemon",
       "context": "grounded",

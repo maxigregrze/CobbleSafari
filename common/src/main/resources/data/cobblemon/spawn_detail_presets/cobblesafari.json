@@ -1,0 +1,7 @@
+{
+    "condition": {
+        "dimensions": [
+            "cobblesafari:domedimension"
+        ]
+    }
+}

@@ -7,8 +7,7 @@
       "id": "stunky-safarispawn",
       "pokemon": "stunky",
       "presets": [
-        "natural",
-        "wild"
+        "cobblesafari"
       ],
       "type": "pokemon",
       "context": "grounded",

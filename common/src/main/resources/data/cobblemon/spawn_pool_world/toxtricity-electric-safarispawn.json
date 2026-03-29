@@ -7,8 +7,7 @@
       "id": "toxtricity-electric-safarispawn",
       "pokemon": "toxtricity",
       "presets": [
-        "natural",
-        "wild"
+        "cobblesafari"
       ],
       "type": "pokemon",
       "context": "grounded",

@@ -7,8 +7,7 @@
       "id": "squawkabilly-safarispawn",
       "pokemon": "squawkabilly",
       "presets": [
-        "natural",
-        "wild"
+        "cobblesafari"
       ],
       "type": "pokemon",
       "context": "grounded",

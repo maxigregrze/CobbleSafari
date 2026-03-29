@@ -7,8 +7,7 @@
       "id": "rowlet-safarispawn",
       "pokemon": "rowlet",
       "presets": [
-        "natural",
-        "wild"
+        "cobblesafari"
       ],
       "type": "pokemon",
       "context": "grounded",

@@ -7,8 +7,7 @@
       "id": "spoink-safarispawn",
       "pokemon": "spoink",
       "presets": [
-        "natural",
-        "wild"
+        "cobblesafari"
       ],
       "type": "pokemon",
       "context": "grounded",

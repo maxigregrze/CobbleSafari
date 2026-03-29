@@ -7,8 +7,7 @@
       "id": "masquerain-safarispawn",
       "pokemon": "masquerain",
       "presets": [
-        "natural",
-        "wild"
+        "cobblesafari"
       ],
       "type": "pokemon",
       "context": "grounded",

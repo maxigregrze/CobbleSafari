@@ -7,8 +7,7 @@
       "id": "combee-safarispawn",
       "pokemon": "combee",
       "presets": [
-        "natural",
-        "wild"
+        "cobblesafari"
       ],
       "type": "pokemon",
       "context": "grounded",

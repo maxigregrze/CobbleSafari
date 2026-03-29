@@ -7,8 +7,7 @@
       "id": "tangela-safarispawn",
       "pokemon": "tangela",
       "presets": [
-        "natural",
-        "wild"
+        "cobblesafari"
       ],
       "type": "pokemon",
       "context": "grounded",

@@ -15,6 +15,15 @@
       },
       "catchRate": 0,
       "baseScale": 1.8,
+      "drops": {
+       "amount": 1,
+       "entries": [
+        {
+          "item": "cobblesafari:redchain_fragment",
+          "quantityRange": "1-1"
+        }
+       ]
+      },
       "hitbox": {
         "width": 1.56,
         "height": 1.92,

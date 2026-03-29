@@ -7,8 +7,7 @@
       "id": "aromatisse-safarispawn",
       "pokemon": "aromatisse",
       "presets": [
-        "natural",
-        "wild"
+        "cobblesafari"
       ],
       "type": "pokemon",
       "context": "grounded",

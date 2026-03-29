@@ -7,8 +7,7 @@
       "id": "mudkip-safarispawn",
       "pokemon": "mudkip",
       "presets": [
-        "natural",
-        "wild"
+        "cobblesafari"
       ],
       "type": "pokemon",
       "context": "grounded",

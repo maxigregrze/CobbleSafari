@@ -7,8 +7,7 @@
       "id": "phantump-safarispawn",
       "pokemon": "phantump",
       "presets": [
-        "natural",
-        "wild"
+        "cobblesafari"
       ],
       "type": "pokemon",
       "context": "grounded",

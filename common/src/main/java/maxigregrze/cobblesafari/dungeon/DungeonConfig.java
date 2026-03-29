@@ -10,6 +10,10 @@ public class DungeonConfig {
         JIGSAW
     }
 
+    public static final int DEFAULT_ZONE_SIZE = 512;
+    public static final int DEFAULT_CLEAR_SECTIONS_BELOW = 1;
+    public static final int DEFAULT_CLEAR_SECTIONS_ABOVE = 1;
+
     private final String id;
     private final ResourceKey<Level> dimensionKey;
     private final String structureId;
@@ -22,26 +26,32 @@ public class DungeonConfig {
     private final int jigsawDepth;
     private final boolean skipTeleportScreen;
     private final boolean externallyManaged;
+    private final int zoneSize;
+    private final int clearSectionsBelow;
+    private final int clearSectionsAbove;
 
     public DungeonConfig(String id, ResourceKey<Level> dimensionKey, String structureId,
                          int playerSpawnOffsetX, int playerSpawnOffsetY, int playerSpawnOffsetZ,
                          int timerDurationSeconds) {
         this(id, dimensionKey, structureId, playerSpawnOffsetX, playerSpawnOffsetY, playerSpawnOffsetZ,
-             timerDurationSeconds, 1, StructureType.SIMPLE, 1, false, false);
+             timerDurationSeconds, 1, StructureType.SIMPLE, 1, false, false,
+             DEFAULT_ZONE_SIZE, DEFAULT_CLEAR_SECTIONS_BELOW, DEFAULT_CLEAR_SECTIONS_ABOVE);
     }
 
     public DungeonConfig(String id, ResourceKey<Level> dimensionKey, String structureId,
                          int playerSpawnOffsetX, int playerSpawnOffsetY, int playerSpawnOffsetZ,
                          int timerDurationSeconds, int weight) {
         this(id, dimensionKey, structureId, playerSpawnOffsetX, playerSpawnOffsetY, playerSpawnOffsetZ,
-             timerDurationSeconds, weight, StructureType.SIMPLE, 1, false, false);
+             timerDurationSeconds, weight, StructureType.SIMPLE, 1, false, false,
+             DEFAULT_ZONE_SIZE, DEFAULT_CLEAR_SECTIONS_BELOW, DEFAULT_CLEAR_SECTIONS_ABOVE);
     }
 
     public DungeonConfig(String id, ResourceKey<Level> dimensionKey, String structureId,
                          int playerSpawnOffsetX, int playerSpawnOffsetY, int playerSpawnOffsetZ,
                          int timerDurationSeconds, int weight, boolean skipTeleportScreen) {
         this(id, dimensionKey, structureId, playerSpawnOffsetX, playerSpawnOffsetY, playerSpawnOffsetZ,
-             timerDurationSeconds, weight, StructureType.SIMPLE, 1, skipTeleportScreen, false);
+             timerDurationSeconds, weight, StructureType.SIMPLE, 1, skipTeleportScreen, false,
+             DEFAULT_ZONE_SIZE, DEFAULT_CLEAR_SECTIONS_BELOW, DEFAULT_CLEAR_SECTIONS_ABOVE);
     }
 
     public DungeonConfig(String id, ResourceKey<Level> dimensionKey, String structureId,
@@ -49,14 +59,16 @@ public class DungeonConfig {
                          int timerDurationSeconds, int weight,
                          boolean skipTeleportScreen, boolean externallyManaged) {
         this(id, dimensionKey, structureId, playerSpawnOffsetX, playerSpawnOffsetY, playerSpawnOffsetZ,
-             timerDurationSeconds, weight, StructureType.SIMPLE, 1, skipTeleportScreen, externallyManaged);
+             timerDurationSeconds, weight, StructureType.SIMPLE, 1, skipTeleportScreen, externallyManaged,
+             DEFAULT_ZONE_SIZE, DEFAULT_CLEAR_SECTIONS_BELOW, DEFAULT_CLEAR_SECTIONS_ABOVE);
     }
 
     public DungeonConfig(String id, ResourceKey<Level> dimensionKey, String structureId,
                          int playerSpawnOffsetX, int playerSpawnOffsetY, int playerSpawnOffsetZ,
                          int timerDurationSeconds, int weight, StructureType structureType, int jigsawDepth) {
         this(id, dimensionKey, structureId, playerSpawnOffsetX, playerSpawnOffsetY, playerSpawnOffsetZ,
-             timerDurationSeconds, weight, structureType, jigsawDepth, false, false);
+             timerDurationSeconds, weight, structureType, jigsawDepth, false, false,
+             DEFAULT_ZONE_SIZE, DEFAULT_CLEAR_SECTIONS_BELOW, DEFAULT_CLEAR_SECTIONS_ABOVE);
     }
 
     public DungeonConfig(String id, ResourceKey<Level> dimensionKey, String structureId,
@@ -64,13 +76,33 @@ public class DungeonConfig {
                          int timerDurationSeconds, int weight, StructureType structureType, int jigsawDepth,
                          boolean skipTeleportScreen) {
         this(id, dimensionKey, structureId, playerSpawnOffsetX, playerSpawnOffsetY, playerSpawnOffsetZ,
-             timerDurationSeconds, weight, structureType, jigsawDepth, skipTeleportScreen, false);
+             timerDurationSeconds, weight, structureType, jigsawDepth, skipTeleportScreen, false,
+             DEFAULT_ZONE_SIZE, DEFAULT_CLEAR_SECTIONS_BELOW, DEFAULT_CLEAR_SECTIONS_ABOVE);
     }
 
     public DungeonConfig(String id, ResourceKey<Level> dimensionKey, String structureId,
                          int playerSpawnOffsetX, int playerSpawnOffsetY, int playerSpawnOffsetZ,
                          int timerDurationSeconds, int weight, StructureType structureType, int jigsawDepth,
                          boolean skipTeleportScreen, boolean externallyManaged) {
+        this(id, dimensionKey, structureId, playerSpawnOffsetX, playerSpawnOffsetY, playerSpawnOffsetZ,
+             timerDurationSeconds, weight, structureType, jigsawDepth, skipTeleportScreen, externallyManaged,
+             DEFAULT_ZONE_SIZE, DEFAULT_CLEAR_SECTIONS_BELOW, DEFAULT_CLEAR_SECTIONS_ABOVE);
+    }
+
+    public DungeonConfig(String id, ResourceKey<Level> dimensionKey, String structureId,
+                         int playerSpawnOffsetX, int playerSpawnOffsetY, int playerSpawnOffsetZ,
+                         int timerDurationSeconds, int weight, StructureType structureType, int jigsawDepth,
+                         int zoneSize, int clearSectionsBelow, int clearSectionsAbove) {
+        this(id, dimensionKey, structureId, playerSpawnOffsetX, playerSpawnOffsetY, playerSpawnOffsetZ,
+             timerDurationSeconds, weight, structureType, jigsawDepth, false, false,
+             zoneSize, clearSectionsBelow, clearSectionsAbove);
+    }
+
+    public DungeonConfig(String id, ResourceKey<Level> dimensionKey, String structureId,
+                         int playerSpawnOffsetX, int playerSpawnOffsetY, int playerSpawnOffsetZ,
+                         int timerDurationSeconds, int weight, StructureType structureType, int jigsawDepth,
+                         boolean skipTeleportScreen, boolean externallyManaged,
+                         int zoneSize, int clearSectionsBelow, int clearSectionsAbove) {
         this.id = id;
         this.dimensionKey = dimensionKey;
         this.structureId = structureId;
@@ -83,6 +115,9 @@ public class DungeonConfig {
         this.jigsawDepth = jigsawDepth;
         this.skipTeleportScreen = skipTeleportScreen;
         this.externallyManaged = externallyManaged;
+        this.zoneSize = zoneSize;
+        this.clearSectionsBelow = clearSectionsBelow;
+        this.clearSectionsAbove = clearSectionsAbove;
     }
 
     public String getId() {
@@ -143,5 +178,17 @@ public class DungeonConfig {
 
     public boolean isExternallyManaged() {
         return externallyManaged;
+    }
+
+    public int getZoneSize() {
+        return zoneSize;
+    }
+
+    public int getClearSectionsBelow() {
+        return clearSectionsBelow;
+    }
+
+    public int getClearSectionsAbove() {
+        return clearSectionsAbove;
     }
 }

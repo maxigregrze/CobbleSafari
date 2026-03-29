@@ -17,6 +17,7 @@ neoForge {
 
 dependencies {
     compileOnly group: 'org.spongepowered', name: 'mixin', version: '0.8.5'
+    compileOnly group: 'org.ow2.asm', name: 'asm-tree', version: '9.7'
     compileOnly group: 'io.github.llamalad7', name: 'mixinextras-common', version: '0.3.5'
     annotationProcessor group: 'io.github.llamalad7', name: 'mixinextras-common', version: '0.3.5'
     compileOnly "com.cobblemon:neoforge:${cobblemon_version}"

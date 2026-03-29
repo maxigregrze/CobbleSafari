@@ -7,8 +7,7 @@
       "id": "corvisquire-flying-safarispawn",
       "pokemon": "corvisquire",
       "presets": [
-        "natural",
-        "wild"
+        "cobblesafari"
       ],
       "type": "pokemon",
       "context": "grounded",

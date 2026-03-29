@@ -2,6 +2,7 @@ package maxigregrze.cobblesafari.dungeon;
 
 import maxigregrze.cobblesafari.CobbleSafari;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.server.level.ServerLevel;
@@ -10,7 +11,6 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.biome.Biome;
-import net.minecraft.world.level.biome.Biomes;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.chunk.LevelChunk;
@@ -23,8 +23,6 @@ import java.util.List;
 public class DungeonRegionClearer {
 
     private static final int SECTION_HEIGHT = 16;
-    private static final int SECTION_PADDING_BELOW = 1;
-    private static final int SECTION_PADDING_ABOVE = 1;
 
     private DungeonRegionClearer() {}
 
@@ -54,8 +52,14 @@ public class DungeonRegionClearer {
     }
 
     public static void clearRegion(ServerLevel dungeonLevel, int chunkMinX, int chunkMinZ, int chunkMaxX, int chunkMaxZ, int structureY) {
-        int minClearY = structureY - (SECTION_PADDING_BELOW * SECTION_HEIGHT);
-        int maxClearY = structureY + (SECTION_PADDING_ABOVE * SECTION_HEIGHT);
+        clearRegion(dungeonLevel, chunkMinX, chunkMinZ, chunkMaxX, chunkMaxZ, structureY,
+                DungeonConfig.DEFAULT_CLEAR_SECTIONS_BELOW, DungeonConfig.DEFAULT_CLEAR_SECTIONS_ABOVE);
+    }
+
+    public static void clearRegion(ServerLevel dungeonLevel, int chunkMinX, int chunkMinZ, int chunkMaxX, int chunkMaxZ,
+                                   int structureY, int sectionsBelow, int sectionsAbove) {
+        int minClearY = structureY - (sectionsBelow * SECTION_HEIGHT);
+        int maxClearY = structureY + (sectionsAbove * SECTION_HEIGHT);
 
         int blockMinX = chunkMinX << 4;
         int blockMinZ = chunkMinZ << 4;
@@ -109,11 +113,7 @@ public class DungeonRegionClearer {
                                         Blocks.AIR.defaultBlockState(),
                                         PalettedContainer.Strategy.SECTION_STATES
                                 ),
-                                new PalettedContainer<>(
-                                        biomeRegistry.asHolderIdMap(),
-                                        biomeRegistry.getHolderOrThrow(Biomes.THE_VOID),
-                                        PalettedContainer.Strategy.SECTION_BIOMES
-                                )
+                                biomePaletteForDungeonSection(biomeRegistry, level, cx, cz, i)
                         );
                     }
                 }
@@ -150,11 +150,7 @@ public class DungeonRegionClearer {
                                         Blocks.AIR.defaultBlockState(),
                                         PalettedContainer.Strategy.SECTION_STATES
                                 ),
-                                new PalettedContainer<>(
-                                        biomeRegistry.asHolderIdMap(),
-                                        biomeRegistry.getHolderOrThrow(Biomes.THE_VOID),
-                                        PalettedContainer.Strategy.SECTION_BIOMES
-                                )
+                                biomePaletteForDungeonSection(biomeRegistry, level, cx, cz, i)
                         );
                     }
                 }
@@ -168,6 +164,29 @@ public class DungeonRegionClearer {
                 chunk.setUnsaved(true);
             }
         }
+    }
+
+    private static PalettedContainer<Holder<Biome>> biomePaletteForDungeonSection(
+            Registry<Biome> biomeRegistry,
+            ServerLevel level,
+            int chunkX,
+            int chunkZ,
+            int sectionIndex
+    ) {
+        int minBuildHeight = level.getMinBuildHeight();
+        int y = minBuildHeight + sectionIndex * SECTION_HEIGHT + 8;
+        BlockPos sample = new BlockPos((chunkX << 4) + 8, y, (chunkZ << 4) + 8);
+        Holder<Biome> biome = level.getChunkSource().getGenerator().getBiomeSource().getNoiseBiome(
+                sample.getX() >> 2,
+                sample.getY() >> 2,
+                sample.getZ() >> 2,
+                level.getChunkSource().randomState().sampler()
+        );
+        return new PalettedContainer<>(
+                biomeRegistry.asHolderIdMap(),
+                biome,
+                PalettedContainer.Strategy.SECTION_BIOMES
+        );
     }
 
     private static void removeChunkTickets(ServerLevel level, int chunkMinX, int chunkMinZ, int chunkMaxX, int chunkMaxZ) {

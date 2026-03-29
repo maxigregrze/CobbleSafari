@@ -7,8 +7,7 @@
       "id": "togekiss-safarispawn",
       "pokemon": "togekiss",
       "presets": [
-        "natural",
-        "wild"
+        "cobblesafari"
       ],
       "type": "pokemon",
       "context": "grounded",

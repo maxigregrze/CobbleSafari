@@ -7,8 +7,7 @@
       "id": "clobbopus-safarispawn",
       "pokemon": "clobbopus",
       "presets": [
-        "natural",
-        "wild"
+        "cobblesafari"
       ],
       "type": "pokemon",
       "context": "grounded",

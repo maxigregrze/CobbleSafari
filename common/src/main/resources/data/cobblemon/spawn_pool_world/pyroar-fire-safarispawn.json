@@ -7,8 +7,7 @@
       "id": "pyroar-safarispawn",
       "pokemon": "pyroar",
       "presets": [
-        "natural",
-        "wild"
+        "cobblesafari"
       ],
       "type": "pokemon",
       "context": "grounded",

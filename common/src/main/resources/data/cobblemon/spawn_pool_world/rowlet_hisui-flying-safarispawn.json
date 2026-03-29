@@ -7,8 +7,7 @@
       "id": "rowlet_hisui-safarispawn",
       "pokemon": "rowlet region_bias",
       "presets": [
-        "natural",
-        "wild"
+        "cobblesafari"
       ],
       "type": "pokemon",
       "context": "grounded",

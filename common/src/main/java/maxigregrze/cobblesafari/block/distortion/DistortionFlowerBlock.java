@@ -17,7 +17,9 @@ import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.Mirror;
 import net.minecraft.world.level.block.RenderShape;
+import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.AttachFace;
@@ -63,7 +65,9 @@ public class DistortionFlowerBlock extends Block {
         Level level = context.getLevel();
         Direction clickedFace = context.getClickedFace();
         AttachFace face = faceForDirection(clickedFace);
-        Direction horizontalFacing = face == AttachFace.WALL ? clickedFace : Direction.NORTH;
+        Direction horizontalFacing = face == AttachFace.WALL
+                ? clickedFace
+                : context.getHorizontalDirection();
         BlockState candidate = this.defaultBlockState()
                 .setValue(PART, DistortionFlowerPart.BASE)
                 .setValue(FACE, face)
@@ -263,6 +267,16 @@ public class DistortionFlowerBlock extends Block {
             case CEILING -> Direction.DOWN;
             case WALL -> state.getValue(FACING);
         };
+    }
+
+    @Override
+    public BlockState rotate(BlockState state, Rotation rotation) {
+        return state.setValue(FACING, rotation.rotate(state.getValue(FACING)));
+    }
+
+    @Override
+    public BlockState mirror(BlockState state, Mirror mirror) {
+        return state.rotate(mirror.getRotation(state.getValue(FACING)));
     }
 
     private static boolean sameOrientation(BlockState first, BlockState second) {

@@ -7,8 +7,7 @@
       "id": "quagsire-water-safarispawn",
       "pokemon": "quagsire",
       "presets": [
-        "natural",
-        "wild"
+        "cobblesafari"
       ],
       "type": "pokemon",
       "context": "grounded",

@@ -7,8 +7,7 @@
       "id": "indeedee-safarispawn",
       "pokemon": "indeedee",
       "presets": [
-        "natural",
-        "wild"
+        "cobblesafari"
       ],
       "type": "pokemon",
       "context": "grounded",

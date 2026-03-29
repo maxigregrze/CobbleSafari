@@ -7,8 +7,7 @@
       "id": "kecleon-safarispawn",
       "pokemon": "kecleon",
       "presets": [
-        "natural",
-        "wild"
+        "cobblesafari"
       ],
       "type": "pokemon",
       "context": "grounded",

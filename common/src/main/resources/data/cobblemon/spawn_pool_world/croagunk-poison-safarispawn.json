@@ -7,8 +7,7 @@
       "id": "croagunk-safarispawn",
       "pokemon": "croagunk",
       "presets": [
-        "natural",
-        "wild"
+        "cobblesafari"
       ],
       "type": "pokemon",
       "context": "grounded",

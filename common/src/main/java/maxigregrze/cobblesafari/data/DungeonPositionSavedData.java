@@ -1,7 +1,6 @@
 package maxigregrze.cobblesafari.data;
 
 import maxigregrze.cobblesafari.CobbleSafari;
-import maxigregrze.cobblesafari.dungeon.DungeonTeleportHandler;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
@@ -148,14 +147,13 @@ public class DungeonPositionSavedData extends SavedData {
         }
     }
 
-    public void removeUsedPosition(String dimensionId, BlockPos pos) {
-        int slot = slotFromPos(pos);
+    public void removeUsedPosition(String dimensionId, BlockPos pos, int zoneSize) {
+        int slot = slotFromPos(pos, zoneSize);
         CobbleSafari.LOGGER.debug("Freeing slot {} (from pos {}) for dimension {}", slot, pos, dimensionId);
         freeSlot(dimensionId, slot);
     }
 
-    private static int slotFromPos(BlockPos pos) {
-        int zoneSize = DungeonTeleportHandler.ZONE_SIZE;
+    private static int slotFromPos(BlockPos pos, int zoneSize) {
         int col = pos.getX() / zoneSize;
         int row = pos.getZ() / zoneSize;
         return col + row * 100;

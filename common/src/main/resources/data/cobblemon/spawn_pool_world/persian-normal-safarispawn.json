@@ -7,8 +7,7 @@
       "id": "persian-safarispawn",
       "pokemon": "persian",
       "presets": [
-        "natural",
-        "wild"
+        "cobblesafari"
       ],
       "type": "pokemon",
       "context": "grounded",

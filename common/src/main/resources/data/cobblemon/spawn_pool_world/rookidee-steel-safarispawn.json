@@ -7,8 +7,7 @@
       "id": "rookidee-steel-safarispawn",
       "pokemon": "rookidee",
       "presets": [
-        "natural",
-        "wild"
+        "cobblesafari"
       ],
       "type": "pokemon",
       "context": "grounded",

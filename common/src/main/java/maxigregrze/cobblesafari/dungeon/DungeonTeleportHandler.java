@@ -275,14 +275,15 @@ public class DungeonTeleportHandler {
         return null;
     }
 
-    private static BlockPos calculateUniquePosition(MinecraftServer server, ResourceKey<Level> dungeonDimension) {
-        String dimensionId = dungeonDimension.location().toString();
+    private static BlockPos calculateUniquePosition(MinecraftServer server, DungeonConfig config) {
+        String dimensionId = config.getDimensionId();
         DungeonPositionSavedData positionData = DungeonPositionSavedData.get(server);
+        int zoneSize = config.getZoneSize();
 
         int slot = positionData.allocateSlot(dimensionId);
         int zOffset = positionData.getAndIncrementSlotZOffset(dimensionId, slot);
-        int x = (slot % 100) * ZONE_SIZE;
-        int z = (slot / 100) * ZONE_SIZE + zOffset;
+        int x = (slot % 100) * zoneSize;
+        int z = (slot / 100) * zoneSize + zOffset;
         int y = (slot % 2 == 0) ? 96 : 32;
         BlockPos pos = new BlockPos(x, y, z);
 
@@ -390,7 +391,7 @@ public class DungeonTeleportHandler {
             CobbleSafari.LOGGER.info("Reusing existing dungeon for portal {}: structure at {}, exit portal at {}",
                     portalEntity.getPortalId(), state.structurePos, state.exitPortalPos);
         } else {
-            state.structurePos = calculateUniquePosition(server, config.getDimensionKey());
+            state.structurePos = calculateUniquePosition(server, config);
             CobbleSafari.LOGGER.info("Calculated new dungeon position at {}", state.structurePos);
         }
 
@@ -504,7 +505,7 @@ public class DungeonTeleportHandler {
             portalEntity.setDungeonStructurePos(state.structurePos);
             portalEntity.setDungeonExitPortalPos(state.exitPortalPos);
 
-            int regionRadius = ZONE_SIZE / 2 - 1;
+            int regionRadius = state.config.getZoneSize() / 2 - 1;
             int chunkMinX = (state.structurePos.getX() - regionRadius) >> 4;
             int chunkMinZ = (state.structurePos.getZ() - regionRadius) >> 4;
             int chunkMaxX = (state.structurePos.getX() + regionRadius) >> 4;

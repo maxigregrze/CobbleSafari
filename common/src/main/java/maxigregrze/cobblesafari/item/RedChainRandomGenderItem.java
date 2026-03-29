@@ -8,7 +8,7 @@ import net.minecraft.world.entity.player.Player;
 
 public class RedChainRandomGenderItem extends PokemonModifierItem {
     public RedChainRandomGenderItem(Properties properties, String itemId) {
-        super(properties, itemId, true);
+        super(properties, itemId, true, 'G');
     }
 
     @Override

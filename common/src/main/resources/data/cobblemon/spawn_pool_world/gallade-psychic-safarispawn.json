@@ -7,8 +7,7 @@
       "id": "gallade-safarispawn",
       "pokemon": "gallade",
       "presets": [
-        "natural",
-        "wild"
+        "cobblesafari"
       ],
       "type": "pokemon",
       "context": "grounded",

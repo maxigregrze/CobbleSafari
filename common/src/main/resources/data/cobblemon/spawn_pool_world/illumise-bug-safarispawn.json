@@ -7,8 +7,7 @@
       "id": "illumise-safarispawn",
       "pokemon": "illumise",
       "presets": [
-        "natural",
-        "wild"
+        "cobblesafari"
       ],
       "type": "pokemon",
       "context": "grounded",

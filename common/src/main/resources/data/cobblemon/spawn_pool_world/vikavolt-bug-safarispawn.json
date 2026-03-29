@@ -7,8 +7,7 @@
       "id": "vikavolt-bug-safarispawn",
       "pokemon": "vikavolt",
       "presets": [
-        "natural",
-        "wild"
+        "cobblesafari"
       ],
       "type": "pokemon",
       "context": "grounded",

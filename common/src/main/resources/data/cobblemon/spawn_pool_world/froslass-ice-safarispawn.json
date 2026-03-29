@@ -7,8 +7,7 @@
       "id": "froslass-safarispawn",
       "pokemon": "froslass",
       "presets": [
-        "natural",
-        "wild"
+        "cobblesafari"
       ],
       "type": "pokemon",
       "context": "grounded",

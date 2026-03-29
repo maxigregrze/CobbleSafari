@@ -7,8 +7,7 @@
       "id": "swanna-safarispawn",
       "pokemon": "swanna",
       "presets": [
-        "natural",
-        "wild"
+        "cobblesafari"
       ],
       "type": "pokemon",
       "context": "grounded",

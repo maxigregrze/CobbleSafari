@@ -400,7 +400,10 @@ public class PortalSpawnManager {
                 pos,
                 level.dimension(),
                 level.getGameTime(),
-                dungeon.getId()
+                dungeon.getId(),
+                dungeon.getId(),
+                null,
+                0, 0, 0, 0, false
         ));
 
         savePortals();
@@ -510,12 +513,16 @@ public class PortalSpawnManager {
         portalEntity.setChanged();
 
         UUID portalId = portalEntity.getPortalId();
+        String resolvedDungeonDimensionId = dungeon != null ? dungeon.getId() : null;
         ACTIVE_PORTALS.put(portalId, new ActivePortal(
                 portalId,
                 pos,
                 level.dimension(),
                 level.getGameTime(),
-                dungeon != null ? dungeon.getId() : "random"
+                dungeon != null ? dungeon.getId() : "random",
+                resolvedDungeonDimensionId,
+                null,
+                0, 0, 0, 0, false
         ));
         savePortals();
 
@@ -551,12 +558,16 @@ public class PortalSpawnManager {
         portalEntity.setSpawnTick(level.getGameTime());
         portalEntity.setChanged();
 
+        String renewedDungeonDimensionId = dungeon != null ? dungeon.getId() : null;
         ACTIVE_PORTALS.put(newPortalId, new ActivePortal(
                 newPortalId,
                 pos,
                 level.dimension(),
                 level.getGameTime(),
-                dungeon != null ? dungeon.getId() : (oldPortal != null ? oldPortal.dungeonId() : "random")
+                dungeon != null ? dungeon.getId() : (oldPortal != null ? oldPortal.dungeonId() : "random"),
+                renewedDungeonDimensionId,
+                null,
+                0, 0, 0, 0, false
         ));
         savePortals();
 
@@ -615,12 +626,13 @@ public class PortalSpawnManager {
                         DungeonRegionClearer.clearRegion(dungeonLevel,
                                 portalEntity.getDungeonChunkMinX(), portalEntity.getDungeonChunkMinZ(),
                                 portalEntity.getDungeonChunkMaxX(), portalEntity.getDungeonChunkMaxZ(),
-                                structureY);
+                                structureY, config.getClearSectionsBelow(), config.getClearSectionsAbove());
                     }
                 }
                 if (portalEntity.getDungeonStructurePos() != null) {
                     String dimensionId = config != null ? config.getDimensionId() : dungeonDimId;
-                    DungeonPositionSavedData.get(serverInstance).removeUsedPosition(dimensionId, portalEntity.getDungeonStructurePos());
+                    int zoneSize = config != null ? config.getZoneSize() : DungeonConfig.DEFAULT_ZONE_SIZE;
+                    DungeonPositionSavedData.get(serverInstance).removeUsedPosition(dimensionId, portalEntity.getDungeonStructurePos(), zoneSize);
                 }
             }
 
@@ -685,12 +697,12 @@ public class PortalSpawnManager {
             DungeonRegionClearer.clearRegion(dungeonLevel,
                     portal.dungeonChunkMinX(), portal.dungeonChunkMinZ(),
                     portal.dungeonChunkMaxX(), portal.dungeonChunkMaxZ(),
-                    structureY);
+                    structureY, config.getClearSectionsBelow(), config.getClearSectionsAbove());
         }
 
         if (portal.dungeonStructurePos() != null) {
             DungeonPositionSavedData.get(server).removeUsedPosition(
-                    config.getDimensionId(), portal.dungeonStructurePos());
+                    config.getDimensionId(), portal.dungeonStructurePos(), config.getZoneSize());
         }
     }
 

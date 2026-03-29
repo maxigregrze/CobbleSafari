@@ -7,8 +7,7 @@
       "id": "kadabra-safarispawn",
       "pokemon": "kadabra",
       "presets": [
-        "natural",
-        "wild"
+        "cobblesafari"
       ],
       "type": "pokemon",
       "context": "grounded",

@@ -7,8 +7,7 @@
       "id": "frigibax-safarispawn",
       "pokemon": "frigibax",
       "presets": [
-        "natural",
-        "wild"
+        "cobblesafari"
       ],
       "type": "pokemon",
       "context": "grounded",

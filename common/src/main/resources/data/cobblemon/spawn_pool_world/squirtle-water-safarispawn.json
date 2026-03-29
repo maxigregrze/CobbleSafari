@@ -7,8 +7,7 @@
       "id": "squirtle-safarispawn",
       "pokemon": "squirtle",
       "presets": [
-        "natural",
-        "wild"
+        "cobblesafari"
       ],
       "type": "pokemon",
       "context": "grounded",

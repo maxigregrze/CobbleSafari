@@ -7,8 +7,7 @@
       "id": "munna-safarispawn",
       "pokemon": "munna",
       "presets": [
-        "natural",
-        "wild"
+        "cobblesafari"
       ],
       "type": "pokemon",
       "context": "grounded",

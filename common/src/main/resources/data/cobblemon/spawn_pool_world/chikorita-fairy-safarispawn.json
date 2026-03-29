@@ -7,8 +7,7 @@
       "id": "chikorita-safarispawn",
       "pokemon": "chikorita",
       "presets": [
-        "natural",
-        "wild"
+        "cobblesafari"
       ],
       "type": "pokemon",
       "context": "grounded",

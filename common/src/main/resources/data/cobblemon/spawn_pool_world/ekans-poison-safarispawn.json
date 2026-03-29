@@ -7,8 +7,7 @@
       "id": "ekans-safarispawn",
       "pokemon": "ekans",
       "presets": [
-        "natural",
-        "wild"
+        "cobblesafari"
       ],
       "type": "pokemon",
       "context": "grounded",

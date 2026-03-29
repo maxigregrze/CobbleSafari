@@ -7,8 +7,7 @@
       "id": "jangmo-o-safarispawn",
       "pokemon": "jangmo-o",
       "presets": [
-        "natural",
-        "wild"
+        "cobblesafari"
       ],
       "type": "pokemon",
       "context": "grounded",

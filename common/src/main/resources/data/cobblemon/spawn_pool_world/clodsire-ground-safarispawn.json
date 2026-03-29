@@ -7,8 +7,7 @@
       "id": "clodsire-ground-safarispawn",
       "pokemon": "clodsire",
       "presets": [
-        "natural",
-        "wild"
+        "cobblesafari"
       ],
       "type": "pokemon",
       "context": "grounded",

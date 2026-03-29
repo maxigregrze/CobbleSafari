@@ -7,8 +7,7 @@
       "id": "duosion-safarispawn",
       "pokemon": "duosion",
       "presets": [
-        "natural",
-        "wild"
+        "cobblesafari"
       ],
       "type": "pokemon",
       "context": "grounded",

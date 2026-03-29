@@ -36,6 +36,7 @@ import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
 import net.neoforged.neoforge.event.entity.EntityAttributeCreationEvent;
+import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.neoforged.neoforge.event.level.BlockEvent;
 import net.neoforged.neoforge.event.server.ServerStartedEvent;
@@ -68,6 +69,7 @@ public class CobbleSafariNeoForge {
         NeoForge.EVENT_BUS.addListener(this::onRightClickBlock);
         NeoForge.EVENT_BUS.addListener(this::onLeftClickBlock);
         NeoForge.EVENT_BUS.addListener(this::onBlockBreak);
+        NeoForge.EVENT_BUS.addListener(this::onLivingIncomingDamage);
 
         CobbleSafari.LOGGER.info("CobbleSafari NeoForge module loaded!");
     }
@@ -293,6 +295,12 @@ public class CobbleSafariNeoForge {
             if (!DimensionalBanEventHandler.onBlockBreakTry(level.dimension(), event.getPlayer(), event.getPos())) {
                 event.setCanceled(true);
             }
+        }
+    }
+
+    private void onLivingIncomingDamage(LivingIncomingDamageEvent event) {
+        if (!DimensionalBanEventHandler.onLivingHurt(event.getEntity(), event.getSource())) {
+            event.setCanceled(true);
         }
     }
 }

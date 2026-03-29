@@ -7,8 +7,7 @@
       "id": "simipour-safarispawn",
       "pokemon": "simipour",
       "presets": [
-        "natural",
-        "wild"
+        "cobblesafari"
       ],
       "type": "pokemon",
       "context": "grounded",

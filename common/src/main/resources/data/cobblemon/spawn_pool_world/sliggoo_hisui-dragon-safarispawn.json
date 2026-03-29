@@ -7,8 +7,7 @@
       "id": "sliggoo_hisui-dragon-safarispawn",
       "pokemon": "sliggoo hisuan",
       "presets": [
-        "natural",
-        "wild"
+        "cobblesafari"
       ],
       "type": "pokemon",
       "context": "grounded",

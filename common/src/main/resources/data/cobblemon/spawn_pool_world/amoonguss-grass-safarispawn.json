@@ -7,8 +7,7 @@
       "id": "amoonguss-safarispawn",
       "pokemon": "amoonguss",
       "presets": [
-        "natural",
-        "wild"
+        "cobblesafari"
       ],
       "type": "pokemon",
       "context": "grounded",

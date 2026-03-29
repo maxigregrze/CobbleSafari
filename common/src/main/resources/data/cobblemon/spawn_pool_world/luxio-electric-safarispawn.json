@@ -7,8 +7,7 @@
       "id": "luxio-safarispawn",
       "pokemon": "luxio",
       "presets": [
-        "natural",
-        "wild"
+        "cobblesafari"
       ],
       "type": "pokemon",
       "context": "grounded",

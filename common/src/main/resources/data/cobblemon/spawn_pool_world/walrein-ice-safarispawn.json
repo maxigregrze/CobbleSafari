@@ -7,8 +7,7 @@
       "id": "walrein-safarispawn",
       "pokemon": "walrein",
       "presets": [
-        "natural",
-        "wild"
+        "cobblesafari"
       ],
       "type": "pokemon",
       "context": "grounded",

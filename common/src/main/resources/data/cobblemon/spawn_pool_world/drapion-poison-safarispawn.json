@@ -7,8 +7,7 @@
       "id": "drapion-safarispawn",
       "pokemon": "drapion",
       "presets": [
-        "natural",
-        "wild"
+        "cobblesafari"
       ],
       "type": "pokemon",
       "context": "grounded",

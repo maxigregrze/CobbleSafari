@@ -7,8 +7,7 @@
       "id": "gigalith-safarispawn",
       "pokemon": "gigalith",
       "presets": [
-        "natural",
-        "wild"
+        "cobblesafari"
       ],
       "type": "pokemon",
       "context": "grounded",

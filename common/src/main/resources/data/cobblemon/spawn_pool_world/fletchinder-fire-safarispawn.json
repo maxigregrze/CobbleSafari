@@ -7,8 +7,7 @@
       "id": "fletchinder-fire-safarispawn",
       "pokemon": "fletchinder",
       "presets": [
-        "natural",
-        "wild"
+        "cobblesafari"
       ],
       "type": "pokemon",
       "context": "grounded",

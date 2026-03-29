@@ -4,12 +4,12 @@
         "type": "bitmap",
         "file": "cobblesafari:font/unown.png",
         "ascent": 8,
-        "height": 16,
+        "height": 9,
         "chars": [
           "ABCDEFGHIJKLMNOP",
           "QRSTUVWXYZ?!ù@#$",
           "abcdefghijklmnop",
-          "qrstuvwxyz ....."
+          "qrstuvwxyz \u0020...."
         ]
       }
     ]

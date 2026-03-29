@@ -7,8 +7,7 @@
       "id": "heliolisk-safarispawn",
       "pokemon": "heliolisk",
       "presets": [
-        "natural",
-        "wild"
+        "cobblesafari"
       ],
       "type": "pokemon",
       "context": "grounded",

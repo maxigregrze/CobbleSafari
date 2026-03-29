@@ -7,8 +7,7 @@
       "id": "meowstic-safarispawn",
       "pokemon": "meowstic",
       "presets": [
-        "natural",
-        "wild"
+        "cobblesafari"
       ],
       "type": "pokemon",
       "context": "grounded",

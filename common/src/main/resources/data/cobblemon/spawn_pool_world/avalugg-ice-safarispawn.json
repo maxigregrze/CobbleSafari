@@ -7,8 +7,7 @@
       "id": "avalugg-safarispawn",
       "pokemon": "avalugg",
       "presets": [
-        "natural",
-        "wild"
+        "cobblesafari"
       ],
       "type": "pokemon",
       "context": "grounded",

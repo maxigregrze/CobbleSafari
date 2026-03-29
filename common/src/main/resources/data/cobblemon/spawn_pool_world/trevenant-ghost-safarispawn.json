@@ -7,8 +7,7 @@
       "id": "trevenant-safarispawn",
       "pokemon": "trevenant",
       "presets": [
-        "natural",
-        "wild"
+        "cobblesafari"
       ],
       "type": "pokemon",
       "context": "grounded",

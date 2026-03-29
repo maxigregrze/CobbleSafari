@@ -7,8 +7,7 @@
       "id": "aggron-steel-safarispawn",
       "pokemon": "aggron",
       "presets": [
-        "natural",
-        "wild"
+        "cobblesafari"
       ],
       "type": "pokemon",
       "context": "grounded",

@@ -7,8 +7,7 @@
       "id": "beedrill-safarispawn",
       "pokemon": "beedrill",
       "presets": [
-        "natural",
-        "wild"
+        "cobblesafari"
       ],
       "type": "pokemon",
       "context": "grounded",

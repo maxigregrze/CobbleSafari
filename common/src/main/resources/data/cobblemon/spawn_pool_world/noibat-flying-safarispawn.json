@@ -7,8 +7,7 @@
       "id": "noibat-flying-safarispawn",
       "pokemon": "noibat",
       "presets": [
-        "natural",
-        "wild"
+        "cobblesafari"
       ],
       "type": "pokemon",
       "context": "grounded",

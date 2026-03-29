@@ -7,19 +7,16 @@
         "id": "distortion-gengar-1",
         "pokemon": "gengar distortion uncatchable",
         "presets": [
-          "natural"
+          "dungeon_distortion"
         ],
         "type": "pokemon",
         "context": "grounded",
         "bucket": "common",
         "level": "70-80",
-        "weight": 0.5,
+        "weight": 2,
         "condition": {
-          "dimensions": [
-            "cobblesafari:dungeon_distortion"
-          ],
           "neededNearbyBlocks": [
-            "cobblesafari:distortion_weed"
+            "cobblesafari:distortion_weed_spawn"
           ]
         }
       },
@@ -27,77 +24,67 @@
         "id": "distortion-porygon-1",
         "pokemon": "porygon distortion uncatchable",
         "presets": [
-          "natural"
+          "dungeon_distortion"
         ],
         "type": "pokemon",
         "context": "grounded",
         "bucket": "common",
         "level": "25-50",
-        "weight": 0.5,
-        "condition": {
-          "dimensions": [
-            "cobblesafari:dungeon_distortion"
-          ]
-        }
+        "weight": 10,
+        "condition": {}
       },
       {
         "id": "distortion-scizor-1",
         "pokemon": "scizor distortion uncatchable",
         "presets": [
-          "natural"
+          "dungeon_distortion"
         ],
         "type": "pokemon",
         "context": "grounded",
         "bucket": "common",
         "level": "70-80",
-        "weight": 0.5,
+        "weight": 5,
         "condition": {
-          "dimensions": [
-            "cobblesafari:dungeon_distortion"
-          ],
           "neededNearbyBlocks": [
-            "cobblesafari:distortion_weed"
+            "cobblesafari:distortion_weed_spawn"
           ]
+
         }
       },
       {
         "id": "distortion-magmortar-1",
         "pokemon": "magmortar distortion uncatchable",
         "presets": [
-          "natural"
+          "dungeon_distortion"
         ],
         "type": "pokemon",
         "context": "grounded",
         "bucket": "common",
         "level": "70-80",
-        "weight": 0.5,
+        "weight": 3,
         "condition": {
-          "dimensions": [
-            "cobblesafari:dungeon_distortion"
-          ],
           "neededNearbyBlocks": [
-            "cobblesafari:distortion_weed"
+            "cobblesafari:distortion_weed_spawn"
           ]
+
         }
       },
       {
         "id": "distortion-electivire-1",
         "pokemon": "electivire distortion uncatchable",
         "presets": [
-          "natural"
+          "dungeon_distortion"
         ],
         "type": "pokemon",
         "context": "grounded",
         "bucket": "common",
         "level": "70-80",
-        "weight": 0.5,
+        "weight": 3,
         "condition": {
-          "dimensions": [
-            "cobblesafari:dungeon_distortion"
-          ],
           "neededNearbyBlocks": [
-            "cobblesafari:distortion_weed"
+            "cobblesafari:distortion_weed_spawn"
           ]
+
         }
       }
     ]

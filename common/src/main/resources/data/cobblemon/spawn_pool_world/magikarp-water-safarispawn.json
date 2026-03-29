@@ -7,8 +7,7 @@
       "id": "magikarp-safarispawn",
       "pokemon": "magikarp",
       "presets": [
-        "natural",
-        "wild"
+        "cobblesafari"
       ],
       "type": "pokemon",
       "context": "grounded",

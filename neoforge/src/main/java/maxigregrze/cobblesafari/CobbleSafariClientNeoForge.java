@@ -30,6 +30,7 @@ import maxigregrze.cobblesafari.client.screen.BasePCScreen;
 import maxigregrze.cobblesafari.underground.UndergroundMinigame;
 import maxigregrze.cobblesafari.underground.UndergroundScreen;
 import maxigregrze.cobblesafari.underground.network.UndergroundPayloads;
+import maxigregrze.cobblesafari.client.DungeonDistortionDimensionEffects;
 import maxigregrze.cobblesafari.client.audio.DungeonMusicHandler;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
@@ -38,12 +39,14 @@ import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
+import net.neoforged.neoforge.client.event.RegisterDimensionSpecialEffectsEvent;
 import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
 import net.neoforged.neoforge.client.event.RenderGuiLayerEvent;
 import net.neoforged.neoforge.client.gui.VanillaGuiLayers;
@@ -76,6 +79,14 @@ public class CobbleSafariClientNeoForge {
     public static void onRegisterMenuScreens(RegisterMenuScreensEvent event) {
         event.register(UndergroundMinigame.MENU_TYPE, UndergroundScreen::new);
         event.register(BasePCMenu.MENU_TYPE, BasePCScreen::new);
+    }
+
+    @SubscribeEvent
+    public static void onRegisterDimensionSpecialEffects(RegisterDimensionSpecialEffectsEvent event) {
+        event.register(
+                ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, "dungeon_distortion"),
+                new DungeonDistortionDimensionEffects()
+        );
     }
 
     @SubscribeEvent

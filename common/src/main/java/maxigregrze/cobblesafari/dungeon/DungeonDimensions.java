@@ -52,7 +52,10 @@ public class DungeonDimensions {
                 900,
                 1,
                 DungeonConfig.StructureType.JIGSAW,
-                5
+                5,
+                512,   
+                1,      
+                1      
         ));
 
         REGISTERED_DUNGEONS.add(new DungeonConfig(
@@ -63,7 +66,10 @@ public class DungeonDimensions {
                 900,
                 1,
                 DungeonConfig.StructureType.JIGSAW,
-                5
+                20,
+                1024,    
+                2,      
+                10      
         ));
 
         recalculateTotalWeight();
@@ -142,6 +148,16 @@ public class DungeonDimensions {
 
     public static List<String> getRegisteredDungeonIdsSorted() {
         return REGISTERED_DUNGEONS.stream()
+                .map(DungeonConfig::getId)
+                .sorted(Comparator.naturalOrder())
+                .toList();
+    }
+
+    public static List<String> getEnabledDungeonIdsSorted() {
+        return REGISTERED_DUNGEONS.stream()
+                .filter(d -> PortalSpawnConfig.getDimensionConfig(d.getId())
+                        .map(DungeonDimensionEntry::isEnabled)
+                        .orElse(true))
                 .map(DungeonConfig::getId)
                 .sorted(Comparator.naturalOrder())
                 .toList();

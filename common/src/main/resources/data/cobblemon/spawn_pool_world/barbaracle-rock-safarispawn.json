@@ -7,8 +7,7 @@
       "id": "barbaracle-safarispawn",
       "pokemon": "barbaracle",
       "presets": [
-        "natural",
-        "wild"
+        "cobblesafari"
       ],
       "type": "pokemon",
       "context": "grounded",

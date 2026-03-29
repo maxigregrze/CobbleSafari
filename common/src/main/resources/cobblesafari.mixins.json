@@ -2,12 +2,16 @@
   "required": true,
   "package": "maxigregrze.cobblesafari.mixin",
   "compatibilityLevel": "JAVA_21",
+  "plugin": "maxigregrze.cobblesafari.mixin.CobbleSafariMixinPlugin",
   "refmap": "${mod_id}.refmap.json",
   "mixins": [
-    "ServerPlayerMixin"
+    "ServerPlayerMixin",
+    "JigsawPlacementMixin",
+    "JigsawStructureMixin"
   ],
   "client": [
-    "client.GuiMixin"
+    "client.GuiMixin",
+    "client.DimensionSpecialEffectsAccessor"
   ],
   "injectors": {
     "defaultRequire": 1

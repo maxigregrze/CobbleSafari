@@ -7,8 +7,7 @@
       "id": "corvisquire-steel-safarispawn",
       "pokemon": "corvisquire",
       "presets": [
-        "natural",
-        "wild"
+        "cobblesafari"
       ],
       "type": "pokemon",
       "context": "grounded",

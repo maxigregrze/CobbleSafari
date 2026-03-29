@@ -7,8 +7,7 @@
       "id": "simisear-safarispawn",
       "pokemon": "simisear",
       "presets": [
-        "natural",
-        "wild"
+        "cobblesafari"
       ],
       "type": "pokemon",
       "context": "grounded",

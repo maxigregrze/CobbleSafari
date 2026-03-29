@@ -7,8 +7,7 @@
       "id": "swablu-safarispawn",
       "pokemon": "swablu",
       "presets": [
-        "natural",
-        "wild"
+        "cobblesafari"
       ],
       "type": "pokemon",
       "context": "grounded",

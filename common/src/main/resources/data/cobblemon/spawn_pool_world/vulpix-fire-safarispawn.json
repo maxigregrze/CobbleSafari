@@ -7,8 +7,7 @@
       "id": "vulpix-safarispawn",
       "pokemon": "vulpix",
       "presets": [
-        "natural",
-        "wild"
+        "cobblesafari"
       ],
       "type": "pokemon",
       "context": "grounded",

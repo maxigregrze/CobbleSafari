@@ -7,8 +7,7 @@
       "id": "gastrodon-safarispawn",
       "pokemon": "gastrodon",
       "presets": [
-        "natural",
-        "wild"
+        "cobblesafari"
       ],
       "type": "pokemon",
       "context": "grounded",

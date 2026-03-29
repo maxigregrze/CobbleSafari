@@ -7,8 +7,7 @@
       "id": "vileplume-safarispawn",
       "pokemon": "vileplume",
       "presets": [
-        "natural",
-        "wild"
+        "cobblesafari"
       ],
       "type": "pokemon",
       "context": "grounded",

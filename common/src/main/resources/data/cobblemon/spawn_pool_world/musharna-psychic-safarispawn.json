@@ -7,8 +7,7 @@
       "id": "musharna-safarispawn",
       "pokemon": "musharna",
       "presets": [
-        "natural",
-        "wild"
+        "cobblesafari"
       ],
       "type": "pokemon",
       "context": "grounded",

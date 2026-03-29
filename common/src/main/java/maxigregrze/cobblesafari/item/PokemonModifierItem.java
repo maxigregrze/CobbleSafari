@@ -5,6 +5,8 @@ import com.cobblemon.mod.common.entity.pokemon.PokemonEntity;
 import com.cobblemon.mod.common.pokemon.Pokemon;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.Style;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
@@ -16,13 +18,22 @@ import net.minecraft.world.item.TooltipFlag;
 import java.util.List;
 
 public abstract class PokemonModifierItem extends Item {
+
+    private static final ResourceLocation UNOWN_FONT = ResourceLocation.fromNamespaceAndPath("cobblesafari", "unown");
+
     private final String itemId;
     private final boolean redName;
+    private final char suffixChar;
 
     protected PokemonModifierItem(Properties properties, String itemId, boolean redName) {
+        this(properties, itemId, redName, '\0');
+    }
+
+    protected PokemonModifierItem(Properties properties, String itemId, boolean redName, char suffixChar) {
         super(properties);
         this.itemId = itemId;
         this.redName = redName;
+        this.suffixChar = suffixChar;
     }
 
     @Override
@@ -31,7 +42,13 @@ public abstract class PokemonModifierItem extends Item {
         if (!redName) {
             return base;
         }
-        return base.copy().withStyle(ChatFormatting.RED);
+        Component styled = base.copy().withStyle(ChatFormatting.RED);
+        if (suffixChar != '\0') {
+            Component suffix = Component.literal(String.valueOf(suffixChar))
+                    .withStyle(Style.EMPTY.withFont(UNOWN_FONT).withColor(ChatFormatting.RED));
+            styled = Component.empty().append(styled).append(suffix);
+        }
+        return styled;
     }
 
     @Override

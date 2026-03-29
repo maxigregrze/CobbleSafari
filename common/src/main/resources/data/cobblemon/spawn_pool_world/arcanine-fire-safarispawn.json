@@ -7,8 +7,7 @@
       "id": "arcanine-safarispawn",
       "pokemon": "arcanine",
       "presets": [
-        "natural",
-        "wild"
+        "cobblesafari"
       ],
       "type": "pokemon",
       "context": "grounded",

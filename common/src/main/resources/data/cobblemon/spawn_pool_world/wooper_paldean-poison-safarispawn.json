@@ -7,8 +7,7 @@
       "id": "wooper_paldean-poison-safarispawn",
       "pokemon": "wooper paldean",
       "presets": [
-        "natural",
-        "wild"
+        "cobblesafari"
       ],
       "type": "pokemon",
       "context": "grounded",

@@ -7,8 +7,7 @@
       "id": "vespiquen-safarispawn",
       "pokemon": "vespiquen",
       "presets": [
-        "natural",
-        "wild"
+        "cobblesafari"
       ],
       "type": "pokemon",
       "context": "grounded",

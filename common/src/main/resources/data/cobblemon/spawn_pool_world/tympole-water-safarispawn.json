@@ -7,8 +7,7 @@
       "id": "tympole-water-safarispawn",
       "pokemon": "tympole",
       "presets": [
-        "natural",
-        "wild"
+        "cobblesafari"
       ],
       "type": "pokemon",
       "context": "grounded",

@@ -1,0 +1,50 @@
+{
+  "fallback": "minecraft:empty",
+  "elements": [
+    {
+      "weight": 1,
+      "element": {
+        "element_type": "minecraft:single_pool_element",
+        "location": "cobblesafari:distortion/labyrinth/to_1",
+        "processors": "cobblesafari:distortion_lostitem_scatter",
+        "projection": "rigid"
+      }
+    },
+    {
+      "weight": 1,
+      "element": {
+        "element_type": "minecraft:single_pool_element",
+        "location": "cobblesafari:distortion/labyrinth/to_2",
+        "processors": "cobblesafari:distortion_lostitem_scatter",
+        "projection": "rigid"
+      }
+    },
+    {
+      "weight": 3,
+      "element": {
+        "element_type": "minecraft:single_pool_element",
+        "location": "cobblesafari:distortion/labyrinth/to_3",
+        "processors": "cobblesafari:distortion_lostitem_scatter",
+        "projection": "rigid"
+      }
+    },
+    {
+      "weight": 1,
+      "element": {
+        "element_type": "minecraft:single_pool_element",
+        "location": "cobblesafari:distortion/labyrinth/to_4",
+        "processors": "cobblesafari:distortion_lostitem_scatter",
+        "projection": "rigid"
+      }
+    },
+    {
+      "weight": 1,
+      "element": {
+        "element_type": "minecraft:single_pool_element",
+        "location": "cobblesafari:distortion/labyrinth/to_5",
+        "processors": "cobblesafari:distortion_lostitem_scatter",
+        "projection": "rigid"
+      }
+    }
+  ]
+}

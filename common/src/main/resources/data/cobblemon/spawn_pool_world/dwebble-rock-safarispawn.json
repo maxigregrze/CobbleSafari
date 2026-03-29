@@ -7,8 +7,7 @@
       "id": "dwebble-safarispawn",
       "pokemon": "dwebble",
       "presets": [
-        "natural",
-        "wild"
+        "cobblesafari"
       ],
       "type": "pokemon",
       "context": "grounded",

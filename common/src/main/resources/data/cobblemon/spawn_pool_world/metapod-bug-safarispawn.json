@@ -7,8 +7,7 @@
       "id": "metapod-safarispawn",
       "pokemon": "metapod",
       "presets": [
-        "natural",
-        "wild"
+        "cobblesafari"
       ],
       "type": "pokemon",
       "context": "grounded",

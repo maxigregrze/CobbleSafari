@@ -7,8 +7,7 @@
       "id": "falinks-safarispawn",
       "pokemon": "falinks",
       "presets": [
-        "natural",
-        "wild"
+        "cobblesafari"
       ],
       "type": "pokemon",
       "context": "grounded",

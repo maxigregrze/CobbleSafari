@@ -7,8 +7,7 @@
       "id": "frosmoth-safarispawn",
       "pokemon": "frosmoth",
       "presets": [
-        "natural",
-        "wild"
+        "cobblesafari"
       ],
       "type": "pokemon",
       "context": "grounded",

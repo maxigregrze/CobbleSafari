@@ -7,8 +7,7 @@
       "id": "shroodle-safarispawn",
       "pokemon": "shroodle",
       "presets": [
-        "natural",
-        "wild"
+        "cobblesafari"
       ],
       "type": "pokemon",
       "context": "grounded",

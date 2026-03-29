@@ -7,8 +7,7 @@
       "id": "patrat-safarispawn",
       "pokemon": "patrat",
       "presets": [
-        "natural",
-        "wild"
+        "cobblesafari"
       ],
       "type": "pokemon",
       "context": "grounded",

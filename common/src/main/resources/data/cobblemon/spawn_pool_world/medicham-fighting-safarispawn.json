@@ -7,8 +7,7 @@
       "id": "medicham-safarispawn",
       "pokemon": "medicham",
       "presets": [
-        "natural",
-        "wild"
+        "cobblesafari"
       ],
       "type": "pokemon",
       "context": "grounded",

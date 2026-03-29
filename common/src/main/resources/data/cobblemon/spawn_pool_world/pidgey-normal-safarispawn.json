@@ -7,8 +7,7 @@
       "id": "pidgey-normal-safarispawn",
       "pokemon": "pidgey",
       "presets": [
-        "natural",
-        "wild"
+        "cobblesafari"
       ],
       "type": "pokemon",
       "context": "grounded",

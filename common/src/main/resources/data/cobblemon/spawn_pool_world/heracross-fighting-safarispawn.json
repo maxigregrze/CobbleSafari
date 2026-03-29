@@ -7,8 +7,7 @@
       "id": "heracross-fighting-safarispawn",
       "pokemon": "heracross",
       "presets": [
-        "natural",
-        "wild"
+        "cobblesafari"
       ],
       "type": "pokemon",
       "context": "grounded",

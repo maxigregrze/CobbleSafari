@@ -7,8 +7,7 @@
       "id": "drowzee-safarispawn",
       "pokemon": "drowzee",
       "presets": [
-        "natural",
-        "wild"
+        "cobblesafari"
       ],
       "type": "pokemon",
       "context": "grounded",
