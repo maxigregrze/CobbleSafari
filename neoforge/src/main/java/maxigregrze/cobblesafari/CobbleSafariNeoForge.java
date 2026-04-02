@@ -181,7 +181,7 @@ public class CobbleSafariNeoForge {
                                 text = text.substring(0, 1024);
                             }
                             runeBlockEntity.setRuneText(text);
-                            sp.displayClientMessage(Component.translatable("message.cobblesafari.distortion_rune.saved"), true);
+                            sp.displayClientMessage(Component.translatable("cobblesafari.distortion_rune.saved"), true);
                         }
                     });
                 });

@@ -42,7 +42,7 @@ public class DistortionPortalBlockEntity extends BlockEntity {
 
     private static void serverTick(Level level, BlockPos pos, BlockState state) {
         ServerLevel serverLevel = (ServerLevel) level;
-        AABB aabb = new AABB(pos).expandTowards(0.0D, 0.5D, 0.0D).inflate(0.01D);
+        AABB aabb = DistortionPortalBlock.triggerBounds(pos);
         for (ServerPlayer player : serverLevel.getEntitiesOfClass(ServerPlayer.class, aabb)) {
             DistortionPortalBlock.handlePlayerInPortalVolume(serverLevel, pos, state, player);
         }

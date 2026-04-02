@@ -1,4 +1,4 @@
-package maxigregrze.cobblesafari.item;
+package maxigregrze.cobblesafari.item.redchainrandom;
 
 import com.cobblemon.mod.common.entity.pokemon.PokemonEntity;
 import com.cobblemon.mod.common.pokeball.PokeBall;
@@ -19,7 +19,7 @@ public class RedChainRandomBallItem extends PokemonModifierItem {
     protected boolean applyToPokemon(Player player, PokemonEntity pokemonEntity, Pokemon pokemon) {
         List<RandomizerItemsConfig.WeightedPokeBall> weighted = RandomizerItemsConfig.getWeightedPokeBalls();
         if (weighted.isEmpty()) {
-            player.sendSystemMessage(Component.translatable("message.cobblesafari.randomizer.no_pokeballs_configured"));
+            player.sendSystemMessage(Component.translatable("cobblesafari.randomizer.no_pokeballs_configured"));
             return false;
         }
 
@@ -28,7 +28,7 @@ public class RedChainRandomBallItem extends PokemonModifierItem {
             totalWeight += Math.max(0, entry.weight());
         }
         if (totalWeight <= 0) {
-            player.sendSystemMessage(Component.translatable("message.cobblesafari.randomizer.no_pokeballs_configured"));
+            player.sendSystemMessage(Component.translatable("cobblesafari.randomizer.no_pokeballs_configured"));
             return false;
         }
 

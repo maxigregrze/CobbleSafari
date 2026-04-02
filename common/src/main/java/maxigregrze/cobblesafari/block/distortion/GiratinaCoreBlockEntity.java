@@ -66,10 +66,15 @@ public class GiratinaCoreBlockEntity extends BlockEntity {
     }
 
     public boolean canTrade(Level level) {
+        long now = level.getGameTime();
+        if (lastTradeGameTime > now) {
+            lastTradeGameTime = NO_TRADE_YET;
+            setChanged();
+        }
         if (lastTradeGameTime < 0L) {
             return true;
         }
-        return level.getGameTime() - lastTradeGameTime >= 100L;
+        return now - lastTradeGameTime >= 100L;
     }
 
     public void markTrade(Level level) {

@@ -569,7 +569,7 @@ public class ModBlocks {
                     .strength(3.0f, 9.0f)
                     .sound(SoundType.GLASS)
                     .noOcclusion()
-                    .dynamicShape()
+                    .noCollission()
                     .lightLevel(state -> 15)
             ));
 

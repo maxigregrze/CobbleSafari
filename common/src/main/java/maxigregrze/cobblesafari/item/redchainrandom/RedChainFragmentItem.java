@@ -1,4 +1,4 @@
-package maxigregrze.cobblesafari.item;
+package maxigregrze.cobblesafari.item.redchainrandom;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;

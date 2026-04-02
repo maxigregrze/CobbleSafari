@@ -94,14 +94,18 @@ public class GiratinaCoreBlock extends BaseEntityBlock {
         if (level.isClientSide()) {
             return;
         }
-        level.setBlock(pos.offset(0, 0, -1), ModBlocks.GIRATINA_CORE_N.defaultBlockState(), Block.UPDATE_ALL);
-        level.setBlock(pos.offset(1, 0, -1), ModBlocks.GIRATINA_CORE_NE.defaultBlockState(), Block.UPDATE_ALL);
-        level.setBlock(pos.offset(1, 0, 0), ModBlocks.GIRATINA_CORE_E.defaultBlockState(), Block.UPDATE_ALL);
-        level.setBlock(pos.offset(1, 0, 1), ModBlocks.GIRATINA_CORE_SE.defaultBlockState(), Block.UPDATE_ALL);
-        level.setBlock(pos.offset(0, 0, 1), ModBlocks.GIRATINA_CORE_S.defaultBlockState(), Block.UPDATE_ALL);
-        level.setBlock(pos.offset(-1, 0, 1), ModBlocks.GIRATINA_CORE_SW.defaultBlockState(), Block.UPDATE_ALL);
-        level.setBlock(pos.offset(-1, 0, 0), ModBlocks.GIRATINA_CORE_W.defaultBlockState(), Block.UPDATE_ALL);
-        level.setBlock(pos.offset(-1, 0, -1), ModBlocks.GIRATINA_CORE_NW.defaultBlockState(), Block.UPDATE_ALL);
+        placeMultiblockSides(level, pos);
+    }
+
+    private static void placeMultiblockSides(Level level, BlockPos center) {
+        level.setBlock(center.offset(0, 0, -1), ModBlocks.GIRATINA_CORE_N.defaultBlockState(), Block.UPDATE_ALL);
+        level.setBlock(center.offset(1, 0, -1), ModBlocks.GIRATINA_CORE_NE.defaultBlockState(), Block.UPDATE_ALL);
+        level.setBlock(center.offset(1, 0, 0), ModBlocks.GIRATINA_CORE_E.defaultBlockState(), Block.UPDATE_ALL);
+        level.setBlock(center.offset(1, 0, 1), ModBlocks.GIRATINA_CORE_SE.defaultBlockState(), Block.UPDATE_ALL);
+        level.setBlock(center.offset(0, 0, 1), ModBlocks.GIRATINA_CORE_S.defaultBlockState(), Block.UPDATE_ALL);
+        level.setBlock(center.offset(-1, 0, 1), ModBlocks.GIRATINA_CORE_SW.defaultBlockState(), Block.UPDATE_ALL);
+        level.setBlock(center.offset(-1, 0, 0), ModBlocks.GIRATINA_CORE_W.defaultBlockState(), Block.UPDATE_ALL);
+        level.setBlock(center.offset(-1, 0, -1), ModBlocks.GIRATINA_CORE_NW.defaultBlockState(), Block.UPDATE_ALL);
     }
 
     @Override

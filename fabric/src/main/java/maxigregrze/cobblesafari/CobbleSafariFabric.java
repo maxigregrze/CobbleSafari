@@ -159,7 +159,7 @@ public class CobbleSafariFabric implements ModInitializer {
                                 text = text.substring(0, 1024);
                             }
                             runeBlockEntity.setRuneText(text);
-                            context.player().displayClientMessage(Component.translatable("message.cobblesafari.distortion_rune.saved"), true);
+                            context.player().displayClientMessage(Component.translatable("cobblesafari.distortion_rune.saved"), true);
                         }
                     });
                 }

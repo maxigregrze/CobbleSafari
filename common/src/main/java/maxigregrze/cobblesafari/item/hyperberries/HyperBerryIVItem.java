@@ -1,9 +1,11 @@
-package maxigregrze.cobblesafari.item;
+package maxigregrze.cobblesafari.item.hyperberries;
 
 import com.cobblemon.mod.common.api.pokemon.stats.Stat;
 import com.cobblemon.mod.common.entity.pokemon.PokemonEntity;
 import com.cobblemon.mod.common.pokemon.IVs;
 import com.cobblemon.mod.common.pokemon.Pokemon;
+
+import maxigregrze.cobblesafari.item.redchainrandom.PokemonModifierItem;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
 
@@ -20,7 +22,7 @@ public class HyperBerryIVItem extends PokemonModifierItem {
         IVs ivs = pokemon.getIvs();
         int current = ivs.get(stat);
         if (current >= IVs.MAX_VALUE) {
-            player.sendSystemMessage(Component.translatable("message.cobblesafari.randomizer.no_effect"));
+            player.sendSystemMessage(Component.translatable("cobblesafari.randomizer.no_effect"));
             return false;
         }
         ivs.set(stat, IVs.MAX_VALUE);

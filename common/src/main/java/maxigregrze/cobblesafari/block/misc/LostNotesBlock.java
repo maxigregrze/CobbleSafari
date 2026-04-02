@@ -103,14 +103,14 @@ public class LostNotesBlock extends BaseEntityBlock {
         if (player.isCreative() && player.isShiftKeyDown()) {
             if (blockEntity.hasBook()) {
                 blockEntity.clearStoredBook();
-                player.displayClientMessage(Component.translatable("message.cobblesafari.lost_notes.removed"), true);
+                player.displayClientMessage(Component.translatable("cobblesafari.lost_notes.removed"), true);
             }
             return InteractionResult.CONSUME;
         }
 
         if (player.isCreative() && stack.is(Items.WRITTEN_BOOK)) {
             blockEntity.setStoredBook(stack);
-            player.displayClientMessage(Component.translatable("message.cobblesafari.lost_notes.stored"), true);
+            player.displayClientMessage(Component.translatable("cobblesafari.lost_notes.stored"), true);
             return InteractionResult.CONSUME;
         }
 

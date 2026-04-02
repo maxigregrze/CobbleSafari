@@ -27,6 +27,15 @@
         "processors": "cobblesafari:distortion_lostitem_scatter",
         "projection": "rigid"
       }
+    },
+    {
+      "weight": 2,
+      "element": {
+        "element_type": "minecraft:single_pool_element",
+        "location": "cobblesafari:distortion/platformers/platformers_4",
+        "processors": "cobblesafari:distortion_lostitem_scatter",
+        "projection": "rigid"
+      }
     }
   ]
 }

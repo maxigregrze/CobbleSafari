@@ -20,7 +20,7 @@
       }
     },
     {
-      "weight": 3,
+      "weight": 2,
       "element": {
         "element_type": "minecraft:single_pool_element",
         "location": "cobblesafari:distortion/labyrinth/to_3",

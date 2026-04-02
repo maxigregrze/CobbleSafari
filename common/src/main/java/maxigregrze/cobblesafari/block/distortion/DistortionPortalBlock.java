@@ -24,6 +24,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.level.portal.DimensionTransition;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
@@ -37,6 +38,7 @@ public class DistortionPortalBlock extends BaseEntityBlock {
     public static final MapCodec<DistortionPortalBlock> CODEC = simpleCodec(DistortionPortalBlock::new);
     public static final EnumProperty<Mode> MODE = EnumProperty.create("mode", Mode.class);
     private static final VoxelShape SHAPE = Block.box(0, 0, 0, 16, 16, 16);
+    private static final double TRIGGER_INSET = 0.25D;
     private static final int TELEPORT_OFFSET_BLOCKS = 128;
 
     public DistortionPortalBlock(Properties properties) {
@@ -95,11 +97,28 @@ public class DistortionPortalBlock extends BaseEntityBlock {
 
         Mode nextMode = state.getValue(MODE) == Mode.TOP ? Mode.BOTTOM : Mode.TOP;
         level.setBlock(pos, state.setValue(MODE, nextMode), Block.UPDATE_ALL);
-        player.sendSystemMessage(Component.translatable("message.cobblesafari.distortion_portal.mode." + nextMode.getSerializedName()));
+        player.sendSystemMessage(Component.translatable("cobblesafari.distortion_portal.mode." + nextMode.getSerializedName()));
         return InteractionResult.CONSUME;
     }
 
+    static AABB triggerBounds(BlockPos pos) {
+        double x = pos.getX();
+        double y = pos.getY();
+        double z = pos.getZ();
+        return new AABB(
+                x + TRIGGER_INSET,
+                y + TRIGGER_INSET,
+                z + TRIGGER_INSET,
+                x + 1.0D - TRIGGER_INSET,
+                y + 1.0D - TRIGGER_INSET,
+                z + 1.0D - TRIGGER_INSET
+        );
+    }
+
     public static void handlePlayerInPortalVolume(ServerLevel serverLevel, BlockPos pos, BlockState state, ServerPlayer serverPlayer) {
+        if (!serverPlayer.getBoundingBox().intersects(triggerBounds(pos))) {
+            return;
+        }
 
         Mode mode = state.getValue(MODE);
         int delta = mode == Mode.TOP ? TELEPORT_OFFSET_BLOCKS : -TELEPORT_OFFSET_BLOCKS;

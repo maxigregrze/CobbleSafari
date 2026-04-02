@@ -1,5 +1,5 @@
 {
-    "parent": "cobblesafari:block/magnetic_cluster",
-    "display": {},
-    "transform": {"origin": "corner", "translation": [0, -1, 0]}
+    "textures": {
+        "particle": "cobblesafari:block/magnetic_cluster"
+    }
 }

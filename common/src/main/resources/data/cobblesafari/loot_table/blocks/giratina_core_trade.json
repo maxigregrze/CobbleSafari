@@ -6,27 +6,34 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "cobblesafari:redchain_random_ball"
+          "name": "cobblesafari:redchain_random_ball",
+          "weight": 30
+
         },
         {
           "type": "minecraft:item",
-          "name": "cobblesafari:redchain_random_ev"
+          "name": "cobblesafari:redchain_random_ev",
+          "weight": 20
         },
         {
           "type": "minecraft:item",
-          "name": "cobblesafari:redchain_random_gender"
+          "name": "cobblesafari:redchain_random_gender",
+          "weight": 30
         },
         {
           "type": "minecraft:item",
-          "name": "cobblesafari:redchain_random_iv"
+          "name": "cobblesafari:redchain_random_iv",
+          "weight": 10
         },
         {
           "type": "minecraft:item",
-          "name": "cobblesafari:redchain_random_level"
+          "name": "cobblesafari:redchain_random_level",
+          "weight": 40
         },
         {
           "type": "minecraft:item",
-          "name": "cobblesafari:redchain_random_shiny"
+          "name": "cobblesafari:redchain_random_shiny",
+          "weight": 5
         }
       ]
     }

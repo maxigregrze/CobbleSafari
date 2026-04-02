@@ -9,6 +9,33 @@
         "processors": "cobblesafari:distortion_lostitem_scatter",
         "projection": "rigid"
       }
+    },
+    {
+      "weight": 1,
+      "element": {
+        "element_type": "minecraft:single_pool_element",
+        "location": "cobblesafari:distortion/labyrinth/labyrinth_2",
+        "processors": "cobblesafari:distortion_lostitem_scatter",
+        "projection": "rigid"
+      }
+    },
+    {
+      "weight": 1,
+      "element": {
+        "element_type": "minecraft:single_pool_element",
+        "location": "cobblesafari:distortion/labyrinth/labyrinth_3",
+        "processors": "cobblesafari:distortion_lostitem_scatter",
+        "projection": "rigid"
+      }
+    },
+    {
+      "weight": 1,
+      "element": {
+        "element_type": "minecraft:single_pool_element",
+        "location": "cobblesafari:distortion/labyrinth/labyrinth_4",
+        "processors": "cobblesafari:distortion_lostitem_scatter",
+        "projection": "rigid"
+      }
     }
   ]
 }

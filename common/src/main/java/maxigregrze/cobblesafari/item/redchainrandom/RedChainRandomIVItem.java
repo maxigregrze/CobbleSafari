@@ -1,9 +1,11 @@
-package maxigregrze.cobblesafari.item;
+package maxigregrze.cobblesafari.item.redchainrandom;
 
 import com.cobblemon.mod.common.api.pokemon.stats.Stat;
 import com.cobblemon.mod.common.entity.pokemon.PokemonEntity;
 import com.cobblemon.mod.common.pokemon.IVs;
 import com.cobblemon.mod.common.pokemon.Pokemon;
+
+import maxigregrze.cobblesafari.item.RandomizerStatUtils;
 import net.minecraft.world.entity.player.Player;
 
 import java.util.concurrent.ThreadLocalRandom;

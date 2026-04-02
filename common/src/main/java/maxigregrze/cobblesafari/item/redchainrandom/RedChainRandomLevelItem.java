@@ -1,7 +1,8 @@
-package maxigregrze.cobblesafari.item;
+package maxigregrze.cobblesafari.item.redchainrandom;
 
 import com.cobblemon.mod.common.entity.pokemon.PokemonEntity;
 import com.cobblemon.mod.common.pokemon.Pokemon;
+
 import net.minecraft.world.entity.player.Player;
 
 import java.util.concurrent.ThreadLocalRandom;

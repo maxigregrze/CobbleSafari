@@ -26,16 +26,46 @@ public class RandomizerItemsConfig {
     private static RandomizerItemsConfig INSTANCE;
 
     private List<WeightedPokeballEntry> availablePokeBalls = new ArrayList<>(List.of(
-            new WeightedPokeballEntry("cobblemon:poke_ball", 30),
-            new WeightedPokeballEntry("cobblemon:great_ball", 20),
-            new WeightedPokeballEntry("cobblemon:ultra_ball", 15),
-            new WeightedPokeballEntry("cobblemon:premier_ball", 10),
-            new WeightedPokeballEntry("cobblemon:luxury_ball", 6),
-            new WeightedPokeballEntry("cobblemon:dusk_ball", 6),
-            new WeightedPokeballEntry("cobblemon:timer_ball", 6),
-            new WeightedPokeballEntry("cobblemon:quick_ball", 4),
-            new WeightedPokeballEntry("cobblemon:repeat_ball", 3)
+        new WeightedPokeballEntry("cobblemon:poke_ball", 1),
+        new WeightedPokeballEntry("cobblemon:great_ball", 1),
+        new WeightedPokeballEntry("cobblemon:ultra_ball", 1),
+        new WeightedPokeballEntry("cobblemon:master_ball", 1),
+        new WeightedPokeballEntry("cobblemon:premier_ball", 1),
+        new WeightedPokeballEntry("cobblemon:cherish_ball", 1),
+        new WeightedPokeballEntry("cobblemon:dive_ball", 1),
+        new WeightedPokeballEntry("cobblemon:dusk_ball", 1),
+        new WeightedPokeballEntry("cobblemon:fast_ball", 1),
+        new WeightedPokeballEntry("cobblemon:friend_ball", 1),
+        new WeightedPokeballEntry("cobblemon:heal_ball", 1),
+        new WeightedPokeballEntry("cobblemon:heavy_ball", 1),
+        new WeightedPokeballEntry("cobblemon:level_ball", 1),
+        new WeightedPokeballEntry("cobblemon:love_ball", 1),
+        new WeightedPokeballEntry("cobblemon:lure_ball", 1),
+        new WeightedPokeballEntry("cobblemon:luxury_ball", 1),
+        new WeightedPokeballEntry("cobblemon:moon_ball", 1),
+        new WeightedPokeballEntry("cobblemon:nest_ball", 1),
+        new WeightedPokeballEntry("cobblemon:net_ball", 1),
+        new WeightedPokeballEntry("cobblemon:park_ball", 1),
+        new WeightedPokeballEntry("cobblemon:quick_ball", 1),
+        new WeightedPokeballEntry("cobblemon:repeat_ball", 1),
+        new WeightedPokeballEntry("cobblemon:sport_ball", 1),
+        new WeightedPokeballEntry("cobblemon:timer_ball", 1),
+        new WeightedPokeballEntry("cobblemon:dream_ball", 1),
+        new WeightedPokeballEntry("cobblemon:beast_ball", 1),
+        new WeightedPokeballEntry("cobblemon:ancient_poke_ball", 1),
+        new WeightedPokeballEntry("cobblemon:ancient_great_ball", 1),
+        new WeightedPokeballEntry("cobblemon:ancient_ultra_ball", 1),
+        new WeightedPokeballEntry("cobblemon:ancient_heavy_ball", 1),
+        new WeightedPokeballEntry("cobblemon:ancient_leaden_ball", 1),
+        new WeightedPokeballEntry("cobblemon:ancient_gigaton_ball", 1),
+        new WeightedPokeballEntry("cobblemon:ancient_feather_ball", 1),
+        new WeightedPokeballEntry("cobblemon:ancient_wing_ball", 1),
+        new WeightedPokeballEntry("cobblemon:ancient_jet_ball", 1),
+        new WeightedPokeballEntry("cobblemon:ancient_origin_ball", 1),
+        new WeightedPokeballEntry("cobblemon:ancient_strange_ball", 1)
     ));
+
+    private Integer redChainRandomShinyRollMax = 1024;
 
     public static void load() {
         if (Files.exists(CONFIG_PATH)) {
@@ -47,6 +77,9 @@ public class RandomizerItemsConfig {
                 if (INSTANCE.availablePokeBalls == null) {
                     INSTANCE.availablePokeBalls = new ArrayList<>();
                 }
+                if (INSTANCE.redChainRandomShinyRollMax == null) {
+                    INSTANCE.redChainRandomShinyRollMax = 4095;
+                }
                 save();
                 CobbleSafari.LOGGER.info("Randomizer items config loaded from {}", CONFIG_PATH);
                 return;
@@ -56,12 +89,16 @@ public class RandomizerItemsConfig {
         }
 
         INSTANCE = new RandomizerItemsConfig();
+        INSTANCE.redChainRandomShinyRollMax = 4095;
         save();
     }
 
     public static void save() {
         if (INSTANCE == null) {
             INSTANCE = new RandomizerItemsConfig();
+        }
+        if (INSTANCE.redChainRandomShinyRollMax == null) {
+            INSTANCE.redChainRandomShinyRollMax = 4095;
         }
         try {
             Files.createDirectories(CONFIG_DIR);
@@ -71,6 +108,13 @@ public class RandomizerItemsConfig {
         } catch (IOException e) {
             CobbleSafari.LOGGER.error("Failed to save randomizer items config", e);
         }
+    }
+
+    public static int getRedChainRandomShinyRollMax() {
+        if (INSTANCE == null || INSTANCE.redChainRandomShinyRollMax == null) {
+            return 4095;
+        }
+        return Math.max(0, INSTANCE.redChainRandomShinyRollMax);
     }
 
     public static List<WeightedPokeBall> getWeightedPokeBalls() {

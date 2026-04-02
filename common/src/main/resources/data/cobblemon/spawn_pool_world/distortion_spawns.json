@@ -13,7 +13,7 @@
         "context": "grounded",
         "bucket": "common",
         "level": "70-80",
-        "weight": 2,
+        "weight": 10,
         "condition": {
           "neededNearbyBlocks": [
             "cobblesafari:distortion_weed_spawn"
@@ -43,7 +43,7 @@
         "context": "grounded",
         "bucket": "common",
         "level": "70-80",
-        "weight": 5,
+        "weight": 10,
         "condition": {
           "neededNearbyBlocks": [
             "cobblesafari:distortion_weed_spawn"
@@ -61,7 +61,7 @@
         "context": "grounded",
         "bucket": "common",
         "level": "70-80",
-        "weight": 3,
+        "weight": 10,
         "condition": {
           "neededNearbyBlocks": [
             "cobblesafari:distortion_weed_spawn"
@@ -79,7 +79,7 @@
         "context": "grounded",
         "bucket": "common",
         "level": "70-80",
-        "weight": 3,
+        "weight": 10,
         "condition": {
           "neededNearbyBlocks": [
             "cobblesafari:distortion_weed_spawn"

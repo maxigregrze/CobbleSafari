@@ -27,7 +27,7 @@ public class ModCreativeTabs {
             ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, "distortion"));
 
     public static final CreativeModeTab SAFARI_UNDERGROUND_TAB = CreativeModeTab.builder(CreativeModeTab.Row.TOP, 0)
-            .title(Component.translatable("itemGroup.cobblesafari.safari_underground"))
+            .title(Component.translatable("itemGroup.cobblesafari.underground"))
             .icon(() -> new ItemStack(ModBlocks.UNDERGROUND_STONE_TRANSITION))
             .displayItems((params, output) -> {
                 output.accept(ModItems.HEART_SCALE);
@@ -81,7 +81,7 @@ public class ModCreativeTabs {
 
     public static final CreativeModeTab SAFARI_DIMENSION_TAB = CreativeModeTab.builder(CreativeModeTab.Row.TOP, 1)
             .icon(() -> new ItemStack(ModBlocks.SAFARI_EGG_NEST))
-            .title(Component.translatable("itemGroup.cobblesafari.safari_dimension"))
+            .title(Component.translatable("itemGroup.cobblesafari.safari"))
             .displayItems((params, output) -> {
                 output.accept(ModBlocks.SAFARI_TELEPORTER);
                 output.accept(ModItems.TICKET_SAFARI);
@@ -116,8 +116,6 @@ public class ModCreativeTabs {
                 output.accept(ModBlocks.DISTORTION_STONEBRICKS_RUBBLE);
                 output.accept(ModBlocks.DISTORTION_STONE_BRICKS_STAIRS);
                 output.accept(ModBlocks.DISTORTION_STONEBRICKS_DOOR);
-                output.accept(ModBlocks.LOST_NOTES);
-                output.accept(ModBlocks.LOST_ITEM);
                 output.accept(ModBlocks.DISTORTION_ROCK_VERTICAL);
                 output.accept(ModBlocks.DISTORTION_ROCK_UPSIDEDOWN);
                 output.accept(ModBlocks.DISTORTION_ROCK_DEEP);
@@ -147,7 +145,28 @@ public class ModCreativeTabs {
             })
             .build();
 
-    public static final CreativeModeTab MISC_TAB = CreativeModeTab.builder(CreativeModeTab.Row.TOP, 3)
+    public static final CreativeModeTab LUMINOSE_TAB = CreativeModeTab.builder(CreativeModeTab.Row.TOP, 3)
+            .icon(() -> new ItemStack(ModItems.AUSPICIOUS_POKEBALL))
+            .title(Component.translatable("itemGroup.cobblesafari.paris"))
+            .displayItems((params, output) -> {
+                output.accept(ModItems.AUSPICIOUS_POKEBALL);
+                output.accept(ModItems.HYPERBERRY_ENIGMA);
+                output.accept(ModItems.HYPERBERRY_TAMATO);
+                output.accept(ModItems.HYPERBERRY_GREPA);
+                output.accept(ModItems.HYPERBERRY_HONDEW);
+                output.accept(ModItems.HYPERBERRY_QUALOT);
+                output.accept(ModItems.HYPERBERRY_KELPSY);
+                output.accept(ModItems.HYPERBERRY_POMEG);
+                output.accept(ModItems.HYPERBERRY_SALAC);
+                output.accept(ModItems.HYPERBERRY_APICOT);
+                output.accept(ModItems.HYPERBERRY_PETAYA);
+                output.accept(ModItems.HYPERBERRY_GANLON);
+                output.accept(ModItems.HYPERBERRY_LIECHI);
+                output.accept(ModItems.HYPERBERRY_STARF);
+            })
+            .build();
+
+        public static final CreativeModeTab MISC_TAB = CreativeModeTab.builder(CreativeModeTab.Row.TOP, 4)
             .icon(() -> new ItemStack(ModItems.REPEL))
             .title(Component.translatable("itemGroup.cobblesafari.misc"))
             .displayItems((params, output) -> {
@@ -166,20 +185,9 @@ public class ModCreativeTabs {
                 output.accept(ModBlocks.INCUBATOR);
                 output.accept(ModItems.EGG_CREATIVE);
                 output.accept(ModItems.WILD_EGG_BASE);
+                output.accept(ModBlocks.LOST_NOTES);
+                output.accept(ModBlocks.LOST_ITEM);
                 ModItems.WILD_EGGS.values().forEach(output::accept);
-                output.accept(ModItems.HYPERBERRY_ENIGMA);
-                output.accept(ModItems.HYPERBERRY_TAMATO);
-                output.accept(ModItems.HYPERBERRY_GREPA);
-                output.accept(ModItems.HYPERBERRY_HONDEW);
-                output.accept(ModItems.HYPERBERRY_QUALOT);
-                output.accept(ModItems.HYPERBERRY_KELPSY);
-                output.accept(ModItems.HYPERBERRY_POMEG);
-                output.accept(ModItems.HYPERBERRY_SALAC);
-                output.accept(ModItems.HYPERBERRY_APICOT);
-                output.accept(ModItems.HYPERBERRY_PETAYA);
-                output.accept(ModItems.HYPERBERRY_GANLON);
-                output.accept(ModItems.HYPERBERRY_LIECHI);
-                output.accept(ModItems.HYPERBERRY_STARF);
             })
             .build();
 

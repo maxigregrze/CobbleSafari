@@ -1,4 +1,4 @@
-package maxigregrze.cobblesafari.item;
+package maxigregrze.cobblesafari.item.redchainrandom;
 
 import com.cobblemon.mod.common.api.storage.StoreCoordinates;
 import com.cobblemon.mod.common.entity.pokemon.PokemonEntity;
@@ -69,7 +69,7 @@ public abstract class PokemonModifierItem extends Item {
         Pokemon pokemon = pokemonEntity.getPokemon();
         StoreCoordinates storeCoordinates = pokemon.getStoreCoordinates().get();
         if (storeCoordinates == null || storeCoordinates.getStore() == null || !storeCoordinates.getStore().getUuid().equals(player.getUUID())) {
-            player.sendSystemMessage(Component.translatable("message.cobblesafari.randomizer.not_owner"));
+            player.sendSystemMessage(Component.translatable("cobblesafari.randomizer.not_owner"));
             return InteractionResult.FAIL;
         }
 

@@ -6,19 +6,19 @@ import maxigregrze.cobblesafari.config.SpawnBoostConfig;
 import maxigregrze.cobblesafari.item.BaitItem;
 import maxigregrze.cobblesafari.item.CreativeEggItem;
 import maxigregrze.cobblesafari.item.CreativeFlagItem;
-import maxigregrze.cobblesafari.item.HyperBerryEVItem;
-import maxigregrze.cobblesafari.item.HyperBerryFriendshipItem;
-import maxigregrze.cobblesafari.item.HyperBerryIVItem;
 import maxigregrze.cobblesafari.item.IncenseItem;
 import maxigregrze.cobblesafari.item.LuckyMiningHelmetItem;
 import maxigregrze.cobblesafari.item.MudBallItem;
-import maxigregrze.cobblesafari.item.RedChainFragmentItem;
-import maxigregrze.cobblesafari.item.RedChainRandomBallItem;
-import maxigregrze.cobblesafari.item.RedChainRandomEVItem;
-import maxigregrze.cobblesafari.item.RedChainRandomGenderItem;
-import maxigregrze.cobblesafari.item.RedChainRandomIVItem;
-import maxigregrze.cobblesafari.item.RedChainRandomLevelItem;
-import maxigregrze.cobblesafari.item.RedChainRandomShinyItem;
+import maxigregrze.cobblesafari.item.hyperberries.HyperBerryEVItem;
+import maxigregrze.cobblesafari.item.hyperberries.HyperBerryFriendshipItem;
+import maxigregrze.cobblesafari.item.hyperberries.HyperBerryIVItem;
+import maxigregrze.cobblesafari.item.redchainrandom.RedChainFragmentItem;
+import maxigregrze.cobblesafari.item.redchainrandom.RedChainRandomBallItem;
+import maxigregrze.cobblesafari.item.redchainrandom.RedChainRandomEVItem;
+import maxigregrze.cobblesafari.item.redchainrandom.RedChainRandomGenderItem;
+import maxigregrze.cobblesafari.item.redchainrandom.RedChainRandomIVItem;
+import maxigregrze.cobblesafari.item.redchainrandom.RedChainRandomLevelItem;
+import maxigregrze.cobblesafari.item.redchainrandom.RedChainRandomShinyItem;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -66,7 +66,7 @@ public class ModItems {
     public static Item PERFUME_RARE;
     public static Item PERFUME_ULTRARARE;
 
-    public static final Item TAB_ICON = new Item(new Item.Properties());
+    public static final Item AUSPICIOUS_POKEBALL = new Item(new Item.Properties());
 
     public static final Item SPHERE_BLUE_S = new Item(new Item.Properties());
     public static final Item SPHERE_BLUE_L = new Item(new Item.Properties());
@@ -166,7 +166,7 @@ public class ModItems {
         PERFUME_ULTRARARE = new IncenseItem(new Item.Properties().stacksTo(16),
                 ModEffects.ULTRA_RARE_BOOST.holder, SpawnBoostConfig.data.durationSettings.ultraRareBoostDuration);
 
-        registerItem("auspiciouspokeball", TAB_ICON);
+        registerItem("auspiciouspokeball", AUSPICIOUS_POKEBALL);
         registerItem("wildegg", WILD_EGG_BASE);
 
         for (Map.Entry<String, Item> entry : WILD_EGGS.entrySet()) {
