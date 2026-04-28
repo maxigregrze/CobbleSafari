@@ -1,0 +1,24 @@
+{
+  "enabled": true,
+  "neededInstalledMods": [],
+  "neededUninstalledMods": [],
+  "spawns": [
+    {
+      "id": "rotom-emptyphone-safarispawn",
+      "pokemon": "rotom",
+      "presets": [
+        "cobblesafari"
+      ],
+      "type": "pokemon",
+      "context": "grounded",
+      "bucket": "rare",
+      "level": "5-15",
+      "weight": 3.0,
+      "condition": {
+        "neededNearbyBlocks": [
+          "cobblesafari:emptyphone"
+        ]
+      }
+    }
+  ]
+}

@@ -9,6 +9,7 @@ import maxigregrze.cobblesafari.item.CreativeFlagItem;
 import maxigregrze.cobblesafari.item.IncenseItem;
 import maxigregrze.cobblesafari.item.LuckyMiningHelmetItem;
 import maxigregrze.cobblesafari.item.MudBallItem;
+import maxigregrze.cobblesafari.item.RotomPhoneItem;
 import maxigregrze.cobblesafari.item.hyperberries.HyperBerryEVItem;
 import maxigregrze.cobblesafari.item.hyperberries.HyperBerryFriendshipItem;
 import maxigregrze.cobblesafari.item.hyperberries.HyperBerryIVItem;
@@ -99,6 +100,8 @@ public class ModItems {
     public static final Item FLAG_CREATIVE = new CreativeFlagItem(new Item.Properties().stacksTo(1).rarity(Rarity.EPIC));
 
     public static final Item EGG_CREATIVE = new CreativeEggItem(new Item.Properties().stacksTo(1).rarity(Rarity.EPIC));
+
+    public static final Item ROTOM_PHONE = new RotomPhoneItem(new Item.Properties().stacksTo(1).rarity(Rarity.EPIC));
 
     public static final Item MUD_BALL = new MudBallItem(new Item.Properties().stacksTo(64));
     public static final Item BAIT = new BaitItem(new Item.Properties().stacksTo(64));
@@ -222,6 +225,8 @@ public class ModItems {
         registerItem("underground_flag_creative", FLAG_CREATIVE);
 
         registerItem("egg_creative", EGG_CREATIVE);
+
+        registerItem("rotomphone", ROTOM_PHONE);
 
         registerItem("mud_ball", MUD_BALL);
         registerItem("bait", BAIT);

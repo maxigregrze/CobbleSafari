@@ -1,0 +1,9 @@
+{
+  "id": "iono",
+  "displayName": "Iono",
+  "hasCustomScreen": true,
+  "color": "aa70ff",
+  "unlockedFromStart": false,
+  "hasShinyVariant": false,
+  "unlockingAdvancement": "story/mine_stone"
+}

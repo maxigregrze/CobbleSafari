@@ -11,7 +11,8 @@
   ],
   "client": [
     "client.GuiMixin",
-    "client.DimensionSpecialEffectsAccessor"
+    "client.DimensionSpecialEffectsAccessor",
+    "client.RotomPhoneScreenMixin"
   ],
   "injectors": {
     "defaultRequire": 1

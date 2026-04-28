@@ -11,6 +11,7 @@ import maxigregrze.cobblesafari.config.SecretBasePCConfig;
 import maxigregrze.cobblesafari.config.SafariTimerConfig;
 import maxigregrze.cobblesafari.config.SpawnBoostConfig;
 import maxigregrze.cobblesafari.config.RandomizerItemsConfig;
+import maxigregrze.cobblesafari.config.RotomPhoneConfig;
 import maxigregrze.cobblesafari.dungeon.DungeonDimensions;
 import maxigregrze.cobblesafari.dungeon.PortalSpawnConfig;
 import maxigregrze.cobblesafari.event.DimensionalBanEventHandler;
@@ -55,6 +56,7 @@ public class CobbleSafari {
         MiscConfig.load();
         SecretBasePCConfig.load();
         RandomizerItemsConfig.load();
+        RotomPhoneConfig.load();
 
         DungeonDimensions.register();
         SafariTimerConfig.syncDungeonDimensionTimersFromRegistry();

@@ -1,0 +1,7 @@
+{
+  "parent": "cobblesafari:item/rotomphone_item",
+  "textures": {
+    "0": "cobblesafari:item/rotomphone/rotomphone_item_skin_color10-s",
+    "particle": "cobblesafari:item/rotomphone/rotomphone_item_skin_color10-s"
+  }
+}

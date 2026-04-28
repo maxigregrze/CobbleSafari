@@ -162,6 +162,10 @@ public class CobbleSafariClientNeoForge {
         NeoForge.EVENT_BUS.addListener(CobbleSafariClientNeoForge::onRenderGuiLayer);
         NeoForge.EVENT_BUS.addListener(CobbleSafariClientNeoForge::onItemTooltip);
         NeoForge.EVENT_BUS.addListener(CobbleSafariClientNeoForge::onClientTick);
+
+        if (net.neoforged.fml.ModList.get().isLoaded("accessories")) {
+            maxigregrze.cobblesafari.compat.accessories.AccessoriesClientCompat.init();
+        }
     }
 
     @SubscribeEvent
@@ -180,7 +184,9 @@ public class CobbleSafariClientNeoForge {
     }
 
     public static void onClientTick(net.neoforged.neoforge.client.event.ClientTickEvent.Post event) {
-        DungeonMusicHandler.onClientTick(Minecraft.getInstance());
+        Minecraft mc = Minecraft.getInstance();
+        DungeonMusicHandler.onClientTick(mc);
+        maxigregrze.cobblesafari.client.screen.rotomphone.RotomPhonePcSession.tickCleanup(mc);
     }
 
     public static void onRenderGuiLayer(RenderGuiLayerEvent.Post event) {
@@ -244,6 +250,26 @@ public class CobbleSafariClientNeoForge {
         context.enqueueWork(() -> {
             BookViewScreen.BookAccess access = BookViewScreen.BookAccess.fromItem(payload.book());
             Minecraft.getInstance().setScreen(new BookViewScreen(access));
+        });
+    }
+
+    public static void handleOpenRotomPhone(maxigregrze.cobblesafari.network.OpenRotomPhonePayload payload, IPayloadContext context) {
+        context.enqueueWork(() -> {
+            Minecraft.getInstance().setScreen(new maxigregrze.cobblesafari.client.screen.rotomphone.RotomPhoneMenuScreen(
+                    payload.rotomName(), payload.shinyStatus(), payload.currentSkin(), payload.safetyMode()));
+        });
+    }
+
+    public static void handleOpenEmptyPhoneConfirm(maxigregrze.cobblesafari.network.OpenEmptyPhoneConfirmPayload payload, IPayloadContext context) {
+        context.enqueueWork(() -> {
+            Minecraft.getInstance().setScreen(new maxigregrze.cobblesafari.client.screen.rotomphone.EmptyPhoneConfirmScreen(
+                    payload.rotomName(), payload.rotomLevel(), payload.rotomIsShiny()));
+        });
+    }
+
+    public static void handleRotomPhoneConfigSync(maxigregrze.cobblesafari.network.RotomPhoneConfigSyncPayload payload, IPayloadContext context) {
+        context.enqueueWork(() -> {
+            maxigregrze.cobblesafari.rotomphone.RotomPhoneClientCache.applySyncData(payload);
         });
     }
 

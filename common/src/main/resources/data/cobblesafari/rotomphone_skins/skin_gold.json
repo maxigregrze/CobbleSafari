@@ -1,0 +1,9 @@
+{
+  "id": "gold",
+  "displayName": "Glitterati",
+  "hasCustomScreen": false,
+  "color": "f9f9f9",
+  "unlockedFromStart": false,
+  "hasShinyVariant": false,
+  "unlockingAdvancement": "story/mine_stone"
+}

@@ -1,0 +1,8 @@
+{
+  "variants": {
+    "facing=north": { "model": "cobblesafari:block/emptyphone_block" },
+    "facing=south": { "model": "cobblesafari:block/emptyphone_block", "y": 180 },
+    "facing=east": { "model": "cobblesafari:block/emptyphone_block", "y": 90 },
+    "facing=west": { "model": "cobblesafari:block/emptyphone_block", "y": 270 }
+  }
+}

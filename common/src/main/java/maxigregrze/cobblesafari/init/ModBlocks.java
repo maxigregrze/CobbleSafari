@@ -41,6 +41,7 @@ import maxigregrze.cobblesafari.block.underground.UndergroundPCBlock;
 import maxigregrze.cobblesafari.block.underground.UndergroundSecretBlock;
 import maxigregrze.cobblesafari.block.incubator.IncubatorBlock;
 import maxigregrze.cobblesafari.block.incubator.IncubatorBlockItem;
+import maxigregrze.cobblesafari.block.rotomphone.EmptyPhoneBlock;
 import maxigregrze.cobblesafari.block.underground.UndergroundTimberBlock;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -733,6 +734,14 @@ public class ModBlocks {
                     .noOcclusion()
             ));
 
+    public static final Block EMPTYPHONE = registerBlockWithoutItem("emptyphone",
+            new EmptyPhoneBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.METAL)
+                    .strength(0.3f)
+                    .sound(SoundType.METAL)
+                    .noOcclusion()
+            ));
+
     public static final Block INCUBATOR = registerBlockWithoutItem("incubator",
             new IncubatorBlock(BlockBehaviour.Properties.of()
                     .mapColor(MapColor.METAL)
@@ -807,5 +816,9 @@ public class ModBlocks {
         Registry.register(BuiltInRegistries.ITEM,
                 ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, "incubator"),
                 new IncubatorBlockItem(INCUBATOR, new Item.Properties()));
+
+        Registry.register(BuiltInRegistries.ITEM,
+                ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, "emptyphone"),
+                new maxigregrze.cobblesafari.item.EmptyPhoneItem(EMPTYPHONE, new Item.Properties()));
     }
 }

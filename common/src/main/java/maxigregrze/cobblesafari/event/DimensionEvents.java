@@ -21,6 +21,7 @@ public class DimensionEvents {
         maxigregrze.cobblesafari.incubator.EggIncubatorRegistry.load(server);
         CsTraderDataLoader.load(server);
         maxigregrze.cobblesafari.underground.UndergroundMinigame.loadDatapacks(server);
+        maxigregrze.cobblesafari.rotomphone.RotomPhoneSkinDataLoader.load(server);
     }
 
     public static void onServerStopping(MinecraftServer server) {
@@ -42,6 +43,7 @@ public class DimensionEvents {
         Services.PLATFORM.sendPayloadToPlayer(player,
                 new DimensionalBanSyncPayload(DimensionalBanConfig.data.dimensions));
         maxigregrze.cobblesafari.underground.UndergroundMinigame.syncRegistryToPlayer(player);
+        maxigregrze.cobblesafari.rotomphone.RotomPhoneConfigSync.syncToPlayer(player);
     }
 
     public static void onPlayerDisconnect(ServerPlayer player) {

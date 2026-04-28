@@ -133,5 +133,37 @@ public class ClientNetworking {
                     });
                 }
         );
+
+        ClientPlayNetworking.registerGlobalReceiver(
+                OpenRotomPhonePayload.TYPE,
+                (payload, context) -> {
+                    context.client().execute(() -> {
+                        Minecraft.getInstance().setScreen(
+                                new maxigregrze.cobblesafari.client.screen.rotomphone.RotomPhoneMenuScreen(
+                                        payload.rotomName(), payload.shinyStatus(),
+                                        payload.currentSkin(), payload.safetyMode()));
+                    });
+                }
+        );
+
+        ClientPlayNetworking.registerGlobalReceiver(
+                OpenEmptyPhoneConfirmPayload.TYPE,
+                (payload, context) -> {
+                    context.client().execute(() -> {
+                        Minecraft.getInstance().setScreen(
+                                new maxigregrze.cobblesafari.client.screen.rotomphone.EmptyPhoneConfirmScreen(
+                                        payload.rotomName(), payload.rotomLevel(), payload.rotomIsShiny()));
+                    });
+                }
+        );
+
+        ClientPlayNetworking.registerGlobalReceiver(
+                RotomPhoneConfigSyncPayload.TYPE,
+                (payload, context) -> {
+                    context.client().execute(() -> {
+                        maxigregrze.cobblesafari.rotomphone.RotomPhoneClientCache.applySyncData(payload);
+                    });
+                }
+        );
     }
 }

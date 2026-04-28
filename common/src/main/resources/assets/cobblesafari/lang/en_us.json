@@ -452,5 +452,37 @@
 	"subtitles.entity.generic.incense_spray": "Incense sprays",
 	"subtitles.cobblesafari.safari.flee": "Pokemon flees...",
 	"subtitles.cobblesafari.safari.spray": "Spray hisses",
-	"subtitles.cobblesafari.giratina.trade": "Giratina screams"
+	"subtitles.cobblesafari.giratina.trade": "Giratina screams",
+
+	"item.cobblesafari.rotomphone": "Rotom Phone",
+	"block.cobblesafari.emptyphone": "Empty Phone",
+
+	"tooltip.cobblesafari.rotomphone.name": "Rotom: %s",
+	"tooltip.cobblesafari.rotomphone.shiny": "Shiny!",
+	"tooltip.cobblesafari.rotomphone.skin": "Skin: %s",
+	"tooltip.cobblesafari.rotomphone.safety_on": "Safety Mode: ON",
+	"tooltip.cobblesafari.rotomphone.safety_off": "Safety Mode: OFF",
+
+	"gui.cobblesafari.rotomphone.menu": "Rotom Phone",
+	"gui.cobblesafari.rotomphone.error": "Error",
+	"gui.cobblesafari.rotomphone.placeholder": "Coming soon...",
+	"gui.cobblesafari.rotomphone.app.chat": "Chat",
+	"gui.cobblesafari.rotomphone.app.pc": "PC",
+	"gui.cobblesafari.rotomphone.app.heal": "Heal",
+	"gui.cobblesafari.rotomphone.app.portal_finder": "Portal Finder",
+	"gui.cobblesafari.rotomphone.app.item_finder": "Item Finder",
+	"gui.cobblesafari.rotomphone.app.skin": "Skins",
+	"gui.cobblesafari.rotomphone.app.settings": "Settings",
+	"gui.cobblesafari.rotomphone.safety_on": "Safety: ON",
+	"gui.cobblesafari.rotomphone.safety_off": "Safety: OFF",
+	"gui.cobblesafari.rotomphone.confirm": "Confirm",
+	"gui.cobblesafari.rotomphone.cancel": "Cancel",
+	"gui.cobblesafari.rotomphone.empty_confirm.title": "Fill Empty Phone?",
+	"gui.cobblesafari.rotomphone.empty_confirm.desc": "Absorb %s (Lv.%d) into the phone?",
+	"gui.cobblesafari.rotomphone.empty_confirm.shiny": "This Rotom is shiny!",
+
+	"cobblesafari.rotomphone.no_rotom": "You need a Rotom in your party!",
+	"cobblesafari.rotomphone.filled": "Rotom has entered the phone!",
+	"cobblesafari.rotomphone.shiny_not_allowed": "Using a shiny Rotom in a phone is not allowed!",
+	"gui.cobblesafari.rotomphone.skin.none": "No Skin"
 }

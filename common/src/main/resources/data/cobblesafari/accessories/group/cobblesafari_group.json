@@ -1,0 +1,8 @@
+{
+  "replace": false,
+  "order": 1992,
+  "slots": [
+    "rotomphone_slot"
+  ],
+  "icon": "cobblesafari:gui/group/cobblesafari"
+}

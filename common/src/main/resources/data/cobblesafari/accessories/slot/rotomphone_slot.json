@@ -1,0 +1,7 @@
+{
+    "replace": false,
+    "amount": 1,
+    "operation": "set",
+    "order": 1992,
+    "icon": "cobblesafari:gui/slot/rotomphone_slot"
+}

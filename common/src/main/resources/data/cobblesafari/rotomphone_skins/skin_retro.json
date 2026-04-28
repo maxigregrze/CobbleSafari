@@ -1,0 +1,9 @@
+{
+  "id": "retro",
+  "displayName": "Gameboy",
+  "hasCustomScreen": true,
+  "color": "ceff44",
+  "unlockedFromStart": false,
+  "hasShinyVariant": false,
+  "unlockingAdvancement": "story/mine_stone"
+}

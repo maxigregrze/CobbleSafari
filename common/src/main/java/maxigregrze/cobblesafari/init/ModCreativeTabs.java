@@ -187,6 +187,8 @@ public class ModCreativeTabs {
                 output.accept(ModItems.WILD_EGG_BASE);
                 output.accept(ModBlocks.LOST_NOTES);
                 output.accept(ModBlocks.LOST_ITEM);
+                output.accept(ModItems.ROTOM_PHONE);
+                output.accept(ModBlocks.EMPTYPHONE);
                 ModItems.WILD_EGGS.values().forEach(output::accept);
             })
             .build();

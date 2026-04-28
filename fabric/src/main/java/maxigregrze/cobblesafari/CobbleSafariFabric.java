@@ -57,6 +57,10 @@ public class CobbleSafariFabric implements ModInitializer {
         registerCommands();
         registerEvents();
 
+        if (net.fabricmc.loader.api.FabricLoader.getInstance().isModLoaded("accessories")) {
+            maxigregrze.cobblesafari.compat.accessories.AccessoriesCompat.registerAccessoryItem();
+        }
+
         CobbleSafari.LOGGER.info("CobbleSafari Fabric module loaded!");
     }
 
@@ -88,6 +92,12 @@ public class CobbleSafariFabric implements ModInitializer {
         PayloadTypeRegistry.playS2C().register(OpenRuneEditorPayload.TYPE, OpenRuneEditorPayload.STREAM_CODEC);
         PayloadTypeRegistry.playS2C().register(OpenLostNoteBookPayload.TYPE, OpenLostNoteBookPayload.STREAM_CODEC);
         PayloadTypeRegistry.playS2C().register(DimensionalBanSyncPayload.TYPE, DimensionalBanSyncPayload.STREAM_CODEC);
+        PayloadTypeRegistry.playS2C().register(maxigregrze.cobblesafari.network.OpenRotomPhonePayload.TYPE, maxigregrze.cobblesafari.network.OpenRotomPhonePayload.STREAM_CODEC);
+        PayloadTypeRegistry.playS2C().register(maxigregrze.cobblesafari.network.OpenEmptyPhoneConfirmPayload.TYPE, maxigregrze.cobblesafari.network.OpenEmptyPhoneConfirmPayload.STREAM_CODEC);
+        PayloadTypeRegistry.playS2C().register(maxigregrze.cobblesafari.network.RotomPhoneConfigSyncPayload.TYPE, maxigregrze.cobblesafari.network.RotomPhoneConfigSyncPayload.STREAM_CODEC);
+
+        PayloadTypeRegistry.playC2S().register(maxigregrze.cobblesafari.network.RotomPhoneActionPayload.TYPE, maxigregrze.cobblesafari.network.RotomPhoneActionPayload.STREAM_CODEC);
+        PayloadTypeRegistry.playC2S().register(maxigregrze.cobblesafari.network.EmptyPhoneConfirmPayload.TYPE, maxigregrze.cobblesafari.network.EmptyPhoneConfirmPayload.STREAM_CODEC);
 
         PayloadTypeRegistry.playC2S().register(
                 TpAcceptResponsePayload.TYPE,
@@ -166,6 +176,24 @@ public class CobbleSafariFabric implements ModInitializer {
         );
 
         ServerPlayNetworking.registerGlobalReceiver(
+                maxigregrze.cobblesafari.network.RotomPhoneActionPayload.TYPE,
+                (payload, context) -> {
+                    context.server().execute(() -> {
+                        maxigregrze.cobblesafari.rotomphone.RotomPhoneServerHandler.handleAction(context.player(), payload);
+                    });
+                }
+        );
+
+        ServerPlayNetworking.registerGlobalReceiver(
+                maxigregrze.cobblesafari.network.EmptyPhoneConfirmPayload.TYPE,
+                (payload, context) -> {
+                    context.server().execute(() -> {
+                        maxigregrze.cobblesafari.rotomphone.EmptyPhoneServerHandler.handleConfirm(context.player(), payload.confirmed());
+                    });
+                }
+        );
+
+        ServerPlayNetworking.registerGlobalReceiver(
                 UndergroundPayloads.MineActionPayload.TYPE,
                 (payload, context) -> {
                     context.server().execute(() -> {
@@ -198,6 +226,7 @@ public class CobbleSafariFabric implements ModInitializer {
                 CsTraderDataLoader.load(server);
                 UndergroundMinigame.loadDatapacks(server);
                 UndergroundMinigame.syncRegistryToAllPlayers(server);
+                maxigregrze.cobblesafari.rotomphone.RotomPhoneSkinDataLoader.load(server);
             }
         });
         ServerTickEvents.END_SERVER_TICK.register(server -> {

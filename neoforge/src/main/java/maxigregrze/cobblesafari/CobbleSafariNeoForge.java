@@ -84,6 +84,9 @@ public class CobbleSafariNeoForge {
 
     private void onCommonSetup(FMLCommonSetupEvent event) {
         event.enqueueWork(CobbleSafari::initLogic);
+        if (net.neoforged.fml.ModList.get().isLoaded("accessories")) {
+            event.enqueueWork(maxigregrze.cobblesafari.compat.accessories.AccessoriesCompat::registerAccessoryItem);
+        }
     }
 
     private void registerMenuType() {
@@ -202,6 +205,48 @@ public class CobbleSafariNeoForge {
                     context.enqueueWork(() -> {
                         if (context.player() instanceof ServerPlayer sp) {
                             UndergroundNetworking.handleToolSwitch(sp, payload);
+                        }
+                    });
+                });
+
+        if (net.neoforged.fml.loading.FMLEnvironment.dist.isClient()) {
+            registrar.playToClient(maxigregrze.cobblesafari.network.OpenRotomPhonePayload.TYPE,
+                    maxigregrze.cobblesafari.network.OpenRotomPhonePayload.STREAM_CODEC,
+                    CobbleSafariClientNeoForge::handleOpenRotomPhone);
+            registrar.playToClient(maxigregrze.cobblesafari.network.OpenEmptyPhoneConfirmPayload.TYPE,
+                    maxigregrze.cobblesafari.network.OpenEmptyPhoneConfirmPayload.STREAM_CODEC,
+                    CobbleSafariClientNeoForge::handleOpenEmptyPhoneConfirm);
+            registrar.playToClient(maxigregrze.cobblesafari.network.RotomPhoneConfigSyncPayload.TYPE,
+                    maxigregrze.cobblesafari.network.RotomPhoneConfigSyncPayload.STREAM_CODEC,
+                    CobbleSafariClientNeoForge::handleRotomPhoneConfigSync);
+        } else {
+            registrar.playToClient(maxigregrze.cobblesafari.network.OpenRotomPhonePayload.TYPE,
+                    maxigregrze.cobblesafari.network.OpenRotomPhonePayload.STREAM_CODEC,
+                    (payload, context) -> {});
+            registrar.playToClient(maxigregrze.cobblesafari.network.OpenEmptyPhoneConfirmPayload.TYPE,
+                    maxigregrze.cobblesafari.network.OpenEmptyPhoneConfirmPayload.STREAM_CODEC,
+                    (payload, context) -> {});
+            registrar.playToClient(maxigregrze.cobblesafari.network.RotomPhoneConfigSyncPayload.TYPE,
+                    maxigregrze.cobblesafari.network.RotomPhoneConfigSyncPayload.STREAM_CODEC,
+                    (payload, context) -> {});
+        }
+
+        registrar.playToServer(maxigregrze.cobblesafari.network.RotomPhoneActionPayload.TYPE,
+                maxigregrze.cobblesafari.network.RotomPhoneActionPayload.STREAM_CODEC,
+                (payload, context) -> {
+                    context.enqueueWork(() -> {
+                        if (context.player() instanceof ServerPlayer sp) {
+                            maxigregrze.cobblesafari.rotomphone.RotomPhoneServerHandler.handleAction(sp, payload);
+                        }
+                    });
+                });
+
+        registrar.playToServer(maxigregrze.cobblesafari.network.EmptyPhoneConfirmPayload.TYPE,
+                maxigregrze.cobblesafari.network.EmptyPhoneConfirmPayload.STREAM_CODEC,
+                (payload, context) -> {
+                    context.enqueueWork(() -> {
+                        if (context.player() instanceof ServerPlayer sp) {
+                            maxigregrze.cobblesafari.rotomphone.EmptyPhoneServerHandler.handleConfirm(sp, payload.confirmed());
                         }
                     });
                 });

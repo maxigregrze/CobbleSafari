@@ -453,5 +453,37 @@
 	"subtitles.entity.generic.incense_spray": "Encens vaporisé",
 	"subtitles.cobblesafari.safari.flee": "Un Pokemon s'enfuit...",
 	"subtitles.cobblesafari.safari.spray": "Bruit de spray",
-	"subtitles.cobblesafari.giratina.trade": "Giratina hurle"
+	"subtitles.cobblesafari.giratina.trade": "Giratina hurle",
+
+	"item.cobblesafari.rotomphone": "Telephone Motisma",
+	"block.cobblesafari.emptyphone": "Telephone vide",
+
+	"tooltip.cobblesafari.rotomphone.name": "Motisma : %s",
+	"tooltip.cobblesafari.rotomphone.shiny": "Chromatique !",
+	"tooltip.cobblesafari.rotomphone.skin": "Skin : %s",
+	"tooltip.cobblesafari.rotomphone.safety_on": "Mode securite : ACTIF",
+	"tooltip.cobblesafari.rotomphone.safety_off": "Mode securite : INACTIF",
+
+	"gui.cobblesafari.rotomphone.menu": "Telephone Motisma",
+	"gui.cobblesafari.rotomphone.error": "Erreur",
+	"gui.cobblesafari.rotomphone.placeholder": "Bientot disponible...",
+	"gui.cobblesafari.rotomphone.app.chat": "Discussion",
+	"gui.cobblesafari.rotomphone.app.pc": "PC",
+	"gui.cobblesafari.rotomphone.app.heal": "Soin",
+	"gui.cobblesafari.rotomphone.app.portal_finder": "Cherche-Portail",
+	"gui.cobblesafari.rotomphone.app.item_finder": "Cherche-Objet",
+	"gui.cobblesafari.rotomphone.app.skin": "Apparences",
+	"gui.cobblesafari.rotomphone.app.settings": "Parametres",
+	"gui.cobblesafari.rotomphone.safety_on": "Securite : ACTIF",
+	"gui.cobblesafari.rotomphone.safety_off": "Securite : INACTIF",
+	"gui.cobblesafari.rotomphone.confirm": "Confirmer",
+	"gui.cobblesafari.rotomphone.cancel": "Annuler",
+	"gui.cobblesafari.rotomphone.empty_confirm.title": "Remplir le telephone ?",
+	"gui.cobblesafari.rotomphone.empty_confirm.desc": "Absorber %s (Nv.%d) dans le telephone ?",
+	"gui.cobblesafari.rotomphone.empty_confirm.shiny": "Ce Motisma est chromatique !",
+
+	"cobblesafari.rotomphone.no_rotom": "Vous avez besoin d'un Motisma dans votre equipe !",
+	"cobblesafari.rotomphone.filled": "Motisma est entre dans le telephone !",
+	"cobblesafari.rotomphone.shiny_not_allowed": "Utiliser un Motisma chromatique dans un telephone n'est pas autorise !",
+	"gui.cobblesafari.rotomphone.skin.none": "Pas de skin"
 }

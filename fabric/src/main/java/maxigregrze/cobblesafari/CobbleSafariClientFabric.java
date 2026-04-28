@@ -70,6 +70,15 @@ public class CobbleSafariClientFabric implements ClientModInitializer {
         registerRenderers();
         registerScreens();
         registerDungeonMusic();
+        maxigregrze.cobblesafari.client.RotomPhoneModelLoadingPlugin.register();
+
+        if (net.fabricmc.loader.api.FabricLoader.getInstance().isModLoaded("accessories")) {
+            maxigregrze.cobblesafari.compat.accessories.AccessoriesClientCompat.init();
+        }
+
+
+        ClientTickEvents.END_CLIENT_TICK.register(client ->
+                maxigregrze.cobblesafari.client.screen.rotomphone.RotomPhonePcSession.tickCleanup(client));
     }
 
     private void registerTooltips() {

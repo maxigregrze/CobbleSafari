@@ -24,6 +24,7 @@ dependencies {
     compileOnly "org.jetbrains.kotlin:kotlin-stdlib:1.9.23"
     compileOnly "mcp.mobius.waila:wthit-api:mojmap-12.4.5"
     compileOnly "maven.modrinth:jade:15.10.5+neoforge"
+    compileOnly "io.wispforest:accessories-common:${accessories_version}-mojmap"
 }
 
 configurations {
