@@ -18,13 +18,88 @@ import net.minecraft.world.level.chunk.LevelChunkSection;
 import net.minecraft.world.level.chunk.PalettedContainer;
 import net.minecraft.world.phys.AABB;
 
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 public class DungeonRegionClearer {
 
     private static final int SECTION_HEIGHT = 16;
+    private static final int CHUNK_LOAD_TICKET_LEVEL = 2;
+    private static final TicketType<ChunkPos> DUNGEON_CLEAR = TicketType.create(
+            "cobblesafari_clear", Comparator.comparingLong(ChunkPos::toLong), 40);
 
     private DungeonRegionClearer() {}
+
+    public static void scheduleRegionClear(ServerLevel dungeonLevel,
+                                           int chunkMinX, int chunkMinZ,
+                                           int chunkMaxX, int chunkMaxZ,
+                                           int structureY,
+                                           int sectionsBelow, int sectionsAbove) {
+        List<ChunkPos> positions = new ArrayList<>();
+        for (int cx = chunkMinX; cx <= chunkMaxX; cx++) {
+            for (int cz = chunkMinZ; cz <= chunkMaxZ; cz++) {
+                ChunkPos cp = new ChunkPos(cx, cz);
+                dungeonLevel.getChunkSource().addRegionTicket(DUNGEON_CLEAR, cp, CHUNK_LOAD_TICKET_LEVEL, cp);
+                positions.add(cp);
+            }
+        }
+
+        dungeonLevel.getChunkSource().tick(() -> false, true);
+
+        boolean allLoaded = positions.stream()
+                .allMatch(cp -> dungeonLevel.hasChunk(cp.x, cp.z));
+
+        if (allLoaded) {
+            doRegionClear(dungeonLevel, chunkMinX, chunkMinZ, chunkMaxX, chunkMaxZ,
+                    structureY, sectionsBelow, sectionsAbove, positions);
+        } else {
+            dungeonLevel.getServer().execute(() ->
+                    waitAndClear(dungeonLevel, chunkMinX, chunkMinZ, chunkMaxX, chunkMaxZ,
+                            structureY, sectionsBelow, sectionsAbove, positions, 0)
+            );
+        }
+    }
+
+    private static void waitAndClear(ServerLevel dungeonLevel,
+                                     int chunkMinX, int chunkMinZ,
+                                     int chunkMaxX, int chunkMaxZ,
+                                     int structureY, int sectionsBelow, int sectionsAbove,
+                                     List<ChunkPos> positions, int attempts) {
+        final int MAX_ATTEMPTS = 100;
+
+        boolean allLoaded = positions.stream()
+                .allMatch(cp -> dungeonLevel.hasChunk(cp.x, cp.z));
+
+        if (allLoaded) {
+            doRegionClear(dungeonLevel, chunkMinX, chunkMinZ, chunkMaxX, chunkMaxZ,
+                    structureY, sectionsBelow, sectionsAbove, positions);
+        } else if (attempts < MAX_ATTEMPTS) {
+            dungeonLevel.getServer().execute(() ->
+                    waitAndClear(dungeonLevel, chunkMinX, chunkMinZ, chunkMaxX, chunkMaxZ,
+                            structureY, sectionsBelow, sectionsAbove, positions, attempts + 1)
+            );
+        } else {
+            CobbleSafari.LOGGER.error(
+                    "DungeonRegionClearer: chunks not loaded after {} attempts, forcing clear anyway",
+                    MAX_ATTEMPTS);
+            doRegionClear(dungeonLevel, chunkMinX, chunkMinZ, chunkMaxX, chunkMaxZ,
+                    structureY, sectionsBelow, sectionsAbove, positions);
+        }
+    }
+
+    private static void doRegionClear(ServerLevel dungeonLevel,
+                                      int chunkMinX, int chunkMinZ,
+                                      int chunkMaxX, int chunkMaxZ,
+                                      int structureY, int sectionsBelow, int sectionsAbove,
+                                      List<ChunkPos> positions) {
+        clearRegion(dungeonLevel, chunkMinX, chunkMinZ, chunkMaxX, chunkMaxZ,
+                structureY, sectionsBelow, sectionsAbove);
+
+        for (ChunkPos cp : positions) {
+            dungeonLevel.getChunkSource().removeRegionTicket(DUNGEON_CLEAR, cp, CHUNK_LOAD_TICKET_LEVEL, cp);
+        }
+    }
 
     public static void clearRegion(ServerLevel dungeonLevel, int chunkMinX, int chunkMinZ, int chunkMaxX, int chunkMaxZ) {
         int blockMinX = chunkMinX << 4;

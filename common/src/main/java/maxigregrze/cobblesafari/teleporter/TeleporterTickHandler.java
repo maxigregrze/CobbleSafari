@@ -98,9 +98,11 @@ public class TeleporterTickHandler {
         TimerManager.checkDailyReset(player, timerData);
 
         boolean bypassed = TimerManager.shouldBypassTimer(player);
+        boolean needsPaidReentryFee = timerData.getRemainingTicks() <= 0 && !bypassed
+                && SafariConfig.isAllowPaidReentry();
 
         if (timerData.getRemainingTicks() <= 0 && !bypassed) {
-            boolean canPayAgain = SafariConfig.isAllowMultiplePayment() && SafariConfig.isEntryFeeEnabled();
+            boolean canPayAgain = SafariConfig.isAllowPaidReentry();
             if (!canPayAgain) {
                 Long lastMessageTick = noTimeMessageCooldown.get(playerId);
                 if (lastMessageTick == null || currentServerTick - lastMessageTick > NO_TIME_MESSAGE_COOLDOWN_TICKS) {
@@ -112,7 +114,7 @@ public class TeleporterTickHandler {
             timerData.resetEntryFeePayDay();
         }
 
-        boolean enableFee = SafariConfig.isEntryFeeEnabled();
+        boolean enableFee = SafariConfig.isEntryFeeEnabled() || needsPaidReentryFee;
         boolean useCobbledollar = SafariConfig.isCobbledollarFeeEnabled();
         EntryFeeHelper.FeeType feeType = EntryFeeHelper.getEffectiveFeeType(enableFee, useCobbledollar);
         boolean hasFee = feeType != EntryFeeHelper.FeeType.NONE;
@@ -152,10 +154,13 @@ public class TeleporterTickHandler {
         TimerManager.checkDailyReset(player, timerData);
 
         boolean bypassed = TimerManager.shouldBypassTimer(player);
+        boolean needsPaidReentryFee = timerData.getRemainingTicks() <= 0 && !bypassed
+                && SafariConfig.isAllowPaidReentry();
+        boolean chargeFeeEnabled = SafariConfig.isEntryFeeEnabled() || needsPaidReentryFee;
         boolean needsTimerReset = false;
 
         if (timerData.getRemainingTicks() <= 0 && !bypassed) {
-            boolean canPayAgain = SafariConfig.isAllowMultiplePayment() && SafariConfig.isEntryFeeEnabled();
+            boolean canPayAgain = SafariConfig.isAllowPaidReentry();
             if (!canPayAgain) {
                 player.sendSystemMessage(Component.translatable("cobblesafari.teleporter.no_time"));
                 ModNetworking.sendCloseTpAccept(player);
@@ -167,7 +172,7 @@ public class TeleporterTickHandler {
 
         if (!timerData.hasPaidEntryFeeToday()) {
             boolean charged = EntryFeeHelper.tryChargeFee(player,
-                    SafariConfig.isEntryFeeEnabled(),
+                    chargeFeeEnabled,
                     SafariConfig.getEntryFeeItem(),
                     SafariConfig.isCobbledollarFeeEnabled(),
                     SafariConfig.getEntryFeeAmount());

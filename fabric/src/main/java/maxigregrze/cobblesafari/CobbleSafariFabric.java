@@ -8,6 +8,7 @@ import maxigregrze.cobblesafari.entity.BalloonSpawnHandler;
 import maxigregrze.cobblesafari.cstrader.logic.CsTraderDataLoader;
 import maxigregrze.cobblesafari.init.ModEntities;
 import maxigregrze.cobblesafari.event.DimensionEvents;
+import maxigregrze.cobblesafari.event.DimensionTimerDeathHandler;
 import maxigregrze.cobblesafari.event.DimensionalBanEventHandler;
 import maxigregrze.cobblesafari.dungeon.DungeonTpAcceptHandler;
 import maxigregrze.cobblesafari.network.CloseTpAcceptPayload;
@@ -43,6 +44,7 @@ import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionResult;
 
 public class CobbleSafariFabric implements ModInitializer {
@@ -234,5 +236,11 @@ public class CobbleSafariFabric implements ModInitializer {
         });
         ServerLivingEntityEvents.ALLOW_DAMAGE.register((entity, source, amount) ->
                 DimensionalBanEventHandler.onLivingHurt(entity, source));
+        ServerLivingEntityEvents.ALLOW_DEATH.register((entity, damageSource, damageAmount) -> {
+            if (!(entity instanceof ServerPlayer player)) {
+                return true;
+            }
+            return DimensionTimerDeathHandler.allowVanillaDeath(player);
+        });
     }
 }

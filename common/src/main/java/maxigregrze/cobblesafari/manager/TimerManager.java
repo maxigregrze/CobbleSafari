@@ -20,6 +20,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.Vec3;
 
 import java.time.Instant;
 import java.time.LocalDate;
@@ -170,19 +171,13 @@ public class TimerManager {
                             if (!dungeonStillExists) {
                                 CobbleSafari.LOGGER.warn("Player {} is in dungeon {} but dungeon no longer exists, evacuating",
                                         player.getName().getString(), timerDimensionId);
-                                data.setRemainingTicks(0);
-                                teleportOnTimerExpired(player, timerDimensionId, data);
-                                data.setActive(false);
-                                savePlayerData(player, data);
+                                expireActiveTimerAndTeleport(player, timerDimensionId, data, true);
                                 continue;
                             }
                         }
 
                         if (DungeonDimensions.isDungeonDimension(timerDimensionId) && player.getY() < 0) {
-                            data.setRemainingTicks(0);
-                            teleportOnTimerExpired(player, timerDimensionId, data);
-                            data.setActive(false);
-                            savePlayerData(player, data);
+                            expireActiveTimerAndTeleport(player, timerDimensionId, data, true);
                             CobbleSafari.LOGGER.info("Player {} detected in void in dungeon dimension {}, teleporting out",
                                     player.getName().getString(), timerDimensionId);
                             continue;
@@ -200,9 +195,7 @@ public class TimerManager {
 
                     if (data.isExpired()) {
                         if (player != null) {
-                            teleportOnTimerExpired(player, timerDimensionId, data);
-                            data.setActive(false);
-                            savePlayerData(player, data);
+                            expireActiveTimerAndTeleport(player, timerDimensionId, data, true);
                         }
                     }
 
@@ -291,6 +284,10 @@ public class TimerManager {
     }
 
     public static void teleportOnTimerExpired(ServerPlayer player, String dimensionId, PlayerTimerData data) {
+        teleportOnTimerExpired(player, dimensionId, data, true);
+    }
+
+    private static void teleportOnTimerExpired(ServerPlayer player, String dimensionId, PlayerTimerData data, boolean notifyExpired) {
         if (serverInstance == null) return;
 
         Optional<DimensionTimerEntry> config = SafariTimerConfig.getDimensionConfig(dimensionId);
@@ -347,9 +344,18 @@ public class TimerManager {
             DungeonTeleportHandler.clearPlayerData(player.getUUID());
         }
 
-        player.sendSystemMessage(Component.translatable("cobblesafari.timer.expired"));
+        if (notifyExpired) {
+            player.sendSystemMessage(Component.translatable("cobblesafari.timer.expired"));
+        }
         CobbleSafari.LOGGER.info("Player {} teleported to {} at {} (timer expired, returnToSpawn: {})",
                 player.getName().getString(), targetLevel.dimension().location(), targetPos, returnToSpawn);
+    }
+
+    private static void expireActiveTimerAndTeleport(ServerPlayer player, String timerDimensionId, PlayerTimerData data, boolean notifyExpired) {
+        data.setRemainingTicks(0);
+        teleportOnTimerExpired(player, timerDimensionId, data, notifyExpired);
+        data.setActive(false);
+        savePlayerData(player, data);
     }
 
     public static void setPlayerOrigin(ServerPlayer player, String dimensionId, BlockPos originPos, ResourceKey<Level> originDimension) {
@@ -473,11 +479,24 @@ public class TimerManager {
         if (currentDimension.isPresent()) {
             String dimensionId = currentDimension.get();
             PlayerTimerData data = getOrCreateData(player, dimensionId);
-            data.setActive(true);
+            data.setActive(data.getRemainingTicks() > 0);
             syncToClient(player, data);
         }
 
         CobbleSafari.LOGGER.debug("Loaded timer data for player {}", player.getName().getString());
+    }
+
+    public static void onDeathWhileTimed(ServerPlayer player, String dimensionId) {
+        PlayerTimerData data = getOrCreateData(player, dimensionId);
+        player.setHealth(1.0F);
+        player.setAbsorptionAmount(0.0F);
+        player.resetFallDistance();
+        player.setDeltaMovement(Vec3.ZERO);
+        player.invulnerableTime = 20;
+        player.sendSystemMessage(Component.translatable("cobblesafari.timer.death_drained"));
+        expireActiveTimerAndTeleport(player, dimensionId, data, false);
+        CobbleSafari.LOGGER.info("Death cancelled for {} in {}: timer expired (death rescue, same as void evac)",
+                player.getName().getString(), dimensionId);
     }
 
     public static void savePlayerData(ServerPlayer player, PlayerTimerData data) {

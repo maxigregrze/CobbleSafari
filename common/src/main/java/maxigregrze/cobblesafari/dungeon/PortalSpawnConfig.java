@@ -30,6 +30,7 @@ public class PortalSpawnConfig {
     private int spawnIntervalSeconds = 600;
     private int portalLifetimeMinutes = 30;
     private int notificationRadiusBlocks = 80;
+    private Boolean enableNotification = true;
     private int spawnRadiusMin = 32;
     private int spawnRadiusMax = 80;
     private boolean enabled = true;
@@ -158,6 +159,11 @@ public class PortalSpawnConfig {
 
     public static int getNotificationRadius() {
         return getInstance().notificationRadiusBlocks;
+    }
+
+    public static boolean isNotificationEnabled() {
+        Boolean v = getInstance().enableNotification;
+        return v == null || v;
     }
 
     public static int getSpawnRadiusMin() {

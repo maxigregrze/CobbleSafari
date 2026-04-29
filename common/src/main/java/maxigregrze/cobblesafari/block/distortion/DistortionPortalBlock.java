@@ -5,11 +5,13 @@ import com.mojang.serialization.MapCodec;
 import maxigregrze.cobblesafari.init.ModBlockEntities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
@@ -23,15 +25,17 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
-import net.minecraft.world.level.portal.DimensionTransition;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
+
+import java.util.Map;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class DistortionPortalBlock extends BaseEntityBlock {
     private static final Logger LOGGER = LogUtils.getLogger();
@@ -40,6 +44,8 @@ public class DistortionPortalBlock extends BaseEntityBlock {
     private static final VoxelShape SHAPE = Block.box(0, 0, 0, 16, 16, 16);
     private static final double TRIGGER_INSET = 0.25D;
     private static final int TELEPORT_OFFSET_BLOCKS = 128;
+    private static final int TELEPORT_COOLDOWN_TICKS = 20;
+    private static final Map<UUID, Long> LAST_DISTORTION_TELEPORT_TICK = new ConcurrentHashMap<>();
 
     public DistortionPortalBlock(Properties properties) {
         super(properties);
@@ -76,29 +82,35 @@ public class DistortionPortalBlock extends BaseEntityBlock {
         return Shapes.empty();
     }
 
-    @Override
-    protected void entityInside(BlockState state, Level level, BlockPos pos, Entity entity) {
-        if (level.isClientSide()) {
-            return;
-        }        
-        if (entity instanceof ServerPlayer serverPlayer && level instanceof ServerLevel serverLevel) {
-            handlePlayerInPortalVolume(serverLevel, pos, state, serverPlayer);
-        }
-    }
 
     @Override
     protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hitResult) {
-        if (!player.isCreative() || !player.isShiftKeyDown() || !player.getMainHandItem().isEmpty()) {
+        if (player.isCreative() && player.isShiftKeyDown() && player.getMainHandItem().isEmpty()) {
+            if (level.isClientSide()) {
+                return InteractionResult.SUCCESS;
+            }
+            Mode nextMode = state.getValue(MODE) == Mode.TOP ? Mode.BOTTOM : Mode.TOP;
+            level.setBlock(pos, state.setValue(MODE, nextMode), Block.UPDATE_ALL);
+            player.sendSystemMessage(Component.translatable("cobblesafari.distortion_portal.mode." + nextMode.getSerializedName()));
+            return InteractionResult.CONSUME;
+        }
+
+        if (player.isCreative() || player.isSpectator() || !player.getMainHandItem().isEmpty() || !player.getOffhandItem().isEmpty()) {
             return InteractionResult.PASS;
         }
+
         if (level.isClientSide()) {
             return InteractionResult.SUCCESS;
         }
 
-        Mode nextMode = state.getValue(MODE) == Mode.TOP ? Mode.BOTTOM : Mode.TOP;
-        level.setBlock(pos, state.setValue(MODE, nextMode), Block.UPDATE_ALL);
-        player.sendSystemMessage(Component.translatable("cobblesafari.distortion_portal.mode." + nextMode.getSerializedName()));
-        return InteractionResult.CONSUME;
+        if (!level.isClientSide()
+                && player instanceof ServerPlayer serverPlayer
+                && level instanceof ServerLevel serverLevel
+                && tryDistortionTeleport(serverLevel, pos, state, serverPlayer, false, true)) {
+            return InteractionResult.CONSUME;
+        }
+
+        return InteractionResult.PASS;
     }
 
     static AABB triggerBounds(BlockPos pos) {
@@ -116,39 +128,58 @@ public class DistortionPortalBlock extends BaseEntityBlock {
     }
 
     public static void handlePlayerInPortalVolume(ServerLevel serverLevel, BlockPos pos, BlockState state, ServerPlayer serverPlayer) {
-        if (!serverPlayer.getBoundingBox().intersects(triggerBounds(pos))) {
-            return;
+        tryDistortionTeleport(serverLevel, pos, state, serverPlayer, true, false);
+    }
+
+    private static boolean tryDistortionTeleport(
+            ServerLevel serverLevel,
+            BlockPos portalPos,
+            BlockState state,
+            ServerPlayer player,
+            boolean requireInsideTriggerVolume,
+            boolean playPortalTriggerAtPortalOnUse
+    ) {
+        if (requireInsideTriggerVolume && !player.getBoundingBox().intersects(triggerBounds(portalPos))) {
+            return false;
+        }
+
+        MinecraftServer server = serverLevel.getServer();
+        long tick = server.getTickCount();
+        UUID id = player.getUUID();
+        Long last = LAST_DISTORTION_TELEPORT_TICK.get(id);
+        if (last != null && tick - last < TELEPORT_COOLDOWN_TICKS) {
+            return false;
         }
 
         Mode mode = state.getValue(MODE);
         int delta = mode == Mode.TOP ? TELEPORT_OFFSET_BLOCKS : -TELEPORT_OFFSET_BLOCKS;
-        int targetY = pos.getY() + delta;
+        int targetY = portalPos.getY() + delta;
         int clampedY = Math.clamp(targetY, serverLevel.getMinBuildHeight() + 1, serverLevel.getMaxBuildHeight() - 2);
 
-        double destX = pos.getX() + 0.5D;
-        double destZ = pos.getZ() + 0.5D;
+        double destX = portalPos.getX() + 0.5D;
+        double destZ = portalPos.getZ() + 0.5D;
         double destY = clampedY + 0.01D;
 
-        DimensionTransition transition = new DimensionTransition(
-                serverLevel,
-                new Vec3(destX, destY, destZ),
-                Vec3.ZERO,
-                serverPlayer.getYRot(),
-                serverPlayer.getXRot(),
-                DimensionTransition.DO_NOTHING
-        );
+        LAST_DISTORTION_TELEPORT_TICK.put(id, tick);
 
         try {
-            Entity result = serverPlayer.changeDimension(transition);
-            
-            if (result instanceof ServerPlayer resultPlayer) {
+            BlockPos destChunkPos = BlockPos.containing(destX, destY, destZ);
+            serverLevel.getChunk(destChunkPos.getX() >> 4, destChunkPos.getZ() >> 4);
 
-                resultPlayer.resetFallDistance();
-            } else {
-                LOGGER.warn("[DistortionPortal] changeDimension did not return a ServerPlayer!");
+            if (playPortalTriggerAtPortalOnUse && !player.getBoundingBox().intersects(triggerBounds(portalPos))) {
+                serverLevel.playSound(player, portalPos, SoundEvents.PORTAL_TRIGGER, SoundSource.BLOCKS, 0.5f, 1.0f);
             }
+
+            player.teleportTo(serverLevel, destX, destY, destZ, player.getYRot(), player.getXRot());
+            player.resetFallDistance();
+            player.setDeltaMovement(net.minecraft.world.phys.Vec3.ZERO);
+
+            serverLevel.playSound(null, destX, destY, destZ, SoundEvents.PORTAL_TRAVEL, SoundSource.BLOCKS, 0.5f, 1.0f);
+            return true;
         } catch (Exception e) {
-            LOGGER.error("[DistortionPortal] Exception during changeDimension: {}", e.getMessage(), e);
+            LAST_DISTORTION_TELEPORT_TICK.remove(id);
+            LOGGER.error("[DistortionPortal] Teleport failed: {}", e.getMessage(), e);
+            return false;
         }
     }
 

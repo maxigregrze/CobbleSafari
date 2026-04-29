@@ -2,6 +2,8 @@ package maxigregrze.cobblesafari.config;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import maxigregrze.cobblesafari.CobbleSafari;
 import maxigregrze.cobblesafari.platform.Services;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -26,7 +28,7 @@ public class SafariConfig {
     private String entryFee = "cobblesafari:ticket_safari";
     private boolean cobbledollarEntryFee = false;
     private int entryFeeAmount = 5000;
-    private boolean allowMultiplePayment = false;
+    private boolean allowPaidReentry = false;
     private int teleporterRadius = 5000;
     private boolean balloonSafariEnabled = true;
     private int balloonSafariMinDrop = 1;
@@ -51,7 +53,9 @@ public class SafariConfig {
     public static void load() {
         if (Files.exists(CONFIG_PATH)) {
             try (Reader reader = Files.newBufferedReader(CONFIG_PATH)) {
-                INSTANCE = GSON.fromJson(reader, SafariConfig.class);
+                JsonObject json = JsonParser.parseReader(reader).getAsJsonObject();
+                migrateLegacyAllowPaidReentry(json);
+                INSTANCE = GSON.fromJson(json, SafariConfig.class);
                 if (INSTANCE == null) {
                     INSTANCE = new SafariConfig();
                 }
@@ -66,6 +70,16 @@ public class SafariConfig {
             INSTANCE = new SafariConfig();
             save();
         }
+    }
+
+    private static void migrateLegacyAllowPaidReentry(JsonObject json) {
+        if (!json.has("allowMultiplePayment")) {
+            return;
+        }
+        if (!json.has("allowPaidReentry")) {
+            json.addProperty("allowPaidReentry", json.get("allowMultiplePayment").getAsBoolean());
+        }
+        json.remove("allowMultiplePayment");
     }
 
     private static void validateAndFixConfig() {
@@ -128,9 +142,9 @@ public class SafariConfig {
         return INSTANCE.entryFeeAmount > 0 ? INSTANCE.entryFeeAmount : 5000;
     }
 
-    public static boolean isAllowMultiplePayment() {
+    public static boolean isAllowPaidReentry() {
         if (INSTANCE == null) return false;
-        return INSTANCE.allowMultiplePayment;
+        return INSTANCE.allowPaidReentry;
     }
 
     public static int getTeleporterRadius() {

@@ -426,6 +426,10 @@ public class PortalSpawnManager {
     }
 
     private static void notifyNearbyPlayers(ServerLevel level, BlockPos portalPos) {
+        if (!PortalSpawnConfig.isNotificationEnabled()) {
+            return;
+        }
+
         int radius = PortalSpawnConfig.getNotificationRadius();
 
         for (ServerPlayer player : level.players()) {
@@ -623,7 +627,7 @@ public class PortalSpawnManager {
                         
                         int structureY = portalEntity.getDungeonStructurePos() != null
                                 ? portalEntity.getDungeonStructurePos().getY() : 64;
-                        DungeonRegionClearer.clearRegion(dungeonLevel,
+                        DungeonRegionClearer.scheduleRegionClear(dungeonLevel,
                                 portalEntity.getDungeonChunkMinX(), portalEntity.getDungeonChunkMinZ(),
                                 portalEntity.getDungeonChunkMaxX(), portalEntity.getDungeonChunkMaxZ(),
                                 structureY, config.getClearSectionsBelow(), config.getClearSectionsAbove());
@@ -694,7 +698,7 @@ public class PortalSpawnManager {
                     portal.dungeonChunkMaxX(), portal.dungeonChunkMaxZ());
             
             int structureY = portal.dungeonStructurePos() != null ? portal.dungeonStructurePos().getY() : 64;
-            DungeonRegionClearer.clearRegion(dungeonLevel,
+            DungeonRegionClearer.scheduleRegionClear(dungeonLevel,
                     portal.dungeonChunkMinX(), portal.dungeonChunkMinZ(),
                     portal.dungeonChunkMaxX(), portal.dungeonChunkMaxZ(),
                     structureY, config.getClearSectionsBelow(), config.getClearSectionsAbove());
