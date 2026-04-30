@@ -364,6 +364,7 @@
 	"cobblesafari.command.safariexit.invalid_origin": "Your entry point dimension no longer exists.",
 	"cobblesafari.timer.expired": "Time's up! You have been kicked-out.",
 	"cobblesafari.timer.reset": "Your Safari time has been reset!",
+	"cobblesafari.timer.death_drained": "You almost died! Your remaining time in this dimension has been consumed.",
 	"cobblesafari.teleporter.no_time": "You have no Safari time left today. Come back tomorrow!",
 	"cobblesafari.teleporter.countdown.title": "Teleporting in:",
 	"cobblesafari.teleporter.safari_balls_received": "You received %s Safari Balls (first visit today).",

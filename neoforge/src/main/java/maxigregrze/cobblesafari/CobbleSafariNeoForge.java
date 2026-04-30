@@ -7,6 +7,7 @@ import maxigregrze.cobblesafari.dungeon.DungeonTeleportCountdown;
 import maxigregrze.cobblesafari.entity.BalloonSpawnHandler;
 import maxigregrze.cobblesafari.init.ModEntities;
 import maxigregrze.cobblesafari.event.DimensionEvents;
+import maxigregrze.cobblesafari.event.DimensionTimerDeathHandler;
 import maxigregrze.cobblesafari.event.DimensionalBanEventHandler;
 import maxigregrze.cobblesafari.dungeon.DungeonTpAcceptHandler;
 import maxigregrze.cobblesafari.network.CloseTpAcceptPayload;
@@ -36,6 +37,7 @@ import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
 import net.neoforged.neoforge.event.entity.EntityAttributeCreationEvent;
+import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
 import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.neoforged.neoforge.event.level.BlockEvent;
@@ -70,6 +72,7 @@ public class CobbleSafariNeoForge {
         NeoForge.EVENT_BUS.addListener(this::onLeftClickBlock);
         NeoForge.EVENT_BUS.addListener(this::onBlockBreak);
         NeoForge.EVENT_BUS.addListener(this::onLivingIncomingDamage);
+        NeoForge.EVENT_BUS.addListener(this::onLivingDeath);
 
         CobbleSafari.LOGGER.info("CobbleSafari NeoForge module loaded!");
     }
@@ -345,6 +348,15 @@ public class CobbleSafariNeoForge {
 
     private void onLivingIncomingDamage(LivingIncomingDamageEvent event) {
         if (!DimensionalBanEventHandler.onLivingHurt(event.getEntity(), event.getSource())) {
+            event.setCanceled(true);
+        }
+    }
+
+    private void onLivingDeath(LivingDeathEvent event) {
+        if (!(event.getEntity() instanceof ServerPlayer sp)) {
+            return;
+        }
+        if (!DimensionTimerDeathHandler.allowVanillaDeath(sp)) {
             event.setCanceled(true);
         }
     }

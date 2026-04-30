@@ -364,6 +364,7 @@
 	"cobblesafari.command.safariexit.invalid_origin": "La dimension de votre point d'entrée n'existe plus.",
 	"cobblesafari.timer.expired": "Temps écoulé ! Vous avez été expulsé.",
 	"cobblesafari.timer.reset": "Votre temps dans le Safari a été réinitialisé !",
+	"cobblesafari.timer.death_drained": "Vous étiez presque mort ! Le temps qu'il vous restait dans cette dimension a été consommé.",
 	"cobblesafari.teleporter.no_time": "Vous avez épuisé votre temps Safari aujourd'hui. Revenez demain !",
 	"cobblesafari.teleporter.countdown.title": "Téléportation dans :",
 	"cobblesafari.teleporter.safari_balls_received": "Vous avez reçu %s Safari Balls (première visite du jour).",
