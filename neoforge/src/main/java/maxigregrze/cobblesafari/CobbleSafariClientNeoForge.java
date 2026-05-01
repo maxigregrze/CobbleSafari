@@ -187,6 +187,7 @@ public class CobbleSafariClientNeoForge {
         Minecraft mc = Minecraft.getInstance();
         DungeonMusicHandler.onClientTick(mc);
         maxigregrze.cobblesafari.client.screen.rotomphone.RotomPhonePcSession.tickCleanup(mc);
+        maxigregrze.cobblesafari.client.rotomphone.RotoGlideClient.tick(mc);
     }
 
     public static void onRenderGuiLayer(RenderGuiLayerEvent.Post event) {
@@ -256,7 +257,7 @@ public class CobbleSafariClientNeoForge {
     public static void handleOpenRotomPhone(maxigregrze.cobblesafari.network.OpenRotomPhonePayload payload, IPayloadContext context) {
         context.enqueueWork(() -> {
             Minecraft.getInstance().setScreen(new maxigregrze.cobblesafari.client.screen.rotomphone.RotomPhoneMenuScreen(
-                    payload.rotomName(), payload.shinyStatus(), payload.currentSkin(), payload.safetyMode()));
+                    payload.rotomName(), payload.shinyStatus(), payload.currentSkin(), payload.safetyMode(), payload.rotoGlide()));
         });
     }
 

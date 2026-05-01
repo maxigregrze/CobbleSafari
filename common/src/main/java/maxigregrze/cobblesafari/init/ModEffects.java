@@ -22,7 +22,8 @@ public enum ModEffects {
     ULTRA_BEAST_BOOST("ultra_beast_boost", () -> new BasicStatusEffect(MobEffectCategory.BENEFICIAL, 0x4B0082)),
     PARADOX_BOOST("paradox_boost", () -> new BasicStatusEffect(MobEffectCategory.BENEFICIAL, 0xFF1493)),
     LEGENDARY_BOOST("legendary_boost", () -> new BasicStatusEffect(MobEffectCategory.BENEFICIAL, 0xFFD700)),
-    MYTHICAL_BOOST("mythical_boost", () -> new BasicStatusEffect(MobEffectCategory.BENEFICIAL, 0xE6E6FA));
+    MYTHICAL_BOOST("mythical_boost", () -> new BasicStatusEffect(MobEffectCategory.BENEFICIAL, 0xE6E6FA)),
+    ROTO_FALL("roto_fall", () -> new BasicStatusEffect(MobEffectCategory.BENEFICIAL, 0x7AFFFF));
 
     public final Holder<MobEffect> holder;
     public final MobEffect effect;

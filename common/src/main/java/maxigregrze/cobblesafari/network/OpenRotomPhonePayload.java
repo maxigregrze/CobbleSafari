@@ -10,7 +10,8 @@ public record OpenRotomPhonePayload(
         String rotomName,
         boolean shinyStatus,
         String currentSkin,
-        boolean safetyMode
+        boolean safetyMode,
+        boolean rotoGlide
 ) implements CustomPacketPayload {
 
     public static final CustomPacketPayload.Type<OpenRotomPhonePayload> TYPE =
@@ -18,15 +19,17 @@ public record OpenRotomPhonePayload(
 
     public static final StreamCodec<FriendlyByteBuf, OpenRotomPhonePayload> STREAM_CODEC = StreamCodec.of(
             (buf, payload) -> {
-                buf.writeUtf(payload.rotomName);
-                buf.writeBoolean(payload.shinyStatus);
-                buf.writeUtf(payload.currentSkin);
-                buf.writeBoolean(payload.safetyMode);
+                buf.writeUtf(payload.rotomName());
+                buf.writeBoolean(payload.shinyStatus());
+                buf.writeUtf(payload.currentSkin());
+                buf.writeBoolean(payload.safetyMode());
+                buf.writeBoolean(payload.rotoGlide());
             },
             buf -> new OpenRotomPhonePayload(
                     buf.readUtf(),
                     buf.readBoolean(),
                     buf.readUtf(),
+                    buf.readBoolean(),
                     buf.readBoolean()
             )
     );

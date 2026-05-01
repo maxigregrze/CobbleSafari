@@ -11,15 +11,17 @@ public final class RotomPhonePcSession {
     private static boolean shinyStatus;
     private static String currentSkin;
     private static boolean safetyMode;
+    private static boolean rotoGlide;
 
     private RotomPhonePcSession() {}
 
-    public static void activateFromPhoneMenu(String rotomName, boolean shiny, String skin, boolean safety) {
+    public static void activateFromPhoneMenu(String rotomName, boolean shiny, String skin, boolean safety, boolean rotoGlideEnabled) {
         RotomPhonePcSession.active = true;
         RotomPhonePcSession.rotomName = rotomName;
         RotomPhonePcSession.shinyStatus = shiny;
         RotomPhonePcSession.currentSkin = skin != null ? skin : "";
         RotomPhonePcSession.safetyMode = safety;
+        RotomPhonePcSession.rotoGlide = rotoGlideEnabled;
     }
 
     public static boolean isActive() {
@@ -33,7 +35,7 @@ public final class RotomPhonePcSession {
     public static void returnToMenu() {
         clear();
         Minecraft mc = Minecraft.getInstance();
-        mc.setScreen(new RotomPhoneMenuScreen(rotomName, shinyStatus, currentSkin, safetyMode));
+        mc.setScreen(new RotomPhoneMenuScreen(rotomName, shinyStatus, currentSkin, safetyMode, rotoGlide));
     }
 
     public static void renderBackdropIfNeeded(Screen screen, net.minecraft.client.gui.GuiGraphics graphics) {

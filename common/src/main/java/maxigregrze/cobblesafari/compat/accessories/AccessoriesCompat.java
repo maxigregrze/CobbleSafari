@@ -24,33 +24,43 @@ public class AccessoriesCompat {
     }
 
     public static boolean hasPhoneInSlot(Player player) {
-        AccessoriesCapability capability = AccessoriesCapability.get(player);
-        if (capability == null) return false;
-
-        Map<String, AccessoriesContainer> containers = capability.getContainers();
-        AccessoriesContainer phoneContainer = containers.get(PHONE_SLOT_KEY);
-        if (phoneContainer == null) return false;
-
-        var stacks = phoneContainer.getAccessories();
-        for (int i = 0; i < stacks.getContainerSize(); i++) {
-            ItemStack stack = stacks.getItem(i);
-            if (stack.is(ModItems.ROTOM_PHONE)) return true;
-        }
-        return false;
+        return !getPhoneFromSlot(player).isEmpty();
     }
 
     public static ItemStack getPhoneFromSlot(Player player) {
         AccessoriesCapability capability = AccessoriesCapability.get(player);
-        if (capability == null) return ItemStack.EMPTY;
+        if (capability == null) {
+            return ItemStack.EMPTY;
+        }
 
         Map<String, AccessoriesContainer> containers = capability.getContainers();
-        AccessoriesContainer phoneContainer = containers.get(PHONE_SLOT_KEY);
-        if (phoneContainer == null) return ItemStack.EMPTY;
+        AccessoriesContainer preferred = containers.get(PHONE_SLOT_KEY);
+        if (preferred != null) {
+            ItemStack fromPreferred = firstRotomPhoneIn(preferred);
+            if (!fromPreferred.isEmpty()) {
+                return fromPreferred;
+            }
+        }
 
-        var stacks = phoneContainer.getAccessories();
+        for (AccessoriesContainer container : containers.values()) {
+            if (preferred != null && container == preferred) {
+                continue;
+            }
+            ItemStack found = firstRotomPhoneIn(container);
+            if (!found.isEmpty()) {
+                return found;
+            }
+        }
+        return ItemStack.EMPTY;
+    }
+
+    private static ItemStack firstRotomPhoneIn(AccessoriesContainer container) {
+        var stacks = container.getAccessories();
         for (int i = 0; i < stacks.getContainerSize(); i++) {
             ItemStack stack = stacks.getItem(i);
-            if (stack.is(ModItems.ROTOM_PHONE)) return stack;
+            if (stack.is(ModItems.ROTOM_PHONE)) {
+                return stack;
+            }
         }
         return ItemStack.EMPTY;
     }

@@ -29,8 +29,8 @@ public class RotomPhoneMenuScreen extends RotomPhoneBaseScreen {
 
     private final List<String> visibleApps = new ArrayList<>();
 
-    public RotomPhoneMenuScreen(String rotomName, boolean shinyStatus, String currentSkin, boolean safetyMode) {
-        super(Component.translatable("gui.cobblesafari.rotomphone.menu"), rotomName, shinyStatus, currentSkin, safetyMode);
+    public RotomPhoneMenuScreen(String rotomName, boolean shinyStatus, String currentSkin, boolean safetyMode, boolean rotoGlide) {
+        super(Component.translatable("gui.cobblesafari.rotomphone.menu"), rotomName, shinyStatus, currentSkin, safetyMode, rotoGlide);
     }
 
     @Override
@@ -108,22 +108,22 @@ public class RotomPhoneMenuScreen extends RotomPhoneBaseScreen {
         if (appData != null && this.minecraft.player != null) {
             String dimKey = this.minecraft.player.level().dimension().location().toString();
             if (appData.bannedDimensions().contains(dimKey)) {
-                this.minecraft.setScreen(new RotomPhoneErrorScreen(rotomName, shinyStatus, currentSkin, safetyMode));
+                this.minecraft.setScreen(new RotomPhoneErrorScreen(rotomName, shinyStatus, currentSkin, safetyMode, rotoGlide));
                 return;
             }
         }
 
         switch (appId) {
-            case "chatApp" -> this.minecraft.setScreen(new RotomPhoneChatScreen(rotomName, shinyStatus, currentSkin, safetyMode));
+            case "chatApp" -> this.minecraft.setScreen(new RotomPhoneChatScreen(rotomName, shinyStatus, currentSkin, safetyMode, rotoGlide));
             case "pcApp" -> {
-                RotomPhonePcSession.activateFromPhoneMenu(rotomName, shinyStatus, currentSkin, safetyMode);
+                RotomPhonePcSession.activateFromPhoneMenu(rotomName, shinyStatus, currentSkin, safetyMode, rotoGlide);
                 Services.PLATFORM.sendPayloadToServer(new RotomPhoneActionPayload(RotomPhoneActionPayload.ACTION_OPEN_PC, ""));
             }
-            case "healApp" -> this.minecraft.setScreen(new RotomPhoneHealScreen(rotomName, shinyStatus, currentSkin, safetyMode));
-            case "portalFinderApp" -> this.minecraft.setScreen(new RotomPhonePortalFinderScreen(rotomName, shinyStatus, currentSkin, safetyMode));
-            case "itemFinderApp" -> this.minecraft.setScreen(new RotomPhoneItemFinderScreen(rotomName, shinyStatus, currentSkin, safetyMode));
-            case "skinApp" -> this.minecraft.setScreen(new RotomPhoneSkinScreen(rotomName, shinyStatus, currentSkin, safetyMode));
-            case "settingsApp" -> this.minecraft.setScreen(new RotomPhoneSettingsScreen(rotomName, shinyStatus, currentSkin, safetyMode));
+            case "healApp" -> this.minecraft.setScreen(new RotomPhoneHealScreen(rotomName, shinyStatus, currentSkin, safetyMode, rotoGlide));
+            case "portalFinderApp" -> this.minecraft.setScreen(new RotomPhonePortalFinderScreen(rotomName, shinyStatus, currentSkin, safetyMode, rotoGlide));
+            case "itemFinderApp" -> this.minecraft.setScreen(new RotomPhoneItemFinderScreen(rotomName, shinyStatus, currentSkin, safetyMode, rotoGlide));
+            case "skinApp" -> this.minecraft.setScreen(new RotomPhoneSkinScreen(rotomName, shinyStatus, currentSkin, safetyMode, rotoGlide));
+            case "settingsApp" -> this.minecraft.setScreen(new RotomPhoneSettingsScreen(rotomName, shinyStatus, currentSkin, safetyMode, rotoGlide));
         }
     }
 

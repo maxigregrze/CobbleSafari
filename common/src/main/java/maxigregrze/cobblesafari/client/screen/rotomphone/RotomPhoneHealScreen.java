@@ -5,8 +5,8 @@ import net.minecraft.network.chat.Component;
 
 public class RotomPhoneHealScreen extends RotomPhoneBaseScreen {
 
-    public RotomPhoneHealScreen(String rotomName, boolean shinyStatus, String currentSkin, boolean safetyMode) {
-        super(Component.translatable("gui.cobblesafari.rotomphone.app.heal"), rotomName, shinyStatus, currentSkin, safetyMode);
+    public RotomPhoneHealScreen(String rotomName, boolean shinyStatus, String currentSkin, boolean safetyMode, boolean rotoGlide) {
+        super(Component.translatable("gui.cobblesafari.rotomphone.app.heal"), rotomName, shinyStatus, currentSkin, safetyMode, rotoGlide);
     }
 
     @Override

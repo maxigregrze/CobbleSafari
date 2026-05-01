@@ -6,6 +6,8 @@ import maxigregrze.cobblesafari.dungeon.DungeonTeleportHandler;
 import maxigregrze.cobblesafari.dungeon.PortalSpawnManager;
 import maxigregrze.cobblesafari.manager.SafariResetManager;
 import maxigregrze.cobblesafari.manager.TimerManager;
+import maxigregrze.cobblesafari.rotomphone.RotoFallGroundClear;
+import maxigregrze.cobblesafari.rotomphone.RotoGlideServerLogic;
 import maxigregrze.cobblesafari.network.DimensionalBanSyncPayload;
 import maxigregrze.cobblesafari.platform.Services;
 import net.minecraft.server.MinecraftServer;
@@ -49,5 +51,7 @@ public class DimensionEvents {
     public static void onPlayerDisconnect(ServerPlayer player) {
         TimerManager.onPlayerDisconnect(player);
         DungeonTeleportHandler.clearPlayerData(player.getUUID());
+        RotoGlideServerLogic.removeState(player.getUUID());
+        RotoFallGroundClear.removePlayer(player.getUUID());
     }
 }

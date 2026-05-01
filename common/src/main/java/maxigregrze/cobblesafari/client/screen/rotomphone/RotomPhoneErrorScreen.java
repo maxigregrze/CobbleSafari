@@ -13,8 +13,8 @@ public class RotomPhoneErrorScreen extends RotomPhoneBaseScreen {
     private static final int ERROR_Y = 32;
     private long openedAt;
 
-    public RotomPhoneErrorScreen(String rotomName, boolean shinyStatus, String currentSkin, boolean safetyMode) {
-        super(Component.translatable("gui.cobblesafari.rotomphone.error"), rotomName, shinyStatus, currentSkin, safetyMode);
+    public RotomPhoneErrorScreen(String rotomName, boolean shinyStatus, String currentSkin, boolean safetyMode, boolean rotoGlide) {
+        super(Component.translatable("gui.cobblesafari.rotomphone.error"), rotomName, shinyStatus, currentSkin, safetyMode, rotoGlide);
     }
 
     @Override
@@ -39,7 +39,7 @@ public class RotomPhoneErrorScreen extends RotomPhoneBaseScreen {
     @Override
     protected void onBackButtonClicked() {
         if (this.minecraft != null) {
-            this.minecraft.setScreen(new RotomPhoneMenuScreen(rotomName, shinyStatus, currentSkin, safetyMode));
+            this.minecraft.setScreen(new RotomPhoneMenuScreen(rotomName, shinyStatus, currentSkin, safetyMode, rotoGlide));
         }
     }
 

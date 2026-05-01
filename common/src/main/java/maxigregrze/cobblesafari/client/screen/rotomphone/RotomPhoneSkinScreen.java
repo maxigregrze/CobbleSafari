@@ -27,8 +27,8 @@ public class RotomPhoneSkinScreen extends RotomPhoneBaseScreen {
     private final List<SkinEntry> skinList = new ArrayList<>();
     private int currentIndex = 0;
 
-    public RotomPhoneSkinScreen(String rotomName, boolean shinyStatus, String currentSkin, boolean safetyMode) {
-        super(Component.translatable("gui.cobblesafari.rotomphone.app.skin"), rotomName, shinyStatus, currentSkin, safetyMode);
+    public RotomPhoneSkinScreen(String rotomName, boolean shinyStatus, String currentSkin, boolean safetyMode, boolean rotoGlide) {
+        super(Component.translatable("gui.cobblesafari.rotomphone.app.skin"), rotomName, shinyStatus, currentSkin, safetyMode, rotoGlide);
     }
 
     @Override

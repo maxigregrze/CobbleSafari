@@ -141,7 +141,7 @@ public class ClientNetworking {
                         Minecraft.getInstance().setScreen(
                                 new maxigregrze.cobblesafari.client.screen.rotomphone.RotomPhoneMenuScreen(
                                         payload.rotomName(), payload.shinyStatus(),
-                                        payload.currentSkin(), payload.safetyMode()));
+                                        payload.currentSkin(), payload.safetyMode(), payload.rotoGlide()));
                     });
                 }
         );

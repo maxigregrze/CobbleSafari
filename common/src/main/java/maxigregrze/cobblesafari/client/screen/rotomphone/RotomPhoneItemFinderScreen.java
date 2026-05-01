@@ -5,8 +5,8 @@ import net.minecraft.network.chat.Component;
 
 public class RotomPhoneItemFinderScreen extends RotomPhoneBaseScreen {
 
-    public RotomPhoneItemFinderScreen(String rotomName, boolean shinyStatus, String currentSkin, boolean safetyMode) {
-        super(Component.translatable("gui.cobblesafari.rotomphone.app.item_finder"), rotomName, shinyStatus, currentSkin, safetyMode);
+    public RotomPhoneItemFinderScreen(String rotomName, boolean shinyStatus, String currentSkin, boolean safetyMode, boolean rotoGlide) {
+        super(Component.translatable("gui.cobblesafari.rotomphone.app.item_finder"), rotomName, shinyStatus, currentSkin, safetyMode, rotoGlide);
     }
 
     @Override

@@ -244,6 +244,17 @@ public class CobbleSafariNeoForge {
                     });
                 });
 
+        registrar.playToServer(maxigregrze.cobblesafari.network.RotomPhoneRotoGlideRequestPayload.TYPE,
+                maxigregrze.cobblesafari.network.RotomPhoneRotoGlideRequestPayload.STREAM_CODEC,
+                (payload, context) -> {
+                    context.enqueueWork(() -> {
+                        if (context.player() instanceof ServerPlayer sp) {
+                            maxigregrze.cobblesafari.rotomphone.RotoGlideServerLogic.onRotoGlideRequest(
+                                    sp, payload.horizontalMoveX(), payload.horizontalMoveZ());
+                        }
+                    });
+                });
+
         registrar.playToServer(maxigregrze.cobblesafari.network.EmptyPhoneConfirmPayload.TYPE,
                 maxigregrze.cobblesafari.network.EmptyPhoneConfirmPayload.STREAM_CODEC,
                 (payload, context) -> {
@@ -293,6 +304,7 @@ public class CobbleSafariNeoForge {
         DungeonTeleportCountdown.onServerTick(event.getServer());
         BalloonSpawnHandler.onServerTick(event.getServer());
         event.getServer().getPlayerList().getPlayers().forEach(LuckyMiningHelmetItem::tickEffect);
+        maxigregrze.cobblesafari.rotomphone.RotoGlideServerLogic.tickAll(event.getServer());
     }
 
     private void onPlayerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {

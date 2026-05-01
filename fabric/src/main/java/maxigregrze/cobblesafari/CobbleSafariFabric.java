@@ -99,6 +99,7 @@ public class CobbleSafariFabric implements ModInitializer {
         PayloadTypeRegistry.playS2C().register(maxigregrze.cobblesafari.network.RotomPhoneConfigSyncPayload.TYPE, maxigregrze.cobblesafari.network.RotomPhoneConfigSyncPayload.STREAM_CODEC);
 
         PayloadTypeRegistry.playC2S().register(maxigregrze.cobblesafari.network.RotomPhoneActionPayload.TYPE, maxigregrze.cobblesafari.network.RotomPhoneActionPayload.STREAM_CODEC);
+        PayloadTypeRegistry.playC2S().register(maxigregrze.cobblesafari.network.RotomPhoneRotoGlideRequestPayload.TYPE, maxigregrze.cobblesafari.network.RotomPhoneRotoGlideRequestPayload.STREAM_CODEC);
         PayloadTypeRegistry.playC2S().register(maxigregrze.cobblesafari.network.EmptyPhoneConfirmPayload.TYPE, maxigregrze.cobblesafari.network.EmptyPhoneConfirmPayload.STREAM_CODEC);
 
         PayloadTypeRegistry.playC2S().register(
@@ -187,6 +188,18 @@ public class CobbleSafariFabric implements ModInitializer {
         );
 
         ServerPlayNetworking.registerGlobalReceiver(
+                maxigregrze.cobblesafari.network.RotomPhoneRotoGlideRequestPayload.TYPE,
+                (payload, context) -> {
+                    context.server().execute(() -> {
+                        if (context.player() instanceof ServerPlayer sp) {
+                            maxigregrze.cobblesafari.rotomphone.RotoGlideServerLogic.onRotoGlideRequest(
+                                    sp, payload.horizontalMoveX(), payload.horizontalMoveZ());
+                        }
+                    });
+                }
+        );
+
+        ServerPlayNetworking.registerGlobalReceiver(
                 maxigregrze.cobblesafari.network.EmptyPhoneConfirmPayload.TYPE,
                 (payload, context) -> {
                     context.server().execute(() -> {
@@ -237,6 +250,7 @@ public class CobbleSafariFabric implements ModInitializer {
             DungeonTeleportCountdown.onServerTick(server);
             BalloonSpawnHandler.onServerTick(server);
             server.getPlayerList().getPlayers().forEach(LuckyMiningHelmetItem::tickEffect);
+            maxigregrze.cobblesafari.rotomphone.RotoGlideServerLogic.tickAll(server);
         });
 
         ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {

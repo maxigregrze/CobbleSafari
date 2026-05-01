@@ -6,6 +6,8 @@
   "refmap": "${mod_id}.refmap.json",
   "mixins": [
     "ServerPlayerMixin",
+    "LivingEntityRotoFallMixin",
+    "PlayerRotoFallMixin",
     "JigsawPlacementMixin",
     "JigsawStructureMixin"
   ],

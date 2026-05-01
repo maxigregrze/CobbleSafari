@@ -281,6 +281,7 @@
 	"effect.cobblesafari.paradox_boost": "Paradox Boost",
 	"effect.cobblesafari.legendary_boost": "Legendary Boost",
 	"effect.cobblesafari.mythical_boost": "Mythical Boost",
+	"effect.cobblesafari.roto_fall": "Roto-Fall",
 	
 	"gui.cobblesafari.underground.title": "Underground Mining",
 	"gui.cobblesafari.underground.treasures_found": "%d treasures detected!",
@@ -463,6 +464,8 @@
 	"tooltip.cobblesafari.rotomphone.skin": "Skin: %s",
 	"tooltip.cobblesafari.rotomphone.safety_on": "Safety Mode: ON",
 	"tooltip.cobblesafari.rotomphone.safety_off": "Safety Mode: OFF",
+	"tooltip.cobblesafari.rotomphone.roto_glide_on": "Roto-Glide: ON",
+	"tooltip.cobblesafari.rotomphone.roto_glide_off": "Roto-Glide: OFF",
 
 	"gui.cobblesafari.rotomphone.menu": "Rotom Phone",
 	"gui.cobblesafari.rotomphone.error": "Error",
@@ -474,6 +477,9 @@
 	"gui.cobblesafari.rotomphone.app.item_finder": "Item Finder",
 	"gui.cobblesafari.rotomphone.app.skin": "Skins",
 	"gui.cobblesafari.rotomphone.app.settings": "Settings",
+	"gui.cobblesafari.rotomphone.settings.title": "Settings App",
+	"gui.cobblesafari.rotomphone.settings.safety_toggle": "Safety mode",
+	"gui.cobblesafari.rotomphone.settings.roto_glide_toggle": "Roto-Glide",
 	"gui.cobblesafari.rotomphone.safety_on": "Safety: ON",
 	"gui.cobblesafari.rotomphone.safety_off": "Safety: OFF",
 	"gui.cobblesafari.rotomphone.confirm": "Confirm",

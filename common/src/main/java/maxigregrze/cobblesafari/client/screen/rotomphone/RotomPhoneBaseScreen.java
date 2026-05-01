@@ -29,17 +29,19 @@ public abstract class RotomPhoneBaseScreen extends Screen {
     protected boolean shinyStatus;
     protected String currentSkin;
     protected boolean safetyMode;
+    protected boolean rotoGlide;
 
     protected int originX;
     protected int originY;
 
     protected RotomPhoneBaseScreen(Component title, String rotomName, boolean shinyStatus,
-                                    String currentSkin, boolean safetyMode) {
+                                    String currentSkin, boolean safetyMode, boolean rotoGlide) {
         super(title);
         this.rotomName = rotomName;
         this.shinyStatus = shinyStatus;
         this.currentSkin = currentSkin;
         this.safetyMode = safetyMode;
+        this.rotoGlide = rotoGlide;
     }
 
     public void setCurrentSkin(String skin) {
@@ -48,6 +50,10 @@ public abstract class RotomPhoneBaseScreen extends Screen {
 
     public void setSafetyMode(boolean mode) {
         this.safetyMode = mode;
+    }
+
+    public void setRotoGlide(boolean enabled) {
+        this.rotoGlide = enabled;
     }
 
     @Override
@@ -131,7 +137,7 @@ public abstract class RotomPhoneBaseScreen extends Screen {
 
     protected void onBackButtonClicked() {
         if (this.minecraft != null) {
-            this.minecraft.setScreen(new RotomPhoneMenuScreen(rotomName, shinyStatus, currentSkin, safetyMode));
+            this.minecraft.setScreen(new RotomPhoneMenuScreen(rotomName, shinyStatus, currentSkin, safetyMode, rotoGlide));
         }
     }
 

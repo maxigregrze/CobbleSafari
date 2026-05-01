@@ -2,6 +2,7 @@ package maxigregrze.cobblesafari.item;
 
 import maxigregrze.cobblesafari.rotomphone.RotomPhoneSkinDefinition;
 import maxigregrze.cobblesafari.rotomphone.RotomPhoneSkinRegistry;
+import maxigregrze.cobblesafari.rotomphone.RotomPhoneSafetyTick;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -15,10 +16,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Rarity;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.component.CustomData;
-import net.minecraft.world.level.Level;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.level.Level;
 
 import java.util.List;
 
@@ -45,11 +44,7 @@ public class RotomPhoneItem extends Item {
         boolean inHand = player.getMainHandItem() == stack || player.getOffhandItem() == stack;
         if (!inHand) return;
 
-        if (player.fallDistance > 1.0f && player.getDeltaMovement().y < -0.1) {
-            if (!player.hasEffect(MobEffects.SLOW_FALLING)) {
-                player.addEffect(new MobEffectInstance(MobEffects.SLOW_FALLING, 20, 0, false, false, true));
-            }
-        }
+        RotomPhoneSafetyTick.tryApplyRotoFall(player);
     }
 
     @Override
@@ -76,6 +71,13 @@ public class RotomPhoneItem extends Item {
             tooltip.add(Component.translatable("tooltip.cobblesafari.rotomphone.safety_off")
                     .withStyle(Style.EMPTY.withColor(0xAAAAAA)));
         }
+        if (isRotoGlideEnabled(stack)) {
+            tooltip.add(Component.translatable("tooltip.cobblesafari.rotomphone.roto_glide_on")
+                    .withStyle(Style.EMPTY.withColor(0x55AAFF)));
+        } else {
+            tooltip.add(Component.translatable("tooltip.cobblesafari.rotomphone.roto_glide_off")
+                    .withStyle(Style.EMPTY.withColor(0xAAAAAA)));
+        }
     }
 
     public static String getRotomName(ItemStack stack) {
@@ -98,6 +100,11 @@ public class RotomPhoneItem extends Item {
         return tag.getBoolean("safetyMode");
     }
 
+    public static boolean isRotoGlideEnabled(ItemStack stack) {
+        CompoundTag tag = getPhoneTag(stack);
+        return tag.getBoolean("rotoGlide");
+    }
+
     public static void setRotomName(ItemStack stack, String name) {
         modifyPhoneTag(stack, tag -> tag.putString("name", name));
     }
@@ -112,6 +119,10 @@ public class RotomPhoneItem extends Item {
 
     public static void setSafetyMode(ItemStack stack, boolean mode) {
         modifyPhoneTag(stack, tag -> tag.putBoolean("safetyMode", mode));
+    }
+
+    public static void setRotoGlideEnabled(ItemStack stack, boolean enabled) {
+        modifyPhoneTag(stack, tag -> tag.putBoolean("rotoGlide", enabled));
     }
 
     private static CompoundTag getPhoneTag(ItemStack stack) {

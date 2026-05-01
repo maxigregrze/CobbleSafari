@@ -281,6 +281,7 @@
 	"effect.cobblesafari.paradox_boost": "Boost Paradoxe",
 	"effect.cobblesafari.legendary_boost": "Boost Legendaire",
 	"effect.cobblesafari.mythical_boost": "Boost Mythique",
+	"effect.cobblesafari.roto_fall": "Roto-Chute",
 	
 	"gui.cobblesafari.underground.title": "Excavation Souterraine",
 	"gui.cobblesafari.underground.treasures_found": "%d trésors détectés !",
@@ -464,6 +465,8 @@
 	"tooltip.cobblesafari.rotomphone.skin": "Skin : %s",
 	"tooltip.cobblesafari.rotomphone.safety_on": "Mode securite : ACTIF",
 	"tooltip.cobblesafari.rotomphone.safety_off": "Mode securite : INACTIF",
+	"tooltip.cobblesafari.rotomphone.roto_glide_on": "Roto-Glide : ACTIF",
+	"tooltip.cobblesafari.rotomphone.roto_glide_off": "Roto-Glide : INACTIF",
 
 	"gui.cobblesafari.rotomphone.menu": "Telephone Motisma",
 	"gui.cobblesafari.rotomphone.error": "Erreur",
@@ -475,6 +478,9 @@
 	"gui.cobblesafari.rotomphone.app.item_finder": "Cherche-Objet",
 	"gui.cobblesafari.rotomphone.app.skin": "Apparences",
 	"gui.cobblesafari.rotomphone.app.settings": "Parametres",
+	"gui.cobblesafari.rotomphone.settings.title": "App Parametres",
+	"gui.cobblesafari.rotomphone.settings.safety_toggle": "Mode securite",
+	"gui.cobblesafari.rotomphone.settings.roto_glide_toggle": "Roto-Glide",
 	"gui.cobblesafari.rotomphone.safety_on": "Securite : ACTIF",
 	"gui.cobblesafari.rotomphone.safety_off": "Securite : INACTIF",
 	"gui.cobblesafari.rotomphone.confirm": "Confirmer",

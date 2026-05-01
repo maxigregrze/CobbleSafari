@@ -77,8 +77,10 @@ public class CobbleSafariClientFabric implements ClientModInitializer {
         }
 
 
-        ClientTickEvents.END_CLIENT_TICK.register(client ->
-                maxigregrze.cobblesafari.client.screen.rotomphone.RotomPhonePcSession.tickCleanup(client));
+        ClientTickEvents.END_CLIENT_TICK.register(client -> {
+            maxigregrze.cobblesafari.client.screen.rotomphone.RotomPhonePcSession.tickCleanup(client);
+            maxigregrze.cobblesafari.client.rotomphone.RotoGlideClient.tick(client);
+        });
     }
 
     private void registerTooltips() {

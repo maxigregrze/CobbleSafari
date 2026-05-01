@@ -20,8 +20,9 @@ public class RotomPhoneServerHandler {
         boolean shiny = RotomPhoneItem.isShiny(phoneStack);
         String skin = RotomPhoneItem.getCurrentSkin(phoneStack);
         boolean safety = RotomPhoneItem.isSafetyMode(phoneStack);
+        boolean rotoGlide = RotomPhoneItem.isRotoGlideEnabled(phoneStack);
         Services.PLATFORM.sendPayloadToPlayer(player,
-                new OpenRotomPhonePayload(name, shiny, skin, safety));
+                new OpenRotomPhonePayload(name, shiny, skin, safety, rotoGlide));
     }
 
     public static void handleAction(ServerPlayer player, RotomPhoneActionPayload payload) {
@@ -43,6 +44,10 @@ public class RotomPhoneServerHandler {
             case RotomPhoneActionPayload.ACTION_TOGGLE_SAFETY -> {
                 boolean current = RotomPhoneItem.isSafetyMode(phoneStack);
                 RotomPhoneItem.setSafetyMode(phoneStack, !current);
+            }
+            case RotomPhoneActionPayload.ACTION_TOGGLE_ROTO_GLIDE -> {
+                boolean current = RotomPhoneItem.isRotoGlideEnabled(phoneStack);
+                RotomPhoneItem.setRotoGlideEnabled(phoneStack, !current);
             }
             case RotomPhoneActionPayload.ACTION_OPEN_PC -> {
                 try {

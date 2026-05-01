@@ -4,9 +4,8 @@ import io.wispforest.accessories.api.Accessory;
 import io.wispforest.accessories.api.slot.SlotReference;
 import maxigregrze.cobblesafari.init.ModItems;
 import maxigregrze.cobblesafari.item.RotomPhoneItem;
+import maxigregrze.cobblesafari.rotomphone.RotomPhoneSafetyTick;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 
@@ -22,10 +21,6 @@ public class RotomPhoneAccessory implements Accessory {
         LivingEntity entity = reference.entity();
         if (entity.level().isClientSide() || !(entity instanceof ServerPlayer player)) return;
         if (!RotomPhoneItem.isSafetyMode(stack)) return;
-        if (player.fallDistance > 1.0f && player.getDeltaMovement().y < -0.1) {
-            if (!player.hasEffect(MobEffects.SLOW_FALLING)) {
-                player.addEffect(new MobEffectInstance(MobEffects.SLOW_FALLING, 20, 0, false, false, true));
-            }
-        }
+        RotomPhoneSafetyTick.tryApplyRotoFall(player);
     }
 }

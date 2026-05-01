@@ -15,6 +15,7 @@ public record RotomPhoneActionPayload(
     public static final int ACTION_TOGGLE_SAFETY = 1;
     public static final int ACTION_OPEN_PC = 2;
     public static final int ACTION_CLOSE = 3;
+    public static final int ACTION_TOGGLE_ROTO_GLIDE = 4;
 
     public static final CustomPacketPayload.Type<RotomPhoneActionPayload> TYPE =
             new CustomPacketPayload.Type<>(ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, "rotom_phone_action"));
