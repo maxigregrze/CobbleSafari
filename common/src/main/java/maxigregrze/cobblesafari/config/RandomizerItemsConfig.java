@@ -72,6 +72,9 @@ public class RandomizerItemsConfig {
             try (Reader reader = Files.newBufferedReader(CONFIG_PATH)) {
                 INSTANCE = GSON.fromJson(reader, RandomizerItemsConfig.class);
                 if (INSTANCE == null) {
+                    CobbleSafari.LOGGER.warn(
+                            "CobbleSafari >> randomizer_items_config.json at {} deserialized to null; using defaults",
+                            CONFIG_PATH);
                     INSTANCE = new RandomizerItemsConfig();
                 }
                 if (INSTANCE.availablePokeBalls == null) {
@@ -80,17 +83,37 @@ public class RandomizerItemsConfig {
                 if (INSTANCE.redChainRandomShinyRollMax == null) {
                     INSTANCE.redChainRandomShinyRollMax = 4095;
                 }
+                CobbleSafari.LOGGER.info("CobbleSafari >> randomizer_items_config.json loaded successfully from {}", CONFIG_PATH);
+                CobbleSafari.LOGGER.info("CobbleSafari >> Persisting randomizer_items_config.json after load (normalized null fields to defaults)");
                 save();
-                CobbleSafari.LOGGER.info("Randomizer items config loaded from {}", CONFIG_PATH);
-                return;
             } catch (IOException e) {
-                CobbleSafari.LOGGER.error("Failed to load randomizer items config, using defaults", e);
+                CobbleSafari.LOGGER.error(
+                        "CobbleSafari >> Failed to read randomizer_items_config.json at {} (I/O error). Using defaults and creating a new file from defaults.",
+                        CONFIG_PATH,
+                        e);
+                INSTANCE = new RandomizerItemsConfig();
+                INSTANCE.redChainRandomShinyRollMax = 4095;
+                CobbleSafari.LOGGER.info("CobbleSafari >> Persisting randomizer_items_config.json after load (recovery from read error)");
+                save();
+            } catch (Exception e) {
+                CobbleSafari.LOGGER.error(
+                        "CobbleSafari >> Failed to parse randomizer_items_config.json at {} (invalid JSON). Using defaults and creating a new file from defaults.",
+                        CONFIG_PATH,
+                        e);
+                INSTANCE = new RandomizerItemsConfig();
+                INSTANCE.redChainRandomShinyRollMax = 4095;
+                CobbleSafari.LOGGER.info("CobbleSafari >> Persisting randomizer_items_config.json after load (recovery from parse error)");
+                save();
             }
+        } else {
+            CobbleSafari.LOGGER.info(
+                    "CobbleSafari >> randomizer_items_config.json not found at {}, creating default file",
+                    CONFIG_PATH);
+            INSTANCE = new RandomizerItemsConfig();
+            INSTANCE.redChainRandomShinyRollMax = 4095;
+            CobbleSafari.LOGGER.info("CobbleSafari >> Persisting randomizer_items_config.json after load (first-time default file)");
+            save();
         }
-
-        INSTANCE = new RandomizerItemsConfig();
-        INSTANCE.redChainRandomShinyRollMax = 4095;
-        save();
     }
 
     public static void save() {
@@ -104,9 +127,10 @@ public class RandomizerItemsConfig {
             Files.createDirectories(CONFIG_DIR);
             try (Writer writer = Files.newBufferedWriter(CONFIG_PATH)) {
                 GSON.toJson(INSTANCE, writer);
+                CobbleSafari.LOGGER.info("CobbleSafari >> randomizer_items_config.json written to {}", CONFIG_PATH);
             }
         } catch (IOException e) {
-            CobbleSafari.LOGGER.error("Failed to save randomizer items config", e);
+            CobbleSafari.LOGGER.error("CobbleSafari >> Failed to save randomizer_items_config.json", e);
         }
     }
 

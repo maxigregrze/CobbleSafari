@@ -106,7 +106,9 @@ public class TeleporterTickHandler {
             if (!canPayAgain) {
                 Long lastMessageTick = noTimeMessageCooldown.get(playerId);
                 if (lastMessageTick == null || currentServerTick - lastMessageTick > NO_TIME_MESSAGE_COOLDOWN_TICKS) {
-                    player.sendSystemMessage(Component.translatable("cobblesafari.teleporter.no_time"));
+                    player.sendSystemMessage(Component.translatable(
+                            "cobblesafari.teleporter.no_time",
+                            TimerManager.formatTimeUntilNextDailyReset(timerData)));
                     noTimeMessageCooldown.put(playerId, currentServerTick);
                 }
                 return;
@@ -162,7 +164,9 @@ public class TeleporterTickHandler {
         if (timerData.getRemainingTicks() <= 0 && !bypassed) {
             boolean canPayAgain = SafariConfig.isAllowPaidReentry();
             if (!canPayAgain) {
-                player.sendSystemMessage(Component.translatable("cobblesafari.teleporter.no_time"));
+                player.sendSystemMessage(Component.translatable(
+                        "cobblesafari.teleporter.no_time",
+                        TimerManager.formatTimeUntilNextDailyReset(timerData)));
                 ModNetworking.sendCloseTpAccept(player);
                 declinedOrFailed.add(playerId);
                 return;

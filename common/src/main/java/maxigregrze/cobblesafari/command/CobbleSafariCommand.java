@@ -120,6 +120,7 @@ public class CobbleSafariCommand {
                         .then(Commands.literal("refresh")
                                 .requires(source -> source.hasPermission(4))
                                 .executes(CobbleSafariCommand::executeRefresh))
+                        .then(DonutCobbleCommand.donutLiteral())
                         .then(Commands.literal("dungeon")
                         .then(Commands.literal("spawn")
                                 .executes(CobbleSafariCommand::executeDungeonSpawnSelf)

@@ -1,0 +1,16 @@
+{
+    "ingredient": "cobblesafari:hyperberry_ganlon",
+    "colour": "yellow",
+    "flavours": {
+        "SWEET": 55,
+        "BITTER": 80
+    },
+    "baitEffects": [
+        {
+            "type": "cobblemon:iv",
+            "chance": 1.0,
+            "value": 10.0,
+            "subcategory": "cobblemon:def"
+        }
+    ]
+}

@@ -34,6 +34,7 @@ public class PortalSpawnConfig {
     private int spawnRadiusMin = 32;
     private int spawnRadiusMax = 80;
     private boolean enabled = true;
+    private Float spawnChance = 1.0f;
     private List<DungeonDimensionEntry> dimensions = new ArrayList<>();
 
     public PortalSpawnConfig() {
@@ -75,6 +76,7 @@ public class PortalSpawnConfig {
                 if (INSTANCE.dimensions == null) {
                     INSTANCE.dimensions = new ArrayList<>();
                 }
+                clampSpawnChanceInInstance();
                 addMissingDimensions();
                 save();
                 CobbleSafari.LOGGER.info("Dungeon portal config loaded from {}", CONFIG_PATH);
@@ -85,6 +87,18 @@ public class PortalSpawnConfig {
         } else {
             INSTANCE = new PortalSpawnConfig();
             save();
+        }
+    }
+
+    private static void clampSpawnChanceInInstance() {
+        if (INSTANCE == null) return;
+        if (INSTANCE.spawnChance == null) {
+            INSTANCE.spawnChance = 1.0f;
+            return;
+        }
+        float v = INSTANCE.spawnChance;
+        if (v < 0f || v > 1f) {
+            INSTANCE.spawnChance = Math.clamp(v, 0f, 1f);
         }
     }
 
@@ -176,6 +190,12 @@ public class PortalSpawnConfig {
 
     public static boolean isEnabled() {
         return getInstance().enabled;
+    }
+
+    public static float getSpawnChance() {
+        Float c = getInstance().spawnChance;
+        float v = c == null ? 1.0f : c;
+        return Math.clamp(v, 0f, 1f);
     }
 
     public static Optional<DungeonDimensionEntry> getDimensionConfig(String dimensionId) {

@@ -27,9 +27,13 @@ import maxigregrze.cobblesafari.client.screen.BasePCScreen;
 import maxigregrze.cobblesafari.underground.UndergroundMinigame;
 import maxigregrze.cobblesafari.underground.UndergroundScreen;
 import maxigregrze.cobblesafari.client.audio.DungeonMusicHandler;
+import maxigregrze.cobblesafari.client.DonutItemClientSetup;
+import maxigregrze.cobblesafari.client.donut.DonutFlavorClientTooltip;
+import maxigregrze.cobblesafari.item.donut.DonutTooltipPayload;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
+import net.fabricmc.fabric.api.client.rendering.v1.TooltipComponentCallback;
 import net.fabricmc.fabric.api.client.item.v1.ItemTooltipCallback;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry;
@@ -59,11 +63,18 @@ public class CobbleSafariClientFabric implements ClientModInitializer {
 
     @Override
     public void onInitializeClient() {
+        TooltipComponentCallback.EVENT.register(data -> {
+            if (data instanceof DonutTooltipPayload p) {
+                return new DonutFlavorClientTooltip(p);
+            }
+            return null;
+        });
         DimensionSpecialEffectsAccessor.getEffects().put(
                 ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, "dungeon_distortion"),
                 new DungeonDistortionDimensionEffects()
         );
         registerTooltips();
+        DonutItemClientSetup.registerItemProperties();
         registerClientNetworking();
         registerHud();
         registerBlockRenderLayers();
@@ -121,6 +132,7 @@ public class CobbleSafariClientFabric implements ClientModInitializer {
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.HOOPA_RING_PORTAL, RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.DUNGEON_PORTAL, RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.CREATIVE_DUNGEON_PORTAL, RenderType.cutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.DUNGEON_PORTAL_EFFECT, RenderType.translucent());
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.GIRATINA_CORE, RenderType.translucent());
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.GIRATINA_CORE_N, RenderType.translucent());
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.GIRATINA_CORE_NE, RenderType.translucent());

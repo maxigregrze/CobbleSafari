@@ -1,6 +1,5 @@
 package maxigregrze.cobblesafari.init;
 
-import com.cobblemon.mod.common.api.pokemon.stats.Stats;
 import maxigregrze.cobblesafari.CobbleSafari;
 import maxigregrze.cobblesafari.config.SpawnBoostConfig;
 import maxigregrze.cobblesafari.item.BaitItem;
@@ -10,9 +9,14 @@ import maxigregrze.cobblesafari.item.IncenseItem;
 import maxigregrze.cobblesafari.item.LuckyMiningHelmetItem;
 import maxigregrze.cobblesafari.item.MudBallItem;
 import maxigregrze.cobblesafari.item.RotomPhoneItem;
+import com.cobblemon.mod.common.api.pokemon.stats.Stats;
+import maxigregrze.cobblesafari.item.donut.DonutItem;
+import maxigregrze.cobblesafari.item.donut.DungeonDonutItem;
+import maxigregrze.cobblesafari.item.hyperberries.HyperBerryEnigmaItem;
 import maxigregrze.cobblesafari.item.hyperberries.HyperBerryEVItem;
-import maxigregrze.cobblesafari.item.hyperberries.HyperBerryFriendshipItem;
 import maxigregrze.cobblesafari.item.hyperberries.HyperBerryIVItem;
+import maxigregrze.cobblesafari.item.hyperberries.HyperBerryStarfItem;
+import maxigregrze.cobblesafari.item.donut.DungeonIngredientItem;
 import maxigregrze.cobblesafari.item.redchainrandom.RedChainFragmentItem;
 import maxigregrze.cobblesafari.item.redchainrandom.RedChainRandomBallItem;
 import maxigregrze.cobblesafari.item.redchainrandom.RedChainRandomEVItem;
@@ -29,9 +33,9 @@ import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ArmorMaterial;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.Rarity;
 import net.minecraft.world.item.crafting.Ingredient;
-import java.util.function.Supplier;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -114,19 +118,44 @@ public class ModItems {
     public static final Item REDCHAIN_RANDOM_SHINY = new RedChainRandomShinyItem(new Item.Properties().stacksTo(1), "redchain_random_shiny");
     public static final Item REDCHAIN_FRAGMENT = new RedChainFragmentItem(new Item.Properties().stacksTo(64));
 
-    public static final Item HYPERBERRY_ENIGMA = new HyperBerryFriendshipItem(new Item.Properties().stacksTo(1).rarity(Rarity.RARE), "hyperberry_enigma");
-    public static final Item HYPERBERRY_TAMATO = new HyperBerryEVItem(new Item.Properties().stacksTo(1).rarity(Rarity.RARE), "hyperberry_tamato", Stats.SPEED);
-    public static final Item HYPERBERRY_GREPA = new HyperBerryEVItem(new Item.Properties().stacksTo(1).rarity(Rarity.RARE), "hyperberry_grepa", Stats.SPECIAL_DEFENCE);
-    public static final Item HYPERBERRY_HONDEW = new HyperBerryEVItem(new Item.Properties().stacksTo(1).rarity(Rarity.RARE), "hyperberry_hondew", Stats.SPECIAL_ATTACK);
-    public static final Item HYPERBERRY_QUALOT = new HyperBerryEVItem(new Item.Properties().stacksTo(1).rarity(Rarity.RARE), "hyperberry_qualot", Stats.DEFENCE);
-    public static final Item HYPERBERRY_KELPSY = new HyperBerryEVItem(new Item.Properties().stacksTo(1).rarity(Rarity.RARE), "hyperberry_kelpsy", Stats.ATTACK);
-    public static final Item HYPERBERRY_POMEG = new HyperBerryEVItem(new Item.Properties().stacksTo(1).rarity(Rarity.RARE), "hyperberry_pomeg", Stats.HP);
-    public static final Item HYPERBERRY_SALAC = new HyperBerryIVItem(new Item.Properties().stacksTo(1).rarity(Rarity.RARE), "hyperberry_salac", Stats.SPEED);
-    public static final Item HYPERBERRY_APICOT = new HyperBerryIVItem(new Item.Properties().stacksTo(1).rarity(Rarity.RARE), "hyperberry_apicot", Stats.SPECIAL_DEFENCE);
-    public static final Item HYPERBERRY_PETAYA = new HyperBerryIVItem(new Item.Properties().stacksTo(1).rarity(Rarity.RARE), "hyperberry_petaya", Stats.SPECIAL_ATTACK);
-    public static final Item HYPERBERRY_GANLON = new HyperBerryIVItem(new Item.Properties().stacksTo(1).rarity(Rarity.RARE), "hyperberry_ganlon", Stats.DEFENCE);
-    public static final Item HYPERBERRY_LIECHI = new HyperBerryIVItem(new Item.Properties().stacksTo(1).rarity(Rarity.RARE), "hyperberry_liechi", Stats.ATTACK);
-    public static final Item HYPERBERRY_STARF = new HyperBerryIVItem(new Item.Properties().stacksTo(1).rarity(Rarity.RARE), "hyperberry_starf", Stats.HP);
+    public static final Item HYPERBERRY_ENIGMA = new HyperBerryEnigmaItem(new Item.Properties().rarity(Rarity.RARE), "hyperberry_enigma");
+    public static final Item HYPERBERRY_TAMATO = new HyperBerryEVItem(new Item.Properties().rarity(Rarity.RARE), "hyperberry_tamato", Stats.SPEED);
+    public static final Item HYPERBERRY_GREPA = new HyperBerryEVItem(new Item.Properties().rarity(Rarity.RARE), "hyperberry_grepa", Stats.SPECIAL_DEFENCE);
+    public static final Item HYPERBERRY_HONDEW = new HyperBerryEVItem(new Item.Properties().rarity(Rarity.RARE), "hyperberry_hondew", Stats.SPECIAL_ATTACK);
+    public static final Item HYPERBERRY_QUALOT = new HyperBerryEVItem(new Item.Properties().rarity(Rarity.RARE), "hyperberry_qualot", Stats.DEFENCE);
+    public static final Item HYPERBERRY_KELPSY = new HyperBerryEVItem(new Item.Properties().rarity(Rarity.RARE), "hyperberry_kelpsy", Stats.ATTACK);
+    public static final Item HYPERBERRY_POMEG = new HyperBerryEVItem(new Item.Properties().rarity(Rarity.RARE), "hyperberry_pomeg", Stats.HP);
+    public static final Item HYPERBERRY_SALAC = new HyperBerryIVItem(new Item.Properties().rarity(Rarity.RARE), "hyperberry_salac", Stats.SPEED);
+    public static final Item HYPERBERRY_APICOT = new HyperBerryIVItem(new Item.Properties().rarity(Rarity.RARE), "hyperberry_apicot", Stats.SPECIAL_DEFENCE);
+    public static final Item HYPERBERRY_PETAYA = new HyperBerryIVItem(new Item.Properties().rarity(Rarity.RARE), "hyperberry_petaya", Stats.SPECIAL_ATTACK);
+    public static final Item HYPERBERRY_GANLON = new HyperBerryIVItem(new Item.Properties().rarity(Rarity.RARE), "hyperberry_ganlon", Stats.DEFENCE);
+    public static final Item HYPERBERRY_LIECHI = new HyperBerryIVItem(new Item.Properties().rarity(Rarity.RARE), "hyperberry_liechi", Stats.ATTACK);
+    public static final Item HYPERBERRY_STARF = new HyperBerryStarfItem(new Item.Properties().rarity(Rarity.RARE), "hyperberry_starf");
+    public static final Item HYPERBERRY_LANSAT = new HyperBerryIVItem(new Item.Properties().rarity(Rarity.RARE), "hyperberry_lansat", Stats.HP);
+    // Donut system
+    public static final Item DONUT_MIX = new Item(new Item.Properties());
+    public static final Item BUTTER_LUMINOSIAN = new Item(new Item.Properties());
+    public static final Item BUTTER_GREAT = new Item(new Item.Properties());
+    public static final Item BUTTER_AMAZING = new Item(new Item.Properties());
+    public static final Item BUTTER_SUPREME = new Item(new Item.Properties());
+    public static final Item BUTTER_HYPERSPACE = new Item(new Item.Properties());
+    private static final FoodProperties DONUT_FOOD_PROPERTIES = new FoodProperties.Builder()
+            .nutrition(2)
+            .saturationModifier(0.25f)
+            .alwaysEdible()
+            .build();
+
+    public static final Item DONUT = new DonutItem(new Item.Properties().stacksTo(16).food(DONUT_FOOD_PROPERTIES));
+    public static final Item INGREDIENT_DUNGEON_PORTAL = new DungeonIngredientItem(new Item.Properties().stacksTo(1).rarity(Rarity.RARE));
+    public static final Item INGREDIENT_DUNGEON_PARIS = new DungeonIngredientItem(new Item.Properties().stacksTo(1).rarity(Rarity.RARE));
+    public static final Item INGREDIENT_DUNGEON_DISTORTION = new DungeonIngredientItem(new Item.Properties().stacksTo(1).rarity(Rarity.RARE));
+    public static final Item INGREDIENT_DUNGEON_UNDERGROUND = new DungeonIngredientItem(new Item.Properties().stacksTo(1).rarity(Rarity.RARE));
+    public static final Item DONUT_DUNGEON_PORTAL = new DungeonDonutItem(new Item.Properties().stacksTo(1).rarity(Rarity.EPIC), null);
+    public static final Item DONUT_DUNGEON_PARIS = new DungeonDonutItem(new Item.Properties().stacksTo(1).rarity(Rarity.EPIC), null);
+    public static final Item DONUT_DUNGEON_DISTORTION = new DungeonDonutItem(
+            new Item.Properties().stacksTo(1).rarity(Rarity.EPIC), "cobblesafari:dungeon_distortion");
+    public static final Item DONUT_DUNGEON_UNDERGROUND = new DungeonDonutItem(
+            new Item.Properties().stacksTo(1).rarity(Rarity.EPIC), "cobblesafari:dungeon_underground");
 
     public static Item LUCKY_MINING_HELMET;
 
@@ -230,6 +259,7 @@ public class ModItems {
 
         registerItem("mud_ball", MUD_BALL);
         registerItem("bait", BAIT);
+
         registerItem("redchain_random_ball", REDCHAIN_RANDOM_BALL);
         registerItem("redchain_random_ev", REDCHAIN_RANDOM_EV);
         registerItem("redchain_random_gender", REDCHAIN_RANDOM_GENDER);
@@ -237,6 +267,7 @@ public class ModItems {
         registerItem("redchain_random_level", REDCHAIN_RANDOM_LEVEL);
         registerItem("redchain_random_shiny", REDCHAIN_RANDOM_SHINY);
         registerItem("redchain_fragment", REDCHAIN_FRAGMENT);
+
         registerItem("hyperberry_enigma", HYPERBERRY_ENIGMA);
         registerItem("hyperberry_tamato", HYPERBERRY_TAMATO);
         registerItem("hyperberry_grepa", HYPERBERRY_GREPA);
@@ -250,6 +281,23 @@ public class ModItems {
         registerItem("hyperberry_ganlon", HYPERBERRY_GANLON);
         registerItem("hyperberry_liechi", HYPERBERRY_LIECHI);
         registerItem("hyperberry_starf", HYPERBERRY_STARF);
+        registerItem("hyperberry_lansat", HYPERBERRY_LANSAT);
+
+        registerItem("donut_mix", DONUT_MIX);
+        registerItem("butter_luminosian", BUTTER_LUMINOSIAN);
+        registerItem("butter_great", BUTTER_GREAT);
+        registerItem("butter_amazing", BUTTER_AMAZING);
+        registerItem("butter_supreme", BUTTER_SUPREME);
+        registerItem("butter_hyperspace", BUTTER_HYPERSPACE);
+        registerItem("donut", DONUT);
+        registerItem("ingredient_dungeon_portal", INGREDIENT_DUNGEON_PORTAL);
+        registerItem("ingredient_dungeon_paris", INGREDIENT_DUNGEON_PARIS);
+        registerItem("ingredient_dungeon_distortion", INGREDIENT_DUNGEON_DISTORTION);
+        registerItem("ingredient_dungeon_underground", INGREDIENT_DUNGEON_UNDERGROUND);
+        registerItem("donut_dungeon_portal", DONUT_DUNGEON_PORTAL);
+        registerItem("donut_dungeon_paris", DONUT_DUNGEON_PARIS);
+        registerItem("donut_dungeon_distortion", DONUT_DUNGEON_DISTORTION);
+        registerItem("donut_dungeon_underground", DONUT_DUNGEON_UNDERGROUND);
 
         Holder<ArmorMaterial> luckyHelmetMaterial = Registry.registerForHolder(
                 BuiltInRegistries.ARMOR_MATERIAL,
@@ -324,5 +372,21 @@ public class ModItems {
         BATCH_ITEMS.add(HYPERBERRY_GANLON);
         BATCH_ITEMS.add(HYPERBERRY_LIECHI);
         BATCH_ITEMS.add(HYPERBERRY_STARF);
+        BATCH_ITEMS.add(HYPERBERRY_LANSAT);
+        BATCH_ITEMS.add(DONUT_MIX);
+        BATCH_ITEMS.add(BUTTER_LUMINOSIAN);
+        BATCH_ITEMS.add(BUTTER_GREAT);
+        BATCH_ITEMS.add(BUTTER_AMAZING);
+        BATCH_ITEMS.add(BUTTER_SUPREME);
+        BATCH_ITEMS.add(BUTTER_HYPERSPACE);
+        BATCH_ITEMS.add(DONUT);
+        BATCH_ITEMS.add(INGREDIENT_DUNGEON_PORTAL);
+        BATCH_ITEMS.add(INGREDIENT_DUNGEON_PARIS);
+        BATCH_ITEMS.add(INGREDIENT_DUNGEON_DISTORTION);
+        BATCH_ITEMS.add(INGREDIENT_DUNGEON_UNDERGROUND);
+        BATCH_ITEMS.add(DONUT_DUNGEON_PORTAL);
+        BATCH_ITEMS.add(DONUT_DUNGEON_PARIS);
+        BATCH_ITEMS.add(DONUT_DUNGEON_DISTORTION);
+        BATCH_ITEMS.add(DONUT_DUNGEON_UNDERGROUND);
     }
 }

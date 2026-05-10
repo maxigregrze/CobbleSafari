@@ -1,0 +1,16 @@
+{
+    "ingredient": "cobblesafari:hyperberry_apicot",
+    "colour": "pink",
+    "flavours": {
+        "SPICY": 80,
+        "SOUR": 55
+    },
+    "baitEffects": [
+        {
+            "type": "cobblemon:iv",
+            "chance": 1.0,
+            "value": 10.0,
+            "subcategory": "cobblemon:spd"
+        }
+    ]
+}

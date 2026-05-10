@@ -1,0 +1,16 @@
+{
+    "ingredient": "cobblesafari:hyperberry_hondew",
+    "colour": "purple",
+    "flavours": {
+        "DRY": 40,
+        "SOUR": 75
+    },
+    "baitEffects": [
+        {
+            "type": "cobblemon:ev",
+            "subcategory": "spa",
+            "chance": 1.0,
+            "value": 200.0
+        }
+    ]
+}

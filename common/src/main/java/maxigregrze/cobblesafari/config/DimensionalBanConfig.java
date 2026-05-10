@@ -84,8 +84,13 @@ public class DimensionalBanConfig {
         boolean needsSave = false;
 
         if (!Files.exists(CONFIG_PATH)) {
-            save();
-            CobbleSafari.LOGGER.info("CobbleSafari >> No dimensional ban config found, writing defaults!");
+            CobbleSafari.LOGGER.info(
+                    "CobbleSafari >> dimensional_restrictions_config.json not found at {}, creating default file",
+                    CONFIG_PATH);
+            persistAfterLoadNormalization("first-time default file");
+            CobbleSafari.LOGGER.info(
+                    "CobbleSafari >> dimensional_restrictions_config.json default values written to {}",
+                    CONFIG_PATH);
             return;
         }
 
@@ -95,6 +100,17 @@ public class DimensionalBanConfig {
             JsonObject json = JsonParser.parseReader(reader).getAsJsonObject();
             JsonObject defaultJson = GSON.toJsonTree(new DimensionalBanData()).getAsJsonObject();
 
+            JsonObject defaultDims = defaultJson.getAsJsonObject("dimensions");
+            JsonObject userDims = json.has("dimensions") && json.get("dimensions").isJsonObject()
+                    ? json.getAsJsonObject("dimensions")
+                    : new JsonObject();
+            JsonElement dimensionsSnapshotBeforeMerge = JsonParser.parseString(GSON.toJson(userDims));
+            JsonObject mergedDims = mergeDimensionsPreservingCustomEntries(userDims, defaultDims);
+            if (!dimensionsSnapshotBeforeMerge.equals(JsonParser.parseString(GSON.toJson(mergedDims)))) {
+                needsSave = true;
+            }
+            json.add("dimensions", mergedDims);
+
             int loadedVersion = json.has("CONFIG_VERSION") ? json.get("CONFIG_VERSION").getAsInt() : 0;
             if (loadedVersion < CONFIG_VERSION) {
                 CobbleSafari.LOGGER.info("CobbleSafari >> Dimensional ban config migrating from v{} to v{}!", loadedVersion, CONFIG_VERSION);
@@ -102,21 +118,54 @@ public class DimensionalBanConfig {
                 needsSave = true;
             }
 
-            JsonElement upgraded = upgrade(json, defaultJson);
-            if (!upgraded.equals(json)) {
-                CobbleSafari.LOGGER.info("CobbleSafari >> Dimensional ban config upgraded!");
-                needsSave = true;
+            List<String> topLevelKeys = new ArrayList<>(json.keySet());
+            for (String key : topLevelKeys) {
+                if (!key.equals("dimensions") && !key.equals("CONFIG_VERSION")) {
+                    json.remove(key);
+                    needsSave = true;
+                }
             }
 
-            data = GSON.fromJson(upgraded, DimensionalBanData.class);
+            data = GSON.fromJson(json, DimensionalBanData.class);
+            CobbleSafari.LOGGER.info("CobbleSafari >> dimensional_restrictions_config.json loaded successfully from {}", CONFIG_PATH);
 
         } catch (Exception e) {
-            CobbleSafari.LOGGER.error("CobbleSafari >> Failed to load dimensional ban config, using defaults!", e);
+            CobbleSafari.LOGGER.error(
+                    "CobbleSafari >> Failed to read or parse dimensional_restrictions_config.json at {} (invalid JSON or unexpected structure). Using in-memory defaults; the file on disk was not overwritten.",
+                    CONFIG_PATH,
+                    e);
             return;
         }
 
-        if (needsSave) save();
-        CobbleSafari.LOGGER.info("CobbleSafari >> Dimensional ban config loaded!");
+        if (needsSave) {
+            persistAfterLoadNormalization("version bump, schema merge, or restored custom dimension entries");
+        }
+    }
+
+    private static void persistAfterLoadNormalization(String reason) {
+        CobbleSafari.LOGGER.info(
+                "CobbleSafari >> Persisting dimensional_restrictions_config.json after load ({})",
+                reason);
+        save();
+    }
+
+    private static JsonObject mergeDimensionsPreservingCustomEntries(JsonObject userDims, JsonObject defaultDims) {
+        JsonObject userWorking = userDims == null || userDims.size() == 0
+                ? new JsonObject()
+                : JsonParser.parseString(GSON.toJson(userDims)).getAsJsonObject();
+        JsonObject emptyRestrictionTemplate = GSON.toJsonTree(new DimensionalBanData.DimensionRestrictions()).getAsJsonObject();
+        JsonObject result = new JsonObject();
+        for (String key : userWorking.keySet()) {
+            JsonElement userVal = userWorking.get(key);
+            JsonElement template = defaultDims.has(key) ? defaultDims.get(key) : emptyRestrictionTemplate;
+            result.add(key, upgrade(userVal, template));
+        }
+        for (Map.Entry<String, JsonElement> entry : defaultDims.entrySet()) {
+            if (!result.has(entry.getKey())) {
+                result.add(entry.getKey(), entry.getValue());
+            }
+        }
+        return result;
     }
 
     public static void save() {
@@ -141,7 +190,7 @@ public class DimensionalBanConfig {
             }
             GSON.toJson(json, out);
         } catch (Exception e) {
-            CobbleSafari.LOGGER.error("CobbleSafari >> Failed to save dimensional ban config!", e);
+            CobbleSafari.LOGGER.error("CobbleSafari >> Failed to save dimensional_restrictions_config.json", e);
         }
     }
 

@@ -32,6 +32,9 @@ import maxigregrze.cobblesafari.underground.UndergroundScreen;
 import maxigregrze.cobblesafari.underground.network.UndergroundPayloads;
 import maxigregrze.cobblesafari.client.DungeonDistortionDimensionEffects;
 import maxigregrze.cobblesafari.client.audio.DungeonMusicHandler;
+import maxigregrze.cobblesafari.client.DonutItemClientSetup;
+import maxigregrze.cobblesafari.client.donut.DonutFlavorClientTooltip;
+import maxigregrze.cobblesafari.item.donut.DonutTooltipPayload;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.inventory.BookViewScreen;
@@ -47,6 +50,7 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 import net.neoforged.neoforge.client.event.RegisterDimensionSpecialEffectsEvent;
+import net.neoforged.neoforge.client.event.RegisterClientTooltipComponentFactoriesEvent;
 import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
 import net.neoforged.neoforge.client.event.RenderGuiLayerEvent;
 import net.neoforged.neoforge.client.gui.VanillaGuiLayers;
@@ -76,6 +80,11 @@ public class CobbleSafariClientNeoForge {
     }
 
     @SubscribeEvent
+    public static void onRegisterTooltipComponentFactories(RegisterClientTooltipComponentFactoriesEvent event) {
+        event.register(DonutTooltipPayload.class, DonutFlavorClientTooltip::new);
+    }
+
+    @SubscribeEvent
     public static void onRegisterMenuScreens(RegisterMenuScreensEvent event) {
         event.register(UndergroundMinigame.MENU_TYPE, UndergroundScreen::new);
         event.register(BasePCMenu.MENU_TYPE, BasePCScreen::new);
@@ -97,6 +106,7 @@ public class CobbleSafariClientNeoForge {
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.HOOPA_RING_PORTAL, RenderType.cutout());
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.DUNGEON_PORTAL, RenderType.cutout());
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.CREATIVE_DUNGEON_PORTAL, RenderType.cutout());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.DUNGEON_PORTAL_EFFECT, RenderType.translucent());
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.GIRATINA_CORE, RenderType.translucent());
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.GIRATINA_CORE_N, RenderType.translucent());
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.GIRATINA_CORE_NE, RenderType.translucent());
@@ -158,6 +168,8 @@ public class CobbleSafariClientNeoForge {
             BlockEntityRenderers.register(ModBlockEntities.DISTORTION_PORTAL, DistortionPortalBlockEntityRenderer::new);
             BlockEntityRenderers.register(ModBlockEntities.LOST_ITEM, LostItemBlockEntityRenderer::new);
         });
+
+        event.enqueueWork(DonutItemClientSetup::registerItemProperties);
 
         NeoForge.EVENT_BUS.addListener(CobbleSafariClientNeoForge::onRenderGuiLayer);
         NeoForge.EVENT_BUS.addListener(CobbleSafariClientNeoForge::onItemTooltip);

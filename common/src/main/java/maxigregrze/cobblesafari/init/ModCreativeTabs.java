@@ -1,6 +1,8 @@
 package maxigregrze.cobblesafari.init;
 
 import maxigregrze.cobblesafari.CobbleSafari;
+import maxigregrze.cobblesafari.item.donut.DonutFlavorComponent;
+import maxigregrze.cobblesafari.item.donut.DonutMainFlavor;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
@@ -25,6 +27,9 @@ public class ModCreativeTabs {
     public static final ResourceKey<CreativeModeTab> DISTORTION_KEY = ResourceKey.create(
             BuiltInRegistries.CREATIVE_MODE_TAB.key(),
             ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, "distortion"));
+    public static final ResourceKey<CreativeModeTab> LUMINOSE_KEY = ResourceKey.create(
+            BuiltInRegistries.CREATIVE_MODE_TAB.key(),
+            ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, "luminose"));
 
     public static final CreativeModeTab SAFARI_UNDERGROUND_TAB = CreativeModeTab.builder(CreativeModeTab.Row.TOP, 0)
             .title(Component.translatable("itemGroup.cobblesafari.underground"))
@@ -149,7 +154,6 @@ public class ModCreativeTabs {
             .icon(() -> new ItemStack(ModItems.AUSPICIOUS_POKEBALL))
             .title(Component.translatable("itemGroup.cobblesafari.paris"))
             .displayItems((params, output) -> {
-                output.accept(ModItems.AUSPICIOUS_POKEBALL);
                 output.accept(ModItems.HYPERBERRY_ENIGMA);
                 output.accept(ModItems.HYPERBERRY_TAMATO);
                 output.accept(ModItems.HYPERBERRY_GREPA);
@@ -163,10 +167,34 @@ public class ModCreativeTabs {
                 output.accept(ModItems.HYPERBERRY_GANLON);
                 output.accept(ModItems.HYPERBERRY_LIECHI);
                 output.accept(ModItems.HYPERBERRY_STARF);
+                output.accept(ModItems.HYPERBERRY_LANSAT);
+                output.accept(ModItems.DONUT_MIX);
+                output.accept(ModItems.BUTTER_LUMINOSIAN);
+                output.accept(ModItems.BUTTER_GREAT);
+                output.accept(ModItems.BUTTER_AMAZING);
+                output.accept(ModItems.BUTTER_SUPREME);
+                output.accept(ModItems.BUTTER_HYPERSPACE);
+                output.accept(ModItems.INGREDIENT_DUNGEON_PORTAL);
+                output.accept(ModItems.INGREDIENT_DUNGEON_UNDERGROUND);
+                output.accept(ModItems.INGREDIENT_DUNGEON_DISTORTION);
+                output.accept(ModItems.INGREDIENT_DUNGEON_PARIS);
+                output.accept(ModItems.DONUT_DUNGEON_PORTAL);
+                output.accept(ModItems.DONUT_DUNGEON_UNDERGROUND);
+                output.accept(ModItems.DONUT_DUNGEON_DISTORTION);
+                output.accept(ModItems.DONUT_DUNGEON_PARIS);
+                output.accept(ModItems.DONUT);
+                for (DonutMainFlavor flavor : DonutMainFlavor.values()) {
+                    for (int tier = 0; tier <= DonutFlavorComponent.MAX_TIER; tier++) {
+                        ItemStack stack = new ItemStack(ModItems.DONUT);
+                        stack.set(ModComponents.DONUT_FLAVOR, new DonutFlavorComponent(flavor, tier));
+                        output.accept(stack);
+                    }
+                }
+                output.accept(ModItems.AUSPICIOUS_POKEBALL);
             })
             .build();
 
-        public static final CreativeModeTab MISC_TAB = CreativeModeTab.builder(CreativeModeTab.Row.TOP, 4)
+    public static final CreativeModeTab MISC_TAB = CreativeModeTab.builder(CreativeModeTab.Row.TOP, 4)
             .icon(() -> new ItemStack(ModItems.REPEL))
             .title(Component.translatable("itemGroup.cobblesafari.misc"))
             .displayItems((params, output) -> {
@@ -198,5 +226,6 @@ public class ModCreativeTabs {
         Registry.register(BuiltInRegistries.CREATIVE_MODE_TAB, SAFARI_DIMENSION_KEY, SAFARI_DIMENSION_TAB);
         Registry.register(BuiltInRegistries.CREATIVE_MODE_TAB, DISTORTION_KEY, DISTORTION_TAB);
         Registry.register(BuiltInRegistries.CREATIVE_MODE_TAB, MISC_KEY, MISC_TAB);
+        Registry.register(BuiltInRegistries.CREATIVE_MODE_TAB, LUMINOSE_KEY, LUMINOSE_TAB);
     }
 }

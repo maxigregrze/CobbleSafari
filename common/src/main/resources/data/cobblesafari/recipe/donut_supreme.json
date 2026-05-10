@@ -1,0 +1,17 @@
+{
+    "type": "cobblemon:cooking_pot_shapeless",
+    "group": "donut",
+    "category": "complex_dishes",
+    "ingredients": [
+        { "item": "cobblesafari:donut_mix" },
+        { "item": "cobblesafari:butter_supreme" }
+    ],
+    "result": {
+        "id": "cobblesafari:donut",
+        "count": 4
+    },
+    "seasoningTag": "cobblemon:recipe_filters/flavour_seasoning",
+    "seasoningProcessors": [
+        "cobblesafari:donut_flavour"
+    ]
+}

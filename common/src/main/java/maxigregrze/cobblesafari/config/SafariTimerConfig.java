@@ -52,15 +52,31 @@ public class SafariTimerConfig {
                         INSTANCE = migrateOldConfig(jsonObject);
                     }
                 } else {
+                    CobbleSafari.LOGGER.warn(
+                            "CobbleSafari >> dimensional_timer_config.json at {} was not a JSON object; using defaults",
+                            CONFIG_PATH);
                     INSTANCE = new SafariTimerConfig();
                 }
-                CobbleSafari.LOGGER.info("Configuration loaded from {}", CONFIG_PATH);
+                CobbleSafari.LOGGER.info("CobbleSafari >> dimensional_timer_config.json loaded successfully from {}", CONFIG_PATH);
             } catch (IOException e) {
-                CobbleSafari.LOGGER.error("Failed to load config, using defaults", e);
+                CobbleSafari.LOGGER.error(
+                        "CobbleSafari >> Failed to read dimensional_timer_config.json at {} (I/O error). Using defaults; the file on disk was not modified.",
+                        CONFIG_PATH,
+                        e);
+                INSTANCE = new SafariTimerConfig();
+            } catch (Exception e) {
+                CobbleSafari.LOGGER.error(
+                        "CobbleSafari >> Failed to parse dimensional_timer_config.json at {} (invalid JSON). Using defaults; the file on disk was not modified.",
+                        CONFIG_PATH,
+                        e);
                 INSTANCE = new SafariTimerConfig();
             }
         } else {
+            CobbleSafari.LOGGER.info(
+                    "CobbleSafari >> dimensional_timer_config.json not found at {}, creating default file",
+                    CONFIG_PATH);
             INSTANCE = new SafariTimerConfig();
+            CobbleSafari.LOGGER.info("CobbleSafari >> Persisting dimensional_timer_config.json after load (first-time default file)");
             save();
         }
     }
@@ -79,6 +95,7 @@ public class SafariTimerConfig {
         }
 
         if (modified) {
+            CobbleSafari.LOGGER.info("CobbleSafari >> Persisting dimensional_timer_config.json after load (added or normalized dimension timer entries)");
             save();
         }
     }
@@ -100,6 +117,7 @@ public class SafariTimerConfig {
             modified |= entry.initializeDefaults();
         }
         if (modified) {
+            CobbleSafari.LOGGER.info("CobbleSafari >> Persisting dimensional_timer_config.json (dungeon registry sync added or normalized entries)");
             save();
         }
     }
@@ -130,6 +148,7 @@ public class SafariTimerConfig {
         if (existing.isEmpty()) {
             INSTANCE.dimensions.add(new DimensionTimerEntry(dimensionId, defaultDurationSeconds, resetHour));
             CobbleSafari.LOGGER.info("Added dimension timer entry: {} ({} min)", dimensionId, defaultDurationSeconds / 60);
+            CobbleSafari.LOGGER.info("CobbleSafari >> Persisting dimensional_timer_config.json (new dimension timer entry)");
             save();
             return true;
         }
@@ -149,7 +168,8 @@ public class SafariTimerConfig {
 
         newConfig.dimensions.add(new DimensionTimerEntry(dimensionId, timerDurationSeconds, resetHour));
 
-        CobbleSafari.LOGGER.info("Migrated old config format to new multi-dimension format");
+        CobbleSafari.LOGGER.info("CobbleSafari >> Migrated legacy dimensional_timer_config.json to multi-dimension format");
+        CobbleSafari.LOGGER.info("CobbleSafari >> Persisting dimensional_timer_config.json after load (legacy format migration)");
         save();
 
         return newConfig;
@@ -188,9 +208,9 @@ public class SafariTimerConfig {
         }
         try (Writer writer = Files.newBufferedWriter(CONFIG_PATH)) {
             GSON.toJson(INSTANCE, writer);
-            CobbleSafari.LOGGER.info("Configuration saved to {}", CONFIG_PATH);
+            CobbleSafari.LOGGER.info("CobbleSafari >> dimensional_timer_config.json written to {}", CONFIG_PATH);
         } catch (IOException e) {
-            CobbleSafari.LOGGER.error("Failed to save config", e);
+            CobbleSafari.LOGGER.error("CobbleSafari >> Failed to save dimensional_timer_config.json", e);
         }
     }
 

@@ -1,0 +1,16 @@
+{
+    "ingredient": "cobblesafari:hyperberry_salac",
+    "colour": "purple",
+    "flavours": {
+        "DRY": 80,
+        "BITTER": 55
+    },
+    "baitEffects": [
+        {
+            "type": "cobblemon:iv",
+            "chance": 1.0,
+            "value": 10.0,
+            "subcategory": "cobblemon:spe"
+        }
+    ]
+}

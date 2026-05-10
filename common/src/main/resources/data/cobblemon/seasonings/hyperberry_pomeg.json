@@ -1,0 +1,19 @@
+{
+    "ingredient": "cobblesafari:hyperberry_pomeg",
+    "colour": "green",
+    "flavours": {
+        "SPICY": 21,
+        "DRY": 21,
+        "SWEET": 21,
+        "SOUR": 21,
+        "BITTER": 21
+    },
+    "baitEffects": [
+        {
+            "type": "cobblemon:ev",
+            "subcategory": "hp",
+            "chance": 1.0,
+            "value": 200.0
+        }
+    ]
+}

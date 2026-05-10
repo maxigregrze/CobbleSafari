@@ -84,17 +84,34 @@ public class SecretBasePCConfig {
             try (Reader reader = Files.newBufferedReader(CONFIG_PATH)) {
                 INSTANCE = GSON.fromJson(reader, SecretBasePCConfig.class);
                 if (INSTANCE == null) {
+                    CobbleSafari.LOGGER.warn(
+                            "CobbleSafari >> secretbase_pc_config.json at {} deserialized to null; using defaults",
+                            CONFIG_PATH);
                     INSTANCE = new SecretBasePCConfig();
                 }
                 validateAndFixConfig();
-                CobbleSafari.LOGGER.info("Secret base PC config loaded from {}", CONFIG_PATH);
+                CobbleSafari.LOGGER.info("CobbleSafari >> secretbase_pc_config.json loaded successfully from {}", CONFIG_PATH);
+                CobbleSafari.LOGGER.info("CobbleSafari >> Persisting secretbase_pc_config.json after load (validated schema)");
                 save();
             } catch (IOException e) {
-                CobbleSafari.LOGGER.error("Failed to load secret base PC config, using defaults", e);
+                CobbleSafari.LOGGER.error(
+                        "CobbleSafari >> Failed to read secretbase_pc_config.json at {} (I/O error). Using in-memory defaults; the file on disk was not modified.",
+                        CONFIG_PATH,
+                        e);
+                INSTANCE = new SecretBasePCConfig();
+            } catch (Exception e) {
+                CobbleSafari.LOGGER.error(
+                        "CobbleSafari >> Failed to parse secretbase_pc_config.json at {} (invalid JSON). Using in-memory defaults; the file on disk was not modified.",
+                        CONFIG_PATH,
+                        e);
                 INSTANCE = new SecretBasePCConfig();
             }
         } else {
+            CobbleSafari.LOGGER.info(
+                    "CobbleSafari >> secretbase_pc_config.json not found at {}, creating default file",
+                    CONFIG_PATH);
             INSTANCE = new SecretBasePCConfig();
+            CobbleSafari.LOGGER.info("CobbleSafari >> Persisting secretbase_pc_config.json after load (first-time default file)");
             save();
         }
     }
@@ -120,7 +137,7 @@ public class SecretBasePCConfig {
         }
         try (Writer writer = Files.newBufferedWriter(CONFIG_PATH)) {
             GSON.toJson(INSTANCE, writer);
-            CobbleSafari.LOGGER.info("Secret base PC config saved to {}", CONFIG_PATH);
+            CobbleSafari.LOGGER.info("CobbleSafari >> secretbase_pc_config.json written to {}", CONFIG_PATH);
         } catch (IOException e) {
             CobbleSafari.LOGGER.error("Failed to save secret base PC config", e);
         }

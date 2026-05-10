@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.Map;
 
 public class SpawnBoostConfig {
-    public static final int CONFIG_VERSION = 1;
+    public static final int CONFIG_VERSION = 4;
     
     private static final Path CONFIG_DIR = Services.PLATFORM.getConfigDir().resolve("cobblesafari");
     private static final Path CONFIG_PATH = CONFIG_DIR.resolve("encounter_boost_config.json");
@@ -55,41 +55,50 @@ public class SpawnBoostConfig {
     public static void load() {
         migrateOldConfigPath();
         boolean needsSave = false;
-        
+
         if (!Files.exists(CONFIG_PATH)) {
+            CobbleSafari.LOGGER.info(
+                    "CobbleSafari >> encounter_boost_config.json not found at {}, creating default file",
+                    CONFIG_PATH);
+            CobbleSafari.LOGGER.info("CobbleSafari >> Persisting encounter_boost_config.json after load (first-time default file)");
             save();
-            CobbleSafari.LOGGER.info("CobbleSafari >> No spawn boost config found, writing defaults!");
             return;
         }
-        
+
         try (Reader in = Files.newBufferedReader(CONFIG_PATH)) {
             JsonReader reader = new JsonReader(in);
             reader.setLenient(true);
             JsonObject json = JsonParser.parseReader(reader).getAsJsonObject();
             JsonObject defaultJson = GSON.toJsonTree(new SpawnBoostConfigData()).getAsJsonObject();
-            
+
             int loadedVersion = json.has("CONFIG_VERSION") ? json.get("CONFIG_VERSION").getAsInt() : 0;
             if (loadedVersion < CONFIG_VERSION) {
                 CobbleSafari.LOGGER.info("CobbleSafari >> Spawn boost config migrating from v{} to v{}!", loadedVersion, CONFIG_VERSION);
                 json.addProperty("CONFIG_VERSION", CONFIG_VERSION);
                 needsSave = true;
             }
-            
+
             JsonElement upgraded = upgrade(json, defaultJson);
             if (!upgraded.equals(json)) {
-                CobbleSafari.LOGGER.info("CobbleSafari >> Spawn boost config upgraded!");
+                CobbleSafari.LOGGER.info("CobbleSafari >> encounter_boost_config.json schema merged with defaults (unknown keys removed or missing keys filled)");
                 needsSave = true;
             }
-            
+
             data = GSON.fromJson(upgraded, SpawnBoostConfigData.class);
-            
+            CobbleSafari.LOGGER.info("CobbleSafari >> encounter_boost_config.json loaded successfully from {}", CONFIG_PATH);
+
         } catch (Exception e) {
-            CobbleSafari.LOGGER.error("CobbleSafari >> Failed to load spawn boost config, using defaults!", e);
+            CobbleSafari.LOGGER.error(
+                    "CobbleSafari >> Failed to read or parse encounter_boost_config.json at {} (invalid JSON or unexpected structure). Keeping previously loaded values in memory; the file on disk was not overwritten.",
+                    CONFIG_PATH,
+                    e);
             return;
         }
-        
-        if (needsSave) save();
-        CobbleSafari.LOGGER.info("CobbleSafari >> Spawn boost config loaded!");
+
+        if (needsSave) {
+            CobbleSafari.LOGGER.info("CobbleSafari >> Persisting encounter_boost_config.json after load (version bump or schema merge)");
+            save();
+        }
     }
     
     public static void save() {
@@ -114,7 +123,7 @@ public class SpawnBoostConfig {
             }
             GSON.toJson(json, out);
         } catch (Exception e) {
-            CobbleSafari.LOGGER.error("CobbleSafari >> Failed to save spawn boost config!", e);
+            CobbleSafari.LOGGER.error("CobbleSafari >> Failed to save encounter_boost_config.json", e);
         }
     }
     

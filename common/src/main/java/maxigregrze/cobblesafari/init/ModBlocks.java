@@ -105,6 +105,15 @@ public class ModBlocks {
                     .noCollission()
             ));
 
+    public static final Block DUNGEON_PORTAL_EFFECT = registerBlockWithoutItem("dungeon_portal_effect",
+            new Block(BlockBehaviour.Properties.of()
+                    .strength(-1.0f, 3600000.0f)
+                    .lightLevel(state -> 10)
+                    .noOcclusion()
+                    .noCollission()
+                    .dynamicShape()
+            ));
+
     public static final Block MAGNETIC_CRYSTAL = registerBlock("magnetic_crystal",
             new MagneticCrystalBlock(BlockBehaviour.Properties.of()
                     .mapColor(MapColor.DEEPSLATE)

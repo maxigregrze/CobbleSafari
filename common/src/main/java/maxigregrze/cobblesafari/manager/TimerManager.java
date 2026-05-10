@@ -22,10 +22,14 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 
+import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -251,6 +255,60 @@ public class TimerManager {
             CobbleSafari.LOGGER.info("Timer reset for player {} in dimension {} (daily reset)",
                     player.getName().getString(), data.getDimensionId());
         }
+    }
+
+    public static String formatTimeUntilNextDailyReset(PlayerTimerData data) {
+        Optional<DimensionTimerEntry> configOpt = SafariTimerConfig.getDimensionConfig(data.getDimensionId());
+        if (configOpt.isPresent() && !configOpt.get().isAllowReset()) {
+            return formatDurationHms(0);
+        }
+        ZoneId zone = ZoneId.systemDefault();
+        ZonedDateTime now = ZonedDateTime.now(zone);
+        LocalDate lastResetDate = Instant.ofEpochMilli(data.getLastResetTimestamp())
+                .atZone(zone)
+                .toLocalDate();
+        int resetHour = data.getResetHour();
+        ZonedDateTime next = computeNextDailyResetInstant(now, lastResetDate, resetHour, zone);
+        long seconds = Duration.between(now, next).getSeconds();
+        return formatDurationHms(Math.max(0, seconds));
+    }
+
+    private static ZonedDateTime computeNextDailyResetInstant(
+            ZonedDateTime now, LocalDate lastResetDate, int resetHour, ZoneId zone) {
+        if (wouldDailyResetTriggerAt(now, lastResetDate, resetHour)) {
+            return now;
+        }
+        LocalDate today = now.toLocalDate();
+        if (!today.isAfter(lastResetDate)) {
+            return lastResetDate.plusDays(1).atTime(resetHour, 0, 0).atZone(zone);
+        }
+        long daysBetween = ChronoUnit.DAYS.between(lastResetDate, today);
+        if (daysBetween == 1) {
+            LocalDateTime todayReset = today.atTime(resetHour, 0, 0);
+            if (now.toLocalDateTime().isBefore(todayReset)) {
+                return todayReset.atZone(zone);
+            }
+        }
+        return now;
+    }
+
+    private static boolean wouldDailyResetTriggerAt(ZonedDateTime zdt, LocalDate lastResetDate, int resetHour) {
+        LocalDate day = zdt.toLocalDate();
+        LocalTime time = zdt.toLocalTime();
+        if (!day.isAfter(lastResetDate)) {
+            return false;
+        }
+        if (time.getHour() >= resetHour) {
+            return true;
+        }
+        return day.isAfter(lastResetDate.plusDays(1));
+    }
+
+    private static String formatDurationHms(long totalSeconds) {
+        long hours = totalSeconds / 3600;
+        long minutes = (totalSeconds % 3600) / 60;
+        long seconds = totalSeconds % 60;
+        return String.format("%02d:%02d:%02d", hours, minutes, seconds);
     }
 
     private static boolean shouldKickOnDailyReset() {

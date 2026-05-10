@@ -1,10 +1,10 @@
 package maxigregrze.cobblesafari.item.hyperberries;
 
+import com.cobblemon.mod.common.Cobblemon;
 import com.cobblemon.mod.common.api.pokemon.stats.Stat;
 import com.cobblemon.mod.common.entity.pokemon.PokemonEntity;
 import com.cobblemon.mod.common.pokemon.EVs;
 import com.cobblemon.mod.common.pokemon.Pokemon;
-
 import maxigregrze.cobblesafari.item.RandomizerStatUtils;
 import maxigregrze.cobblesafari.item.redchainrandom.PokemonModifierItem;
 import net.minecraft.network.chat.Component;
@@ -20,25 +20,27 @@ public class HyperBerryEVItem extends PokemonModifierItem {
 
     @Override
     protected boolean applyToPokemon(Player player, PokemonEntity pokemonEntity, Pokemon pokemon) {
+        boolean changed = false;
+        if (pokemon.getFriendship() != 0) {
+            pokemon.setFriendship(0, true);
+            changed = true;
+        }
         EVs evs = pokemon.getEvs();
-        int currentStat = evs.get(stat);
-        int total = 0;
-        for (Stat loopStat : RandomizerStatUtils.SIX_STATS) {
-            total += evs.get(loopStat);
+        for (Stat s : RandomizerStatUtils.SIX_STATS) {
+            if (s != stat && evs.get(s) != 0) {
+                evs.set(s, 0);
+                changed = true;
+            }
         }
-
-        if (currentStat >= EVs.MAX_STAT_VALUE || total >= EVs.MAX_TOTAL_VALUE) {
+        if (evs.get(stat) != EVs.MAX_STAT_VALUE) {
+            evs.set(stat, EVs.MAX_STAT_VALUE);
+            changed = true;
+        }
+        if (!changed) {
             player.sendSystemMessage(Component.translatable("cobblesafari.randomizer.no_effect"));
             return false;
         }
-
-        int maxIncrease = Math.min(EVs.MAX_STAT_VALUE - currentStat, EVs.MAX_TOTAL_VALUE - total);
-        if (maxIncrease <= 0) {
-            player.sendSystemMessage(Component.translatable("cobblesafari.randomizer.no_effect"));
-            return false;
-        }
-
-        evs.set(stat, currentStat + maxIncrease);
+        pokemon.feedPokemon(3, true);
         return true;
     }
 }

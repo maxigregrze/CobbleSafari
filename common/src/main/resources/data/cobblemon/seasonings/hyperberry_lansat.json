@@ -1,0 +1,19 @@
+{
+    "ingredient": "cobblesafari:hyperberry_lansat",
+    "colour": "pink",
+    "flavours": {
+        "SPICY": 26,
+        "DRY": 26,
+        "SWEET": 26,
+        "SOUR": 26,
+        "BITTER": 26
+    },
+    "baitEffects": [
+        {
+            "type": "cobblemon:iv",
+            "chance": 1.0,
+            "value": 10.0,
+            "subcategory": "cobblemon:hp"
+        }
+    ]
+}

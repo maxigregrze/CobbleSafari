@@ -364,7 +364,7 @@
 	"cobblesafari.command.safariexit.invalid_origin": "我们的入口维度已不复存在。",
 	"cobblesafari.timer.expired": "时间到了！你被踢出去了。",
 	"cobblesafari.timer.reset": "您的狩猎时间已重置！",
-	"cobblesafari.teleporter.no_time": "您今天没有剩余的狩猎时间了。请明天再来！",
+	"cobblesafari.teleporter.no_time": "您今天没有剩余的狩猎时间了。请在 %s 后再来",
 	"cobblesafari.teleporter.countdown.title": "传送中：",
 	"cobblesafari.teleporter.safari_balls_received": "您收到了 %s 个狩猎球（今日首次访问）。",
 	"cobblesafari.teleporter.safari_items_received": "您收到了 %s 个狩猎球、%s 个诱饵和 %s 个泥球（今日首次访问）。",

@@ -1,0 +1,16 @@
+{
+    "ingredient": "cobblesafari:hyperberry_liechi",
+    "colour": "blue",
+    "flavours": {
+        "SPICY": 55,
+        "SWEET": 80
+    },
+    "baitEffects": [
+        {
+            "type": "cobblemon:iv",
+            "chance": 1.0,
+            "value": 10.0,
+            "subcategory": "cobblemon:atk"
+        }
+    ]
+}

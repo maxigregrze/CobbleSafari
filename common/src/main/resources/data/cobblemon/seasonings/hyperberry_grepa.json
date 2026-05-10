@@ -1,0 +1,16 @@
+{
+    "ingredient": "cobblesafari:hyperberry_grepa",
+    "colour": "blue",
+    "flavours": {
+        "SPICY": 75,
+        "SOUR": 40
+    },
+    "baitEffects": [
+        {
+            "type": "cobblemon:ev",
+            "subcategory": "spd",
+            "chance": 1.0,
+            "value": 200.0
+        }
+    ]
+}

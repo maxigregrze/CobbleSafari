@@ -2,6 +2,7 @@ package maxigregrze.cobblesafari.event;
 
 import maxigregrze.cobblesafari.config.DimensionalBanConfig;
 import maxigregrze.cobblesafari.cstrader.logic.CsTraderDataLoader;
+import maxigregrze.cobblesafari.dungeon.DungeonRegionClearer;
 import maxigregrze.cobblesafari.dungeon.DungeonTeleportHandler;
 import maxigregrze.cobblesafari.dungeon.PortalSpawnManager;
 import maxigregrze.cobblesafari.manager.SafariResetManager;
@@ -34,6 +35,7 @@ public class DimensionEvents {
 
     public static void onServerTick(MinecraftServer server) {
         TimerManager.tickAllTimers();
+        DungeonRegionClearer.tick(server);
         PortalSpawnManager.tick(server);
         SafariResetManager.tick(server);
         maxigregrze.cobblesafari.safari.SafariStateManager.onServerTick(server);

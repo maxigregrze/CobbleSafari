@@ -1,0 +1,16 @@
+{
+    "ingredient": "cobblesafari:hyperberry_tamato",
+    "colour": "blue",
+    "flavours": {
+        "DRY": 75,
+        "BITTER": 40
+    },
+    "baitEffects": [
+        {
+            "type": "cobblemon:ev",
+            "subcategory": "spe",
+            "chance": 1.0,
+            "value": 200.0
+        }
+    ]
+}

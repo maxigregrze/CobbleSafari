@@ -199,6 +199,17 @@ public class PortalSpawnManager {
     }
 
     private static void trySpawnRandomPortal(MinecraftServer server) {
+        float chance = PortalSpawnConfig.getSpawnChance();
+        if (chance <= 0f) {
+            CobbleSafari.LOGGER.debug("Scheduled dungeon portal spawn skipped (spawnChance is 0)");
+            return;
+        }
+        float roll = RANDOM.nextFloat();
+        if (roll > chance) {
+            CobbleSafari.LOGGER.debug("Scheduled dungeon portal spawn skipped by spawnChance (roll {} > {})", roll, chance);
+            return;
+        }
+
         ServerLevel overworld = server.overworld();
         List<ServerPlayer> overworldPlayers = new ArrayList<>();
 
@@ -620,23 +631,31 @@ public class PortalSpawnManager {
 
             if (portalEntity.hasDungeonChunkBounds() && dungeonDimId != null) {
                 DungeonConfig config = DungeonDimensions.getDungeonById(dungeonDimId);
+                BlockPos structurePos = portalEntity.getDungeonStructurePos();
+                String slotDimensionId = config != null ? config.getDimensionId() : dungeonDimId;
+                int zoneSize = config != null ? config.getZoneSize() : DungeonConfig.DEFAULT_ZONE_SIZE;
+
+                boolean scheduledClear = false;
                 if (config != null) {
                     ServerLevel dungeonLevel = serverInstance.getLevel(config.getDimensionKey());
                     if (dungeonLevel != null) {
                         evacuatePlayersFromDungeon(dungeonLevel, portalEntity, config);
-                        
+
                         int structureY = portalEntity.getDungeonStructurePos() != null
                                 ? portalEntity.getDungeonStructurePos().getY() : 64;
+                        Runnable releaseSlot = structurePos != null
+                                ? () -> DungeonPositionSavedData.get(serverInstance).removeUsedPosition(slotDimensionId, structurePos, zoneSize)
+                                : null;
                         DungeonRegionClearer.scheduleRegionClear(dungeonLevel,
                                 portalEntity.getDungeonChunkMinX(), portalEntity.getDungeonChunkMinZ(),
                                 portalEntity.getDungeonChunkMaxX(), portalEntity.getDungeonChunkMaxZ(),
-                                structureY, config.getClearSectionsBelow(), config.getClearSectionsAbove());
+                                structureY, config.getClearSectionsBelow(), config.getClearSectionsAbove(),
+                                releaseSlot);
+                        scheduledClear = true;
                     }
                 }
-                if (portalEntity.getDungeonStructurePos() != null) {
-                    String dimensionId = config != null ? config.getDimensionId() : dungeonDimId;
-                    int zoneSize = config != null ? config.getZoneSize() : DungeonConfig.DEFAULT_ZONE_SIZE;
-                    DungeonPositionSavedData.get(serverInstance).removeUsedPosition(dimensionId, portalEntity.getDungeonStructurePos(), zoneSize);
+                if (!scheduledClear && structurePos != null) {
+                    DungeonPositionSavedData.get(serverInstance).removeUsedPosition(slotDimensionId, structurePos, zoneSize);
                 }
             }
 
@@ -691,22 +710,27 @@ public class PortalSpawnManager {
 
         if (!portal.hasDungeonChunkBounds()) return;
 
+        BlockPos structurePos = portal.dungeonStructurePos();
+
         ServerLevel dungeonLevel = server.getLevel(config.getDimensionKey());
         if (dungeonLevel != null) {
             evacuatePlayersFromDungeonByChunkBounds(dungeonLevel, config,
                     portal.dungeonChunkMinX(), portal.dungeonChunkMinZ(),
                     portal.dungeonChunkMaxX(), portal.dungeonChunkMaxZ());
-            
-            int structureY = portal.dungeonStructurePos() != null ? portal.dungeonStructurePos().getY() : 64;
+
+            int structureY = structurePos != null ? structurePos.getY() : 64;
+            Runnable releaseSlot = structurePos != null
+                    ? () -> DungeonPositionSavedData.get(server).removeUsedPosition(
+                            config.getDimensionId(), structurePos, config.getZoneSize())
+                    : null;
             DungeonRegionClearer.scheduleRegionClear(dungeonLevel,
                     portal.dungeonChunkMinX(), portal.dungeonChunkMinZ(),
                     portal.dungeonChunkMaxX(), portal.dungeonChunkMaxZ(),
-                    structureY, config.getClearSectionsBelow(), config.getClearSectionsAbove());
-        }
-
-        if (portal.dungeonStructurePos() != null) {
+                    structureY, config.getClearSectionsBelow(), config.getClearSectionsAbove(),
+                    releaseSlot);
+        } else if (structurePos != null) {
             DungeonPositionSavedData.get(server).removeUsedPosition(
-                    config.getDimensionId(), portal.dungeonStructurePos(), config.getZoneSize());
+                    config.getDimensionId(), structurePos, config.getZoneSize());
         }
     }
 

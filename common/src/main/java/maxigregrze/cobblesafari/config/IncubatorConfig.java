@@ -31,17 +31,34 @@ public class IncubatorConfig {
             try (Reader reader = Files.newBufferedReader(CONFIG_PATH)) {
                 INSTANCE = GSON.fromJson(reader, IncubatorConfig.class);
                 if (INSTANCE == null) {
+                    CobbleSafari.LOGGER.warn(
+                            "CobbleSafari >> incubator_config.json at {} deserialized to null; using defaults",
+                            CONFIG_PATH);
                     INSTANCE = new IncubatorConfig();
                 }
                 validateAndFixConfig();
-                CobbleSafari.LOGGER.info("Incubator config loaded from {}", CONFIG_PATH);
+                CobbleSafari.LOGGER.info("CobbleSafari >> incubator_config.json loaded successfully from {}", CONFIG_PATH);
+                CobbleSafari.LOGGER.info("CobbleSafari >> Persisting incubator_config.json after load (validated schema)");
                 save();
             } catch (IOException e) {
-                CobbleSafari.LOGGER.error("Failed to load incubator config, using defaults", e);
+                CobbleSafari.LOGGER.error(
+                        "CobbleSafari >> Failed to read incubator_config.json at {} (I/O error). Using in-memory defaults; the file on disk was not modified.",
+                        CONFIG_PATH,
+                        e);
+                INSTANCE = new IncubatorConfig();
+            } catch (Exception e) {
+                CobbleSafari.LOGGER.error(
+                        "CobbleSafari >> Failed to parse incubator_config.json at {} (invalid JSON). Using in-memory defaults; the file on disk was not modified.",
+                        CONFIG_PATH,
+                        e);
                 INSTANCE = new IncubatorConfig();
             }
         } else {
+            CobbleSafari.LOGGER.info(
+                    "CobbleSafari >> incubator_config.json not found at {}, creating default file",
+                    CONFIG_PATH);
             INSTANCE = new IncubatorConfig();
+            CobbleSafari.LOGGER.info("CobbleSafari >> Persisting incubator_config.json after load (first-time default file)");
             save();
         }
     }
@@ -73,7 +90,7 @@ public class IncubatorConfig {
         }
         try (Writer writer = Files.newBufferedWriter(CONFIG_PATH)) {
             GSON.toJson(INSTANCE, writer);
-            CobbleSafari.LOGGER.info("Incubator config saved to {}", CONFIG_PATH);
+            CobbleSafari.LOGGER.info("CobbleSafari >> incubator_config.json written to {}", CONFIG_PATH);
         } catch (IOException e) {
             CobbleSafari.LOGGER.error("Failed to save incubator config", e);
         }

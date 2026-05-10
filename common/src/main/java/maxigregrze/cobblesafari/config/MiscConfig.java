@@ -34,16 +34,33 @@ public class MiscConfig {
             try (Reader reader = Files.newBufferedReader(CONFIG_PATH)) {
                 INSTANCE = GSON.fromJson(reader, MiscConfig.class);
                 if (INSTANCE == null) {
+                    CobbleSafari.LOGGER.warn(
+                            "CobbleSafari >> misc_config.json at {} deserialized to null; using defaults",
+                            CONFIG_PATH);
                     INSTANCE = new MiscConfig();
                 }
-                CobbleSafari.LOGGER.info("Misc config loaded from {}", CONFIG_PATH);
+                CobbleSafari.LOGGER.info("CobbleSafari >> misc_config.json loaded successfully from {}", CONFIG_PATH);
+                CobbleSafari.LOGGER.info("CobbleSafari >> Persisting misc_config.json after load (canonical schema on disk)");
                 save();
             } catch (IOException e) {
-                CobbleSafari.LOGGER.error("Failed to load misc config, using defaults", e);
+                CobbleSafari.LOGGER.error(
+                        "CobbleSafari >> Failed to read misc_config.json at {} (I/O error). Using in-memory defaults; the file on disk was not modified.",
+                        CONFIG_PATH,
+                        e);
+                INSTANCE = new MiscConfig();
+            } catch (Exception e) {
+                CobbleSafari.LOGGER.error(
+                        "CobbleSafari >> Failed to parse misc_config.json at {} (invalid JSON). Using in-memory defaults; the file on disk was not modified.",
+                        CONFIG_PATH,
+                        e);
                 INSTANCE = new MiscConfig();
             }
         } else {
+            CobbleSafari.LOGGER.info(
+                    "CobbleSafari >> misc_config.json not found at {}, creating default file",
+                    CONFIG_PATH);
             INSTANCE = new MiscConfig();
+            CobbleSafari.LOGGER.info("CobbleSafari >> Persisting misc_config.json after load (first-time default file)");
             save();
         }
     }
@@ -59,7 +76,7 @@ public class MiscConfig {
         }
         try (Writer writer = Files.newBufferedWriter(CONFIG_PATH)) {
             GSON.toJson(INSTANCE, writer);
-            CobbleSafari.LOGGER.info("Misc config saved to {}", CONFIG_PATH);
+            CobbleSafari.LOGGER.info("CobbleSafari >> misc_config.json written to {}", CONFIG_PATH);
         } catch (IOException e) {
             CobbleSafari.LOGGER.error("Failed to save misc config", e);
         }

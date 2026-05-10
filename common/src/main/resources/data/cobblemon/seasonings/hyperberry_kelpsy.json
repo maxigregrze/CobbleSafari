@@ -1,0 +1,16 @@
+{
+    "ingredient": "cobblesafari:hyperberry_kelpsy",
+    "colour": "red",
+    "flavours": {
+        "SPICY": 40,
+        "SWEET": 75
+    },
+    "baitEffects": [
+        {
+            "type": "cobblemon:ev",
+            "subcategory": "atk",
+            "chance": 1.0,
+            "value": 200.0
+        }
+    ]
+}

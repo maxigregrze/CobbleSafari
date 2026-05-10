@@ -1,0 +1,18 @@
+{
+    "ingredient": "cobblesafari:hyperberry_starf",
+    "colour": "purple",
+    "flavours": {
+        "SPICY": 14,
+        "DRY": 14,
+        "SWEET": 14,
+        "SOUR": 14,
+        "BITTER": 14
+    },
+    "baitEffects": [
+        {
+            "type": "cobblemon:shiny_reroll",
+            "chance": 1.0,
+            "value": 8.0
+        }
+    ]
+}

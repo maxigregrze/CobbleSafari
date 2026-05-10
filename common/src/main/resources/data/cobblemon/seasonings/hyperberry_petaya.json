@@ -1,0 +1,16 @@
+{
+    "ingredient": "cobblesafari:hyperberry_petaya",
+    "colour": "green",
+    "flavours": {
+        "DRY": 55,
+        "SOUR": 80
+    },
+    "baitEffects": [
+        {
+            "type": "cobblemon:iv",
+            "chance": 1.0,
+            "value": 10.0,
+            "subcategory": "cobblemon:spa"
+        }
+    ]
+}

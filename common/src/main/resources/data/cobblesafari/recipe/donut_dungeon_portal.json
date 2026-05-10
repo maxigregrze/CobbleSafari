@@ -1,0 +1,16 @@
+{
+    "type": "cobblemon:cooking_pot_shapeless",
+    "group": "donut",
+    "category": "complex_dishes",
+    "ingredients": [
+        { "item": "cobblesafari:donut_mix" },
+        { "item": "cobblesafari:butter_hyperspace" },
+        { "item": "cobblesafari:ingredient_dungeon_portal" }
+    ],
+    "result": {
+        "id": "cobblesafari:donut_dungeon_portal",
+        "count": 1
+    },
+    "seasoningTag": "cobblemon:empty",
+    "seasoningProcessors": []
+}

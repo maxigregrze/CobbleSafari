@@ -1,0 +1,17 @@
+{
+    "ingredient": "cobblesafari:hyperberry_enigma",
+    "colour": "white",
+    "flavours": {
+        "SPICY": 20,
+        "DRY": 20,
+        "SWEET": 20,
+        "SOUR": 20,
+        "BITTER": 20
+    },
+    "baitEffects": [
+        {
+            "type": "cobblemon:ha_chance",
+            "chance": 0.1
+        }
+    ]
+}

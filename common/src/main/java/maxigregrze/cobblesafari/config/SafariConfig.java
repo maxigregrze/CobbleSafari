@@ -57,17 +57,34 @@ public class SafariConfig {
                 migrateLegacyAllowPaidReentry(json);
                 INSTANCE = GSON.fromJson(json, SafariConfig.class);
                 if (INSTANCE == null) {
+                    CobbleSafari.LOGGER.warn(
+                            "CobbleSafari >> safari_config.json at {} deserialized to null; using defaults",
+                            CONFIG_PATH);
                     INSTANCE = new SafariConfig();
                 }
                 validateAndFixConfig();
-                CobbleSafari.LOGGER.info("Safari config loaded from {}", CONFIG_PATH);
+                CobbleSafari.LOGGER.info("CobbleSafari >> safari_config.json loaded successfully from {}", CONFIG_PATH);
+                CobbleSafari.LOGGER.info("CobbleSafari >> Persisting safari_config.json after load (validated schema)");
                 save();
             } catch (IOException e) {
-                CobbleSafari.LOGGER.error("Failed to load safari config, using defaults", e);
+                CobbleSafari.LOGGER.error(
+                        "CobbleSafari >> Failed to read safari_config.json at {} (I/O error). Using in-memory defaults; the file on disk was not modified.",
+                        CONFIG_PATH,
+                        e);
+                INSTANCE = new SafariConfig();
+            } catch (Exception e) {
+                CobbleSafari.LOGGER.error(
+                        "CobbleSafari >> Failed to parse safari_config.json at {} (invalid JSON or unexpected structure). Using in-memory defaults; the file on disk was not modified.",
+                        CONFIG_PATH,
+                        e);
                 INSTANCE = new SafariConfig();
             }
         } else {
+            CobbleSafari.LOGGER.info(
+                    "CobbleSafari >> safari_config.json not found at {}, creating default file",
+                    CONFIG_PATH);
             INSTANCE = new SafariConfig();
+            CobbleSafari.LOGGER.info("CobbleSafari >> Persisting safari_config.json after load (first-time default file)");
             save();
         }
     }
@@ -111,7 +128,7 @@ public class SafariConfig {
         }
         try (Writer writer = Files.newBufferedWriter(CONFIG_PATH)) {
             GSON.toJson(INSTANCE, writer);
-            CobbleSafari.LOGGER.info("Safari config saved to {}", CONFIG_PATH);
+            CobbleSafari.LOGGER.info("CobbleSafari >> safari_config.json written to {}", CONFIG_PATH);
         } catch (IOException e) {
             CobbleSafari.LOGGER.error("Failed to save safari config", e);
         }

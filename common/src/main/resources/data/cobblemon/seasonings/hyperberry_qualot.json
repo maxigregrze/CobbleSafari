@@ -1,0 +1,16 @@
+{
+    "ingredient": "cobblesafari:hyperberry_qualot",
+    "colour": "green",
+    "flavours": {
+        "SWEET": 40,
+        "BITTER": 75
+    },
+    "baitEffects": [
+        {
+            "type": "cobblemon:ev",
+            "subcategory": "def",
+            "chance": 1.0,
+            "value": 200.0
+        }
+    ]
+}
