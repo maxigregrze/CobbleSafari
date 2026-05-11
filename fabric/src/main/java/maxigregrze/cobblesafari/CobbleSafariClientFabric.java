@@ -16,6 +16,7 @@ import maxigregrze.cobblesafari.client.renderer.CsTraderEntityRenderer;
 import maxigregrze.cobblesafari.client.renderer.HikerEntityRenderer;
 import maxigregrze.cobblesafari.client.renderer.HoopaRingPortalBlockEntityRenderer;
 import maxigregrze.cobblesafari.client.renderer.GiratinaCoreBlockEntityRenderer;
+import maxigregrze.cobblesafari.client.renderer.AuspiciousPokeballBlockEntityRenderer;
 import maxigregrze.cobblesafari.client.renderer.DistortionPortalBlockEntityRenderer;
 import maxigregrze.cobblesafari.client.DungeonDistortionDimensionEffects;
 import maxigregrze.cobblesafari.mixin.client.DimensionSpecialEffectsAccessor;
@@ -186,6 +187,12 @@ public class CobbleSafariClientFabric implements ClientModInitializer {
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.LOST_NOTES, RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.LOST_ITEM, RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.LOST_ITEM_VISUAL, RenderType.cutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.AUSPICIOUS_POKEBALL, RenderType.cutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.AUSPICIOUS_POKEBALL_DISPLAY, RenderType.cutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.AUSPICIOUS_POKEBALL_SMALL, RenderType.cutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.AUSPICIOUS_POKEBALL_SMALL_DISPLAY, RenderType.cutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.AUSPICIOUS_POKEBALL_GOLD, RenderType.cutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.AUSPICIOUS_POKEBALL_GOLD_DISPLAY, RenderType.cutout());
     }
 
     private void registerRenderers() {
@@ -195,6 +202,8 @@ public class CobbleSafariClientFabric implements ClientModInitializer {
         BlockEntityRenderers.register(ModBlockEntities.GIRATINA_CORE, GiratinaCoreBlockEntityRenderer::new);
         BlockEntityRenderers.register(ModBlockEntities.DISTORTION_PORTAL, DistortionPortalBlockEntityRenderer::new);
         BlockEntityRenderers.register(ModBlockEntities.LOST_ITEM, LostItemBlockEntityRenderer::new);
+        BlockEntityRenderers.register(ModBlockEntities.AUSPICIOUS_POKEBALL, AuspiciousPokeballBlockEntityRenderer::new);
+        BlockEntityRenderers.register(ModBlockEntities.AUSPICIOUS_POKEBALL_GOLD, AuspiciousPokeballBlockEntityRenderer::new);
         EntityRendererRegistry.register(ModEntities.HIKER, HikerEntityRenderer::new);
         EntityRendererRegistry.register(ModEntities.CSTRADER_NPC, CsTraderEntityRenderer::new);
         EntityRendererRegistry.register(ModEntities.BALLOON, BalloonEntityRenderer::new);

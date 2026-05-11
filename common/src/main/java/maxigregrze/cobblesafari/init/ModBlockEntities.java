@@ -7,6 +7,8 @@ import maxigregrze.cobblesafari.block.distortion.GiratinaCoreBlockEntity;
 import maxigregrze.cobblesafari.block.distortion.DistortionPortalBlockEntity;
 import maxigregrze.cobblesafari.block.distortion.DistortionStoneBricksRuneBlockEntity;
 import maxigregrze.cobblesafari.block.misc.LostNotesBlockEntity;
+import maxigregrze.cobblesafari.block.misc.AuspiciousPokeballBlockEntity;
+import maxigregrze.cobblesafari.block.misc.AuspiciousPokeballGoldBlockEntity;
 import maxigregrze.cobblesafari.block.misc.LostItemBlockEntity;
 import maxigregrze.cobblesafari.block.misc.SafariEggNestBlockEntity;
 import maxigregrze.cobblesafari.block.misc.VoidBlockEntity;
@@ -30,6 +32,8 @@ public class ModBlockEntities {
     public static BlockEntityType<DistortionStoneBricksRuneBlockEntity> DISTORTION_STONEBRICKS_RUNE;
     public static BlockEntityType<LostNotesBlockEntity> LOST_NOTES;
     public static BlockEntityType<LostItemBlockEntity> LOST_ITEM;
+    public static BlockEntityType<AuspiciousPokeballBlockEntity> AUSPICIOUS_POKEBALL;
+    public static BlockEntityType<AuspiciousPokeballGoldBlockEntity> AUSPICIOUS_POKEBALL_GOLD;
     public static BlockEntityType<BasePCBlockEntity> SECRETBASE_PC;
     public static BlockEntityType<IncubatorBlockEntity> INCUBATOR;
 
@@ -88,6 +92,18 @@ public class ModBlockEntities {
                 BuiltInRegistries.BLOCK_ENTITY_TYPE,
                 ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, "lost_item"),
                 BlockEntityType.Builder.of(LostItemBlockEntity::new, ModBlocks.LOST_ITEM).build(null)
+        );
+
+        AUSPICIOUS_POKEBALL = Registry.register(
+                BuiltInRegistries.BLOCK_ENTITY_TYPE,
+                ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, "auspicious_pokeball"),
+                BlockEntityType.Builder.of(AuspiciousPokeballBlockEntity::new, ModBlocks.AUSPICIOUS_POKEBALL, ModBlocks.AUSPICIOUS_POKEBALL_SMALL).build(null)
+        );
+
+        AUSPICIOUS_POKEBALL_GOLD = Registry.register(
+                BuiltInRegistries.BLOCK_ENTITY_TYPE,
+                ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, "auspiciouspokeball_gold"),
+                BlockEntityType.Builder.of(AuspiciousPokeballGoldBlockEntity::new, ModBlocks.AUSPICIOUS_POKEBALL_GOLD).build(null)
         );
 
         SECRETBASE_PC = Registry.register(

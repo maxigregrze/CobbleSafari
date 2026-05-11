@@ -151,7 +151,7 @@ public class ModCreativeTabs {
             .build();
 
     public static final CreativeModeTab LUMINOSE_TAB = CreativeModeTab.builder(CreativeModeTab.Row.TOP, 3)
-            .icon(() -> new ItemStack(ModItems.AUSPICIOUS_POKEBALL))
+            .icon(() -> new ItemStack(ModBlocks.AUSPICIOUS_POKEBALL))
             .title(Component.translatable("itemGroup.cobblesafari.paris"))
             .displayItems((params, output) -> {
                 output.accept(ModItems.HYPERBERRY_ENIGMA);
@@ -190,7 +190,9 @@ public class ModCreativeTabs {
                         output.accept(stack);
                     }
                 }
-                output.accept(ModItems.AUSPICIOUS_POKEBALL);
+                output.accept(ModBlocks.AUSPICIOUS_POKEBALL);
+                output.accept(ModBlocks.AUSPICIOUS_POKEBALL_SMALL);
+                output.accept(ModBlocks.AUSPICIOUS_POKEBALL_GOLD);
             })
             .build();
 
@@ -215,6 +217,9 @@ public class ModCreativeTabs {
                 output.accept(ModItems.WILD_EGG_BASE);
                 output.accept(ModBlocks.LOST_NOTES);
                 output.accept(ModBlocks.LOST_ITEM);
+                output.accept(ModBlocks.AUSPICIOUS_POKEBALL);
+                output.accept(ModBlocks.AUSPICIOUS_POKEBALL_SMALL);
+                output.accept(ModBlocks.AUSPICIOUS_POKEBALL_GOLD);
                 output.accept(ModItems.ROTOM_PHONE);
                 output.accept(ModBlocks.EMPTYPHONE);
                 ModItems.WILD_EGGS.values().forEach(output::accept);

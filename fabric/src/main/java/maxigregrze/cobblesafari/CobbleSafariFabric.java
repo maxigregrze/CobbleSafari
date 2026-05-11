@@ -16,6 +16,17 @@ import maxigregrze.cobblesafari.network.DimensionalBanSyncPayload;
 import maxigregrze.cobblesafari.network.OpenTpAcceptPayload;
 import maxigregrze.cobblesafari.network.OpenLostNoteBookPayload;
 import maxigregrze.cobblesafari.network.OpenRuneEditorPayload;
+import maxigregrze.cobblesafari.network.OpenLostItemConfigPayload;
+import maxigregrze.cobblesafari.network.OpenAuspiciousPokeballConfigPayload;
+import maxigregrze.cobblesafari.network.OpenAuspiciousPokeballGoldConfigPayload;
+import maxigregrze.cobblesafari.network.SaveLostItemConfigPayload;
+import maxigregrze.cobblesafari.network.SaveAuspiciousPokeballConfigPayload;
+import maxigregrze.cobblesafari.network.SaveAuspiciousPokeballGoldConfigPayload;
+import maxigregrze.cobblesafari.network.LostItemResetClaimsPayload;
+import maxigregrze.cobblesafari.network.AuspiciousPokeballResetClaimsPayload;
+import maxigregrze.cobblesafari.network.LostItemConfigServerHandler;
+import maxigregrze.cobblesafari.network.AuspiciousPokeballConfigServerHandler;
+import maxigregrze.cobblesafari.network.AuspiciousPokeballGoldConfigServerHandler;
 import maxigregrze.cobblesafari.network.SaveRuneTextPayload;
 import maxigregrze.cobblesafari.network.TimerSyncPayload;
 import maxigregrze.cobblesafari.network.TpAcceptResponsePayload;
@@ -92,6 +103,9 @@ public class CobbleSafariFabric implements ModInitializer {
         PayloadTypeRegistry.playS2C().register(OpenTpAcceptPayload.TYPE, OpenTpAcceptPayload.STREAM_CODEC);
         PayloadTypeRegistry.playS2C().register(CloseTpAcceptPayload.TYPE, CloseTpAcceptPayload.STREAM_CODEC);
         PayloadTypeRegistry.playS2C().register(OpenRuneEditorPayload.TYPE, OpenRuneEditorPayload.STREAM_CODEC);
+        PayloadTypeRegistry.playS2C().register(OpenLostItemConfigPayload.TYPE, OpenLostItemConfigPayload.STREAM_CODEC);
+        PayloadTypeRegistry.playS2C().register(OpenAuspiciousPokeballConfigPayload.TYPE, OpenAuspiciousPokeballConfigPayload.STREAM_CODEC);
+        PayloadTypeRegistry.playS2C().register(OpenAuspiciousPokeballGoldConfigPayload.TYPE, OpenAuspiciousPokeballGoldConfigPayload.STREAM_CODEC);
         PayloadTypeRegistry.playS2C().register(OpenLostNoteBookPayload.TYPE, OpenLostNoteBookPayload.STREAM_CODEC);
         PayloadTypeRegistry.playS2C().register(DimensionalBanSyncPayload.TYPE, DimensionalBanSyncPayload.STREAM_CODEC);
         PayloadTypeRegistry.playS2C().register(maxigregrze.cobblesafari.network.OpenRotomPhonePayload.TYPE, maxigregrze.cobblesafari.network.OpenRotomPhonePayload.STREAM_CODEC);
@@ -110,6 +124,11 @@ public class CobbleSafariFabric implements ModInitializer {
                 SaveRuneTextPayload.TYPE,
                 SaveRuneTextPayload.STREAM_CODEC
         );
+        PayloadTypeRegistry.playC2S().register(SaveLostItemConfigPayload.TYPE, SaveLostItemConfigPayload.STREAM_CODEC);
+        PayloadTypeRegistry.playC2S().register(SaveAuspiciousPokeballConfigPayload.TYPE, SaveAuspiciousPokeballConfigPayload.STREAM_CODEC);
+        PayloadTypeRegistry.playC2S().register(SaveAuspiciousPokeballGoldConfigPayload.TYPE, SaveAuspiciousPokeballGoldConfigPayload.STREAM_CODEC);
+        PayloadTypeRegistry.playC2S().register(LostItemResetClaimsPayload.TYPE, LostItemResetClaimsPayload.STREAM_CODEC);
+        PayloadTypeRegistry.playC2S().register(AuspiciousPokeballResetClaimsPayload.TYPE, AuspiciousPokeballResetClaimsPayload.STREAM_CODEC);
         PayloadTypeRegistry.playC2S().register(
                 UndergroundPayloads.MineActionPayload.TYPE,
                 UndergroundPayloads.MineActionPayload.STREAM_CODEC
@@ -173,6 +192,61 @@ public class CobbleSafariFabric implements ModInitializer {
                             }
                             runeBlockEntity.setRuneText(text);
                             context.player().displayClientMessage(Component.translatable("cobblesafari.distortion_rune.saved"), true);
+                        }
+                    });
+                }
+        );
+
+        ServerPlayNetworking.registerGlobalReceiver(
+                SaveLostItemConfigPayload.TYPE,
+                (payload, context) -> {
+                    context.server().execute(() -> {
+                        if (context.player() instanceof ServerPlayer sp) {
+                            LostItemConfigServerHandler.handleSave(sp, payload);
+                        }
+                    });
+                }
+        );
+
+        ServerPlayNetworking.registerGlobalReceiver(
+                LostItemResetClaimsPayload.TYPE,
+                (payload, context) -> {
+                    context.server().execute(() -> {
+                        if (context.player() instanceof ServerPlayer sp) {
+                            LostItemConfigServerHandler.handleReset(sp, payload);
+                        }
+                    });
+                }
+        );
+
+        ServerPlayNetworking.registerGlobalReceiver(
+                AuspiciousPokeballResetClaimsPayload.TYPE,
+                (payload, context) -> {
+                    context.server().execute(() -> {
+                        if (context.player() instanceof ServerPlayer sp) {
+                            AuspiciousPokeballConfigServerHandler.handleReset(sp, payload);
+                        }
+                    });
+                }
+        );
+
+        ServerPlayNetworking.registerGlobalReceiver(
+                SaveAuspiciousPokeballGoldConfigPayload.TYPE,
+                (payload, context) -> {
+                    context.server().execute(() -> {
+                        if (context.player() instanceof ServerPlayer sp) {
+                            AuspiciousPokeballGoldConfigServerHandler.handleSave(sp, payload);
+                        }
+                    });
+                }
+        );
+
+        ServerPlayNetworking.registerGlobalReceiver(
+                SaveAuspiciousPokeballConfigPayload.TYPE,
+                (payload, context) -> {
+                    context.server().execute(() -> {
+                        if (context.player() instanceof ServerPlayer sp) {
+                            AuspiciousPokeballConfigServerHandler.handleSave(sp, payload);
                         }
                     });
                 }

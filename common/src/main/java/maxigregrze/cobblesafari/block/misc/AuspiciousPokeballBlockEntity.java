@@ -2,7 +2,8 @@ package maxigregrze.cobblesafari.block.misc;
 
 import maxigregrze.cobblesafari.config.MiscConfig;
 import maxigregrze.cobblesafari.init.ModBlockEntities;
-import maxigregrze.cobblesafari.network.OpenLostItemConfigPayload;
+import maxigregrze.cobblesafari.init.ModBlocks;
+import maxigregrze.cobblesafari.network.OpenAuspiciousPokeballConfigPayload;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
@@ -13,8 +14,10 @@ import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
 
@@ -23,7 +26,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
-public class LostItemBlockEntity extends BlockEntity {
+public class AuspiciousPokeballBlockEntity extends BlockEntity {
 
     private static final String NBT_CLAIMED_PLAYERS = "ClaimedPlayers";
     private static final String NBT_POOL_BERRY = "PoolBerry";
@@ -32,9 +35,6 @@ public class LostItemBlockEntity extends BlockEntity {
     private static final String NBT_POOL_TREASURES = "PoolTreasures";
     private static final String NBT_MIN_ROLL = "MinRoll";
     private static final String NBT_MAX_ROLL = "MaxRoll";
-    private static final String NBT_LOOT_ITEM = "LootItem";
-    private static final String NBT_LOST_ITEM_LOOT_TABLE = "LostItemLootTable";
-    private static final String NBT_MODE = "Mode";
 
     private final Set<UUID> claimedPlayers = new HashSet<>();
 
@@ -44,25 +44,65 @@ public class LostItemBlockEntity extends BlockEntity {
     private String poolTreasuresId;
     private int minRoll;
     private int maxRoll;
-    private String lootItemId;
-    private String lostItemLootTableId;
-    private int mode;
 
-    public LostItemBlockEntity(BlockPos pos, BlockState state) {
-        super(ModBlockEntities.LOST_ITEM, pos, state);
+    public AuspiciousPokeballBlockEntity(BlockPos pos, BlockState state) {
+        this(ModBlockEntities.AUSPICIOUS_POKEBALL, pos, state);
+    }
+
+    protected AuspiciousPokeballBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
+        super(type, pos, state);
         this.applyPlacementDefaults();
     }
 
+    /**
+     * Bloc rendu par le BER (variante {@code _display}).
+     */
+    public Block displayRenderBlock() {
+        return ModBlocks.AUSPICIOUS_POKEBALL_DISPLAY;
+    }
+
+    /**
+     * Hitbox vide en survie pour ce joueur (réclamé ou règles spécifiques sous-classe).
+     */
+    public boolean shouldHideShapeForSurvivalPlayer(Player player) {
+        if (player.isCreative()) {
+            return false;
+        }
+        if (this.hasClaimed(player.getUUID())) {
+            return true;
+        }
+        return this.shouldHideShapeForEarnRestrictions(player);
+    }
+
+    protected boolean shouldHideShapeForEarnRestrictions(Player player) {
+        return false;
+    }
+
+    /**
+     * Masquer le modèle monde pour le joueur local (client).
+     */
+    public boolean shouldHideWorldModelForLocalPlayer(Player player) {
+        if (this.hasClaimed(player.getUUID())) {
+            return true;
+        }
+        return this.shouldHideWorldModelForEarnRestrictions(player);
+    }
+
+    protected boolean shouldHideWorldModelForEarnRestrictions(Player player) {
+        return false;
+    }
+
+    public boolean canPlayerAttemptClaim(Player player) {
+        return true;
+    }
+
     private void applyPlacementDefaults() {
-        this.poolBerryId = MiscConfig.getLostItemPoolBerryId();
-        this.poolCandyId = MiscConfig.getLostItemPoolCandyId();
-        this.poolBallsId = MiscConfig.getLostItemPoolBallsId();
-        this.poolTreasuresId = MiscConfig.getLostItemPoolTreasuresId();
-        this.minRoll = MiscConfig.getLostItemMinRoll();
-        this.maxRoll = MiscConfig.getLostItemMaxRoll();
-        this.lootItemId = MiscConfig.getLostItemLootItemId();
-        this.lostItemLootTableId = MiscConfig.getLostItemLootTableId();
-        this.mode = MiscConfig.getLostItemMode();
+        this.poolBerryId = MiscConfig.getAuspiciousPokeballPoolBerryId();
+        this.poolCandyId = MiscConfig.getAuspiciousPokeballPoolCandyId();
+        this.poolBallsId = MiscConfig.getAuspiciousPokeballPoolBallsId();
+        this.poolTreasuresId = MiscConfig.getAuspiciousPokeballPoolTreasuresId();
+        this.minRoll = MiscConfig.getAuspiciousPokeballMinRoll();
+        this.maxRoll = MiscConfig.getAuspiciousPokeballMaxRoll();
     }
 
     public boolean hasClaimed(UUID playerId) {
@@ -77,15 +117,15 @@ public class LostItemBlockEntity extends BlockEntity {
         return added;
     }
 
-    public Set<UUID> getClaimedPlayers() {
-        return Collections.unmodifiableSet(this.claimedPlayers);
-    }
-
     public void resetClaims() {
         if (!this.claimedPlayers.isEmpty()) {
             this.claimedPlayers.clear();
             this.syncClaimData();
         }
+    }
+
+    public Set<UUID> getClaimedPlayers() {
+        return Collections.unmodifiableSet(this.claimedPlayers);
     }
 
     public String getPoolBerryId() {
@@ -112,18 +152,6 @@ public class LostItemBlockEntity extends BlockEntity {
         return this.maxRoll;
     }
 
-    public String getLootItemId() {
-        return this.lootItemId;
-    }
-
-    public String getLostItemLootTableId() {
-        return this.lostItemLootTableId;
-    }
-
-    public int getMode() {
-        return this.mode;
-    }
-
     public void setPoolBerryId(String poolBerryId) {
         this.poolBerryId = poolBerryId;
     }
@@ -148,21 +176,6 @@ public class LostItemBlockEntity extends BlockEntity {
         this.maxRoll = maxRoll;
     }
 
-    public void setLootItemId(String lootItemId) {
-        this.lootItemId = lootItemId;
-    }
-
-    public void setLostItemLootTableId(String lostItemLootTableId) {
-        this.lostItemLootTableId = lostItemLootTableId;
-    }
-
-    public void setMode(int mode) {
-        this.mode = mode;
-    }
-
-    /**
-     * Ensures {@code minRoll <= maxRoll} by taking the min / max of the two stored values.
-     */
     public void normalizeRollBounds() {
         int lo = Math.min(this.minRoll, this.maxRoll);
         int hi = Math.max(this.minRoll, this.maxRoll);
@@ -180,18 +193,15 @@ public class LostItemBlockEntity extends BlockEntity {
         };
     }
 
-    public OpenLostItemConfigPayload createOpenPayload() {
-        return new OpenLostItemConfigPayload(
+    public OpenAuspiciousPokeballConfigPayload createOpenPayload() {
+        return new OpenAuspiciousPokeballConfigPayload(
                 this.worldPosition,
                 this.poolBerryId,
                 this.poolCandyId,
                 this.poolBallsId,
                 this.poolTreasuresId,
                 this.minRoll,
-                this.maxRoll,
-                this.lostItemLootTableId,
-                this.lootItemId,
-                this.mode
+                this.maxRoll
         );
     }
 
@@ -228,9 +238,6 @@ public class LostItemBlockEntity extends BlockEntity {
         tag.putString(NBT_POOL_TREASURES, this.poolTreasuresId);
         tag.putInt(NBT_MIN_ROLL, this.minRoll);
         tag.putInt(NBT_MAX_ROLL, this.maxRoll);
-        tag.putString(NBT_LOOT_ITEM, this.lootItemId);
-        tag.putString(NBT_LOST_ITEM_LOOT_TABLE, this.lostItemLootTableId);
-        tag.putInt(NBT_MODE, this.mode);
     }
 
     @Override
@@ -245,15 +252,12 @@ public class LostItemBlockEntity extends BlockEntity {
             }
         }
 
-        this.poolBerryId = tag.contains(NBT_POOL_BERRY) ? tag.getString(NBT_POOL_BERRY) : MiscConfig.getLostItemPoolBerryId();
-        this.poolCandyId = tag.contains(NBT_POOL_CANDY) ? tag.getString(NBT_POOL_CANDY) : MiscConfig.getLostItemPoolCandyId();
-        this.poolBallsId = tag.contains(NBT_POOL_BALLS) ? tag.getString(NBT_POOL_BALLS) : MiscConfig.getLostItemPoolBallsId();
-        this.poolTreasuresId = tag.contains(NBT_POOL_TREASURES) ? tag.getString(NBT_POOL_TREASURES) : MiscConfig.getLostItemPoolTreasuresId();
-        this.minRoll = tag.contains(NBT_MIN_ROLL) ? tag.getInt(NBT_MIN_ROLL) : MiscConfig.getLostItemMinRoll();
-        this.maxRoll = tag.contains(NBT_MAX_ROLL) ? tag.getInt(NBT_MAX_ROLL) : MiscConfig.getLostItemMaxRoll();
-        this.lootItemId = tag.contains(NBT_LOOT_ITEM) ? tag.getString(NBT_LOOT_ITEM) : MiscConfig.getLostItemLootItemId();
-        this.lostItemLootTableId = tag.contains(NBT_LOST_ITEM_LOOT_TABLE) ? tag.getString(NBT_LOST_ITEM_LOOT_TABLE) : MiscConfig.getLostItemLootTableId();
-        this.mode = tag.contains(NBT_MODE) ? tag.getInt(NBT_MODE) : MiscConfig.getLostItemMode();
+        this.poolBerryId = tag.contains(NBT_POOL_BERRY) ? tag.getString(NBT_POOL_BERRY) : MiscConfig.getAuspiciousPokeballPoolBerryId();
+        this.poolCandyId = tag.contains(NBT_POOL_CANDY) ? tag.getString(NBT_POOL_CANDY) : MiscConfig.getAuspiciousPokeballPoolCandyId();
+        this.poolBallsId = tag.contains(NBT_POOL_BALLS) ? tag.getString(NBT_POOL_BALLS) : MiscConfig.getAuspiciousPokeballPoolBallsId();
+        this.poolTreasuresId = tag.contains(NBT_POOL_TREASURES) ? tag.getString(NBT_POOL_TREASURES) : MiscConfig.getAuspiciousPokeballPoolTreasuresId();
+        this.minRoll = tag.contains(NBT_MIN_ROLL) ? tag.getInt(NBT_MIN_ROLL) : MiscConfig.getAuspiciousPokeballMinRoll();
+        this.maxRoll = tag.contains(NBT_MAX_ROLL) ? tag.getInt(NBT_MAX_ROLL) : MiscConfig.getAuspiciousPokeballMaxRoll();
     }
 
     private static UUID parseUuid(String raw) {

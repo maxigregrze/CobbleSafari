@@ -1,0 +1,74 @@
+{
+  "parent": "minecraft:block/block",
+  "texture_size": [32, 32],
+  "textures": {
+    "0": "cobblesafari:block/auspiciouspokeball_small",
+    "particle": "cobblesafari:block/auspiciouspokeball_small"
+  },
+  "elements": [
+    {
+      "name": "bottom",
+      "from": [3.75, 3.75, 3.75],
+      "to": [12.25, 8.25, 12.25],
+      "rotation": {"angle": 22.5, "axis": "z", "origin": [8, 8, 8]},
+      "faces": {
+        "north": {"uv": [4, 10, 8, 12], "texture": "#0"},
+        "east": {"uv": [0, 10, 4, 12], "texture": "#0"},
+        "south": {"uv": [8, 10, 12, 12], "texture": "#0"},
+        "west": {"uv": [4, 10, 0, 12], "texture": "#0"},
+        "down": {"uv": [16, 8, 12, 12], "texture": "#0"}
+      }
+    },
+    {
+      "name": "lid",
+      "from": [3.74, 7.74, 3.74],
+      "to": [12.26, 12.26, 12.26],
+      "rotation": {"angle": 22.5, "axis": "z", "origin": [8, 8, 8]},
+      "faces": {
+        "north": {"uv": [4, 8, 8, 10], "texture": "#0"},
+        "east": {"uv": [0, 8, 4, 10], "texture": "#0"},
+        "south": {"uv": [8, 8, 12, 10], "texture": "#0"},
+        "west": {"uv": [4, 8, 0, 10], "texture": "#0"},
+        "up": {"uv": [4, 4, 0, 0], "texture": "#0"}
+      }
+    },
+    {
+      "name": "lid",
+      "from": [7, 7, 3.745],
+      "to": [9, 9, 3.745],
+      "rotation": {"angle": 22.5, "axis": "z", "origin": [8, 8, 8]},
+      "faces": {
+        "north": {"uv": [5.5, 9.5, 6.5, 10.5], "texture": "#0"},
+        "south": {"uv": [5.5, 9.5, 6.5, 10.5], "texture": "#0"}
+      }
+    },
+    {
+      "name": "lid",
+      "from": [4, 4, 4],
+      "to": [12, 12, 12],
+      "rotation": {"angle": 22.5, "axis": "z", "origin": [8, 8, 8]},
+      "faces": {
+        "north": {"uv": [4, 4, 8, 8], "texture": "#0"},
+        "east": {"uv": [0, 4, 4, 8], "texture": "#0"},
+        "south": {"uv": [12, 4, 16, 8], "texture": "#0"},
+        "west": {"uv": [8, 4, 12, 8], "texture": "#0"},
+        "up": {"uv": [8, 4, 4, 0], "texture": "#0"},
+        "down": {"uv": [12, 0, 8, 4], "texture": "#0"}
+      }
+    },
+    {
+      "name": "lid",
+      "from": [3.5, 12.5, 3.5],
+      "to": [12.5, 3.5, 12.5],
+      "rotation": {"angle": 22.5, "axis": "z", "origin": [8, 8, 8]},
+      "faces": {
+        "north": {"uv": [12, 0, 16, 4], "texture": "#0"},
+        "east": {"uv": [12, 0, 16, 4], "texture": "#0"},
+        "south": {"uv": [12, 0, 16, 4], "texture": "#0"},
+        "west": {"uv": [12, 0, 16, 4], "texture": "#0"},
+        "up": {"uv": [16, 4, 12, 0], "texture": "#0"},
+        "down": {"uv": [16, 0, 12, 4], "texture": "#0"}
+      }
+    }
+  ]
+}

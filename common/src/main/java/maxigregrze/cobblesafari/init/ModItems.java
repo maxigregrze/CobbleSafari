@@ -71,8 +71,6 @@ public class ModItems {
     public static Item PERFUME_RARE;
     public static Item PERFUME_ULTRARARE;
 
-    public static final Item AUSPICIOUS_POKEBALL = new Item(new Item.Properties());
-
     public static final Item SPHERE_BLUE_S = new Item(new Item.Properties());
     public static final Item SPHERE_BLUE_L = new Item(new Item.Properties());
     public static final Item SPHERE_RED_S = new Item(new Item.Properties());
@@ -198,7 +196,6 @@ public class ModItems {
         PERFUME_ULTRARARE = new IncenseItem(new Item.Properties().stacksTo(16),
                 ModEffects.ULTRA_RARE_BOOST.holder, SpawnBoostConfig.data.durationSettings.ultraRareBoostDuration);
 
-        registerItem("auspiciouspokeball", AUSPICIOUS_POKEBALL);
         registerItem("wildegg", WILD_EGG_BASE);
 
         for (Map.Entry<String, Item> entry : WILD_EGGS.entrySet()) {

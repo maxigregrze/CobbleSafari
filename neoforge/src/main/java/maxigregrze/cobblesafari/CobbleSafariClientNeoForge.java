@@ -5,8 +5,14 @@ import maxigregrze.cobblesafari.init.ModBlockEntities;
 import maxigregrze.cobblesafari.init.ModBlocks;
 import maxigregrze.cobblesafari.init.ModEntities;
 import maxigregrze.cobblesafari.init.ModItems;
-import maxigregrze.cobblesafari.client.screen.DistortionStoneBricksRuneScreen;
+import maxigregrze.cobblesafari.client.screen.AuspiciousPokeballConfigScreen;
+import maxigregrze.cobblesafari.client.screen.AuspiciousPokeballGoldConfigScreen;
+import maxigregrze.cobblesafari.client.screen.LostItemConfigScreen;
+import maxigregrze.cobblesafari.network.OpenAuspiciousPokeballConfigPayload;
+import maxigregrze.cobblesafari.network.OpenAuspiciousPokeballGoldConfigPayload;
+import maxigregrze.cobblesafari.network.OpenLostItemConfigPayload;
 import maxigregrze.cobblesafari.client.screen.TpAcceptScreen;
+import maxigregrze.cobblesafari.client.screen.DistortionStoneBricksRuneScreen;
 import maxigregrze.cobblesafari.config.DimensionalBanConfig;
 import maxigregrze.cobblesafari.network.CloseTpAcceptPayload;
 import maxigregrze.cobblesafari.network.DimensionalBanSyncPayload;
@@ -21,6 +27,7 @@ import maxigregrze.cobblesafari.client.renderer.CsTraderEntityRenderer;
 import maxigregrze.cobblesafari.client.renderer.HikerEntityRenderer;
 import maxigregrze.cobblesafari.client.renderer.HoopaRingPortalBlockEntityRenderer;
 import maxigregrze.cobblesafari.client.renderer.GiratinaCoreBlockEntityRenderer;
+import maxigregrze.cobblesafari.client.renderer.AuspiciousPokeballBlockEntityRenderer;
 import maxigregrze.cobblesafari.client.renderer.DistortionPortalBlockEntityRenderer;
 import maxigregrze.cobblesafari.client.renderer.LostItemBlockEntityRenderer;
 import maxigregrze.cobblesafari.client.renderer.VoidBlockRenderer;
@@ -160,6 +167,12 @@ public class CobbleSafariClientNeoForge {
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.LOST_NOTES, RenderType.cutout());
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.LOST_ITEM, RenderType.cutout());
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.LOST_ITEM_VISUAL, RenderType.cutout());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.AUSPICIOUS_POKEBALL, RenderType.cutout());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.AUSPICIOUS_POKEBALL_DISPLAY, RenderType.cutout());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.AUSPICIOUS_POKEBALL_SMALL, RenderType.cutout());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.AUSPICIOUS_POKEBALL_SMALL_DISPLAY, RenderType.cutout());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.AUSPICIOUS_POKEBALL_GOLD, RenderType.cutout());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.AUSPICIOUS_POKEBALL_GOLD_DISPLAY, RenderType.cutout());
 
             BlockEntityRenderers.register(ModBlockEntities.HOOPA_RING_PORTAL, HoopaRingPortalBlockEntityRenderer::new);
             BlockEntityRenderers.register(ModBlockEntities.DUNGEON_PORTAL, DungeonPortalBlockEntityRenderer::new);
@@ -167,6 +180,8 @@ public class CobbleSafariClientNeoForge {
             BlockEntityRenderers.register(ModBlockEntities.GIRATINA_CORE, GiratinaCoreBlockEntityRenderer::new);
             BlockEntityRenderers.register(ModBlockEntities.DISTORTION_PORTAL, DistortionPortalBlockEntityRenderer::new);
             BlockEntityRenderers.register(ModBlockEntities.LOST_ITEM, LostItemBlockEntityRenderer::new);
+            BlockEntityRenderers.register(ModBlockEntities.AUSPICIOUS_POKEBALL, AuspiciousPokeballBlockEntityRenderer::new);
+            BlockEntityRenderers.register(ModBlockEntities.AUSPICIOUS_POKEBALL_GOLD, AuspiciousPokeballBlockEntityRenderer::new);
         });
 
         event.enqueueWork(DonutItemClientSetup::registerItemProperties);
@@ -256,6 +271,24 @@ public class CobbleSafariClientNeoForge {
     public static void handleOpenRuneEditor(OpenRuneEditorPayload payload, IPayloadContext context) {
         context.enqueueWork(() -> {
             Minecraft.getInstance().setScreen(new DistortionStoneBricksRuneScreen(payload.pos(), payload.text()));
+        });
+    }
+
+    public static void handleOpenLostItemConfig(OpenLostItemConfigPayload payload, IPayloadContext context) {
+        context.enqueueWork(() -> {
+            Minecraft.getInstance().setScreen(new LostItemConfigScreen(payload));
+        });
+    }
+
+    public static void handleOpenAuspiciousPokeballConfig(OpenAuspiciousPokeballConfigPayload payload, IPayloadContext context) {
+        context.enqueueWork(() -> {
+            Minecraft.getInstance().setScreen(new AuspiciousPokeballConfigScreen(payload));
+        });
+    }
+
+    public static void handleOpenAuspiciousPokeballGoldConfig(OpenAuspiciousPokeballGoldConfigPayload payload, IPayloadContext context) {
+        context.enqueueWork(() -> {
+            Minecraft.getInstance().setScreen(new AuspiciousPokeballGoldConfigScreen(payload));
         });
     }
 

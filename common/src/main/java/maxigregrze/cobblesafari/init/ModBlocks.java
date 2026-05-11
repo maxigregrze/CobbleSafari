@@ -26,6 +26,9 @@ import maxigregrze.cobblesafari.block.distortion.DistortionStonebricksRubbleBloc
 import maxigregrze.cobblesafari.block.distortion.GiratinaCoreBlock;
 import maxigregrze.cobblesafari.block.distortion.GiratinaCoreSideBlock;
 import maxigregrze.cobblesafari.block.misc.LostNotesBlock;
+import maxigregrze.cobblesafari.block.misc.AuspiciousPokeballBlock;
+import maxigregrze.cobblesafari.block.misc.AuspiciousPokeballSmallBlock;
+import maxigregrze.cobblesafari.block.misc.AuspiciousPokeballGoldBlock;
 import maxigregrze.cobblesafari.block.misc.LostItemBlock;
 import maxigregrze.cobblesafari.block.misc.LostItemVisualBlock;
 import maxigregrze.cobblesafari.block.misc.MagneticClusterBlock;
@@ -566,6 +569,63 @@ public class ModBlocks {
 
     public static final Block LOST_ITEM_VISUAL = registerBlockWithoutItem("lost_item_visual",
             new LostItemVisualBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.STONE)
+                    .instabreak()
+                    .sound(SoundType.STONE)
+                    .noOcclusion()
+                    .noCollission()
+            ));
+
+    public static final Block AUSPICIOUS_POKEBALL = registerBlock("auspicious_pokeball",
+            new AuspiciousPokeballBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.STONE)
+                    .instabreak()
+                    .sound(SoundType.STONE)
+                    .noOcclusion()
+                    .noCollission()
+                    .lightLevel(state -> 15)
+            ));
+
+    public static final Block AUSPICIOUS_POKEBALL_DISPLAY = registerBlockWithoutItem("auspicious_pokeball_display",
+            new Block(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.STONE)
+                    .instabreak()
+                    .sound(SoundType.STONE)
+                    .noOcclusion()
+                    .noCollission()
+            ));
+
+    public static final Block AUSPICIOUS_POKEBALL_SMALL = registerBlock("auspiciouspokeball_small",
+            new AuspiciousPokeballSmallBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.STONE)
+                    .instabreak()
+                    .sound(SoundType.STONE)
+                    .noOcclusion()
+                    .noCollission()
+                    .lightLevel(state -> 15)
+            ));
+
+    public static final Block AUSPICIOUS_POKEBALL_SMALL_DISPLAY = registerBlockWithoutItem("auspiciouspokeball_small_display",
+            new Block(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.STONE)
+                    .instabreak()
+                    .sound(SoundType.STONE)
+                    .noOcclusion()
+                    .noCollission()
+            ));
+
+    public static final Block AUSPICIOUS_POKEBALL_GOLD = registerBlock("auspiciouspokeball_gold",
+            new AuspiciousPokeballGoldBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.STONE)
+                    .instabreak()
+                    .sound(SoundType.STONE)
+                    .noOcclusion()
+                    .noCollission()
+                    .lightLevel(state -> 15)
+            ));
+
+    public static final Block AUSPICIOUS_POKEBALL_GOLD_DISPLAY = registerBlockWithoutItem("auspiciouspokeball_gold_display",
+            new Block(BlockBehaviour.Properties.of()
                     .mapColor(MapColor.STONE)
                     .instabreak()
                     .sound(SoundType.STONE)

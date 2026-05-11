@@ -1,5 +1,8 @@
 package maxigregrze.cobblesafari.network;
 
+import maxigregrze.cobblesafari.client.screen.AuspiciousPokeballConfigScreen;
+import maxigregrze.cobblesafari.client.screen.AuspiciousPokeballGoldConfigScreen;
+import maxigregrze.cobblesafari.client.screen.LostItemConfigScreen;
 import maxigregrze.cobblesafari.client.screen.TpAcceptScreen;
 import maxigregrze.cobblesafari.client.screen.DistortionStoneBricksRuneScreen;
 import maxigregrze.cobblesafari.underground.UndergroundScreen;
@@ -46,6 +49,33 @@ public class ClientNetworking {
                 (payload, context) -> {
                     context.client().execute(() -> {
                         Minecraft.getInstance().setScreen(new DistortionStoneBricksRuneScreen(payload.pos(), payload.text()));
+                    });
+                }
+        );
+
+        ClientPlayNetworking.registerGlobalReceiver(
+                OpenLostItemConfigPayload.TYPE,
+                (payload, context) -> {
+                    context.client().execute(() -> {
+                        Minecraft.getInstance().setScreen(new LostItemConfigScreen(payload));
+                    });
+                }
+        );
+
+        ClientPlayNetworking.registerGlobalReceiver(
+                OpenAuspiciousPokeballGoldConfigPayload.TYPE,
+                (payload, context) -> {
+                    context.client().execute(() -> {
+                        Minecraft.getInstance().setScreen(new AuspiciousPokeballGoldConfigScreen(payload));
+                    });
+                }
+        );
+
+        ClientPlayNetworking.registerGlobalReceiver(
+                OpenAuspiciousPokeballConfigPayload.TYPE,
+                (payload, context) -> {
+                    context.client().execute(() -> {
+                        Minecraft.getInstance().setScreen(new AuspiciousPokeballConfigScreen(payload));
                     });
                 }
         );
