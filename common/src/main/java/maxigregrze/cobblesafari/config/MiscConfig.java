@@ -34,12 +34,15 @@ public class MiscConfig {
     /** Valeurs par défaut pour un bloc « pokéball auspicieuse » nouvellement placé (clé {@code auspiciousPokeball}). */
     private AuspiciousPokeballDefaults auspiciousPokeball = new AuspiciousPokeballDefaults();
 
+    /** Défauts au placement pour {@code cobblesafari:auspiciouspokeball_small} (clé {@code auspiciousPokeballSmall}). */
+    private AuspiciousPokeballDefaults auspiciousPokeballSmall = new AuspiciousPokeballDefaults();
+
+    /** Défauts au placement pour {@code cobblesafari:auspiciouspokeball_gold} (clé {@code auspiciousPokeballGold}). */
+    private AuspiciousPokeballDefaults auspiciousPokeballGold = new AuspiciousPokeballDefaults();
+
     public MiscConfig() {
     }
 
-    /**
-     * Schéma JSON sous la clé {@code lostItem} dans {@code misc_config.json}.
-     */
     public static final class LostItemDefaults {
         public String poolBerryId = "cobblesafari:lostitem_berry";
         public String poolCandyId = "cobblesafari:lostitem_candy";
@@ -53,10 +56,28 @@ public class MiscConfig {
     }
 
     public static final class AuspiciousPokeballDefaults {
-        public String poolBerryId = "cobblesafari:lostitem_berry";
-        public String poolCandyId = "cobblesafari:lostitem_candy";
-        public String poolBallsId = "cobblesafari:lostitem_ball";
-        public String poolTreasuresId = "cobblesafari:lostitem_treasure";
+        public String poolBerryId = "cobblesafari:auspiciouspokeball/berry";
+        public String poolCandyId = "cobblesafari:auspiciouspokeball/candy";
+        public String poolBallsId = "cobblesafari:auspiciouspokeball/ball";
+        public String poolTreasuresId = "cobblesafari:auspiciouspokeball/treasure";
+        public int minRoll = 1;
+        public int maxRoll = 3;
+    }
+
+    public static final class AuspiciousPokeballSmallDefaults {
+        public String poolBerryId = "cobblesafari:auspiciouspokeball/berry_small";
+        public String poolCandyId = "cobblesafari:auspiciouspokeball/candy_small";
+        public String poolBallsId = "cobblesafari:auspiciouspokeball/ball_small";
+        public String poolTreasuresId = "cobblesafari:auspiciouspokeball/treasure_small";
+        public int minRoll = 1;
+        public int maxRoll = 3;
+    }
+
+    public static final class AuspiciousPokeballGoldenDefaults {
+        public String poolBerryId = "cobblesafari:auspiciouspokeball/berry_gold";
+        public String poolCandyId = "cobblesafari:auspiciouspokeball/candy_gold";
+        public String poolBallsId = "cobblesafari:auspiciouspokeball/ball_gold";
+        public String poolTreasuresId = "cobblesafari:auspiciouspokeball/treasure_gold";
         public int minRoll = 1;
         public int maxRoll = 3;
     }
@@ -73,6 +94,8 @@ public class MiscConfig {
                 }
                 INSTANCE.ensureLostItemDefaults();
                 INSTANCE.ensureAuspiciousPokeballDefaults();
+                INSTANCE.ensureAuspiciousPokeballSmallDefaults();
+                INSTANCE.ensureAuspiciousPokeballGoldDefaults();
                 CobbleSafari.LOGGER.info("CobbleSafari >> misc_config.json loaded successfully from {}", CONFIG_PATH);
                 CobbleSafari.LOGGER.info("CobbleSafari >> Persisting misc_config.json after load (canonical schema on disk)");
                 save();
@@ -105,6 +128,8 @@ public class MiscConfig {
         }
         INSTANCE.ensureLostItemDefaults();
         INSTANCE.ensureAuspiciousPokeballDefaults();
+        INSTANCE.ensureAuspiciousPokeballSmallDefaults();
+        INSTANCE.ensureAuspiciousPokeballGoldDefaults();
         try {
             Files.createDirectories(CONFIG_DIR);
         } catch (IOException e) {
@@ -174,23 +199,40 @@ public class MiscConfig {
         li.mode = Math.max(0, Math.min(2, li.mode));
     }
 
+    private static void fillNullAuspiciousPools(AuspiciousPokeballDefaults ap, AuspiciousPokeballDefaults template) {
+        if (ap.poolBerryId == null) {
+            ap.poolBerryId = template.poolBerryId;
+        }
+        if (ap.poolCandyId == null) {
+            ap.poolCandyId = template.poolCandyId;
+        }
+        if (ap.poolBallsId == null) {
+            ap.poolBallsId = template.poolBallsId;
+        }
+        if (ap.poolTreasuresId == null) {
+            ap.poolTreasuresId = template.poolTreasuresId;
+        }
+    }
+
     public void ensureAuspiciousPokeballDefaults() {
         if (this.auspiciousPokeball == null) {
             this.auspiciousPokeball = new AuspiciousPokeballDefaults();
         }
-        AuspiciousPokeballDefaults ap = this.auspiciousPokeball;
-        if (ap.poolBerryId == null) {
-            ap.poolBerryId = new AuspiciousPokeballDefaults().poolBerryId;
+        fillNullAuspiciousPools(this.auspiciousPokeball, new AuspiciousPokeballDefaults());
+    }
+
+    public void ensureAuspiciousPokeballSmallDefaults() {
+        if (this.auspiciousPokeballSmall == null) {
+            this.auspiciousPokeballSmall = new AuspiciousPokeballDefaults();
         }
-        if (ap.poolCandyId == null) {
-            ap.poolCandyId = new AuspiciousPokeballDefaults().poolCandyId;
+        fillNullAuspiciousPools(this.auspiciousPokeballSmall, new AuspiciousPokeballDefaults());
+    }
+
+    public void ensureAuspiciousPokeballGoldDefaults() {
+        if (this.auspiciousPokeballGold == null) {
+            this.auspiciousPokeballGold = new AuspiciousPokeballDefaults();
         }
-        if (ap.poolBallsId == null) {
-            ap.poolBallsId = new AuspiciousPokeballDefaults().poolBallsId;
-        }
-        if (ap.poolTreasuresId == null) {
-            ap.poolTreasuresId = new AuspiciousPokeballDefaults().poolTreasuresId;
-        }
+        fillNullAuspiciousPools(this.auspiciousPokeballGold, new AuspiciousPokeballDefaults());
     }
 
     private static LostItemDefaults lostItemOrDefaults() {
@@ -205,6 +247,22 @@ public class MiscConfig {
         if (INSTANCE != null) {
             INSTANCE.ensureAuspiciousPokeballDefaults();
             return INSTANCE.auspiciousPokeball;
+        }
+        return new AuspiciousPokeballDefaults();
+    }
+
+    private static AuspiciousPokeballDefaults auspiciousPokeballSmallOrDefaults() {
+        if (INSTANCE != null) {
+            INSTANCE.ensureAuspiciousPokeballSmallDefaults();
+            return INSTANCE.auspiciousPokeballSmall;
+        }
+        return new AuspiciousPokeballDefaults();
+    }
+
+    private static AuspiciousPokeballDefaults auspiciousPokeballGoldOrDefaults() {
+        if (INSTANCE != null) {
+            INSTANCE.ensureAuspiciousPokeballGoldDefaults();
+            return INSTANCE.auspiciousPokeballGold;
         }
         return new AuspiciousPokeballDefaults();
     }
@@ -284,5 +342,61 @@ public class MiscConfig {
 
     public static int getAuspiciousPokeballMaxRoll() {
         return Math.max(0, auspiciousPokeballOrDefaults().maxRoll);
+    }
+
+    public static String getAuspiciousPokeballSmallPoolBerryId() {
+        AuspiciousPokeballDefaults d = auspiciousPokeballSmallOrDefaults();
+        return nonBlankOrDefault(d.poolBerryId, new AuspiciousPokeballDefaults().poolBerryId);
+    }
+
+    public static String getAuspiciousPokeballSmallPoolCandyId() {
+        AuspiciousPokeballDefaults d = auspiciousPokeballSmallOrDefaults();
+        return nonBlankOrDefault(d.poolCandyId, new AuspiciousPokeballDefaults().poolCandyId);
+    }
+
+    public static String getAuspiciousPokeballSmallPoolBallsId() {
+        AuspiciousPokeballDefaults d = auspiciousPokeballSmallOrDefaults();
+        return nonBlankOrDefault(d.poolBallsId, new AuspiciousPokeballDefaults().poolBallsId);
+    }
+
+    public static String getAuspiciousPokeballSmallPoolTreasuresId() {
+        AuspiciousPokeballDefaults d = auspiciousPokeballSmallOrDefaults();
+        return nonBlankOrDefault(d.poolTreasuresId, new AuspiciousPokeballDefaults().poolTreasuresId);
+    }
+
+    public static int getAuspiciousPokeballSmallMinRoll() {
+        return Math.max(0, auspiciousPokeballSmallOrDefaults().minRoll);
+    }
+
+    public static int getAuspiciousPokeballSmallMaxRoll() {
+        return Math.max(0, auspiciousPokeballSmallOrDefaults().maxRoll);
+    }
+
+    public static String getAuspiciousPokeballGoldPoolBerryId() {
+        AuspiciousPokeballDefaults d = auspiciousPokeballGoldOrDefaults();
+        return nonBlankOrDefault(d.poolBerryId, new AuspiciousPokeballDefaults().poolBerryId);
+    }
+
+    public static String getAuspiciousPokeballGoldPoolCandyId() {
+        AuspiciousPokeballDefaults d = auspiciousPokeballGoldOrDefaults();
+        return nonBlankOrDefault(d.poolCandyId, new AuspiciousPokeballDefaults().poolCandyId);
+    }
+
+    public static String getAuspiciousPokeballGoldPoolBallsId() {
+        AuspiciousPokeballDefaults d = auspiciousPokeballGoldOrDefaults();
+        return nonBlankOrDefault(d.poolBallsId, new AuspiciousPokeballDefaults().poolBallsId);
+    }
+
+    public static String getAuspiciousPokeballGoldPoolTreasuresId() {
+        AuspiciousPokeballDefaults d = auspiciousPokeballGoldOrDefaults();
+        return nonBlankOrDefault(d.poolTreasuresId, new AuspiciousPokeballDefaults().poolTreasuresId);
+    }
+
+    public static int getAuspiciousPokeballGoldMinRoll() {
+        return Math.max(0, auspiciousPokeballGoldOrDefaults().minRoll);
+    }
+
+    public static int getAuspiciousPokeballGoldMaxRoll() {
+        return Math.max(0, auspiciousPokeballGoldOrDefaults().maxRoll);
     }
 }

@@ -2,8 +2,8 @@
     "ingredient": "cobblesafari:hyperberry_ganlon",
     "colour": "yellow",
     "flavours": {
-        "SWEET": 55,
-        "BITTER": 80
+        "SWEET": 80,
+        "BITTER": 55
     },
     "baitEffects": [
         {

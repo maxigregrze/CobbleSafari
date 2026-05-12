@@ -2,8 +2,8 @@
     "ingredient": "cobblesafari:hyperberry_apicot",
     "colour": "pink",
     "flavours": {
-        "SPICY": 80,
-        "SOUR": 55
+        "SPICY": 55,
+        "SOUR": 80
     },
     "baitEffects": [
         {

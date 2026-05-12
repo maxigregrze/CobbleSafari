@@ -142,12 +142,12 @@ public class AuspiciousPokeballGoldConfigScreen extends Screen {
     }
 
     private void applyFieldsFromMiscConfig() {
-        this.poolBerryBox.setValue(MiscConfig.getAuspiciousPokeballPoolBerryId());
-        this.poolCandyBox.setValue(MiscConfig.getAuspiciousPokeballPoolCandyId());
-        this.poolBallsBox.setValue(MiscConfig.getAuspiciousPokeballPoolBallsId());
-        this.poolTreasuresBox.setValue(MiscConfig.getAuspiciousPokeballPoolTreasuresId());
-        this.minRollBox.setValue(Integer.toString(MiscConfig.getAuspiciousPokeballMinRoll()));
-        this.maxRollBox.setValue(Integer.toString(MiscConfig.getAuspiciousPokeballMaxRoll()));
+        this.poolBerryBox.setValue(MiscConfig.getAuspiciousPokeballGoldPoolBerryId());
+        this.poolCandyBox.setValue(MiscConfig.getAuspiciousPokeballGoldPoolCandyId());
+        this.poolBallsBox.setValue(MiscConfig.getAuspiciousPokeballGoldPoolBallsId());
+        this.poolTreasuresBox.setValue(MiscConfig.getAuspiciousPokeballGoldPoolTreasuresId());
+        this.minRollBox.setValue(Integer.toString(MiscConfig.getAuspiciousPokeballGoldMinRoll()));
+        this.maxRollBox.setValue(Integer.toString(MiscConfig.getAuspiciousPokeballGoldMaxRoll()));
     }
 
     private void relayoutEditBoxes() {

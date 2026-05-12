@@ -2,8 +2,8 @@
     "ingredient": "cobblesafari:hyperberry_petaya",
     "colour": "green",
     "flavours": {
-        "DRY": 55,
-        "SOUR": 80
+        "DRY": 80,
+        "SOUR": 55
     },
     "baitEffects": [
         {

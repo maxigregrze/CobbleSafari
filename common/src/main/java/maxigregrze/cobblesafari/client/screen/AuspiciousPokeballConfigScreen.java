@@ -1,6 +1,7 @@
 package maxigregrze.cobblesafari.client.screen;
 
 import maxigregrze.cobblesafari.config.MiscConfig;
+import maxigregrze.cobblesafari.init.ModBlocks;
 import maxigregrze.cobblesafari.network.AuspiciousPokeballResetClaimsPayload;
 import maxigregrze.cobblesafari.network.OpenAuspiciousPokeballConfigPayload;
 import maxigregrze.cobblesafari.network.SaveAuspiciousPokeballConfigPayload;
@@ -118,12 +119,24 @@ public class AuspiciousPokeballConfigScreen extends Screen {
     }
 
     private void applyFieldsFromMiscConfig() {
-        this.poolBerryBox.setValue(MiscConfig.getAuspiciousPokeballPoolBerryId());
-        this.poolCandyBox.setValue(MiscConfig.getAuspiciousPokeballPoolCandyId());
-        this.poolBallsBox.setValue(MiscConfig.getAuspiciousPokeballPoolBallsId());
-        this.poolTreasuresBox.setValue(MiscConfig.getAuspiciousPokeballPoolTreasuresId());
-        this.minRollBox.setValue(Integer.toString(MiscConfig.getAuspiciousPokeballMinRoll()));
-        this.maxRollBox.setValue(Integer.toString(MiscConfig.getAuspiciousPokeballMaxRoll()));
+        boolean small = this.minecraft != null
+                && this.minecraft.level != null
+                && this.minecraft.level.getBlockState(this.initial.pos()).getBlock() == ModBlocks.AUSPICIOUS_POKEBALL_SMALL;
+        if (small) {
+            this.poolBerryBox.setValue(MiscConfig.getAuspiciousPokeballSmallPoolBerryId());
+            this.poolCandyBox.setValue(MiscConfig.getAuspiciousPokeballSmallPoolCandyId());
+            this.poolBallsBox.setValue(MiscConfig.getAuspiciousPokeballSmallPoolBallsId());
+            this.poolTreasuresBox.setValue(MiscConfig.getAuspiciousPokeballSmallPoolTreasuresId());
+            this.minRollBox.setValue(Integer.toString(MiscConfig.getAuspiciousPokeballSmallMinRoll()));
+            this.maxRollBox.setValue(Integer.toString(MiscConfig.getAuspiciousPokeballSmallMaxRoll()));
+        } else {
+            this.poolBerryBox.setValue(MiscConfig.getAuspiciousPokeballPoolBerryId());
+            this.poolCandyBox.setValue(MiscConfig.getAuspiciousPokeballPoolCandyId());
+            this.poolBallsBox.setValue(MiscConfig.getAuspiciousPokeballPoolBallsId());
+            this.poolTreasuresBox.setValue(MiscConfig.getAuspiciousPokeballPoolTreasuresId());
+            this.minRollBox.setValue(Integer.toString(MiscConfig.getAuspiciousPokeballMinRoll()));
+            this.maxRollBox.setValue(Integer.toString(MiscConfig.getAuspiciousPokeballMaxRoll()));
+        }
     }
 
     private void relayoutEditBoxes() {

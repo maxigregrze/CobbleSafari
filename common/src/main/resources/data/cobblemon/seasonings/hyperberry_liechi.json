@@ -2,8 +2,8 @@
     "ingredient": "cobblesafari:hyperberry_liechi",
     "colour": "blue",
     "flavours": {
-        "SPICY": 55,
-        "SWEET": 80
+        "SPICY": 80,
+        "SWEET": 55
     },
     "baitEffects": [
         {

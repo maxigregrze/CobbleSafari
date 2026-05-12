@@ -96,13 +96,56 @@ public class AuspiciousPokeballBlockEntity extends BlockEntity {
         return true;
     }
 
+    /**
+     * La variante or lit {@link MiscConfig} sous {@code auspiciousPokeballGold} plutôt que la grande Pokéball.
+     */
+    protected boolean usesGoldMiscConfigDefaults() {
+        return false;
+    }
+
+    private enum AuspiciousMiscKind {
+        GOLD,
+        SMALL,
+        STANDARD
+    }
+
+    private AuspiciousMiscKind miscKindForDefaults() {
+        if (this.usesGoldMiscConfigDefaults()) {
+            return AuspiciousMiscKind.GOLD;
+        }
+        if (this.getBlockState().getBlock() == ModBlocks.AUSPICIOUS_POKEBALL_SMALL) {
+            return AuspiciousMiscKind.SMALL;
+        }
+        return AuspiciousMiscKind.STANDARD;
+    }
+
     private void applyPlacementDefaults() {
-        this.poolBerryId = MiscConfig.getAuspiciousPokeballPoolBerryId();
-        this.poolCandyId = MiscConfig.getAuspiciousPokeballPoolCandyId();
-        this.poolBallsId = MiscConfig.getAuspiciousPokeballPoolBallsId();
-        this.poolTreasuresId = MiscConfig.getAuspiciousPokeballPoolTreasuresId();
-        this.minRoll = MiscConfig.getAuspiciousPokeballMinRoll();
-        this.maxRoll = MiscConfig.getAuspiciousPokeballMaxRoll();
+        switch (this.miscKindForDefaults()) {
+            case GOLD -> {
+                this.poolBerryId = MiscConfig.getAuspiciousPokeballGoldPoolBerryId();
+                this.poolCandyId = MiscConfig.getAuspiciousPokeballGoldPoolCandyId();
+                this.poolBallsId = MiscConfig.getAuspiciousPokeballGoldPoolBallsId();
+                this.poolTreasuresId = MiscConfig.getAuspiciousPokeballGoldPoolTreasuresId();
+                this.minRoll = MiscConfig.getAuspiciousPokeballGoldMinRoll();
+                this.maxRoll = MiscConfig.getAuspiciousPokeballGoldMaxRoll();
+            }
+            case SMALL -> {
+                this.poolBerryId = MiscConfig.getAuspiciousPokeballSmallPoolBerryId();
+                this.poolCandyId = MiscConfig.getAuspiciousPokeballSmallPoolCandyId();
+                this.poolBallsId = MiscConfig.getAuspiciousPokeballSmallPoolBallsId();
+                this.poolTreasuresId = MiscConfig.getAuspiciousPokeballSmallPoolTreasuresId();
+                this.minRoll = MiscConfig.getAuspiciousPokeballSmallMinRoll();
+                this.maxRoll = MiscConfig.getAuspiciousPokeballSmallMaxRoll();
+            }
+            case STANDARD -> {
+                this.poolBerryId = MiscConfig.getAuspiciousPokeballPoolBerryId();
+                this.poolCandyId = MiscConfig.getAuspiciousPokeballPoolCandyId();
+                this.poolBallsId = MiscConfig.getAuspiciousPokeballPoolBallsId();
+                this.poolTreasuresId = MiscConfig.getAuspiciousPokeballPoolTreasuresId();
+                this.minRoll = MiscConfig.getAuspiciousPokeballMinRoll();
+                this.maxRoll = MiscConfig.getAuspiciousPokeballMaxRoll();
+            }
+        }
     }
 
     public boolean hasClaimed(UUID playerId) {
@@ -252,12 +295,42 @@ public class AuspiciousPokeballBlockEntity extends BlockEntity {
             }
         }
 
-        this.poolBerryId = tag.contains(NBT_POOL_BERRY) ? tag.getString(NBT_POOL_BERRY) : MiscConfig.getAuspiciousPokeballPoolBerryId();
-        this.poolCandyId = tag.contains(NBT_POOL_CANDY) ? tag.getString(NBT_POOL_CANDY) : MiscConfig.getAuspiciousPokeballPoolCandyId();
-        this.poolBallsId = tag.contains(NBT_POOL_BALLS) ? tag.getString(NBT_POOL_BALLS) : MiscConfig.getAuspiciousPokeballPoolBallsId();
-        this.poolTreasuresId = tag.contains(NBT_POOL_TREASURES) ? tag.getString(NBT_POOL_TREASURES) : MiscConfig.getAuspiciousPokeballPoolTreasuresId();
-        this.minRoll = tag.contains(NBT_MIN_ROLL) ? tag.getInt(NBT_MIN_ROLL) : MiscConfig.getAuspiciousPokeballMinRoll();
-        this.maxRoll = tag.contains(NBT_MAX_ROLL) ? tag.getInt(NBT_MAX_ROLL) : MiscConfig.getAuspiciousPokeballMaxRoll();
+        this.loadPoolFieldsFromTag(tag);
+    }
+
+    private void loadPoolFieldsFromTag(CompoundTag tag) {
+        switch (this.miscKindForDefaults()) {
+            case GOLD -> {
+                this.poolBerryId = tag.contains(NBT_POOL_BERRY) ? tag.getString(NBT_POOL_BERRY) : MiscConfig.getAuspiciousPokeballGoldPoolBerryId();
+                this.poolCandyId = tag.contains(NBT_POOL_CANDY) ? tag.getString(NBT_POOL_CANDY) : MiscConfig.getAuspiciousPokeballGoldPoolCandyId();
+                this.poolBallsId = tag.contains(NBT_POOL_BALLS) ? tag.getString(NBT_POOL_BALLS) : MiscConfig.getAuspiciousPokeballGoldPoolBallsId();
+                this.poolTreasuresId = tag.contains(NBT_POOL_TREASURES)
+                        ? tag.getString(NBT_POOL_TREASURES)
+                        : MiscConfig.getAuspiciousPokeballGoldPoolTreasuresId();
+                this.minRoll = tag.contains(NBT_MIN_ROLL) ? tag.getInt(NBT_MIN_ROLL) : MiscConfig.getAuspiciousPokeballGoldMinRoll();
+                this.maxRoll = tag.contains(NBT_MAX_ROLL) ? tag.getInt(NBT_MAX_ROLL) : MiscConfig.getAuspiciousPokeballGoldMaxRoll();
+            }
+            case SMALL -> {
+                this.poolBerryId = tag.contains(NBT_POOL_BERRY) ? tag.getString(NBT_POOL_BERRY) : MiscConfig.getAuspiciousPokeballSmallPoolBerryId();
+                this.poolCandyId = tag.contains(NBT_POOL_CANDY) ? tag.getString(NBT_POOL_CANDY) : MiscConfig.getAuspiciousPokeballSmallPoolCandyId();
+                this.poolBallsId = tag.contains(NBT_POOL_BALLS) ? tag.getString(NBT_POOL_BALLS) : MiscConfig.getAuspiciousPokeballSmallPoolBallsId();
+                this.poolTreasuresId = tag.contains(NBT_POOL_TREASURES)
+                        ? tag.getString(NBT_POOL_TREASURES)
+                        : MiscConfig.getAuspiciousPokeballSmallPoolTreasuresId();
+                this.minRoll = tag.contains(NBT_MIN_ROLL) ? tag.getInt(NBT_MIN_ROLL) : MiscConfig.getAuspiciousPokeballSmallMinRoll();
+                this.maxRoll = tag.contains(NBT_MAX_ROLL) ? tag.getInt(NBT_MAX_ROLL) : MiscConfig.getAuspiciousPokeballSmallMaxRoll();
+            }
+            case STANDARD -> {
+                this.poolBerryId = tag.contains(NBT_POOL_BERRY) ? tag.getString(NBT_POOL_BERRY) : MiscConfig.getAuspiciousPokeballPoolBerryId();
+                this.poolCandyId = tag.contains(NBT_POOL_CANDY) ? tag.getString(NBT_POOL_CANDY) : MiscConfig.getAuspiciousPokeballPoolCandyId();
+                this.poolBallsId = tag.contains(NBT_POOL_BALLS) ? tag.getString(NBT_POOL_BALLS) : MiscConfig.getAuspiciousPokeballPoolBallsId();
+                this.poolTreasuresId = tag.contains(NBT_POOL_TREASURES)
+                        ? tag.getString(NBT_POOL_TREASURES)
+                        : MiscConfig.getAuspiciousPokeballPoolTreasuresId();
+                this.minRoll = tag.contains(NBT_MIN_ROLL) ? tag.getInt(NBT_MIN_ROLL) : MiscConfig.getAuspiciousPokeballMinRoll();
+                this.maxRoll = tag.contains(NBT_MAX_ROLL) ? tag.getInt(NBT_MAX_ROLL) : MiscConfig.getAuspiciousPokeballMaxRoll();
+            }
+        }
     }
 
     private static UUID parseUuid(String raw) {

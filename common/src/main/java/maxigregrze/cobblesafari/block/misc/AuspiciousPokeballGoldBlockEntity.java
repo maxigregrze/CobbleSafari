@@ -34,6 +34,11 @@ public class AuspiciousPokeballGoldBlockEntity extends AuspiciousPokeballBlockEn
     }
 
     @Override
+    protected boolean usesGoldMiscConfigDefaults() {
+        return true;
+    }
+
+    @Override
     public Block displayRenderBlock() {
         return ModBlocks.AUSPICIOUS_POKEBALL_GOLD_DISPLAY;
     }

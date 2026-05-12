@@ -1,0 +1,46 @@
+{
+  "_comment": "The Bonus Ball data contains no treasure-category items (no Nuggets, Pearls, etc.). This table uses Rare Candy as a fallback across all tiers. Update once treasure items are defined for Bonus Ball.",
+  "type": "minecraft:chest",
+  "pools": [
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:group",
+          "weight": 39,
+          "children": [
+            { "type": "minecraft:item", "name": "cobblemon:rare_candy", "weight": 1 }
+          ]
+        },
+        {
+          "type": "minecraft:group",
+          "weight": 30,
+          "children": [
+            { "type": "minecraft:item", "name": "cobblemon:rare_candy", "weight": 1 }
+          ]
+        },
+        {
+          "type": "minecraft:group",
+          "weight": 20,
+          "children": [
+            { "type": "minecraft:item", "name": "cobblemon:rare_candy", "weight": 1 }
+          ]
+        },
+        {
+          "type": "minecraft:group",
+          "weight": 10,
+          "children": [
+            { "type": "minecraft:item", "name": "cobblemon:rare_candy", "weight": 1 }
+          ]
+        },
+        {
+          "type": "minecraft:group",
+          "weight": 1,
+          "children": [
+            { "type": "minecraft:item", "name": "cobblemon:rare_candy", "weight": 1 }
+          ]
+        }
+      ]
+    }
+  ]
+}
