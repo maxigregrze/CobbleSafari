@@ -1,0 +1,8 @@
+{
+    "name": "cobblemon.mark.cobblesafari.ribbon_wonder",
+    "title": "cobblemon.mark.cobblesafari.ribbon_wonder.title",
+	"titleColor": "ee9778",
+	"description": "cobblemon.mark.cobblesafari.ribbon_wonder.desc",
+	"texture": "cobblemon:textures/gui/mark/ribbon_wonder.png",
+	"indexNumber": 68
+}

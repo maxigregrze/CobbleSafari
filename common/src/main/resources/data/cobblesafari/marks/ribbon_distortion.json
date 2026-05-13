@@ -1,0 +1,8 @@
+{
+    "name": "cobblemon.mark.cobblesafari.ribbon_dungeon_distortion",
+    "title": "cobblemon.mark.cobblesafari.ribbon_dungeon_distortion.title",
+	"titleColor": "9a4b63",
+	"description": "cobblemon.mark.cobblesafari.ribbon_dungeon_distortion.desc",
+	"texture": "cobblemon:textures/gui/mark/ribbon_dungeon_distortion.png",
+	"indexNumber": 68
+}

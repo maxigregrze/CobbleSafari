@@ -1262,5 +1262,21 @@
 	"cobblesafari.rotomphone.no_rotom": "Vous avez besoin d'un Motisma dans votre equipe !",
 	"cobblesafari.rotomphone.filled": "Motisma est entre dans le telephone !",
 	"cobblesafari.rotomphone.shiny_not_allowed": "Utiliser un Motisma chromatique dans un telephone n'est pas autorise !",
-	"gui.cobblesafari.rotomphone.skin.none": "Pas de skin"
+	"gui.cobblesafari.rotomphone.skin.none": "Pas de skin",
+
+	"cobblemon.mark.cobblesafari.ribbon_dungeon_underground" : "Ruban Souterrain",
+    "cobblemon.mark.cobblesafari.ribbon_dungeon_underground.title" :"%1$s le Fan de Spéléologie",
+    "cobblemon.mark.cobblesafari.ribbon_dungeon_underground.desc" : "Un Ruban obtenu dans le Souterrain de Sinnoh.",
+	"cobblemon.mark.cobblesafari.ribbon_dungeon_paris" : "Ruban Palais Mystère",
+    "cobblemon.mark.cobblesafari.ribbon_dungeon_paris.title" : "%1$s l'Extra'",
+    "cobblemon.mark.cobblesafari.ribbon_dungeon_paris.desc" : "Un Ruban obtenu dans Extra Illumis.",
+	"cobblemon.mark.cobblesafari.ribbon_dungeon_distortion" : "Ruban Distorsion",
+    "cobblemon.mark.cobblesafari.ribbon_dungeon_distortion.title" : "%1$s le Distordu",
+    "cobblemon.mark.cobblesafari.ribbon_dungeon_distortion.desc" : "Un Ruban obtenu dans le Monde Distorsion.",
+	"cobblemon.mark.cobblesafari.safari" : "Insigne Safari",
+    "cobblemon.mark.cobblesafari.safari.title" : "%1$s le Sauvage",
+    "cobblemon.mark.cobblesafari.safari.desc" : "L'insigne d'un pokémon provenant du Safari.",
+	"cobblemon.mark.cobblesafari.dungeon" : "Insigne Donjon",
+    "cobblemon.mark.cobblesafari.dungeon.title" : "%1$s l'Explorateur",
+    "cobblemon.mark.cobblesafari.dungeon.desc" : "L'insigne d'un pokémon provenant d'un portail d'Hoopa."
 }

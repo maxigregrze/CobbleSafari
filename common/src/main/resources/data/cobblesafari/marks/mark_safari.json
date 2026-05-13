@@ -1,0 +1,14 @@
+{
+    "name": "cobblemon.mark.cobblesafari.safari",
+    "title": "cobblemon.mark.cobblesafari.safari.title",
+	"titleColor": "a8b860",
+	"description": "cobblemon.mark.cobblesafari.safari.desc",
+	"texture": "cobblemon:textures/gui/mark/mark_safari.png",
+	"indexNumber": 5,
+    "chance": 1,
+    "spawnConditions": [
+        {
+            "dimensions": ["coblesafari:domedimension"]
+        }
+    ]
+}

@@ -1259,5 +1259,22 @@
 	"cobblesafari.rotomphone.no_rotom": "You need a Rotom in your party!",
 	"cobblesafari.rotomphone.filled": "Rotom has entered the phone!",
 	"cobblesafari.rotomphone.shiny_not_allowed": "Using a shiny Rotom in a phone is not allowed!",
-	"gui.cobblesafari.rotomphone.skin.none": "No Skin"
+	"gui.cobblesafari.rotomphone.skin.none": "No Skin",
+
+	
+	"cobblemon.mark.cobblesafari.ribbon_dungeon_underground" : "Underground Ribbon",
+    "cobblemon.mark.cobblesafari.ribbon_dungeon_underground.title" :"%1$s the Spelunker ",
+    "cobblemon.mark.cobblesafari.ribbon_dungeon_underground.desc" : "A Ribbon obtained in the Sinnoh Underground.",
+	"cobblemon.mark.cobblesafari.ribbon_dungeon_paris" : "Hyperspace Luminose Ribbon",
+    "cobblemon.mark.cobblesafari.ribbon_dungeon_paris.title" : "Extra-%1$s",
+    "cobblemon.mark.cobblesafari.ribbon_dungeon_paris.desc" : "A Ribbon obtained in Extra Luminose.",
+	"cobblemon.mark.cobblesafari.ribbon_dungeon_distortion" : "Distortion Ribbon",
+    "cobblemon.mark.cobblesafari.ribbon_dungeon_distortion.title" : "%1$s the Distorted",
+    "cobblemon.mark.cobblesafari.ribbon_dungeon_distortion.desc" : "A Ribbon obtained in the Distortion World.",
+	"cobblemon.mark.cobblesafari.safari" : "Safari Mark",
+    "cobblemon.mark.cobblesafari.safari.title" : "%1$s the Wild",
+    "cobblemon.mark.cobblesafari.safari.desc" : "The mark of a pokemon caught in the Safari.",
+	"cobblemon.mark.cobblesafari.dungeon" : "Donjon Mark",
+    "cobblemon.mark.cobblesafari.dungeon.title" : "%1$s the Explorer",
+    "cobblemon.mark.cobblesafari.dungeon.desc" : "The mark of a pokemon caught inside a Hoopa portal."
 }
