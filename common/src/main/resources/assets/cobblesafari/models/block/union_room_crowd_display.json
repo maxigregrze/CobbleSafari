@@ -1,0 +1,46 @@
+{
+  "parent": "minecraft:block/block",
+  "texture_size": [16, 32],
+  "textures": {
+    "0": "cobblesafari:block/union_crowd",
+    "particle": "cobblesafari:block/union_crowd"
+  },
+  "elements": [
+    {
+      "from": [1, 0, 12],
+      "to": [15, 32, 12],
+      "rotation": {"angle": 0, "axis": "y", "origin": [1, 0, 12]},
+      "faces": {
+        "north": {"uv": [1, 0, 15, 16], "texture": "#0"},
+        "south": {"uv": [1, 0, 15, 16], "texture": "#0"}
+      }
+    },
+    {
+      "from": [1, 0, 4],
+      "to": [15, 20, 4],
+      "rotation": {"angle": 0, "axis": "y", "origin": [1, -13, 4]},
+      "faces": {
+        "north": {"uv": [1, 0, 15, 10], "texture": "#0"},
+        "south": {"uv": [1, 0, 15, 10], "texture": "#0"}
+      }
+    },
+    {
+      "from": [-7, 0, 8],
+      "to": [7, 26, 8],
+      "rotation": {"angle": 0, "axis": "y", "origin": [-7, -6, 8]},
+      "faces": {
+        "north": {"uv": [1, 0, 15, 13], "texture": "#0"},
+        "south": {"uv": [1, 0, 15, 13], "texture": "#0"}
+      }
+    },
+    {
+      "from": [9, 0, 8],
+      "to": [23, 26, 8],
+      "rotation": {"angle": 0, "axis": "y", "origin": [9, -6, 8]},
+      "faces": {
+        "north": {"uv": [1, 0, 15, 13], "texture": "#0"},
+        "south": {"uv": [1, 0, 15, 13], "texture": "#0"}
+      }
+    }
+  ]
+}

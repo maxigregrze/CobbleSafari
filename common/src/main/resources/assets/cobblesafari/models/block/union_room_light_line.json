@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/cube_all",
+  "textures": {
+    "all": "cobblesafari:block/union_light_line",
+    "particle": "cobblesafari:block/union_light_line"
+  }
+}

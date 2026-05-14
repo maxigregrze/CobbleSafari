@@ -1,0 +1,12 @@
+{
+  "variants": {
+    "facing=east,half=lower": { "model": "cobblesafari:block/union_room_globe_display_main", "y": 90 },
+    "facing=east,half=upper": { "model": "cobblesafari:block/union_room_invisible" },
+    "facing=north,half=lower": { "model": "cobblesafari:block/union_room_globe_display_main" },
+    "facing=north,half=upper": { "model": "cobblesafari:block/union_room_invisible" },
+    "facing=south,half=lower": { "model": "cobblesafari:block/union_room_globe_display_main", "y": 180 },
+    "facing=south,half=upper": { "model": "cobblesafari:block/union_room_invisible", "y": 180 },
+    "facing=west,half=lower": { "model": "cobblesafari:block/union_room_globe_display_main", "y": 270 },
+    "facing=west,half=upper": { "model": "cobblesafari:block/union_room_invisible", "y": 270 }
+  }
+}
