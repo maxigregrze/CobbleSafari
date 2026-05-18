@@ -195,5 +195,33 @@ public class ClientNetworking {
                     });
                 }
         );
+
+        ClientPlayNetworking.registerGlobalReceiver(
+                maxigregrze.cobblesafari.network.UnionAppResultPayload.TYPE,
+                (payload, context) -> {
+                    context.client().execute(() -> {
+                        if (payload.subscreen() == maxigregrze.cobblesafari.network.UnionAppResultPayload.SUB_CLOSE_GUI) {
+                            net.minecraft.client.Minecraft.getInstance().setScreen(null);
+                            return;
+                        }
+                        if (net.minecraft.client.Minecraft.getInstance().screen
+                                instanceof maxigregrze.cobblesafari.client.screen.rotomphone.RotomPhoneUnionScreen ru) {
+                            ru.applyServerSnapshot(payload);
+                        }
+                    });
+                }
+        );
+
+        ClientPlayNetworking.registerGlobalReceiver(
+                maxigregrze.cobblesafari.network.WonderAppResultPayload.TYPE,
+                (payload, context) -> {
+                    context.client().execute(() -> {
+                        if (net.minecraft.client.Minecraft.getInstance().screen
+                                instanceof maxigregrze.cobblesafari.client.screen.rotomphone.RotomPhoneWonderScreen rw) {
+                            rw.applyServerSnapshot(payload);
+                        }
+                    });
+                }
+        );
     }
 }

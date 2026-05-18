@@ -11,6 +11,9 @@ import maxigregrze.cobblesafari.block.misc.AuspiciousPokeballBlockEntity;
 import maxigregrze.cobblesafari.block.misc.AuspiciousPokeballGoldBlockEntity;
 import maxigregrze.cobblesafari.block.misc.LostItemBlockEntity;
 import maxigregrze.cobblesafari.block.misc.SafariEggNestBlockEntity;
+import maxigregrze.cobblesafari.block.misc.UnionRoomDecorBlockEntity;
+import maxigregrze.cobblesafari.block.misc.UnionRoomGlobeUpperBlockEntity;
+import maxigregrze.cobblesafari.block.misc.UnionRoomExitTeleporterBlockEntity;
 import maxigregrze.cobblesafari.block.misc.VoidBlockEntity;
 import maxigregrze.cobblesafari.CobbleSafari;
 import maxigregrze.cobblesafari.block.incubator.IncubatorBlockEntity;
@@ -36,6 +39,9 @@ public class ModBlockEntities {
     public static BlockEntityType<AuspiciousPokeballGoldBlockEntity> AUSPICIOUS_POKEBALL_GOLD;
     public static BlockEntityType<BasePCBlockEntity> SECRETBASE_PC;
     public static BlockEntityType<IncubatorBlockEntity> INCUBATOR;
+    public static BlockEntityType<UnionRoomDecorBlockEntity> UNION_ROOM_DECOR;
+    public static BlockEntityType<UnionRoomGlobeUpperBlockEntity> UNION_ROOM_GLOBE_UPPER;
+    public static BlockEntityType<UnionRoomExitTeleporterBlockEntity> UNION_ROOM_EXIT_TELEPORTER;
 
     public static void register() {
         CobbleSafari.LOGGER.info("Registering block entities for " + CobbleSafari.MOD_ID);
@@ -116,6 +122,32 @@ public class ModBlockEntities {
                 BuiltInRegistries.BLOCK_ENTITY_TYPE,
                 ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, "incubator"),
                 BlockEntityType.Builder.of(IncubatorBlockEntity::new, ModBlocks.INCUBATOR).build(null)
+        );
+
+        UNION_ROOM_DECOR = Registry.register(
+                BuiltInRegistries.BLOCK_ENTITY_TYPE,
+                ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, "union_room_decor"),
+                BlockEntityType.Builder.of(UnionRoomDecorBlockEntity::new,
+                        ModBlocks.UNION_ROOM_CROWD,
+                        ModBlocks.UNION_ROOM_POKEBALL,
+                        ModBlocks.UNION_ROOM_SPOT,
+                        ModBlocks.UNION_ROOM_SCREEN,
+                        ModBlocks.UNION_ROOM_SCREEN_LEFT,
+                        ModBlocks.UNION_ROOM_SCREEN_RIGHT).build(null)
+        );
+
+        UNION_ROOM_GLOBE_UPPER = Registry.register(
+                BuiltInRegistries.BLOCK_ENTITY_TYPE,
+                ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, "union_room_globe_upper"),
+                BlockEntityType.Builder.of(UnionRoomGlobeUpperBlockEntity::new,
+                        ModBlocks.UNION_ROOM_GLOBE,
+                        ModBlocks.UNION_ROOM_EXIT_TELEPORTER).build(null)
+        );
+
+        UNION_ROOM_EXIT_TELEPORTER = Registry.register(
+                BuiltInRegistries.BLOCK_ENTITY_TYPE,
+                ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, "union_room_exit_teleporter"),
+                BlockEntityType.Builder.of(UnionRoomExitTeleporterBlockEntity::new, ModBlocks.UNION_ROOM_EXIT_TELEPORTER).build(null)
         );
     }
 }

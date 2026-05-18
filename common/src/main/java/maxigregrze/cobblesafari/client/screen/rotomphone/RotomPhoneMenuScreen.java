@@ -23,7 +23,7 @@ public class RotomPhoneMenuScreen extends RotomPhoneBaseScreen {
     };
 
     private static final String[] APP_IDS = {
-            "chatApp", "pcApp", "healApp", "portalFinderApp",
+            "chatApp", "pcApp", "unionApp", "wonderApp",
             "itemFinderApp", "skinApp", "settingsApp"
     };
 
@@ -119,8 +119,8 @@ public class RotomPhoneMenuScreen extends RotomPhoneBaseScreen {
                 RotomPhonePcSession.activateFromPhoneMenu(rotomName, shinyStatus, currentSkin, safetyMode, rotoGlide);
                 Services.PLATFORM.sendPayloadToServer(new RotomPhoneActionPayload(RotomPhoneActionPayload.ACTION_OPEN_PC, ""));
             }
-            case "healApp" -> this.minecraft.setScreen(new RotomPhoneHealScreen(rotomName, shinyStatus, currentSkin, safetyMode, rotoGlide));
-            case "portalFinderApp" -> this.minecraft.setScreen(new RotomPhonePortalFinderScreen(rotomName, shinyStatus, currentSkin, safetyMode, rotoGlide));
+            case "unionApp" -> this.minecraft.setScreen(new RotomPhoneUnionScreen(rotomName, shinyStatus, currentSkin, safetyMode, rotoGlide));
+            case "wonderApp" -> this.minecraft.setScreen(new RotomPhoneWonderScreen(rotomName, shinyStatus, currentSkin, safetyMode, rotoGlide));
             case "itemFinderApp" -> this.minecraft.setScreen(new RotomPhoneItemFinderScreen(rotomName, shinyStatus, currentSkin, safetyMode, rotoGlide));
             case "skinApp" -> this.minecraft.setScreen(new RotomPhoneSkinScreen(rotomName, shinyStatus, currentSkin, safetyMode, rotoGlide));
             case "settingsApp" -> this.minecraft.setScreen(new RotomPhoneSettingsScreen(rotomName, shinyStatus, currentSkin, safetyMode, rotoGlide));

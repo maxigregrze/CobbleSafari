@@ -31,7 +31,9 @@ public class UnionRoomDecorBlockEntityRenderer implements BlockEntityRenderer<Un
 
         BlockState state = blockEntity.getBlockState();
         Direction facing = state.getValue(UnionRoomDecorBlock.FACING);
-        float facingYaw = facing.toYRot();
+        Direction yawFacing = decorFacingForRender(state.getBlock(), facing);
+
+        float facingYaw = yawFacing.toYRot();
 
         poseStack.pushPose();
         poseStack.translate(0.5, 0.0, 0.5);
@@ -47,6 +49,24 @@ public class UnionRoomDecorBlockEntityRenderer implements BlockEntityRenderer<Un
         poseStack.popPose();
     }
 
+    /**
+     * Blockbench models for these blocks do not match vanilla north/south; swap N↔S like overworld east/west.
+     */
+    private static Direction decorFacingForRender(Block block, Direction facing) {
+        if (block == ModBlocks.UNION_ROOM_CROWD
+                || block == ModBlocks.UNION_ROOM_SCREEN
+                || block == ModBlocks.UNION_ROOM_SCREEN_LEFT
+                || block == ModBlocks.UNION_ROOM_SCREEN_RIGHT) {
+            if (facing == Direction.NORTH) {
+                return Direction.SOUTH;
+            }
+            if (facing == Direction.SOUTH) {
+                return Direction.NORTH;
+            }
+        }
+        return facing;
+    }
+
     private static Block displayBlockFor(Block block) {
         if (block == ModBlocks.UNION_ROOM_CROWD) {
             return ModBlocks.UNION_ROOM_CROWD_DISPLAY;
@@ -56,6 +76,15 @@ public class UnionRoomDecorBlockEntityRenderer implements BlockEntityRenderer<Un
         }
         if (block == ModBlocks.UNION_ROOM_SPOT) {
             return ModBlocks.UNION_ROOM_SPOT_DISPLAY;
+        }
+        if (block == ModBlocks.UNION_ROOM_SCREEN) {
+            return ModBlocks.UNION_ROOM_SCREEN_DISPLAY;
+        }
+        if (block == ModBlocks.UNION_ROOM_SCREEN_LEFT) {
+            return ModBlocks.UNION_ROOM_SCREEN_LEFT_DISPLAY;
+        }
+        if (block == ModBlocks.UNION_ROOM_SCREEN_RIGHT) {
+            return ModBlocks.UNION_ROOM_SCREEN_RIGHT_DISPLAY;
         }
         return null;
     }

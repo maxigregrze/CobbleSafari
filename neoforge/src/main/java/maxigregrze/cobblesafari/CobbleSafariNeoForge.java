@@ -290,6 +290,12 @@ public class CobbleSafariNeoForge {
             registrar.playToClient(maxigregrze.cobblesafari.network.RotomPhoneConfigSyncPayload.TYPE,
                     maxigregrze.cobblesafari.network.RotomPhoneConfigSyncPayload.STREAM_CODEC,
                     CobbleSafariClientNeoForge::handleRotomPhoneConfigSync);
+            registrar.playToClient(maxigregrze.cobblesafari.network.UnionAppResultPayload.TYPE,
+                    maxigregrze.cobblesafari.network.UnionAppResultPayload.STREAM_CODEC,
+                    CobbleSafariClientNeoForge::handleUnionAppResult);
+            registrar.playToClient(maxigregrze.cobblesafari.network.WonderAppResultPayload.TYPE,
+                    maxigregrze.cobblesafari.network.WonderAppResultPayload.STREAM_CODEC,
+                    CobbleSafariClientNeoForge::handleWonderAppResult);
         } else {
             registrar.playToClient(maxigregrze.cobblesafari.network.OpenRotomPhonePayload.TYPE,
                     maxigregrze.cobblesafari.network.OpenRotomPhonePayload.STREAM_CODEC,
@@ -300,6 +306,12 @@ public class CobbleSafariNeoForge {
             registrar.playToClient(maxigregrze.cobblesafari.network.RotomPhoneConfigSyncPayload.TYPE,
                     maxigregrze.cobblesafari.network.RotomPhoneConfigSyncPayload.STREAM_CODEC,
                     (payload, context) -> {});
+            registrar.playToClient(maxigregrze.cobblesafari.network.UnionAppResultPayload.TYPE,
+                    maxigregrze.cobblesafari.network.UnionAppResultPayload.STREAM_CODEC,
+                    (payload, context) -> {});
+            registrar.playToClient(maxigregrze.cobblesafari.network.WonderAppResultPayload.TYPE,
+                    maxigregrze.cobblesafari.network.WonderAppResultPayload.STREAM_CODEC,
+                    (payload, context) -> {});
         }
 
         registrar.playToServer(maxigregrze.cobblesafari.network.RotomPhoneActionPayload.TYPE,
@@ -308,6 +320,26 @@ public class CobbleSafariNeoForge {
                     context.enqueueWork(() -> {
                         if (context.player() instanceof ServerPlayer sp) {
                             maxigregrze.cobblesafari.rotomphone.RotomPhoneServerHandler.handleAction(sp, payload);
+                        }
+                    });
+                });
+
+        registrar.playToServer(maxigregrze.cobblesafari.network.UnionAppPayload.TYPE,
+                maxigregrze.cobblesafari.network.UnionAppPayload.STREAM_CODEC,
+                (payload, context) -> {
+                    context.enqueueWork(() -> {
+                        if (context.player() instanceof ServerPlayer sp) {
+                            maxigregrze.cobblesafari.network.UnionAppServerHandler.handle(sp, payload);
+                        }
+                    });
+                });
+
+        registrar.playToServer(maxigregrze.cobblesafari.network.WonderAppPayload.TYPE,
+                maxigregrze.cobblesafari.network.WonderAppPayload.STREAM_CODEC,
+                (payload, context) -> {
+                    context.enqueueWork(() -> {
+                        if (context.player() instanceof ServerPlayer sp) {
+                            maxigregrze.cobblesafari.network.WonderAppServerHandler.handle(sp, payload);
                         }
                     });
                 });

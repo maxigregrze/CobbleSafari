@@ -1,0 +1,10 @@
+{
+  "eventId": "sample",
+  "eventName": "Sample",
+  "hasCustomBanner": false,
+  "customBannerName": "purple",
+  "eventPools": [
+    { "groupId": "starter", "weight": 10 },
+    { "groupId": "normal", "weight": 1 }
+  ]
+}

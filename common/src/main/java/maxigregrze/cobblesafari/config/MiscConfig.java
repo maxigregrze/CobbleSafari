@@ -10,6 +10,8 @@ import java.io.Reader;
 import java.io.Writer;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MiscConfig {
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
@@ -39,6 +41,11 @@ public class MiscConfig {
 
     /** Défauts au placement pour {@code cobblesafari:auspiciouspokeball_gold} (clé {@code auspiciousPokeballGold}). */
     private AuspiciousPokeballDefaults auspiciousPokeballGold = new AuspiciousPokeballDefaults();
+
+    /** Nombre maximal d'instances Union Room (structures) dans {@code cobblesafari:unionroom}. */
+    private int unionRoomMaxInstances = 10;
+    /** Dimensions depuis lesquelles un joueur ne peut pas entrer dans l'Union Room (IDs complets, ex. {@code cobblesafari:domedimension}). */
+    private List<String> unionRoomBannedDimensions = new ArrayList<>();
 
     public MiscConfig() {
     }
@@ -96,6 +103,7 @@ public class MiscConfig {
                 INSTANCE.ensureAuspiciousPokeballDefaults();
                 INSTANCE.ensureAuspiciousPokeballSmallDefaults();
                 INSTANCE.ensureAuspiciousPokeballGoldDefaults();
+                INSTANCE.ensureUnionRoomDefaults();
                 CobbleSafari.LOGGER.info("CobbleSafari >> misc_config.json loaded successfully from {}", CONFIG_PATH);
                 CobbleSafari.LOGGER.info("CobbleSafari >> Persisting misc_config.json after load (canonical schema on disk)");
                 save();
@@ -130,6 +138,7 @@ public class MiscConfig {
         INSTANCE.ensureAuspiciousPokeballDefaults();
         INSTANCE.ensureAuspiciousPokeballSmallDefaults();
         INSTANCE.ensureAuspiciousPokeballGoldDefaults();
+        INSTANCE.ensureUnionRoomDefaults();
         try {
             Files.createDirectories(CONFIG_DIR);
         } catch (IOException e) {
@@ -398,5 +407,29 @@ public class MiscConfig {
 
     public static int getAuspiciousPokeballGoldMaxRoll() {
         return Math.max(0, auspiciousPokeballGoldOrDefaults().maxRoll);
+    }
+
+    public void ensureUnionRoomDefaults() {
+        if (this.unionRoomBannedDimensions == null) {
+            this.unionRoomBannedDimensions = new ArrayList<>();
+        }
+        this.unionRoomMaxInstances = Math.max(1, Math.min(100, this.unionRoomMaxInstances));
+    }
+
+    public static int getUnionRoomMaxInstances() {
+        if (INSTANCE == null) {
+            return 10;
+        }
+        return Math.max(1, Math.min(100, INSTANCE.unionRoomMaxInstances));
+    }
+
+    public static List<String> getUnionRoomBannedDimensions() {
+        if (INSTANCE == null) {
+            return List.of();
+        }
+        if (INSTANCE.unionRoomBannedDimensions == null) {
+            return List.of();
+        }
+        return INSTANCE.unionRoomBannedDimensions;
     }
 }

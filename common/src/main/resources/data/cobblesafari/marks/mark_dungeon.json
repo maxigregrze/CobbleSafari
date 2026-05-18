@@ -3,7 +3,7 @@
     "title": "cobblemon.mark.cobblesafari.dungeon.title",
 	"titleColor": "f8b63a",
 	"description": "cobblemon.mark.cobblesafari.dungeon.desc",
-	"texture": "cobblemon:textures/gui/mark/mark_dungeon.png",
+	"texture": "cobblesafari:textures/gui/mark/mark_dungeon.png",
 	"indexNumber": 5,
     "chance": 1,
     "spawnConditions": [

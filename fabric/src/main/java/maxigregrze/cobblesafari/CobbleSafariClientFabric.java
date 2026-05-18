@@ -193,6 +193,22 @@ public class CobbleSafariClientFabric implements ClientModInitializer {
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.AUSPICIOUS_POKEBALL_SMALL_DISPLAY, RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.AUSPICIOUS_POKEBALL_GOLD, RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.AUSPICIOUS_POKEBALL_GOLD_DISPLAY, RenderType.cutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.UNION_ROOM_PILLAR, RenderType.translucent());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.UNION_ROOM_CROWD, RenderType.translucent());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.UNION_ROOM_CROWD_DISPLAY, RenderType.translucent());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.UNION_ROOM_POKEBALL, RenderType.translucent());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.UNION_ROOM_POKEBALL_DISPLAY, RenderType.translucent());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.UNION_ROOM_SPOT, RenderType.translucent());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.UNION_ROOM_SPOT_DISPLAY, RenderType.translucent());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.UNION_ROOM_GLOBE, RenderType.translucent());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.ONLINE_FEATURE_PC, RenderType.cutoutMipped());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.UNION_ROOM_GLOBE_DISPLAY_MOVING, RenderType.translucent());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.UNION_ROOM_SCREEN, RenderType.translucent());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.UNION_ROOM_SCREEN_DISPLAY, RenderType.translucent());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.UNION_ROOM_SCREEN_LEFT, RenderType.translucent());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.UNION_ROOM_SCREEN_LEFT_DISPLAY, RenderType.translucent());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.UNION_ROOM_SCREEN_RIGHT, RenderType.translucent());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.UNION_ROOM_SCREEN_RIGHT_DISPLAY, RenderType.translucent());
     }
 
     private void registerRenderers() {
@@ -204,6 +220,8 @@ public class CobbleSafariClientFabric implements ClientModInitializer {
         BlockEntityRenderers.register(ModBlockEntities.LOST_ITEM, LostItemBlockEntityRenderer::new);
         BlockEntityRenderers.register(ModBlockEntities.AUSPICIOUS_POKEBALL, AuspiciousPokeballBlockEntityRenderer::new);
         BlockEntityRenderers.register(ModBlockEntities.AUSPICIOUS_POKEBALL_GOLD, AuspiciousPokeballBlockEntityRenderer::new);
+        BlockEntityRenderers.register(ModBlockEntities.UNION_ROOM_DECOR, maxigregrze.cobblesafari.client.renderer.UnionRoomDecorBlockEntityRenderer::new);
+        BlockEntityRenderers.register(ModBlockEntities.UNION_ROOM_GLOBE_UPPER, maxigregrze.cobblesafari.client.renderer.UnionRoomGlobeUpperBlockEntityRenderer::new);
         EntityRendererRegistry.register(ModEntities.HIKER, HikerEntityRenderer::new);
         EntityRendererRegistry.register(ModEntities.CSTRADER_NPC, CsTraderEntityRenderer::new);
         EntityRendererRegistry.register(ModEntities.BALLOON, BalloonEntityRenderer::new);

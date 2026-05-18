@@ -9,6 +9,7 @@ import maxigregrze.cobblesafari.data.TimerSavedData;
 import maxigregrze.cobblesafari.dungeon.DungeonDimensions;
 import maxigregrze.cobblesafari.dungeon.DungeonTeleportHandler;
 import maxigregrze.cobblesafari.network.ModNetworking;
+import maxigregrze.cobblesafari.unionroom.UnionRoomManager;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
@@ -187,6 +188,13 @@ public class TimerManager {
                             continue;
                         }
 
+                        if (UnionRoomManager.DIMENSION_ID.equals(timerDimensionId) && player.getY() < 0) {
+                            expireActiveTimerAndTeleport(player, timerDimensionId, data, true);
+                            CobbleSafari.LOGGER.info("Player {} detected in void in union room, teleporting out",
+                                    player.getName().getString());
+                            continue;
+                        }
+
                         if (shouldBypassTimer(player)) {
                             if (serverInstance.getTickCount() % 20 == 0) {
                                 syncToClient(player, data, true);
@@ -346,6 +354,11 @@ public class TimerManager {
     }
 
     private static void teleportOnTimerExpired(ServerPlayer player, String dimensionId, PlayerTimerData data, boolean notifyExpired) {
+        teleportOnTimerExpired(player, dimensionId, data, notifyExpired, false);
+    }
+
+    private static void teleportOnTimerExpired(ServerPlayer player, String dimensionId, PlayerTimerData data, boolean notifyExpired,
+                                              boolean unionGracefulDeparture) {
         if (serverInstance == null) return;
 
         Optional<DimensionTimerEntry> config = SafariTimerConfig.getDimensionConfig(dimensionId);
@@ -403,15 +416,34 @@ public class TimerManager {
         }
 
         if (notifyExpired) {
-            player.sendSystemMessage(Component.translatable("cobblesafari.timer.expired"));
+            if (UnionRoomManager.DIMENSION_ID.equals(dimensionId) && unionGracefulDeparture) {
+                player.sendSystemMessage(Component.translatable("cobblesafari.unionroom.session_closed.thanks"));
+            } else {
+                player.sendSystemMessage(Component.translatable("cobblesafari.timer.expired"));
+            }
         }
         CobbleSafari.LOGGER.info("Player {} teleported to {} at {} (timer expired, returnToSpawn: {})",
                 player.getName().getString(), targetLevel.dimension().location(), targetPos, returnToSpawn);
     }
 
-    private static void expireActiveTimerAndTeleport(ServerPlayer player, String timerDimensionId, PlayerTimerData data, boolean notifyExpired) {
+    public static void expireActiveTimerAndTeleport(ServerPlayer player, String timerDimensionId, PlayerTimerData data, boolean notifyExpired) {
+        expireActiveTimerAndTeleport(player, timerDimensionId, data, notifyExpired, false);
+    }
+
+    /**
+     * @param unionGracefulDeparture when true and dimension is the Union Room, players see the friendly
+     *                                departure line instead of {@code cobblesafari.timer.expired} (session close / evac).
+     */
+    public static void expireActiveTimerAndTeleport(ServerPlayer player, String timerDimensionId, PlayerTimerData data,
+                                                    boolean notifyExpired, boolean unionGracefulDeparture) {
+        if (UnionRoomManager.DIMENSION_ID.equals(timerDimensionId)) {
+            UnionRoomManager.onBeforeUnionRoomTimerExpire(player);
+        }
         data.setRemainingTicks(0);
-        teleportOnTimerExpired(player, timerDimensionId, data, notifyExpired);
+        teleportOnTimerExpired(player, timerDimensionId, data, notifyExpired, unionGracefulDeparture);
+        if (UnionRoomManager.DIMENSION_ID.equals(timerDimensionId)) {
+            UnionRoomManager.onAfterUnionRoomTimerExpire(player);
+        }
         data.setActive(false);
         savePlayerData(player, data);
     }

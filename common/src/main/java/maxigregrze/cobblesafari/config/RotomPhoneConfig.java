@@ -30,14 +30,34 @@ public class RotomPhoneConfig {
     public RotomPhoneConfig() {
     }
 
+    private void migrateHealToUnion() {
+        if (phoneApps == null) {
+            return;
+        }
+        PhoneAppConfig heal = phoneApps.remove("healApp");
+        if (heal != null && !phoneApps.containsKey("unionApp")) {
+            phoneApps.put("unionApp", heal);
+        }
+    }
+
+    private void migratePortalToWonder() {
+        if (phoneApps == null) {
+            return;
+        }
+        PhoneAppConfig portal = phoneApps.remove("portalFinderApp");
+        if (portal != null && !phoneApps.containsKey("wonderApp")) {
+            phoneApps.put("wonderApp", portal);
+        }
+    }
+
     private static Map<String, PhoneAppConfig> createDefaultApps() {
         Map<String, PhoneAppConfig> apps = new LinkedHashMap<>();
         apps.put("chatApp", new PhoneAppConfig(true, true, "story/root", new ArrayList<>()));
         apps.put("pcApp", new PhoneAppConfig(true, false, "story/root", List.of(
                 "cobblesafari:dungeon_underground", "cobblesafari:dungeon_distortion")));
-        apps.put("healApp", new PhoneAppConfig(true, false, "story/root", List.of(
+        apps.put("unionApp", new PhoneAppConfig(true, false, "story/root", List.of(
                 "cobblesafari:dungeon_underground", "cobblesafari:dungeon_distortion")));
-        apps.put("portalFinderApp", new PhoneAppConfig(true, false, "story/root", List.of(
+        apps.put("wonderApp", new PhoneAppConfig(true, false, "story/root", List.of(
                 "cobblesafari:dungeon_underground", "cobblesafari:dungeon_distortion")));
         apps.put("itemFinderApp", new PhoneAppConfig(true, false, "story/root", List.of(
                 "cobblesafari:dungeon_underground", "cobblesafari:dungeon_distortion")));
@@ -53,6 +73,8 @@ public class RotomPhoneConfig {
                 if (INSTANCE == null) {
                     INSTANCE = new RotomPhoneConfig();
                 }
+                INSTANCE.migrateHealToUnion();
+                INSTANCE.migratePortalToWonder();
                 CobbleSafari.LOGGER.info("Rotom phone config loaded from {}", CONFIG_PATH);
                 save();
             } catch (IOException e) {

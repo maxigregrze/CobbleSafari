@@ -1,0 +1,9 @@
+{
+  "id": "cynthia",
+  "displayName": "Champion Cynthia",
+  "hasCustomScreen": true,
+  "color": "08ffff",
+  "unlockedFromStart": false,
+  "hasShinyVariant": false,
+  "unlockingAdvancement": "story/mine_stone"
+}

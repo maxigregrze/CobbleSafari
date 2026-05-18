@@ -3,6 +3,6 @@
     "title": "cobblemon.mark.cobblesafari.ribbon_dungeon_paris.title",
 	"titleColor": "ccb8e9",
 	"description": "cobblemon.mark.cobblesafari.ribbon_dungeon_paris.desc",
-	"texture": "cobblemon:textures/gui/mark/ribbon_dungeon_paris.png",
+	"texture": "cobblesafari:textures/gui/mark/ribbon_dungeon_paris.png",
 	"indexNumber": 68
 }

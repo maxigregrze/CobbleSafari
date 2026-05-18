@@ -3,6 +3,6 @@
     "title": "cobblemon.mark.cobblesafari.ribbon_dungeon_underground.title",
 	"titleColor": "ee9778",
 	"description": "cobblemon.mark.cobblesafari.ribbon_dungeon_underground.desc",
-	"texture": "cobblemon:textures/gui/mark/ribbon_dungeon_underground.png",
+	"texture": "cobblesafari:textures/gui/mark/ribbon_dungeon_underground.png",
 	"indexNumber": 68
 }

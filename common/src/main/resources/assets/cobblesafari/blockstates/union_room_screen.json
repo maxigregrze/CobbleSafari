@@ -1,0 +1,8 @@
+{
+  "variants": {
+    "facing=east": { "model": "cobblesafari:block/union_room_invisible" },
+    "facing=north": { "model": "cobblesafari:block/union_room_invisible" },
+    "facing=south": { "model": "cobblesafari:block/union_room_invisible" },
+    "facing=west": { "model": "cobblesafari:block/union_room_invisible" }
+  }
+}

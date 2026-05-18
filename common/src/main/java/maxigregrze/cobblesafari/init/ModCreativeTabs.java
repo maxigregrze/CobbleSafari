@@ -193,6 +193,20 @@ public class ModCreativeTabs {
                 output.accept(ModBlocks.AUSPICIOUS_POKEBALL);
                 output.accept(ModBlocks.AUSPICIOUS_POKEBALL_SMALL);
                 output.accept(ModBlocks.AUSPICIOUS_POKEBALL_GOLD);
+                output.accept(ModBlocks.UNION_ROOM_WALL);
+                output.accept(ModBlocks.UNION_ROOM_FLOOR);
+                output.accept(ModBlocks.UNION_ROOM_LIGHT);
+                output.accept(ModBlocks.UNION_ROOM_LIGHT_LINE);
+                output.accept(ModBlocks.UNION_ROOM_PILLAR);
+                output.accept(ModBlocks.UNION_ROOM_SCREEN);
+                output.accept(ModBlocks.UNION_ROOM_SCREEN_LEFT);
+                output.accept(ModBlocks.UNION_ROOM_SCREEN_RIGHT);
+                output.accept(ModBlocks.UNION_ROOM_CROWD);
+                output.accept(ModBlocks.UNION_ROOM_POKEBALL);
+                output.accept(ModBlocks.UNION_ROOM_SPOT);
+                output.accept(ModBlocks.UNION_ROOM_GLOBE);
+                output.accept(ModBlocks.ONLINE_FEATURE_PC);
+                output.accept(ModBlocks.UNION_ROOM_EXIT_TELEPORTER);
             })
             .build();
 

@@ -66,6 +66,12 @@ public class DimensionalBanData {
         dungeonUndergroundRestrictions.bannedItems.add("minecraft:bone_meal");
         dimensions.put("cobblesafari:dungeon_underground", dungeonUndergroundRestrictions);
 
+        DimensionRestrictions unionRoomRestrictions = new DimensionRestrictions();
+        unionRoomRestrictions.allowBattle = true;
+        unionRoomRestrictions.allowBlockBreaking = false;
+        unionRoomRestrictions.allowBlockPlacing = false;
+        dimensions.put("cobblesafari:unionroom", unionRoomRestrictions);
+
         DimensionRestrictions dungeonDistortionRestrictions = new DimensionRestrictions();
         dungeonDistortionRestrictions.allowBattle = true;
         dungeonDistortionRestrictions.allowBlockBreaking = false;
