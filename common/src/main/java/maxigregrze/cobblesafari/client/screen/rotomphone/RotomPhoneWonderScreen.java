@@ -42,13 +42,16 @@ public class RotomPhoneWonderScreen extends RotomPhoneBaseScreen {
     private static final ResourceLocation TEX_TRADEANIM = loc("wonder/rotomphone_gui_tradeanim.png");
 
     private static final float SCALED_TEXT_Y_OFFSET = -7f;
+    private static final int PARTY_SLOT_SIZE = 32;
+    private static final float PARTY_SLOT_BASE_SCALE = 3.5f;
+    private static final float PARTY_SLOT_MODEL_SCALE = 5.5f;
     private static final int TRADE_SLOT_SIZE = 114;
     private static final int TRADE_SLOT_X = 117;
     private static final int TRADE_SLOT_Y = 11;
     private static final int ANIM_FRAME_COUNT = 14;
-    private static final int ANIM_FRAME_MS = 200;
-    private static final long ANIM_INITIAL_DELAY_MS = 1000L;
-    private static final long ANIM_PAUSE_MS = 1000L;
+    private static final int ANIM_FRAME_MS = 100;
+    private static final long ANIM_INITIAL_DELAY_MS = 800L;
+    private static final long ANIM_PAUSE_MS = 500L;
     private static final long ANIM_TOTAL_MS = ANIM_INITIAL_DELAY_MS
             + (long) ANIM_FRAME_COUNT * ANIM_FRAME_MS
             + ANIM_PAUSE_MS
@@ -155,10 +158,7 @@ public class RotomPhoneWonderScreen extends RotomPhoneBaseScreen {
                 renderHeader(graphics);
                 renderSelect(graphics, mouseX, mouseY, partialTick);
             }
-            case TRADE -> {
-                renderHeader(graphics);
-                renderTrade(graphics, mouseX, mouseY, partialTick);
-            }
+            case TRADE -> renderTrade(graphics, mouseX, mouseY, partialTick);
             case ERROR -> {
                 renderHeader(graphics);
                 if (!lastErrorKey.isEmpty()) {
@@ -174,7 +174,7 @@ public class RotomPhoneWonderScreen extends RotomPhoneBaseScreen {
     @Override
     public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
         super.render(graphics, mouseX, mouseY, partialTick);
-        if (state == SubScreen.BEGIN && hasEvent
+        if ((state == SubScreen.BEGIN || state == SubScreen.SELECT) && hasEvent
                 && isInBounds(mouseX, mouseY, originX + 46, originY + 136, 255, 32)) {
             graphics.renderComponentTooltip(this.font, buildEventTooltipLines(), mouseX, mouseY);
         }
@@ -243,7 +243,7 @@ public class RotomPhoneWonderScreen extends RotomPhoneBaseScreen {
                 ? Component.translatable("gui.cobblesafari.rotomphone.wonder.ticket.unlimited")
                 : Component.translatable("gui.cobblesafari.rotomphone.wonder.ticket",
                         ticketsRemaining, formatCountdown(nextResetEpochSeconds));
-        drawScaledCentered(g, ticketLine, originX + 174, originY + 72, theme);
+        g.drawCenteredString(this.font, ticketLine, originX + 174, originY + 72, theme);
 
         boolean showStart = unlimited || ticketsRemaining >= 1;
         if (showStart) {
@@ -256,16 +256,7 @@ public class RotomPhoneWonderScreen extends RotomPhoneBaseScreen {
                     originX + 174, originY + 112, theme);
         }
 
-        if (hasEvent) {
-            ResourceLocation bannerTex = getEventBannerTexture();
-            int bx = originX + 46;
-            int by = originY + 136;
-            g.blit(bannerTex, bx, by, 0, 0, 255, 32, 255, 32);
-            Component bannerLabel = Component.translatable(
-                    "gui.cobblesafari.rotomphone.wonder.banner", eventName, eventDaysLeft);
-            int labelY = by + (32 - this.font.lineHeight) / 2;
-            g.drawCenteredString(this.font, bannerLabel, originX + 174, labelY, 0xFFFFFFFF);
-        }
+        renderEventBanner(g);
 
         if (!lastErrorKey.isEmpty()) {
             drawScaledCentered(g, Component.translatable(lastErrorKey), originX + 174, originY + 152, 0xFFFFFFFF);
@@ -284,7 +275,8 @@ public class RotomPhoneWonderScreen extends RotomPhoneBaseScreen {
             int tint = hovered ? 0xFFFFFFFF : theme;
             drawTinted(g, TEX_EMPTY, x, y, 32, 32, tint);
             if (p != null) {
-                drawPokemonInArea(g, p, x, y, 32, 32, partialTick, partyStates[i], 2.5f, 4.5f);
+                drawPokemonInArea(g, p, x, y, PARTY_SLOT_SIZE, PARTY_SLOT_SIZE, partialTick,
+                        partyStates[i], PARTY_SLOT_BASE_SCALE, PARTY_SLOT_MODEL_SCALE);
             }
         }
 
@@ -306,6 +298,8 @@ public class RotomPhoneWonderScreen extends RotomPhoneBaseScreen {
             drawButton(g, originX + 138, originY + 96, h, theme,
                     Component.translatable("gui.cobblesafari.rotomphone.wonder.confirm"));
         }
+
+        renderEventBanner(g);
     }
 
     private void renderTrade(GuiGraphics g, int mx, int my, float partialTick) {
@@ -333,10 +327,24 @@ public class RotomPhoneWonderScreen extends RotomPhoneBaseScreen {
         }
 
         if (elapsed >= ANIM_TOTAL_MS) {
-            boolean h = isInBounds(mx, my, originX + 138, originY + 96, 72, 32);
-            drawButton(g, originX + 138, originY + 96, h, theme,
+            boolean h = isInBounds(mx, my, originX + 138, originY + 136, 72, 32);
+            drawButton(g, originX + 138, originY + 136, h, theme,
                     Component.translatable("gui.cobblesafari.rotomphone.wonder.again"));
         }
+    }
+
+    private void renderEventBanner(GuiGraphics g) {
+        if (!hasEvent) {
+            return;
+        }
+        ResourceLocation bannerTex = getEventBannerTexture();
+        int bx = originX + 46;
+        int by = originY + 136;
+        g.blit(bannerTex, bx, by, 0, 0, 255, 32, 255, 32);
+        Component bannerLabel = Component.translatable(
+                "gui.cobblesafari.rotomphone.wonder.banner", eventName, eventDaysLeft);
+        int labelY = by + (32 - this.font.lineHeight) / 2;
+        g.drawCenteredString(this.font, bannerLabel, originX + 174, labelY, 0xFFFFFFFF);
     }
 
     private boolean shouldShowOfferedModel(long elapsed) {
@@ -432,7 +440,7 @@ public class RotomPhoneWonderScreen extends RotomPhoneBaseScreen {
         if (System.currentTimeMillis() - tradeStartedAtMillis < ANIM_TOTAL_MS) {
             return false;
         }
-        if (isInBounds(mx, my, originX + 138, originY + 96, 72, 32)) {
+        if (isInBounds(mx, my, originX + 138, originY + 136, 72, 32)) {
             if (ticketsRemaining == 0) {
                 state = SubScreen.BEGIN;
             } else {

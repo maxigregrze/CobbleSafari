@@ -1,10 +1,10 @@
 {
   "eventId": "sample",
-  "eventName": "Sample",
+  "eventName": "SausajFest",
   "hasCustomBanner": false,
   "customBannerName": "purple",
   "eventPools": [
-    { "groupId": "starter", "weight": 10 },
-    { "groupId": "normal", "weight": 1 }
+    { "groupId": "starter", "weight": 1 },
+    { "groupId": "legendaries", "weight": 69 }
   ]
 }
