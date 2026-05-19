@@ -45,7 +45,11 @@ public class RotomPhoneWonderScreen extends RotomPhoneBaseScreen {
     private static final int PARTY_SLOT_SIZE = 32;
     private static final float PARTY_SLOT_BASE_SCALE = 3.5f;
     private static final float PARTY_SLOT_MODEL_SCALE = 5.5f;
+    private static final float PARTY_SLOT_MODEL_Y_OFFSET = 4f;
+    private static final float TRADE_SLOT_BASE_SCALE = 10.5f;
+    private static final float TRADE_SLOT_MODEL_SCALE = 6f;
     private static final int TRADE_SLOT_SIZE = 114;
+    private static final int TRADE_SLOT_CLIP_WIDTH = TRADE_SLOT_SIZE * 2;
     private static final int TRADE_SLOT_X = 117;
     private static final int TRADE_SLOT_Y = 11;
     private static final int ANIM_FRAME_COUNT = 14;
@@ -272,11 +276,13 @@ public class RotomPhoneWonderScreen extends RotomPhoneBaseScreen {
             int y = originY + 56;
             Pokemon p = party.get(i);
             boolean hovered = !selectedLocked && isInBounds(mx, my, x, y, 32, 32);
-            int tint = hovered ? 0xFFFFFFFF : theme;
+            boolean selected = i == selectedSlot;
+            int tint = (selected || hovered) ? 0xFFFFFFFF : theme;
             drawTinted(g, TEX_EMPTY, x, y, 32, 32, tint);
             if (p != null) {
-                drawPokemonInArea(g, p, x, y, PARTY_SLOT_SIZE, PARTY_SLOT_SIZE, partialTick,
-                        partyStates[i], PARTY_SLOT_BASE_SCALE, PARTY_SLOT_MODEL_SCALE);
+                drawPokemonInArea(g, p, x, y, PARTY_SLOT_SIZE, PARTY_SLOT_SIZE, 0,
+                        partialTick, partyStates[i], PARTY_SLOT_BASE_SCALE, PARTY_SLOT_MODEL_SCALE,
+                        PARTY_SLOT_MODEL_Y_OFFSET);
             }
         }
 
@@ -313,16 +319,18 @@ public class RotomPhoneWonderScreen extends RotomPhoneBaseScreen {
 
         if (showOffered && offeredPokemon != null) {
             drawPokemonInArea(g, offeredPokemon, sx, sy, TRADE_SLOT_SIZE, TRADE_SLOT_SIZE,
-                    partialTick, offeredState, 8.0f, 4.5f);
+                    TRADE_SLOT_CLIP_WIDTH, partialTick, offeredState, TRADE_SLOT_BASE_SCALE,
+                    TRADE_SLOT_MODEL_SCALE, 0f);
         } else if (showReceived && receivedPokemon != null) {
             drawPokemonInArea(g, receivedPokemon, sx, sy, TRADE_SLOT_SIZE, TRADE_SLOT_SIZE,
-                    partialTick, receivedState, 8.0f, 4.5f);
+                    TRADE_SLOT_CLIP_WIDTH, partialTick, receivedState, TRADE_SLOT_BASE_SCALE,
+                    TRADE_SLOT_MODEL_SCALE, 0f);
         }
 
         int animFrame = getTradeAnimFrame(elapsed);
         if (animFrame >= 0) {
             int vOffset = animFrame * TRADE_SLOT_SIZE;
-            g.blit(TEX_TRADEANIM, sx, sy, 0, vOffset, TRADE_SLOT_SIZE, TRADE_SLOT_SIZE,
+            drawBlitWithAlpha(g, TEX_TRADEANIM, sx, sy, 0, vOffset, TRADE_SLOT_SIZE, TRADE_SLOT_SIZE,
                     TRADE_SLOT_SIZE, TRADE_SLOT_SIZE * ANIM_FRAME_COUNT);
         }
 
@@ -340,7 +348,7 @@ public class RotomPhoneWonderScreen extends RotomPhoneBaseScreen {
         ResourceLocation bannerTex = getEventBannerTexture();
         int bx = originX + 46;
         int by = originY + 136;
-        g.blit(bannerTex, bx, by, 0, 0, 255, 32, 255, 32);
+        drawBlitWithAlpha(g, bannerTex, bx, by, 0, 0, 255, 32, 255, 32);
         Component bannerLabel = Component.translatable(
                 "gui.cobblesafari.rotomphone.wonder.banner", eventName, eventDaysLeft);
         int labelY = by + (32 - this.font.lineHeight) / 2;
@@ -561,13 +569,17 @@ public class RotomPhoneWonderScreen extends RotomPhoneBaseScreen {
             int y,
             int w,
             int h,
+            int clipWidth,
             float partialTick,
             FloatingState state,
             float baseScale,
-            float modelScale) {
-        g.enableScissor(x, y, x + w, y + h);
+            float modelScale,
+            float modelYOffset) {
+        int scissorW = clipWidth > 0 ? clipWidth : w;
+        int clipX = x + (w - scissorW) / 2;
+        g.enableScissor(clipX, y, clipX + scissorW, y + h);
         g.pose().pushPose();
-        g.pose().translate(x + w * 0.5, y + 1.0, 0.0);
+        g.pose().translate(x + w * 0.5, y + 1.0 - modelYOffset, 0.0);
         g.pose().scale(baseScale, baseScale, baseScale);
         Quaternionf rotation = QuaternionUtilsKt.fromEulerXYZDegrees(
                 new Quaternionf(), new Vector3f(13f, 35f, 0f));
@@ -616,6 +628,25 @@ public class RotomPhoneWonderScreen extends RotomPhoneBaseScreen {
         g.pose().scale(2f, 2f, 1f);
         g.drawCenteredString(this.font, c, 0, 0, color);
         g.pose().popPose();
+    }
+
+    private void drawBlitWithAlpha(
+            GuiGraphics g,
+            ResourceLocation tex,
+            int x,
+            int y,
+            int u,
+            int v,
+            int w,
+            int h,
+            int texW,
+            int texH) {
+        RenderSystem.enableBlend();
+        RenderSystem.defaultBlendFunc();
+        g.setColor(1f, 1f, 1f, 1f);
+        g.blit(tex, x, y, u, v, w, h, texW, texH);
+        g.setColor(1f, 1f, 1f, 1f);
+        RenderSystem.disableBlend();
     }
 
     private void drawTinted(GuiGraphics g, ResourceLocation tex, int x, int y, int w, int h, int argb) {
