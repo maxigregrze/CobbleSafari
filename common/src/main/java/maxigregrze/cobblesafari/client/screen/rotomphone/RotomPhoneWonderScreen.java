@@ -84,6 +84,8 @@ public class RotomPhoneWonderScreen extends RotomPhoneBaseScreen {
     private int selectedSlot = -1;
     private boolean selectedLocked;
     private long lockedAtMillis;
+    /** Blocks duplicate confirm clicks until the server responds. */
+    private boolean tradePending;
 
     private long tradeStartedAtMillis;
     private Pokemon offeredPokemon;
@@ -124,6 +126,7 @@ public class RotomPhoneWonderScreen extends RotomPhoneBaseScreen {
                 }
             }
             case WonderAppResultPayload.SUB_TRADE -> {
+                tradePending = false;
                 if (this.minecraft != null && this.minecraft.player != null) {
                     this.offeredPokemon = Pokemon.Companion.loadFromNBT(
                             this.minecraft.player.registryAccess(), p.offeredNbt());
@@ -135,7 +138,10 @@ public class RotomPhoneWonderScreen extends RotomPhoneBaseScreen {
                 this.tradeStartedAtMillis = System.currentTimeMillis();
                 state = SubScreen.TRADE;
             }
-            case WonderAppResultPayload.SUB_ERROR -> state = SubScreen.ERROR;
+            case WonderAppResultPayload.SUB_ERROR -> {
+                tradePending = false;
+                state = SubScreen.ERROR;
+            }
             default -> {
             }
         }
@@ -211,6 +217,7 @@ public class RotomPhoneWonderScreen extends RotomPhoneBaseScreen {
         if (state == SubScreen.SELECT) {
             selectedSlot = -1;
             selectedLocked = false;
+            tradePending = false;
             state = SubScreen.BEGIN;
             return;
         }
@@ -223,6 +230,7 @@ public class RotomPhoneWonderScreen extends RotomPhoneBaseScreen {
             if (state == SubScreen.SELECT && (selectedSlot >= 0 || selectedLocked)) {
                 selectedSlot = -1;
                 selectedLocked = false;
+                tradePending = false;
                 return true;
             }
             onBackButtonClicked();
@@ -294,11 +302,13 @@ public class RotomPhoneWonderScreen extends RotomPhoneBaseScreen {
             boolean h = isInBounds(mx, my, originX + 138, originY + 96, 72, 32);
             drawButton(g, originX + 138, originY + 96, h, theme,
                     Component.translatable("gui.cobblesafari.rotomphone.wonder.trade"));
-        } else if (digit > 0) {
+        } else if (digit > 0 || tradePending) {
             drawTinted(g, TEX_DOUBLE, originX + 138, originY + 96, 72, 32, theme);
-            int textY = originY + 96 + (32 - this.font.lineHeight) / 2;
-            g.drawCenteredString(this.font, Component.literal(String.valueOf(digit)),
-                    originX + 138 + 36, textY, theme);
+            if (digit > 0) {
+                int textY = originY + 96 + (32 - this.font.lineHeight) / 2;
+                g.drawCenteredString(this.font, Component.literal(String.valueOf(digit)),
+                        originX + 138 + 36, textY, theme);
+            }
         } else {
             boolean h = isInBounds(mx, my, originX + 138, originY + 96, 72, 32);
             drawButton(g, originX + 138, originY + 96, h, theme,
@@ -409,6 +419,7 @@ public class RotomPhoneWonderScreen extends RotomPhoneBaseScreen {
             lastErrorKey = "";
             selectedSlot = -1;
             selectedLocked = false;
+            tradePending = false;
             state = SubScreen.SELECT;
             return true;
         }
@@ -435,8 +446,9 @@ public class RotomPhoneWonderScreen extends RotomPhoneBaseScreen {
             return true;
         }
 
-        if (selectedLocked && countdownDigit() == 0
+        if (selectedLocked && !tradePending && countdownDigit() == 0
                 && isInBounds(mx, my, originX + 138, originY + 96, 72, 32)) {
+            tradePending = true;
             Services.PLATFORM.sendPayloadToServer(
                     new WonderAppPayload(WonderAppPayload.ACTION_TRADE, selectedSlot));
             return true;
@@ -454,6 +466,7 @@ public class RotomPhoneWonderScreen extends RotomPhoneBaseScreen {
             } else {
                 selectedSlot = -1;
                 selectedLocked = false;
+                tradePending = false;
                 state = SubScreen.SELECT;
             }
             Services.PLATFORM.sendPayloadToServer(
