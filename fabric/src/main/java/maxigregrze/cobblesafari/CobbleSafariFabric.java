@@ -113,10 +113,12 @@ public class CobbleSafariFabric implements ModInitializer {
         PayloadTypeRegistry.playS2C().register(maxigregrze.cobblesafari.network.RotomPhoneConfigSyncPayload.TYPE, maxigregrze.cobblesafari.network.RotomPhoneConfigSyncPayload.STREAM_CODEC);
         PayloadTypeRegistry.playS2C().register(maxigregrze.cobblesafari.network.UnionAppResultPayload.TYPE, maxigregrze.cobblesafari.network.UnionAppResultPayload.STREAM_CODEC);
         PayloadTypeRegistry.playS2C().register(maxigregrze.cobblesafari.network.WonderAppResultPayload.TYPE, maxigregrze.cobblesafari.network.WonderAppResultPayload.STREAM_CODEC);
+        PayloadTypeRegistry.playS2C().register(maxigregrze.cobblesafari.network.GtsAppResultPayload.TYPE, maxigregrze.cobblesafari.network.GtsAppResultPayload.STREAM_CODEC);
 
         PayloadTypeRegistry.playC2S().register(maxigregrze.cobblesafari.network.RotomPhoneActionPayload.TYPE, maxigregrze.cobblesafari.network.RotomPhoneActionPayload.STREAM_CODEC);
         PayloadTypeRegistry.playC2S().register(maxigregrze.cobblesafari.network.UnionAppPayload.TYPE, maxigregrze.cobblesafari.network.UnionAppPayload.STREAM_CODEC);
         PayloadTypeRegistry.playC2S().register(maxigregrze.cobblesafari.network.WonderAppPayload.TYPE, maxigregrze.cobblesafari.network.WonderAppPayload.STREAM_CODEC);
+        PayloadTypeRegistry.playC2S().register(maxigregrze.cobblesafari.network.GtsAppPayload.TYPE, maxigregrze.cobblesafari.network.GtsAppPayload.STREAM_CODEC);
         PayloadTypeRegistry.playC2S().register(maxigregrze.cobblesafari.network.RotomPhoneRotoGlideRequestPayload.TYPE, maxigregrze.cobblesafari.network.RotomPhoneRotoGlideRequestPayload.STREAM_CODEC);
         PayloadTypeRegistry.playC2S().register(maxigregrze.cobblesafari.network.EmptyPhoneConfirmPayload.TYPE, maxigregrze.cobblesafari.network.EmptyPhoneConfirmPayload.STREAM_CODEC);
 
@@ -282,6 +284,17 @@ public class CobbleSafariFabric implements ModInitializer {
                     context.server().execute(() -> {
                         if (context.player() instanceof ServerPlayer sp) {
                             maxigregrze.cobblesafari.network.WonderAppServerHandler.handle(sp, payload);
+                        }
+                    });
+                }
+        );
+
+        ServerPlayNetworking.registerGlobalReceiver(
+                maxigregrze.cobblesafari.network.GtsAppPayload.TYPE,
+                (payload, context) -> {
+                    context.server().execute(() -> {
+                        if (context.player() instanceof ServerPlayer sp) {
+                            maxigregrze.cobblesafari.network.GtsAppServerHandler.handle(sp, payload);
                         }
                     });
                 }

@@ -223,5 +223,16 @@ public class ClientNetworking {
                     });
                 }
         );
+        ClientPlayNetworking.registerGlobalReceiver(
+                maxigregrze.cobblesafari.network.GtsAppResultPayload.TYPE,
+                (payload, context) -> {
+                    context.client().execute(() -> {
+                        if (net.minecraft.client.Minecraft.getInstance().screen
+                                instanceof maxigregrze.cobblesafari.client.screen.rotomphone.RotomPhoneGTSScreen rg) {
+                            rg.applyServerSnapshot(payload);
+                        }
+                    });
+                }
+        );
     }
 }

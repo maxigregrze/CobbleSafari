@@ -50,10 +50,20 @@ public class RotomPhoneConfig {
         }
     }
 
+    private void migratePcToGts() {
+        if (phoneApps == null) {
+            return;
+        }
+        PhoneAppConfig pc = phoneApps.remove("pcApp");
+        if (pc != null && !phoneApps.containsKey("gtsApp")) {
+            phoneApps.put("gtsApp", pc);
+        }
+    }
+
     private static Map<String, PhoneAppConfig> createDefaultApps() {
         Map<String, PhoneAppConfig> apps = new LinkedHashMap<>();
         apps.put("chatApp", new PhoneAppConfig(true, true, "story/root", new ArrayList<>()));
-        apps.put("pcApp", new PhoneAppConfig(true, false, "story/root", List.of(
+        apps.put("gtsApp", new PhoneAppConfig(true, false, "story/root", List.of(
                 "cobblesafari:dungeon_underground", "cobblesafari:dungeon_distortion")));
         apps.put("unionApp", new PhoneAppConfig(true, false, "story/root", List.of(
                 "cobblesafari:dungeon_underground", "cobblesafari:dungeon_distortion")));
@@ -75,6 +85,7 @@ public class RotomPhoneConfig {
                 }
                 INSTANCE.migrateHealToUnion();
                 INSTANCE.migratePortalToWonder();
+                INSTANCE.migratePcToGts();
                 CobbleSafari.LOGGER.info("Rotom phone config loaded from {}", CONFIG_PATH);
                 save();
             } catch (IOException e) {

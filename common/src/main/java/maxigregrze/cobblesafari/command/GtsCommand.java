@@ -40,6 +40,7 @@ public final class GtsCommand {
     private static final String ARG_SPECIES = "species";
     private static final String ARG_LEVEL_BUCKET = "levelBucket";
     private static final String ARG_GENDER = "gender";
+    private static final String ARG_SHINY = "shiny";
     private static final String ARG_ID = "id";
     private static final String ARG_PICK = "pickIndex";
     private static final String ARG_PAGE = "page";
@@ -91,7 +92,8 @@ public final class GtsCommand {
                                         .then(Commands.argument(ARG_SPECIES, StringArgumentType.string())
                                                 .then(Commands.argument(ARG_LEVEL_BUCKET, StringArgumentType.word())
                                                         .then(Commands.argument(ARG_GENDER, StringArgumentType.word())
-                                                                .executes(GtsCommand::testDeposit)))))))
+                                                                .then(Commands.argument(ARG_SHINY, StringArgumentType.word())
+                                                                        .executes(GtsCommand::testDeposit))))))))
                 .then(Commands.literal("test-trade")
                         .then(Commands.argument(ARG_PLAYER, EntityArgument.player())
                                 .then(Commands.argument(ARG_ID, IntegerArgumentType.integer(1))
@@ -367,7 +369,8 @@ public final class GtsCommand {
         String species = StringArgumentType.getString(ctx, ARG_SPECIES);
         int bucket = parseLevelBucketToken(StringArgumentType.getString(ctx, ARG_LEVEL_BUCKET));
         GenderFilter gf = GenderFilter.parse(StringArgumentType.getString(ctx, ARG_GENDER));
-        GtsService.DepositResult r = GtsService.tryDeposit(target, internal, species, bucket, gf);
+        GtsOffer.ShinyWish shiny = GtsOffer.ShinyWish.parse(StringArgumentType.getString(ctx, ARG_SHINY));
+        GtsService.DepositResult r = GtsService.tryDeposit(target, internal, species, bucket, gf, shiny);
         return switch (r) {
             case SUCCESS -> {
                 ctx.getSource().sendSuccess(() -> Component.translatable("cobblesafari.command.gts.deposit_success", target.getName().getString(), opSlot), true);

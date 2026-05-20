@@ -296,6 +296,9 @@ public class CobbleSafariNeoForge {
             registrar.playToClient(maxigregrze.cobblesafari.network.WonderAppResultPayload.TYPE,
                     maxigregrze.cobblesafari.network.WonderAppResultPayload.STREAM_CODEC,
                     CobbleSafariClientNeoForge::handleWonderAppResult);
+            registrar.playToClient(maxigregrze.cobblesafari.network.GtsAppResultPayload.TYPE,
+                    maxigregrze.cobblesafari.network.GtsAppResultPayload.STREAM_CODEC,
+                    CobbleSafariClientNeoForge::handleGtsAppResult);
         } else {
             registrar.playToClient(maxigregrze.cobblesafari.network.OpenRotomPhonePayload.TYPE,
                     maxigregrze.cobblesafari.network.OpenRotomPhonePayload.STREAM_CODEC,
@@ -311,6 +314,9 @@ public class CobbleSafariNeoForge {
                     (payload, context) -> {});
             registrar.playToClient(maxigregrze.cobblesafari.network.WonderAppResultPayload.TYPE,
                     maxigregrze.cobblesafari.network.WonderAppResultPayload.STREAM_CODEC,
+                    (payload, context) -> {});
+            registrar.playToClient(maxigregrze.cobblesafari.network.GtsAppResultPayload.TYPE,
+                    maxigregrze.cobblesafari.network.GtsAppResultPayload.STREAM_CODEC,
                     (payload, context) -> {});
         }
 
@@ -340,6 +346,16 @@ public class CobbleSafariNeoForge {
                     context.enqueueWork(() -> {
                         if (context.player() instanceof ServerPlayer sp) {
                             maxigregrze.cobblesafari.network.WonderAppServerHandler.handle(sp, payload);
+                        }
+                    });
+                });
+
+        registrar.playToServer(maxigregrze.cobblesafari.network.GtsAppPayload.TYPE,
+                maxigregrze.cobblesafari.network.GtsAppPayload.STREAM_CODEC,
+                (payload, context) -> {
+                    context.enqueueWork(() -> {
+                        if (context.player() instanceof ServerPlayer sp) {
+                            maxigregrze.cobblesafari.network.GtsAppServerHandler.handle(sp, payload);
                         }
                     });
                 });

@@ -359,6 +359,15 @@ public class CobbleSafariClientNeoForge {
         });
     }
 
+    public static void handleGtsAppResult(maxigregrze.cobblesafari.network.GtsAppResultPayload payload, IPayloadContext context) {
+        context.enqueueWork(() -> {
+            if (Minecraft.getInstance().screen
+                    instanceof maxigregrze.cobblesafari.client.screen.rotomphone.RotomPhoneGTSScreen rg) {
+                rg.applyServerSnapshot(payload);
+            }
+        });
+    }
+
     public static void handleGridUpdate(UndergroundPayloads.GridUpdatePayload payload, IPayloadContext context) {
         context.enqueueWork(() -> {
             if (Minecraft.getInstance().screen instanceof UndergroundScreen screen) {
