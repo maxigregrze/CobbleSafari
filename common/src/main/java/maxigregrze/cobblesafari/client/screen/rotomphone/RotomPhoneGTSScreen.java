@@ -148,6 +148,8 @@ public class RotomPhoneGTSScreen extends RotomPhoneBaseScreen {
     private boolean confirmLocked;
     private long confirmLockedAtMillis;
     private boolean confirmPending;
+    private boolean retrievePending;
+    private boolean claimPending;
 
     private Pokemon offeredAnimPokemon;
     private Pokemon receivedAnimPokemon;
@@ -263,6 +265,7 @@ public class RotomPhoneGTSScreen extends RotomPhoneBaseScreen {
                 }
             }
             case GtsAppResultPayload.SUB_RETRIEVAL -> {
+                retrievePending = false;
                 beginMode = BeginBeginMode.NO_OFFER;
                 if ("SUCCESS".equals(p.operationResult())) {
                     offeredAnimPokemon = loadPokemon(p.offeredNbt());
@@ -274,6 +277,7 @@ public class RotomPhoneGTSScreen extends RotomPhoneBaseScreen {
                 }
             }
             case GtsAppResultPayload.SUB_RECEIVE -> {
+                claimPending = false;
                 if ("SUCCESS".equals(p.operationResult())) {
                     receivedAnimPokemon = loadPokemon(p.receivedNbt());
                     receivedTradeState = new FloatingState();
@@ -316,6 +320,8 @@ public class RotomPhoneGTSScreen extends RotomPhoneBaseScreen {
             }
             case GtsAppResultPayload.SUB_ERROR -> {
                 confirmPending = false;
+                retrievePending = false;
+                claimPending = false;
                 tradeConfirmPending = false;
                 resetCheckScreen();
                 lastErrorKey = p.errorKey() == null ? "" : p.errorKey();
@@ -614,12 +620,17 @@ public class RotomPhoneGTSScreen extends RotomPhoneBaseScreen {
         if (beginMode == BeginBeginMode.CONFIRM_RETRIEVE) {
             drawScaledCentered(g, Component.translatable("gui.cobblesafari.rotomphone.gts.confirmation"),
                     originX + 174, originY + 72, 0xFFFFFFFF);
-            boolean yHov = isInBounds(mx, my, originX + 98, originY + BEGIN_CONFIRM_BUTTON_Y, 72, 32);
-            boolean nHov = isInBounds(mx, my, originX + 178, originY + BEGIN_CONFIRM_BUTTON_Y, 72, 32);
-            drawButton(g, originX + 98, originY + BEGIN_CONFIRM_BUTTON_Y, yHov, theme,
-                    Component.translatable("gui.cobblesafari.rotomphone.gts.yes"));
-            drawButton(g, originX + 178, originY + BEGIN_CONFIRM_BUTTON_Y, nHov, theme,
-                    Component.translatable("gui.cobblesafari.rotomphone.gts.no"));
+            if (retrievePending) {
+                drawTinted(g, TEX_DOUBLE, originX + 98, originY + BEGIN_CONFIRM_BUTTON_Y, 72, 32, theme);
+                drawTinted(g, TEX_DOUBLE, originX + 178, originY + BEGIN_CONFIRM_BUTTON_Y, 72, 32, theme);
+            } else {
+                boolean yHov = isInBounds(mx, my, originX + 98, originY + BEGIN_CONFIRM_BUTTON_Y, 72, 32);
+                boolean nHov = isInBounds(mx, my, originX + 178, originY + BEGIN_CONFIRM_BUTTON_Y, 72, 32);
+                drawButton(g, originX + 98, originY + BEGIN_CONFIRM_BUTTON_Y, yHov, theme,
+                        Component.translatable("gui.cobblesafari.rotomphone.gts.yes"));
+                drawButton(g, originX + 178, originY + BEGIN_CONFIRM_BUTTON_Y, nHov, theme,
+                        Component.translatable("gui.cobblesafari.rotomphone.gts.no"));
+            }
             return;
         }
 
@@ -628,13 +639,17 @@ public class RotomPhoneGTSScreen extends RotomPhoneBaseScreen {
 
         boolean depHov = isInBounds(mx, my, originX + 98, originY + 96, 72, 32);
         boolean seekHov = isInBounds(mx, my, originX + 178, originY + 96, 72, 32);
-        Component depLabel = switch (beginMode) {
-            case NO_OFFER -> Component.translatable("gui.cobblesafari.rotomphone.gts.deposit");
-            case HAS_OFFER -> Component.translatable("gui.cobblesafari.rotomphone.gts.retrieve");
-            case HAS_SUCCESS -> Component.translatable("gui.cobblesafari.rotomphone.gts.receive");
-            default -> Component.translatable("gui.cobblesafari.rotomphone.gts.deposit");
-        };
-        drawButton(g, originX + 98, originY + 96, depHov, theme, depLabel);
+        if (claimPending) {
+            drawTinted(g, TEX_DOUBLE, originX + 98, originY + 96, 72, 32, theme);
+        } else {
+            Component depLabel = switch (beginMode) {
+                case NO_OFFER -> Component.translatable("gui.cobblesafari.rotomphone.gts.deposit");
+                case HAS_OFFER -> Component.translatable("gui.cobblesafari.rotomphone.gts.retrieve");
+                case HAS_SUCCESS -> Component.translatable("gui.cobblesafari.rotomphone.gts.receive");
+                default -> Component.translatable("gui.cobblesafari.rotomphone.gts.deposit");
+            };
+            drawButton(g, originX + 98, originY + 96, depHov, theme, depLabel);
+        }
         drawButton(g, originX + 178, originY + 96, seekHov, theme, Component.translatable("gui.cobblesafari.rotomphone.gts.seek"));
 
         if (!lastErrorKey.isEmpty()) {
@@ -951,11 +966,11 @@ public class RotomPhoneGTSScreen extends RotomPhoneBaseScreen {
         drawTinted(g, shinyTexture(seekShiny), originX + 258, originY + 56, 32, 32, sHov ? 0xFFFFFFFF : theme);
 
         int slotIdx = 0;
-        for (int x : SEEK_SLOT_ROW1_X) {
-            renderSeekSlot(g, mx, my, partialTick, theme, slotIdx++, x, originY + SEEK_ROW1_Y);
+        for (int slotX : SEEK_SLOT_ROW1_X) {
+            renderSeekSlot(g, mx, my, partialTick, theme, slotIdx++, originX + slotX, originY + SEEK_ROW1_Y);
         }
-        for (int x : SEEK_SLOT_ROW2_X) {
-            renderSeekSlot(g, mx, my, partialTick, theme, slotIdx++, x, originY + SEEK_ROW2_Y);
+        for (int slotX : SEEK_SLOT_ROW2_X) {
+            renderSeekSlot(g, mx, my, partialTick, theme, slotIdx++, originX + slotX, originY + SEEK_ROW2_Y);
         }
 
         if (seekPage > 1) {
@@ -1075,12 +1090,13 @@ public class RotomPhoneGTSScreen extends RotomPhoneBaseScreen {
 
     private boolean handleBeginClick(double mx, double my) {
         if (beginMode == BeginBeginMode.CONFIRM_RETRIEVE) {
-            if (isInBounds(mx, my, originX + 98, originY + BEGIN_CONFIRM_BUTTON_Y, 72, 32)) {
+            if (!retrievePending && isInBounds(mx, my, originX + 98, originY + BEGIN_CONFIRM_BUTTON_Y, 72, 32)) {
+                retrievePending = true;
                 Services.PLATFORM.sendPayloadToServer(
                         new GtsAppPayload(GtsAppPayload.ACTION_RETRIEVE, ownActiveOfferId, 0, "", "", ""));
                 return true;
             }
-            if (isInBounds(mx, my, originX + 178, originY + BEGIN_CONFIRM_BUTTON_Y, 72, 32)) {
+            if (!retrievePending && isInBounds(mx, my, originX + 178, originY + BEGIN_CONFIRM_BUTTON_Y, 72, 32)) {
                 beginMode = BeginBeginMode.HAS_OFFER;
                 return true;
             }
@@ -1098,7 +1114,8 @@ public class RotomPhoneGTSScreen extends RotomPhoneBaseScreen {
                     yield true;
                 }
                 case HAS_SUCCESS -> {
-                    if (oldestSuccessId >= 0) {
+                    if (!claimPending && oldestSuccessId >= 0) {
+                        claimPending = true;
                         Services.PLATFORM.sendPayloadToServer(
                                 new GtsAppPayload(GtsAppPayload.ACTION_CLAIM, oldestSuccessId, 0, "", "", ""));
                     }
@@ -1239,6 +1256,8 @@ public class RotomPhoneGTSScreen extends RotomPhoneBaseScreen {
         selectedSlot = -1;
         confirmLocked = false;
         confirmPending = false;
+        retrievePending = false;
+        claimPending = false;
         state = SubScreen.BEGIN;
         Services.PLATFORM.sendPayloadToServer(new GtsAppPayload(GtsAppPayload.ACTION_REQUEST_STATE, 0, 0, "", "", ""));
     }
@@ -1348,14 +1367,14 @@ public class RotomPhoneGTSScreen extends RotomPhoneBaseScreen {
 
     private int seekSlotIndexAt(int mx, int my) {
         int idx = 0;
-        for (int x : SEEK_SLOT_ROW1_X) {
-            if (isInBounds(mx, my, x, originY + SEEK_ROW1_Y, 32, 32)) {
+        for (int slotX : SEEK_SLOT_ROW1_X) {
+            if (isInBounds(mx, my, originX + slotX, originY + SEEK_ROW1_Y, 32, 32)) {
                 return idx;
             }
             idx++;
         }
-        for (int x : SEEK_SLOT_ROW2_X) {
-            if (isInBounds(mx, my, x, originY + SEEK_ROW2_Y, 32, 32)) {
+        for (int slotX : SEEK_SLOT_ROW2_X) {
+            if (isInBounds(mx, my, originX + slotX, originY + SEEK_ROW2_Y, 32, 32)) {
                 return idx;
             }
             idx++;

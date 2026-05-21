@@ -14,12 +14,35 @@ import net.minecraft.server.level.ServerPlayer;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 public final class GtsAppServerHandler {
 
+    /** Minimum gap between duplicate mutation payloads (guards against double-submit). */
+    private static final long MUTATION_DEBOUNCE_MS = 2_000L;
+    private static final Map<UUID, Long> LAST_DEPOSIT_MS = new ConcurrentHashMap<>();
+    private static final Map<UUID, Long> LAST_RETRIEVE_MS = new ConcurrentHashMap<>();
+    private static final Map<UUID, Long> LAST_CLAIM_MS = new ConcurrentHashMap<>();
+    private static final Map<UUID, Long> LAST_CONFIRM_TRADE_MS = new ConcurrentHashMap<>();
+
     private GtsAppServerHandler() {}
+
+    private static boolean registerMutationAttempt(Map<UUID, Long> ledger, UUID playerId) {
+        long now = System.currentTimeMillis();
+        Long last = ledger.get(playerId);
+        if (last != null && now - last < MUTATION_DEBOUNCE_MS) {
+            return false;
+        }
+        ledger.put(playerId, now);
+        return true;
+    }
+
+    private static void clearMutationAttempt(Map<UUID, Long> ledger, UUID playerId) {
+        ledger.remove(playerId);
+    }
 
     public static void handle(ServerPlayer player, GtsAppPayload payload) {
         MinecraftServer server = player.getServer();
@@ -70,10 +93,16 @@ public final class GtsAppServerHandler {
             sendBegin(player, "gui.cobblesafari.rotomphone.gts.error.empty_slot");
             return;
         }
+        if (!registerMutationAttempt(LAST_DEPOSIT_MS, player.getUUID())) {
+            return;
+        }
         GenderFilter gf = GenderFilter.parse(pl.stringArg2());
         GtsOffer.ShinyWish shiny = GtsOffer.ShinyWish.parse(pl.stringArg3());
         GtsService.DepositResult r =
                 GtsService.tryDeposit(player, slot, pl.stringArg1(), pl.intArg2(), gf, shiny);
+        if (r != GtsService.DepositResult.SUCCESS) {
+            clearMutationAttempt(LAST_DEPOSIT_MS, player.getUUID());
+        }
         if (r == GtsService.DepositResult.SUCCESS) {
             GtsSavedData data = GtsSavedData.get(player.getServer());
             int ownId = resolveOwnOfferId(data, player.getUUID(), -1);
@@ -116,11 +145,17 @@ public final class GtsAppServerHandler {
     }
 
     private static void doRetrieve(ServerPlayer player, GtsAppPayload pl) {
+        if (!registerMutationAttempt(LAST_RETRIEVE_MS, player.getUUID())) {
+            return;
+        }
         GtsSavedData data = GtsSavedData.get(player.getServer());
         int offerId = resolveOwnOfferId(data, player.getUUID(), pl.intArg1());
         CompoundTag pokemonNbt = new CompoundTag();
         data.findOffer(offerId).ifPresent(o -> pokemonNbt.merge(o.getPokemonData().copy()));
         GtsService.RetrieveResult r = GtsService.tryRetrieveOwnOffer(player, offerId);
+        if (r != GtsService.RetrieveResult.SUCCESS) {
+            clearMutationAttempt(LAST_RETRIEVE_MS, player.getUUID());
+        }
         if (r == GtsService.RetrieveResult.SUCCESS) {
             send(
                     player,
@@ -156,6 +191,9 @@ public final class GtsAppServerHandler {
     }
 
     private static void doClaim(ServerPlayer player, GtsAppPayload pl) {
+        if (!registerMutationAttempt(LAST_CLAIM_MS, player.getUUID())) {
+            return;
+        }
         int successId = pl.intArg1();
         GtsSavedData data = GtsSavedData.get(player.getServer());
         Optional<GtsSuccess> opt = data.findSuccess(successId);
@@ -164,6 +202,9 @@ public final class GtsAppServerHandler {
             pokemonNbt = opt.get().getPokemonData().copy();
         }
         GtsService.ClaimResult r = GtsService.tryClaimSuccess(player, successId);
+        if (r != GtsService.ClaimResult.SUCCESS) {
+            clearMutationAttempt(LAST_CLAIM_MS, player.getUUID());
+        }
         if (r == GtsService.ClaimResult.SUCCESS) {
             send(
                     player,
@@ -276,6 +317,9 @@ public final class GtsAppServerHandler {
     }
 
     private static void doConfirmTrade(ServerPlayer player, GtsAppPayload pl) {
+        if (!registerMutationAttempt(LAST_CONFIRM_TRADE_MS, player.getUUID())) {
+            return;
+        }
         int offerId = pl.intArg1();
         int pick = pl.intArg2();
         GtsSavedData data = GtsSavedData.get(player.getServer());
@@ -287,6 +331,9 @@ public final class GtsAppServerHandler {
         CompoundTag givenNbt =
                 GtsService.peekPendingCandidateNbt(player, offerId, pick).orElse(new CompoundTag());
         GtsService.ConfirmTradeKind r = GtsService.tryConfirmTrade(player, offerId, pick);
+        if (r != GtsService.ConfirmTradeKind.SUCCESS) {
+            clearMutationAttempt(LAST_CONFIRM_TRADE_MS, player.getUUID());
+        }
         if (r == GtsService.ConfirmTradeKind.SUCCESS) {
             send(
                     player,
