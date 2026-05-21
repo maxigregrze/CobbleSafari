@@ -360,7 +360,7 @@ public final class GtsService {
         }
     }
 
-    private static boolean isWishGenderCompatible(String wishSpeciesLine, GenderFilter wishGender) {
+    public static boolean isWishGenderCompatible(String wishSpeciesLine, GenderFilter wishGender) {
         if (wishGender == GenderFilter.ANY) {
             return true;
         }

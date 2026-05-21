@@ -116,6 +116,9 @@
 	"block.cobblesafari.union_room_spot": "Point lumineux de la Salle Union",
 	"block.cobblesafari.union_room_globe": "Globe de la Salle Union",
 	"block.cobblesafari.online_feature_pc": "PC en ligne (Salle Union)",
+	"block.cobblesafari.online_feature_pc_union": "PC en ligne (Salle Union)",
+	"block.cobblesafari.online_feature_pc_gts": "PC en ligne (GTS)",
+	"block.cobblesafari.online_feature_pc_wonder": "PC en ligne (Wonder Trade)",
 	"block.cobblesafari.union_room_pillar": "Pilier de la Salle Union",
 	"block.cobblesafari.union_room_screen": "Écran de la Salle Union",
 	"block.cobblesafari.union_room_screen_left": "Écran de la Salle Union (gauche)",
@@ -1309,6 +1312,9 @@
 
 	"subtitles.entity.generic.incense_spray": "Encens vaporisé",
 	"subtitles.cobblesafari.safari.flee": "Un Pokemon s'enfuit...",
+	"subtitles.cobblesafari.block.machine_union": "Bourdonnement PC Union",
+	"subtitles.cobblesafari.block.machine_gts": "Bourdonnement PC GTS",
+	"subtitles.cobblesafari.block.machine_wonder": "Bourdonnement PC Wonder",
 	"subtitles.cobblesafari.safari.spray": "Bruit de spray",
 	"subtitles.cobblesafari.giratina.trade": "Giratina hurle",
 
@@ -1393,6 +1399,7 @@
 	"gui.cobblesafari.rotomphone.gts.checkpkmn": "Trouver",
 	"gui.cobblesafari.rotomphone.gts.accept": "Accepter",
 	"gui.cobblesafari.rotomphone.gts.exit": "Quitter",
+	"gui.cobblesafari.rotomphone.gts.return": "Retour",
 	"gui.cobblesafari.rotomphone.gts.offeredpkmn": "Pokemon offert :",
 	"gui.cobblesafari.rotomphone.gts.nooffer": "Aucune offre",
 	"gui.cobblesafari.rotomphone.gts.nomatch": "Aucun pokemon correspondant",

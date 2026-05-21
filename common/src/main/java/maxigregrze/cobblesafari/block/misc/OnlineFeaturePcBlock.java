@@ -1,8 +1,13 @@
 package maxigregrze.cobblesafari.block.misc;
 
 import com.mojang.serialization.MapCodec;
+import maxigregrze.cobblesafari.client.screen.rotomphone.RotomPhoneGTSScreen;
+import maxigregrze.cobblesafari.client.screen.rotomphone.RotomPhoneUnionScreen;
+import maxigregrze.cobblesafari.client.screen.rotomphone.RotomPhoneWonderScreen;
+import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -19,13 +24,21 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
+import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
-public class UnionOnlineFeaturePcBlock extends HorizontalDirectionalBlock {
+public class OnlineFeaturePcBlock extends HorizontalDirectionalBlock {
 
-    public static final MapCodec<UnionOnlineFeaturePcBlock> CODEC = simpleCodec(UnionOnlineFeaturePcBlock::new);
+    public enum Kind {
+        LEGACY,
+        UNION,
+        GTS,
+        WONDER
+    }
+
+    public static final MapCodec<OnlineFeaturePcBlock> CODEC = simpleCodec(OnlineFeaturePcBlock::new);
 
     private static final VoxelShape LOWER_SHAPE = Block.box(0, 0, 0, 16, 16, 16);
     /** Upper-half model in default north orientation (non-negative model Y), union of main cuboids from online_feature_pc_top. */
@@ -35,11 +48,22 @@ public class UnionOnlineFeaturePcBlock extends HorizontalDirectionalBlock {
             Block.box(4.5, 0, 2.0, 11.5, 6, 2.5)
     );
 
-    public UnionOnlineFeaturePcBlock(Properties properties) {
+    private final Kind kind;
+
+    public OnlineFeaturePcBlock(Properties properties) {
+        this(properties, Kind.LEGACY);
+    }
+
+    public OnlineFeaturePcBlock(Properties properties, Kind kind) {
         super(properties);
+        this.kind = kind;
         this.registerDefaultState(this.stateDefinition.any()
                 .setValue(FACING, Direction.NORTH)
                 .setValue(BlockStateProperties.DOUBLE_BLOCK_HALF, DoubleBlockHalf.LOWER));
+    }
+
+    public Kind getKind() {
+        return kind;
     }
 
     @Override
@@ -81,7 +105,7 @@ public class UnionOnlineFeaturePcBlock extends HorizontalDirectionalBlock {
             return level.getBlockState(pos.below()).isFaceSturdy(level, pos.below(), Direction.UP);
         }
         BlockState below = level.getBlockState(pos.below());
-        return below.is(this)
+        return below.getBlock() instanceof OnlineFeaturePcBlock
                 && below.getValue(BlockStateProperties.DOUBLE_BLOCK_HALF) == DoubleBlockHalf.LOWER
                 && below.getValue(FACING) == facing;
     }
@@ -91,7 +115,7 @@ public class UnionOnlineFeaturePcBlock extends HorizontalDirectionalBlock {
         DoubleBlockHalf half = state.getValue(BlockStateProperties.DOUBLE_BLOCK_HALF);
         BlockPos other = half == DoubleBlockHalf.LOWER ? pos.above() : pos.below();
         BlockState otherState = level.getBlockState(other);
-        if (otherState.is(this)) {
+        if (otherState.getBlock() instanceof OnlineFeaturePcBlock) {
             level.setBlock(other, Blocks.AIR.defaultBlockState(), Block.UPDATE_ALL);
         }
         return super.playerWillDestroy(level, pos, state, player);
@@ -116,30 +140,28 @@ public class UnionOnlineFeaturePcBlock extends HorizontalDirectionalBlock {
     }
 
     @Override
-    public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+    protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
         return shapeFor(state);
     }
 
     @Override
-    public VoxelShape getCollisionShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+    protected VoxelShape getCollisionShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
         return shapeFor(state);
     }
 
     private static VoxelShape shapeFor(BlockState state) {
         Direction facing = state.getValue(FACING);
         if (state.getValue(BlockStateProperties.DOUBLE_BLOCK_HALF) == DoubleBlockHalf.UPPER) {
-            return rotateShape(TOP_SHAPE_NORTH, facing);
+            return rotateTopShape(TOP_SHAPE_NORTH, facing);
         }
         return LOWER_SHAPE;
     }
 
-    /** Same axis-aligned rotation convention as BasePCBlock. */
-    private static VoxelShape rotateShape(VoxelShape shape, Direction facing) {
+    /** Upper-half rotation; N/S were mirrored — swap their transforms. */
+    private static VoxelShape rotateTopShape(VoxelShape shape, Direction facing) {
         return switch (facing) {
-            case NORTH -> shape;
-            case SOUTH -> Shapes.box(
-                    1 - shape.max(Direction.Axis.X), shape.min(Direction.Axis.Y), 1 - shape.max(Direction.Axis.Z),
-                    1 - shape.min(Direction.Axis.X), shape.max(Direction.Axis.Y), 1 - shape.min(Direction.Axis.Z));
+            case NORTH -> mirrorSouth(shape);
+            case SOUTH -> shape;
             case EAST -> Shapes.box(
                     shape.min(Direction.Axis.Z), shape.min(Direction.Axis.Y), 1 - shape.max(Direction.Axis.X),
                     shape.max(Direction.Axis.Z), shape.max(Direction.Axis.Y), 1 - shape.min(Direction.Axis.X));
@@ -150,8 +172,40 @@ public class UnionOnlineFeaturePcBlock extends HorizontalDirectionalBlock {
         };
     }
 
+    private static VoxelShape mirrorSouth(VoxelShape shape) {
+        return Shapes.box(
+                1 - shape.max(Direction.Axis.X), shape.min(Direction.Axis.Y), 1 - shape.max(Direction.Axis.Z),
+                1 - shape.min(Direction.Axis.X), shape.max(Direction.Axis.Y), 1 - shape.min(Direction.Axis.Z));
+    }
+
     @Override
     public RenderShape getRenderShape(BlockState state) {
         return RenderShape.MODEL;
+    }
+
+    @Override
+    protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hitResult) {
+        if (kind == Kind.LEGACY) {
+            return InteractionResult.PASS;
+        }
+        if (level.isClientSide()) {
+            openAppScreen(kind);
+            return InteractionResult.SUCCESS;
+        }
+        return InteractionResult.CONSUME;
+    }
+
+    private static void openAppScreen(Kind kind) {
+        Minecraft mc = Minecraft.getInstance();
+        switch (kind) {
+            case UNION -> mc.setScreen(RotomPhoneUnionScreen.forOnlinePc());
+            case GTS -> mc.setScreen(RotomPhoneGTSScreen.forOnlinePc());
+            case WONDER -> mc.setScreen(RotomPhoneWonderScreen.forOnlinePc());
+            default -> {}
+        }
+    }
+
+    public static boolean isOnlineFeaturePc(Block block) {
+        return block instanceof OnlineFeaturePcBlock;
     }
 }

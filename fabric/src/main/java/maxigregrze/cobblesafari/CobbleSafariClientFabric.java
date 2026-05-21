@@ -202,6 +202,9 @@ public class CobbleSafariClientFabric implements ClientModInitializer {
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.UNION_ROOM_SPOT_DISPLAY, RenderType.translucent());
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.UNION_ROOM_GLOBE, RenderType.translucent());
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.ONLINE_FEATURE_PC, RenderType.cutoutMipped());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.ONLINE_FEATURE_PC_UNION, RenderType.cutoutMipped());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.ONLINE_FEATURE_PC_GTS, RenderType.cutoutMipped());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.ONLINE_FEATURE_PC_WONDER, RenderType.cutoutMipped());
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.UNION_ROOM_GLOBE_DISPLAY_MOVING, RenderType.translucent());
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.UNION_ROOM_SCREEN, RenderType.translucent());
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.UNION_ROOM_SCREEN_DISPLAY, RenderType.translucent());

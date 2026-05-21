@@ -25,23 +25,33 @@ public abstract class RotomPhoneBaseScreen extends Screen {
     protected static final int BACK_BTN_X = 321;
     protected static final int BACK_BTN_Y = 61;
 
+    public static final int ONLINE_PC_TINT = 0xFF3deeee;
+
     protected final String rotomName;
     protected boolean shinyStatus;
     protected String currentSkin;
     protected boolean safetyMode;
     protected boolean rotoGlide;
+    protected final RotomPhoneShell shell;
 
     protected int originX;
     protected int originY;
 
     protected RotomPhoneBaseScreen(Component title, String rotomName, boolean shinyStatus,
                                     String currentSkin, boolean safetyMode, boolean rotoGlide) {
+        this(title, rotomName, shinyStatus, currentSkin, safetyMode, rotoGlide, RotomPhoneShell.PHONE);
+    }
+
+    protected RotomPhoneBaseScreen(Component title, String rotomName, boolean shinyStatus,
+                                    String currentSkin, boolean safetyMode, boolean rotoGlide,
+                                    RotomPhoneShell shell) {
         super(title);
         this.rotomName = rotomName;
         this.shinyStatus = shinyStatus;
         this.currentSkin = currentSkin;
         this.safetyMode = safetyMode;
         this.rotoGlide = rotoGlide;
+        this.shell = shell;
     }
 
     public void setCurrentSkin(String skin) {
@@ -68,12 +78,18 @@ public abstract class RotomPhoneBaseScreen extends Screen {
 
     @Override
     public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
-        RotomPhoneBackdropRenderer.renderFullPhone(graphics, width, height, shinyStatus, currentSkin);
+        if (shell == RotomPhoneShell.ONLINE_PC) {
+            OnlinePcBackdropRenderer.render(graphics, width, height);
+        } else {
+            RotomPhoneBackdropRenderer.renderFullPhone(graphics, width, height, shinyStatus, currentSkin);
+        }
 
         super.render(graphics, mouseX, mouseY, partialTick);
 
         renderPhoneContent(graphics, mouseX, mouseY, partialTick);
-        renderBackButton(graphics, mouseX, mouseY);
+        if (showBackButton()) {
+            renderBackButton(graphics, mouseX, mouseY);
+        }
     }
 
     private void renderBackButton(GuiGraphics graphics, int mouseX, int mouseY) {
@@ -103,6 +119,9 @@ public abstract class RotomPhoneBaseScreen extends Screen {
     }
 
     protected int getTintColor() {
+        if (shell == RotomPhoneShell.ONLINE_PC) {
+            return ONLINE_PC_TINT;
+        }
         RotomPhoneConfigSyncPayload.SkinData skinData = getCurrentSkinData();
         if (skinData != null && skinData.hasCustomScreen()) {
             try {
@@ -136,9 +155,25 @@ public abstract class RotomPhoneBaseScreen extends Screen {
     }
 
     protected void onBackButtonClicked() {
-        if (this.minecraft != null) {
-            this.minecraft.setScreen(new RotomPhoneMenuScreen(rotomName, shinyStatus, currentSkin, safetyMode, rotoGlide));
+        if (this.minecraft == null) {
+            return;
         }
+        if (shell == RotomPhoneShell.ONLINE_PC) {
+            this.minecraft.setScreen(null);
+            return;
+        }
+        this.minecraft.setScreen(new RotomPhoneMenuScreen(rotomName, shinyStatus, currentSkin, safetyMode, rotoGlide));
+    }
+
+    @Override
+    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+        if (keyCode == 256 && shell == RotomPhoneShell.ONLINE_PC && !showBackButton()) {
+            if (this.minecraft != null) {
+                this.minecraft.setScreen(null);
+            }
+            return true;
+        }
+        return super.keyPressed(keyCode, scanCode, modifiers);
     }
 
     protected static ResourceLocation loc(String filename) {

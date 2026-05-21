@@ -206,6 +206,9 @@ public class ModCreativeTabs {
                 output.accept(ModBlocks.UNION_ROOM_SPOT);
                 output.accept(ModBlocks.UNION_ROOM_GLOBE);
                 output.accept(ModBlocks.ONLINE_FEATURE_PC);
+                output.accept(ModBlocks.ONLINE_FEATURE_PC_UNION);
+                output.accept(ModBlocks.ONLINE_FEATURE_PC_GTS);
+                output.accept(ModBlocks.ONLINE_FEATURE_PC_WONDER);
                 output.accept(ModBlocks.UNION_ROOM_EXIT_TELEPORTER);
             })
             .build();

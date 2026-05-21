@@ -61,6 +61,7 @@ public class RotomPhoneGTSScreen extends RotomPhoneBaseScreen {
     private static final ResourceLocation TEX_GTS_LOGO = loc("gts/rotomphone_gui_icon_gts.png");
     private static final ResourceLocation TEX_DOUBLE = loc("rotomphone_gui_icon_double.png");
     private static final ResourceLocation TEX_RIGHT = loc("rotomphone_gui_icon_right.png");
+    private static final ResourceLocation TEX_LEFT = loc("rotomphone_gui_icon_left.png");
     private static final ResourceLocation TEX_EMPTY = loc("rotomphone_gui_icon_empty.png");
     private static final ResourceLocation TEX_TRADEANIM = loc("wonder/rotomphone_gui_tradeanim.png");
     private static final ResourceLocation TEX_TRADE = loc("gts/rotomphone_gui_icon_trade.png");
@@ -90,9 +91,16 @@ public class RotomPhoneGTSScreen extends RotomPhoneBaseScreen {
     private static final long ANIM_HALF_TOTAL_MS = ANIM_INITIAL_DELAY_MS + ANIM_FORWARD_MS;
 
     private static final int CONFIRM_SLOT_SIZE = 72;
-    private static final float CONFIRM_SLOT_BASE_SCALE = 9.5f;
-    private static final float CONFIRM_SLOT_MODEL_SCALE = 7f;
-    private static final float CONFIRM_SLOT_MODEL_Y_OFFSET = -5f;
+    private static final int CONFIRM_SLOT_CLIP_WIDTH = CONFIRM_SLOT_SIZE * 2;
+    private static final float CONFIRM_SLOT_BASE_SCALE = 8.5f;
+    private static final float CONFIRM_SLOT_MODEL_SCALE = 6.2f;
+    /** Screen-pixel lift for confirm slots; negative moves the model up. */
+    private static final float CONFIRM_SLOT_MODEL_Y_OFFSET = -20f;
+    private static final long TRADE_ICON_ROTATION_PERIOD_MS = 4000L;
+    private static final int ANIM_DISAPPEAR_FRAME = 4;
+    private static final int ANIM_APPEAR_FORWARD_INDEX = 10;
+    private static final int ANIM_RECEIVED_VISIBLE_FROM_END = 4;
+    private static final float ANIM_MIN_POKEMON_SCALE = 0.5f;
 
     private static final int PARAM_SUGGESTION_X = 59;
     private static final int PARAM_SUGGESTION_WIDTH = 230;
@@ -113,7 +121,7 @@ public class RotomPhoneGTSScreen extends RotomPhoneBaseScreen {
     private static final int SEEK_ROW1_Y = 96;
     private static final int SEEK_ROW2_Y = 136;
 
-    private static final long SEEK_DEBOUNCE_MS = 3000L;
+    private static final long SEEK_DEBOUNCE_MS = 500L;
 
     private static final Stat[] TOOLTIP_STATS = {
             Stats.HP,
@@ -187,6 +195,14 @@ public class RotomPhoneGTSScreen extends RotomPhoneBaseScreen {
         super(Component.translatable("gui.cobblesafari.rotomphone.app.gts"), rotomName, shinyStatus, currentSkin, safetyMode, rotoGlide);
     }
 
+    private RotomPhoneGTSScreen(RotomPhoneShell shell) {
+        super(Component.translatable("gui.cobblesafari.rotomphone.app.gts"), "", false, "", false, false, shell);
+    }
+
+    public static RotomPhoneGTSScreen forOnlinePc() {
+        return new RotomPhoneGTSScreen(RotomPhoneShell.ONLINE_PC);
+    }
+
     @Override
     protected void init() {
         super.init();
@@ -224,10 +240,12 @@ public class RotomPhoneGTSScreen extends RotomPhoneBaseScreen {
     }
 
     public void applyServerSnapshot(GtsAppResultPayload p) {
-        offerCount = p.offerCount();
-        ownActiveOfferId = p.ownActiveOfferId();
-        successCount = p.successCount();
-        oldestSuccessId = p.oldestSuccessId();
+        if (payloadCarriesBeginSnapshot(p.subscreen())) {
+            offerCount = p.offerCount();
+            ownActiveOfferId = p.ownActiveOfferId();
+            successCount = p.successCount();
+            oldestSuccessId = p.oldestSuccessId();
+        }
 
         switch (p.subscreen()) {
             case GtsAppResultPayload.SUB_BEGIN -> {
@@ -241,15 +259,7 @@ public class RotomPhoneGTSScreen extends RotomPhoneBaseScreen {
                 if (state != SubScreen.PARAMETERS) {
                     break;
                 }
-                String vr = p.validateResult();
-                if (GtsService.ValidateSpeciesResult.OK.name().equals(vr)) {
-                    paramSpeciesChecked = true;
-                    paramSpeciesInvalid = false;
-                } else {
-                    paramSpeciesChecked = false;
-                    paramSpeciesInvalid = true;
-                    lastErrorKey = validateResultToErrorKey(vr);
-                }
+                applyParamValidateResult(p.validateResult());
             }
             case GtsAppResultPayload.SUB_DEPOSIT -> {
                 confirmPending = false;
@@ -335,6 +345,14 @@ public class RotomPhoneGTSScreen extends RotomPhoneBaseScreen {
         }
     }
 
+    /** Only these subscreens populate hub counters; others use 0 as an unused placeholder. */
+    private static boolean payloadCarriesBeginSnapshot(int subscreen) {
+        return subscreen == GtsAppResultPayload.SUB_BEGIN
+                || subscreen == GtsAppResultPayload.SUB_DEPOSIT
+                || subscreen == GtsAppResultPayload.SUB_RETRIEVAL
+                || subscreen == GtsAppResultPayload.SUB_ERROR;
+    }
+
     private void refreshBeginModeFromServer() {
         if (beginMode == BeginBeginMode.CONFIRM_RETRIEVE) {
             return;
@@ -348,6 +366,25 @@ public class RotomPhoneGTSScreen extends RotomPhoneBaseScreen {
         }
     }
 
+    private void applyParamValidateResult(String vr) {
+        if (GtsService.ValidateSpeciesResult.OK.name().equals(vr)) {
+            paramSpeciesChecked = true;
+            paramSpeciesInvalid = false;
+            lastErrorKey = "";
+            return;
+        }
+        if (GtsService.ValidateSpeciesResult.INCOMPATIBLE_GENDER.name().equals(vr)) {
+            paramGender = GenderFilter.ANY;
+            paramSpeciesChecked = true;
+            paramSpeciesInvalid = false;
+            lastErrorKey = "";
+            return;
+        }
+        paramSpeciesChecked = false;
+        paramSpeciesInvalid = true;
+        lastErrorKey = validateResultToErrorKey(vr);
+    }
+
     private static String validateResultToErrorKey(String vr) {
         try {
             return switch (GtsService.ValidateSpeciesResult.valueOf(vr)) {
@@ -359,6 +396,17 @@ public class RotomPhoneGTSScreen extends RotomPhoneBaseScreen {
         } catch (IllegalArgumentException e) {
             return "gui.cobblesafari.rotomphone.gts.error.error";
         }
+    }
+
+    private GenderFilter paramGenderForValidation(String speciesLine) {
+        if (paramGender == GenderFilter.ANY) {
+            return GenderFilter.ANY;
+        }
+        if (speciesLine.isBlank() || GtsService.isWishGenderCompatible(speciesLine, paramGender)) {
+            return paramGender;
+        }
+        paramGender = GenderFilter.ANY;
+        return GenderFilter.ANY;
     }
 
     private Pokemon loadPokemon(CompoundTag tag) {
@@ -568,6 +616,8 @@ public class RotomPhoneGTSScreen extends RotomPhoneBaseScreen {
             }
             if (state == SubScreen.SEEK && seekSpeciesBox != null && seekSpeciesBox.isFocused()) {
                 seekSpeciesBox.setFocused(false);
+                clearSeekSuggestions();
+                flushSeekSearch(false);
                 return true;
             }
             onBackButtonClicked();
@@ -588,7 +638,9 @@ public class RotomPhoneGTSScreen extends RotomPhoneBaseScreen {
             if ((keyCode == 258 || keyCode == 257) && !seekSuggestions.isEmpty()) {
                 seekSpeciesBox.setValue(seekSuggestions.get(0));
                 seekSpeciesBox.moveCursorToEnd(false);
+                seekSpeciesBox.setFocused(false);
                 clearSeekSuggestions();
+                flushSeekSearch(true);
                 return true;
             }
             if (seekSpeciesBox.keyPressed(keyCode, scanCode, modifiers)) {
@@ -701,7 +753,7 @@ public class RotomPhoneGTSScreen extends RotomPhoneBaseScreen {
         drawTinted(g, shinyTexture(paramShiny), originX + 258, originY + 96, 32, 32, sHov ? 0xFFFFFFFF : theme);
 
         boolean ldHov = isInBounds(mx, my, originX + 98, originY + 96, 32, 32);
-        drawTintedFlippedH(g, TEX_RIGHT, originX + 98, originY + 96, 32, 32, ldHov ? 0xFFFFFFFF : theme);
+        drawTinted(g, TEX_LEFT, originX + 98, originY + 96, 32, 32, ldHov ? 0xFFFFFFFF : theme);
 
         boolean luHov = isInBounds(mx, my, originX + 218, originY + 96, 32, 32);
         drawTinted(g, TEX_RIGHT, originX + 218, originY + 96, 32, 32, luHov ? 0xFFFFFFFF : theme);
@@ -737,7 +789,7 @@ public class RotomPhoneGTSScreen extends RotomPhoneBaseScreen {
         int ox = originX + 58;
         int oy = originY + 56;
         if (offered != null) {
-            drawPokemonInArea(g, offered, ox, oy, CONFIRM_SLOT_SIZE, CONFIRM_SLOT_SIZE, 0,
+            drawPokemonInArea(g, offered, ox, oy, CONFIRM_SLOT_SIZE, CONFIRM_SLOT_SIZE, CONFIRM_SLOT_CLIP_WIDTH,
                     partialTick, partyStates[Math.max(0, selectedSlot)],
                     CONFIRM_SLOT_BASE_SCALE, CONFIRM_SLOT_MODEL_SCALE, CONFIRM_SLOT_MODEL_Y_OFFSET);
         }
@@ -748,7 +800,7 @@ public class RotomPhoneGTSScreen extends RotomPhoneBaseScreen {
             if (offeredWishState == null) {
                 offeredWishState = new FloatingState();
             }
-            drawPokemonInArea(g, wished, wx, oy, CONFIRM_SLOT_SIZE, CONFIRM_SLOT_SIZE, 0,
+            drawPokemonInArea(g, wished, wx, oy, CONFIRM_SLOT_SIZE, CONFIRM_SLOT_SIZE, CONFIRM_SLOT_CLIP_WIDTH,
                     partialTick, offeredWishState,
                     CONFIRM_SLOT_BASE_SCALE, CONFIRM_SLOT_MODEL_SCALE, CONFIRM_SLOT_MODEL_Y_OFFSET);
         }
@@ -785,7 +837,7 @@ public class RotomPhoneGTSScreen extends RotomPhoneBaseScreen {
         int cy = originY + 56 + 36;
         g.pose().translate(cx, cy, 0f);
         if (elapsedMs > 0L) {
-            float deg = (elapsedMs % 2000L) * 360f / 2000f;
+            float deg = (elapsedMs % TRADE_ICON_ROTATION_PERIOD_MS) * 360f / TRADE_ICON_ROTATION_PERIOD_MS;
             g.pose().mulPose(Axis.ZP.rotationDegrees(deg));
         }
         drawTinted(g, TEX_TRADE, -36, -36, 72, 72, 0xFFFFFFFF);
@@ -798,9 +850,10 @@ public class RotomPhoneGTSScreen extends RotomPhoneBaseScreen {
         int sx = originX + TRADE_SLOT_X;
         int sy = originY + TRADE_SLOT_Y;
         if (depositShowPokemon(elapsed) && offeredAnimPokemon != null) {
+            float scale = forwardDisappearPokemonScale(elapsed);
             drawPokemonInArea(g, offeredAnimPokemon, sx, sy, TRADE_SLOT_SIZE, TRADE_SLOT_SIZE,
                     TRADE_SLOT_CLIP_WIDTH, partialTick, offeredTradeState, TRADE_SLOT_BASE_SCALE,
-                    TRADE_SLOT_MODEL_SCALE, 0f);
+                    TRADE_SLOT_MODEL_SCALE, 0f, scale);
         }
         int f = getOneWayAnimFrame(elapsed, false);
         if (f >= 0) {
@@ -823,9 +876,10 @@ public class RotomPhoneGTSScreen extends RotomPhoneBaseScreen {
         Pokemon p = retrieval ? offeredAnimPokemon : receivedAnimPokemon;
         FloatingState st = retrieval ? offeredTradeState : receivedTradeState;
         if (retrievalShowPokemon(elapsed) && p != null && st != null) {
+            float scale = reverseAppearPokemonScale(elapsed);
             drawPokemonInArea(g, p, sx, sy, TRADE_SLOT_SIZE, TRADE_SLOT_SIZE,
                     TRADE_SLOT_CLIP_WIDTH, partialTick, st, TRADE_SLOT_BASE_SCALE,
-                    TRADE_SLOT_MODEL_SCALE, 0f);
+                    TRADE_SLOT_MODEL_SCALE, 0f, scale);
         }
         int f = getOneWayAnimFrame(elapsed, true);
         if (f >= 0) {
@@ -849,13 +903,15 @@ public class RotomPhoneGTSScreen extends RotomPhoneBaseScreen {
         boolean showOffered = shouldShowOfferedModel(elapsed);
         boolean showReceived = shouldShowReceivedModel(elapsed);
         if (showOffered && offeredAnimPokemon != null && offeredTradeState != null) {
+            float scale = forwardDisappearPokemonScale(elapsed);
             drawPokemonInArea(g, offeredAnimPokemon, sx, sy, TRADE_SLOT_SIZE, TRADE_SLOT_SIZE,
                     TRADE_SLOT_CLIP_WIDTH, partialTick, offeredTradeState, TRADE_SLOT_BASE_SCALE,
-                    TRADE_SLOT_MODEL_SCALE, 0f);
+                    TRADE_SLOT_MODEL_SCALE, 0f, scale);
         } else if (showReceived && receivedAnimPokemon != null && receivedTradeState != null) {
+            float scale = receivedAppearPokemonScale(elapsed);
             drawPokemonInArea(g, receivedAnimPokemon, sx, sy, TRADE_SLOT_SIZE, TRADE_SLOT_SIZE,
                     TRADE_SLOT_CLIP_WIDTH, partialTick, receivedTradeState, TRADE_SLOT_BASE_SCALE,
-                    TRADE_SLOT_MODEL_SCALE, 0f);
+                    TRADE_SLOT_MODEL_SCALE, 0f, scale);
         }
 
         int animFrame = getTradeAnimFrame(elapsed);
@@ -934,6 +990,59 @@ public class RotomPhoneGTSScreen extends RotomPhoneBaseScreen {
         return frameFromEnd <= 4;
     }
 
+    private float forwardDisappearPokemonScale(long elapsed) {
+        if (elapsed < ANIM_INITIAL_DELAY_MS) {
+            return 1f;
+        }
+        long animElapsed = elapsed - ANIM_INITIAL_DELAY_MS;
+        int frame = (int) (animElapsed / ANIM_FRAME_MS);
+        if (frame < ANIM_DISAPPEAR_FRAME - 1) {
+            return 1f;
+        }
+        if (frame >= ANIM_DISAPPEAR_FRAME) {
+            return ANIM_MIN_POKEMON_SCALE;
+        }
+        float t = (animElapsed % ANIM_FRAME_MS) / (float) ANIM_FRAME_MS;
+        return 1f - (1f - ANIM_MIN_POKEMON_SCALE) * t;
+    }
+
+    private float reverseAppearPokemonScale(long elapsed) {
+        if (elapsed < ANIM_INITIAL_DELAY_MS) {
+            return ANIM_MIN_POKEMON_SCALE;
+        }
+        long animElapsed = elapsed - ANIM_INITIAL_DELAY_MS;
+        int frame = (int) (animElapsed / ANIM_FRAME_MS);
+        if (frame < ANIM_APPEAR_FORWARD_INDEX) {
+            return ANIM_MIN_POKEMON_SCALE;
+        }
+        if (frame > ANIM_APPEAR_FORWARD_INDEX) {
+            return 1f;
+        }
+        float t = (animElapsed % ANIM_FRAME_MS) / (float) ANIM_FRAME_MS;
+        return ANIM_MIN_POKEMON_SCALE + (1f - ANIM_MIN_POKEMON_SCALE) * t;
+    }
+
+    private float receivedAppearPokemonScale(long elapsed) {
+        long reverseStart = ANIM_INITIAL_DELAY_MS + ANIM_FORWARD_MS + ANIM_PAUSE_MS;
+        if (elapsed < reverseStart) {
+            return ANIM_MIN_POKEMON_SCALE;
+        }
+        long reverseElapsed = elapsed - reverseStart;
+        if (reverseElapsed >= ANIM_FORWARD_MS) {
+            return 1f;
+        }
+        int frameFromStart = (int) (reverseElapsed / ANIM_FRAME_MS);
+        int frameFromEnd = ANIM_FRAME_COUNT - 1 - frameFromStart;
+        if (frameFromEnd > ANIM_RECEIVED_VISIBLE_FROM_END) {
+            return ANIM_MIN_POKEMON_SCALE;
+        }
+        if (frameFromEnd < ANIM_RECEIVED_VISIBLE_FROM_END) {
+            return 1f;
+        }
+        float t = (reverseElapsed % ANIM_FRAME_MS) / (float) ANIM_FRAME_MS;
+        return ANIM_MIN_POKEMON_SCALE + (1f - ANIM_MIN_POKEMON_SCALE) * t;
+    }
+
     private int getTradeAnimFrame(long elapsed) {
         if (elapsed < ANIM_INITIAL_DELAY_MS) {
             return -1;
@@ -965,34 +1074,34 @@ public class RotomPhoneGTSScreen extends RotomPhoneBaseScreen {
         boolean sHov = isInBounds(mx, my, originX + 258, originY + 56, 32, 32);
         drawTinted(g, shinyTexture(seekShiny), originX + 258, originY + 56, 32, 32, sHov ? 0xFFFFFFFF : theme);
 
-        int slotIdx = 0;
-        for (int slotX : SEEK_SLOT_ROW1_X) {
-            renderSeekSlot(g, mx, my, partialTick, theme, slotIdx++, originX + slotX, originY + SEEK_ROW1_Y);
-        }
-        for (int slotX : SEEK_SLOT_ROW2_X) {
-            renderSeekSlot(g, mx, my, partialTick, theme, slotIdx++, originX + slotX, originY + SEEK_ROW2_Y);
-        }
-
-        if (seekPage > 1) {
-            g.pose().pushPose();
-            g.pose().translate(originX + 58 + 32, originY + 136, 0);
-            g.pose().scale(-1f, 1f, 1f);
-            boolean ph = isInBounds(mx, my, originX + 58, originY + 136, 32, 32);
-            drawTinted(g, TEX_RIGHT, 0, 0, 32, 32, ph ? 0xFFFFFFFF : theme);
-            g.pose().popPose();
-            g.drawCenteredString(this.font, Component.literal(String.valueOf(seekPage - 1)),
-                    originX + 58 + 16, originY + 136 + 10, 0xFFFFFFFF);
-        }
-        if (seekPage < seekTotalPages) {
-            boolean nh = isInBounds(mx, my, originX + 258, originY + 136, 32, 32);
-            drawTinted(g, TEX_RIGHT, originX + 258, originY + 136, 32, 32, nh ? 0xFFFFFFFF : theme);
-            g.drawCenteredString(this.font, Component.literal(String.valueOf(seekPage + 1)),
-                    originX + 258 + 16, originY + 136 + 10, 0xFFFFFFFF);
-        }
-
         if (seekResults.isEmpty()) {
             drawScaledCentered(g, Component.translatable("gui.cobblesafari.rotomphone.gts.nooffer"),
                     originX + 174, originY + 112, 0xFFFFFFFF);
+        } else {
+            int slotIdx = 0;
+            for (int slotX : SEEK_SLOT_ROW1_X) {
+                renderSeekSlot(g, mx, my, partialTick, theme, slotIdx++, originX + slotX, originY + SEEK_ROW1_Y);
+            }
+            for (int slotX : SEEK_SLOT_ROW2_X) {
+                renderSeekSlot(g, mx, my, partialTick, theme, slotIdx++, originX + slotX, originY + SEEK_ROW2_Y);
+            }
+
+            if (seekPage > 1) {
+                g.pose().pushPose();
+                g.pose().translate(originX + 58 + 32, originY + 136, 0);
+                g.pose().scale(-1f, 1f, 1f);
+                boolean ph = isInBounds(mx, my, originX + 58, originY + 136, 32, 32);
+                drawTinted(g, TEX_RIGHT, 0, 0, 32, 32, ph ? 0xFFFFFFFF : theme);
+                g.pose().popPose();
+                g.drawCenteredString(this.font, Component.literal(String.valueOf(seekPage - 1)),
+                        originX + 58 + 16, originY + 136 + 10, 0xFFFFFFFF);
+            }
+            if (seekPage < seekTotalPages) {
+                boolean nh = isInBounds(mx, my, originX + 258, originY + 136, 32, 32);
+                drawTinted(g, TEX_RIGHT, originX + 258, originY + 136, 32, 32, nh ? 0xFFFFFFFF : theme);
+                g.drawCenteredString(this.font, Component.literal(String.valueOf(seekPage + 1)),
+                        originX + 258 + 16, originY + 136 + 10, 0xFFFFFFFF);
+            }
         }
 
         if (!seekSuggestions.isEmpty() && seekSpeciesBox != null && seekSpeciesBox.isFocused()) {
@@ -1023,8 +1132,8 @@ public class RotomPhoneGTSScreen extends RotomPhoneBaseScreen {
 
     private void renderCheck(GuiGraphics g, int mx, int my, float partialTick) {
         int theme = getTintColor();
-        drawScaledRightAligned(g, Component.translatable("gui.cobblesafari.rotomphone.gts.offeredpkmn"),
-                originX + 98, originY + 72, theme);
+        g.drawCenteredString(this.font, Component.translatable("gui.cobblesafari.rotomphone.gts.offeredpkmn"),
+                originX + 174, originY + 72, theme);
 
         Pokemon offered = checkOffer == null ? null : getSeekPokemon(checkOffer);
         int ox = originX + 178;
@@ -1035,55 +1144,56 @@ public class RotomPhoneGTSScreen extends RotomPhoneBaseScreen {
                     PARTY_SLOT_BASE_SCALE, PARTY_SLOT_MODEL_SCALE, PARTY_SLOT_MODEL_Y_OFFSET);
         }
 
+        boolean noMatch = checkLaunched && checkNoMatch;
+
         if (!checkLaunched) {
             boolean ch = isInBounds(mx, my, originX + 138, originY + 96, 72, 32);
             drawButton(g, originX + 138, originY + 96, ch, theme,
                     Component.translatable("gui.cobblesafari.rotomphone.gts.checkpkmn"));
-            return;
-        }
-
-        if (checkNoMatch || checkCandidates.isEmpty()) {
-            drawScaledCentered(g, Component.translatable("gui.cobblesafari.rotomphone.gts.nomatch"),
-                    originX + 174, originY + 112, 0xFFFFFFFF);
-            return;
-        }
-
-        if (checkCandidates.size() > 1) {
-            boolean ph = isInBounds(mx, my, originX + 98, originY + 96, 32, 32);
-            drawTintedFlippedH(g, TEX_RIGHT, originX + 98, originY + 96, 32, 32, ph ? 0xFFFFFFFF : theme);
-
-            boolean nh = isInBounds(mx, my, originX + 218, originY + 96, 32, 32);
-            drawTinted(g, TEX_RIGHT, originX + 218, originY + 96, 32, 32, nh ? 0xFFFFFFFF : theme);
-        }
-
-        int mxSlot = originX + 158;
-        int mySlot = originY + 96;
-        drawTinted(g, TEX_EMPTY, mxSlot, mySlot, 32, 32, theme);
-        if (matchIndex >= 0 && matchIndex < checkCandidates.size()) {
-            Pokemon m = loadPokemon(checkCandidates.get(matchIndex));
-            if (m != null) {
-                drawPokemonInArea(g, m, mxSlot, mySlot, 32, 32, 0, partialTick, seekSlotStates[1],
-                        PARTY_SLOT_BASE_SCALE, PARTY_SLOT_MODEL_SCALE, PARTY_SLOT_MODEL_Y_OFFSET);
-            }
-        }
-
-        if (!matchLocked) {
-            boolean tr = isInBounds(mx, my, originX + 138, originY + 136, 72, 32);
-            drawButton(g, originX + 138, originY + 136, tr, theme,
-                    Component.translatable("gui.cobblesafari.rotomphone.gts.accept"));
-        } else if (tradeConfirmPending) {
-            drawTinted(g, TEX_DOUBLE, originX + 138, originY + 136, 72, 32, theme);
+        } else if (noMatch) {
+            drawCenteredStatusLine(g, Component.translatable("gui.cobblesafari.rotomphone.gts.nomatch"),
+                    originX + 174, originY + 112, theme);
+            boolean retHov = isInBounds(mx, my, originX + 138, originY + 136, 72, 32);
+            drawButton(g, originX + 138, originY + 136, retHov, theme,
+                    Component.translatable("gui.cobblesafari.rotomphone.gts.return"));
         } else {
-            int digit = countdownDigit(matchLockedAtMillis);
-            if (digit > 0) {
+            if (checkCandidates.size() > 1) {
+                boolean ph = isInBounds(mx, my, originX + 98, originY + 96, 32, 32);
+                drawTinted(g, TEX_LEFT, originX + 98, originY + 96, 32, 32, ph ? 0xFFFFFFFF : theme);
+
+                boolean nh = isInBounds(mx, my, originX + 218, originY + 96, 32, 32);
+                drawTinted(g, TEX_RIGHT, originX + 218, originY + 96, 32, 32, nh ? 0xFFFFFFFF : theme);
+            }
+
+            int mxSlot = originX + 158;
+            int mySlot = originY + 96;
+            drawTinted(g, TEX_EMPTY, mxSlot, mySlot, 32, 32, theme);
+            if (matchIndex >= 0 && matchIndex < checkCandidates.size()) {
+                Pokemon m = loadPokemon(checkCandidates.get(matchIndex));
+                if (m != null) {
+                    drawPokemonInArea(g, m, mxSlot, mySlot, 32, 32, 0, partialTick, seekSlotStates[1],
+                            PARTY_SLOT_BASE_SCALE, PARTY_SLOT_MODEL_SCALE, PARTY_SLOT_MODEL_Y_OFFSET);
+                }
+            }
+
+            if (!matchLocked) {
+                boolean tr = isInBounds(mx, my, originX + 138, originY + 136, 72, 32);
+                drawButton(g, originX + 138, originY + 136, tr, theme,
+                        Component.translatable("gui.cobblesafari.rotomphone.gts.accept"));
+            } else if (tradeConfirmPending) {
                 drawTinted(g, TEX_DOUBLE, originX + 138, originY + 136, 72, 32, theme);
-                int textY = originY + 136 + (32 - this.font.lineHeight) / 2;
-                g.drawCenteredString(this.font, Component.literal(String.valueOf(digit)),
-                        originX + 138 + 36, textY, theme);
             } else {
-                boolean cf = isInBounds(mx, my, originX + 138, originY + 136, 72, 32);
-                drawButton(g, originX + 138, originY + 136, cf, theme,
-                        Component.translatable("gui.cobblesafari.rotomphone.wonder.confirm"));
+                int digit = countdownDigit(matchLockedAtMillis);
+                if (digit > 0) {
+                    drawTinted(g, TEX_DOUBLE, originX + 138, originY + 136, 72, 32, theme);
+                    int textY = originY + 136 + (32 - this.font.lineHeight) / 2;
+                    g.drawCenteredString(this.font, Component.literal(String.valueOf(digit)),
+                            originX + 138 + 36, textY, theme);
+                } else {
+                    boolean cf = isInBounds(mx, my, originX + 138, originY + 136, 72, 32);
+                    drawButton(g, originX + 138, originY + 136, cf, theme,
+                            Component.translatable("gui.cobblesafari.rotomphone.wonder.confirm"));
+                }
             }
         }
     }
@@ -1176,6 +1286,8 @@ public class RotomPhoneGTSScreen extends RotomPhoneBaseScreen {
         }
         if (isInBounds(mx, my, originX + 58, originY + 96, 32, 32)) {
             paramGender = cycleGender(paramGender);
+            paramSpeciesChecked = false;
+            paramSpeciesInvalid = false;
             return true;
         }
         if (isInBounds(mx, my, originX + 258, originY + 96, 32, 32)) {
@@ -1192,8 +1304,15 @@ public class RotomPhoneGTSScreen extends RotomPhoneBaseScreen {
         }
         if (!paramSpeciesChecked && isInBounds(mx, my, originX + 138, originY + 136, 72, 32)) {
             String line = sanitizeSpeciesLine(paramSpeciesBox.getValue());
+            GenderFilter genderForValidate = paramGenderForValidation(line);
             Services.PLATFORM.sendPayloadToServer(
-                    new GtsAppPayload(GtsAppPayload.ACTION_VALIDATE_SPECIES, 0, 0, line, paramGender.name(), ""));
+                    new GtsAppPayload(
+                            GtsAppPayload.ACTION_VALIDATE_SPECIES,
+                            0,
+                            0,
+                            line,
+                            genderForValidate.name(),
+                            ""));
             return true;
         }
         if (paramSpeciesChecked && !paramSpeciesInvalid && isInBounds(mx, my, originX + 138, originY + 136, 72, 32)) {
@@ -1268,6 +1387,38 @@ public class RotomPhoneGTSScreen extends RotomPhoneBaseScreen {
                 seekSuggestions, seekSuggestionHover)) {
             return true;
         }
+        if (isInBounds(mx, my, originX + 58, originY + 56, 32, 32)) {
+            blurSeekSpeciesBox();
+            seekGender = cycleGender(seekGender);
+            sendSearch();
+            return true;
+        }
+        if (isInBounds(mx, my, originX + 258, originY + 56, 32, 32)) {
+            blurSeekSpeciesBox();
+            seekShiny = seekShiny.next();
+            sendSearch();
+            return true;
+        }
+        int slot = seekSlotIndexAt((int) mx, (int) my);
+        if (slot >= 0 && slot < seekResults.size()) {
+            blurSeekSpeciesBox();
+            checkOffer = seekResults.get(slot);
+            resetCheckScreen();
+            state = SubScreen.CHECK;
+            return true;
+        }
+        if (seekPage > 1 && isInBounds(mx, my, originX + 58, originY + 136, 32, 32)) {
+            blurSeekSpeciesBox();
+            seekPage--;
+            sendSearch();
+            return true;
+        }
+        if (seekPage < seekTotalPages && isInBounds(mx, my, originX + 258, originY + 136, 32, 32)) {
+            blurSeekSpeciesBox();
+            seekPage++;
+            sendSearch();
+            return true;
+        }
         if (seekSpeciesBox != null) {
             boolean inBox = isInBounds(mx, my, originX + 98, originY + 56, 152, 32);
             if (inBox) {
@@ -1275,40 +1426,23 @@ public class RotomPhoneGTSScreen extends RotomPhoneBaseScreen {
                 seekSpeciesBox.mouseClicked(mx, my, 0);
                 return true;
             }
-            seekSpeciesBox.setFocused(false);
-            clearSeekSuggestions();
-        }
-        if (isInBounds(mx, my, originX + 58, originY + 56, 32, 32)) {
-            seekGender = cycleGender(seekGender);
-            sendSearch();
-            return true;
-        }
-        if (isInBounds(mx, my, originX + 258, originY + 56, 32, 32)) {
-            seekShiny = seekShiny.next();
-            sendSearch();
-            return true;
-        }
-        int slot = seekSlotIndexAt((int) mx, (int) my);
-        if (slot >= 0 && slot < seekResults.size()) {
-            checkOffer = seekResults.get(slot);
-            resetCheckScreen();
-            state = SubScreen.CHECK;
-            return true;
-        }
-        if (seekPage > 1 && isInBounds(mx, my, originX + 58, originY + 136, 32, 32)) {
-            seekPage--;
-            sendSearch();
-            return true;
-        }
-        if (seekPage < seekTotalPages && isInBounds(mx, my, originX + 258, originY + 136, 32, 32)) {
-            seekPage++;
-            sendSearch();
-            return true;
+            if (seekSpeciesBox.isFocused()) {
+                seekSpeciesBox.setFocused(false);
+                clearSeekSuggestions();
+                flushSeekSearch(false);
+            }
         }
         return super.mouseClicked(mx, my, 0);
     }
 
     private boolean handleCheckClick(double mx, double my) {
+        boolean noMatch = checkLaunched && checkNoMatch;
+        if (noMatch && isInBounds(mx, my, originX + 138, originY + 136, 72, 32)) {
+            resetCheckScreen();
+            hideSeekEdit();
+            state = SubScreen.SEEK;
+            return true;
+        }
         if (!checkLaunched && isInBounds(mx, my, originX + 138, originY + 96, 72, 32)) {
             if (checkOffer != null) {
                 checkLaunched = true;
@@ -1363,6 +1497,25 @@ public class RotomPhoneGTSScreen extends RotomPhoneBaseScreen {
                 species,
                 seekGender.name(),
                 seekShiny.name()));
+    }
+
+    /** Runs a pending debounced seek search immediately (e.g. blur). */
+    private void flushSeekSearch(boolean force) {
+        if (force || seekDirty) {
+            seekDirty = false;
+            sendSearch();
+        }
+    }
+
+    private void blurSeekSpeciesBox() {
+        if (seekSpeciesBox == null) {
+            return;
+        }
+        if (seekSpeciesBox.isFocused()) {
+            seekSpeciesBox.setFocused(false);
+            clearSeekSuggestions();
+            seekDirty = false;
+        }
     }
 
     private int seekSlotIndexAt(int mx, int my) {
@@ -1696,9 +1849,8 @@ public class RotomPhoneGTSScreen extends RotomPhoneBaseScreen {
             seekSpeciesBox.setValue(pick);
             seekSpeciesBox.moveCursorToEnd(false);
             seekSpeciesBox.setFocused(false);
-            seekLastTypedAt = System.currentTimeMillis();
-            seekDirty = true;
             clearSeekSuggestions();
+            flushSeekSearch(true);
         }
         return true;
     }
@@ -1716,12 +1868,41 @@ public class RotomPhoneGTSScreen extends RotomPhoneBaseScreen {
             float baseScale,
             float modelScale,
             float modelYOffset) {
+        drawPokemonInArea(g, pokemon, x, y, w, h, clipWidth, partialTick, floatingState,
+                baseScale, modelScale, modelYOffset, 1f);
+    }
+
+    private void drawPokemonInArea(
+            GuiGraphics g,
+            Pokemon pokemon,
+            int x,
+            int y,
+            int w,
+            int h,
+            int clipWidth,
+            float partialTick,
+            FloatingState floatingState,
+            float baseScale,
+            float modelScale,
+            float modelYOffset,
+            float animScaleMult) {
         int scissorW = clipWidth > 0 ? clipWidth : w;
         int clipX = x + (w - scissorW) / 2;
         g.enableScissor(clipX, y, clipX + scissorW, y + h);
         g.pose().pushPose();
-        g.pose().translate(x + w * 0.5, y + 1.0 - modelYOffset, 0.0);
-        g.pose().scale(baseScale, baseScale, baseScale);
+        float scaledBase = baseScale * animScaleMult;
+        float scaledModel = modelScale * animScaleMult;
+        boolean confirmSlot = w == CONFIRM_SLOT_SIZE && h == CONFIRM_SLOT_SIZE;
+        if (confirmSlot) {
+            g.pose().translate(x + w * 0.5f, y + h * 0.5f, 0.0f);
+            g.pose().scale(scaledBase, scaledBase, scaledBase);
+            if (modelYOffset != 0f) {
+                g.pose().translate(0f, modelYOffset / scaledBase, 0f);
+            }
+        } else {
+            g.pose().translate(x + w * 0.5, y + 1.0 - modelYOffset, 0.0);
+            g.pose().scale(scaledBase, scaledBase, scaledBase);
+        }
         Quaternionf rotation = QuaternionUtilsKt.fromEulerXYZDegrees(
                 new Quaternionf(), new Vector3f(13f, 35f, 0f));
         RenderablePokemon renderable = pokemon.asRenderablePokemon();
@@ -1733,7 +1914,7 @@ public class RotomPhoneGTSScreen extends RotomPhoneBaseScreen {
                 PoseType.PROFILE,
                 floatingState,
                 partialTick,
-                modelScale,
+                scaledModel,
                 true,
                 false,
                 1f,
@@ -1751,15 +1932,6 @@ public class RotomPhoneGTSScreen extends RotomPhoneBaseScreen {
         g.pose().translate(x, y + SCALED_TEXT_Y_OFFSET, 0);
         g.pose().scale(2f, 2f, 1f);
         g.drawString(this.font, c, 0, 0, color, false);
-        g.pose().popPose();
-    }
-
-    private void drawScaledRightAligned(GuiGraphics g, Component c, int anchorX, int y, int color) {
-        int w = this.font.width(c);
-        g.pose().pushPose();
-        g.pose().translate(anchorX, y + SCALED_TEXT_Y_OFFSET, 0);
-        g.pose().scale(2f, 2f, 1f);
-        g.drawString(this.font, c, -w, 0, color, false);
         g.pose().popPose();
     }
 
@@ -1801,14 +1973,6 @@ public class RotomPhoneGTSScreen extends RotomPhoneBaseScreen {
         g.blit(tex, x, y, 0, 0, w, h, w, h);
         g.setColor(1f, 1f, 1f, 1f);
         RenderSystem.disableBlend();
-    }
-
-    private void drawTintedFlippedH(GuiGraphics g, ResourceLocation tex, int x, int y, int w, int h, int argb) {
-        g.pose().pushPose();
-        g.pose().translate(x + w, y, 0);
-        g.pose().scale(-1f, 1f, 1f);
-        drawTinted(g, tex, 0, 0, w, h, argb);
-        g.pose().popPose();
     }
 
     private void drawButton(GuiGraphics g, int x, int y, boolean hovered, int themeTint, Component label) {

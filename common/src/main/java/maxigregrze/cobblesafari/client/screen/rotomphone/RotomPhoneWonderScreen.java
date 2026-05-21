@@ -60,6 +60,9 @@ public class RotomPhoneWonderScreen extends RotomPhoneBaseScreen {
             + (long) ANIM_FRAME_COUNT * ANIM_FRAME_MS
             + ANIM_PAUSE_MS
             + (long) ANIM_FRAME_COUNT * ANIM_FRAME_MS;
+    private static final int ANIM_DISAPPEAR_FRAME = 4;
+    private static final int ANIM_RECEIVED_VISIBLE_FROM_END = 4;
+    private static final float ANIM_MIN_POKEMON_SCALE = 0.5f;
 
     private static final int[] PARTY_SLOT_X = {58, 98, 138, 178, 218, 258};
     private static final Stat[] TOOLTIP_STATS = {
@@ -98,6 +101,14 @@ public class RotomPhoneWonderScreen extends RotomPhoneBaseScreen {
 
     public RotomPhoneWonderScreen(String rotomName, boolean shinyStatus, String currentSkin, boolean safetyMode, boolean rotoGlide) {
         super(Component.translatable("gui.cobblesafari.rotomphone.app.wonder"), rotomName, shinyStatus, currentSkin, safetyMode, rotoGlide);
+    }
+
+    private RotomPhoneWonderScreen(RotomPhoneShell shell) {
+        super(Component.translatable("gui.cobblesafari.rotomphone.app.wonder"), "", false, "", false, false, shell);
+    }
+
+    public static RotomPhoneWonderScreen forOnlinePc() {
+        return new RotomPhoneWonderScreen(RotomPhoneShell.ONLINE_PC);
     }
 
     @Override
@@ -328,13 +339,15 @@ public class RotomPhoneWonderScreen extends RotomPhoneBaseScreen {
         boolean showReceived = shouldShowReceivedModel(elapsed);
 
         if (showOffered && offeredPokemon != null) {
+            float scale = forwardDisappearPokemonScale(elapsed);
             drawPokemonInArea(g, offeredPokemon, sx, sy, TRADE_SLOT_SIZE, TRADE_SLOT_SIZE,
                     TRADE_SLOT_CLIP_WIDTH, partialTick, offeredState, TRADE_SLOT_BASE_SCALE,
-                    TRADE_SLOT_MODEL_SCALE, 0f);
+                    TRADE_SLOT_MODEL_SCALE, 0f, scale);
         } else if (showReceived && receivedPokemon != null) {
+            float scale = receivedAppearPokemonScale(elapsed);
             drawPokemonInArea(g, receivedPokemon, sx, sy, TRADE_SLOT_SIZE, TRADE_SLOT_SIZE,
                     TRADE_SLOT_CLIP_WIDTH, partialTick, receivedState, TRADE_SLOT_BASE_SCALE,
-                    TRADE_SLOT_MODEL_SCALE, 0f);
+                    TRADE_SLOT_MODEL_SCALE, 0f, scale);
         }
 
         int animFrame = getTradeAnimFrame(elapsed);
@@ -389,6 +402,44 @@ public class RotomPhoneWonderScreen extends RotomPhoneBaseScreen {
         int frameFromStart = (int) (reverseElapsed / ANIM_FRAME_MS);
         int frameFromEnd = ANIM_FRAME_COUNT - 1 - frameFromStart;
         return frameFromEnd <= 4;
+    }
+
+    private float forwardDisappearPokemonScale(long elapsed) {
+        if (elapsed < ANIM_INITIAL_DELAY_MS) {
+            return 1f;
+        }
+        long animElapsed = elapsed - ANIM_INITIAL_DELAY_MS;
+        int frame = (int) (animElapsed / ANIM_FRAME_MS);
+        if (frame < ANIM_DISAPPEAR_FRAME - 1) {
+            return 1f;
+        }
+        if (frame >= ANIM_DISAPPEAR_FRAME) {
+            return ANIM_MIN_POKEMON_SCALE;
+        }
+        float t = (animElapsed % ANIM_FRAME_MS) / (float) ANIM_FRAME_MS;
+        return 1f - (1f - ANIM_MIN_POKEMON_SCALE) * t;
+    }
+
+    private float receivedAppearPokemonScale(long elapsed) {
+        long reverseStart = ANIM_INITIAL_DELAY_MS + (long) ANIM_FRAME_COUNT * ANIM_FRAME_MS + ANIM_PAUSE_MS;
+        if (elapsed < reverseStart) {
+            return ANIM_MIN_POKEMON_SCALE;
+        }
+        long reverseElapsed = elapsed - reverseStart;
+        long forwardDuration = (long) ANIM_FRAME_COUNT * ANIM_FRAME_MS;
+        if (reverseElapsed >= forwardDuration) {
+            return 1f;
+        }
+        int frameFromStart = (int) (reverseElapsed / ANIM_FRAME_MS);
+        int frameFromEnd = ANIM_FRAME_COUNT - 1 - frameFromStart;
+        if (frameFromEnd > ANIM_RECEIVED_VISIBLE_FROM_END) {
+            return ANIM_MIN_POKEMON_SCALE;
+        }
+        if (frameFromEnd < ANIM_RECEIVED_VISIBLE_FROM_END) {
+            return 1f;
+        }
+        float t = (reverseElapsed % ANIM_FRAME_MS) / (float) ANIM_FRAME_MS;
+        return ANIM_MIN_POKEMON_SCALE + (1f - ANIM_MIN_POKEMON_SCALE) * t;
     }
 
     private int getTradeAnimFrame(long elapsed) {
@@ -588,12 +639,32 @@ public class RotomPhoneWonderScreen extends RotomPhoneBaseScreen {
             float baseScale,
             float modelScale,
             float modelYOffset) {
+        drawPokemonInArea(g, pokemon, x, y, w, h, clipWidth, partialTick, state,
+                baseScale, modelScale, modelYOffset, 1f);
+    }
+
+    private void drawPokemonInArea(
+            GuiGraphics g,
+            Pokemon pokemon,
+            int x,
+            int y,
+            int w,
+            int h,
+            int clipWidth,
+            float partialTick,
+            FloatingState state,
+            float baseScale,
+            float modelScale,
+            float modelYOffset,
+            float animScaleMult) {
         int scissorW = clipWidth > 0 ? clipWidth : w;
         int clipX = x + (w - scissorW) / 2;
         g.enableScissor(clipX, y, clipX + scissorW, y + h);
         g.pose().pushPose();
+        float scaledBase = baseScale * animScaleMult;
+        float scaledModel = modelScale * animScaleMult;
         g.pose().translate(x + w * 0.5, y + 1.0 - modelYOffset, 0.0);
-        g.pose().scale(baseScale, baseScale, baseScale);
+        g.pose().scale(scaledBase, scaledBase, scaledBase);
         Quaternionf rotation = QuaternionUtilsKt.fromEulerXYZDegrees(
                 new Quaternionf(), new Vector3f(13f, 35f, 0f));
         RenderablePokemon renderable = pokemon.asRenderablePokemon();
@@ -605,7 +676,7 @@ public class RotomPhoneWonderScreen extends RotomPhoneBaseScreen {
                 PoseType.PROFILE,
                 state,
                 partialTick,
-                modelScale,
+                scaledModel,
                 true,
                 false,
                 1f,

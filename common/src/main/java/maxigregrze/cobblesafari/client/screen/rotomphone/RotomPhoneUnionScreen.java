@@ -52,6 +52,14 @@ public class RotomPhoneUnionScreen extends RotomPhoneBaseScreen {
         super(Component.translatable("gui.cobblesafari.rotomphone.app.union"), rotomName, shinyStatus, currentSkin, safetyMode, rotoGlide);
     }
 
+    private RotomPhoneUnionScreen(RotomPhoneShell shell) {
+        super(Component.translatable("gui.cobblesafari.rotomphone.app.union"), "", false, "", false, false, shell);
+    }
+
+    public static RotomPhoneUnionScreen forOnlinePc() {
+        return new RotomPhoneUnionScreen(RotomPhoneShell.ONLINE_PC);
+    }
+
     @Override
     protected void init() {
         super.init();
@@ -82,6 +90,11 @@ public class RotomPhoneUnionScreen extends RotomPhoneBaseScreen {
                 // SUB_CLOSE_GUI handled above; unknown values ignored
             }
         }
+    }
+
+    @Override
+    protected boolean showBackButton() {
+        return state != SubScreen.LOADING;
     }
 
     @Override

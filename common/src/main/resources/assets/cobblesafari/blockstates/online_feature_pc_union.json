@@ -1,0 +1,12 @@
+{
+  "variants": {
+    "facing=east,half=lower": { "model": "cobblesafari:block/online_feature_pc_union_bottom", "y": 90 },
+    "facing=east,half=upper": { "model": "cobblesafari:block/online_feature_pc_union_top", "y": 90 },
+    "facing=north,half=lower": { "model": "cobblesafari:block/online_feature_pc_union_bottom" },
+    "facing=north,half=upper": { "model": "cobblesafari:block/online_feature_pc_union_top" },
+    "facing=south,half=lower": { "model": "cobblesafari:block/online_feature_pc_union_bottom", "y": 180 },
+    "facing=south,half=upper": { "model": "cobblesafari:block/online_feature_pc_union_top", "y": 180 },
+    "facing=west,half=lower": { "model": "cobblesafari:block/online_feature_pc_union_bottom", "y": 270 },
+    "facing=west,half=upper": { "model": "cobblesafari:block/online_feature_pc_union_top", "y": 270 }
+  }
+}

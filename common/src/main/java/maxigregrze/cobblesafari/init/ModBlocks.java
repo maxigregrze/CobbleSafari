@@ -38,7 +38,7 @@ import maxigregrze.cobblesafari.block.misc.SafariEggNestBlock;
 import maxigregrze.cobblesafari.block.misc.VoidBlock;
 import maxigregrze.cobblesafari.block.distortion.VanishingDistortionFlowerBlock;
 import maxigregrze.cobblesafari.block.misc.UnionRoomDecorBlock;
-import maxigregrze.cobblesafari.block.misc.UnionOnlineFeaturePcBlock;
+import maxigregrze.cobblesafari.block.misc.OnlineFeaturePcBlock;
 import maxigregrze.cobblesafari.block.misc.UnionRoomGlobeBlock;
 import maxigregrze.cobblesafari.block.misc.UnionRoomExitTeleporterBlock;
 import maxigregrze.cobblesafari.block.misc.UnionRoomPillarBlock;
@@ -955,11 +955,29 @@ public class ModBlocks {
                     .sound(SoundType.GLASS)
                     .noOcclusion()));
     public static final Block ONLINE_FEATURE_PC = registerBlock("online_feature_pc",
-            new UnionOnlineFeaturePcBlock(BlockBehaviour.Properties.of()
+            new OnlineFeaturePcBlock(BlockBehaviour.Properties.of()
                     .mapColor(MapColor.COLOR_BLUE)
                     .strength(0.5f)
                     .sound(SoundType.METAL)
                     .noOcclusion()));
+    public static final Block ONLINE_FEATURE_PC_UNION = registerBlock("online_feature_pc_union",
+            new OnlineFeaturePcBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.COLOR_BLUE)
+                    .strength(0.5f)
+                    .sound(SoundType.METAL)
+                    .noOcclusion(), OnlineFeaturePcBlock.Kind.UNION));
+    public static final Block ONLINE_FEATURE_PC_GTS = registerBlock("online_feature_pc_gts",
+            new OnlineFeaturePcBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.COLOR_BLUE)
+                    .strength(0.5f)
+                    .sound(SoundType.METAL)
+                    .noOcclusion(), OnlineFeaturePcBlock.Kind.GTS));
+    public static final Block ONLINE_FEATURE_PC_WONDER = registerBlock("online_feature_pc_wonder",
+            new OnlineFeaturePcBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.COLOR_BLUE)
+                    .strength(0.5f)
+                    .sound(SoundType.METAL)
+                    .noOcclusion(), OnlineFeaturePcBlock.Kind.WONDER));
     public static final Block UNION_ROOM_GLOBE_DISPLAY_MOVING = registerBlockWithoutItem("union_room_globe_display_moving",
             new Block(BlockBehaviour.Properties.of()
                     .mapColor(MapColor.COLOR_BLUE)

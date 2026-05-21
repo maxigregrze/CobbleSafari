@@ -182,6 +182,9 @@ public class CobbleSafariClientNeoForge {
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.UNION_ROOM_SPOT_DISPLAY, RenderType.translucent());
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.UNION_ROOM_GLOBE, RenderType.translucent());
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.ONLINE_FEATURE_PC, RenderType.cutoutMipped());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.ONLINE_FEATURE_PC_UNION, RenderType.cutoutMipped());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.ONLINE_FEATURE_PC_GTS, RenderType.cutoutMipped());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.ONLINE_FEATURE_PC_WONDER, RenderType.cutoutMipped());
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.UNION_ROOM_GLOBE_DISPLAY_MOVING, RenderType.translucent());
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.UNION_ROOM_SCREEN, RenderType.translucent());
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.UNION_ROOM_SCREEN_DISPLAY, RenderType.translucent());
