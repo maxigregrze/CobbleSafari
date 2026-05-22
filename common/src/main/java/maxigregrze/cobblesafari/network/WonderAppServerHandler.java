@@ -3,6 +3,7 @@ package maxigregrze.cobblesafari.network;
 import maxigregrze.cobblesafari.config.WonderTradeSettings;
 import maxigregrze.cobblesafari.data.WonderTradeSavedData;
 import maxigregrze.cobblesafari.platform.Services;
+import maxigregrze.cobblesafari.security.RateLimiter;
 import maxigregrze.cobblesafari.wondertrade.WonderTradeEventDefinition;
 import maxigregrze.cobblesafari.wondertrade.WonderTradeEventRegistry;
 import maxigregrze.cobblesafari.wondertrade.WonderTradeService;
@@ -28,6 +29,13 @@ public final class WonderAppServerHandler {
     public static void handle(ServerPlayer player, WonderAppPayload payload) {
         MinecraftServer server = player.getServer();
         if (server == null) {
+            return;
+        }
+        if (payload.actionType() == WonderAppPayload.ACTION_REQUEST_STATE
+                && !RateLimiter.allow(
+                        player.getUUID(),
+                        RateLimiter.key(RateLimiter.SERVICE_WONDER, WonderAppPayload.ACTION_REQUEST_STATE),
+                        250L)) {
             return;
         }
         switch (payload.actionType()) {
@@ -69,6 +77,10 @@ public final class WonderAppServerHandler {
                 case EMPTY_SLOT -> "gui.cobblesafari.rotomphone.wonder.error.empty";
                 case POOL_EMPTY -> "gui.cobblesafari.rotomphone.wonder.error.pool";
                 case NO_CREDITS -> "gui.cobblesafari.rotomphone.wonder.error.credits";
+                case BANNED_DEPOSIT -> "gui.cobblesafari.rotomphone.wonder.error.banned_deposit";
+                case BANNED_HELD_ITEM -> "gui.cobblesafari.rotomphone.wonder.error.banned_held_item";
+                case LEVEL_OUT_OF_BOUNDS -> "gui.cobblesafari.rotomphone.wonder.error.level";
+                case EV_OVERFLOW -> "gui.cobblesafari.rotomphone.wonder.error.ev_overflow";
                 default -> "gui.cobblesafari.rotomphone.wonder.error.generic";
             };
             sendSnapshot(player, WonderAppResultPayload.SUB_ERROR, new CompoundTag(), new CompoundTag(), key);

@@ -172,6 +172,22 @@ public class BasePCBlockEntity extends BlockEntity implements MenuProvider {
 
     public void applyEffectOnce() {
         if (level != null && !level.isClientSide()) {
+            int cost = getEffectCost(rank, currentEffect);
+            if (cost == -1) {
+                isActive = false;
+                setChanged();
+                return;
+            }
+
+            battery -= cost;
+            if (battery <= 0) {
+                battery = 0;
+                isActive = false;
+                setChanged();
+                return;
+            }
+
+            setChanged();
             applyEffect(level, worldPosition);
         }
     }

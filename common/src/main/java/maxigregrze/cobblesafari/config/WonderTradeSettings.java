@@ -12,6 +12,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Configuration serveur pour la piscine Wonder Trade ({@code wondertrade_settings.json}).
@@ -36,6 +37,8 @@ public class WonderTradeSettings {
     private int maxIV = 31;
     private double perfectChance = 0.01;
     private double ribbonChance = 0.01;
+    private List<String> bannedSpecies = new ArrayList<>();
+    private List<String> bannedHeldItems = new ArrayList<>();
 
     public static final class WeightedPoolEntry {
         public String groupId = "";
@@ -53,6 +56,12 @@ public class WonderTradeSettings {
                 } else {
                     if (parsed.autoFillFromPools == null) {
                         parsed.autoFillFromPools = new ArrayList<>();
+                    }
+                    if (parsed.bannedSpecies == null) {
+                        parsed.bannedSpecies = new ArrayList<>();
+                    }
+                    if (parsed.bannedHeldItems == null) {
+                        parsed.bannedHeldItems = new ArrayList<>();
                     }
                     INSTANCE = parsed;
                 }
@@ -122,6 +131,16 @@ public class WonderTradeSettings {
         for (WeightedPoolEntry e : autoFillFromPools) {
             if (e.weight < 0) e.weight = 0;
         }
+        normalizeBanlist(bannedSpecies);
+        normalizeBanlist(bannedHeldItems);
+    }
+
+    private static void normalizeBanlist(List<String> list) {
+        if (list == null) {
+            return;
+        }
+        list.replaceAll(s -> s == null ? "" : s.trim().toLowerCase(Locale.ROOT));
+        list.removeIf(String::isEmpty);
     }
 
     public static void save() {
@@ -197,5 +216,25 @@ public class WonderTradeSettings {
 
     public boolean isUnlimitedDailyTrades() {
         return dailyTrades < 0;
+    }
+
+    public boolean isSpeciesBanned(String id) {
+        if (id == null || id.isEmpty()) {
+            return false;
+        }
+        String n = id.toLowerCase(Locale.ROOT);
+        for (String b : bannedSpecies) {
+            if (n.equals(b) || n.endsWith(":" + b)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean isHeldItemBanned(String id) {
+        if (id == null || id.isEmpty()) {
+            return false;
+        }
+        return bannedHeldItems.contains(id.toLowerCase(Locale.ROOT));
     }
 }

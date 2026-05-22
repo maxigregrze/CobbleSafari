@@ -11,11 +11,14 @@ import com.cobblemon.mod.common.pokemon.Pokemon;
 import maxigregrze.cobblesafari.CobbleSafari;
 import maxigregrze.cobblesafari.config.WonderTradeSettings;
 import maxigregrze.cobblesafari.data.WonderTradeSavedData;
+import maxigregrze.cobblesafari.security.TradeNbtSanitizer;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.item.ItemStack;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -23,6 +26,7 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.UUID;
 
 public final class WonderTradeService {
@@ -38,7 +42,57 @@ public final class WonderTradeService {
             Stats.SPEED
     };
 
+    private static final int HARD_LEVEL_MIN = 1;
+    private static final int HARD_LEVEL_MAX = 100;
+    private static final int HARD_EV_PER_STAT_MAX = 252;
+    private static final int HARD_EV_TOTAL_MAX = 510;
+
     private WonderTradeService() {}
+
+    public enum OfferedValidation {
+        OK,
+        BANNED_SPECIES,
+        BANNED_HELD_ITEM,
+        LEVEL_OUT_OF_BOUNDS,
+        EV_OVERFLOW
+    }
+
+    private static OfferedValidation validateOffered(Pokemon offered, WonderTradeSettings cfg) {
+        String path = offered.getSpecies().getResourceIdentifier().getPath().toLowerCase(Locale.ROOT);
+        String full = offered.getSpecies().getResourceIdentifier().toString().toLowerCase(Locale.ROOT);
+        if (cfg.isSpeciesBanned(path) || cfg.isSpeciesBanned(full)) {
+            return OfferedValidation.BANNED_SPECIES;
+        }
+        String heldItemId = resolveHeldItemId(offered);
+        if (!heldItemId.isEmpty() && cfg.isHeldItemBanned(heldItemId)) {
+            return OfferedValidation.BANNED_HELD_ITEM;
+        }
+        int lvl = offered.getLevel();
+        if (lvl < HARD_LEVEL_MIN || lvl > HARD_LEVEL_MAX) {
+            return OfferedValidation.LEVEL_OUT_OF_BOUNDS;
+        }
+        int evSum = 0;
+        for (Stat s : IV_STATS) {
+            int v = offered.getEvs().getOrDefault(s);
+            if (v < 0 || v > HARD_EV_PER_STAT_MAX) {
+                return OfferedValidation.EV_OVERFLOW;
+            }
+            evSum += v;
+        }
+        if (evSum > HARD_EV_TOTAL_MAX) {
+            return OfferedValidation.EV_OVERFLOW;
+        }
+        return OfferedValidation.OK;
+    }
+
+    private static String resolveHeldItemId(Pokemon offered) {
+        ItemStack held = offered.heldItem();
+        if (held.isEmpty()) {
+            return "";
+        }
+        ResourceLocation key = BuiltInRegistries.ITEM.getKey(held.getItem());
+        return key.toString().toLowerCase(Locale.ROOT);
+    }
 
     public static void onServerStarted(MinecraftServer server) {
         WonderTradeSettings.load();
@@ -275,6 +329,18 @@ public final class WonderTradeService {
             return TradeResultDetailed.failure(TradeResult.POOL_EMPTY);
         }
 
+        OfferedValidation ov = validateOffered(offered, cfg);
+        if (ov != OfferedValidation.OK) {
+            return TradeResultDetailed.failure(
+                    switch (ov) {
+                        case BANNED_SPECIES -> TradeResult.BANNED_DEPOSIT;
+                        case BANNED_HELD_ITEM -> TradeResult.BANNED_HELD_ITEM;
+                        case LEVEL_OUT_OF_BOUNDS -> TradeResult.LEVEL_OUT_OF_BOUNDS;
+                        case EV_OVERFLOW -> TradeResult.EV_OVERFLOW;
+                        default -> TradeResult.ERROR;
+                    });
+        }
+
         int idx = player.getServer().overworld().getRandom().nextInt(data.getPoolSize());
         WonderTradePoolEntry poolEntry = data.getPool().get(idx);
 
@@ -286,6 +352,8 @@ public final class WonderTradeService {
             return TradeResultDetailed.failure(TradeResult.ERROR);
         }
 
+        TradeNbtSanitizer.sanitize(incomingNbt, cfg::isHeldItemBanned);
+
         Pokemon received;
         try {
             received = Pokemon.Companion.loadFromNBT(player.getServer().registryAccess(), incomingNbt);
@@ -294,20 +362,38 @@ public final class WonderTradeService {
             return TradeResultDetailed.failure(TradeResult.ERROR);
         }
 
+        received.setFriendship(received.getForm().getBaseFriendship(), true);
+
         CompoundTag offeredNbt = offered.saveToNBT(player.getServer().registryAccess(), new CompoundTag());
         WonderTradePoolEntry replacement = new WonderTradePoolEntry(offeredNbt.copy(), 0, false);
-
-        received.setFriendship(received.getForm().getBaseFriendship(), true);
         CompoundTag receivedNbt = received.saveToNBT(player.getServer().registryAccess(), new CompoundTag());
 
+        WonderTradePoolEntry previousAtIdx = data.getPool().get(idx);
+        boolean poolMutated = false;
+        boolean partyMutated = false;
         try {
             data.setPoolEntry(idx, replacement);
+            poolMutated = true;
             party.set(slot0To5, received);
+            partyMutated = true;
             consumeCredit(player);
             data.setDirty();
             return new TradeResultDetailed(TradeResult.SUCCESS, offeredNbt, receivedNbt);
         } catch (Exception e) {
-            CobbleSafari.LOGGER.error("[WonderTrade] Trade failed after pool update; restoring pool slot is manual", e);
+            CobbleSafari.LOGGER.error("[WonderTrade] Trade aborted, rolling back", e);
+            if (partyMutated) {
+                try {
+                    party.set(slot0To5, offered);
+                } catch (Exception ignored) {
+                }
+            }
+            if (poolMutated) {
+                try {
+                    data.setPoolEntry(idx, previousAtIdx);
+                } catch (Exception ignored) {
+                }
+            }
+            data.setDirty();
             return TradeResultDetailed.failure(TradeResult.ERROR);
         }
     }
@@ -317,6 +403,10 @@ public final class WonderTradeService {
         EMPTY_SLOT,
         POOL_EMPTY,
         NO_CREDITS,
+        BANNED_DEPOSIT,
+        BANNED_HELD_ITEM,
+        LEVEL_OUT_OF_BOUNDS,
+        EV_OVERFLOW,
         ERROR
     }
 

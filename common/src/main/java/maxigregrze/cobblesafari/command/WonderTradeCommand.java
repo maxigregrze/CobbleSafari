@@ -237,6 +237,10 @@ public final class WonderTradeCommand {
                 ctx.getSource().sendFailure(Component.translatable("cobblesafari.command.wondertrade.no_credits"));
                 yield 0;
             }
+            case BANNED_DEPOSIT, BANNED_HELD_ITEM, LEVEL_OUT_OF_BOUNDS, EV_OVERFLOW -> {
+                ctx.getSource().sendFailure(Component.translatable("cobblesafari.command.wondertrade.rejected_deposit"));
+                yield 0;
+            }
             case ERROR -> {
                 ctx.getSource().sendFailure(Component.translatable("cobblesafari.command.wondertrade.error"));
                 yield 0;

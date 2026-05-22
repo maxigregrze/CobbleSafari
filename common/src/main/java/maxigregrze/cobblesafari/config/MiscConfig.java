@@ -11,7 +11,9 @@ import java.io.Writer;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class MiscConfig {
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
@@ -44,8 +46,14 @@ public class MiscConfig {
 
     /** Nombre maximal d'instances Union Room (structures) dans {@code cobblesafari:unionroom}. */
     private int unionRoomMaxInstances = 10;
+    /** Nombre maximal de guests par session Union Room (hôte non compté), type {@code default}. */
+    private int unionRoomMaxGuestsPerSession = 6;
+    /** Types de salon (clé → limites). Absent du JSON ⇒ reconstruit depuis les champs ci‑dessus. */
+    private Map<String, RoomTypeConfig> unionRoomTypes = null;
     /** Dimensions depuis lesquelles un joueur ne peut pas entrer dans l'Union Room (IDs complets, ex. {@code cobblesafari:domedimension}). */
     private List<String> unionRoomBannedDimensions = new ArrayList<>();
+
+    private static Map<String, RoomTypeConfig> roomTypeRuntime = new HashMap<>();
 
     public MiscConfig() {
     }
@@ -78,6 +86,18 @@ public class MiscConfig {
         public String poolTreasuresId = "cobblesafari:auspiciouspokeball/treasure_small";
         public int minRoll = 1;
         public int maxRoll = 3;
+    }
+
+    public static final class RoomTypeConfig {
+        public int maxInstances;
+        public int maxGuestsPerSession;
+
+        public RoomTypeConfig() {}
+
+        public RoomTypeConfig(int maxInstances, int maxGuestsPerSession) {
+            this.maxInstances = maxInstances;
+            this.maxGuestsPerSession = maxGuestsPerSession;
+        }
     }
 
     public static final class AuspiciousPokeballGoldenDefaults {
@@ -113,12 +133,14 @@ public class MiscConfig {
                         CONFIG_PATH,
                         e);
                 INSTANCE = new MiscConfig();
+                INSTANCE.ensureUnionRoomDefaults();
             } catch (Exception e) {
                 CobbleSafari.LOGGER.error(
                         "CobbleSafari >> Failed to parse misc_config.json at {} (invalid JSON). Using in-memory defaults; the file on disk was not modified.",
                         CONFIG_PATH,
                         e);
                 INSTANCE = new MiscConfig();
+                INSTANCE.ensureUnionRoomDefaults();
             }
         } else {
             CobbleSafari.LOGGER.info(
@@ -414,13 +436,48 @@ public class MiscConfig {
             this.unionRoomBannedDimensions = new ArrayList<>();
         }
         this.unionRoomMaxInstances = Math.max(1, Math.min(100, this.unionRoomMaxInstances));
+        this.unionRoomMaxGuestsPerSession = Math.max(1, Math.min(100, this.unionRoomMaxGuestsPerSession));
+        rebuildRoomTypeRuntime();
+    }
+
+    private void rebuildRoomTypeRuntime() {
+        roomTypeRuntime = new HashMap<>();
+        RoomTypeConfig defaultType =
+                new RoomTypeConfig(this.unionRoomMaxInstances, this.unionRoomMaxGuestsPerSession);
+        roomTypeRuntime.put("default", defaultType);
+        if (this.unionRoomTypes != null) {
+            for (Map.Entry<String, RoomTypeConfig> e : this.unionRoomTypes.entrySet()) {
+                if (e.getKey() == null || e.getValue() == null) {
+                    continue;
+                }
+                RoomTypeConfig c = e.getValue();
+                c.maxInstances = Math.max(1, Math.min(100, c.maxInstances));
+                c.maxGuestsPerSession = Math.max(1, Math.min(100, c.maxGuestsPerSession));
+                roomTypeRuntime.put(e.getKey(), c);
+            }
+        }
+        roomTypeRuntime.put("default", defaultType);
+    }
+
+    public static RoomTypeConfig getRoomType(String key) {
+        if (INSTANCE == null) {
+            return new RoomTypeConfig(10, 6);
+        }
+        if (roomTypeRuntime.isEmpty()) {
+            INSTANCE.ensureUnionRoomDefaults();
+        }
+        RoomTypeConfig def = roomTypeRuntime.get("default");
+        if (def == null) {
+            return new RoomTypeConfig(10, 6);
+        }
+        if (key == null) {
+            return def;
+        }
+        return roomTypeRuntime.getOrDefault(key, def);
     }
 
     public static int getUnionRoomMaxInstances() {
-        if (INSTANCE == null) {
-            return 10;
-        }
-        return Math.max(1, Math.min(100, INSTANCE.unionRoomMaxInstances));
+        return getRoomType("default").maxInstances;
     }
 
     public static List<String> getUnionRoomBannedDimensions() {

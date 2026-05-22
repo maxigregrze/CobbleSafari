@@ -72,7 +72,7 @@ public final class UnionRoomCommand {
                 IntegerArgumentType.getInteger(ctx, "d3"),
                 IntegerArgumentType.getInteger(ctx, "d4")
         };
-        return UnionRoomManager.joinSession(player, code) ? 1 : 0;
+        return UnionRoomManager.joinSession(player, code) == UnionRoomManager.JoinResult.OK ? 1 : 0;
     }
 
     private static int executeList(CommandContext<CommandSourceStack> ctx, int page) {

@@ -78,11 +78,13 @@ public class UnionRoomSavedData extends SavedData {
         public UUID hostUUID;
         public final int[] code = new int[4];
         public final Set<UUID> guestUUIDs = new HashSet<>();
+        public String roomType = "default";
 
         CompoundTag toNbt() {
             CompoundTag t = new CompoundTag();
             t.putInt("InstanceId", instanceId);
             t.putUUID("Host", hostUUID);
+            t.putString("RoomType", roomType == null ? "default" : roomType);
             t.putIntArray("Code", code);
             ListTag guests = new ListTag();
             for (UUID g : guestUUIDs) {
@@ -111,6 +113,7 @@ public class UnionRoomSavedData extends SavedData {
                     }
                 }
             }
+            s.roomType = t.contains("RoomType", Tag.TAG_STRING) ? t.getString("RoomType") : "default";
             return s;
         }
     }

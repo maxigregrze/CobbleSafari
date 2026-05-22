@@ -11,6 +11,8 @@ import maxigregrze.cobblesafari.manager.SafariResetManager;
 import maxigregrze.cobblesafari.manager.TimerManager;
 import maxigregrze.cobblesafari.rotomphone.RotoFallGroundClear;
 import maxigregrze.cobblesafari.rotomphone.RotoGlideServerLogic;
+import maxigregrze.cobblesafari.security.JoinThrottle;
+import maxigregrze.cobblesafari.security.RateLimiter;
 import maxigregrze.cobblesafari.unionroom.UnionRoomDisconnectHandler;
 import maxigregrze.cobblesafari.network.DimensionalBanSyncPayload;
 import maxigregrze.cobblesafari.platform.Services;
@@ -65,6 +67,9 @@ public class DimensionEvents {
     }
 
     public static void onPlayerDisconnect(ServerPlayer player) {
+        RateLimiter.clear(player.getUUID());
+        JoinThrottle.clear(player.getUUID());
+        GtsService.releasePendingFor(player);
         UnionRoomDisconnectHandler.onPlayerDisconnect(player);
         TimerManager.onPlayerDisconnect(player);
         DungeonTeleportHandler.clearPlayerData(player.getUUID());

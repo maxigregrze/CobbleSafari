@@ -1,5 +1,6 @@
 package maxigregrze.cobblesafari.gts;
 
+import com.cobblemon.mod.common.pokemon.Gender;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 
@@ -40,6 +41,9 @@ public final class GtsOffer {
     private final int wishLevelBucket;
     private final GenderFilter wishGender;
     private final ShinyWish wishShiny;
+    private final String depositedSpeciesPath;
+    private final Gender depositedGender;
+    private final boolean depositedShiny;
     private int age;
     private boolean locked;
     private UUID lockOwnerUuid;
@@ -52,7 +56,10 @@ public final class GtsOffer {
             String wishSpecies,
             int wishLevelBucket,
             GenderFilter wishGender,
-            ShinyWish wishShiny) {
+            ShinyWish wishShiny,
+            String depositedSpeciesPath,
+            Gender depositedGender,
+            boolean depositedShiny) {
         this.id = id;
         this.depositorUuid = depositorUuid;
         this.pokemonData = pokemonData.copy();
@@ -60,6 +67,9 @@ public final class GtsOffer {
         this.wishLevelBucket = wishLevelBucket;
         this.wishGender = wishGender;
         this.wishShiny = wishShiny == null ? ShinyWish.ANY : wishShiny;
+        this.depositedSpeciesPath = depositedSpeciesPath;
+        this.depositedGender = depositedGender;
+        this.depositedShiny = depositedShiny;
         this.age = 0;
         this.locked = false;
         this.lockOwnerUuid = null;
@@ -92,6 +102,18 @@ public final class GtsOffer {
 
     public ShinyWish getWishShiny() {
         return wishShiny;
+    }
+
+    public String getDepositedSpeciesPath() {
+        return depositedSpeciesPath;
+    }
+
+    public Gender getDepositedGender() {
+        return depositedGender;
+    }
+
+    public boolean isDepositedShiny() {
+        return depositedShiny;
     }
 
     public int getAge() {
@@ -149,6 +171,9 @@ public final class GtsOffer {
         if (lockExpireEpochMs != 0L) {
             tag.putLong("LockExpire", lockExpireEpochMs);
         }
+        tag.putString("DepSpeciesPath", depositedSpeciesPath);
+        tag.putString("DepGender", depositedGender.name());
+        tag.putBoolean("DepShiny", depositedShiny);
         return tag;
     }
 
@@ -172,7 +197,22 @@ public final class GtsOffer {
             } catch (IllegalArgumentException ignored) {
             }
         }
-        GtsOffer o = new GtsOffer(id, dep, p, wish, bucket, gf, ws);
+
+        String depPath;
+        Gender depGender;
+        boolean depShiny;
+        if (tag.contains("DepSpeciesPath", Tag.TAG_STRING)) {
+            depPath = tag.getString("DepSpeciesPath");
+            depGender = parseGenderSafe(tag.getString("DepGender"));
+            depShiny = tag.getBoolean("DepShiny");
+        } else {
+            depPath = extractSpeciesPathFromPokemonNbt(p);
+            depGender = extractGenderFromPokemonNbt(p);
+            depShiny = p.getBoolean("Shiny");
+        }
+
+        GtsOffer o =
+                new GtsOffer(id, dep, p, wish, bucket, gf, ws, depPath, depGender, depShiny);
         o.age = tag.getInt("Age");
         o.locked = tag.contains("Locked", Tag.TAG_BYTE) && tag.getBoolean("Locked");
         if (tag.hasUUID("LockOwner")) {
@@ -182,5 +222,32 @@ public final class GtsOffer {
             o.lockExpireEpochMs = tag.getLong("LockExpire");
         }
         return o;
+    }
+
+    private static String extractSpeciesPathFromPokemonNbt(CompoundTag pokemonNbt) {
+        if (pokemonNbt.contains("Species", Tag.TAG_STRING)) {
+            String s = pokemonNbt.getString("Species");
+            int colon = s.indexOf(':');
+            return (colon >= 0 ? s.substring(colon + 1) : s).toLowerCase(Locale.ROOT);
+        }
+        return "";
+    }
+
+    private static Gender extractGenderFromPokemonNbt(CompoundTag pokemonNbt) {
+        if (pokemonNbt.contains("Gender", Tag.TAG_STRING)) {
+            return parseGenderSafe(pokemonNbt.getString("Gender"));
+        }
+        return Gender.GENDERLESS;
+    }
+
+    private static Gender parseGenderSafe(String s) {
+        if (s == null || s.isEmpty()) {
+            return Gender.GENDERLESS;
+        }
+        try {
+            return Gender.valueOf(s);
+        } catch (IllegalArgumentException e) {
+            return Gender.GENDERLESS;
+        }
     }
 }

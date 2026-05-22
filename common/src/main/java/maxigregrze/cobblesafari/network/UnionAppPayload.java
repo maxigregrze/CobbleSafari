@@ -30,6 +30,10 @@ public record UnionAppPayload(int actionType, int[] code) implements CustomPacke
             buf -> {
                 int action = buf.readVarInt();
                 int len = buf.readVarInt();
+                if (len < 0 || len > 8) {
+                    throw new io.netty.handler.codec.DecoderException(
+                            "Invalid UnionAppPayload code length: " + len);
+                }
                 int[] arr = new int[len];
                 for (int i = 0; i < len; i++) {
                     arr[i] = buf.readVarInt();

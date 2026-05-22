@@ -7,6 +7,7 @@ import maxigregrze.cobblesafari.gts.GtsOffer;
 import maxigregrze.cobblesafari.gts.GtsService;
 import maxigregrze.cobblesafari.gts.GtsSuccess;
 import maxigregrze.cobblesafari.platform.Services;
+import maxigregrze.cobblesafari.security.RateLimiter;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
@@ -27,6 +28,7 @@ public final class GtsAppServerHandler {
     private static final Map<UUID, Long> LAST_RETRIEVE_MS = new ConcurrentHashMap<>();
     private static final Map<UUID, Long> LAST_CLAIM_MS = new ConcurrentHashMap<>();
     private static final Map<UUID, Long> LAST_CONFIRM_TRADE_MS = new ConcurrentHashMap<>();
+    private static final Map<UUID, Long> LAST_START_TRADE_MS = new ConcurrentHashMap<>();
 
     private GtsAppServerHandler() {}
 
@@ -44,9 +46,26 @@ public final class GtsAppServerHandler {
         ledger.remove(playerId);
     }
 
+    private static boolean checkReadRateLimit(UUID playerId, int action) {
+        long gap = switch (action) {
+            case GtsAppPayload.ACTION_REQUEST_STATE -> 250L;
+            case GtsAppPayload.ACTION_VALIDATE_SPECIES -> 500L;
+            case GtsAppPayload.ACTION_SEARCH -> 500L;
+            case GtsAppPayload.ACTION_START_TRADE -> 1_000L;
+            default -> 0L;
+        };
+        if (gap == 0L) {
+            return true;
+        }
+        return RateLimiter.allow(playerId, RateLimiter.key(RateLimiter.SERVICE_GTS, action), gap);
+    }
+
     public static void handle(ServerPlayer player, GtsAppPayload payload) {
         MinecraftServer server = player.getServer();
         if (server == null) {
+            return;
+        }
+        if (!checkReadRateLimit(player.getUUID(), payload.actionType())) {
             return;
         }
         switch (payload.actionType()) {
@@ -58,6 +77,7 @@ public final class GtsAppServerHandler {
             case GtsAppPayload.ACTION_SEARCH -> doSearch(player, payload);
             case GtsAppPayload.ACTION_START_TRADE -> doStartTrade(player, payload);
             case GtsAppPayload.ACTION_CONFIRM_TRADE -> doConfirmTrade(player, payload);
+            case GtsAppPayload.ACTION_ABORT_TRADE -> doAbortTrade(player);
             default -> {
             }
         }
@@ -148,8 +168,19 @@ public final class GtsAppServerHandler {
         if (!registerMutationAttempt(LAST_RETRIEVE_MS, player.getUUID())) {
             return;
         }
+        int preferredId = pl.intArg1();
         GtsSavedData data = GtsSavedData.get(player.getServer());
-        int offerId = resolveOwnOfferId(data, player.getUUID(), pl.intArg1());
+
+        if (preferredId >= 0) {
+            Optional<GtsOffer> opt = data.findOffer(preferredId);
+            if (opt.isEmpty() || !opt.get().getDepositorUuid().equals(player.getUUID())) {
+                clearMutationAttempt(LAST_RETRIEVE_MS, player.getUUID());
+                sendBegin(player, "gui.cobblesafari.rotomphone.gts.error.offer_not_found");
+                return;
+            }
+        }
+
+        int offerId = resolveOwnOfferId(data, player.getUUID(), preferredId);
         CompoundTag pokemonNbt = new CompoundTag();
         data.findOffer(offerId).ifPresent(o -> pokemonNbt.merge(o.getPokemonData().copy()));
         GtsService.RetrieveResult r = GtsService.tryRetrieveOwnOffer(player, offerId);
@@ -275,10 +306,18 @@ public final class GtsAppServerHandler {
                         ""));
     }
 
+    private static void doAbortTrade(ServerPlayer player) {
+        GtsService.releasePendingFor(player);
+    }
+
     private static void doStartTrade(ServerPlayer player, GtsAppPayload pl) {
+        if (!registerMutationAttempt(LAST_START_TRADE_MS, player.getUUID())) {
+            return;
+        }
         int offerId = pl.intArg1();
         GtsService.StartTradeCandidateBundle bundle = GtsService.tryStartTradeWithViews(player, offerId);
         if (bundle.kind() != GtsService.StartTradeKind.OK) {
+            clearMutationAttempt(LAST_START_TRADE_MS, player.getUUID());
             sendBegin(player, startTradeErrorKey(bundle.kind()));
             return;
         }

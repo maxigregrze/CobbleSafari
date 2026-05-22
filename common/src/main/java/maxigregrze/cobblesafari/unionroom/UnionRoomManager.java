@@ -50,6 +50,19 @@ public final class UnionRoomManager {
         CREATION_FAILED
     }
 
+    public enum JoinResult {
+        OK,
+        INVALID_CODE,
+        OWN_SESSION,
+        ALREADY_JOINED,
+        ALREADY_IN_SESSION,
+        BANNED_DIMENSION,
+        DIMENSION_NOT_FOUND,
+        HOST_UNAVAILABLE,
+        SESSION_FULL,
+        FAILED
+    }
+
     public static final ResourceKey<Level> UNION_ROOM_DIMENSION = ResourceKey.create(
             Registries.DIMENSION,
             ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, "unionroom"));
@@ -152,13 +165,15 @@ public final class UnionRoomManager {
             return CreateResult.DIMENSION_NOT_FOUND;
         }
 
+        MiscConfig.RoomTypeConfig roomType = MiscConfig.getRoomType("default");
+
         synchronized (UnionRoomManager.class) {
             Optional<UnionRoomSavedData.InstanceData> vacant = findVacantInstance(data);
             UnionRoomSavedData.InstanceData instance;
             if (vacant.isPresent()) {
                 instance = vacant.get();
             } else {
-                if (data.getInstanceCount() >= MiscConfig.getUnionRoomMaxInstances()) {
+                if (data.getInstanceCount() >= roomType.maxInstances) {
                     player.sendSystemMessage(Component.translatable("cobblesafari.unionroom.error.max_instances"));
                     return CreateResult.MAX_INSTANCES;
                 }
@@ -173,6 +188,7 @@ public final class UnionRoomManager {
             UnionRoomSavedData.SessionData session = new UnionRoomSavedData.SessionData();
             session.instanceId = instance.id;
             session.hostUUID = player.getUUID();
+            session.roomType = "default";
             System.arraycopy(code, 0, session.code, 0, CODE_LENGTH);
             data.addSession(session);
             instance.occupied = true;
@@ -197,19 +213,19 @@ public final class UnionRoomManager {
         return CreateResult.OK;
     }
 
-    public static boolean joinSession(ServerPlayer player, int[] code) {
+    public static JoinResult joinSession(ServerPlayer player, int[] code) {
         MinecraftServer server = player.getServer();
         if (server == null) {
-            return false;
+            return JoinResult.FAILED;
         }
         if (!canPlayerEnterUnionRoom(player)) {
             player.sendSystemMessage(Component.translatable("cobblesafari.unionroom.error.banned_dimension"));
-            return false;
+            return JoinResult.BANNED_DIMENSION;
         }
         UnionRoomSavedData data = UnionRoomSavedData.get(server);
         if (data == null) {
             player.sendSystemMessage(Component.translatable("cobblesafari.unionroom.error.dimension_not_found"));
-            return false;
+            return JoinResult.DIMENSION_NOT_FOUND;
         }
 
         Optional<UnionRoomSavedData.SessionData> existing = findPlayerSession(data, player.getUUID());
@@ -220,31 +236,43 @@ public final class UnionRoomManager {
                 teleportToInstance(player, existLevel, existInst.get());
             }
             player.sendSystemMessage(Component.translatable("cobblesafari.unionroom.error.already_in_session"));
-            return false;
+            return JoinResult.ALREADY_IN_SESSION;
         }
 
         Optional<UnionRoomSavedData.SessionData> sessionOpt = data.findSessionByCode(code);
         if (sessionOpt.isEmpty()) {
             player.sendSystemMessage(Component.translatable("cobblesafari.unionroom.error.invalid_code"));
-            return false;
+            return JoinResult.INVALID_CODE;
         }
         UnionRoomSavedData.SessionData session = sessionOpt.get();
         if (session.hostUUID.equals(player.getUUID())) {
             player.sendSystemMessage(Component.translatable("cobblesafari.unionroom.error.own_session"));
-            return false;
+            return JoinResult.OWN_SESSION;
         }
         if (session.guestUUIDs.contains(player.getUUID())) {
             player.sendSystemMessage(Component.translatable("cobblesafari.unionroom.error.already_joined"));
-            return false;
+            return JoinResult.ALREADY_JOINED;
+        }
+
+        ServerPlayer host = server.getPlayerList().getPlayer(session.hostUUID);
+        if (host == null || !isInUnionRoom(host)) {
+            player.sendSystemMessage(Component.translatable("cobblesafari.unionroom.error.host_unavailable"));
+            return JoinResult.HOST_UNAVAILABLE;
+        }
+
+        MiscConfig.RoomTypeConfig type = MiscConfig.getRoomType(session.roomType);
+        if (session.guestUUIDs.size() >= type.maxGuestsPerSession) {
+            player.sendSystemMessage(Component.translatable("cobblesafari.unionroom.error.session_full"));
+            return JoinResult.SESSION_FULL;
         }
 
         ServerLevel unionLevel = server.getLevel(UNION_ROOM_DIMENSION);
         if (unionLevel == null) {
-            return false;
+            return JoinResult.FAILED;
         }
         Optional<UnionRoomSavedData.InstanceData> instOpt = data.getInstance(session.instanceId);
         if (instOpt.isEmpty()) {
-            return false;
+            return JoinResult.FAILED;
         }
         UnionRoomSavedData.InstanceData instance = instOpt.get();
 
@@ -261,7 +289,7 @@ public final class UnionRoomManager {
             player.sendSystemMessage(Component.translatable("cobblesafari.unionroom.joined"));
             data.setDirty();
         }
-        return true;
+        return JoinResult.OK;
     }
 
     public static void closeSession(MinecraftServer server, int instanceId, String reasonKey) {
@@ -324,7 +352,7 @@ public final class UnionRoomManager {
         UnionRoomSavedData.SessionData session = sessionOpt.get();
         int[] code = new int[4];
         System.arraycopy(session.code, 0, code, 0, 4);
-        return joinSession(player, code);
+        return joinSession(player, code) == JoinResult.OK;
     }
 
     public static void handlePlayerExit(ServerPlayer player, int instanceId) {

@@ -12,6 +12,8 @@ import maxigregrze.cobblesafari.CobbleSafari;
 import maxigregrze.cobblesafari.config.GtsSettings;
 import maxigregrze.cobblesafari.config.WonderTradeSettings;
 import maxigregrze.cobblesafari.data.GtsSavedData;
+import maxigregrze.cobblesafari.security.TradeNbtSanitizer;
+import maxigregrze.cobblesafari.security.WishLineValidator;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
@@ -31,6 +33,7 @@ public final class GtsService {
     private static final ZoneId ZONE = ZoneId.systemDefault();
     private static final long SELECTION_TTL_MS = 5L * 60L * 1000L;
     private static final int PC_SLOTS_PER_BOX = 30;
+    private static final int MAX_LOCKS_PER_PLAYER = 1;
 
     private static final Map<UUID, GtsPendingTrade> PENDING_BY_PLAYER = new ConcurrentHashMap<>();
 
@@ -152,8 +155,26 @@ public final class GtsService {
         INCOMPATIBLE_GENDER
     }
 
+    /**
+     * Idempotent. Clears any pending trade held by {@code player} and releases the associated offer lock
+     * when this player is the lock owner.
+     */
+    public static void releasePendingFor(ServerPlayer player) {
+        GtsSavedData data = GtsSavedData.get(player.getServer());
+        GtsPendingTrade prev = PENDING_BY_PLAYER.remove(player.getUUID());
+        if (prev == null) {
+            return;
+        }
+        data.findOffer(prev.getOfferId()).ifPresent(o -> {
+            if (o.isLocked() && player.getUUID().equals(o.getLockOwnerUuid())) {
+                o.clearLock();
+                data.setDirty();
+            }
+        });
+    }
+
     public static ValidateSpeciesResult validateWishSpecies(String line, GenderFilter wishGender) {
-        if (line == null || line.isBlank()) {
+        if (!WishLineValidator.isSafe(line)) {
             return ValidateSpeciesResult.INVALID;
         }
         PokemonProperties wishProps = PokemonProperties.Companion.parse(line.trim());
@@ -215,7 +236,7 @@ public final class GtsService {
             if (offer.isLocked() && offer.getLockExpireEpochMs() > 0L && now <= offer.getLockExpireEpochMs()) {
                 continue;
             }
-            if (!matchesSearch(server, offer, s, genderFilter, shinyFilter)) {
+            if (!matchesSearch(offer, s, genderFilter, shinyFilter)) {
                 continue;
             }
             filtered.add(offer);
@@ -230,37 +251,26 @@ public final class GtsService {
     }
 
     private static boolean matchesSearch(
-            MinecraftServer server,
             GtsOffer offer,
             String speciesLower,
             GenderFilter genderFilter,
             GtsOffer.ShinyWish shinyFilter) {
-        try {
-            Pokemon deposited =
-                    Pokemon.Companion.loadFromNBT(server.registryAccess(), offer.getPokemonData().copy());
-            if (!speciesLower.isEmpty()) {
-                String path = deposited.getSpecies().getResourceIdentifier().getPath().toLowerCase(java.util.Locale.ROOT);
-                if (!path.contains(speciesLower)) {
-                    return false;
-                }
-            }
-            if (genderFilter != GenderFilter.ANY) {
-                Gender want = genderFilter.toCobblemonGenderOrNull();
-                if (want != null && deposited.getGender() != want) {
-                    return false;
-                }
-            }
-            if (shinyFilter != GtsOffer.ShinyWish.ANY) {
-                boolean wantShiny = shinyFilter == GtsOffer.ShinyWish.SHINY;
-                if (deposited.getShiny() != wantShiny) {
-                    return false;
-                }
-            }
-            return true;
-        } catch (Exception e) {
-            CobbleSafari.LOGGER.warn("[GTS] search filter failed for offer {}", offer.getId(), e);
+        if (!speciesLower.isEmpty() && !offer.getDepositedSpeciesPath().contains(speciesLower)) {
             return false;
         }
+        if (genderFilter != GenderFilter.ANY) {
+            Gender want = genderFilter.toCobblemonGenderOrNull();
+            if (want != null && offer.getDepositedGender() != want) {
+                return false;
+            }
+        }
+        if (shinyFilter != GtsOffer.ShinyWish.ANY) {
+            boolean wantShiny = shinyFilter == GtsOffer.ShinyWish.SHINY;
+            if (offer.isDepositedShiny() != wantShiny) {
+                return false;
+            }
+        }
+        return true;
     }
 
     public record CandidateView(GtsTradeCandidate ref, CompoundTag nbt) {}
@@ -316,6 +326,9 @@ public final class GtsService {
         if (wishSpeciesLine == null || wishSpeciesLine.isBlank()) {
             return DepositResult.UNKNOWN_WISH_SPECIES;
         }
+        if (!WishLineValidator.isSafe(wishSpeciesLine)) {
+            return DepositResult.UNKNOWN_WISH_SPECIES;
+        }
         PokemonProperties wishProps = PokemonProperties.Companion.parse(wishSpeciesLine.trim());
         if (wishProps.getSpecies() == null) {
             return DepositResult.UNKNOWN_WISH_SPECIES;
@@ -333,6 +346,10 @@ public final class GtsService {
         if (!isWishGenderCompatible(wishSpeciesLine.trim(), wishGender)) {
             return DepositResult.INCOMPATIBLE_GENDER;
         }
+        String depPath = offered.getSpecies().getResourceIdentifier().getPath().toLowerCase(java.util.Locale.ROOT);
+        Gender depGender = offered.getGender();
+        boolean depShiny = offered.getShiny();
+
         int offerId = data.allocateOfferId();
         CompoundTag nbt = offered.saveToNBT(player.getServer().registryAccess(), new CompoundTag());
         GtsOffer offer =
@@ -343,7 +360,10 @@ public final class GtsService {
                         wishSpeciesLine.trim(),
                         wishLevelBucket,
                         wishGender,
-                        wishShiny == null ? GtsOffer.ShinyWish.ANY : wishShiny);
+                        wishShiny == null ? GtsOffer.ShinyWish.ANY : wishShiny,
+                        depPath,
+                        depGender,
+                        depShiny);
         try {
             data.addOffer(offer);
             if (!party.remove(offered)) {
@@ -434,7 +454,23 @@ public final class GtsService {
     }
 
     public static StartTradeResult tryStartTrade(ServerPlayer player, int offerId) {
+        releasePendingFor(player);
+
         GtsSavedData data = GtsSavedData.get(player.getServer());
+
+        long heldLocks = data.getOffers().stream()
+                .filter(o -> o.isLocked() && player.getUUID().equals(o.getLockOwnerUuid()))
+                .count();
+        if (heldLocks >= MAX_LOCKS_PER_PLAYER) {
+            CobbleSafari.LOGGER.info(
+                    "[GTS] Player {} attempted to acquire a second concurrent lock; defensive rollback applied",
+                    player.getUUID());
+            data.getOffers().stream()
+                    .filter(o -> o.isLocked() && player.getUUID().equals(o.getLockOwnerUuid()))
+                    .forEach(GtsOffer::clearLock);
+            data.setDirty();
+        }
+
         Optional<GtsOffer> opt = data.findOffer(offerId);
         if (opt.isEmpty()) {
             return StartTradeResult.of(StartTradeKind.OFFER_NOT_FOUND);
@@ -552,6 +588,17 @@ public final class GtsService {
             return ConfirmTradeKind.ERROR;
         }
         GtsOffer offer = offerOpt.get();
+        long now = System.currentTimeMillis();
+        if (!offer.isLocked() || !player.getUUID().equals(offer.getLockOwnerUuid())) {
+            PENDING_BY_PLAYER.remove(player.getUUID());
+            return ConfirmTradeKind.SELECTION_EXPIRED;
+        }
+        if (offer.getLockExpireEpochMs() > 0L && now > offer.getLockExpireEpochMs()) {
+            offer.clearLock();
+            data.setDirty();
+            PENDING_BY_PLAYER.remove(player.getUUID());
+            return ConfirmTradeKind.SELECTION_EXPIRED;
+        }
         PlayerPartyStore party = Cobblemon.INSTANCE.getStorage().getParty(player);
         PCStore pc = Cobblemon.INSTANCE.getStorage().getPC(player);
         Pokemon candidate = resolveCandidate(player, party, pc, ref);
@@ -561,9 +608,11 @@ public final class GtsService {
             PENDING_BY_PLAYER.remove(player.getUUID());
             return ConfirmTradeKind.CANDIDATE_GONE;
         }
+        CompoundTag receivedRawNbt = offer.getPokemonData().copy();
+        TradeNbtSanitizer.sanitize(receivedRawNbt, cfg::isHeldItemBanned);
         Pokemon received;
         try {
-            received = Pokemon.Companion.loadFromNBT(player.getServer().registryAccess(), offer.getPokemonData().copy());
+            received = Pokemon.Companion.loadFromNBT(player.getServer().registryAccess(), receivedRawNbt);
         } catch (Exception e) {
             CobbleSafari.LOGGER.error("[GTS] Failed to load offer pokemon", e);
             offer.clearLock();
@@ -573,6 +622,7 @@ public final class GtsService {
         }
         received.setFriendship(received.getForm().getBaseFriendship(), true);
         CompoundTag givenNbt = candidate.saveToNBT(player.getServer().registryAccess(), new CompoundTag());
+        TradeNbtSanitizer.sanitize(givenNbt, cfg::isHeldItemBanned);
         int sid = data.allocateSuccessId();
         GtsSuccess success = new GtsSuccess(sid, offer.getDepositorUuid(), givenNbt, GtsSuccess.Reason.TRADED);
         try {

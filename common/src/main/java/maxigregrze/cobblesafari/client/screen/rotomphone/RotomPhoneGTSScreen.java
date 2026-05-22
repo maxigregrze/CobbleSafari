@@ -216,7 +216,7 @@ public class RotomPhoneGTSScreen extends RotomPhoneBaseScreen {
         int pbx = originX + 60;
         int pby = originY + 58;
         paramSpeciesBox = new EditBox(this.font, pbx, pby, 226, 28, Component.empty());
-        paramSpeciesBox.setMaxLength(256);
+        paramSpeciesBox.setMaxLength(64);
         paramSpeciesBox.setBordered(true);
         paramSpeciesBox.setResponder(s -> {
             if (paramSpeciesChecked) {
@@ -228,7 +228,7 @@ public class RotomPhoneGTSScreen extends RotomPhoneBaseScreen {
         int sbx = originX + 100;
         int sby = originY + 58;
         seekSpeciesBox = new EditBox(this.font, sbx, sby, 144, 28, Component.empty());
-        seekSpeciesBox.setMaxLength(256);
+        seekSpeciesBox.setMaxLength(64);
         seekSpeciesBox.setBordered(true);
         seekSpeciesBox.setResponder(s -> {
             seekLastTypedAt = System.currentTimeMillis();
@@ -564,6 +564,19 @@ public class RotomPhoneGTSScreen extends RotomPhoneBaseScreen {
         };
     }
 
+    private void sendAbortIfPendingTrade() {
+        if (state == SubScreen.CHECK && checkLaunched) {
+            Services.PLATFORM.sendPayloadToServer(
+                    new GtsAppPayload(GtsAppPayload.ACTION_ABORT_TRADE, 0, 0, "", "", ""));
+        }
+    }
+
+    @Override
+    public void onClose() {
+        sendAbortIfPendingTrade();
+        super.onClose();
+    }
+
     @Override
     protected void onBackButtonClicked() {
         switch (state) {
@@ -590,6 +603,7 @@ public class RotomPhoneGTSScreen extends RotomPhoneBaseScreen {
                 return;
             }
             case CHECK -> {
+                sendAbortIfPendingTrade();
                 resetCheckScreen();
                 hideSeekEdit();
                 state = SubScreen.SEEK;
@@ -604,6 +618,7 @@ public class RotomPhoneGTSScreen extends RotomPhoneBaseScreen {
             default -> {
             }
         }
+        sendAbortIfPendingTrade();
         super.onBackButtonClicked();
     }
 
@@ -1438,6 +1453,7 @@ public class RotomPhoneGTSScreen extends RotomPhoneBaseScreen {
     private boolean handleCheckClick(double mx, double my) {
         boolean noMatch = checkLaunched && checkNoMatch;
         if (noMatch && isInBounds(mx, my, originX + 138, originY + 136, 72, 32)) {
+            sendAbortIfPendingTrade();
             resetCheckScreen();
             hideSeekEdit();
             state = SubScreen.SEEK;

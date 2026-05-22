@@ -4,17 +4,38 @@ import maxigregrze.cobblesafari.config.MiscConfig;
 import maxigregrze.cobblesafari.config.SafariTimerConfig;
 import maxigregrze.cobblesafari.data.UnionRoomSavedData;
 import maxigregrze.cobblesafari.platform.Services;
+import maxigregrze.cobblesafari.security.JoinThrottle;
+import maxigregrze.cobblesafari.security.RateLimiter;
 import maxigregrze.cobblesafari.unionroom.UnionRoomManager;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
+
+import java.util.Optional;
+import java.util.UUID;
 
 public final class UnionAppServerHandler {
 
     private UnionAppServerHandler() {}
 
+    private static boolean checkReadRateLimit(UUID playerId, int action) {
+        long gap = switch (action) {
+            case UnionAppPayload.ACTION_REQUEST_STATE -> 250L;
+            case UnionAppPayload.ACTION_CREATE -> 2_000L;
+            case UnionAppPayload.ACTION_CLOSE -> 1_000L;
+            default -> 0L;
+        };
+        if (gap == 0L) {
+            return true;
+        }
+        return RateLimiter.allow(playerId, RateLimiter.key(RateLimiter.SERVICE_UNION, action), gap);
+    }
+
     public static void handle(ServerPlayer player, UnionAppPayload payload) {
         MinecraftServer server = player.getServer();
         if (server == null) {
+            return;
+        }
+        if (!checkReadRateLimit(player.getUUID(), payload.actionType())) {
             return;
         }
         switch (payload.actionType()) {
@@ -28,21 +49,33 @@ public final class UnionAppServerHandler {
                 }
             }
             case UnionAppPayload.ACTION_JOIN -> {
+                if (!JoinThrottle.tryAcquire(player.getUUID())) {
+                    return;
+                }
                 int[] code = payload.code();
                 if (code == null || code.length != 4) {
+                    JoinThrottle.recordFailure(player.getUUID());
                     sendSnapshot(player, "gui.cobblesafari.rotomphone.union.error.notfound");
                     return;
                 }
                 for (int d : code) {
                     if (d < 1 || d > 6) {
+                        JoinThrottle.recordFailure(player.getUUID());
                         sendSnapshot(player, "gui.cobblesafari.rotomphone.union.error.notfound");
                         return;
                     }
                 }
-                if (UnionRoomManager.joinSession(player, code)) {
+                UnionRoomManager.JoinResult jr = UnionRoomManager.joinSession(player, code);
+                if (jr == UnionRoomManager.JoinResult.OK) {
+                    JoinThrottle.recordSuccess(player.getUUID());
                     sendCloseGui(player);
                 } else {
-                    sendSnapshot(player, "gui.cobblesafari.rotomphone.union.error.notfound");
+                    if (jr == UnionRoomManager.JoinResult.INVALID_CODE
+                            || jr == UnionRoomManager.JoinResult.HOST_UNAVAILABLE
+                            || jr == UnionRoomManager.JoinResult.FAILED) {
+                        JoinThrottle.recordFailure(player.getUUID());
+                    }
+                    sendSnapshot(player, mapJoinError(jr));
                 }
             }
             case UnionAppPayload.ACTION_CLOSE -> {
@@ -51,9 +84,18 @@ public final class UnionAppServerHandler {
                     sendSnapshot(player, "cobblesafari.unionroom.error.dimension_not_found");
                     return;
                 }
-                data.findSessionByHost(player.getUUID()).ifPresentOrElse(
-                        s -> UnionRoomManager.handlePlayerExit(player, s.instanceId),
-                        () -> sendSnapshot(player, "cobblesafari.unionroom.error.invalid_code"));
+                Optional<UnionRoomSavedData.SessionData> host = data.findSessionByHost(player.getUUID());
+                if (host.isPresent()) {
+                    UnionRoomManager.handlePlayerExit(player, host.get().instanceId);
+                    return;
+                }
+                Optional<UnionRoomSavedData.SessionData> guest =
+                        data.findSessionContainingGuest(player.getUUID());
+                if (guest.isPresent()) {
+                    UnionRoomManager.handlePlayerExit(player, guest.get().instanceId);
+                    return;
+                }
+                sendSnapshot(player, "gui.cobblesafari.rotomphone.union.error.not_in_session");
             }
             default -> {
                 // Unknown action type; ignore
@@ -68,6 +110,19 @@ public final class UnionAppServerHandler {
             case BANNED_DIMENSION -> "cobblesafari.unionroom.error.banned_dimension";
             case DIMENSION_NOT_FOUND -> "cobblesafari.unionroom.error.dimension_not_found";
             case CREATION_FAILED -> "cobblesafari.unionroom.error.creation_failed";
+            case OK -> "";
+        };
+    }
+
+    private static String mapJoinError(UnionRoomManager.JoinResult r) {
+        return switch (r) {
+            case SESSION_FULL -> "gui.cobblesafari.rotomphone.union.error.session_full";
+            case ALREADY_IN_SESSION -> "gui.cobblesafari.rotomphone.union.error.alreadycreated";
+            case INVALID_CODE, FAILED -> "gui.cobblesafari.rotomphone.union.error.notfound";
+            case BANNED_DIMENSION -> "cobblesafari.unionroom.error.banned_dimension";
+            case DIMENSION_NOT_FOUND -> "cobblesafari.unionroom.error.dimension_not_found";
+            case HOST_UNAVAILABLE -> "cobblesafari.unionroom.error.host_unavailable";
+            case OWN_SESSION, ALREADY_JOINED -> "gui.cobblesafari.rotomphone.union.error.notfound";
             case OK -> "";
         };
     }

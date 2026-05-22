@@ -28,6 +28,7 @@ public class GtsSettings {
     private boolean tradeReminder = true;
     private int pokemonBestBefore = 7;
     private List<String> bannedPokemons = new ArrayList<>();
+    private List<String> bannedHeldItems = new ArrayList<>();
 
     public static void load() {
         if (Files.exists(CONFIG_PATH)) {
@@ -38,6 +39,9 @@ public class GtsSettings {
                 } else {
                     if (parsed.bannedPokemons == null) {
                         parsed.bannedPokemons = new ArrayList<>();
+                    }
+                    if (parsed.bannedHeldItems == null) {
+                        parsed.bannedHeldItems = new ArrayList<>();
                     }
                     INSTANCE = parsed;
                 }
@@ -71,6 +75,11 @@ public class GtsSettings {
         }
         bannedPokemons.replaceAll(s -> s == null ? "" : s.trim().toLowerCase(Locale.ROOT));
         bannedPokemons.removeIf(String::isEmpty);
+        if (bannedHeldItems == null) {
+            bannedHeldItems = new ArrayList<>();
+        }
+        bannedHeldItems.replaceAll(s -> s == null ? "" : s.trim().toLowerCase(Locale.ROOT));
+        bannedHeldItems.removeIf(String::isEmpty);
     }
 
     public static void save() {
@@ -121,5 +130,12 @@ public class GtsSettings {
             }
         }
         return false;
+    }
+
+    public boolean isHeldItemBanned(String id) {
+        if (id == null || id.isEmpty()) {
+            return false;
+        }
+        return bannedHeldItems.contains(id.toLowerCase(Locale.ROOT));
     }
 }
