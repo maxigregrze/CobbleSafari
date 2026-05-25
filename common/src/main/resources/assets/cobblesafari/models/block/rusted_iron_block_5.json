@@ -1,0 +1,6 @@
+{
+  "parent": "cobblesafari:block/rusted_iron_block_template",
+  "textures": {
+    "overlay": "cobblesafari:block/overlay_rust_5"
+  }
+}

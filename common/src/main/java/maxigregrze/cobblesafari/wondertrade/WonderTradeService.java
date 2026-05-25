@@ -378,6 +378,9 @@ public final class WonderTradeService {
             partyMutated = true;
             consumeCredit(player);
             data.setDirty();
+            int wonderTrades = maxigregrze.cobblesafari.init.ModStats.awardAndGet(
+                    player, maxigregrze.cobblesafari.init.ModStats.WONDER_TRADES);
+            maxigregrze.cobblesafari.advancement.ModCriteria.WONDER_TRADE.trigger(player, wonderTrades);
             return new TradeResultDetailed(TradeResult.SUCCESS, offeredNbt, receivedNbt);
         } catch (Exception e) {
             CobbleSafari.LOGGER.error("[WonderTrade] Trade aborted, rolling back", e);

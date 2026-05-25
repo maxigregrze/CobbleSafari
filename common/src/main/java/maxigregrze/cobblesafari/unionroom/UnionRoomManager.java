@@ -210,6 +210,9 @@ public final class UnionRoomManager {
                     instance.id, player.getName().getString(), player.getUUID(),
                     code[0], code[1], code[2], code[3]);
         }
+        int created = maxigregrze.cobblesafari.init.ModStats.awardAndGet(
+                player, maxigregrze.cobblesafari.init.ModStats.UNION_ROOMS_CREATED);
+        maxigregrze.cobblesafari.advancement.ModCriteria.UNION_CREATED.trigger(player, created);
         return CreateResult.OK;
     }
 
@@ -241,6 +244,8 @@ public final class UnionRoomManager {
 
         Optional<UnionRoomSavedData.SessionData> sessionOpt = data.findSessionByCode(code);
         if (sessionOpt.isEmpty()) {
+            maxigregrze.cobblesafari.init.ModStats.award(
+                    player, maxigregrze.cobblesafari.init.ModStats.UNION_ROOM_WRONG_CODES);
             player.sendSystemMessage(Component.translatable("cobblesafari.unionroom.error.invalid_code"));
             return JoinResult.INVALID_CODE;
         }
@@ -289,6 +294,8 @@ public final class UnionRoomManager {
             player.sendSystemMessage(Component.translatable("cobblesafari.unionroom.joined"));
             data.setDirty();
         }
+        maxigregrze.cobblesafari.init.ModStats.award(
+                player, maxigregrze.cobblesafari.init.ModStats.UNION_ROOMS_JOINED);
         return JoinResult.OK;
     }
 
@@ -470,6 +477,15 @@ public final class UnionRoomManager {
 
         Set<UUID> members = new HashSet<>(session.guestUUIDs);
         members.add(session.hostUUID);
+
+        // Party Popper: host closes a session while guests are still present (close / teleport / disconnect).
+        // Admin disbands are excluded.
+        if (!adminDisbandChat && !session.guestUUIDs.isEmpty()) {
+            ServerPlayer hostPlayer = server.getPlayerList().getPlayer(session.hostUUID);
+            if (hostPlayer != null) {
+                maxigregrze.cobblesafari.advancement.ModCriteria.UNION_PARTY_POPPER.trigger(hostPlayer);
+            }
+        }
 
         BlockPos evacCenter = instOpt
                 .map(i -> i.structurePos.equals(BlockPos.ZERO) ? i.anchorPos : i.structurePos)

@@ -51,6 +51,11 @@ public class ThrownBaitEntity extends ThrowableItemProjectile {
                 return;
             }
 
+            ServerPlayer thrower = (getOwner() instanceof ServerPlayer sp) ? sp : null;
+            if (thrower != null) {
+                SafariStateManager.getOrCreate(pokemon.getUUID()).setLastInteractingPlayer(thrower.getUUID());
+            }
+
             SafariPokemonState state = SafariStateManager.getState(pokemon.getUUID());
             if (state != null && state.isFleeing()) {
                 SafariStateManager.triggerImmediateDespawn(pokemon);
@@ -58,6 +63,12 @@ public class ThrownBaitEntity extends ThrowableItemProjectile {
             }
 
             SafariStateManager.applyBait(pokemon);
+
+            if (thrower != null) {
+                int total = maxigregrze.cobblesafari.init.ModStats.awardAndGet(
+                        thrower, maxigregrze.cobblesafari.init.ModStats.BAIT_USED_SAFARI);
+                maxigregrze.cobblesafari.advancement.ModCriteria.BAIT_USED.trigger(thrower, total);
+            }
 
             level().playSound(null, pokemon.getX(), pokemon.getY(), pokemon.getZ(),
                     SoundEvents.ITEM_PICKUP, pokemon.getSoundSource(), 0.8f, 0.8f);

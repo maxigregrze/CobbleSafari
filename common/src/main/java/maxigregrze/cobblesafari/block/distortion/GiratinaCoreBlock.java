@@ -14,6 +14,7 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -163,6 +164,12 @@ public class GiratinaCoreBlock extends BaseEntityBlock {
             stack.shrink(1);
         }
         coreBlockEntity.markTrade(level);
+
+        if (player instanceof ServerPlayer serverPlayer) {
+            int trades = maxigregrze.cobblesafari.init.ModStats.awardAndGet(
+                    serverPlayer, maxigregrze.cobblesafari.init.ModStats.DARK_ONE_TRADES);
+            maxigregrze.cobblesafari.advancement.ModCriteria.GIRATINA_TRADE.trigger(serverPlayer, trades);
+        }
 
         serverLevel.playSound(null, corePos, ModSounds.GIRATINA_TRADE, SoundSource.BLOCKS, 1.0f, 1.0f);
         serverLevel.sendParticles(ParticleTypes.CAMPFIRE_COSY_SMOKE, corePos.getX() + 0.5, corePos.getY() + 1.1, corePos.getZ() + 0.5, 20, 0.2, 0.2, 0.2, 0.02);

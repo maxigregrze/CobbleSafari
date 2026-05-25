@@ -38,6 +38,7 @@ public class RotomPhoneServerHandler {
                     RotomPhoneSkinDefinition skin = RotomPhoneSkinRegistry.getSkin(skinId);
                     if (skin != null && RotomPhoneSkinRegistry.isUnlockedByPlayer(player, skin)) {
                         RotomPhoneItem.setCurrentSkin(phoneStack, skinId);
+                        maxigregrze.cobblesafari.advancement.ModCriteria.ROTOM_SKIN_CHANGED.trigger(player);
                     }
                 }
             }

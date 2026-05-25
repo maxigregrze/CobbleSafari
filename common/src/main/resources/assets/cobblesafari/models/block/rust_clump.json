@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/cube_all",
+  "textures": {
+    "all": "cobblesafari:block/rustclumps",
+    "particle": "cobblesafari:block/rustclumps"
+  }
+}

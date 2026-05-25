@@ -1,0 +1,310 @@
+{
+  "parent": "cobblesafari:root",
+  "display": {
+    "icon": {
+      "id": "cobblesafari:bait"
+    },
+    "title": {
+      "translate": "advancement.cobblesafari.master_baiter.title"
+    },
+    "description": {
+      "translate": "advancement.cobblesafari.master_baiter.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "c1": {
+      "trigger": "cobblesafari:bait_used",
+      "conditions": {
+        "count": 1
+      }
+    },
+    "c2": {
+      "trigger": "cobblesafari:bait_used",
+      "conditions": {
+        "count": 2
+      }
+    },
+    "c3": {
+      "trigger": "cobblesafari:bait_used",
+      "conditions": {
+        "count": 3
+      }
+    },
+    "c4": {
+      "trigger": "cobblesafari:bait_used",
+      "conditions": {
+        "count": 4
+      }
+    },
+    "c5": {
+      "trigger": "cobblesafari:bait_used",
+      "conditions": {
+        "count": 5
+      }
+    },
+    "c6": {
+      "trigger": "cobblesafari:bait_used",
+      "conditions": {
+        "count": 6
+      }
+    },
+    "c7": {
+      "trigger": "cobblesafari:bait_used",
+      "conditions": {
+        "count": 7
+      }
+    },
+    "c8": {
+      "trigger": "cobblesafari:bait_used",
+      "conditions": {
+        "count": 8
+      }
+    },
+    "c9": {
+      "trigger": "cobblesafari:bait_used",
+      "conditions": {
+        "count": 9
+      }
+    },
+    "c10": {
+      "trigger": "cobblesafari:bait_used",
+      "conditions": {
+        "count": 10
+      }
+    },
+    "c11": {
+      "trigger": "cobblesafari:bait_used",
+      "conditions": {
+        "count": 11
+      }
+    },
+    "c12": {
+      "trigger": "cobblesafari:bait_used",
+      "conditions": {
+        "count": 12
+      }
+    },
+    "c13": {
+      "trigger": "cobblesafari:bait_used",
+      "conditions": {
+        "count": 13
+      }
+    },
+    "c14": {
+      "trigger": "cobblesafari:bait_used",
+      "conditions": {
+        "count": 14
+      }
+    },
+    "c15": {
+      "trigger": "cobblesafari:bait_used",
+      "conditions": {
+        "count": 15
+      }
+    },
+    "c16": {
+      "trigger": "cobblesafari:bait_used",
+      "conditions": {
+        "count": 16
+      }
+    },
+    "c17": {
+      "trigger": "cobblesafari:bait_used",
+      "conditions": {
+        "count": 17
+      }
+    },
+    "c18": {
+      "trigger": "cobblesafari:bait_used",
+      "conditions": {
+        "count": 18
+      }
+    },
+    "c19": {
+      "trigger": "cobblesafari:bait_used",
+      "conditions": {
+        "count": 19
+      }
+    },
+    "c20": {
+      "trigger": "cobblesafari:bait_used",
+      "conditions": {
+        "count": 20
+      }
+    },
+    "c21": {
+      "trigger": "cobblesafari:bait_used",
+      "conditions": {
+        "count": 21
+      }
+    },
+    "c22": {
+      "trigger": "cobblesafari:bait_used",
+      "conditions": {
+        "count": 22
+      }
+    },
+    "c23": {
+      "trigger": "cobblesafari:bait_used",
+      "conditions": {
+        "count": 23
+      }
+    },
+    "c24": {
+      "trigger": "cobblesafari:bait_used",
+      "conditions": {
+        "count": 24
+      }
+    },
+    "c25": {
+      "trigger": "cobblesafari:bait_used",
+      "conditions": {
+        "count": 25
+      }
+    },
+    "c26": {
+      "trigger": "cobblesafari:bait_used",
+      "conditions": {
+        "count": 26
+      }
+    },
+    "c27": {
+      "trigger": "cobblesafari:bait_used",
+      "conditions": {
+        "count": 27
+      }
+    },
+    "c28": {
+      "trigger": "cobblesafari:bait_used",
+      "conditions": {
+        "count": 28
+      }
+    },
+    "c29": {
+      "trigger": "cobblesafari:bait_used",
+      "conditions": {
+        "count": 29
+      }
+    },
+    "c30": {
+      "trigger": "cobblesafari:bait_used",
+      "conditions": {
+        "count": 30
+      }
+    },
+    "c31": {
+      "trigger": "cobblesafari:bait_used",
+      "conditions": {
+        "count": 31
+      }
+    },
+    "c32": {
+      "trigger": "cobblesafari:bait_used",
+      "conditions": {
+        "count": 32
+      }
+    }
+  },
+  "requirements": [
+    [
+      "c1"
+    ],
+    [
+      "c2"
+    ],
+    [
+      "c3"
+    ],
+    [
+      "c4"
+    ],
+    [
+      "c5"
+    ],
+    [
+      "c6"
+    ],
+    [
+      "c7"
+    ],
+    [
+      "c8"
+    ],
+    [
+      "c9"
+    ],
+    [
+      "c10"
+    ],
+    [
+      "c11"
+    ],
+    [
+      "c12"
+    ],
+    [
+      "c13"
+    ],
+    [
+      "c14"
+    ],
+    [
+      "c15"
+    ],
+    [
+      "c16"
+    ],
+    [
+      "c17"
+    ],
+    [
+      "c18"
+    ],
+    [
+      "c19"
+    ],
+    [
+      "c20"
+    ],
+    [
+      "c21"
+    ],
+    [
+      "c22"
+    ],
+    [
+      "c23"
+    ],
+    [
+      "c24"
+    ],
+    [
+      "c25"
+    ],
+    [
+      "c26"
+    ],
+    [
+      "c27"
+    ],
+    [
+      "c28"
+    ],
+    [
+      "c29"
+    ],
+    [
+      "c30"
+    ],
+    [
+      "c31"
+    ],
+    [
+      "c32"
+    ]
+  ]
+}

@@ -63,6 +63,8 @@ public class CobbleSafari {
         ModCreativeTabs.register();
         ModEntities.register();
         ModProcessors.register();
+        maxigregrze.cobblesafari.init.ModStats.register();
+        maxigregrze.cobblesafari.advancement.ModCriteria.register();
     }
 
     public static void initLogic() {

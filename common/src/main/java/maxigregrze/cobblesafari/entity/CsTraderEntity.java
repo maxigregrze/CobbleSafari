@@ -167,6 +167,11 @@ public class CsTraderEntity extends AbstractVillager {
 
     @Override
     protected void rewardTradeXp(MerchantOffer offer) {
+        if (this.getTradingPlayer() instanceof net.minecraft.server.level.ServerPlayer player) {
+            int trades = maxigregrze.cobblesafari.init.ModStats.awardAndGet(
+                    player, maxigregrze.cobblesafari.init.ModStats.CSTRADER_TRADES);
+            maxigregrze.cobblesafari.advancement.ModCriteria.CSTRADER_TRADE.trigger(player, trades);
+        }
     }
 
     @Nullable

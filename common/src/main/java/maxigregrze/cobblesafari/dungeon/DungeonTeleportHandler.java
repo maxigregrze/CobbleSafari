@@ -155,6 +155,9 @@ public class DungeonTeleportHandler {
 
         if (!prep.isReEntry()) {
             portalEntity.addEnteredPlayer(player.getUUID());
+            int portalsUsed = maxigregrze.cobblesafari.init.ModStats.awardAndGet(
+                    player, maxigregrze.cobblesafari.init.ModStats.HOOPA_PORTALS_EXPLORED);
+            maxigregrze.cobblesafari.advancement.ModCriteria.PORTAL_USED.trigger(player, portalsUsed);
             PlayerTimerData timerData = TimerManager.getOrCreateData(player, prep.dimensionId());
             timerData.setRemainingTicks(prep.timerTicks());
             timerData.setLastResetTimestamp(System.currentTimeMillis());

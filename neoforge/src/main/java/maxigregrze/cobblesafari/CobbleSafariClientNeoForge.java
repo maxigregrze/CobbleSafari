@@ -141,6 +141,7 @@ public class CobbleSafariClientNeoForge {
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.AIR_FIRE_CORAL, RenderType.cutout());
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.AIR_HORN_CORAL, RenderType.cutout());
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.ICICLE, RenderType.cutout());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.RUSTED_IRON_BLOCK, RenderType.cutoutMipped());
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.UNDERGROUND_PC, RenderType.cutout());
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.SECRETBASE_PC, RenderType.cutout());
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.INCUBATOR, RenderType.translucent());
@@ -167,6 +168,8 @@ public class CobbleSafariClientNeoForge {
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.LOST_NOTES, RenderType.cutout());
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.LOST_ITEM, RenderType.cutout());
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.LOST_ITEM_VISUAL, RenderType.cutout());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.WHIRLWIND, RenderType.translucent());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.WHIRLWIND_DISPLAY, RenderType.translucent());
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.AUSPICIOUS_POKEBALL, RenderType.cutout());
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.AUSPICIOUS_POKEBALL_DISPLAY, RenderType.cutout());
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.AUSPICIOUS_POKEBALL_SMALL, RenderType.cutout());
@@ -202,6 +205,7 @@ public class CobbleSafariClientNeoForge {
             BlockEntityRenderers.register(ModBlockEntities.AUSPICIOUS_POKEBALL, AuspiciousPokeballBlockEntityRenderer::new);
             BlockEntityRenderers.register(ModBlockEntities.AUSPICIOUS_POKEBALL_GOLD, AuspiciousPokeballBlockEntityRenderer::new);
             BlockEntityRenderers.register(ModBlockEntities.UNION_ROOM_DECOR, maxigregrze.cobblesafari.client.renderer.UnionRoomDecorBlockEntityRenderer::new);
+            BlockEntityRenderers.register(ModBlockEntities.WHIRLWIND, maxigregrze.cobblesafari.client.renderer.WhirlwindBlockEntityRenderer::new);
             BlockEntityRenderers.register(ModBlockEntities.UNION_ROOM_GLOBE_UPPER, maxigregrze.cobblesafari.client.renderer.UnionRoomGlobeUpperBlockEntityRenderer::new);
         });
 

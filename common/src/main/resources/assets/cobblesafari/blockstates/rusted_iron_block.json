@@ -1,0 +1,13 @@
+{
+  "variants": {
+    "": [
+      { "model": "cobblesafari:block/rusted_iron_block_1" },
+      { "model": "cobblesafari:block/rusted_iron_block_2" },
+      { "model": "cobblesafari:block/rusted_iron_block_3" },
+      { "model": "cobblesafari:block/rusted_iron_block_4" },
+      { "model": "cobblesafari:block/rusted_iron_block_5" },
+      { "model": "cobblesafari:block/rusted_iron_block_6" },
+      { "model": "cobblesafari:block/rusted_iron_block_7" }
+    ]
+  }
+}

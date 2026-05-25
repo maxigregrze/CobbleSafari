@@ -44,8 +44,12 @@ public class UndergroundMinigame {
         long seed = player.level().getRandom().nextLong();
         int luckLevel = (int) player.getAttributeValue(Attributes.LUCK);
 
-        MiningSession session = new MiningSession(sessionId, seed, luckLevel);
+        MiningSession session = new MiningSession(sessionId, player.getUUID(), seed, luckLevel);
         activeSessions.put(sessionId, session);
+
+        int digsites = maxigregrze.cobblesafari.init.ModStats.awardAndGet(
+                player, maxigregrze.cobblesafari.init.ModStats.DIGSITES_USED);
+        maxigregrze.cobblesafari.advancement.ModCriteria.DIGSITE_USED.trigger(player, digsites);
 
         Services.PLATFORM.openUndergroundMenu(player, session);
 
@@ -58,16 +62,19 @@ public class UndergroundMinigame {
     }
 
     public static void onScreenClosed(UUID sessionId, Player player) {
-        MiningSession session = activeSessions.remove(sessionId);
+        MiningSession session = activeSessions.get(sessionId);
+        if (session == null || !(player instanceof ServerPlayer serverPlayer)
+                || !serverPlayer.getUUID().equals(session.getOwnerId())) {
+            return;
+        }
+        activeSessions.remove(sessionId);
 
-        if (session != null && player instanceof ServerPlayer serverPlayer) {
-            List<PlacedTreasure> collected = session.getGrid().getRevealedTreasures();
-            if (!collected.isEmpty()) {
-                giveRewards(serverPlayer, collected);
-                if (!session.isComplete()) {
-                    player.displayClientMessage(Component.translatable("gui.cobblesafari.underground.partial_clear",
-                            collected.size(), session.getGrid().getTreasureCount()), false);
-                }
+        List<PlacedTreasure> collected = session.getGrid().getRevealedTreasures();
+        if (!collected.isEmpty()) {
+            giveRewards(serverPlayer, collected);
+            if (!session.isComplete()) {
+                player.displayClientMessage(Component.translatable("gui.cobblesafari.underground.partial_clear",
+                        collected.size(), session.getGrid().getTreasureCount()), false);
             }
         }
     }

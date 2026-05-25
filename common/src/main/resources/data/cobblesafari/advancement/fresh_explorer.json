@@ -1,0 +1,16 @@
+{
+  "parent": "cobblesafari:root",
+  "display": {
+    "icon": { "id": "minecraft:ender_pearl" },
+    "title": { "translate": "advancement.cobblesafari.fresh_explorer.title" },
+    "description": { "translate": "advancement.cobblesafari.fresh_explorer.description" },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "done": { "trigger": "cobblesafari:portal_used", "conditions": { "count": 1 } }
+  },
+  "requirements": [["done"]]
+}

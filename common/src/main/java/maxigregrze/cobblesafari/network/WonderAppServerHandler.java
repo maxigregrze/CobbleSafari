@@ -26,6 +26,11 @@ public final class WonderAppServerHandler {
 
     private WonderAppServerHandler() {}
 
+    /** Releases the per-player trade debounce entry; call on disconnect to avoid unbounded growth. */
+    public static void clear(UUID playerId) {
+        LAST_TRADE_ATTEMPT_MS.remove(playerId);
+    }
+
     public static void handle(ServerPlayer player, WonderAppPayload payload) {
         MinecraftServer server = player.getServer();
         if (server == null) {

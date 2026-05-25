@@ -57,7 +57,13 @@ public class EmptyPhoneServerHandler {
             return;
         }
 
+        boolean shiny = rotom.getShiny();
         party.remove(rotom);
+
+        maxigregrze.cobblesafari.advancement.ModCriteria.ROTOM_PHONE_MADE.trigger(player);
+        if (shiny) {
+            maxigregrze.cobblesafari.advancement.ModCriteria.ROTOM_PHONE_SHINY.trigger(player);
+        }
 
         ItemStack phoneStack = new ItemStack(ModItems.ROTOM_PHONE);
         RotomPhoneItem.setRotomName(phoneStack, rotom.getSpecies().getName());

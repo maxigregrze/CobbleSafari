@@ -1,6 +1,8 @@
 package maxigregrze.cobblesafari.gts;
 
 import com.cobblemon.mod.common.Cobblemon;
+import com.cobblemon.mod.common.api.mark.Mark;
+import com.cobblemon.mod.common.api.mark.Marks;
 import com.cobblemon.mod.common.api.pokemon.PokemonProperties;
 import com.cobblemon.mod.common.api.storage.pc.PCBox;
 import com.cobblemon.mod.common.api.storage.pc.PCPosition;
@@ -15,6 +17,7 @@ import maxigregrze.cobblesafari.data.GtsSavedData;
 import maxigregrze.cobblesafari.security.TradeNbtSanitizer;
 import maxigregrze.cobblesafari.security.WishLineValidator;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
@@ -30,6 +33,9 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 public final class GtsService {
+    public static final UUID UNIQUE_OFFER_DEPOSITOR_UUID =
+            UUID.fromString("00000000-0000-0000-0000-000000000000");
+
     private static final ZoneId ZONE = ZoneId.systemDefault();
     private static final long SELECTION_TTL_MS = 5L * 60L * 1000L;
     private static final int PC_SLOTS_PER_BOX = 30;
@@ -41,6 +47,7 @@ public final class GtsService {
 
     public static void onServerStarted(MinecraftServer server) {
         GtsSettings.load();
+        GtsDataLoader.load(server);
         GtsSavedData data = GtsSavedData.get(server);
         if (data.getLastDailyResetEpochDay() < 0) {
             data.setLastDailyResetEpochDay(LocalDate.now(ZONE).minusDays(1).toEpochDay());
@@ -75,10 +82,18 @@ public final class GtsService {
         }
         for (GtsOffer offer : new ArrayList<>(data.getOffers())) {
             if (offer.getAge() > best) {
-                int sid = data.allocateSuccessId();
-                data.addSuccess(
-                        new GtsSuccess(sid, offer.getDepositorUuid(), offer.getPokemonData().copy(), GtsSuccess.Reason.EXPIRED));
-                data.removeOffer(offer.getId());
+                if (offer.isUniqueOffer()) {
+                    data.removeOffer(offer.getId());
+                } else {
+                    int sid = data.allocateSuccessId();
+                    data.addSuccess(
+                            new GtsSuccess(
+                                    sid,
+                                    offer.getDepositorUuid(),
+                                    offer.getPokemonData().copy(),
+                                    GtsSuccess.Reason.EXPIRED));
+                    data.removeOffer(offer.getId());
+                }
             }
         }
         data.setDirty();
@@ -380,6 +395,128 @@ public final class GtsService {
         }
     }
 
+    public enum AddUniqueOfferResult {
+        SUCCESS,
+        UNKNOWN_OFFER_ID,
+        INVALID_GIVEN,
+        BANNED_GIVEN,
+        BANNED_WISH,
+        INCOMPATIBLE_GENDER,
+        INVALID_LEVEL_BUCKET,
+        ERROR
+    }
+
+    public record AddUniqueOfferOutcome(AddUniqueOfferResult result, int runtimeOfferId) {
+        public static AddUniqueOfferOutcome fail(AddUniqueOfferResult result) {
+            return new AddUniqueOfferOutcome(result, -1);
+        }
+
+        public static AddUniqueOfferOutcome ok(int runtimeOfferId) {
+            return new AddUniqueOfferOutcome(AddUniqueOfferResult.SUCCESS, runtimeOfferId);
+        }
+    }
+
+    public static AddUniqueOfferOutcome addUniqueOffer(MinecraftServer server, String templateOfferId) {
+        Optional<GtsUniqueOfferDefinition> defOpt = GtsUniqueOfferRegistry.get(templateOfferId);
+        if (defOpt.isEmpty()) {
+            return AddUniqueOfferOutcome.fail(AddUniqueOfferResult.UNKNOWN_OFFER_ID);
+        }
+        GtsUniqueOfferDefinition def = defOpt.get();
+        GtsSettings cfg = GtsSettings.get();
+        GtsSavedData data = GtsSavedData.get(server);
+
+        AddUniqueOfferResult wishCheck = validateWishForUniqueOffer(def, cfg);
+        if (wishCheck != null) {
+            return AddUniqueOfferOutcome.fail(wishCheck);
+        }
+
+        Pokemon given;
+        try {
+            given = createGivenPokemon(def);
+        } catch (IllegalStateException e) {
+            CobbleSafari.LOGGER.warn("[GTS] addUniqueOffer invalid given for {}: {}", templateOfferId, e.getMessage());
+            return AddUniqueOfferOutcome.fail(AddUniqueOfferResult.INVALID_GIVEN);
+        } catch (Exception e) {
+            CobbleSafari.LOGGER.error("[GTS] addUniqueOffer failed to create given for {}", templateOfferId, e);
+            return AddUniqueOfferOutcome.fail(AddUniqueOfferResult.ERROR);
+        }
+
+        String depositPath = given.getSpecies().getResourceIdentifier().getPath().toLowerCase(java.util.Locale.ROOT);
+        String depositId = given.getSpecies().getResourceIdentifier().toString().toLowerCase(java.util.Locale.ROOT);
+        if (cfg.isSpeciesBanned(depositPath) || cfg.isSpeciesBanned(depositId)) {
+            return AddUniqueOfferOutcome.fail(AddUniqueOfferResult.BANNED_GIVEN);
+        }
+
+        int offerId = data.allocateOfferId();
+        CompoundTag nbt = given.saveToNBT(server.registryAccess(), new CompoundTag());
+        TradeNbtSanitizer.sanitize(nbt, cfg::isHeldItemBanned);
+        GtsOffer offer =
+                new GtsOffer(
+                        offerId,
+                        UNIQUE_OFFER_DEPOSITOR_UUID,
+                        nbt,
+                        def.getWishSpeciesLine(),
+                        def.getWishLevelBucket(),
+                        def.getWishGender(),
+                        def.getWishShiny(),
+                        depositPath,
+                        given.getGender(),
+                        given.getShiny(),
+                        true,
+                        def.getOfferId());
+        data.addOffer(offer);
+        data.setDirty();
+        return AddUniqueOfferOutcome.ok(offerId);
+    }
+
+    /** @return error result, or {@code null} if wish is valid */
+    private static AddUniqueOfferResult validateWishForUniqueOffer(GtsUniqueOfferDefinition def, GtsSettings cfg) {
+        String wishLine = def.getWishSpeciesLine();
+        if (!WishLineValidator.isSafe(wishLine)) {
+            return AddUniqueOfferResult.ERROR;
+        }
+        PokemonProperties wishProps = PokemonProperties.Companion.parse(wishLine.trim());
+        if (wishProps.getSpecies() == null) {
+            return AddUniqueOfferResult.ERROR;
+        }
+        String wishSpeciesName = wishProps.getSpecies();
+        if (wishSpeciesName != null) {
+            String ws = wishSpeciesName.toLowerCase(java.util.Locale.ROOT);
+            if (cfg.isSpeciesBanned(ws)) {
+                return AddUniqueOfferResult.BANNED_WISH;
+            }
+        }
+        if (def.getWishLevelBucket() != -1 && (def.getWishLevelBucket() < 0 || def.getWishLevelBucket() > 9)) {
+            return AddUniqueOfferResult.INVALID_LEVEL_BUCKET;
+        }
+        if (!isWishGenderCompatible(wishLine.trim(), def.getWishGender())) {
+            return AddUniqueOfferResult.INCOMPATIBLE_GENDER;
+        }
+        return null;
+    }
+
+    public static Pokemon createGivenPokemon(GtsUniqueOfferDefinition def) {
+        PokemonProperties props = PokemonProperties.Companion.parse(def.getGivenLine());
+        if (props.getSpecies() == null) {
+            throw new IllegalStateException("no species in given line");
+        }
+        Pokemon pokemon = props.create(null);
+        for (ResourceLocation markId : def.getGivenMarkIds()) {
+            Mark mark = Marks.getByIdentifier(markId);
+            if (mark != null) {
+                pokemon.exchangeMark(mark, true);
+            }
+        }
+        ResourceLocation activeId = def.getGivenActiveMarkId();
+        if (activeId != null) {
+            Mark active = Marks.getByIdentifier(activeId);
+            if (active != null) {
+                pokemon.setActiveMark(active);
+            }
+        }
+        return pokemon;
+    }
+
     public static boolean isWishGenderCompatible(String wishSpeciesLine, GenderFilter wishGender) {
         if (wishGender == GenderFilter.ANY) {
             return true;
@@ -623,13 +760,21 @@ public final class GtsService {
         received.setFriendship(received.getForm().getBaseFriendship(), true);
         CompoundTag givenNbt = candidate.saveToNBT(player.getServer().registryAccess(), new CompoundTag());
         TradeNbtSanitizer.sanitize(givenNbt, cfg::isHeldItemBanned);
-        int sid = data.allocateSuccessId();
-        GtsSuccess success = new GtsSuccess(sid, offer.getDepositorUuid(), givenNbt, GtsSuccess.Reason.TRADED);
+        boolean uniqueOffer = offer.isUniqueOffer();
+        int sid = uniqueOffer ? -1 : data.allocateSuccessId();
+        GtsSuccess success =
+                uniqueOffer
+                        ? null
+                        : new GtsSuccess(sid, offer.getDepositorUuid(), givenNbt, GtsSuccess.Reason.TRADED);
         try {
-            data.addSuccess(success);
+            if (!uniqueOffer) {
+                data.addSuccess(success);
+            }
             data.removeOffer(offerId);
             if (!removeCandidateFromStore(party, pc, ref, candidate)) {
-                data.removeSuccess(sid);
+                if (!uniqueOffer) {
+                    data.removeSuccess(sid);
+                }
                 data.addOffer(offer);
                 offer.clearLock();
                 data.setDirty();
@@ -640,7 +785,9 @@ public final class GtsService {
             if (!party.add(received) && !pc.add(received)) {
                 CobbleSafari.LOGGER.error("[GTS] Party and PC full after trade; rolling back");
                 restoreCandidateAt(party, pc, ref, candidate);
-                data.removeSuccess(sid);
+                if (!uniqueOffer) {
+                    data.removeSuccess(sid);
+                }
                 data.addOffer(offer);
                 offer.clearLock();
                 data.setDirty();
@@ -650,7 +797,15 @@ public final class GtsService {
             offer.clearLock();
             PENDING_BY_PLAYER.remove(player.getUUID());
             data.setDirty();
-            if (cfg.isTradeNotification()) {
+            int gtsTrades = maxigregrze.cobblesafari.init.ModStats.awardAndGet(
+                    player, maxigregrze.cobblesafari.init.ModStats.GTS_TRADES);
+            maxigregrze.cobblesafari.advancement.ModCriteria.GTS_TRADE_CONFIRMED.trigger(player, gtsTrades);
+            if (uniqueOffer) {
+                CobbleSafari.LOGGER.info(
+                        "[GTS] Unique offer #{} template={} completed; received pokemon discarded",
+                        offerId,
+                        offer.getUniqueOfferTemplateId());
+            } else if (cfg.isTradeNotification()) {
                 ServerPlayer depositor = player.getServer().getPlayerList().getPlayer(offer.getDepositorUuid());
                 if (depositor != null) {
                     depositor.sendSystemMessage(
@@ -779,6 +934,11 @@ public final class GtsService {
         }
         data.removeSuccess(successId);
         data.setDirty();
+        if (row.getReason() == GtsSuccess.Reason.TRADED) {
+            int gtsTrades = maxigregrze.cobblesafari.init.ModStats.awardAndGet(
+                    player, maxigregrze.cobblesafari.init.ModStats.GTS_TRADES);
+            maxigregrze.cobblesafari.advancement.ModCriteria.GTS_TRADE_DEPOSIT_SOLD.trigger(player, gtsTrades);
+        }
         return ClaimResult.SUCCESS;
     }
 
@@ -802,10 +962,18 @@ public final class GtsService {
         if (offer.isLocked()) {
             offer.clearLock();
         }
-        int sid = data.allocateSuccessId();
-        data.addSuccess(
-                new GtsSuccess(sid, offer.getDepositorUuid(), offer.getPokemonData().copy(), GtsSuccess.Reason.ADMIN_REMOVED));
-        data.removeOffer(offerId);
+        if (offer.isUniqueOffer()) {
+            data.removeOffer(offerId);
+        } else {
+            int sid = data.allocateSuccessId();
+            data.addSuccess(
+                    new GtsSuccess(
+                            sid,
+                            offer.getDepositorUuid(),
+                            offer.getPokemonData().copy(),
+                            GtsSuccess.Reason.ADMIN_REMOVED));
+            data.removeOffer(offerId);
+        }
         data.setDirty();
         return AdminRemoveResult.SUCCESS;
     }

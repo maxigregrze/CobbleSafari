@@ -1,0 +1,16 @@
+{
+  "parent": "cobblesafari:root",
+  "display": {
+    "icon": { "id": "minecraft:firework_rocket" },
+    "title": { "translate": "advancement.cobblesafari.party_popper.title" },
+    "description": { "translate": "advancement.cobblesafari.party_popper.description" },
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "done": { "trigger": "cobblesafari:union_party_popper", "conditions": {} }
+  },
+  "requirements": [["done"]]
+}

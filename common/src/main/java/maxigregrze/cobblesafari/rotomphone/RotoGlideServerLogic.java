@@ -1,6 +1,5 @@
 package maxigregrze.cobblesafari.rotomphone;
 
-import maxigregrze.cobblesafari.CobbleSafari;
 import maxigregrze.cobblesafari.item.RotomPhoneItem;
 import net.minecraft.network.protocol.game.ClientboundSetEntityMotionPacket;
 import net.minecraft.server.MinecraftServer;
@@ -36,43 +35,33 @@ public final class RotoGlideServerLogic {
     }
 
     public static void onRotoGlideRequest(ServerPlayer player, double clientMoveX, double clientMoveZ) {
-        CobbleSafari.LOGGER.info("[RotoGlide] Jump key request received | {} | clientHoriz=({}, {})",
-                formatPlayer(player), clientMoveX, clientMoveZ);
         if (isGloballyBlocked(player)) {
-            CobbleSafari.LOGGER.info("[RotoGlide] Request ignored (blocked) | {} | reason={}", formatPlayer(player), blockReason(player));
             return;
         }
         ItemStack phone = RotomPhoneEquipped.findPhoneForHandOrAccessory(player);
         if (phone.isEmpty() || !RotomPhoneItem.isRotoGlideEnabled(phone)) {
-            boolean glideOn = !phone.isEmpty() && RotomPhoneItem.isRotoGlideEnabled(phone);
-            CobbleSafari.LOGGER.info("[RotoGlide] Request ignored (no phone or Roto-Glide off) | {} | phoneEmpty={} rotoGlideEnabledOnStack={}",
-                    formatPlayer(player), phone.isEmpty(), glideOn);
             return;
         }
         if (player.onGround()) {
-            CobbleSafari.LOGGER.info("[RotoGlide] Request ignored (on ground) | {}", formatPlayer(player));
             return;
         }
         PlayerState st = STATES.computeIfAbsent(player.getUUID(), u -> new PlayerState());
         if (st.consumedUntilLanding) {
-            CobbleSafari.LOGGER.info("[RotoGlide] Request ignored (already used this air) | {}", formatPlayer(player));
             return;
         }
         if (st.pendingEndTick >= 0) {
-            CobbleSafari.LOGGER.info("[RotoGlide] Request ignored (delay already pending until tick {}) | {}",
-                    st.pendingEndTick, formatPlayer(player));
             return;
         }
-        int endTick = player.getServer().getTickCount() + DELAY_TICKS;
-        st.pendingEndTick = endTick;
+        st.pendingEndTick = player.getServer().getTickCount() + DELAY_TICKS;
         st.touchedGroundWhilePending = false;
         st.pendingHorizX = sanitizeHorizontal(clientMoveX);
         st.pendingHorizZ = sanitizeHorizontal(clientMoveZ);
-        CobbleSafari.LOGGER.info("[RotoGlide] Delay started ({} ticks) | {} | pendingEndTick={} storedHoriz=({}, {})",
-                DELAY_TICKS, formatPlayer(player), endTick, st.pendingHorizX, st.pendingHorizZ);
     }
     private static void tick(ServerPlayer player) {
-        PlayerState st = STATES.computeIfAbsent(player.getUUID(), u -> new PlayerState());
+        PlayerState st = STATES.get(player.getUUID());
+        if (st == null) {
+            return;
+        }
         int now = player.getServer().getTickCount();
 
         if (st.pendingEndTick >= 0) {
@@ -80,11 +69,8 @@ public final class RotoGlideServerLogic {
                 st.touchedGroundWhilePending = true;
             }
             if (isGloballyBlocked(player)) {
-                CobbleSafari.LOGGER.info("[RotoGlide] Delay cancelled (blocked mid-wait) | {} | reason={}", formatPlayer(player), blockReason(player));
                 clearPending(st);
             } else if (now >= st.pendingEndTick) {
-                CobbleSafari.LOGGER.info("[RotoGlide] {} ticks elapsed, resolving | {} | serverTick={} pendingEndTick={} touchedGroundDuringWait={}",
-                        DELAY_TICKS, formatPlayer(player), now, st.pendingEndTick, st.touchedGroundWhilePending);
                 resolvePending(st, player);
             }
             return;
@@ -101,17 +87,13 @@ public final class RotoGlideServerLogic {
         double savedHorizZ = st.pendingHorizZ;
         clearPending(st);
         if (isGloballyBlocked(player)) {
-            CobbleSafari.LOGGER.info("[RotoGlide] Jump not applied (blocked at resolve) | {} | reason={}", formatPlayer(player), blockReason(player));
             return;
         }
         if (player.onGround() || touchedDuringWait) {
-            CobbleSafari.LOGGER.info("[RotoGlide] Jump not applied | {} | onGround={} touchedGroundDuringWait={}",
-                    formatPlayer(player), player.onGround(), touchedDuringWait);
             return;
         }
         ItemStack phone = RotomPhoneEquipped.findPhoneForHandOrAccessory(player);
         if (phone.isEmpty() || !RotomPhoneItem.isRotoGlideEnabled(phone)) {
-            CobbleSafari.LOGGER.info("[RotoGlide] Jump not applied (phone missing or Roto-Glide off) | {}", formatPlayer(player));
             return;
         }
         applyBoost(player, savedHorizX, savedHorizZ);
@@ -131,8 +113,9 @@ public final class RotoGlideServerLogic {
         player.setDeltaMovement(hx, vy, hz);
         player.connection.send(new ClientboundSetEntityMotionPacket(player.getId(), player.getDeltaMovement()));
         player.resetFallDistance();
-        CobbleSafari.LOGGER.info("[RotoGlide] Jump applied | {} | baseJumpVy={} boostedVy={} horiz=({}, {}) (client {}, {} vs server {}, {})",
-                formatPlayer(player), jump, vy, hx, hz, fromClientX, fromClientZ, srv.x, srv.z);
+        int jumps = maxigregrze.cobblesafari.init.ModStats.awardAndGet(
+                player, maxigregrze.cobblesafari.init.ModStats.ROTO_GLIDE_JUMPS);
+        maxigregrze.cobblesafari.advancement.ModCriteria.ROTO_GLIDE.trigger(player, jumps);
     }
 
     private static double pickStrongerHorizontal(double fromClient, double fromServer) {
@@ -174,36 +157,6 @@ public final class RotoGlideServerLogic {
         return false;
     }
 
-    private static String blockReason(Player player) {
-        if (player.isSpectator()) {
-            return "spectator";
-        }
-        if (player.getAbilities().flying) {
-            return "creative_flight";
-        }
-        if (player.isFallFlying()) {
-            return "elytra_gliding";
-        }
-        return "none";
-    }
-
-    private static String formatPlayer(ServerPlayer player) {
-        Vec3 pos = player.position();
-        Vec3 d = player.getDeltaMovement();
-        return String.format(
-                "name=%s uuid=%s dim=%s pos=(%.2f, %.2f, %.2f) vel=(%.3f, %.3f, %.3f) onGround=%s fallFlying=%s creativeFly=%s spectator=%s fallDist=%.2f",
-                player.getGameProfile().getName(),
-                player.getUUID(),
-                player.level().dimension().location(),
-                pos.x, pos.y, pos.z,
-                d.x, d.y, d.z,
-                player.onGround(),
-                player.isFallFlying(),
-                player.getAbilities().flying,
-                player.isSpectator(),
-                player.fallDistance
-        );
-    }
     private static final class PlayerState {
         int pendingEndTick = -1;
         boolean touchedGroundWhilePending;

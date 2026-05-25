@@ -24,7 +24,7 @@ public class BalloonSpawnHandler {
 
     public static void onServerTick(MinecraftServer server) {
         int checkInterval = MiscConfig.getBalloonCheckIntervalTicks();
-        ResourceLocation safariDimensionId = ResourceLocation.parse(SafariTimerConfig.getSafariDimensionId());
+        ResourceLocation safariDimensionId = SafariTimerConfig.getSafariDimensionRL();
 
         for (ServerPlayer player : server.getPlayerList().getPlayers()) {
             ResourceLocation playerDimension = player.level().dimension().location();

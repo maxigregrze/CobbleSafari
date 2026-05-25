@@ -161,6 +161,7 @@ public class CobbleSafariClientFabric implements ClientModInitializer {
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.AIR_FIRE_CORAL, RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.AIR_HORN_CORAL, RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.ICICLE, RenderType.cutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.RUSTED_IRON_BLOCK, RenderType.cutoutMipped());
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.UNDERGROUND_PC, RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.SECRETBASE_PC, RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.INCUBATOR, RenderType.translucent());
@@ -187,6 +188,8 @@ public class CobbleSafariClientFabric implements ClientModInitializer {
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.LOST_NOTES, RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.LOST_ITEM, RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.LOST_ITEM_VISUAL, RenderType.cutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.WHIRLWIND, RenderType.translucent());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.WHIRLWIND_DISPLAY, RenderType.translucent());
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.AUSPICIOUS_POKEBALL, RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.AUSPICIOUS_POKEBALL_DISPLAY, RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.AUSPICIOUS_POKEBALL_SMALL, RenderType.cutout());
@@ -224,6 +227,7 @@ public class CobbleSafariClientFabric implements ClientModInitializer {
         BlockEntityRenderers.register(ModBlockEntities.AUSPICIOUS_POKEBALL, AuspiciousPokeballBlockEntityRenderer::new);
         BlockEntityRenderers.register(ModBlockEntities.AUSPICIOUS_POKEBALL_GOLD, AuspiciousPokeballBlockEntityRenderer::new);
         BlockEntityRenderers.register(ModBlockEntities.UNION_ROOM_DECOR, maxigregrze.cobblesafari.client.renderer.UnionRoomDecorBlockEntityRenderer::new);
+        BlockEntityRenderers.register(ModBlockEntities.WHIRLWIND, maxigregrze.cobblesafari.client.renderer.WhirlwindBlockEntityRenderer::new);
         BlockEntityRenderers.register(ModBlockEntities.UNION_ROOM_GLOBE_UPPER, maxigregrze.cobblesafari.client.renderer.UnionRoomGlobeUpperBlockEntityRenderer::new);
         EntityRendererRegistry.register(ModEntities.HIKER, HikerEntityRenderer::new);
         EntityRendererRegistry.register(ModEntities.CSTRADER_NPC, CsTraderEntityRenderer::new);

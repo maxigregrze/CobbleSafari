@@ -1,0 +1,8 @@
+{
+  "name": "cobblemon.mark.ribbon_partner",
+  "description": "cobblemon.mark.ribbon_partner.desc",
+  "title": "cobblemon.mark.ribbon_partner.title",
+  "titleColor": "74A8EF",
+  "texture": "cobblemon:textures/gui/mark/ribbon_partner.png",
+  "indexNumber": 110
+}

@@ -11,6 +11,7 @@ import maxigregrze.cobblesafari.block.misc.AuspiciousPokeballBlockEntity;
 import maxigregrze.cobblesafari.block.misc.AuspiciousPokeballGoldBlockEntity;
 import maxigregrze.cobblesafari.block.misc.LostItemBlockEntity;
 import maxigregrze.cobblesafari.block.misc.SafariEggNestBlockEntity;
+import maxigregrze.cobblesafari.block.misc.WhirlwindBlockEntity;
 import maxigregrze.cobblesafari.block.misc.UnionRoomDecorBlockEntity;
 import maxigregrze.cobblesafari.block.misc.UnionRoomGlobeUpperBlockEntity;
 import maxigregrze.cobblesafari.block.misc.UnionRoomExitTeleporterBlockEntity;
@@ -42,6 +43,7 @@ public class ModBlockEntities {
     public static BlockEntityType<UnionRoomDecorBlockEntity> UNION_ROOM_DECOR;
     public static BlockEntityType<UnionRoomGlobeUpperBlockEntity> UNION_ROOM_GLOBE_UPPER;
     public static BlockEntityType<UnionRoomExitTeleporterBlockEntity> UNION_ROOM_EXIT_TELEPORTER;
+    public static BlockEntityType<WhirlwindBlockEntity> WHIRLWIND;
 
     public static void register() {
         CobbleSafari.LOGGER.info("Registering block entities for " + CobbleSafari.MOD_ID);
@@ -148,6 +150,12 @@ public class ModBlockEntities {
                 BuiltInRegistries.BLOCK_ENTITY_TYPE,
                 ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, "union_room_exit_teleporter"),
                 BlockEntityType.Builder.of(UnionRoomExitTeleporterBlockEntity::new, ModBlocks.UNION_ROOM_EXIT_TELEPORTER).build(null)
+        );
+
+        WHIRLWIND = Registry.register(
+                BuiltInRegistries.BLOCK_ENTITY_TYPE,
+                ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, "whirlwind"),
+                BlockEntityType.Builder.of(WhirlwindBlockEntity::new, ModBlocks.WHIRLWIND).build(null)
         );
     }
 }

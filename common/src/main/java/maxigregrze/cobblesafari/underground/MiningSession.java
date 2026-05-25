@@ -11,16 +11,14 @@ import java.util.UUID;
 public class MiningSession {
     
     private final UUID sessionId;
+    private final UUID ownerId;
     private final MiningGrid grid;
     private boolean usingHammer;
     private boolean complete;
-    
-    public MiningSession(UUID sessionId, long seed) {
-        this(sessionId, seed, 0);
-    }
 
-    public MiningSession(UUID sessionId, long seed, int luckLevel) {
+    public MiningSession(UUID sessionId, UUID ownerId, long seed, int luckLevel) {
         this.sessionId = sessionId;
+        this.ownerId = ownerId;
         this.grid = new MiningGrid(seed, luckLevel);
         this.grid.generateContent();
         this.usingHammer = false;
@@ -57,6 +55,10 @@ public class MiningSession {
     // Getters and setters
     public UUID getSessionId() {
         return sessionId;
+    }
+
+    public UUID getOwnerId() {
+        return ownerId;
     }
     
     public MiningGrid getGrid() {

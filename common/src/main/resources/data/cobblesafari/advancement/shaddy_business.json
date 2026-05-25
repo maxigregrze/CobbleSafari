@@ -1,0 +1,76 @@
+{
+  "parent": "cobblesafari:root",
+  "display": {
+    "icon": {
+      "id": "cobblesafari:redchain_fragment"
+    },
+    "title": {
+      "translate": "advancement.cobblesafari.shaddy_business.title"
+    },
+    "description": {
+      "translate": "advancement.cobblesafari.shaddy_business.description"
+    },
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "c1": {
+      "trigger": "cobblesafari:giratina_trade",
+      "conditions": {
+        "count": 1
+      }
+    },
+    "c2": {
+      "trigger": "cobblesafari:giratina_trade",
+      "conditions": {
+        "count": 2
+      }
+    },
+    "c3": {
+      "trigger": "cobblesafari:giratina_trade",
+      "conditions": {
+        "count": 3
+      }
+    },
+    "c4": {
+      "trigger": "cobblesafari:giratina_trade",
+      "conditions": {
+        "count": 4
+      }
+    },
+    "c5": {
+      "trigger": "cobblesafari:giratina_trade",
+      "conditions": {
+        "count": 5
+      }
+    },
+    "c6": {
+      "trigger": "cobblesafari:giratina_trade",
+      "conditions": {
+        "count": 6
+      }
+    }
+  },
+  "requirements": [
+    [
+      "c1"
+    ],
+    [
+      "c2"
+    ],
+    [
+      "c3"
+    ],
+    [
+      "c4"
+    ],
+    [
+      "c5"
+    ],
+    [
+      "c6"
+    ]
+  ]
+}

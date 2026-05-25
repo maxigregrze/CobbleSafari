@@ -1,0 +1,16 @@
+{
+  "parent": "cobblesafari:root",
+  "display": {
+    "icon": { "id": "minecraft:bell" },
+    "title": { "translate": "advancement.cobblesafari.sociable.title" },
+    "description": { "translate": "advancement.cobblesafari.sociable.description" },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "done": { "trigger": "cobblesafari:union_created", "conditions": { "count": 1 } }
+  },
+  "requirements": [["done"]]
+}

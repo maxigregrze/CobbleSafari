@@ -32,6 +32,15 @@ public final class GtsAppServerHandler {
 
     private GtsAppServerHandler() {}
 
+    /** Releases per-player debounce ledger entries; call on disconnect to avoid unbounded growth. */
+    public static void clear(UUID playerId) {
+        LAST_DEPOSIT_MS.remove(playerId);
+        LAST_RETRIEVE_MS.remove(playerId);
+        LAST_CLAIM_MS.remove(playerId);
+        LAST_CONFIRM_TRADE_MS.remove(playerId);
+        LAST_START_TRADE_MS.remove(playerId);
+    }
+
     private static boolean registerMutationAttempt(Map<UUID, Long> ledger, UUID playerId) {
         long now = System.currentTimeMillis();
         Long last = ledger.get(playerId);

@@ -17,17 +17,19 @@ public record RotomPhoneActionPayload(
     public static final int ACTION_CLOSE = 3;
     public static final int ACTION_TOGGLE_ROTO_GLIDE = 4;
 
+    private static final int MAX_DATA_LEN = 128;
+
     public static final CustomPacketPayload.Type<RotomPhoneActionPayload> TYPE =
             new CustomPacketPayload.Type<>(ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, "rotom_phone_action"));
 
     public static final StreamCodec<FriendlyByteBuf, RotomPhoneActionPayload> STREAM_CODEC = StreamCodec.of(
             (buf, payload) -> {
                 buf.writeInt(payload.actionType);
-                buf.writeUtf(payload.data);
+                buf.writeUtf(payload.data == null ? "" : payload.data, MAX_DATA_LEN);
             },
             buf -> new RotomPhoneActionPayload(
                     buf.readInt(),
-                    buf.readUtf()
+                    buf.readUtf(MAX_DATA_LEN)
             )
     );
 

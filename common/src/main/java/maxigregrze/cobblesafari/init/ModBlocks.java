@@ -37,6 +37,7 @@ import maxigregrze.cobblesafari.block.misc.LiquidBarrierBlock;
 import maxigregrze.cobblesafari.block.misc.SafariEggNestBlock;
 import maxigregrze.cobblesafari.block.misc.VoidBlock;
 import maxigregrze.cobblesafari.block.distortion.VanishingDistortionFlowerBlock;
+import maxigregrze.cobblesafari.block.misc.WhirlwindBlock;
 import maxigregrze.cobblesafari.block.misc.UnionRoomDecorBlock;
 import maxigregrze.cobblesafari.block.misc.OnlineFeaturePcBlock;
 import maxigregrze.cobblesafari.block.misc.UnionRoomGlobeBlock;
@@ -58,6 +59,7 @@ import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Rarity;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.SlabBlock;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.StairBlock;
@@ -491,6 +493,32 @@ public class ModBlocks {
                     .pushReaction(PushReaction.DESTROY)
                     .isRedstoneConductor((state, level, pos) -> false)
             ));
+
+    public static final Block RUSTED_IRON_BLOCK = registerBlock("rusted_iron_block",
+            new Block(BlockBehaviour.Properties.ofFullCopy(Blocks.IRON_BLOCK)));
+
+    public static final Block COMPACTED_TRASH_BLOCK = registerBlock("compacted_trash_block",
+            new Block(BlockBehaviour.Properties.ofFullCopy(Blocks.RAW_IRON_BLOCK)));
+
+    public static final Block RUST_CLUMP = registerBlock("rust_clump",
+            new Block(BlockBehaviour.Properties.ofFullCopy(Blocks.RAW_IRON_BLOCK)));
+
+    public static final Block WHIRLWIND = registerBlock("whirlwind",
+            new WhirlwindBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.COLOR_LIGHT_BLUE)
+                    .instabreak()
+                    .sound(SoundType.WOOL)
+                    .noOcclusion()
+                    .noCollission()
+                    .pushReaction(PushReaction.DESTROY)));
+
+    public static final Block WHIRLWIND_DISPLAY = registerBlockWithoutItem("whirlwind_display",
+            new Block(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.COLOR_LIGHT_BLUE)
+                    .instabreak()
+                    .noOcclusion()
+                    .noLootTable()
+                    .noCollission()));
 
     public static final Block SECRETBASE_PC = registerBlockWithoutItem("secretbase_pc",
             new BasePCBlock(BlockBehaviour.Properties.of()

@@ -100,6 +100,7 @@ public class ResetCommand {
         GtsSettings.load();
         maxigregrze.cobblesafari.wondertrade.WonderTradeDataLoader.load(source.getServer());
         maxigregrze.cobblesafari.wondertrade.WonderTradeService.runAutofillIfNeeded(source.getServer());
+        maxigregrze.cobblesafari.gts.GtsDataLoader.load(source.getServer());
 
         source.sendSuccess(() -> Component.translatable("cobblesafari.command.refresh.success"), true);
         CobbleSafari.LOGGER.info("All configs refreshed by {}", source.getTextName());

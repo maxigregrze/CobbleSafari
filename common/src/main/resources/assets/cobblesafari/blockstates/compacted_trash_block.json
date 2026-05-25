@@ -1,0 +1,9 @@
+{
+  "variants": {
+    "": [
+      { "model": "cobblesafari:block/compacted_trash_1" },
+      { "model": "cobblesafari:block/compacted_trash_2" },
+      { "model": "cobblesafari:block/compacted_trash_3" }
+    ]
+  }
+}

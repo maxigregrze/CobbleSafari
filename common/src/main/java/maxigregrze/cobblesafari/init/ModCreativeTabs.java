@@ -93,6 +93,10 @@ public class ModCreativeTabs {
                 output.accept(ModBlocks.SAFARI_EGG_NEST);
                 output.accept(ModBlocks.MAGNETIC_CRYSTAL);
                 output.accept(ModBlocks.MAGNETIC_CLUSTER);
+                output.accept(ModBlocks.RUSTED_IRON_BLOCK);
+                output.accept(ModBlocks.COMPACTED_TRASH_BLOCK);
+                output.accept(ModBlocks.RUST_CLUMP);
+                output.accept(ModBlocks.WHIRLWIND);
                 output.accept(ModBlocks.ICICLE);
                 output.accept(ModBlocks.AIR_KELP);
                 output.accept(ModBlocks.AIR_TUBE_CORAL_FAN);

@@ -1,0 +1,16 @@
+{
+  "parent": "cobblesafari:root",
+  "display": {
+    "icon": { "id": "minecraft:painting" },
+    "title": { "translate": "advancement.cobblesafari.fresh_makeover.title" },
+    "description": { "translate": "advancement.cobblesafari.fresh_makeover.description" },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "done": { "trigger": "cobblesafari:rotom_skin_changed", "conditions": {} }
+  },
+  "requirements": [["done"]]
+}
