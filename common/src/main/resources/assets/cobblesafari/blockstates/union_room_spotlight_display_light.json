@@ -1,0 +1,8 @@
+{
+  "variants": {
+    "color=green": { "model": "cobblesafari:block/union_room_spotlight_display_light_green" },
+    "color=yellow": { "model": "cobblesafari:block/union_room_spotlight_display_light_yellow" },
+    "color=blue": { "model": "cobblesafari:block/union_room_spotlight_display_light_blue" },
+    "color=red": { "model": "cobblesafari:block/union_room_spotlight_display_light_red" }
+  }
+}

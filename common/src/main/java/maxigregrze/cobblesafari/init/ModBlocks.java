@@ -42,7 +42,12 @@ import maxigregrze.cobblesafari.block.misc.UnionRoomDecorBlock;
 import maxigregrze.cobblesafari.block.misc.OnlineFeaturePcBlock;
 import maxigregrze.cobblesafari.block.misc.UnionRoomGlobeBlock;
 import maxigregrze.cobblesafari.block.misc.UnionRoomExitTeleporterBlock;
+import maxigregrze.cobblesafari.block.misc.PokemonStatueBlock;
+import maxigregrze.cobblesafari.block.misc.UnionRoomBricksBlock;
+import maxigregrze.cobblesafari.block.misc.UnionRoomColoredBlockItem;
 import maxigregrze.cobblesafari.block.misc.UnionRoomPillarBlock;
+import maxigregrze.cobblesafari.block.misc.UnionRoomSpotlightBlock;
+import maxigregrze.cobblesafari.block.misc.UnionRoomSpotlightDisplayLightBlock;
 import maxigregrze.cobblesafari.block.teleporter.SafariTeleporterBlock;
 import maxigregrze.cobblesafari.block.underground.UndergroundBoulderBlock;
 import maxigregrze.cobblesafari.block.underground.UndergroundDigsiteBlock;
@@ -1014,6 +1019,37 @@ public class ModBlocks {
                     .noLootTable()
                     .noCollission()));
 
+    public static final Block BULBASAUR_STATUE = registerBlock("bulbasaur_statue",
+            new PokemonStatueBlock.Bulbasaur(BlockBehaviour.Properties.ofFullCopy(Blocks.WHITE_WOOL)));
+    public static final Block CHARMANDER_STATUE = registerBlock("charmander_statue",
+            new PokemonStatueBlock.Charmander(BlockBehaviour.Properties.ofFullCopy(Blocks.WHITE_WOOL)));
+    public static final Block PIKACHU_STATUE = registerBlock("pikachu_statue",
+            new PokemonStatueBlock.Pikachu(BlockBehaviour.Properties.ofFullCopy(Blocks.WHITE_WOOL)));
+    public static final Block SQUIRTLE_STATUE = registerBlock("squirtle_statue",
+            new PokemonStatueBlock.Squirtle(BlockBehaviour.Properties.ofFullCopy(Blocks.WHITE_WOOL)));
+
+    public static final Block UNION_ROOM_BRICKS = registerColoredBlock("union_room_bricks",
+            new UnionRoomBricksBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.QUARTZ)
+                    .strength(0.4f, 6.0f)
+                    .sound(SoundType.STONE)));
+
+    public static final Block UNION_ROOM_SPOTLIGHT = registerColoredBlock("union_room_spotlight",
+            new UnionRoomSpotlightBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.QUARTZ)
+                    .strength(0.4f, 6.0f)
+                    .sound(SoundType.STONE)
+                    .lightLevel(state -> 15)
+                    .noOcclusion()));
+
+    public static final Block UNION_ROOM_SPOTLIGHT_DISPLAY_LIGHT = registerBlockWithoutItem("union_room_spotlight_display_light",
+            new UnionRoomSpotlightDisplayLightBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.QUARTZ)
+                    .strength(0.3f)
+                    .noOcclusion()
+                    .noLootTable()
+                    .noCollission()));
+
     public static final Block INCUBATOR = registerBlockWithoutItem("incubator",
             new IncubatorBlock(BlockBehaviour.Properties.of()
                     .mapColor(MapColor.METAL)
@@ -1063,6 +1099,12 @@ public class ModBlocks {
             case "prism_s", "prism_l" -> MapColor.DIAMOND;
             default -> MapColor.STONE;
         };
+    }
+
+    private static Block registerColoredBlock(String name, Block block) {
+        Registry.register(BuiltInRegistries.ITEM, ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, name),
+                new UnionRoomColoredBlockItem(block, new Item.Properties()));
+        return Registry.register(BuiltInRegistries.BLOCK, ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, name), block);
     }
 
     private static Block registerBlock(String name, Block block) {

@@ -29,6 +29,7 @@ import maxigregrze.cobblesafari.underground.UndergroundMinigame;
 import maxigregrze.cobblesafari.underground.UndergroundScreen;
 import maxigregrze.cobblesafari.client.audio.DungeonMusicHandler;
 import maxigregrze.cobblesafari.client.DonutItemClientSetup;
+import maxigregrze.cobblesafari.client.UnionRoomColoredItemClientSetup;
 import maxigregrze.cobblesafari.client.donut.DonutFlavorClientTooltip;
 import maxigregrze.cobblesafari.item.donut.DonutTooltipPayload;
 import net.fabricmc.api.ClientModInitializer;
@@ -76,6 +77,7 @@ public class CobbleSafariClientFabric implements ClientModInitializer {
         );
         registerTooltips();
         DonutItemClientSetup.registerItemProperties();
+        UnionRoomColoredItemClientSetup.registerItemProperties();
         registerClientNetworking();
         registerHud();
         registerBlockRenderLayers();
@@ -215,6 +217,8 @@ public class CobbleSafariClientFabric implements ClientModInitializer {
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.UNION_ROOM_SCREEN_LEFT_DISPLAY, RenderType.translucent());
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.UNION_ROOM_SCREEN_RIGHT, RenderType.translucent());
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.UNION_ROOM_SCREEN_RIGHT_DISPLAY, RenderType.translucent());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.UNION_ROOM_SPOTLIGHT, RenderType.translucent());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.UNION_ROOM_SPOTLIGHT_DISPLAY_LIGHT, RenderType.translucent());
     }
 
     private void registerRenderers() {
@@ -229,6 +233,7 @@ public class CobbleSafariClientFabric implements ClientModInitializer {
         BlockEntityRenderers.register(ModBlockEntities.UNION_ROOM_DECOR, maxigregrze.cobblesafari.client.renderer.UnionRoomDecorBlockEntityRenderer::new);
         BlockEntityRenderers.register(ModBlockEntities.WHIRLWIND, maxigregrze.cobblesafari.client.renderer.WhirlwindBlockEntityRenderer::new);
         BlockEntityRenderers.register(ModBlockEntities.UNION_ROOM_GLOBE_UPPER, maxigregrze.cobblesafari.client.renderer.UnionRoomGlobeUpperBlockEntityRenderer::new);
+        BlockEntityRenderers.register(ModBlockEntities.UNION_ROOM_SPOTLIGHT, maxigregrze.cobblesafari.client.renderer.UnionRoomSpotlightBlockEntityRenderer::new);
         EntityRendererRegistry.register(ModEntities.HIKER, HikerEntityRenderer::new);
         EntityRendererRegistry.register(ModEntities.CSTRADER_NPC, CsTraderEntityRenderer::new);
         EntityRendererRegistry.register(ModEntities.BALLOON, BalloonEntityRenderer::new);

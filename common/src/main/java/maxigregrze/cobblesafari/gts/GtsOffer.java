@@ -46,6 +46,7 @@ public final class GtsOffer {
     private final boolean depositedShiny;
     private final boolean uniqueOffer;
     private final String uniqueOfferTemplateId;
+    private final UUID personalTargetUuid;
     private int age;
     private boolean locked;
     private UUID lockOwnerUuid;
@@ -90,6 +91,36 @@ public final class GtsOffer {
             boolean depositedShiny,
             boolean uniqueOffer,
             String uniqueOfferTemplateId) {
+        this(
+                id,
+                depositorUuid,
+                pokemonData,
+                wishSpecies,
+                wishLevelBucket,
+                wishGender,
+                wishShiny,
+                depositedSpeciesPath,
+                depositedGender,
+                depositedShiny,
+                uniqueOffer,
+                uniqueOfferTemplateId,
+                null);
+    }
+
+    public GtsOffer(
+            int id,
+            UUID depositorUuid,
+            CompoundTag pokemonData,
+            String wishSpecies,
+            int wishLevelBucket,
+            GenderFilter wishGender,
+            ShinyWish wishShiny,
+            String depositedSpeciesPath,
+            Gender depositedGender,
+            boolean depositedShiny,
+            boolean uniqueOffer,
+            String uniqueOfferTemplateId,
+            UUID personalTargetUuid) {
         this.id = id;
         this.depositorUuid = depositorUuid;
         this.pokemonData = pokemonData.copy();
@@ -102,6 +133,7 @@ public final class GtsOffer {
         this.depositedShiny = depositedShiny;
         this.uniqueOffer = uniqueOffer;
         this.uniqueOfferTemplateId = uniqueOfferTemplateId == null ? "" : uniqueOfferTemplateId;
+        this.personalTargetUuid = personalTargetUuid;
         this.age = 0;
         this.locked = false;
         this.lockOwnerUuid = null;
@@ -154,6 +186,14 @@ public final class GtsOffer {
 
     public String getUniqueOfferTemplateId() {
         return uniqueOfferTemplateId;
+    }
+
+    public boolean isPersonalOffer() {
+        return personalTargetUuid != null;
+    }
+
+    public UUID getPersonalTargetUuid() {
+        return personalTargetUuid;
     }
 
     public int getAge() {
@@ -218,6 +258,9 @@ public final class GtsOffer {
         if (uniqueOffer && uniqueOfferTemplateId != null && !uniqueOfferTemplateId.isEmpty()) {
             tag.putString("UniqueOfferTemplateId", uniqueOfferTemplateId);
         }
+        if (personalTargetUuid != null) {
+            tag.putUUID("PersonalTarget", personalTargetUuid);
+        }
         return tag;
     }
 
@@ -258,8 +301,11 @@ public final class GtsOffer {
         boolean unique = tag.contains("UniqueOffer", Tag.TAG_BYTE) && tag.getBoolean("UniqueOffer");
         String uniqueTemplateId =
                 tag.contains("UniqueOfferTemplateId", Tag.TAG_STRING) ? tag.getString("UniqueOfferTemplateId") : "";
+        UUID personalTarget = tag.hasUUID("PersonalTarget") ? tag.getUUID("PersonalTarget") : null;
         GtsOffer o =
-                new GtsOffer(id, dep, p, wish, bucket, gf, ws, depPath, depGender, depShiny, unique, uniqueTemplateId);
+                new GtsOffer(
+                        id, dep, p, wish, bucket, gf, ws, depPath, depGender, depShiny, unique, uniqueTemplateId,
+                        personalTarget);
         o.age = tag.getInt("Age");
         o.locked = tag.contains("Locked", Tag.TAG_BYTE) && tag.getBoolean("Locked");
         if (tag.hasUUID("LockOwner")) {

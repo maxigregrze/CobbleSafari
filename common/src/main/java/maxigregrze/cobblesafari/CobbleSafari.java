@@ -28,6 +28,7 @@ import maxigregrze.cobblesafari.item.donut.DonutPowerRegistry;
 import maxigregrze.cobblesafari.item.donut.DonutSeasoningProcessor;
 import maxigregrze.cobblesafari.init.ModPowerEffects;
 import maxigregrze.cobblesafari.influence.AlphaSpawnBoostInfluence;
+import maxigregrze.cobblesafari.influence.GuaranteedShinyInfluence;
 import maxigregrze.cobblesafari.influence.BucketBoostInfluence;
 import maxigregrze.cobblesafari.influence.HiddenAbilityBoostInfluence;
 import maxigregrze.cobblesafari.influence.RepelInfluence;
@@ -94,6 +95,7 @@ public class CobbleSafari {
         PlayerSpawnerFactory.INSTANCE.getInfluenceBuilders().add(HiddenAbilityBoostInfluence::new);
         PlayerSpawnerFactory.INSTANCE.getInfluenceBuilders().add(TypedEncounterBoostInfluence::new);
         PlayerSpawnerFactory.INSTANCE.getInfluenceBuilders().add(WildLevelModifierInfluence::new);
+        PlayerSpawnerFactory.INSTANCE.getInfluenceBuilders().add(GuaranteedShinyInfluence::new);
         SafariCatchEventHandler.register();
         PowerCaptureCatchRateHandler.register();
         PowerSalvageLootHandler.register();

@@ -416,7 +416,14 @@ public final class GtsAppServerHandler {
 
     private static void sendBegin(ServerPlayer player, String errorKey) {
         GtsSavedData data = GtsSavedData.get(player.getServer());
-        int total = data.getOffers().size();
+        int total =
+                (int)
+                        data.getOffers().stream()
+                                .filter(
+                                        o ->
+                                                !o.isPersonalOffer()
+                                                        || player.getUUID().equals(o.getPersonalTargetUuid()))
+                                .count();
         int ownId = resolveOwnOfferId(data, player.getUUID(), -1);
         List<GtsSuccess> waiting = data.findSuccessesByRecipient(player.getUUID());
         int sCount = waiting.size();

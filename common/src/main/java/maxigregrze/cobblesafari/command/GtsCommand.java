@@ -133,7 +133,36 @@ public final class GtsCommand {
                                 .requires(s -> s.hasPermission(4))
                                 .then(Commands.argument(ARG_OFFER_ID, StringArgumentType.string())
                                         .suggests(GtsCommand::suggestUniqueOfferIds)
-                                        .executes(GtsCommand::uniqueOfferDetails))));
+                                        .executes(GtsCommand::uniqueOfferDetails)))
+                        .then(Commands.literal("personal")
+                                .requires(s -> s.hasPermission(4))
+                                .then(Commands.literal("add")
+                                        .then(Commands.argument(ARG_PLAYER, EntityArgument.player())
+                                                .then(Commands.argument(ARG_OFFER_ID, StringArgumentType.string())
+                                                        .suggests(GtsCommand::suggestUniqueOfferIds)
+                                                        .executes(GtsCommand::personalAdd))))
+                                .then(Commands.literal("list")
+                                        .executes(ctx -> personalList(ctx, null, 1))
+                                        .then(Commands.argument(ARG_PLAYER, EntityArgument.player())
+                                                .executes(
+                                                        ctx ->
+                                                                personalList(
+                                                                        ctx,
+                                                                        EntityArgument.getPlayer(ctx, ARG_PLAYER),
+                                                                        1))
+                                                .then(Commands.argument(ARG_PAGE, IntegerArgumentType.integer(1))
+                                                        .executes(
+                                                                ctx ->
+                                                                        personalList(
+                                                                                ctx,
+                                                                                EntityArgument.getPlayer(ctx, ARG_PLAYER),
+                                                                                IntegerArgumentType.getInteger(
+                                                                                        ctx, ARG_PAGE))))))
+                                .then(Commands.literal("remove")
+                                        .then(Commands.argument(ARG_PLAYER, EntityArgument.player())
+                                                .then(Commands.argument(ARG_OFFER_ID, StringArgumentType.string())
+                                                        .suggests(GtsCommand::suggestUniqueOfferIds)
+                                                        .executes(GtsCommand::personalRemove))))));
     }
 
     private static java.util.concurrent.CompletableFuture<com.mojang.brigadier.suggestion.Suggestions> suggestUniqueOfferIds(
@@ -184,7 +213,24 @@ public final class GtsCommand {
             final String flv = lvl;
             final String fg = gen;
             final int fid = o.getId();
-            if (o.isUniqueOffer()) {
+            if (o.isPersonalOffer()) {
+                final String templateId = o.getUniqueOfferTemplateId();
+                final String fTarget =
+                        GtsService.lookupUsername(server, o.getPersonalTargetUuid())
+                                .orElse(o.getPersonalTargetUuid().toString());
+                ctx.getSource()
+                        .sendSuccess(
+                                () -> Component.translatable(
+                                        "cobblesafari.command.gts.list_offers_line_personal",
+                                        fid,
+                                        fTarget,
+                                        templateId,
+                                        fd,
+                                        fw,
+                                        flv,
+                                        fg),
+                                false);
+            } else if (o.isUniqueOffer()) {
                 final String templateId = o.getUniqueOfferTemplateId();
                 ctx.getSource()
                         .sendSuccess(
@@ -532,6 +578,136 @@ public final class GtsCommand {
         ctx.getSource().sendSuccess(() -> Component.translatable("cobblesafari.command.gts.details_section_requested"), false);
         sendRequestedWishSummary(ctx, wishPreview);
         return 1;
+    }
+
+    private static int personalAdd(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
+        ServerPlayer target = EntityArgument.getPlayer(ctx, ARG_PLAYER);
+        String templateId = StringArgumentType.getString(ctx, ARG_OFFER_ID);
+        GtsService.AddPersonalOfferOutcome outcome =
+                GtsService.addPersonalOffer(ctx.getSource().getServer(), target.getUUID(), templateId);
+        return switch (outcome.result()) {
+            case SUCCESS -> {
+                ctx.getSource()
+                        .sendSuccess(
+                                () -> Component.translatable(
+                                        "cobblesafari.command.gts.uniqueoffer.personal.add_success",
+                                        outcome.runtimeOfferId(),
+                                        templateId,
+                                        target.getName().getString()),
+                                true);
+                yield 1;
+            }
+            case ALREADY_HAS_PERSONAL -> {
+                ctx.getSource()
+                        .sendFailure(
+                                Component.translatable("cobblesafari.command.gts.uniqueoffer.personal.add_already_has"));
+                yield 0;
+            }
+            case UNKNOWN_OFFER_ID -> {
+                ctx.getSource().sendFailure(Component.translatable("cobblesafari.command.gts.uniqueoffer.personal.add_unknown"));
+                yield 0;
+            }
+            case INVALID_GIVEN -> {
+                ctx.getSource().sendFailure(Component.translatable("cobblesafari.command.gts.uniqueoffer.personal.add_invalid_given"));
+                yield 0;
+            }
+            case BANNED_GIVEN -> {
+                ctx.getSource().sendFailure(Component.translatable("cobblesafari.command.gts.uniqueoffer.personal.add_banned_given"));
+                yield 0;
+            }
+            case BANNED_WISH -> {
+                ctx.getSource().sendFailure(Component.translatable("cobblesafari.command.gts.uniqueoffer.personal.add_banned_wish"));
+                yield 0;
+            }
+            case INCOMPATIBLE_GENDER -> {
+                ctx.getSource().sendFailure(Component.translatable("cobblesafari.command.gts.uniqueoffer.personal.add_incompatible_gender"));
+                yield 0;
+            }
+            case INVALID_LEVEL_BUCKET -> {
+                ctx.getSource().sendFailure(Component.translatable("cobblesafari.command.gts.uniqueoffer.personal.add_invalid_level"));
+                yield 0;
+            }
+            case ERROR -> {
+                ctx.getSource().sendFailure(Component.translatable("cobblesafari.command.gts.uniqueoffer.personal.add_error"));
+                yield 0;
+            }
+        };
+    }
+
+    private static int personalList(CommandContext<CommandSourceStack> ctx, ServerPlayer filterPlayer, int page) {
+        MinecraftServer server = ctx.getSource().getServer();
+        GtsSavedData data = GtsSavedData.get(server);
+        List<GtsOffer> personal =
+                data.getOffers().stream()
+                        .filter(GtsOffer::isPersonalOffer)
+                        .filter(o -> filterPlayer == null || filterPlayer.getUUID().equals(o.getPersonalTargetUuid()))
+                        .sorted(Comparator.comparingInt(GtsOffer::getId))
+                        .collect(Collectors.toList());
+        int pageSize = 10;
+        int from = (page - 1) * pageSize;
+        if (from >= personal.size()) {
+            ctx.getSource().sendSuccess(() -> Component.translatable("cobblesafari.command.gts.uniqueoffer.personal.list_empty"), false);
+            return 1;
+        }
+        ctx.getSource().sendSuccess(() -> Component.translatable("cobblesafari.command.gts.uniqueoffer.personal.list_header", page), false);
+        int to = Math.min(from + pageSize, personal.size());
+        for (int i = from; i < to; i++) {
+            GtsOffer o = personal.get(i);
+            String targetName =
+                    GtsService.lookupUsername(server, o.getPersonalTargetUuid())
+                            .orElse(o.getPersonalTargetUuid().toString());
+            String given = speciesNameFromOffer(server, o);
+            String wish = o.getWishSpecies();
+            String lvl = levelLabel(o.getWishLevelBucket());
+            String gen = o.getWishGender().name().toLowerCase(Locale.ROOT);
+            final int fid = o.getId();
+            final String fTarget = targetName;
+            final String fTemplate = o.getUniqueOfferTemplateId();
+            final String fGiven = given;
+            final String fWish = wish;
+            final String fLvl = lvl;
+            final String fGen = gen;
+            ctx.getSource()
+                    .sendSuccess(
+                            () -> Component.translatable(
+                                    "cobblesafari.command.gts.uniqueoffer.personal.list_line",
+                                    fid,
+                                    fTarget,
+                                    fTemplate,
+                                    fGiven,
+                                    fWish,
+                                    fLvl,
+                                    fGen),
+                            false);
+        }
+        return 1;
+    }
+
+    private static int personalRemove(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
+        ServerPlayer target = EntityArgument.getPlayer(ctx, ARG_PLAYER);
+        String templateId = StringArgumentType.getString(ctx, ARG_OFFER_ID);
+        GtsService.RemovePersonalOfferResult r =
+                GtsService.removePersonalOffer(ctx.getSource().getServer(), target.getUUID(), templateId);
+        return switch (r) {
+            case SUCCESS -> {
+                ctx.getSource()
+                        .sendSuccess(
+                                () -> Component.translatable(
+                                        "cobblesafari.command.gts.uniqueoffer.personal.remove_success",
+                                        templateId,
+                                        target.getName().getString()),
+                                true);
+                yield 1;
+            }
+            case NOT_FOUND -> {
+                ctx.getSource().sendFailure(Component.translatable("cobblesafari.command.gts.uniqueoffer.personal.remove_not_found"));
+                yield 0;
+            }
+            case LOCKED -> {
+                ctx.getSource().sendFailure(Component.translatable("cobblesafari.command.gts.uniqueoffer.personal.remove_locked"));
+                yield 0;
+            }
+        };
     }
 
     private static String speciesNameFromGivenLine(MinecraftServer server, String givenLine) {

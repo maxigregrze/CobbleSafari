@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.Map;
 
 public class SpawnBoostConfig {
-    public static final int CONFIG_VERSION = 4;
+    public static final int CONFIG_VERSION = 5;
     
     private static final Path CONFIG_DIR = Services.PLATFORM.getConfigDir().resolve("cobblesafari");
     private static final Path CONFIG_PATH = CONFIG_DIR.resolve("encounter_boost_config.json");

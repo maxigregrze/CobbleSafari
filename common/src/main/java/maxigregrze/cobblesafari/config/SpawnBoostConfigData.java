@@ -8,6 +8,7 @@ public class SpawnBoostConfigData {
         public float shinyBoostMultiplier = 4.0f;
         public float superShinyBoostMultiplier = 8.0f;
         public float ultraShinyBoostMultiplier = 12.0f;
+        public float sparklingGuaranteeWindowFraction = 0.6f;
         public float uncommonBoostMultiplier = 16.0f;
         public float rareBoostMultiplier = 16.0f;
         public float ultraRareBoostMultiplier = 16.0f;

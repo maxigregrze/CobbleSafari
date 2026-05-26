@@ -78,9 +78,15 @@ public final class GtsService {
         GtsSavedData data = GtsSavedData.get(server);
         int best = cfg.getPokemonBestBefore();
         for (GtsOffer offer : new ArrayList<>(data.getOffers())) {
+            if (offer.isPersonalOffer()) {
+                continue;
+            }
             offer.setAge(offer.getAge() + 1);
         }
         for (GtsOffer offer : new ArrayList<>(data.getOffers())) {
+            if (offer.isPersonalOffer()) {
+                continue;
+            }
             if (offer.getAge() > best) {
                 if (offer.isUniqueOffer()) {
                     data.removeOffer(offer.getId());
@@ -237,7 +243,7 @@ public final class GtsService {
             String speciesFilter,
             GenderFilter genderFilter,
             GtsOffer.ShinyWish shinyFilter,
-            java.util.UUID excludeDepositorUuid) {
+            java.util.UUID viewerUuid) {
         GtsSavedData data = GtsSavedData.get(server);
         String s = speciesFilter == null ? "" : speciesFilter.trim().toLowerCase(java.util.Locale.ROOT);
         long now = System.currentTimeMillis();
@@ -245,7 +251,11 @@ public final class GtsService {
         all.sort((a, b) -> Integer.compare(b.getId(), a.getId()));
         List<GtsOffer> filtered = new ArrayList<>();
         for (GtsOffer offer : all) {
-            if (excludeDepositorUuid != null && excludeDepositorUuid.equals(offer.getDepositorUuid())) {
+            if (viewerUuid != null && viewerUuid.equals(offer.getDepositorUuid())) {
+                continue;
+            }
+            if (offer.isPersonalOffer()
+                    && (viewerUuid == null || !viewerUuid.equals(offer.getPersonalTargetUuid()))) {
                 continue;
             }
             if (offer.isLocked() && offer.getLockExpireEpochMs() > 0L && now <= offer.getLockExpireEpochMs()) {
@@ -417,6 +427,17 @@ public final class GtsService {
     }
 
     public static AddUniqueOfferOutcome addUniqueOffer(MinecraftServer server, String templateOfferId) {
+        return publishUniqueOffer(server, templateOfferId, null);
+    }
+
+    /**
+     * Builds and publishes a unique offer from a template definition.
+     *
+     * @param personalTargetUuid when non-null, the offer is bound to that player (personal offer): visible only to
+     *     them, never expires; otherwise it is a global unique offer.
+     */
+    private static AddUniqueOfferOutcome publishUniqueOffer(
+            MinecraftServer server, String templateOfferId, UUID personalTargetUuid) {
         Optional<GtsUniqueOfferDefinition> defOpt = GtsUniqueOfferRegistry.get(templateOfferId);
         if (defOpt.isEmpty()) {
             return AddUniqueOfferOutcome.fail(AddUniqueOfferResult.UNKNOWN_OFFER_ID);
@@ -434,10 +455,10 @@ public final class GtsService {
         try {
             given = createGivenPokemon(def);
         } catch (IllegalStateException e) {
-            CobbleSafari.LOGGER.warn("[GTS] addUniqueOffer invalid given for {}: {}", templateOfferId, e.getMessage());
+            CobbleSafari.LOGGER.warn("[GTS] publishUniqueOffer invalid given for {}: {}", templateOfferId, e.getMessage());
             return AddUniqueOfferOutcome.fail(AddUniqueOfferResult.INVALID_GIVEN);
         } catch (Exception e) {
-            CobbleSafari.LOGGER.error("[GTS] addUniqueOffer failed to create given for {}", templateOfferId, e);
+            CobbleSafari.LOGGER.error("[GTS] publishUniqueOffer failed to create given for {}", templateOfferId, e);
             return AddUniqueOfferOutcome.fail(AddUniqueOfferResult.ERROR);
         }
 
@@ -463,10 +484,104 @@ public final class GtsService {
                         given.getGender(),
                         given.getShiny(),
                         true,
-                        def.getOfferId());
+                        def.getOfferId(),
+                        personalTargetUuid);
         data.addOffer(offer);
         data.setDirty();
         return AddUniqueOfferOutcome.ok(offerId);
+    }
+
+    public enum AddPersonalOfferResult {
+        SUCCESS,
+        UNKNOWN_OFFER_ID,
+        INVALID_GIVEN,
+        BANNED_GIVEN,
+        BANNED_WISH,
+        INCOMPATIBLE_GENDER,
+        INVALID_LEVEL_BUCKET,
+        ALREADY_HAS_PERSONAL,
+        ERROR
+    }
+
+    public record AddPersonalOfferOutcome(AddPersonalOfferResult result, int runtimeOfferId) {
+        public static AddPersonalOfferOutcome fail(AddPersonalOfferResult result) {
+            return new AddPersonalOfferOutcome(result, -1);
+        }
+
+        public static AddPersonalOfferOutcome ok(int runtimeOfferId) {
+            return new AddPersonalOfferOutcome(AddPersonalOfferResult.SUCCESS, runtimeOfferId);
+        }
+    }
+
+    /**
+     * Public API: grants a personal (player-bound) unique offer built from a template. Usable by admin commands and by
+     * external systems (e.g. quest rewards) without requiring the target to be online — only the UUID is stored.
+     *
+     * <p>At most one personal offer per {@code (targetUuid, templateOfferId)} pair may exist.
+     */
+    public static AddPersonalOfferOutcome addPersonalOffer(
+            MinecraftServer server, UUID targetUuid, String templateOfferId) {
+        GtsSavedData data = GtsSavedData.get(server);
+        boolean duplicate =
+                data.getOffers().stream()
+                        .anyMatch(
+                                o ->
+                                        o.isPersonalOffer()
+                                                && targetUuid.equals(o.getPersonalTargetUuid())
+                                                && templateOfferId.equals(o.getUniqueOfferTemplateId()));
+        if (duplicate) {
+            return AddPersonalOfferOutcome.fail(AddPersonalOfferResult.ALREADY_HAS_PERSONAL);
+        }
+        AddUniqueOfferOutcome outcome = publishUniqueOffer(server, templateOfferId, targetUuid);
+        AddPersonalOfferResult mapped =
+                switch (outcome.result()) {
+                    case SUCCESS -> AddPersonalOfferResult.SUCCESS;
+                    case UNKNOWN_OFFER_ID -> AddPersonalOfferResult.UNKNOWN_OFFER_ID;
+                    case INVALID_GIVEN -> AddPersonalOfferResult.INVALID_GIVEN;
+                    case BANNED_GIVEN -> AddPersonalOfferResult.BANNED_GIVEN;
+                    case BANNED_WISH -> AddPersonalOfferResult.BANNED_WISH;
+                    case INCOMPATIBLE_GENDER -> AddPersonalOfferResult.INCOMPATIBLE_GENDER;
+                    case INVALID_LEVEL_BUCKET -> AddPersonalOfferResult.INVALID_LEVEL_BUCKET;
+                    case ERROR -> AddPersonalOfferResult.ERROR;
+                };
+        if (mapped == AddPersonalOfferResult.SUCCESS) {
+            return AddPersonalOfferOutcome.ok(outcome.runtimeOfferId());
+        }
+        return AddPersonalOfferOutcome.fail(mapped);
+    }
+
+    public enum RemovePersonalOfferResult {
+        SUCCESS,
+        NOT_FOUND,
+        LOCKED
+    }
+
+    /**
+     * Public API: removes the personal offer bound to {@code (targetUuid, templateOfferId)}. No {@code GtsSuccess} is
+     * produced (personal offers are sinks).
+     */
+    public static RemovePersonalOfferResult removePersonalOffer(
+            MinecraftServer server, UUID targetUuid, String templateOfferId) {
+        GtsSavedData data = GtsSavedData.get(server);
+        Optional<GtsOffer> opt =
+                data.getOffers().stream()
+                        .filter(
+                                o ->
+                                        o.isPersonalOffer()
+                                                && targetUuid.equals(o.getPersonalTargetUuid())
+                                                && templateOfferId.equals(o.getUniqueOfferTemplateId()))
+                        .findFirst();
+        if (opt.isEmpty()) {
+            return RemovePersonalOfferResult.NOT_FOUND;
+        }
+        GtsOffer offer = opt.get();
+        long now = System.currentTimeMillis();
+        if (offer.isLocked() && (offer.getLockExpireEpochMs() == 0L || now <= offer.getLockExpireEpochMs())) {
+            return RemovePersonalOfferResult.LOCKED;
+        }
+        data.removeOffer(offer.getId());
+        data.setDirty();
+        return RemovePersonalOfferResult.SUCCESS;
     }
 
     /** @return error result, or {@code null} if wish is valid */
@@ -616,6 +731,9 @@ public final class GtsService {
         if (offer.getDepositorUuid().equals(player.getUUID())) {
             return StartTradeResult.of(StartTradeKind.OFFER_OWN);
         }
+        if (offer.isPersonalOffer() && !player.getUUID().equals(offer.getPersonalTargetUuid())) {
+            return StartTradeResult.of(StartTradeKind.OFFER_NOT_FOUND);
+        }
         long now = System.currentTimeMillis();
         if (offer.isLocked() && offer.getLockExpireEpochMs() > 0L && now > offer.getLockExpireEpochMs()) {
             offer.clearLock();
@@ -725,6 +843,10 @@ public final class GtsService {
             return ConfirmTradeKind.ERROR;
         }
         GtsOffer offer = offerOpt.get();
+        if (offer.isPersonalOffer() && !player.getUUID().equals(offer.getPersonalTargetUuid())) {
+            PENDING_BY_PLAYER.remove(player.getUUID());
+            return ConfirmTradeKind.SELECTION_EXPIRED;
+        }
         long now = System.currentTimeMillis();
         if (!offer.isLocked() || !player.getUUID().equals(offer.getLockOwnerUuid())) {
             PENDING_BY_PLAYER.remove(player.getUUID());
@@ -802,9 +924,10 @@ public final class GtsService {
             maxigregrze.cobblesafari.advancement.ModCriteria.GTS_TRADE_CONFIRMED.trigger(player, gtsTrades);
             if (uniqueOffer) {
                 CobbleSafari.LOGGER.info(
-                        "[GTS] Unique offer #{} template={} completed; received pokemon discarded",
+                        "[GTS] Unique offer #{} template={} personalTarget={} completed; received pokemon discarded",
                         offerId,
-                        offer.getUniqueOfferTemplateId());
+                        offer.getUniqueOfferTemplateId(),
+                        offer.isPersonalOffer() ? offer.getPersonalTargetUuid() : "none");
             } else if (cfg.isTradeNotification()) {
                 ServerPlayer depositor = player.getServer().getPlayerList().getPlayer(offer.getDepositorUuid());
                 if (depositor != null) {

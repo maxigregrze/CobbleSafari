@@ -40,6 +40,7 @@ import maxigregrze.cobblesafari.underground.network.UndergroundPayloads;
 import maxigregrze.cobblesafari.client.DungeonDistortionDimensionEffects;
 import maxigregrze.cobblesafari.client.audio.DungeonMusicHandler;
 import maxigregrze.cobblesafari.client.DonutItemClientSetup;
+import maxigregrze.cobblesafari.client.UnionRoomColoredItemClientSetup;
 import maxigregrze.cobblesafari.client.donut.DonutFlavorClientTooltip;
 import maxigregrze.cobblesafari.item.donut.DonutTooltipPayload;
 import net.minecraft.ChatFormatting;
@@ -195,6 +196,8 @@ public class CobbleSafariClientNeoForge {
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.UNION_ROOM_SCREEN_LEFT_DISPLAY, RenderType.translucent());
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.UNION_ROOM_SCREEN_RIGHT, RenderType.translucent());
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.UNION_ROOM_SCREEN_RIGHT_DISPLAY, RenderType.translucent());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.UNION_ROOM_SPOTLIGHT, RenderType.translucent());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.UNION_ROOM_SPOTLIGHT_DISPLAY_LIGHT, RenderType.translucent());
 
             BlockEntityRenderers.register(ModBlockEntities.HOOPA_RING_PORTAL, HoopaRingPortalBlockEntityRenderer::new);
             BlockEntityRenderers.register(ModBlockEntities.DUNGEON_PORTAL, DungeonPortalBlockEntityRenderer::new);
@@ -207,9 +210,13 @@ public class CobbleSafariClientNeoForge {
             BlockEntityRenderers.register(ModBlockEntities.UNION_ROOM_DECOR, maxigregrze.cobblesafari.client.renderer.UnionRoomDecorBlockEntityRenderer::new);
             BlockEntityRenderers.register(ModBlockEntities.WHIRLWIND, maxigregrze.cobblesafari.client.renderer.WhirlwindBlockEntityRenderer::new);
             BlockEntityRenderers.register(ModBlockEntities.UNION_ROOM_GLOBE_UPPER, maxigregrze.cobblesafari.client.renderer.UnionRoomGlobeUpperBlockEntityRenderer::new);
+            BlockEntityRenderers.register(ModBlockEntities.UNION_ROOM_SPOTLIGHT, maxigregrze.cobblesafari.client.renderer.UnionRoomSpotlightBlockEntityRenderer::new);
         });
 
-        event.enqueueWork(DonutItemClientSetup::registerItemProperties);
+        event.enqueueWork(() -> {
+            DonutItemClientSetup.registerItemProperties();
+            UnionRoomColoredItemClientSetup.registerItemProperties();
+        });
 
         NeoForge.EVENT_BUS.addListener(CobbleSafariClientNeoForge::onRenderGuiLayer);
         NeoForge.EVENT_BUS.addListener(CobbleSafariClientNeoForge::onItemTooltip);

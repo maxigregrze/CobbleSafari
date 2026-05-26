@@ -1,0 +1,8 @@
+{
+  "variants": {
+    "color=green": { "model": "cobblesafari:block/union_room_bricks_green" },
+    "color=yellow": { "model": "cobblesafari:block/union_room_bricks_yellow" },
+    "color=blue": { "model": "cobblesafari:block/union_room_bricks_blue" },
+    "color=red": { "model": "cobblesafari:block/union_room_bricks_red" }
+  }
+}

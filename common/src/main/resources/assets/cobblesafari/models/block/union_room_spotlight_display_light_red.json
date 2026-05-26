@@ -1,0 +1,7 @@
+{
+  "parent": "cobblesafari:block/union_room_spotlight_display_light",
+  "textures": {
+    "0": "cobblesafari:block/union_spotlight_4",
+    "particle": "cobblesafari:block/union_spotlight_4"
+  }
+}
