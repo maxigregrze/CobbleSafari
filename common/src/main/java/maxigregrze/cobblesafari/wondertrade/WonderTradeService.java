@@ -246,12 +246,7 @@ public final class WonderTradeService {
         }
 
         boolean pastResetHour = now.getHour() > rh || (now.getHour() == rh);
-        boolean shouldRun = false;
-        if (todayEpoch > last && pastResetHour) {
-            shouldRun = true;
-        } else if (todayEpoch > last + 1) {
-            shouldRun = true;
-        }
+        boolean shouldRun = (todayEpoch > last && pastResetHour) || (todayEpoch > last + 1);
 
         if (!shouldRun) {
             return;
@@ -388,12 +383,14 @@ public final class WonderTradeService {
                 try {
                     party.set(slot0To5, offered);
                 } catch (Exception ignored) {
+                    // Best-effort rollback; original failure already logged above.
                 }
             }
             if (poolMutated) {
                 try {
                     data.setPoolEntry(idx, previousAtIdx);
                 } catch (Exception ignored) {
+                    // Best-effort rollback; original failure already logged above.
                 }
             }
             data.setDirty();

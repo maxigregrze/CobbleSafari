@@ -1,7 +1,6 @@
 package maxigregrze.cobblesafari.gts;
 
 import java.util.List;
-import java.util.UUID;
 
 public final class GtsPendingTrade {
     private final int offerId;

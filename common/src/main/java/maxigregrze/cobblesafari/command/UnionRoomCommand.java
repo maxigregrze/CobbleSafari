@@ -18,6 +18,8 @@ import java.util.Optional;
 
 public final class UnionRoomCommand {
 
+    private static final String MSG_PLAYER_ONLY = "This command must be run by a player";
+
     private static final SuggestionProvider<CommandSourceStack> INSTANCE_TYPE_SUGGESTIONS =
             (ctx, builder) -> {
                 builder.suggest("room");
@@ -71,7 +73,7 @@ public final class UnionRoomCommand {
     private static int executeCreate(CommandContext<CommandSourceStack> ctx, String instanceType) {
         ServerPlayer player = ctx.getSource().getPlayer();
         if (player == null) {
-            ctx.getSource().sendFailure(Component.literal("This command must be run by a player"));
+            ctx.getSource().sendFailure(Component.literal(MSG_PLAYER_ONLY));
             return 0;
         }
         return UnionRoomManager.createSession(player, instanceType) == UnionRoomManager.CreateResult.OK ? 1 : 0;
@@ -80,7 +82,7 @@ public final class UnionRoomCommand {
     private static int executeJoin(CommandContext<CommandSourceStack> ctx) {
         ServerPlayer player = ctx.getSource().getPlayer();
         if (player == null) {
-            ctx.getSource().sendFailure(Component.literal("This command must be run by a player"));
+            ctx.getSource().sendFailure(Component.literal(MSG_PLAYER_ONLY));
             return 0;
         }
         int[] code = {
@@ -155,7 +157,7 @@ public final class UnionRoomCommand {
     private static int executeForceJoin(CommandContext<CommandSourceStack> ctx) {
         ServerPlayer player = ctx.getSource().getPlayer();
         if (player == null) {
-            ctx.getSource().sendFailure(Component.literal("This command must be run by a player"));
+            ctx.getSource().sendFailure(Component.literal(MSG_PLAYER_ONLY));
             return 0;
         }
         int id = IntegerArgumentType.getInteger(ctx, "id");

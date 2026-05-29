@@ -41,6 +41,9 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public final class UnionRoomManager {
 
+    private static final String ERR_DIMENSION_NOT_FOUND = "cobblesafari.unionroom.error.dimension_not_found";
+    private static final String CODE_DIGIT_PREFIX = "cobblesafari.unionroom.code.";
+
     public enum CreateResult {
         OK,
         ALREADY_IN_SESSION,
@@ -151,7 +154,7 @@ public final class UnionRoomManager {
         }
         UnionRoomSavedData data = UnionRoomSavedData.get(server);
         if (data == null) {
-            player.sendSystemMessage(Component.translatable("cobblesafari.unionroom.error.dimension_not_found"));
+            player.sendSystemMessage(Component.translatable(ERR_DIMENSION_NOT_FOUND));
             return CreateResult.DIMENSION_NOT_FOUND;
         }
 
@@ -168,7 +171,7 @@ public final class UnionRoomManager {
 
         ServerLevel unionLevel = server.getLevel(UNION_ROOM_DIMENSION);
         if (unionLevel == null) {
-            player.sendSystemMessage(Component.translatable("cobblesafari.unionroom.error.dimension_not_found"));
+            player.sendSystemMessage(Component.translatable(ERR_DIMENSION_NOT_FOUND));
             return CreateResult.DIMENSION_NOT_FOUND;
         }
 
@@ -234,7 +237,7 @@ public final class UnionRoomManager {
         }
         UnionRoomSavedData data = UnionRoomSavedData.get(server);
         if (data == null) {
-            player.sendSystemMessage(Component.translatable("cobblesafari.unionroom.error.dimension_not_found"));
+            player.sendSystemMessage(Component.translatable(ERR_DIMENSION_NOT_FOUND));
             return JoinResult.DIMENSION_NOT_FOUND;
         }
 
@@ -355,7 +358,7 @@ public final class UnionRoomManager {
         }
         UnionRoomSavedData data = UnionRoomSavedData.get(server);
         if (data == null) {
-            player.sendSystemMessage(Component.translatable("cobblesafari.unionroom.error.dimension_not_found"));
+            player.sendSystemMessage(Component.translatable(ERR_DIMENSION_NOT_FOUND));
             return false;
         }
         Optional<UnionRoomSavedData.SessionData> sessionOpt = data.getSessionByInstanceId(instanceId);
@@ -410,10 +413,10 @@ public final class UnionRoomManager {
         data.getSessionByInstanceId(instanceId).ifPresentOrElse(session -> {
             player.sendSystemMessage(Component.translatable("cobblesafari.unionroom.code.header"));
             player.sendSystemMessage(Component.translatable("cobblesafari.unionroom.code.display",
-                    Component.translatable("cobblesafari.unionroom.code." + session.code[0]),
-                    Component.translatable("cobblesafari.unionroom.code." + session.code[1]),
-                    Component.translatable("cobblesafari.unionroom.code." + session.code[2]),
-                    Component.translatable("cobblesafari.unionroom.code." + session.code[3])));
+                    Component.translatable(CODE_DIGIT_PREFIX + session.code[0]),
+                    Component.translatable(CODE_DIGIT_PREFIX + session.code[1]),
+                    Component.translatable(CODE_DIGIT_PREFIX + session.code[2]),
+                    Component.translatable(CODE_DIGIT_PREFIX + session.code[3])));
             player.sendSystemMessage(Component.translatable("cobblesafari.unionroom.code.exit_hint"));
         }, () -> player.sendSystemMessage(Component.translatable("cobblesafari.unionroom.error.invalid_code")));
     }
@@ -802,9 +805,9 @@ public final class UnionRoomManager {
         player.sendSystemMessage(Component.translatable("cobblesafari.unionroom.created"));
         player.sendSystemMessage(Component.translatable("cobblesafari.unionroom.code.header"));
         player.sendSystemMessage(Component.translatable("cobblesafari.unionroom.code.display",
-                Component.translatable("cobblesafari.unionroom.code." + code[0]),
-                Component.translatable("cobblesafari.unionroom.code." + code[1]),
-                Component.translatable("cobblesafari.unionroom.code." + code[2]),
-                Component.translatable("cobblesafari.unionroom.code." + code[3])));
+                Component.translatable(CODE_DIGIT_PREFIX + code[0]),
+                Component.translatable(CODE_DIGIT_PREFIX + code[1]),
+                Component.translatable(CODE_DIGIT_PREFIX + code[2]),
+                Component.translatable(CODE_DIGIT_PREFIX + code[3])));
     }
 }

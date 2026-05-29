@@ -25,6 +25,7 @@ import java.util.regex.Pattern;
 
 public final class GtsDataLoader {
     private static final String PREFIX = "gts/unique_offers";
+    private static final String KEY_GIVEN_MARKS = "givenMarks";
     private static final Pattern OFFER_ID_PATTERN = Pattern.compile("[a-z0-9._-]+");
 
     private GtsDataLoader() {}
@@ -99,8 +100,8 @@ public final class GtsDataLoader {
         }
 
         List<ResourceLocation> markIds = new ArrayList<>();
-        if (json.has("givenMarks") && json.get("givenMarks").isJsonArray()) {
-            for (JsonElement el : json.getAsJsonArray("givenMarks")) {
+        if (json.has(KEY_GIVEN_MARKS) && json.get(KEY_GIVEN_MARKS).isJsonArray()) {
+            for (JsonElement el : json.getAsJsonArray(KEY_GIVEN_MARKS)) {
                 if (!el.isJsonPrimitive()) {
                     continue;
                 }

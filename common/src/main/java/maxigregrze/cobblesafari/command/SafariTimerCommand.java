@@ -14,9 +14,12 @@ public class SafariTimerCommand {
 
     private SafariTimerCommand() {}
 
+    private static final String ARG_PLAYER = "player";
+    private static final String ARG_SECONDS = "seconds";
+
     static int executeAdd(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
-        ServerPlayer target = EntityArgument.getPlayer(context, "player");
-        int seconds = IntegerArgumentType.getInteger(context, "seconds");
+        ServerPlayer target = EntityArgument.getPlayer(context, ARG_PLAYER);
+        int seconds = IntegerArgumentType.getInteger(context, ARG_SECONDS);
         int ticks = seconds * 20;
 
         PlayerTimerData data = TimerManager.getOrCreateData(target);
@@ -38,8 +41,8 @@ public class SafariTimerCommand {
     }
 
     static int executeRemove(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
-        ServerPlayer target = EntityArgument.getPlayer(context, "player");
-        int seconds = IntegerArgumentType.getInteger(context, "seconds");
+        ServerPlayer target = EntityArgument.getPlayer(context, ARG_PLAYER);
+        int seconds = IntegerArgumentType.getInteger(context, ARG_SECONDS);
         int ticks = seconds * 20;
 
         PlayerTimerData data = TimerManager.getOrCreateData(target);
@@ -62,8 +65,8 @@ public class SafariTimerCommand {
     }
 
     static int executeSet(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
-        ServerPlayer target = EntityArgument.getPlayer(context, "player");
-        int seconds = IntegerArgumentType.getInteger(context, "seconds");
+        ServerPlayer target = EntityArgument.getPlayer(context, ARG_PLAYER);
+        int seconds = IntegerArgumentType.getInteger(context, ARG_SECONDS);
         int ticks = seconds * 20;
 
         PlayerTimerData data = TimerManager.getOrCreateData(target);
@@ -84,7 +87,7 @@ public class SafariTimerCommand {
     }
 
     static int executeGet(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
-        ServerPlayer target = EntityArgument.getPlayer(context, "player");
+        ServerPlayer target = EntityArgument.getPlayer(context, ARG_PLAYER);
 
         PlayerTimerData data = TimerManager.getOrCreateData(target);
 
@@ -98,7 +101,7 @@ public class SafariTimerCommand {
     }
 
     static int executeToggle(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
-        ServerPlayer target = EntityArgument.getPlayer(context, "player");
+        ServerPlayer target = EntityArgument.getPlayer(context, ARG_PLAYER);
 
         TimerManager.toggleBypass(target, null);
 
@@ -118,7 +121,7 @@ public class SafariTimerCommand {
     }
 
     static int executeToggleWithState(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
-        ServerPlayer target = EntityArgument.getPlayer(context, "player");
+        ServerPlayer target = EntityArgument.getPlayer(context, ARG_PLAYER);
         boolean state = com.mojang.brigadier.arguments.BoolArgumentType.getBool(context, "state");
 
         TimerManager.toggleBypass(target, state);

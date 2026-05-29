@@ -16,17 +16,22 @@ public class DimensionTimerCommand {
 
     private DimensionTimerCommand() {}
 
+    private static final String ARG_DIMENSION = "dimension";
+    private static final String ARG_PLAYER = "player";
+    private static final String ARG_SECONDS = "seconds";
+    private static final String MSG_NOT_CONFIGURED = "cobblesafari.command.dimension.not_configured";
+
     static int executeAdd(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
-        String dimensionId = StringArgumentType.getString(context, "dimension").trim();
+        String dimensionId = StringArgumentType.getString(context, ARG_DIMENSION).trim();
         
         if (!SafariTimerConfig.hasDimensionTimer(dimensionId)) {
             context.getSource().sendFailure(Component.translatable(
-                    "cobblesafari.command.dimension.not_configured", dimensionId));
+                    MSG_NOT_CONFIGURED, dimensionId));
             return 0;
         }
 
-        ServerPlayer target = EntityArgument.getPlayer(context, "player");
-        int seconds = IntegerArgumentType.getInteger(context, "seconds");
+        ServerPlayer target = EntityArgument.getPlayer(context, ARG_PLAYER);
+        int seconds = IntegerArgumentType.getInteger(context, ARG_SECONDS);
         int ticks = seconds * 20;
 
         PlayerTimerData data = TimerManager.getOrCreateData(target, dimensionId);
@@ -50,16 +55,16 @@ public class DimensionTimerCommand {
     }
 
     static int executeRemove(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
-        String dimensionId = StringArgumentType.getString(context, "dimension").trim();
+        String dimensionId = StringArgumentType.getString(context, ARG_DIMENSION).trim();
         
         if (!SafariTimerConfig.hasDimensionTimer(dimensionId)) {
             context.getSource().sendFailure(Component.translatable(
-                    "cobblesafari.command.dimension.not_configured", dimensionId));
+                    MSG_NOT_CONFIGURED, dimensionId));
             return 0;
         }
 
-        ServerPlayer target = EntityArgument.getPlayer(context, "player");
-        int seconds = IntegerArgumentType.getInteger(context, "seconds");
+        ServerPlayer target = EntityArgument.getPlayer(context, ARG_PLAYER);
+        int seconds = IntegerArgumentType.getInteger(context, ARG_SECONDS);
         int ticks = seconds * 20;
 
         PlayerTimerData data = TimerManager.getOrCreateData(target, dimensionId);
@@ -84,16 +89,16 @@ public class DimensionTimerCommand {
     }
 
     static int executeSet(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
-        String dimensionId = StringArgumentType.getString(context, "dimension").trim();
+        String dimensionId = StringArgumentType.getString(context, ARG_DIMENSION).trim();
         
         if (!SafariTimerConfig.hasDimensionTimer(dimensionId)) {
             context.getSource().sendFailure(Component.translatable(
-                    "cobblesafari.command.dimension.not_configured", dimensionId));
+                    MSG_NOT_CONFIGURED, dimensionId));
             return 0;
         }
 
-        ServerPlayer target = EntityArgument.getPlayer(context, "player");
-        int seconds = IntegerArgumentType.getInteger(context, "seconds");
+        ServerPlayer target = EntityArgument.getPlayer(context, ARG_PLAYER);
+        int seconds = IntegerArgumentType.getInteger(context, ARG_SECONDS);
         int ticks = seconds * 20;
 
         PlayerTimerData data = TimerManager.getOrCreateData(target, dimensionId);
@@ -116,15 +121,15 @@ public class DimensionTimerCommand {
     }
 
     static int executeGet(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
-        String dimensionId = StringArgumentType.getString(context, "dimension").trim();
+        String dimensionId = StringArgumentType.getString(context, ARG_DIMENSION).trim();
         
         if (!SafariTimerConfig.hasDimensionTimer(dimensionId)) {
             context.getSource().sendFailure(Component.translatable(
-                    "cobblesafari.command.dimension.not_configured", dimensionId));
+                    MSG_NOT_CONFIGURED, dimensionId));
             return 0;
         }
 
-        ServerPlayer target = EntityArgument.getPlayer(context, "player");
+        ServerPlayer target = EntityArgument.getPlayer(context, ARG_PLAYER);
 
         PlayerTimerData data = TimerManager.getOrCreateData(target, dimensionId);
 

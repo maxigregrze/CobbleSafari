@@ -17,6 +17,8 @@ import java.util.List;
 import java.util.Map;
 
 public final class WonderTradeDataLoader {
+    private static final String KEY_GROUP_ID = "groupId";
+    private static final String KEY_EVENT_NAME = "eventName";
     private static final String PREFIX_GROUPS = "wonder_trade/pokemon_groups";
     private static final String PREFIX_EVENTS = "wonder_trade/events";
 
@@ -42,12 +44,12 @@ public final class WonderTradeDataLoader {
                     continue;
                 }
                 JsonObject json = root.getAsJsonObject();
-                if (!json.has("groupId") || !json.has("population")) {
+                if (!json.has(KEY_GROUP_ID) || !json.has("population")) {
                     CobbleSafari.LOGGER.warn("[WonderTrade] group {} missing groupId/population", entry.getKey());
                     skipped++;
                     continue;
                 }
-                String groupId = json.get("groupId").getAsString();
+                String groupId = json.get(KEY_GROUP_ID).getAsString();
                 JsonArray pop = json.getAsJsonArray("population");
                 List<String> population = new ArrayList<>();
                 for (JsonElement el : pop) {
@@ -86,8 +88,8 @@ public final class WonderTradeDataLoader {
                     continue;
                 }
                 String eventId = json.get("eventId").getAsString();
-                String eventName = json.has("eventName") ? json.get("eventName").getAsString() : eventId;
-                if (!json.has("eventName")) {
+                String eventName = json.has(KEY_EVENT_NAME) ? json.get(KEY_EVENT_NAME).getAsString() : eventId;
+                if (!json.has(KEY_EVENT_NAME)) {
                     CobbleSafari.LOGGER.warn("[WonderTrade] event {} missing eventName; using eventId as fallback", entry.getKey());
                 }
                 boolean hasBanner = json.has("hasCustomBanner") && json.get("hasCustomBanner").getAsBoolean();
@@ -102,9 +104,9 @@ public final class WonderTradeDataLoader {
                 for (JsonElement el : pools) {
                     if (!el.isJsonObject()) continue;
                     JsonObject p = el.getAsJsonObject();
-                    if (!p.has("groupId") || !p.has("weight")) continue;
+                    if (!p.has(KEY_GROUP_ID) || !p.has("weight")) continue;
                     WonderTradeSettings.WeightedPoolEntry w = new WonderTradeSettings.WeightedPoolEntry();
-                    w.groupId = p.get("groupId").getAsString();
+                    w.groupId = p.get(KEY_GROUP_ID).getAsString();
                     w.weight = p.get("weight").getAsInt();
                     eventPools.add(w);
                 }

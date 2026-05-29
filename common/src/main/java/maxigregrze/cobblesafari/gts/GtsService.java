@@ -315,7 +315,7 @@ public final class GtsService {
             if (views.size() >= max) {
                 break;
             }
-            Pokemon p = resolveCandidate(player, party, pc, ref);
+            Pokemon p = resolveCandidate(party, pc, ref);
             if (p != null) {
                 views.add(
                         new CandidateView(
@@ -811,7 +811,7 @@ public final class GtsService {
         GtsTradeCandidate ref = pending.getCandidates().get(idx);
         PlayerPartyStore party = Cobblemon.INSTANCE.getStorage().getParty(player);
         PCStore pc = Cobblemon.INSTANCE.getStorage().getPC(player);
-        Pokemon p = resolveCandidate(player, party, pc, ref);
+        Pokemon p = resolveCandidate(party, pc, ref);
         if (p == null) {
             return Optional.empty();
         }
@@ -860,7 +860,7 @@ public final class GtsService {
         }
         PlayerPartyStore party = Cobblemon.INSTANCE.getStorage().getParty(player);
         PCStore pc = Cobblemon.INSTANCE.getStorage().getPC(player);
-        Pokemon candidate = resolveCandidate(player, party, pc, ref);
+        Pokemon candidate = resolveCandidate(party, pc, ref);
         if (candidate == null || !candidate.getUuid().equals(ref.pokemonUuid())) {
             offer.clearLock();
             data.setDirty();
@@ -960,7 +960,7 @@ public final class GtsService {
         };
     }
 
-    private static Pokemon resolveCandidate(ServerPlayer player, PlayerPartyStore party, PCStore pc, GtsTradeCandidate ref) {
+    private static Pokemon resolveCandidate(PlayerPartyStore party, PCStore pc, GtsTradeCandidate ref) {
         return switch (ref.source()) {
             case PARTY -> {
                 Pokemon p = party.get(ref.partySlot());

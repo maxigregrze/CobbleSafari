@@ -151,10 +151,7 @@ public final class RotoGlideServerLogic {
         if (player.getAbilities().flying) {
             return true;
         }
-        if (player.isFallFlying()) {
-            return true;
-        }
-        return false;
+        return player.isFallFlying();
     }
 
     private static final class PlayerState {

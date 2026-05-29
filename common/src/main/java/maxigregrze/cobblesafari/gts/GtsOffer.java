@@ -234,6 +234,16 @@ public final class GtsOffer {
         this.lockExpireEpochMs = 0L;
     }
 
+    private static final String KEY_WISH_GENDER = "WishGender";
+    private static final String KEY_WISH_SHINY = "WishShiny";
+    private static final String KEY_LOCKED = "Locked";
+    private static final String KEY_LOCK_OWNER = "LockOwner";
+    private static final String KEY_LOCK_EXPIRE = "LockExpire";
+    private static final String KEY_DEP_SPECIES_PATH = "DepSpeciesPath";
+    private static final String KEY_UNIQUE_OFFER = "UniqueOffer";
+    private static final String KEY_UNIQUE_OFFER_TEMPLATE_ID = "UniqueOfferTemplateId";
+    private static final String KEY_PERSONAL_TARGET = "PersonalTarget";
+
     public CompoundTag toNbt() {
         CompoundTag tag = new CompoundTag();
         tag.putInt("Id", id);
@@ -241,25 +251,25 @@ public final class GtsOffer {
         tag.put("Pokemon", pokemonData.copy());
         tag.putString("WishSpecies", wishSpecies);
         tag.putInt("WishLevelBucket", wishLevelBucket);
-        tag.putString("WishGender", wishGender.name());
-        tag.putString("WishShiny", wishShiny.name());
+        tag.putString(KEY_WISH_GENDER, wishGender.name());
+        tag.putString(KEY_WISH_SHINY, wishShiny.name());
         tag.putInt("Age", age);
-        tag.putBoolean("Locked", locked);
+        tag.putBoolean(KEY_LOCKED, locked);
         if (lockOwnerUuid != null) {
-            tag.putUUID("LockOwner", lockOwnerUuid);
+            tag.putUUID(KEY_LOCK_OWNER, lockOwnerUuid);
         }
         if (lockExpireEpochMs != 0L) {
-            tag.putLong("LockExpire", lockExpireEpochMs);
+            tag.putLong(KEY_LOCK_EXPIRE, lockExpireEpochMs);
         }
-        tag.putString("DepSpeciesPath", depositedSpeciesPath);
+        tag.putString(KEY_DEP_SPECIES_PATH, depositedSpeciesPath);
         tag.putString("DepGender", depositedGender.name());
         tag.putBoolean("DepShiny", depositedShiny);
-        tag.putBoolean("UniqueOffer", uniqueOffer);
+        tag.putBoolean(KEY_UNIQUE_OFFER, uniqueOffer);
         if (uniqueOffer && uniqueOfferTemplateId != null && !uniqueOfferTemplateId.isEmpty()) {
-            tag.putString("UniqueOfferTemplateId", uniqueOfferTemplateId);
+            tag.putString(KEY_UNIQUE_OFFER_TEMPLATE_ID, uniqueOfferTemplateId);
         }
         if (personalTargetUuid != null) {
-            tag.putUUID("PersonalTarget", personalTargetUuid);
+            tag.putUUID(KEY_PERSONAL_TARGET, personalTargetUuid);
         }
         return tag;
     }
@@ -271,25 +281,27 @@ public final class GtsOffer {
         String wish = tag.getString("WishSpecies");
         int bucket = tag.getInt("WishLevelBucket");
         GenderFilter gf = GenderFilter.ANY;
-        if (tag.contains("WishGender", Tag.TAG_STRING)) {
+        if (tag.contains(KEY_WISH_GENDER, Tag.TAG_STRING)) {
             try {
-                gf = GenderFilter.valueOf(tag.getString("WishGender"));
+                gf = GenderFilter.valueOf(tag.getString(KEY_WISH_GENDER));
             } catch (IllegalArgumentException ignored) {
+                // Unknown gender filter value; keep the ANY default.
             }
         }
         ShinyWish ws = ShinyWish.ANY;
-        if (tag.contains("WishShiny", Tag.TAG_STRING)) {
+        if (tag.contains(KEY_WISH_SHINY, Tag.TAG_STRING)) {
             try {
-                ws = ShinyWish.valueOf(tag.getString("WishShiny"));
+                ws = ShinyWish.valueOf(tag.getString(KEY_WISH_SHINY));
             } catch (IllegalArgumentException ignored) {
+                // Unknown shiny wish value; keep the ANY default.
             }
         }
 
         String depPath;
         Gender depGender;
         boolean depShiny;
-        if (tag.contains("DepSpeciesPath", Tag.TAG_STRING)) {
-            depPath = tag.getString("DepSpeciesPath");
+        if (tag.contains(KEY_DEP_SPECIES_PATH, Tag.TAG_STRING)) {
+            depPath = tag.getString(KEY_DEP_SPECIES_PATH);
             depGender = parseGenderSafe(tag.getString("DepGender"));
             depShiny = tag.getBoolean("DepShiny");
         } else {
@@ -298,21 +310,21 @@ public final class GtsOffer {
             depShiny = p.getBoolean("Shiny");
         }
 
-        boolean unique = tag.contains("UniqueOffer", Tag.TAG_BYTE) && tag.getBoolean("UniqueOffer");
+        boolean unique = tag.contains(KEY_UNIQUE_OFFER, Tag.TAG_BYTE) && tag.getBoolean(KEY_UNIQUE_OFFER);
         String uniqueTemplateId =
-                tag.contains("UniqueOfferTemplateId", Tag.TAG_STRING) ? tag.getString("UniqueOfferTemplateId") : "";
-        UUID personalTarget = tag.hasUUID("PersonalTarget") ? tag.getUUID("PersonalTarget") : null;
+                tag.contains(KEY_UNIQUE_OFFER_TEMPLATE_ID, Tag.TAG_STRING) ? tag.getString(KEY_UNIQUE_OFFER_TEMPLATE_ID) : "";
+        UUID personalTarget = tag.hasUUID(KEY_PERSONAL_TARGET) ? tag.getUUID(KEY_PERSONAL_TARGET) : null;
         GtsOffer o =
                 new GtsOffer(
                         id, dep, p, wish, bucket, gf, ws, depPath, depGender, depShiny, unique, uniqueTemplateId,
                         personalTarget);
         o.age = tag.getInt("Age");
-        o.locked = tag.contains("Locked", Tag.TAG_BYTE) && tag.getBoolean("Locked");
-        if (tag.hasUUID("LockOwner")) {
-            o.lockOwnerUuid = tag.getUUID("LockOwner");
+        o.locked = tag.contains(KEY_LOCKED, Tag.TAG_BYTE) && tag.getBoolean(KEY_LOCKED);
+        if (tag.hasUUID(KEY_LOCK_OWNER)) {
+            o.lockOwnerUuid = tag.getUUID(KEY_LOCK_OWNER);
         }
-        if (tag.contains("LockExpire", Tag.TAG_LONG)) {
-            o.lockExpireEpochMs = tag.getLong("LockExpire");
+        if (tag.contains(KEY_LOCK_EXPIRE, Tag.TAG_LONG)) {
+            o.lockExpireEpochMs = tag.getLong(KEY_LOCK_EXPIRE);
         }
         return o;
     }

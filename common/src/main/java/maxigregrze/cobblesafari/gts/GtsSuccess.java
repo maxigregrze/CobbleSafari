@@ -50,13 +50,16 @@ public final class GtsSuccess {
         this.notified = notified;
     }
 
+    private static final String KEY_REASON = "Reason";
+    private static final String KEY_NOTIFIED = "Notified";
+
     public CompoundTag toNbt() {
         CompoundTag tag = new CompoundTag();
         tag.putInt("Id", id);
         tag.putUUID("Recipient", recipientUuid);
         tag.put("Pokemon", pokemonData.copy());
-        tag.putString("Reason", reason.name());
-        tag.putBoolean("Notified", notified);
+        tag.putString(KEY_REASON, reason.name());
+        tag.putBoolean(KEY_NOTIFIED, notified);
         return tag;
     }
 
@@ -65,14 +68,16 @@ public final class GtsSuccess {
         UUID recipient = tag.getUUID("Recipient");
         CompoundTag p = tag.getCompound("Pokemon");
         Reason reason = Reason.TRADED;
-        if (tag.contains("Reason", Tag.TAG_STRING)) {
+        if (tag.contains(KEY_REASON, Tag.TAG_STRING)) {
             try {
-                reason = Reason.valueOf(tag.getString("Reason"));
-            } catch (IllegalArgumentException ignored) {}
+                reason = Reason.valueOf(tag.getString(KEY_REASON));
+            } catch (IllegalArgumentException ignored) {
+                // Unknown reason value; keep the TRADED default.
+            }
         }
         GtsSuccess s = new GtsSuccess(id, recipient, p, reason);
-        if (tag.contains("Notified", Tag.TAG_BYTE)) {
-            s.notified = tag.getBoolean("Notified");
+        if (tag.contains(KEY_NOTIFIED, Tag.TAG_BYTE)) {
+            s.notified = tag.getBoolean(KEY_NOTIFIED);
         }
         return s;
     }

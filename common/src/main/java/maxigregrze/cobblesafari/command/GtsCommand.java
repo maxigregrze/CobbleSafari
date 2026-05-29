@@ -47,6 +47,8 @@ public final class GtsCommand {
     private static final String ARG_GENDER = "gender";
     private static final String ARG_SHINY = "shiny";
     private static final String ARG_ID = "id";
+    private static final String MSG_GTS_ERROR = "cobblesafari.command.gts.error";
+    private static final String KEY_SUCCESS = "success";
     private static final String ARG_PICK = "pickIndex";
     private static final String ARG_PAGE = "page";
     private static final String ARG_OFFER_ID = "offerId";
@@ -75,7 +77,7 @@ public final class GtsCommand {
                                 .executes(ctx -> listOffers(ctx, 1))
                                 .then(Commands.argument(ARG_PAGE, IntegerArgumentType.integer(1))
                                         .executes(ctx -> listOffers(ctx, IntegerArgumentType.getInteger(ctx, ARG_PAGE)))))
-                        .then(Commands.literal("success")
+                        .then(Commands.literal(KEY_SUCCESS)
                                 .executes(ctx -> listSuccess(ctx, 1))
                                 .then(Commands.argument(ARG_PAGE, IntegerArgumentType.integer(1))
                                         .executes(ctx -> listSuccess(ctx, IntegerArgumentType.getInteger(ctx, ARG_PAGE))))))
@@ -84,7 +86,7 @@ public final class GtsCommand {
                         .then(Commands.literal("offer")
                                 .then(Commands.argument(ARG_ID, IntegerArgumentType.integer(1))
                                         .executes(GtsCommand::detailsOffer)))
-                        .then(Commands.literal("success")
+                        .then(Commands.literal(KEY_SUCCESS)
                                 .then(Commands.argument(ARG_ID, IntegerArgumentType.integer(1))
                                         .executes(GtsCommand::detailsSuccess))))
                 .then(Commands.literal("remove")
@@ -307,7 +309,7 @@ public final class GtsCommand {
             ctx.getSource().sendFailure(Component.translatable("cobblesafari.command.gts.details_not_found"));
             return 0;
         }
-        sendPokemonDetails(ctx, opt.get().getPokemonData(), "success", id);
+        sendPokemonDetails(ctx, opt.get().getPokemonData(), KEY_SUCCESS, id);
         return 1;
     }
 
@@ -344,7 +346,7 @@ public final class GtsCommand {
     }
 
     /**
-     * @param kindHeader {@code "success"} to print the GTS header, or {@code null} when the header was already printed
+     * @param kindHeader {@code KEY_SUCCESS} to print the GTS header, or {@code null} when the header was already printed
      *     (e.g. offer details after the wishlist section).
      */
     private static void sendPokemonDetails(
@@ -497,10 +499,10 @@ public final class GtsCommand {
         int to = Math.min(from + pageSize, defs.size());
         for (int i = from; i < to; i++) {
             GtsUniqueOfferDefinition def = defs.get(i);
-            String givenSpecies = speciesNameFromGivenLine(server, def.getGivenLine());
-            String ot = otPreviewFromGivenLine(server, def);
+            String givenSpecies = speciesNameFromGivenLine(def.getGivenLine());
+            String ot = otPreviewFromGivenLine(def);
             int markCount = def.getGivenMarkIds().size();
-            String wishSpecies = wishSpeciesNameFromLine(server, def.getWishSpeciesLine());
+            String wishSpecies = wishSpeciesNameFromLine(def.getWishSpeciesLine());
             String lvl = levelLabel(def.getWishLevelBucket());
             String gen = def.getWishGender().name().toLowerCase(Locale.ROOT);
             String shiny = def.getWishShiny().name().toLowerCase(Locale.ROOT);
@@ -710,7 +712,7 @@ public final class GtsCommand {
         };
     }
 
-    private static String speciesNameFromGivenLine(MinecraftServer server, String givenLine) {
+    private static String speciesNameFromGivenLine(String givenLine) {
         try {
             PokemonProperties props = PokemonProperties.Companion.parse(givenLine);
             if (props.getSpecies() == null) {
@@ -723,7 +725,7 @@ public final class GtsCommand {
         }
     }
 
-    private static String otPreviewFromGivenLine(MinecraftServer server, GtsUniqueOfferDefinition def) {
+    private static String otPreviewFromGivenLine(GtsUniqueOfferDefinition def) {
         try {
             Pokemon p = GtsService.createGivenPokemon(def);
             String ot = p.getOriginalTrainerName();
@@ -733,7 +735,7 @@ public final class GtsCommand {
         }
     }
 
-    private static String wishSpeciesNameFromLine(MinecraftServer server, String wishLine) {
+    private static String wishSpeciesNameFromLine(String wishLine) {
         try {
             PokemonProperties props = PokemonProperties.Companion.parse(wishLine);
             if (props.getSpecies() == null) {
@@ -817,7 +819,7 @@ public final class GtsCommand {
                 yield 0;
             }
             case ERROR -> {
-                ctx.getSource().sendFailure(Component.translatable("cobblesafari.command.gts.error"));
+                ctx.getSource().sendFailure(Component.translatable(MSG_GTS_ERROR));
                 yield 0;
             }
         };
@@ -870,7 +872,7 @@ public final class GtsCommand {
                 yield 0;
             }
             case ERROR -> {
-                ctx.getSource().sendFailure(Component.translatable("cobblesafari.command.gts.error"));
+                ctx.getSource().sendFailure(Component.translatable(MSG_GTS_ERROR));
                 yield 0;
             }
         };
@@ -909,7 +911,7 @@ public final class GtsCommand {
                 yield 0;
             }
             case ERROR -> {
-                ctx.getSource().sendFailure(Component.translatable("cobblesafari.command.gts.error"));
+                ctx.getSource().sendFailure(Component.translatable(MSG_GTS_ERROR));
                 yield 0;
             }
         };
@@ -941,7 +943,7 @@ public final class GtsCommand {
                 yield 0;
             }
             case ERROR -> {
-                ctx.getSource().sendFailure(Component.translatable("cobblesafari.command.gts.error"));
+                ctx.getSource().sendFailure(Component.translatable(MSG_GTS_ERROR));
                 yield 0;
             }
         };
@@ -969,7 +971,7 @@ public final class GtsCommand {
                 yield 0;
             }
             case ERROR -> {
-                ctx.getSource().sendFailure(Component.translatable("cobblesafari.command.gts.error"));
+                ctx.getSource().sendFailure(Component.translatable(MSG_GTS_ERROR));
                 yield 0;
             }
         };
