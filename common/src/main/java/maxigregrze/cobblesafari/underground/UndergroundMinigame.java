@@ -24,6 +24,10 @@ import java.util.UUID;
 
 public class UndergroundMinigame {
 
+    private UndergroundMinigame() {
+        // Utility class; not meant to be instantiated.
+    }
+
     private static final Map<UUID, MiningSession> activeSessions = new HashMap<>();
 
     public static MenuType<UndergroundScreenHandler> MENU_TYPE;

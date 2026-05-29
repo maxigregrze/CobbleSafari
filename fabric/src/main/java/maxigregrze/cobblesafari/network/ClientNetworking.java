@@ -14,6 +14,10 @@ import net.minecraft.client.gui.screens.inventory.BookViewScreen;
 
 public class ClientNetworking {
 
+    private ClientNetworking() {
+        // Utility class; not meant to be instantiated.
+    }
+
     public static void registerFabricClientReceivers() {
         ClientPlayNetworking.registerGlobalReceiver(
                 OpenTpAcceptPayload.TYPE,

@@ -21,6 +21,7 @@ public class GiratinaCoreBlockEntity extends BlockEntity {
     private float previousYaw;
     private float targetYaw;
     private static final long NO_TRADE_YET = -1L;
+    private static final String KEY_LAST_TRADE_GAME_TIME = "LastTradeGameTime";
     private long lastTradeGameTime = NO_TRADE_YET;
 
     public GiratinaCoreBlockEntity(BlockPos pos, BlockState state) {
@@ -85,13 +86,13 @@ public class GiratinaCoreBlockEntity extends BlockEntity {
     @Override
     protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.saveAdditional(tag, registries);
-        tag.putLong("LastTradeGameTime", lastTradeGameTime);
+        tag.putLong(KEY_LAST_TRADE_GAME_TIME, lastTradeGameTime);
     }
 
     @Override
     protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
-        lastTradeGameTime = tag.contains("LastTradeGameTime") ? tag.getLong("LastTradeGameTime") : NO_TRADE_YET;
+        lastTradeGameTime = tag.contains(KEY_LAST_TRADE_GAME_TIME) ? tag.getLong(KEY_LAST_TRADE_GAME_TIME) : NO_TRADE_YET;
         if (lastTradeGameTime == Long.MIN_VALUE) {
             lastTradeGameTime = NO_TRADE_YET;
         }

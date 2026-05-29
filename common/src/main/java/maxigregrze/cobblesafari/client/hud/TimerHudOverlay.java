@@ -10,6 +10,11 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.resources.ResourceLocation;
 
 public class TimerHudOverlay {
+
+    private TimerHudOverlay() {
+        // Utility class; not meant to be instantiated.
+    }
+
     private static final ResourceLocation TIMER_TEXTURE =
             ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, "textures/gui/timer_background.png");
 
@@ -49,6 +54,7 @@ public class TimerHudOverlay {
         updateDisplay(dimensionId, ticks, active, false);
     }
 
+    /** @deprecated use {@link #updateDisplay(String, int, boolean)} with an explicit dimension id. */
     @Deprecated
     public static void updateDisplay(int ticks, boolean active) {
         updateDisplay("cobblesafari:domedimension", ticks, active, false);

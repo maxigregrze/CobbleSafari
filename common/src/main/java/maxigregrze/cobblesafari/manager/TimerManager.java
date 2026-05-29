@@ -38,6 +38,11 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class TimerManager {
+
+    private TimerManager() {
+        // Utility class; not meant to be instantiated.
+    }
+
     private static final Map<UUID, Map<String, PlayerTimerData>> activeTimers = new ConcurrentHashMap<>();
     private static MinecraftServer serverInstance;
 

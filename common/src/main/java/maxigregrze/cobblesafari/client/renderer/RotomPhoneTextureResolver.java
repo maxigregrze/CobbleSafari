@@ -18,6 +18,9 @@ public final class RotomPhoneTextureResolver {
     private static final Pattern SKIN_ID_PATTERN = Pattern.compile("^[a-z0-9_]+$");
     private static final String ITEM_MODEL_DIR = "models/item";
     private static final String VARIANT_PREFIX = "rotomphone_variant_";
+    private static final String DEFAULT_ID = "default";
+    private static final String ITEM_PREFIX = "item/";
+    private static final String JSON_EXT = ".json";
 
     private RotomPhoneTextureResolver() {}
 
@@ -30,27 +33,27 @@ public final class RotomPhoneTextureResolver {
     public static ResourceLocation modelFor(String skin, boolean shiny) {
         String id;
         if (skin == null || skin.isEmpty()) {
-            id = "default";
+            id = DEFAULT_ID;
         } else {
             id = skin.toLowerCase(Locale.ROOT);
             if (!SKIN_ID_PATTERN.matcher(id).matches()) {
-                id = "default";
+                id = DEFAULT_ID;
             }
         }
-        String path = "item/" + VARIANT_PREFIX + id + (shiny ? "_s" : "");
+        String path = ITEM_PREFIX + VARIANT_PREFIX + id + (shiny ? "_s" : "");
         return ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, path);
     }
 
     public static List<ResourceLocation> allVariantModels(ResourceManager resourceManager) {
         Set<String> baseIds = new LinkedHashSet<>();
-        baseIds.add("default");
+        baseIds.add(DEFAULT_ID);
         for (String id : discoverVariantSkinIds(resourceManager)) {
             baseIds.add(id);
         }
         List<ResourceLocation> all = new ArrayList<>();
         for (String id : baseIds) {
-            all.add(ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, "item/" + VARIANT_PREFIX + id));
-            all.add(ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, "item/" + VARIANT_PREFIX + id + "_s"));
+            all.add(ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, ITEM_PREFIX + VARIANT_PREFIX + id));
+            all.add(ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, ITEM_PREFIX + VARIANT_PREFIX + id + "_s"));
         }
         return all;
     }
@@ -63,13 +66,13 @@ public final class RotomPhoneTextureResolver {
                 return false;
             }
             String p = loc.getPath();
-            return p.startsWith(ITEM_MODEL_DIR + "/") && p.startsWith(ITEM_MODEL_DIR + "/" + VARIANT_PREFIX) && p.endsWith(".json");
+            return p.startsWith(ITEM_MODEL_DIR + "/") && p.startsWith(ITEM_MODEL_DIR + "/" + VARIANT_PREFIX) && p.endsWith(JSON_EXT);
         }).entrySet()) {
             String name = entry.getKey().getPath().substring(ITEM_MODEL_DIR.length() + 1);
-            if (!name.startsWith(VARIANT_PREFIX) || !name.endsWith(".json")) {
+            if (!name.startsWith(VARIANT_PREFIX) || !name.endsWith(JSON_EXT)) {
                 continue;
             }
-            name = name.substring(0, name.length() - ".json".length());
+            name = name.substring(0, name.length() - JSON_EXT.length());
             if (name.endsWith("_s")) {
                 name = name.substring(0, name.length() - 2);
             }

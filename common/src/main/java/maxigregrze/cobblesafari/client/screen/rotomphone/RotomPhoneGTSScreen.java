@@ -50,6 +50,16 @@ public class RotomPhoneGTSScreen extends RotomPhoneBaseScreen {
         ERROR
     }
 
+    private static final String GENDER_GENDERLESS = "cobblemon.gender.genderless";
+    private static final String GENDER_FEMALE = "cobblemon.gender.female";
+    private static final String GENDER_MALE = "cobblemon.gender.male";
+    private static final String TT_SHINY_YES = "gui.cobblesafari.rotomphone.wonder.tt.shiny.yes";
+    private static final String TT_SHINY_NO = "gui.cobblesafari.rotomphone.wonder.tt.shiny.no";
+    private static final String TT_LEVEL = "gui.cobblesafari.rotomphone.wonder.tt.level";
+    private static final String GTS_LEVEL_PREFIX = "gui.cobblesafari.rotomphone.gts.level.";
+    private static final String GTS_EXIT = "gui.cobblesafari.rotomphone.gts.exit";
+    private static final String STATUS_SUCCESS = "SUCCESS";
+
     /** Begin hub layout modes (retrieve confirmation is local UI). */
     private enum BeginBeginMode {
         NO_OFFER,
@@ -263,7 +273,7 @@ public class RotomPhoneGTSScreen extends RotomPhoneBaseScreen {
             }
             case GtsAppResultPayload.SUB_DEPOSIT -> {
                 confirmPending = false;
-                if ("SUCCESS".equals(p.operationResult())) {
+                if (STATUS_SUCCESS.equals(p.operationResult())) {
                     offeredAnimPokemon = loadPokemon(p.offeredNbt());
                     offeredTradeState = new FloatingState();
                     tradeStartedAtMillis = System.currentTimeMillis();
@@ -277,7 +287,7 @@ public class RotomPhoneGTSScreen extends RotomPhoneBaseScreen {
             case GtsAppResultPayload.SUB_RETRIEVAL -> {
                 retrievePending = false;
                 beginMode = BeginBeginMode.NO_OFFER;
-                if ("SUCCESS".equals(p.operationResult())) {
+                if (STATUS_SUCCESS.equals(p.operationResult())) {
                     offeredAnimPokemon = loadPokemon(p.offeredNbt());
                     offeredTradeState = new FloatingState();
                     tradeStartedAtMillis = System.currentTimeMillis();
@@ -288,7 +298,7 @@ public class RotomPhoneGTSScreen extends RotomPhoneBaseScreen {
             }
             case GtsAppResultPayload.SUB_RECEIVE -> {
                 claimPending = false;
-                if ("SUCCESS".equals(p.operationResult())) {
+                if (STATUS_SUCCESS.equals(p.operationResult())) {
                     receivedAnimPokemon = loadPokemon(p.receivedNbt());
                     receivedTradeState = new FloatingState();
                     tradeStartedAtMillis = System.currentTimeMillis();
@@ -774,7 +784,7 @@ public class RotomPhoneGTSScreen extends RotomPhoneBaseScreen {
         drawTinted(g, TEX_RIGHT, originX + 218, originY + 96, 32, 32, luHov ? 0xFFFFFFFF : theme);
 
         String levelKey = paramLevelBucket < 0 ? "any" : Integer.toString(paramLevelBucket);
-        drawScaledCentered(g, Component.translatable("gui.cobblesafari.rotomphone.gts.level." + levelKey),
+        drawScaledCentered(g, Component.translatable(GTS_LEVEL_PREFIX + levelKey),
                 originX + 174, originY + 112, theme);
 
         if (!paramSpeciesChecked) {
@@ -879,7 +889,7 @@ public class RotomPhoneGTSScreen extends RotomPhoneBaseScreen {
         if (elapsed >= ANIM_HALF_TOTAL_MS) {
             boolean h = isInBounds(mx, my, originX + 138, originY + HALF_ANIM_EXIT_Y, 72, 32);
             drawButton(g, originX + 138, originY + HALF_ANIM_EXIT_Y, h, theme,
-                    Component.translatable("gui.cobblesafari.rotomphone.gts.exit"));
+                    Component.translatable(GTS_EXIT));
         }
     }
 
@@ -905,7 +915,7 @@ public class RotomPhoneGTSScreen extends RotomPhoneBaseScreen {
         if (elapsed >= ANIM_HALF_TOTAL_MS) {
             boolean h = isInBounds(mx, my, originX + 138, originY + HALF_ANIM_EXIT_Y, 72, 32);
             drawButton(g, originX + 138, originY + HALF_ANIM_EXIT_Y, h, theme,
-                    Component.translatable("gui.cobblesafari.rotomphone.gts.exit"));
+                    Component.translatable(GTS_EXIT));
         }
     }
 
@@ -939,7 +949,7 @@ public class RotomPhoneGTSScreen extends RotomPhoneBaseScreen {
         if (elapsed >= ANIM_TRADE_TOTAL_MS) {
             boolean h = isInBounds(mx, my, originX + 138, originY + 136, 72, 32);
             drawButton(g, originX + 138, originY + 136, h, theme,
-                    Component.translatable("gui.cobblesafari.rotomphone.gts.exit"));
+                    Component.translatable(GTS_EXIT));
         }
     }
 
@@ -1711,7 +1721,7 @@ public class RotomPhoneGTSScreen extends RotomPhoneBaseScreen {
     private List<Component> buildWishPreviewTooltip(Pokemon w) {
         List<Component> lines = new ArrayList<>();
         lines.add(w.getDisplayName(false));
-        lines.add(Component.translatable("gui.cobblesafari.rotomphone.wonder.tt.level", w.getLevel()));
+        lines.add(Component.translatable(TT_LEVEL, w.getLevel()));
         lines.addAll(wishCriteriaLines());
         return lines;
     }
@@ -1721,7 +1731,7 @@ public class RotomPhoneGTSScreen extends RotomPhoneBaseScreen {
         lines.add(Component.translatable("gui.cobblesafari.rotomphone.gts.tt.wish.species",
                 Component.literal(sanitizeSpeciesLine(paramSpeciesBox.getValue()))));
         lines.add(Component.translatable("gui.cobblesafari.rotomphone.gts.tt.wish.level",
-                Component.translatable("gui.cobblesafari.rotomphone.gts.level."
+                Component.translatable(GTS_LEVEL_PREFIX
                         + (paramLevelBucket < 0 ? "any" : Integer.toString(paramLevelBucket)))));
         lines.add(Component.translatable("gui.cobblesafari.rotomphone.gts.tt.wish.gender",
                 genderFilterLabel(paramGender)));
@@ -1733,16 +1743,16 @@ public class RotomPhoneGTSScreen extends RotomPhoneBaseScreen {
     private List<Component> buildOfferSummaryTooltip(Pokemon offered, GtsAppResultPayload.SearchEntry e) {
         List<Component> lines = new ArrayList<>();
         lines.add(offered.getDisplayName(false));
-        lines.add(Component.translatable("gui.cobblesafari.rotomphone.wonder.tt.level", offered.getLevel()));
+        lines.add(Component.translatable(TT_LEVEL, offered.getLevel()));
         lines.add(Component.translatable("gui.cobblesafari.rotomphone.wonder.tt.gender", genderComponent(offered)));
         lines.add(Component.translatable("gui.cobblesafari.rotomphone.wonder.tt.shiny",
                 Component.translatable(offered.getShiny()
-                        ? "gui.cobblesafari.rotomphone.wonder.tt.shiny.yes"
-                        : "gui.cobblesafari.rotomphone.wonder.tt.shiny.no")));
+                        ? TT_SHINY_YES
+                        : TT_SHINY_NO)));
         lines.add(Component.translatable("gui.cobblesafari.rotomphone.gts.tt.wish.species",
                 Component.literal(e.wishSpecies() == null ? "" : e.wishSpecies())));
         lines.add(Component.translatable("gui.cobblesafari.rotomphone.gts.tt.wish.level",
-                Component.translatable("gui.cobblesafari.rotomphone.gts.level."
+                Component.translatable(GTS_LEVEL_PREFIX
                         + (e.wishLevelBucket() < 0 ? "any" : Integer.toString(e.wishLevelBucket())))));
         lines.add(Component.translatable("gui.cobblesafari.rotomphone.gts.tt.wish.gender",
                 genderFilterLabel(GenderFilter.parse(e.wishGender()))));
@@ -1754,26 +1764,26 @@ public class RotomPhoneGTSScreen extends RotomPhoneBaseScreen {
 
     private static Component genderComponent(Pokemon p) {
         String genderKey = switch (p.getGender()) {
-            case MALE -> "cobblemon.gender.male";
-            case FEMALE -> "cobblemon.gender.female";
-            default -> "cobblemon.gender.genderless";
+            case MALE -> GENDER_MALE;
+            case FEMALE -> GENDER_FEMALE;
+            default -> GENDER_GENDERLESS;
         };
         return Component.translatable(genderKey);
     }
 
     private static Component genderFilterLabel(GenderFilter g) {
         return switch (g) {
-            case MALE -> Component.translatable("cobblemon.gender.male");
-            case FEMALE -> Component.translatable("cobblemon.gender.female");
-            case GENDERLESS -> Component.translatable("cobblemon.gender.genderless");
+            case MALE -> Component.translatable(GENDER_MALE);
+            case FEMALE -> Component.translatable(GENDER_FEMALE);
+            case GENDERLESS -> Component.translatable(GENDER_GENDERLESS);
             default -> Component.translatable("gui.cobblesafari.rotomphone.gts.level.any");
         };
     }
 
     private static Component shinyFilterLabel(GtsOffer.ShinyWish s) {
         return switch (s) {
-            case SHINY -> Component.translatable("gui.cobblesafari.rotomphone.wonder.tt.shiny.yes");
-            case NOT_SHINY -> Component.translatable("gui.cobblesafari.rotomphone.wonder.tt.shiny.no");
+            case SHINY -> Component.translatable(TT_SHINY_YES);
+            case NOT_SHINY -> Component.translatable(TT_SHINY_NO);
             default -> Component.translatable("gui.cobblesafari.rotomphone.gts.level.any");
         };
     }
@@ -1781,20 +1791,20 @@ public class RotomPhoneGTSScreen extends RotomPhoneBaseScreen {
     private List<Component> buildPokemonTooltip(Pokemon p) {
         List<Component> lines = new ArrayList<>();
         lines.add(p.getDisplayName(false));
-        lines.add(Component.translatable("gui.cobblesafari.rotomphone.wonder.tt.level", p.getLevel()));
+        lines.add(Component.translatable(TT_LEVEL, p.getLevel()));
 
         String genderKey = switch (p.getGender()) {
-            case MALE -> "cobblemon.gender.male";
-            case FEMALE -> "cobblemon.gender.female";
-            default -> "cobblemon.gender.genderless";
+            case MALE -> GENDER_MALE;
+            case FEMALE -> GENDER_FEMALE;
+            default -> GENDER_GENDERLESS;
         };
         lines.add(Component.translatable("gui.cobblesafari.rotomphone.wonder.tt.gender",
                 Component.translatable(genderKey)));
 
         lines.add(Component.translatable("gui.cobblesafari.rotomphone.wonder.tt.shiny",
                 Component.translatable(p.getShiny()
-                        ? "gui.cobblesafari.rotomphone.wonder.tt.shiny.yes"
-                        : "gui.cobblesafari.rotomphone.wonder.tt.shiny.no")));
+                        ? TT_SHINY_YES
+                        : TT_SHINY_NO)));
 
         lines.add(Component.translatable("gui.cobblesafari.rotomphone.wonder.tt.ability",
                 Component.translatable("cobblemon.ability." + p.getAbility().getName())));

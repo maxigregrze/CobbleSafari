@@ -12,6 +12,9 @@ import net.minecraft.world.level.block.state.BlockState;
 
 public class SafariEggNestBlockEntity extends BlockEntity {
 
+    private static final String KEY_BIOME_TYPE = "BiomeType";
+    private static final String KEY_NEXT_REFILL_TICK = "NextRefillTick";
+
     private String biomeType = "";
     private long nextRefillTick = 0;
 
@@ -40,18 +43,18 @@ public class SafariEggNestBlockEntity extends BlockEntity {
     @Override
     protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.saveAdditional(tag, registries);
-        tag.putString("BiomeType", biomeType);
-        tag.putLong("NextRefillTick", nextRefillTick);
+        tag.putString(KEY_BIOME_TYPE, biomeType);
+        tag.putLong(KEY_NEXT_REFILL_TICK, nextRefillTick);
     }
 
     @Override
     protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
-        if (tag.contains("BiomeType")) {
-            biomeType = tag.getString("BiomeType");
+        if (tag.contains(KEY_BIOME_TYPE)) {
+            biomeType = tag.getString(KEY_BIOME_TYPE);
         }
-        if (tag.contains("NextRefillTick")) {
-            nextRefillTick = tag.getLong("NextRefillTick");
+        if (tag.contains(KEY_NEXT_REFILL_TICK)) {
+            nextRefillTick = tag.getLong(KEY_NEXT_REFILL_TICK);
         }
     }
 

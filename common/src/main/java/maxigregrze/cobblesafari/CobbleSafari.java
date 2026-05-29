@@ -49,6 +49,10 @@ public class CobbleSafari {
     public static final String MOD_ID = "cobblesafari";
     public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 
+    private CobbleSafari() {
+        // Utility class; not meant to be instantiated.
+    }
+
     public static void initRegistries() {
         LOGGER.info("CobbleSafari registering game objects...");
 

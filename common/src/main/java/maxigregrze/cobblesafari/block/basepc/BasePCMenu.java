@@ -77,8 +77,7 @@ public class BasePCMenu extends AbstractContainerMenu {
         if (flagItem == ModItems.FLAG_SILVER && currentRank <= 1) return true;
         if (flagItem == ModItems.FLAG_GOLD && currentRank <= 2) return true;
         if (flagItem == ModItems.FLAG_PLATINUM && currentRank <= 3) return true;
-        if (flagItem == ModItems.FLAG_CREATIVE && currentRank <= 4) return true;
-        return false;
+        return flagItem == ModItems.FLAG_CREATIVE && currentRank <= 4;
     }
 
     private static int getFlagBatteryValue(Item flagItem) {
@@ -208,10 +207,9 @@ public class BasePCMenu extends AbstractContainerMenu {
                 if (!moveItemStackTo(slotStack, HOTBAR_START, HOTBAR_END, false)) {
                     return ItemStack.EMPTY;
                 }
-            } else if (index >= HOTBAR_START && index < HOTBAR_END) {
-                if (!moveItemStackTo(slotStack, PLAYER_INV_START, PLAYER_INV_END, false)) {
-                    return ItemStack.EMPTY;
-                }
+            } else if (index >= HOTBAR_START && index < HOTBAR_END
+                    && !moveItemStackTo(slotStack, PLAYER_INV_START, PLAYER_INV_END, false)) {
+                return ItemStack.EMPTY;
             }
 
             if (slotStack.isEmpty()) {

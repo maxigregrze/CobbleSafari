@@ -3,6 +3,8 @@ package maxigregrze.cobblesafari.underground.screen;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 
+import java.util.Arrays;
+import java.util.Objects;
 import java.util.UUID;
 
 /**
@@ -35,5 +37,30 @@ public record UndergroundOpenData(
         int currentStability = buf.readInt();
         int maxStability = buf.readInt();
         return new UndergroundOpenData(sessionId, treasureCount, gridData, currentStability, maxStability);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof UndergroundOpenData that)) return false;
+        return treasureCount == that.treasureCount
+                && currentStability == that.currentStability
+                && maxStability == that.maxStability
+                && Objects.equals(sessionId, that.sessionId)
+                && Arrays.equals(gridData, that.gridData);
+    }
+
+    @Override
+    public int hashCode() {
+        return 31 * Objects.hash(sessionId, treasureCount, currentStability, maxStability) + Arrays.hashCode(gridData);
+    }
+
+    @Override
+    public String toString() {
+        return "UndergroundOpenData[sessionId=" + sessionId
+                + ", treasureCount=" + treasureCount
+                + ", gridData=" + Arrays.toString(gridData)
+                + ", currentStability=" + currentStability
+                + ", maxStability=" + maxStability + "]";
     }
 }

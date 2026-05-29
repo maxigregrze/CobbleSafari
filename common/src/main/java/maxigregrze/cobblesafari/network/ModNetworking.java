@@ -6,6 +6,10 @@ import net.minecraft.server.level.ServerPlayer;
 
 public class ModNetworking {
 
+    private ModNetworking() {
+        // Utility class; not meant to be instantiated.
+    }
+
     public static void sendTimerSync(ServerPlayer player, String dimensionId, int remainingTicks, boolean active, boolean bypassed) {
         Services.PLATFORM.sendPayloadToPlayer(player, new TimerSyncPayload(dimensionId, remainingTicks, active, bypassed));
     }
@@ -14,6 +18,7 @@ public class ModNetworking {
         sendTimerSync(player, dimensionId, remainingTicks, active, false);
     }
 
+    /** @deprecated use {@link #sendTimerSync(ServerPlayer, String, int, boolean)} with an explicit dimension id. */
     @Deprecated
     public static void sendTimerSync(ServerPlayer player, int remainingTicks, boolean active) {
         sendTimerSync(player, SafariTimerConfig.getSafariDimensionId(), remainingTicks, active, false);

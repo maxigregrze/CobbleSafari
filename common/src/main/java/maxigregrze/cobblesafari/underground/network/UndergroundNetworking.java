@@ -13,6 +13,10 @@ import java.util.List;
 
 public class UndergroundNetworking {
 
+    private UndergroundNetworking() {
+        // Utility class; not meant to be instantiated.
+    }
+
     public static void handleMineAction(ServerPlayer player, UndergroundPayloads.MineActionPayload payload) {
         MiningSession session = UndergroundMinigame.getSession(payload.sessionId());
         if (session == null || session.isComplete()

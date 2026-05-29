@@ -126,12 +126,6 @@ public final class WonderAppServerHandler {
                     customBannerName = ev.getCustomBannerName();
                 }
                 eventDaysLeft = WonderTradeService.getEventDaysLeftForGui(server);
-                int weightSum = 0;
-                for (WonderTradeSettings.WeightedPoolEntry w : ev.getEventPools()) {
-                    if (w.weight > 0) {
-                        weightSum += w.weight;
-                    }
-                }
                 List<WonderAppResultPayload.EventPoolEntry> built = new ArrayList<>();
                 for (WonderTradeSettings.WeightedPoolEntry w : ev.getEventPools()) {
                     if (w.weight > 0) {

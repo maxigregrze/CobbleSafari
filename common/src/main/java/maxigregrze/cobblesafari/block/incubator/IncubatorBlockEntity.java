@@ -21,6 +21,9 @@ import net.minecraft.world.level.block.state.BlockState;
 
 public class IncubatorBlockEntity extends BlockEntity {
 
+    private static final String KEY_INPUT_ITEM = "InputItem";
+    private static final String KEY_STORED_EGG_SPECIES_NAME = "StoredEggSpeciesName";
+
     private ItemStack inputItem = ItemStack.EMPTY;
     private int ticksRemaining = -1;
     private int totalTicks = 14400;
@@ -158,28 +161,28 @@ public class IncubatorBlockEntity extends BlockEntity {
     protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.saveAdditional(tag, registries);
         if (!inputItem.isEmpty()) {
-            tag.put("InputItem", inputItem.save(registries));
+            tag.put(KEY_INPUT_ITEM, inputItem.save(registries));
         }
         tag.putInt("TicksRemaining", ticksRemaining);
         tag.putInt("TotalTicks", totalTicks);
         tag.putBoolean("IsCobbreedingEgg", isCobbreedingEgg);
         if (isCobbreedingEgg && storedEggSpeciesName != null && !storedEggSpeciesName.isEmpty()) {
-            tag.putString("StoredEggSpeciesName", storedEggSpeciesName);
+            tag.putString(KEY_STORED_EGG_SPECIES_NAME, storedEggSpeciesName);
         }
     }
 
     @Override
     protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
-        if (tag.contains("InputItem")) {
-            inputItem = ItemStack.parse(registries, tag.getCompound("InputItem")).orElse(ItemStack.EMPTY);
+        if (tag.contains(KEY_INPUT_ITEM)) {
+            inputItem = ItemStack.parse(registries, tag.getCompound(KEY_INPUT_ITEM)).orElse(ItemStack.EMPTY);
         } else {
             inputItem = ItemStack.EMPTY;
         }
         ticksRemaining = tag.getInt("TicksRemaining");
         totalTicks = tag.getInt("TotalTicks");
         isCobbreedingEgg = tag.getBoolean("IsCobbreedingEgg");
-        storedEggSpeciesName = tag.contains("StoredEggSpeciesName") ? tag.getString("StoredEggSpeciesName") : "";
+        storedEggSpeciesName = tag.contains(KEY_STORED_EGG_SPECIES_NAME) ? tag.getString(KEY_STORED_EGG_SPECIES_NAME) : "";
     }
 
     @Override

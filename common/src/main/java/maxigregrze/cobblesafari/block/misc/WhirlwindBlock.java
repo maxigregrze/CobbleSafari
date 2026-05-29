@@ -73,10 +73,7 @@ public class WhirlwindBlock extends BaseEntityBlock {
     @Override
     public boolean canBeReplaced(BlockState state, BlockPlaceContext context) {
         ItemStack stack = context.getItemInHand();
-        if (stack.is(this.asItem())) {
-            return false;
-        }
-        return true;
+        return !stack.is(this.asItem());
     }
 
     @Override

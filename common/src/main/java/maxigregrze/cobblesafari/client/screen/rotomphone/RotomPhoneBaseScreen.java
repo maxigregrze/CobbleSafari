@@ -74,7 +74,9 @@ public abstract class RotomPhoneBaseScreen extends Screen {
     }
 
     @Override
-    public void renderBackground(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {}
+    public void renderBackground(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
+        // Intentionally blank: the phone frame/background is drawn in render().
+    }
 
     @Override
     public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
@@ -126,7 +128,9 @@ public abstract class RotomPhoneBaseScreen extends Screen {
         if (skinData != null && skinData.hasCustomScreen()) {
             try {
                 return 0xFF000000 | Integer.parseInt(skinData.color(), 16);
-            } catch (NumberFormatException ignored) {}
+            } catch (NumberFormatException ignored) {
+                // Malformed colour string; fall back to the default below.
+            }
         }
         return shinyStatus ? 0xFFffffc0 : 0xFF7affff;
     }

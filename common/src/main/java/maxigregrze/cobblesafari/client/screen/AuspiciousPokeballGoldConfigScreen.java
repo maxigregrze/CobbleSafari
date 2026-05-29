@@ -37,9 +37,7 @@ public class AuspiciousPokeballGoldConfigScreen extends Screen {
         this.earnableEditing = initial.earnable();
     }
 
-    private int contentTopY() {
-        return 96;
-    }
+    private static final int CONTENT_TOP_Y = 96;
 
     private int bottomDuoRowY() {
         return this.height - 28;
@@ -152,7 +150,7 @@ public class AuspiciousPokeballGoldConfigScreen extends Screen {
 
     private void relayoutEditBoxes() {
         int left = this.width / 2 - 154;
-        int y = this.contentTopY();
+        int y = CONTENT_TOP_Y;
         int stride = this.fieldStride();
 
         this.poolBerryBox.setPosition(left, y);

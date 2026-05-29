@@ -37,7 +37,9 @@ public class EmptyPhoneConfirmScreen extends Screen {
     }
 
     @Override
-    public void renderBackground(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {}
+    public void renderBackground(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
+        // Intentionally blank: this confirm screen draws its own background in render().
+    }
 
     @Override
     public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {

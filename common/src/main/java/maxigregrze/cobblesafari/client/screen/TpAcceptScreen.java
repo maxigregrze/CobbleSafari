@@ -214,6 +214,7 @@ public class TpAcceptScreen extends Screen {
                 return item.getDescription();
             }
         } catch (Exception e) {
+            // Invalid item id; fall through to literal display below.
         }
         return Component.literal(itemId);
     }

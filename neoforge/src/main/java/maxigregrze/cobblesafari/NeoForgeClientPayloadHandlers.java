@@ -8,6 +8,10 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 public class NeoForgeClientPayloadHandlers {
 
+    private NeoForgeClientPayloadHandlers() {
+        // Utility class; not meant to be instantiated.
+    }
+
     public static void handleGridUpdate(UndergroundPayloads.GridUpdatePayload payload, IPayloadContext context) {
         context.enqueueWork(() -> {
             if (Minecraft.getInstance().screen instanceof UndergroundScreen screen) {

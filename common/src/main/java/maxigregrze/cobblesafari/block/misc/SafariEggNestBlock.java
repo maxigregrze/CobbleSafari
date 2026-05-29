@@ -67,7 +67,7 @@ public class SafariEggNestBlock extends BaseEntityBlock {
         return new SafariEggNestBlockEntity(pos, state);
     }
 
-    private InteractionResult handleInteraction(BlockState state, Level level, BlockPos pos, Player player) {
+    private InteractionResult handleInteraction(BlockState state, Level level, BlockPos pos) {
         if (level.isClientSide()) {
             return InteractionResult.SUCCESS;
         }
@@ -100,12 +100,12 @@ public class SafariEggNestBlock extends BaseEntityBlock {
 
     @Override
     protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hitResult) {
-        return handleInteraction(state, level, pos, player);
+        return handleInteraction(state, level, pos);
     }
 
     @Override
     protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
-        InteractionResult result = handleInteraction(state, level, pos, player);
+        InteractionResult result = handleInteraction(state, level, pos);
         if (result.consumesAction()) {
             return ItemInteractionResult.CONSUME;
         }

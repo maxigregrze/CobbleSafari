@@ -33,9 +33,7 @@ public class AuspiciousPokeballConfigScreen extends Screen {
         this.initial = initial;
     }
 
-    private int contentTopY() {
-        return 52;
-    }
+    private static final int CONTENT_TOP_Y = 52;
 
     private int bottomDuoRowY() {
         return this.height - 28;
@@ -141,7 +139,7 @@ public class AuspiciousPokeballConfigScreen extends Screen {
 
     private void relayoutEditBoxes() {
         int left = this.width / 2 - 154;
-        int y = this.contentTopY();
+        int y = CONTENT_TOP_Y;
         int stride = this.fieldStride();
 
         this.poolBerryBox.setPosition(left, y);

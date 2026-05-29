@@ -1,6 +1,7 @@
 package maxigregrze.cobblesafari.network;
 
 import maxigregrze.cobblesafari.CobbleSafari;
+import java.util.Arrays;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
@@ -45,5 +46,22 @@ public record UnionAppPayload(int actionType, int[] code) implements CustomPacke
     @Override
     public Type<? extends CustomPacketPayload> type() {
         return TYPE;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof UnionAppPayload that)) return false;
+        return actionType == that.actionType && Arrays.equals(code, that.code);
+    }
+
+    @Override
+    public int hashCode() {
+        return 31 * actionType + Arrays.hashCode(code);
+    }
+
+    @Override
+    public String toString() {
+        return "UnionAppPayload[actionType=" + actionType + ", code=" + Arrays.toString(code) + "]";
     }
 }

@@ -113,7 +113,7 @@ public class BasePCScreen extends AbstractContainerScreen<BasePCMenu> {
         if (cost == -1) {
             costText = Component.translatable("gui.cobblesafari.basepc.locked");
         } else {
-            double costPerSecond = maxBattery > 0 ? ((double) cost / 4.0) / maxBattery * 100.0 : 0;
+            double costPerSecond = maxBattery > 0 ? (cost / 4.0) / maxBattery * 100.0 : 0;
             costText = Component.translatable("gui.cobblesafari.basepc.cost", String.format("%.2f", costPerSecond));
         }
         int costWidth = font.width(costText);

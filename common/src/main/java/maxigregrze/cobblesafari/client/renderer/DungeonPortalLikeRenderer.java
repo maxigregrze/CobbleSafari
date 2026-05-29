@@ -44,7 +44,7 @@ public final class DungeonPortalLikeRenderer {
         poseStack.pushPose();
 
         if (ShaderCompatHelper.isIrisShaderActive()) {
-            renderPortalCircleShaderCompat(poseStack, bufferSource, facing, packedLight, packedOverlay);
+            renderPortalCircleShaderCompat(poseStack, bufferSource, facing, packedOverlay);
         } else {
             renderPortalCircle(poseStack, bufferSource, facing);
         }
@@ -154,7 +154,7 @@ public final class DungeonPortalLikeRenderer {
     }
 
     private static void renderPortalCircleShaderCompat(PoseStack poseStack, MultiBufferSource bufferSource,
-                                                       Direction facing, int packedLight, int packedOverlay) {
+                                                       Direction facing, int packedOverlay) {
         VertexConsumer vertexConsumer = bufferSource.getBuffer(
                 RenderType.entitySolid(TheEndPortalRenderer.END_PORTAL_LOCATION));
 

@@ -24,6 +24,10 @@ public final class GtsAppServerHandler {
 
     /** Minimum gap between duplicate mutation payloads (guards against double-submit). */
     private static final long MUTATION_DEBOUNCE_MS = 2_000L;
+
+    private static final String ERR_GENERIC = "gui.cobblesafari.rotomphone.gts.error.error";
+    private static final String ERR_OFFER_NOT_FOUND = "gui.cobblesafari.rotomphone.gts.error.offer_not_found";
+    private static final String STATUS_SUCCESS = "SUCCESS";
     private static final Map<UUID, Long> LAST_DEPOSIT_MS = new ConcurrentHashMap<>();
     private static final Map<UUID, Long> LAST_RETRIEVE_MS = new ConcurrentHashMap<>();
     private static final Map<UUID, Long> LAST_CLAIM_MS = new ConcurrentHashMap<>();
@@ -88,6 +92,7 @@ public final class GtsAppServerHandler {
             case GtsAppPayload.ACTION_CONFIRM_TRADE -> doConfirmTrade(player, payload);
             case GtsAppPayload.ACTION_ABORT_TRADE -> doAbortTrade(player);
             default -> {
+                // Unknown action: ignore.
             }
         }
     }
@@ -146,7 +151,7 @@ public final class GtsAppServerHandler {
                             0,
                             -1,
                             "",
-                            "SUCCESS",
+                            STATUS_SUCCESS,
                             1,
                             1,
                             List.of(),
@@ -169,7 +174,7 @@ public final class GtsAppServerHandler {
             case INVALID_LEVEL_BUCKET -> "gui.cobblesafari.rotomphone.gts.error.invalid_level_bucket";
             case INCOMPATIBLE_GENDER -> "gui.cobblesafari.rotomphone.gts.error.incompatible_gender";
             case ALREADY_HAS_OFFER -> "gui.cobblesafari.rotomphone.gts.error.already_has_offer";
-            default -> "gui.cobblesafari.rotomphone.gts.error.error";
+            default -> ERR_GENERIC;
         };
     }
 
@@ -184,7 +189,7 @@ public final class GtsAppServerHandler {
             Optional<GtsOffer> opt = data.findOffer(preferredId);
             if (opt.isEmpty() || !opt.get().getDepositorUuid().equals(player.getUUID())) {
                 clearMutationAttempt(LAST_RETRIEVE_MS, player.getUUID());
-                sendBegin(player, "gui.cobblesafari.rotomphone.gts.error.offer_not_found");
+                sendBegin(player, ERR_OFFER_NOT_FOUND);
                 return;
             }
         }
@@ -206,7 +211,7 @@ public final class GtsAppServerHandler {
                             0,
                             -1,
                             "",
-                            "SUCCESS",
+                            STATUS_SUCCESS,
                             1,
                             1,
                             List.of(),
@@ -222,11 +227,11 @@ public final class GtsAppServerHandler {
 
     private static String retrieveErrorKey(GtsService.RetrieveResult r) {
         return switch (r) {
-            case NOT_FOUND -> "gui.cobblesafari.rotomphone.gts.error.offer_not_found";
+            case NOT_FOUND -> ERR_OFFER_NOT_FOUND;
             case NOT_OWNER -> "gui.cobblesafari.rotomphone.gts.error.not_owner";
             case LOCKED -> "gui.cobblesafari.rotomphone.gts.error.offer_locked";
             case INVENTORY_FULL -> "gui.cobblesafari.rotomphone.gts.error.inventory_full";
-            default -> "gui.cobblesafari.rotomphone.gts.error.error";
+            default -> ERR_GENERIC;
         };
     }
 
@@ -255,7 +260,7 @@ public final class GtsAppServerHandler {
                             0,
                             -1,
                             "",
-                            "SUCCESS",
+                            STATUS_SUCCESS,
                             1,
                             1,
                             List.of(),
@@ -271,10 +276,10 @@ public final class GtsAppServerHandler {
 
     private static String claimErrorKey(GtsService.ClaimResult r) {
         return switch (r) {
-            case NOT_FOUND -> "gui.cobblesafari.rotomphone.gts.error.offer_not_found";
+            case NOT_FOUND -> ERR_OFFER_NOT_FOUND;
             case NOT_RECIPIENT -> "gui.cobblesafari.rotomphone.gts.error.not_recipient";
             case INVENTORY_FULL -> "gui.cobblesafari.rotomphone.gts.error.inventory_full";
-            default -> "gui.cobblesafari.rotomphone.gts.error.error";
+            default -> ERR_GENERIC;
         };
     }
 
@@ -356,11 +361,11 @@ public final class GtsAppServerHandler {
 
     private static String startTradeErrorKey(GtsService.StartTradeKind k) {
         return switch (k) {
-            case OFFER_NOT_FOUND -> "gui.cobblesafari.rotomphone.gts.error.offer_not_found";
+            case OFFER_NOT_FOUND -> ERR_OFFER_NOT_FOUND;
             case OFFER_LOCKED -> "gui.cobblesafari.rotomphone.gts.error.offer_locked";
             case OFFER_OWN -> "gui.cobblesafari.rotomphone.gts.error.offer_own";
             case NO_MATCHING_POKEMON -> "gui.cobblesafari.rotomphone.gts.error.no_matching_pokemon";
-            default -> "gui.cobblesafari.rotomphone.gts.error.error";
+            default -> ERR_GENERIC;
         };
     }
 
@@ -392,7 +397,7 @@ public final class GtsAppServerHandler {
                             0,
                             -1,
                             "",
-                            "SUCCESS",
+                            STATUS_SUCCESS,
                             1,
                             1,
                             List.of(),
@@ -410,7 +415,7 @@ public final class GtsAppServerHandler {
         return switch (r) {
             case SELECTION_EXPIRED -> "gui.cobblesafari.rotomphone.gts.error.selection_expired";
             case CANDIDATE_GONE -> "gui.cobblesafari.rotomphone.gts.error.candidate_gone";
-            default -> "gui.cobblesafari.rotomphone.gts.error.error";
+            default -> ERR_GENERIC;
         };
     }
 

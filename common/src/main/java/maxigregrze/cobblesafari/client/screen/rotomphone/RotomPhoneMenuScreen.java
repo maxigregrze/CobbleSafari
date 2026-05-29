@@ -45,11 +45,8 @@ public class RotomPhoneMenuScreen extends RotomPhoneBaseScreen {
                 if (a.name().equals(appId)) { appData = a; break; }
             }
             if (appData == null || !appData.enabled()) continue;
-            if (appData.unlockedByDefault()) {
-                visibleApps.add(appId);
-            } else {
-                visibleApps.add(appId);
-            }
+            // Visibility here depends only on the app being enabled; unlock state is handled at click time.
+            visibleApps.add(appId);
         }
     }
 
@@ -122,6 +119,7 @@ public class RotomPhoneMenuScreen extends RotomPhoneBaseScreen {
             case "itemFinderApp" -> this.minecraft.setScreen(new RotomPhoneItemFinderScreen(rotomName, shinyStatus, currentSkin, safetyMode, rotoGlide));
             case "skinApp" -> this.minecraft.setScreen(new RotomPhoneSkinScreen(rotomName, shinyStatus, currentSkin, safetyMode, rotoGlide));
             case "settingsApp" -> this.minecraft.setScreen(new RotomPhoneSettingsScreen(rotomName, shinyStatus, currentSkin, safetyMode, rotoGlide));
+            default -> { /* unknown app id: do nothing */ }
         }
     }
 

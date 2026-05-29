@@ -8,7 +8,9 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 /**
@@ -265,5 +267,29 @@ public class UndergroundPayloads {
     }
 
     public record TreasureEntryData(String id, String textureId, int weight,
-                                     int minQty, int maxQty, boolean isDisabled, boolean[][] shapeMatrix) {}
+                                     int minQty, int maxQty, boolean isDisabled, boolean[][] shapeMatrix) {
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (!(o instanceof TreasureEntryData that)) return false;
+            return weight == that.weight && minQty == that.minQty && maxQty == that.maxQty
+                    && isDisabled == that.isDisabled
+                    && Objects.equals(id, that.id)
+                    && Objects.equals(textureId, that.textureId)
+                    && Arrays.deepEquals(shapeMatrix, that.shapeMatrix);
+        }
+
+        @Override
+        public int hashCode() {
+            return 31 * Objects.hash(id, textureId, weight, minQty, maxQty, isDisabled)
+                    + Arrays.deepHashCode(shapeMatrix);
+        }
+
+        @Override
+        public String toString() {
+            return "TreasureEntryData[id=" + id + ", textureId=" + textureId + ", weight=" + weight
+                    + ", minQty=" + minQty + ", maxQty=" + maxQty + ", isDisabled=" + isDisabled
+                    + ", shapeMatrix=" + Arrays.deepToString(shapeMatrix) + "]";
+        }
+    }
 }

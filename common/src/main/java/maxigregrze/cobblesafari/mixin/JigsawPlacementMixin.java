@@ -8,6 +8,10 @@ import org.spongepowered.asm.mixin.injection.ModifyConstant;
 @Mixin(value = JigsawPlacement.class, priority = 1100)
 public class JigsawPlacementMixin {
 
+    private JigsawPlacementMixin() {
+        // Mixin utility class; not meant to be instantiated.
+    }
+
     @ModifyConstant(
             method = "generateJigsaw",
             constant = @Constant(intValue = 128),

@@ -15,6 +15,9 @@ import java.util.UUID;
 
 public final class UnionAppServerHandler {
 
+    private static final String ERR_NOTFOUND = "gui.cobblesafari.rotomphone.union.error.notfound";
+    private static final String ERR_DIMENSION_NOT_FOUND = "cobblesafari.unionroom.error.dimension_not_found";
+
     private UnionAppServerHandler() {}
 
     private static boolean checkReadRateLimit(UUID playerId, int action) {
@@ -58,13 +61,13 @@ public final class UnionAppServerHandler {
                 int[] code = payload.code();
                 if (code == null || code.length != 4) {
                     JoinThrottle.recordFailure(player.getUUID());
-                    sendSnapshot(player, "gui.cobblesafari.rotomphone.union.error.notfound");
+                    sendSnapshot(player, ERR_NOTFOUND);
                     return;
                 }
                 for (int d : code) {
                     if (d < 1 || d > 6) {
                         JoinThrottle.recordFailure(player.getUUID());
-                        sendSnapshot(player, "gui.cobblesafari.rotomphone.union.error.notfound");
+                        sendSnapshot(player, ERR_NOTFOUND);
                         return;
                     }
                 }
@@ -84,7 +87,7 @@ public final class UnionAppServerHandler {
             case UnionAppPayload.ACTION_CLOSE -> {
                 UnionRoomSavedData data = UnionRoomSavedData.get(server);
                 if (data == null) {
-                    sendSnapshot(player, "cobblesafari.unionroom.error.dimension_not_found");
+                    sendSnapshot(player, ERR_DIMENSION_NOT_FOUND);
                     return;
                 }
                 Optional<UnionRoomSavedData.SessionData> host = data.findSessionByHost(player.getUUID());
@@ -111,7 +114,7 @@ public final class UnionAppServerHandler {
             case ALREADY_IN_SESSION -> "gui.cobblesafari.rotomphone.union.error.alreadycreated";
             case MAX_INSTANCES -> "gui.cobblesafari.rotomphone.union.error.noroom";
             case BANNED_DIMENSION -> "cobblesafari.unionroom.error.banned_dimension";
-            case DIMENSION_NOT_FOUND -> "cobblesafari.unionroom.error.dimension_not_found";
+            case DIMENSION_NOT_FOUND -> ERR_DIMENSION_NOT_FOUND;
             case CREATION_FAILED -> "cobblesafari.unionroom.error.creation_failed";
             case OK -> "";
         };
@@ -121,11 +124,11 @@ public final class UnionAppServerHandler {
         return switch (r) {
             case SESSION_FULL -> "gui.cobblesafari.rotomphone.union.error.session_full";
             case ALREADY_IN_SESSION -> "gui.cobblesafari.rotomphone.union.error.alreadycreated";
-            case INVALID_CODE, FAILED -> "gui.cobblesafari.rotomphone.union.error.notfound";
+            case INVALID_CODE, FAILED -> ERR_NOTFOUND;
             case BANNED_DIMENSION -> "cobblesafari.unionroom.error.banned_dimension";
-            case DIMENSION_NOT_FOUND -> "cobblesafari.unionroom.error.dimension_not_found";
+            case DIMENSION_NOT_FOUND -> ERR_DIMENSION_NOT_FOUND;
             case HOST_UNAVAILABLE -> "cobblesafari.unionroom.error.host_unavailable";
-            case OWN_SESSION, ALREADY_JOINED -> "gui.cobblesafari.rotomphone.union.error.notfound";
+            case OWN_SESSION, ALREADY_JOINED -> ERR_NOTFOUND;
             case OK -> "";
         };
     }

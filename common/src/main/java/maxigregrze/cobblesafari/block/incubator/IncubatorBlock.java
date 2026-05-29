@@ -56,6 +56,9 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class IncubatorBlock extends HorizontalDirectionalBlock implements EntityBlock {
 
+    private static final String SPECIES_RANDOM = "random";
+    private static final String SPECIES_MISSINGNO = "MissingNo";
+
     public static final MapCodec<IncubatorBlock> CODEC = simpleCodec(IncubatorBlock::new);
     public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
     public static final IntegerProperty STATE = IntegerProperty.create("state", 0, 6);
@@ -170,7 +173,7 @@ public class IncubatorBlock extends HorizontalDirectionalBlock implements Entity
         if (recipe == null || recipe.outputs().isEmpty()) {
             CobbleSafari.LOGGER.warn("[Incubator] No recipe found for {}, outputting random pokemon",
                     BuiltInRegistries.ITEM.getKey(incubator.getInputItem().getItem()));
-            return PokemonProperties.Companion.parse("random").create();
+            return PokemonProperties.Companion.parse(SPECIES_RANDOM).create();
         }
 
         List<String> outputs = recipe.outputs();
@@ -180,7 +183,7 @@ public class IncubatorBlock extends HorizontalDirectionalBlock implements Entity
         try {
             PokemonProperties props = PokemonProperties.Companion.parse(chosen);
             Pokemon pokemon = props.create();
-            if (pokemon.getSpecies().getName().equalsIgnoreCase("MissingNo")) {
+            if (pokemon.getSpecies().getName().equalsIgnoreCase(SPECIES_MISSINGNO)) {
                 throw new IllegalStateException("Resolved to MissingNo");
             }
             applyShinyBoost(pokemon, recipe.shinyBoost());
@@ -188,7 +191,7 @@ public class IncubatorBlock extends HorizontalDirectionalBlock implements Entity
         } catch (Exception e) {
             CobbleSafari.LOGGER.warn("[Incubator] The '{}' species from the {} data file was not found, outputting random pokemon instead",
                     chosen, inputId);
-            return PokemonProperties.Companion.parse("random").create();
+            return PokemonProperties.Companion.parse(SPECIES_RANDOM).create();
         }
     }
 
@@ -197,7 +200,7 @@ public class IncubatorBlock extends HorizontalDirectionalBlock implements Entity
         if (properties != null) {
             try {
                 Pokemon pokemon = properties.create();
-                if (pokemon.getSpecies().getName().equalsIgnoreCase("MissingNo")) {
+                if (pokemon.getSpecies().getName().equalsIgnoreCase(SPECIES_MISSINGNO)) {
                     throw new IllegalStateException("Resolved to MissingNo");
                 }
                 return pokemon;
@@ -209,7 +212,7 @@ public class IncubatorBlock extends HorizontalDirectionalBlock implements Entity
         if (fallbackName != null && !fallbackName.isEmpty()) {
             try {
                 Pokemon pokemon = PokemonProperties.Companion.parse(fallbackName).create();
-                if (pokemon != null && !pokemon.getSpecies().getName().equalsIgnoreCase("MissingNo")) {
+                if (pokemon != null && !pokemon.getSpecies().getName().equalsIgnoreCase(SPECIES_MISSINGNO)) {
                     return pokemon;
                 }
             } catch (Exception e) {
@@ -217,7 +220,7 @@ public class IncubatorBlock extends HorizontalDirectionalBlock implements Entity
             }
         }
         CobbleSafari.LOGGER.warn("[Incubator] Cobbreeding egg has no recoverable data, outputting random");
-        return PokemonProperties.Companion.parse("random").create();
+        return PokemonProperties.Companion.parse(SPECIES_RANDOM).create();
     }
 
     private void applyShinyBoost(Pokemon pokemon, int shinyBoost) {

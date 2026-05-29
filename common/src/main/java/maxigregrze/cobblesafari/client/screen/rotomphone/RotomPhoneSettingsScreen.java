@@ -26,7 +26,8 @@ public class RotomPhoneSettingsScreen extends RotomPhoneBaseScreen {
         int sy = originY + SAFETY_TOGGLE_Y;
         int sw = this.font.width(safetyLabel);
         boolean safetyHovered = isInBounds(mouseX, mouseY, sx - sw / 2, sy, sw, this.font.lineHeight);
-        int safetyColor = safetyHovered ? 0xFFFFFFFF : (safetyMode ? 0xFF55FF55 : 0xFFFF5555);
+        int safetyActiveColor = safetyMode ? 0xFF55FF55 : 0xFFFF5555;
+        int safetyColor = safetyHovered ? 0xFFFFFFFF : safetyActiveColor;
         graphics.drawCenteredString(this.font, safetyLabel, sx, sy, safetyColor);
 
         Component rotoLabel = Component.translatable("gui.cobblesafari.rotomphone.settings.roto_glide_toggle");
@@ -34,7 +35,8 @@ public class RotomPhoneSettingsScreen extends RotomPhoneBaseScreen {
         int ry = originY + ROTO_TOGGLE_Y;
         int rw = this.font.width(rotoLabel);
         boolean rotoHovered = isInBounds(mouseX, mouseY, rx - rw / 2, ry, rw, this.font.lineHeight);
-        int rotoColor = rotoHovered ? 0xFFFFFFFF : (rotoGlide ? 0xFF55AAFF : 0xFFFF5555);
+        int rotoActiveColor = rotoGlide ? 0xFF55AAFF : 0xFFFF5555;
+        int rotoColor = rotoHovered ? 0xFFFFFFFF : rotoActiveColor;
         graphics.drawCenteredString(this.font, rotoLabel, rx, ry, rotoColor);
     }
 

@@ -60,6 +60,7 @@ public class BasePCBlockEntity extends BlockEntity implements MenuProvider {
                 case 1 -> currentEffect = value;
                 case 2 -> battery = value;
                 case 3 -> isActive = value != 0;
+                default -> { /* ignore unknown container-data index */ }
             }
             setChanged();
         }
@@ -119,11 +120,17 @@ public class BasePCBlockEntity extends BlockEntity implements MenuProvider {
 
     public static int getEffectDuration(int rank) {
         int idx = Math.max(0, Math.min(rank, EFFECT_DURATION_TICKS.length - 1));
+        if (idx < 0 || idx >= EFFECT_DURATION_TICKS.length) {
+            return 0;
+        }
         return EFFECT_DURATION_TICKS[idx];
     }
 
     public static int getEffectRadius(int rank) {
         int idx = Math.max(0, Math.min(rank, EFFECT_RADIUS.length - 1));
+        if (idx < 0 || idx >= EFFECT_RADIUS.length) {
+            return 0;
+        }
         return EFFECT_RADIUS[idx];
     }
 

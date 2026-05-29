@@ -139,10 +139,10 @@ public class GiratinaCoreBlock extends BaseEntityBlock {
 
     @Override
     protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
-        return tryUseRedchainFragmentOnCore(stack, level, pos, player, hand);
+        return tryUseRedchainFragmentOnCore(stack, level, pos, player);
     }
 
-    public static ItemInteractionResult tryUseRedchainFragmentOnCore(ItemStack stack, Level level, BlockPos corePos, Player player, InteractionHand hand) {
+    public static ItemInteractionResult tryUseRedchainFragmentOnCore(ItemStack stack, Level level, BlockPos corePos, Player player) {
         if (level.isClientSide()) {
             return ItemInteractionResult.SUCCESS;
         }

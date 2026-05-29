@@ -155,6 +155,6 @@ public class GiratinaCoreSideBlock extends Block {
         if (!level.getBlockState(centerPos).is(ModBlocks.GIRATINA_CORE)) {
             return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
         }
-        return GiratinaCoreBlock.tryUseRedchainFragmentOnCore(stack, level, centerPos, player, hand);
+        return GiratinaCoreBlock.tryUseRedchainFragmentOnCore(stack, level, centerPos, player);
     }
 }

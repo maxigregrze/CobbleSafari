@@ -17,6 +17,10 @@ import java.util.List;
 
 public class IncubatorBlockItem extends BlockItem {
 
+    private static final String KEY_INPUT_ITEM = "InputItem";
+    private static final String KEY_STORED_EGG_SPECIES_NAME = "StoredEggSpeciesName";
+    private static final String KEY_TICKS_REMAINING = "TicksRemaining";
+
     public IncubatorBlockItem(Block block, Properties properties) {
         super(block, properties);
     }
@@ -33,12 +37,12 @@ public class IncubatorBlockItem extends BlockItem {
         }
 
         CompoundTag tag = customData.copyTag();
-        boolean hasEgg = tag.contains("InputItem") || (tag.getBoolean("IsCobbreedingEgg") && (tag.contains("StoredEggSpeciesName") || tag.contains("TicksRemaining")));
+        boolean hasEgg = tag.contains(KEY_INPUT_ITEM) || (tag.getBoolean("IsCobbreedingEgg") && (tag.contains(KEY_STORED_EGG_SPECIES_NAME) || tag.contains(KEY_TICKS_REMAINING)));
         if (!hasEgg) {
             return;
         }
 
-        int ticksRemaining = tag.getInt("TicksRemaining");
+        int ticksRemaining = tag.getInt(KEY_TICKS_REMAINING);
         int modelData;
         if (ticksRemaining <= 0) {
             modelData = 2;
@@ -56,17 +60,17 @@ public class IncubatorBlockItem extends BlockItem {
         if (customData == null) return;
 
         CompoundTag tag = customData.copyTag();
-        boolean hasInput = tag.contains("InputItem");
+        boolean hasInput = tag.contains(KEY_INPUT_ITEM);
         boolean isCobbreedingEgg = tag.getBoolean("IsCobbreedingEgg");
-        int ticksRemaining = tag.getInt("TicksRemaining");
+        int ticksRemaining = tag.getInt(KEY_TICKS_REMAINING);
 
-        if (!hasInput && !(isCobbreedingEgg && tag.contains("StoredEggSpeciesName"))) {
+        if (!hasInput && !(isCobbreedingEgg && tag.contains(KEY_STORED_EGG_SPECIES_NAME))) {
             return;
         }
 
         String itemName;
         if (isCobbreedingEgg && !CobbreedingCompat.isCobbreedingLoaded()) {
-            String speciesName = tag.getString("StoredEggSpeciesName");
+            String speciesName = tag.getString(KEY_STORED_EGG_SPECIES_NAME);
             if (speciesName != null && !speciesName.isEmpty()) {
                 String formatted = speciesName.substring(0, 1).toUpperCase() + speciesName.substring(1);
                 itemName = Component.translatable("cobblesafari.incubator.strange_egg", formatted).getString();
@@ -74,7 +78,7 @@ public class IncubatorBlockItem extends BlockItem {
                 itemName = Component.translatable("cobblesafari.incubator.strange_egg", "Unknown").getString();
             }
         } else if (isCobbreedingEgg && CobbreedingCompat.isCobbreedingLoaded() && hasInput) {
-            ItemStack storedEgg = ItemStack.parse(context.registries(), tag.getCompound("InputItem"))
+            ItemStack storedEgg = ItemStack.parse(context.registries(), tag.getCompound(KEY_INPUT_ITEM))
                     .orElse(ItemStack.EMPTY);
             String speciesName = CobbreedingCompat.getEggName(storedEgg);
             if (speciesName != null && !speciesName.isEmpty()) {
@@ -83,7 +87,7 @@ public class IncubatorBlockItem extends BlockItem {
                 itemName = "Unknown Egg";
             }
         } else if (hasInput) {
-            ItemStack storedEgg = ItemStack.parse(context.registries(), tag.getCompound("InputItem"))
+            ItemStack storedEgg = ItemStack.parse(context.registries(), tag.getCompound(KEY_INPUT_ITEM))
                     .orElse(ItemStack.EMPTY);
             if (storedEgg.isEmpty()) return;
             itemName = storedEgg.getHoverName().getString();

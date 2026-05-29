@@ -201,7 +201,7 @@ public class OnlineFeaturePcBlock extends HorizontalDirectionalBlock {
             case UNION -> mc.setScreen(RotomPhoneUnionScreen.forOnlinePc());
             case GTS -> mc.setScreen(RotomPhoneGTSScreen.forOnlinePc());
             case WONDER -> mc.setScreen(RotomPhoneWonderScreen.forOnlinePc());
-            default -> {}
+            default -> { /* no screen for other kinds */ }
         }
     }
 
