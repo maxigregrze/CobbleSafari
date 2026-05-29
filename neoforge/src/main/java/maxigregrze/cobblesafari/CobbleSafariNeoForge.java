@@ -15,6 +15,17 @@ import maxigregrze.cobblesafari.network.DimensionalBanSyncPayload;
 import maxigregrze.cobblesafari.network.OpenTpAcceptPayload;
 import maxigregrze.cobblesafari.network.OpenLostNoteBookPayload;
 import maxigregrze.cobblesafari.network.OpenRuneEditorPayload;
+import maxigregrze.cobblesafari.network.OpenLostItemConfigPayload;
+import maxigregrze.cobblesafari.network.OpenAuspiciousPokeballConfigPayload;
+import maxigregrze.cobblesafari.network.OpenAuspiciousPokeballGoldConfigPayload;
+import maxigregrze.cobblesafari.network.SaveLostItemConfigPayload;
+import maxigregrze.cobblesafari.network.SaveAuspiciousPokeballConfigPayload;
+import maxigregrze.cobblesafari.network.SaveAuspiciousPokeballGoldConfigPayload;
+import maxigregrze.cobblesafari.network.LostItemResetClaimsPayload;
+import maxigregrze.cobblesafari.network.AuspiciousPokeballResetClaimsPayload;
+import maxigregrze.cobblesafari.network.LostItemConfigServerHandler;
+import maxigregrze.cobblesafari.network.AuspiciousPokeballConfigServerHandler;
+import maxigregrze.cobblesafari.network.AuspiciousPokeballGoldConfigServerHandler;
 import maxigregrze.cobblesafari.network.SaveRuneTextPayload;
 import maxigregrze.cobblesafari.network.TimerSyncPayload;
 import maxigregrze.cobblesafari.network.TpAcceptResponsePayload;
@@ -87,6 +98,9 @@ public class CobbleSafariNeoForge {
 
     private void onCommonSetup(FMLCommonSetupEvent event) {
         event.enqueueWork(CobbleSafari::initLogic);
+        if (net.neoforged.fml.ModList.get().isLoaded("accessories")) {
+            event.enqueueWork(maxigregrze.cobblesafari.compat.accessories.AccessoriesCompat::registerAccessoryItem);
+        }
     }
 
     private void registerMenuType() {
@@ -142,6 +156,12 @@ public class CobbleSafariNeoForge {
                     CobbleSafariClientNeoForge::handleOpenRuneEditor);
             registrar.playToClient(OpenLostNoteBookPayload.TYPE, OpenLostNoteBookPayload.STREAM_CODEC,
                     CobbleSafariClientNeoForge::handleOpenLostNoteBook);
+            registrar.playToClient(OpenLostItemConfigPayload.TYPE, OpenLostItemConfigPayload.STREAM_CODEC,
+                    CobbleSafariClientNeoForge::handleOpenLostItemConfig);
+            registrar.playToClient(OpenAuspiciousPokeballConfigPayload.TYPE, OpenAuspiciousPokeballConfigPayload.STREAM_CODEC,
+                    CobbleSafariClientNeoForge::handleOpenAuspiciousPokeballConfig);
+            registrar.playToClient(OpenAuspiciousPokeballGoldConfigPayload.TYPE, OpenAuspiciousPokeballGoldConfigPayload.STREAM_CODEC,
+                    CobbleSafariClientNeoForge::handleOpenAuspiciousPokeballGoldConfig);
         } else {
             registrar.playToClient(OpenTpAcceptPayload.TYPE, OpenTpAcceptPayload.STREAM_CODEC,
                     (payload, context) -> {});
@@ -150,6 +170,12 @@ public class CobbleSafariNeoForge {
             registrar.playToClient(OpenRuneEditorPayload.TYPE, OpenRuneEditorPayload.STREAM_CODEC,
                     (payload, context) -> {});
             registrar.playToClient(OpenLostNoteBookPayload.TYPE, OpenLostNoteBookPayload.STREAM_CODEC,
+                    (payload, context) -> {});
+            registrar.playToClient(OpenLostItemConfigPayload.TYPE, OpenLostItemConfigPayload.STREAM_CODEC,
+                    (payload, context) -> {});
+            registrar.playToClient(OpenAuspiciousPokeballConfigPayload.TYPE, OpenAuspiciousPokeballConfigPayload.STREAM_CODEC,
+                    (payload, context) -> {});
+            registrar.playToClient(OpenAuspiciousPokeballGoldConfigPayload.TYPE, OpenAuspiciousPokeballGoldConfigPayload.STREAM_CODEC,
                     (payload, context) -> {});
         }
 
@@ -189,6 +215,51 @@ public class CobbleSafariNeoForge {
                     });
                 });
 
+        registrar.playToServer(SaveLostItemConfigPayload.TYPE, SaveLostItemConfigPayload.STREAM_CODEC,
+                (payload, context) -> {
+                    context.enqueueWork(() -> {
+                        if (context.player() instanceof ServerPlayer sp) {
+                            LostItemConfigServerHandler.handleSave(sp, payload);
+                        }
+                    });
+                });
+
+        registrar.playToServer(LostItemResetClaimsPayload.TYPE, LostItemResetClaimsPayload.STREAM_CODEC,
+                (payload, context) -> {
+                    context.enqueueWork(() -> {
+                        if (context.player() instanceof ServerPlayer sp) {
+                            LostItemConfigServerHandler.handleReset(sp, payload);
+                        }
+                    });
+                });
+
+        registrar.playToServer(SaveAuspiciousPokeballConfigPayload.TYPE, SaveAuspiciousPokeballConfigPayload.STREAM_CODEC,
+                (payload, context) -> {
+                    context.enqueueWork(() -> {
+                        if (context.player() instanceof ServerPlayer sp) {
+                            AuspiciousPokeballConfigServerHandler.handleSave(sp, payload);
+                        }
+                    });
+                });
+
+        registrar.playToServer(SaveAuspiciousPokeballGoldConfigPayload.TYPE, SaveAuspiciousPokeballGoldConfigPayload.STREAM_CODEC,
+                (payload, context) -> {
+                    context.enqueueWork(() -> {
+                        if (context.player() instanceof ServerPlayer sp) {
+                            AuspiciousPokeballGoldConfigServerHandler.handleSave(sp, payload);
+                        }
+                    });
+                });
+
+        registrar.playToServer(AuspiciousPokeballResetClaimsPayload.TYPE, AuspiciousPokeballResetClaimsPayload.STREAM_CODEC,
+                (payload, context) -> {
+                    context.enqueueWork(() -> {
+                        if (context.player() instanceof ServerPlayer sp) {
+                            AuspiciousPokeballConfigServerHandler.handleReset(sp, payload);
+                        }
+                    });
+                });
+
         registrar.playToServer(UndergroundPayloads.MineActionPayload.TYPE,
                 UndergroundPayloads.MineActionPayload.STREAM_CODEC,
                 (payload, context) -> {
@@ -205,6 +276,107 @@ public class CobbleSafariNeoForge {
                     context.enqueueWork(() -> {
                         if (context.player() instanceof ServerPlayer sp) {
                             UndergroundNetworking.handleToolSwitch(sp, payload);
+                        }
+                    });
+                });
+
+        if (net.neoforged.fml.loading.FMLEnvironment.dist.isClient()) {
+            registrar.playToClient(maxigregrze.cobblesafari.network.OpenRotomPhonePayload.TYPE,
+                    maxigregrze.cobblesafari.network.OpenRotomPhonePayload.STREAM_CODEC,
+                    CobbleSafariClientNeoForge::handleOpenRotomPhone);
+            registrar.playToClient(maxigregrze.cobblesafari.network.OpenEmptyPhoneConfirmPayload.TYPE,
+                    maxigregrze.cobblesafari.network.OpenEmptyPhoneConfirmPayload.STREAM_CODEC,
+                    CobbleSafariClientNeoForge::handleOpenEmptyPhoneConfirm);
+            registrar.playToClient(maxigregrze.cobblesafari.network.RotomPhoneConfigSyncPayload.TYPE,
+                    maxigregrze.cobblesafari.network.RotomPhoneConfigSyncPayload.STREAM_CODEC,
+                    CobbleSafariClientNeoForge::handleRotomPhoneConfigSync);
+            registrar.playToClient(maxigregrze.cobblesafari.network.UnionAppResultPayload.TYPE,
+                    maxigregrze.cobblesafari.network.UnionAppResultPayload.STREAM_CODEC,
+                    CobbleSafariClientNeoForge::handleUnionAppResult);
+            registrar.playToClient(maxigregrze.cobblesafari.network.WonderAppResultPayload.TYPE,
+                    maxigregrze.cobblesafari.network.WonderAppResultPayload.STREAM_CODEC,
+                    CobbleSafariClientNeoForge::handleWonderAppResult);
+            registrar.playToClient(maxigregrze.cobblesafari.network.GtsAppResultPayload.TYPE,
+                    maxigregrze.cobblesafari.network.GtsAppResultPayload.STREAM_CODEC,
+                    CobbleSafariClientNeoForge::handleGtsAppResult);
+        } else {
+            registrar.playToClient(maxigregrze.cobblesafari.network.OpenRotomPhonePayload.TYPE,
+                    maxigregrze.cobblesafari.network.OpenRotomPhonePayload.STREAM_CODEC,
+                    (payload, context) -> {});
+            registrar.playToClient(maxigregrze.cobblesafari.network.OpenEmptyPhoneConfirmPayload.TYPE,
+                    maxigregrze.cobblesafari.network.OpenEmptyPhoneConfirmPayload.STREAM_CODEC,
+                    (payload, context) -> {});
+            registrar.playToClient(maxigregrze.cobblesafari.network.RotomPhoneConfigSyncPayload.TYPE,
+                    maxigregrze.cobblesafari.network.RotomPhoneConfigSyncPayload.STREAM_CODEC,
+                    (payload, context) -> {});
+            registrar.playToClient(maxigregrze.cobblesafari.network.UnionAppResultPayload.TYPE,
+                    maxigregrze.cobblesafari.network.UnionAppResultPayload.STREAM_CODEC,
+                    (payload, context) -> {});
+            registrar.playToClient(maxigregrze.cobblesafari.network.WonderAppResultPayload.TYPE,
+                    maxigregrze.cobblesafari.network.WonderAppResultPayload.STREAM_CODEC,
+                    (payload, context) -> {});
+            registrar.playToClient(maxigregrze.cobblesafari.network.GtsAppResultPayload.TYPE,
+                    maxigregrze.cobblesafari.network.GtsAppResultPayload.STREAM_CODEC,
+                    (payload, context) -> {});
+        }
+
+        registrar.playToServer(maxigregrze.cobblesafari.network.RotomPhoneActionPayload.TYPE,
+                maxigregrze.cobblesafari.network.RotomPhoneActionPayload.STREAM_CODEC,
+                (payload, context) -> {
+                    context.enqueueWork(() -> {
+                        if (context.player() instanceof ServerPlayer sp) {
+                            maxigregrze.cobblesafari.rotomphone.RotomPhoneServerHandler.handleAction(sp, payload);
+                        }
+                    });
+                });
+
+        registrar.playToServer(maxigregrze.cobblesafari.network.UnionAppPayload.TYPE,
+                maxigregrze.cobblesafari.network.UnionAppPayload.STREAM_CODEC,
+                (payload, context) -> {
+                    context.enqueueWork(() -> {
+                        if (context.player() instanceof ServerPlayer sp) {
+                            maxigregrze.cobblesafari.network.UnionAppServerHandler.handle(sp, payload);
+                        }
+                    });
+                });
+
+        registrar.playToServer(maxigregrze.cobblesafari.network.WonderAppPayload.TYPE,
+                maxigregrze.cobblesafari.network.WonderAppPayload.STREAM_CODEC,
+                (payload, context) -> {
+                    context.enqueueWork(() -> {
+                        if (context.player() instanceof ServerPlayer sp) {
+                            maxigregrze.cobblesafari.network.WonderAppServerHandler.handle(sp, payload);
+                        }
+                    });
+                });
+
+        registrar.playToServer(maxigregrze.cobblesafari.network.GtsAppPayload.TYPE,
+                maxigregrze.cobblesafari.network.GtsAppPayload.STREAM_CODEC,
+                (payload, context) -> {
+                    context.enqueueWork(() -> {
+                        if (context.player() instanceof ServerPlayer sp) {
+                            maxigregrze.cobblesafari.network.GtsAppServerHandler.handle(sp, payload);
+                        }
+                    });
+                });
+
+        registrar.playToServer(maxigregrze.cobblesafari.network.RotomPhoneRotoGlideRequestPayload.TYPE,
+                maxigregrze.cobblesafari.network.RotomPhoneRotoGlideRequestPayload.STREAM_CODEC,
+                (payload, context) -> {
+                    context.enqueueWork(() -> {
+                        if (context.player() instanceof ServerPlayer sp) {
+                            maxigregrze.cobblesafari.rotomphone.RotoGlideServerLogic.onRotoGlideRequest(
+                                    sp, payload.horizontalMoveX(), payload.horizontalMoveZ());
+                        }
+                    });
+                });
+
+        registrar.playToServer(maxigregrze.cobblesafari.network.EmptyPhoneConfirmPayload.TYPE,
+                maxigregrze.cobblesafari.network.EmptyPhoneConfirmPayload.STREAM_CODEC,
+                (payload, context) -> {
+                    context.enqueueWork(() -> {
+                        if (context.player() instanceof ServerPlayer sp) {
+                            maxigregrze.cobblesafari.rotomphone.EmptyPhoneServerHandler.handleConfirm(sp, payload.confirmed());
                         }
                     });
                 });
@@ -248,6 +420,7 @@ public class CobbleSafariNeoForge {
         DungeonTeleportCountdown.onServerTick(event.getServer());
         BalloonSpawnHandler.onServerTick(event.getServer());
         event.getServer().getPlayerList().getPlayers().forEach(LuckyMiningHelmetItem::tickEffect);
+        maxigregrze.cobblesafari.rotomphone.RotoGlideServerLogic.tickAll(event.getServer());
     }
 
     private void onPlayerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {

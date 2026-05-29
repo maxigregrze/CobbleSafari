@@ -11,6 +11,8 @@ import maxigregrze.cobblesafari.config.SafariTimerConfig;
 import maxigregrze.cobblesafari.config.SecretBasePCConfig;
 import maxigregrze.cobblesafari.config.SpawnBoostConfig;
 import maxigregrze.cobblesafari.config.RandomizerItemsConfig;
+import maxigregrze.cobblesafari.config.WonderTradeSettings;
+import maxigregrze.cobblesafari.config.RotomPhoneConfig;
 import maxigregrze.cobblesafari.dungeon.DungeonDimensions;
 import maxigregrze.cobblesafari.dungeon.PortalSpawnConfig;
 import maxigregrze.cobblesafari.event.DimensionalBanEventHandler;
@@ -26,6 +28,7 @@ import maxigregrze.cobblesafari.item.donut.DonutPowerRegistry;
 import maxigregrze.cobblesafari.item.donut.DonutSeasoningProcessor;
 import maxigregrze.cobblesafari.init.ModPowerEffects;
 import maxigregrze.cobblesafari.influence.AlphaSpawnBoostInfluence;
+import maxigregrze.cobblesafari.influence.GuaranteedShinyInfluence;
 import maxigregrze.cobblesafari.influence.BucketBoostInfluence;
 import maxigregrze.cobblesafari.influence.HiddenAbilityBoostInfluence;
 import maxigregrze.cobblesafari.influence.RepelInfluence;
@@ -61,6 +64,8 @@ public class CobbleSafari {
         ModCreativeTabs.register();
         ModEntities.register();
         ModProcessors.register();
+        maxigregrze.cobblesafari.init.ModStats.register();
+        maxigregrze.cobblesafari.advancement.ModCriteria.register();
     }
 
     public static void initLogic() {
@@ -73,6 +78,8 @@ public class CobbleSafari {
         MiscConfig.load();
         SecretBasePCConfig.load();
         RandomizerItemsConfig.load();
+        RotomPhoneConfig.load();
+        WonderTradeSettings.load();
 
         DungeonDimensions.register();
         SafariTimerConfig.syncDungeonDimensionTimersFromRegistry();
@@ -88,6 +95,7 @@ public class CobbleSafari {
         PlayerSpawnerFactory.INSTANCE.getInfluenceBuilders().add(HiddenAbilityBoostInfluence::new);
         PlayerSpawnerFactory.INSTANCE.getInfluenceBuilders().add(TypedEncounterBoostInfluence::new);
         PlayerSpawnerFactory.INSTANCE.getInfluenceBuilders().add(WildLevelModifierInfluence::new);
+        PlayerSpawnerFactory.INSTANCE.getInfluenceBuilders().add(GuaranteedShinyInfluence::new);
         SafariCatchEventHandler.register();
         PowerCaptureCatchRateHandler.register();
         PowerSalvageLootHandler.register();

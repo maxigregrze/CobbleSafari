@@ -1,0 +1,92 @@
+package maxigregrze.cobblesafari.network;
+
+import maxigregrze.cobblesafari.CobbleSafari;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.resources.ResourceLocation;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public record RotomPhoneConfigSyncPayload(
+        List<AppData> apps,
+        List<SkinData> skins
+) implements CustomPacketPayload {
+
+    public static final CustomPacketPayload.Type<RotomPhoneConfigSyncPayload> TYPE =
+            new CustomPacketPayload.Type<>(ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, "rotom_phone_config_sync"));
+
+    public static final StreamCodec<FriendlyByteBuf, RotomPhoneConfigSyncPayload> STREAM_CODEC = StreamCodec.of(
+            RotomPhoneConfigSyncPayload::write,
+            RotomPhoneConfigSyncPayload::read
+    );
+
+    private static void write(FriendlyByteBuf buf, RotomPhoneConfigSyncPayload payload) {
+        buf.writeInt(payload.apps.size());
+        for (AppData app : payload.apps) {
+            buf.writeUtf(app.name);
+            buf.writeBoolean(app.enabled);
+            buf.writeBoolean(app.unlockedByDefault);
+            buf.writeUtf(app.unlockingAdvancement);
+            buf.writeInt(app.bannedDimensions.size());
+            for (String dim : app.bannedDimensions) {
+                buf.writeUtf(dim);
+            }
+        }
+        buf.writeInt(payload.skins.size());
+        for (SkinData skin : payload.skins) {
+            buf.writeUtf(skin.id);
+            buf.writeUtf(skin.displayName);
+            buf.writeUtf(skin.color);
+            buf.writeBoolean(skin.hasCustomScreen);
+            buf.writeBoolean(skin.unlockedFromStart);
+            buf.writeUtf(skin.unlockingAdvancement);
+            buf.writeBoolean(skin.hasShinyVariant);
+            buf.writeBoolean(skin.unlockedForPlayer);
+        }
+    }
+
+    private static RotomPhoneConfigSyncPayload read(FriendlyByteBuf buf) {
+        int appCount = buf.readInt();
+        List<AppData> apps = new ArrayList<>();
+        for (int i = 0; i < appCount; i++) {
+            String name = buf.readUtf();
+            boolean enabled = buf.readBoolean();
+            boolean unlockedByDefault = buf.readBoolean();
+            String unlockingAdvancement = buf.readUtf();
+            int dimCount = buf.readInt();
+            List<String> bannedDimensions = new ArrayList<>();
+            for (int j = 0; j < dimCount; j++) {
+                bannedDimensions.add(buf.readUtf());
+            }
+            apps.add(new AppData(name, enabled, unlockedByDefault, unlockingAdvancement, bannedDimensions));
+        }
+        int skinCount = buf.readInt();
+        List<SkinData> skins = new ArrayList<>();
+        for (int i = 0; i < skinCount; i++) {
+            String id = buf.readUtf();
+            String display = buf.readUtf();
+            String color = buf.readUtf();
+            boolean hasCustomScreen = buf.readBoolean();
+            boolean unlockedFromStart = buf.readBoolean();
+            String unlockingAd = buf.readUtf();
+            boolean hasShiny = buf.readBoolean();
+            boolean unlockedForPlayer = buf.readBoolean();
+            skins.add(new SkinData(id, display, color, hasCustomScreen, unlockedFromStart, unlockingAd, hasShiny, unlockedForPlayer));
+        }
+        return new RotomPhoneConfigSyncPayload(apps, skins);
+    }
+
+    @Override
+    public Type<? extends CustomPacketPayload> type() {
+        return TYPE;
+    }
+
+    public record AppData(String name, boolean enabled, boolean unlockedByDefault,
+                          String unlockingAdvancement, List<String> bannedDimensions) {}
+
+    public record SkinData(String id, String displayName, String color,
+                           boolean hasCustomScreen, boolean unlockedFromStart,
+                           String unlockingAdvancement, boolean hasShinyVariant, boolean unlockedForPlayer) {}
+}

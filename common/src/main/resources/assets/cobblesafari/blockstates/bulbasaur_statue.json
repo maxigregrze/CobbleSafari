@@ -1,0 +1,8 @@
+{
+  "variants": {
+    "facing=north": { "model": "cobblesafari:block/bulbasaur_statue" },
+    "facing=south": { "model": "cobblesafari:block/bulbasaur_statue", "y": 180 },
+    "facing=east": { "model": "cobblesafari:block/bulbasaur_statue", "y": 90 },
+    "facing=west": { "model": "cobblesafari:block/bulbasaur_statue", "y": 270 }
+  }
+}

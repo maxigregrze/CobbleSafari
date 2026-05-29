@@ -18,7 +18,7 @@ public class SafariCatchEventHandler {
 
     public static void register() {
         CobblemonEvents.THROWN_POKEBALL_HIT.subscribe(Priority.NORMAL, event -> {
-            handlePokeballHit(event.getPokemon());
+            handlePokeballHit(event.getPokemon(), event.getPokeBall());
             return Unit.INSTANCE;
         });
 
@@ -33,6 +33,7 @@ public class SafariCatchEventHandler {
         });
 
         CobblemonEvents.POKEMON_CAPTURED.subscribe(Priority.NORMAL, event -> {
+            handleCapture(event);
             var entity = event.getPokemon().getEntity();
             if (entity != null) {
                 SafariStateManager.remove(entity.getUUID());
@@ -43,11 +44,33 @@ public class SafariCatchEventHandler {
         CobbleSafari.LOGGER.info("CobbleSafari >> Safari catch event handlers registered!");
     }
 
-    private static void handlePokeballHit(PokemonEntity pokemonEntity) {
+    private static void handlePokeballHit(PokemonEntity pokemonEntity,
+                                          com.cobblemon.mod.common.entity.pokeball.EmptyPokeBallEntity pokeBall) {
         if (!SafariStateManager.isInSafariDimension(pokemonEntity)) return;
+        if (pokeBall.getOwner() instanceof net.minecraft.server.level.ServerPlayer thrower) {
+            SafariStateManager.getOrCreate(pokemonEntity.getUUID()).setLastInteractingPlayer(thrower.getUUID());
+        }
         SafariPokemonState state = SafariStateManager.getState(pokemonEntity.getUUID());
         if (state != null && state.isFleeing()) {
             SafariStateManager.pauseFleeTimer(pokemonEntity.getUUID());
+        }
+    }
+
+    private static void handleCapture(com.cobblemon.mod.common.api.events.pokemon.PokemonCapturedEvent event) {
+        net.minecraft.server.level.ServerPlayer player = event.getPlayer();
+        if (!maxigregrze.cobblesafari.manager.TimerManager.isInSafariDimension(player)) return;
+
+        maxigregrze.cobblesafari.init.ModStats.award(
+                player, maxigregrze.cobblesafari.init.ModStats.POKEMON_CAUGHT_SAFARI);
+
+        String speciesId = event.getPokemon().getSpecies().getResourceIdentifier().toString();
+        maxigregrze.cobblesafari.data.StatProgressSavedData data =
+                maxigregrze.cobblesafari.data.StatProgressSavedData.get(player.getServer());
+        if (data != null) {
+            int distinct = data.recordSafariSpecies(player.getUUID(), speciesId);
+            if (distinct > 0) {
+                maxigregrze.cobblesafari.advancement.ModCriteria.SPECIES_CAUGHT.trigger(player, distinct);
+            }
         }
     }
 

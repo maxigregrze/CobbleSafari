@@ -93,6 +93,10 @@ public class ModCreativeTabs {
                 output.accept(ModBlocks.SAFARI_EGG_NEST);
                 output.accept(ModBlocks.MAGNETIC_CRYSTAL);
                 output.accept(ModBlocks.MAGNETIC_CLUSTER);
+                output.accept(ModBlocks.RUSTED_IRON_BLOCK);
+                output.accept(ModBlocks.COMPACTED_TRASH_BLOCK);
+                output.accept(ModBlocks.RUST_CLUMP);
+                output.accept(ModBlocks.WHIRLWIND);
                 output.accept(ModBlocks.ICICLE);
                 output.accept(ModBlocks.AIR_KELP);
                 output.accept(ModBlocks.AIR_TUBE_CORAL_FAN);
@@ -151,7 +155,7 @@ public class ModCreativeTabs {
             .build();
 
     public static final CreativeModeTab LUMINOSE_TAB = CreativeModeTab.builder(CreativeModeTab.Row.TOP, 3)
-            .icon(() -> new ItemStack(ModItems.AUSPICIOUS_POKEBALL))
+            .icon(() -> new ItemStack(ModBlocks.AUSPICIOUS_POKEBALL))
             .title(Component.translatable("itemGroup.cobblesafari.paris"))
             .displayItems((params, output) -> {
                 output.accept(ModItems.HYPERBERRY_ENIGMA);
@@ -190,7 +194,39 @@ public class ModCreativeTabs {
                         output.accept(stack);
                     }
                 }
-                output.accept(ModItems.AUSPICIOUS_POKEBALL);
+                output.accept(ModBlocks.AUSPICIOUS_POKEBALL);
+                output.accept(ModBlocks.AUSPICIOUS_POKEBALL_SMALL);
+                output.accept(ModBlocks.AUSPICIOUS_POKEBALL_GOLD);
+                output.accept(ModBlocks.UNION_ROOM_WALL);
+                output.accept(ModBlocks.UNION_ROOM_FLOOR);
+                output.accept(ModBlocks.UNION_ROOM_LIGHT);
+                output.accept(ModBlocks.UNION_ROOM_LIGHT_LINE);
+                output.accept(ModBlocks.UNION_ROOM_PILLAR);
+                output.accept(ModBlocks.UNION_ROOM_SCREEN);
+                output.accept(ModBlocks.UNION_ROOM_SCREEN_LEFT);
+                output.accept(ModBlocks.UNION_ROOM_SCREEN_RIGHT);
+                output.accept(ModBlocks.UNION_ROOM_CROWD);
+                output.accept(ModBlocks.UNION_ROOM_POKEBALL);
+                output.accept(ModBlocks.UNION_ROOM_SPOT);
+                output.accept(ModBlocks.UNION_ROOM_GLOBE);
+                output.accept(ModBlocks.ONLINE_FEATURE_PC);
+                output.accept(ModBlocks.ONLINE_FEATURE_PC_UNION);
+                output.accept(ModBlocks.ONLINE_FEATURE_PC_GTS);
+                output.accept(ModBlocks.ONLINE_FEATURE_PC_WONDER);
+                output.accept(ModBlocks.UNION_ROOM_EXIT_TELEPORTER);
+                output.accept(ModBlocks.BULBASAUR_STATUE);
+                output.accept(ModBlocks.CHARMANDER_STATUE);
+                output.accept(ModBlocks.PIKACHU_STATUE);
+                output.accept(ModBlocks.SQUIRTLE_STATUE);
+                output.accept(ModBlocks.KARATE_MANNEQUIN);
+                output.accept(ModBlocks.UNION_ROOM_BRICKS_GREEN);
+                output.accept(ModBlocks.UNION_ROOM_BRICKS_YELLOW);
+                output.accept(ModBlocks.UNION_ROOM_BRICKS_BLUE);
+                output.accept(ModBlocks.UNION_ROOM_BRICKS_RED);
+                output.accept(ModBlocks.UNION_ROOM_SPOTLIGHT_GREEN);
+                output.accept(ModBlocks.UNION_ROOM_SPOTLIGHT_YELLOW);
+                output.accept(ModBlocks.UNION_ROOM_SPOTLIGHT_BLUE);
+                output.accept(ModBlocks.UNION_ROOM_SPOTLIGHT_RED);
             })
             .build();
 
@@ -215,6 +251,11 @@ public class ModCreativeTabs {
                 output.accept(ModItems.WILD_EGG_BASE);
                 output.accept(ModBlocks.LOST_NOTES);
                 output.accept(ModBlocks.LOST_ITEM);
+                output.accept(ModBlocks.AUSPICIOUS_POKEBALL);
+                output.accept(ModBlocks.AUSPICIOUS_POKEBALL_SMALL);
+                output.accept(ModBlocks.AUSPICIOUS_POKEBALL_GOLD);
+                output.accept(ModItems.ROTOM_PHONE);
+                output.accept(ModBlocks.EMPTYPHONE);
                 ModItems.WILD_EGGS.values().forEach(output::accept);
             })
             .build();

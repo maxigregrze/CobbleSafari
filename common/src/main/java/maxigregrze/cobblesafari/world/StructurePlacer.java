@@ -73,6 +73,34 @@ public class StructurePlacer {
         return true;
     }
 
+    /**
+     * Same as {@link #placeJigsawStructure} but does not fall back to placing the underground entrance template on failure.
+     */
+    public static boolean placeJigsawStructureStrict(ServerLevel world, BlockPos pos, String poolId, int depth) {
+        CobbleSafari.LOGGER.info("Jigsaw (strict): generation at {} pool {} depth {} dim {}",
+                pos, poolId, depth, world.dimension().location());
+
+        forceLoadChunks(world, pos, 3);
+
+        String command = String.format("execute in %s run place jigsaw %s %s %d %d %d %d",
+                world.dimension().location(), poolId, "cobblesafari:start", depth,
+                pos.getX(), pos.getY(), pos.getZ());
+
+        var server = world.getServer();
+        var source = server.createCommandSourceStack()
+                .withLevel(world)
+                .withPosition(net.minecraft.world.phys.Vec3.atCenterOf(pos))
+                .withPermission(4);
+
+        try {
+            server.getCommands().performPrefixedCommand(source, command);
+            return true;
+        } catch (Exception e) {
+            CobbleSafari.LOGGER.error("Jigsaw (strict): command failed: {}", e.getMessage());
+            return false;
+        }
+    }
+
     private static void forceLoadChunks(ServerLevel world, BlockPos center, int radius) {
         ChunkPos centerChunk = new ChunkPos(center);
         int count = 0;

@@ -1,0 +1,30 @@
+{
+  "type": "minecraft:chest",
+  "pools": [
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:group",
+          "weight": 90,
+          "children": [
+            { "type": "minecraft:item", "name": "cobblesafari:hyperberry_starf", "weight": 2 }, 
+            { "type": "minecraft:item", "name": "cobblesafari:hyperberry_enigma", "weight": 1 } 
+          ]
+        },
+        {
+          "type": "minecraft:group",
+          "weight": 10,
+          "children": [
+            { "type": "minecraft:item", "name": "cobblesafari:hyperberry_grepa", "weight": 1 },
+            { "type": "minecraft:item", "name": "cobblesafari:hyperberry_hondew", "weight": 1 },
+            { "type": "minecraft:item", "name": "cobblesafari:hyperberry_kelpsy", "weight": 1 },
+            { "type": "minecraft:item", "name": "cobblesafari:hyperberry_qualot", "weight": 1 },
+            { "type": "minecraft:item", "name": "cobblesafari:hyperberry_tamato", "weight": 1 },
+            { "type": "minecraft:item", "name": "cobblesafari:hyperberry_pomeg", "weight": 1 }
+          ]
+        }
+      ]
+    }
+  ]
+}

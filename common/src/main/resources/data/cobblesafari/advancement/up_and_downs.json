@@ -1,0 +1,16 @@
+{
+  "parent": "cobblesafari:root",
+  "display": {
+    "icon": { "id": "minecraft:feather" },
+    "title": { "translate": "advancement.cobblesafari.up_and_downs.title" },
+    "description": { "translate": "advancement.cobblesafari.up_and_downs.description" },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "done": { "trigger": "cobblesafari:roto_glide", "conditions": { "count": 1 } }
+  },
+  "requirements": [["done"]]
+}

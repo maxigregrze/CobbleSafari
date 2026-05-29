@@ -8,6 +8,7 @@ import maxigregrze.cobblesafari.CobbleSafari;
 import maxigregrze.cobblesafari.dungeon.DungeonConfig;
 import maxigregrze.cobblesafari.dungeon.DungeonDimensions;
 import maxigregrze.cobblesafari.platform.Services;
+import net.minecraft.resources.ResourceLocation;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -25,8 +26,11 @@ public class SafariTimerConfig {
     private static final Path CONFIG_PATH = CONFIG_DIR.resolve("dimensional_timer_config.json");
 
     private static final String SAFARI_DIMENSION_ID = "cobblesafari:domedimension";
+    /** Cached parse of {@link #SAFARI_DIMENSION_ID}; the id is a compile-time constant, so this never changes. */
+    private static final ResourceLocation SAFARI_DIMENSION_RL = ResourceLocation.parse(SAFARI_DIMENSION_ID);
     private static final String DUNGEON_JUMP_DIMENSION_ID = "cobblesafari:dungeon_jump";
     private static final String DUNGEON_UNDERGROUND_DIMENSION_ID = "cobblesafari:dungeon_underground";
+    private static final String UNION_ROOM_DIMENSION_ID = "cobblesafari:unionroom";
 
     private static SafariTimerConfig INSTANCE;
 
@@ -36,6 +40,7 @@ public class SafariTimerConfig {
         dimensions.add(new DimensionTimerEntry(SAFARI_DIMENSION_ID, 900, 0));
         dimensions.add(new DimensionTimerEntry(DUNGEON_JUMP_DIMENSION_ID, 900, 0));
         dimensions.add(new DimensionTimerEntry(DUNGEON_UNDERGROUND_DIMENSION_ID, 900, 0));
+        dimensions.add(new DimensionTimerEntry(UNION_ROOM_DIMENSION_ID, 3600, 0));
     }
 
     public static void load() {
@@ -89,6 +94,7 @@ public class SafariTimerConfig {
         modified |= ensureDimensionConfig(SAFARI_DIMENSION_ID, 900);
         modified |= ensureDimensionConfig(DUNGEON_JUMP_DIMENSION_ID, 900);
         modified |= ensureDimensionConfig(DUNGEON_UNDERGROUND_DIMENSION_ID, 900);
+        modified |= ensureDimensionConfig(UNION_ROOM_DIMENSION_ID, 3600);
 
         for (DimensionTimerEntry entry : INSTANCE.dimensions) {
             modified |= entry.initializeDefaults();
@@ -108,6 +114,7 @@ public class SafariTimerConfig {
         modified |= ensureDimensionConfig(SAFARI_DIMENSION_ID, 900);
         modified |= ensureDimensionConfig(DUNGEON_JUMP_DIMENSION_ID, 900);
         modified |= ensureDimensionConfig(DUNGEON_UNDERGROUND_DIMENSION_ID, 900);
+        modified |= ensureDimensionConfig(UNION_ROOM_DIMENSION_ID, 3600);
         for (DungeonConfig dungeon : DungeonDimensions.getAllDungeons()) {
             if (!dungeon.isExternallyManaged()) {
                 modified |= ensureDimensionConfig(dungeon.getDimensionId(), dungeon.getTimerDurationSeconds());
@@ -234,6 +241,11 @@ public class SafariTimerConfig {
 
     public static String getSafariDimensionId() {
         return SAFARI_DIMENSION_ID;
+    }
+
+    /** Pre-parsed safari dimension id; avoids re-parsing the constant string on hot paths. */
+    public static ResourceLocation getSafariDimensionRL() {
+        return SAFARI_DIMENSION_RL;
     }
 
     public static int getTimerDurationSeconds() {

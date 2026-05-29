@@ -1,0 +1,19 @@
+{
+  "parent": "cobblesafari:root",
+  "display": {
+    "icon": { "id": "cobblemon:safari_ball" },
+    "title": { "translate": "advancement.cobblesafari.welcome_to_safari.title" },
+    "description": { "translate": "advancement.cobblesafari.welcome_to_safari.description" },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "entered": {
+      "trigger": "minecraft:changed_dimension",
+      "conditions": { "to": "cobblesafari:domedimension" }
+    }
+  },
+  "requirements": [["entered"]]
+}

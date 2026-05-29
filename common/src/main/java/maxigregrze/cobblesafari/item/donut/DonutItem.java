@@ -1,7 +1,10 @@
 package maxigregrze.cobblesafari.item.donut;
 
+import maxigregrze.cobblesafari.config.SpawnBoostConfig;
 import maxigregrze.cobblesafari.init.ModComponents;
 import maxigregrze.cobblesafari.init.ModPowerEffects;
+import maxigregrze.cobblesafari.power.GuaranteedShinyManager;
+import maxigregrze.cobblesafari.power.PowerVariantRegistry;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponents;
@@ -150,10 +153,18 @@ public class DonutItem extends Item {
             if (comp != null) {
                 int ticks = Math.max(1, comp.calories()) * 20;
                 ModPowerEffects.removeAllDonutPowerEffects(player);
+                GuaranteedShinyManager.clearByPrefix(player, "sparkling:");
                 for (DonutBonus b : comp.bonuses()) {
                     Holder<MobEffect> holder = ModPowerEffects.resolveBonus(b);
                     if (holder != null) {
                         player.addEffect(new MobEffectInstance(holder, ticks, 0, false, true, true));
+                        if ("sparkling".equals(b.powerId()) && b.level() == 3) {
+                            Integer variant = b.type() == PowerVariantRegistry.INDEX_ALL ? null : b.type();
+                            GuaranteedShinyManager.requestForEffect(player,
+                                    "sparkling:" + PowerVariantRegistry.suffix(b.type()) + "_3",
+                                    holder, variant, ticks,
+                                    SpawnBoostConfig.data.effectSettings.sparklingGuaranteeWindowFraction);
+                        }
                     }
                 }
             } else {

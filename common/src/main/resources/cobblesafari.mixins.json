@@ -7,12 +7,18 @@
   "mixins": [
     "ServerPlayerMixin",
     "LivingEntitySelfCombatDamageMixin",
+    "LivingEntityRotoFallMixin",
+    "PlayerRotoFallMixin",
     "JigsawPlacementMixin",
-    "JigsawStructureMixin"
+    "JigsawStructureMixin",
+    "PokemonMixin",
+    "PokemonEntityMixin"
   ],
   "client": [
     "client.GuiMixin",
-    "client.DimensionSpecialEffectsAccessor"
+    "client.DimensionSpecialEffectsAccessor",
+    "client.RotomPhoneScreenMixin",
+    "client.MarksWidgetMixin"
   ],
   "injectors": {
     "defaultRequire": 1

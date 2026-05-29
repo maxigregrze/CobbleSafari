@@ -1,0 +1,19 @@
+{
+  "parent": "cobblesafari:root",
+  "display": {
+    "icon": { "id": "cobblesafari:redchain_fragment" },
+    "title": { "translate": "advancement.cobblesafari.upside_down.title" },
+    "description": { "translate": "advancement.cobblesafari.upside_down.description" },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "entered": {
+      "trigger": "minecraft:changed_dimension",
+      "conditions": { "to": "cobblesafari:dungeon_distortion" }
+    }
+  },
+  "requirements": [["entered"]]
+}

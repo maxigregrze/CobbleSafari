@@ -1,0 +1,16 @@
+{
+  "parent": "cobblesafari:root",
+  "display": {
+    "icon": { "id": "cobblesafari:rotomphone" },
+    "title": { "translate": "advancement.cobblesafari.raihan_would_be_proud.title" },
+    "description": { "translate": "advancement.cobblesafari.raihan_would_be_proud.description" },
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "done": { "trigger": "cobblesafari:rotom_phone_shiny", "conditions": {} }
+  },
+  "requirements": [["done"]]
+}

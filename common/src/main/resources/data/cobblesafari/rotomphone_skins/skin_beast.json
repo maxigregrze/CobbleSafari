@@ -1,0 +1,9 @@
+{
+  "id": "beast",
+  "displayName": "Beast-Ball",
+  "hasCustomScreen": true,
+  "color": "367474",
+  "unlockedFromStart": false,
+  "hasShinyVariant": false,
+  "unlockingAdvancement": "story/mine_stone"
+}

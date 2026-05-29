@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:chest",
+  "pools": [
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:group",
+          "weight": 100,
+          "children": [
+            { "type": "minecraft:item", "name": "cobblesafari:hyperberry_apicot", "weight": 1 },
+            { "type": "minecraft:item", "name": "cobblesafari:hyperberry_ganlon", "weight": 1 },
+            { "type": "minecraft:item", "name": "cobblesafari:hyperberry_liechi", "weight": 1 },
+            { "type": "minecraft:item", "name": "cobblesafari:hyperberry_petaya", "weight": 1 },
+            { "type": "minecraft:item", "name": "cobblesafari:hyperberry_salac", "weight": 1 },
+            { "type": "minecraft:item", "name": "cobblesafari:hyperberry_lansat", "weight": 1 }
+          ]
+        }
+      ]
+    }
+  ]
+}

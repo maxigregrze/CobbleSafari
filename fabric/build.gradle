@@ -15,6 +15,7 @@ dependencies {
     compileOnly "org.jetbrains.kotlin:kotlin-stdlib:1.9.23"
     modCompileOnly "maven.modrinth:jade:15.10.4+fabric"
     modCompileOnly "mcp.mobius.waila:wthit-api:fabric-12.4.5"
+    modCompileOnly "io.wispforest:accessories-fabric:${accessories_version}"
 }
 
 loom {

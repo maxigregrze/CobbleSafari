@@ -1,0 +1,16 @@
+{
+  "parent": "minecraft:block/block",
+  "textures": {
+    "0": "cobblesafari:block/union_line_dot",
+    "particle": "cobblesafari:block/union_line_dot"
+  },
+  "elements": [
+    {
+      "from": [0, 0.5, 0],
+      "to": [16, 0.5, 16],
+      "faces": {
+        "up": {"uv": [0, 0, 16, 16], "texture": "#0"}
+      }
+    }
+  ]
+}

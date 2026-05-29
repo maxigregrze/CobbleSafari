@@ -453,12 +453,19 @@ public class PortalSpawnManager {
 
     private static void cleanupExpiredPortals(MinecraftServer server, long currentTick) {
         int lifetime = PortalSpawnConfig.getPortalLifetimeTicks();
-        List<UUID> expiredIds = new ArrayList<>();
+        List<UUID> expiredIds = null;
 
         for (ActivePortal portal : ACTIVE_PORTALS.values()) {
             if (currentTick - portal.spawnTick() >= lifetime) {
+                if (expiredIds == null) {
+                    expiredIds = new ArrayList<>();
+                }
                 expiredIds.add(portal.id());
             }
+        }
+
+        if (expiredIds == null) {
+            return;
         }
 
         for (UUID portalId : expiredIds) {

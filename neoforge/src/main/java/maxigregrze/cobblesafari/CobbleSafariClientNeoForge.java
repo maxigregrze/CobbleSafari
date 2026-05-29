@@ -5,8 +5,14 @@ import maxigregrze.cobblesafari.init.ModBlockEntities;
 import maxigregrze.cobblesafari.init.ModBlocks;
 import maxigregrze.cobblesafari.init.ModEntities;
 import maxigregrze.cobblesafari.init.ModItems;
-import maxigregrze.cobblesafari.client.screen.DistortionStoneBricksRuneScreen;
+import maxigregrze.cobblesafari.client.screen.AuspiciousPokeballConfigScreen;
+import maxigregrze.cobblesafari.client.screen.AuspiciousPokeballGoldConfigScreen;
+import maxigregrze.cobblesafari.client.screen.LostItemConfigScreen;
+import maxigregrze.cobblesafari.network.OpenAuspiciousPokeballConfigPayload;
+import maxigregrze.cobblesafari.network.OpenAuspiciousPokeballGoldConfigPayload;
+import maxigregrze.cobblesafari.network.OpenLostItemConfigPayload;
 import maxigregrze.cobblesafari.client.screen.TpAcceptScreen;
+import maxigregrze.cobblesafari.client.screen.DistortionStoneBricksRuneScreen;
 import maxigregrze.cobblesafari.config.DimensionalBanConfig;
 import maxigregrze.cobblesafari.network.CloseTpAcceptPayload;
 import maxigregrze.cobblesafari.network.DimensionalBanSyncPayload;
@@ -21,6 +27,7 @@ import maxigregrze.cobblesafari.client.renderer.CsTraderEntityRenderer;
 import maxigregrze.cobblesafari.client.renderer.HikerEntityRenderer;
 import maxigregrze.cobblesafari.client.renderer.HoopaRingPortalBlockEntityRenderer;
 import maxigregrze.cobblesafari.client.renderer.GiratinaCoreBlockEntityRenderer;
+import maxigregrze.cobblesafari.client.renderer.AuspiciousPokeballBlockEntityRenderer;
 import maxigregrze.cobblesafari.client.renderer.DistortionPortalBlockEntityRenderer;
 import maxigregrze.cobblesafari.client.renderer.LostItemBlockEntityRenderer;
 import maxigregrze.cobblesafari.client.renderer.VoidBlockRenderer;
@@ -134,6 +141,7 @@ public class CobbleSafariClientNeoForge {
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.AIR_FIRE_CORAL, RenderType.cutout());
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.AIR_HORN_CORAL, RenderType.cutout());
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.ICICLE, RenderType.cutout());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.RUSTED_IRON_BLOCK, RenderType.cutoutMipped());
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.UNDERGROUND_PC, RenderType.cutout());
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.SECRETBASE_PC, RenderType.cutout());
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.INCUBATOR, RenderType.translucent());
@@ -160,6 +168,41 @@ public class CobbleSafariClientNeoForge {
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.LOST_NOTES, RenderType.cutout());
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.LOST_ITEM, RenderType.cutout());
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.LOST_ITEM_VISUAL, RenderType.cutout());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.WHIRLWIND, RenderType.translucent());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.WHIRLWIND_DISPLAY, RenderType.translucent());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.AUSPICIOUS_POKEBALL, RenderType.cutout());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.AUSPICIOUS_POKEBALL_DISPLAY, RenderType.cutout());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.AUSPICIOUS_POKEBALL_SMALL, RenderType.cutout());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.AUSPICIOUS_POKEBALL_SMALL_DISPLAY, RenderType.cutout());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.AUSPICIOUS_POKEBALL_GOLD, RenderType.cutout());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.AUSPICIOUS_POKEBALL_GOLD_DISPLAY, RenderType.cutout());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.UNION_ROOM_PILLAR, RenderType.translucent());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.UNION_ROOM_CROWD, RenderType.translucent());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.UNION_ROOM_CROWD_DISPLAY, RenderType.translucent());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.UNION_ROOM_POKEBALL, RenderType.translucent());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.UNION_ROOM_POKEBALL_DISPLAY, RenderType.translucent());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.UNION_ROOM_SPOT, RenderType.translucent());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.UNION_ROOM_SPOT_DISPLAY, RenderType.translucent());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.UNION_ROOM_GLOBE, RenderType.translucent());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.ONLINE_FEATURE_PC, RenderType.cutoutMipped());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.ONLINE_FEATURE_PC_UNION, RenderType.cutoutMipped());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.ONLINE_FEATURE_PC_GTS, RenderType.cutoutMipped());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.ONLINE_FEATURE_PC_WONDER, RenderType.cutoutMipped());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.UNION_ROOM_GLOBE_DISPLAY_MOVING, RenderType.translucent());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.UNION_ROOM_SCREEN, RenderType.translucent());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.UNION_ROOM_SCREEN_DISPLAY, RenderType.translucent());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.UNION_ROOM_SCREEN_LEFT, RenderType.translucent());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.UNION_ROOM_SCREEN_LEFT_DISPLAY, RenderType.translucent());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.UNION_ROOM_SCREEN_RIGHT, RenderType.translucent());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.UNION_ROOM_SCREEN_RIGHT_DISPLAY, RenderType.translucent());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.UNION_ROOM_SPOTLIGHT_GREEN, RenderType.translucent());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.UNION_ROOM_SPOTLIGHT_YELLOW, RenderType.translucent());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.UNION_ROOM_SPOTLIGHT_BLUE, RenderType.translucent());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.UNION_ROOM_SPOTLIGHT_RED, RenderType.translucent());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.UNION_ROOM_SPOTLIGHT_DISPLAY_LIGHT_GREEN, RenderType.translucent());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.UNION_ROOM_SPOTLIGHT_DISPLAY_LIGHT_YELLOW, RenderType.translucent());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.UNION_ROOM_SPOTLIGHT_DISPLAY_LIGHT_BLUE, RenderType.translucent());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.UNION_ROOM_SPOTLIGHT_DISPLAY_LIGHT_RED, RenderType.translucent());
 
             BlockEntityRenderers.register(ModBlockEntities.HOOPA_RING_PORTAL, HoopaRingPortalBlockEntityRenderer::new);
             BlockEntityRenderers.register(ModBlockEntities.DUNGEON_PORTAL, DungeonPortalBlockEntityRenderer::new);
@@ -167,6 +210,12 @@ public class CobbleSafariClientNeoForge {
             BlockEntityRenderers.register(ModBlockEntities.GIRATINA_CORE, GiratinaCoreBlockEntityRenderer::new);
             BlockEntityRenderers.register(ModBlockEntities.DISTORTION_PORTAL, DistortionPortalBlockEntityRenderer::new);
             BlockEntityRenderers.register(ModBlockEntities.LOST_ITEM, LostItemBlockEntityRenderer::new);
+            BlockEntityRenderers.register(ModBlockEntities.AUSPICIOUS_POKEBALL, AuspiciousPokeballBlockEntityRenderer::new);
+            BlockEntityRenderers.register(ModBlockEntities.AUSPICIOUS_POKEBALL_GOLD, AuspiciousPokeballBlockEntityRenderer::new);
+            BlockEntityRenderers.register(ModBlockEntities.UNION_ROOM_DECOR, maxigregrze.cobblesafari.client.renderer.UnionRoomDecorBlockEntityRenderer::new);
+            BlockEntityRenderers.register(ModBlockEntities.WHIRLWIND, maxigregrze.cobblesafari.client.renderer.WhirlwindBlockEntityRenderer::new);
+            BlockEntityRenderers.register(ModBlockEntities.UNION_ROOM_GLOBE_UPPER, maxigregrze.cobblesafari.client.renderer.UnionRoomGlobeUpperBlockEntityRenderer::new);
+            BlockEntityRenderers.register(ModBlockEntities.UNION_ROOM_SPOTLIGHT, maxigregrze.cobblesafari.client.renderer.UnionRoomSpotlightBlockEntityRenderer::new);
         });
 
         event.enqueueWork(DonutItemClientSetup::registerItemProperties);
@@ -174,6 +223,10 @@ public class CobbleSafariClientNeoForge {
         NeoForge.EVENT_BUS.addListener(CobbleSafariClientNeoForge::onRenderGuiLayer);
         NeoForge.EVENT_BUS.addListener(CobbleSafariClientNeoForge::onItemTooltip);
         NeoForge.EVENT_BUS.addListener(CobbleSafariClientNeoForge::onClientTick);
+
+        if (net.neoforged.fml.ModList.get().isLoaded("accessories")) {
+            maxigregrze.cobblesafari.compat.accessories.AccessoriesClientCompat.init();
+        }
     }
 
     @SubscribeEvent
@@ -192,7 +245,10 @@ public class CobbleSafariClientNeoForge {
     }
 
     public static void onClientTick(net.neoforged.neoforge.client.event.ClientTickEvent.Post event) {
-        DungeonMusicHandler.onClientTick(Minecraft.getInstance());
+        Minecraft mc = Minecraft.getInstance();
+        DungeonMusicHandler.onClientTick(mc);
+        maxigregrze.cobblesafari.client.screen.rotomphone.RotomPhonePcSession.tickCleanup(mc);
+        maxigregrze.cobblesafari.client.rotomphone.RotoGlideClient.tick(mc);
     }
 
     public static void onRenderGuiLayer(RenderGuiLayerEvent.Post event) {
@@ -252,10 +308,79 @@ public class CobbleSafariClientNeoForge {
         });
     }
 
+    public static void handleOpenLostItemConfig(OpenLostItemConfigPayload payload, IPayloadContext context) {
+        context.enqueueWork(() -> {
+            Minecraft.getInstance().setScreen(new LostItemConfigScreen(payload));
+        });
+    }
+
+    public static void handleOpenAuspiciousPokeballConfig(OpenAuspiciousPokeballConfigPayload payload, IPayloadContext context) {
+        context.enqueueWork(() -> {
+            Minecraft.getInstance().setScreen(new AuspiciousPokeballConfigScreen(payload));
+        });
+    }
+
+    public static void handleOpenAuspiciousPokeballGoldConfig(OpenAuspiciousPokeballGoldConfigPayload payload, IPayloadContext context) {
+        context.enqueueWork(() -> {
+            Minecraft.getInstance().setScreen(new AuspiciousPokeballGoldConfigScreen(payload));
+        });
+    }
+
     public static void handleOpenLostNoteBook(OpenLostNoteBookPayload payload, IPayloadContext context) {
         context.enqueueWork(() -> {
             BookViewScreen.BookAccess access = BookViewScreen.BookAccess.fromItem(payload.book());
             Minecraft.getInstance().setScreen(new BookViewScreen(access));
+        });
+    }
+
+    public static void handleOpenRotomPhone(maxigregrze.cobblesafari.network.OpenRotomPhonePayload payload, IPayloadContext context) {
+        context.enqueueWork(() -> {
+            Minecraft.getInstance().setScreen(new maxigregrze.cobblesafari.client.screen.rotomphone.RotomPhoneMenuScreen(
+                    payload.rotomName(), payload.shinyStatus(), payload.currentSkin(), payload.safetyMode(), payload.rotoGlide()));
+        });
+    }
+
+    public static void handleOpenEmptyPhoneConfirm(maxigregrze.cobblesafari.network.OpenEmptyPhoneConfirmPayload payload, IPayloadContext context) {
+        context.enqueueWork(() -> {
+            Minecraft.getInstance().setScreen(new maxigregrze.cobblesafari.client.screen.rotomphone.EmptyPhoneConfirmScreen(
+                    payload.rotomName(), payload.rotomLevel(), payload.rotomIsShiny()));
+        });
+    }
+
+    public static void handleRotomPhoneConfigSync(maxigregrze.cobblesafari.network.RotomPhoneConfigSyncPayload payload, IPayloadContext context) {
+        context.enqueueWork(() -> {
+            maxigregrze.cobblesafari.rotomphone.RotomPhoneClientCache.applySyncData(payload);
+        });
+    }
+
+    public static void handleUnionAppResult(maxigregrze.cobblesafari.network.UnionAppResultPayload payload, IPayloadContext context) {
+        context.enqueueWork(() -> {
+            if (payload.subscreen() == maxigregrze.cobblesafari.network.UnionAppResultPayload.SUB_CLOSE_GUI) {
+                Minecraft.getInstance().setScreen(null);
+                return;
+            }
+            if (Minecraft.getInstance().screen
+                    instanceof maxigregrze.cobblesafari.client.screen.rotomphone.RotomPhoneUnionScreen ru) {
+                ru.applyServerSnapshot(payload);
+            }
+        });
+    }
+
+    public static void handleWonderAppResult(maxigregrze.cobblesafari.network.WonderAppResultPayload payload, IPayloadContext context) {
+        context.enqueueWork(() -> {
+            if (Minecraft.getInstance().screen
+                    instanceof maxigregrze.cobblesafari.client.screen.rotomphone.RotomPhoneWonderScreen rw) {
+                rw.applyServerSnapshot(payload);
+            }
+        });
+    }
+
+    public static void handleGtsAppResult(maxigregrze.cobblesafari.network.GtsAppResultPayload payload, IPayloadContext context) {
+        context.enqueueWork(() -> {
+            if (Minecraft.getInstance().screen
+                    instanceof maxigregrze.cobblesafari.client.screen.rotomphone.RotomPhoneGTSScreen rg) {
+                rg.applyServerSnapshot(payload);
+            }
         });
     }
 

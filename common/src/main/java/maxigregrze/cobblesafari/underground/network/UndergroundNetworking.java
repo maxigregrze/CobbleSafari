@@ -1,6 +1,7 @@
 package maxigregrze.cobblesafari.underground.network;
 
 import maxigregrze.cobblesafari.platform.Services;
+import maxigregrze.cobblesafari.security.RateLimiter;
 import maxigregrze.cobblesafari.underground.MiningSession;
 import maxigregrze.cobblesafari.underground.UndergroundMinigame;
 import maxigregrze.cobblesafari.underground.logic.MiningGrid;
@@ -14,7 +15,12 @@ public class UndergroundNetworking {
 
     public static void handleMineAction(ServerPlayer player, UndergroundPayloads.MineActionPayload payload) {
         MiningSession session = UndergroundMinigame.getSession(payload.sessionId());
-        if (session == null || session.isComplete()) {
+        if (session == null || session.isComplete()
+                || !player.getUUID().equals(session.getOwnerId())) {
+            return;
+        }
+        if (!RateLimiter.allow(player.getUUID(),
+                RateLimiter.key(RateLimiter.SERVICE_UNDERGROUND, 0), 40L)) {
             return;
         }
 
@@ -67,6 +73,10 @@ public class UndergroundNetworking {
         if (result.collapsed()) {
             session.setComplete(true);
 
+            int failed = maxigregrze.cobblesafari.init.ModStats.awardAndGet(
+                    player, maxigregrze.cobblesafari.init.ModStats.FAILED_EXCAVATIONS);
+            maxigregrze.cobblesafari.advancement.ModCriteria.EXCAVATION_FAILED.trigger(player, failed);
+
             Services.PLATFORM.sendPayloadToPlayer(player, new UndergroundPayloads.GameEndPayload(
                     payload.sessionId(),
                     true,
@@ -81,6 +91,10 @@ public class UndergroundNetworking {
             List<PlacedTreasure> collected = session.getGrid().getRevealedTreasures();
             if (collected.size() == session.getGrid().getTreasureCount()) {
                 session.setComplete(true);
+
+                int perfect = maxigregrze.cobblesafari.init.ModStats.awardAndGet(
+                        player, maxigregrze.cobblesafari.init.ModStats.PERFECT_EXCAVATIONS);
+                maxigregrze.cobblesafari.advancement.ModCriteria.EXCAVATION_PERFECT.trigger(player, perfect);
 
                 Services.PLATFORM.sendPayloadToPlayer(player, new UndergroundPayloads.GameEndPayload(
                         payload.sessionId(),
@@ -98,7 +112,8 @@ public class UndergroundNetworking {
 
     public static void handleToolSwitch(ServerPlayer player, UndergroundPayloads.SwitchToolPayload payload) {
         MiningSession session = UndergroundMinigame.getSession(payload.sessionId());
-        if (session == null || session.isComplete()) {
+        if (session == null || session.isComplete()
+                || !player.getUUID().equals(session.getOwnerId())) {
             return;
         }
 

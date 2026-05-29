@@ -1,0 +1,16 @@
+{
+  "parent": "cobblesafari:root",
+  "display": {
+    "icon": { "id": "minecraft:diamond" },
+    "title": { "translate": "advancement.cobblesafari.spheres_in_my_cube_game.title" },
+    "description": { "translate": "advancement.cobblesafari.spheres_in_my_cube_game.description" },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "done": { "trigger": "cobblesafari:digsite_used", "conditions": { "count": 1 } }
+  },
+  "requirements": [["done"]]
+}

@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/cube_bottom_top",
+  "textures": {
+    "top": "cobblesafari:block/union_light_top",
+    "bottom": "cobblesafari:block/union_light_top",
+    "side": "cobblesafari:block/union_light"
+  }
+}

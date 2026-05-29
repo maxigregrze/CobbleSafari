@@ -2,8 +2,8 @@
     "ingredient": "cobblesafari:hyperberry_salac",
     "colour": "purple",
     "flavours": {
-        "DRY": 80,
-        "BITTER": 55
+        "DRY": 55,
+        "BITTER": 80
     },
     "baitEffects": [
         {

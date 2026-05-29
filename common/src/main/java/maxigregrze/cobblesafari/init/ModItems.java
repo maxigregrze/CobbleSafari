@@ -8,6 +8,7 @@ import maxigregrze.cobblesafari.item.CreativeFlagItem;
 import maxigregrze.cobblesafari.item.IncenseItem;
 import maxigregrze.cobblesafari.item.LuckyMiningHelmetItem;
 import maxigregrze.cobblesafari.item.MudBallItem;
+import maxigregrze.cobblesafari.item.RotomPhoneItem;
 import com.cobblemon.mod.common.api.pokemon.stats.Stats;
 import maxigregrze.cobblesafari.item.donut.DonutItem;
 import maxigregrze.cobblesafari.item.donut.DungeonDonutItem;
@@ -70,8 +71,6 @@ public class ModItems {
     public static Item PERFUME_RARE;
     public static Item PERFUME_ULTRARARE;
 
-    public static final Item AUSPICIOUS_POKEBALL = new Item(new Item.Properties());
-
     public static final Item SPHERE_BLUE_S = new Item(new Item.Properties());
     public static final Item SPHERE_BLUE_L = new Item(new Item.Properties());
     public static final Item SPHERE_RED_S = new Item(new Item.Properties());
@@ -103,6 +102,8 @@ public class ModItems {
     public static final Item FLAG_CREATIVE = new CreativeFlagItem(new Item.Properties().stacksTo(1).rarity(Rarity.EPIC));
 
     public static final Item EGG_CREATIVE = new CreativeEggItem(new Item.Properties().stacksTo(1).rarity(Rarity.EPIC));
+
+    public static final Item ROTOM_PHONE = new RotomPhoneItem(new Item.Properties().stacksTo(1).rarity(Rarity.EPIC));
 
     public static final Item MUD_BALL = new MudBallItem(new Item.Properties().stacksTo(64));
     public static final Item BAIT = new BaitItem(new Item.Properties().stacksTo(64));
@@ -195,7 +196,6 @@ public class ModItems {
         PERFUME_ULTRARARE = new IncenseItem(new Item.Properties().stacksTo(16),
                 ModEffects.ULTRA_RARE_BOOST.holder, SpawnBoostConfig.data.durationSettings.ultraRareBoostDuration);
 
-        registerItem("auspiciouspokeball", AUSPICIOUS_POKEBALL);
         registerItem("wildegg", WILD_EGG_BASE);
 
         for (Map.Entry<String, Item> entry : WILD_EGGS.entrySet()) {
@@ -251,6 +251,8 @@ public class ModItems {
         registerItem("underground_flag_creative", FLAG_CREATIVE);
 
         registerItem("egg_creative", EGG_CREATIVE);
+
+        registerItem("rotomphone", ROTOM_PHONE);
 
         registerItem("mud_ball", MUD_BALL);
         registerItem("bait", BAIT);

@@ -1,0 +1,9 @@
+{
+  "id": "poketch",
+  "displayName": "Poketch",
+  "hasCustomScreen": true,
+  "color": "c4ffc4",
+  "unlockedFromStart": false,
+  "hasShinyVariant": false,
+  "unlockingAdvancement": "story/mine_stone"
+}

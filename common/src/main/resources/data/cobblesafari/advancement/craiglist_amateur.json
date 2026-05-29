@@ -1,0 +1,16 @@
+{
+  "parent": "cobblesafari:root",
+  "display": {
+    "icon": { "id": "minecraft:paper" },
+    "title": { "translate": "advancement.cobblesafari.craiglist_amateur.title" },
+    "description": { "translate": "advancement.cobblesafari.craiglist_amateur.description" },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "done": { "trigger": "cobblesafari:gts_trade_deposit_sold", "conditions": { "count": 1 } }
+  },
+  "requirements": [["done"]]
+}

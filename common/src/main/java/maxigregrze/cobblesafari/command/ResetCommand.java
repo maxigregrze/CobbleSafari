@@ -10,6 +10,9 @@ import maxigregrze.cobblesafari.config.SafariTimerConfig;
 import maxigregrze.cobblesafari.config.SecretBasePCConfig;
 import maxigregrze.cobblesafari.config.SpawnBoostConfig;
 import maxigregrze.cobblesafari.config.RandomizerItemsConfig;
+import maxigregrze.cobblesafari.config.GtsSettings;
+import maxigregrze.cobblesafari.config.WonderTradeSettings;
+import maxigregrze.cobblesafari.config.RotomPhoneConfig;
 import maxigregrze.cobblesafari.data.DungeonPositionSavedData;
 import maxigregrze.cobblesafari.dungeon.DungeonConfig;
 import maxigregrze.cobblesafari.dungeon.DungeonDimensions;
@@ -92,6 +95,12 @@ public class ResetCommand {
         MiscConfig.load();
         SecretBasePCConfig.load();
         RandomizerItemsConfig.load();
+        RotomPhoneConfig.load();
+        WonderTradeSettings.load();
+        GtsSettings.load();
+        maxigregrze.cobblesafari.wondertrade.WonderTradeDataLoader.load(source.getServer());
+        maxigregrze.cobblesafari.wondertrade.WonderTradeService.runAutofillIfNeeded(source.getServer());
+        maxigregrze.cobblesafari.gts.GtsDataLoader.load(source.getServer());
 
         source.sendSuccess(() -> Component.translatable("cobblesafari.command.refresh.success"), true);
         CobbleSafari.LOGGER.info("All configs refreshed by {}", source.getTextName());

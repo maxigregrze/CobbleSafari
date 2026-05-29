@@ -1,0 +1,12 @@
+{
+  "offerId": "sample_shiny_eevee_for_pikachu",
+  "given": "eevee level=25 shiny originaltrainertype=npc originaltrainer=Safari Exchange",
+  "givenMarks": ["cobblesafari:ribbon_wonder"],
+  "givenActiveMark": "cobblesafari:ribbon_wonder",
+  "wish": {
+    "species": "pikachu",
+    "levelBucket": 2,
+    "gender": "any",
+    "shiny": "any"
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/cube_all",
+  "textures": {
+    "all": "cobblesafari:block/trashcube_2",
+    "particle": "cobblesafari:block/trashcube_2"
+  }
+}

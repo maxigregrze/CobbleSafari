@@ -51,6 +51,11 @@ public class ThrownMudBallEntity extends ThrowableItemProjectile {
                 return;
             }
 
+            ServerPlayer thrower = (getOwner() instanceof ServerPlayer sp) ? sp : null;
+            if (thrower != null) {
+                SafariStateManager.getOrCreate(pokemon.getUUID()).setLastInteractingPlayer(thrower.getUUID());
+            }
+
             SafariPokemonState state = SafariStateManager.getState(pokemon.getUUID());
             if (state != null && state.isFleeing()) {
                 SafariStateManager.triggerImmediateDespawn(pokemon);
@@ -58,6 +63,11 @@ public class ThrownMudBallEntity extends ThrowableItemProjectile {
             }
 
             SafariStateManager.applyMudBall(pokemon);
+
+            if (thrower != null) {
+                maxigregrze.cobblesafari.init.ModStats.award(
+                        thrower, maxigregrze.cobblesafari.init.ModStats.MUD_BALLS_USED_SAFARI);
+            }
 
             level().playSound(null, pokemon.getX(), pokemon.getY(), pokemon.getZ(),
                     SoundEvents.MUD_BREAK, pokemon.getSoundSource(), 1.0f, 1.0f);

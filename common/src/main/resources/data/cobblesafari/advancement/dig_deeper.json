@@ -1,0 +1,19 @@
+{
+  "parent": "cobblesafari:root",
+  "display": {
+    "icon": { "id": "minecraft:iron_pickaxe" },
+    "title": { "translate": "advancement.cobblesafari.dig_deeper.title" },
+    "description": { "translate": "advancement.cobblesafari.dig_deeper.description" },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "entered": {
+      "trigger": "minecraft:changed_dimension",
+      "conditions": { "to": "cobblesafari:dungeon_underground" }
+    }
+  },
+  "requirements": [["entered"]]
+}

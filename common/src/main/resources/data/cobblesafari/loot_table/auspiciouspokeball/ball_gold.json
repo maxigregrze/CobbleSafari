@@ -1,0 +1,33 @@
+{
+  "type": "minecraft:chest",
+  "pools": [
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:group",
+          "weight": 90,
+          "children": [
+            { "type": "minecraft:item", "name": "cobblemon:fast_ball", "weight": 1 },
+            { "type": "minecraft:item", "name": "cobblemon:level_ball", "weight": 1 },
+            { "type": "minecraft:item", "name": "cobblemon:lure_ball", "weight": 1 },
+            { "type": "minecraft:item", "name": "cobblemon:heavy_ball", "weight": 1 },
+            { "type": "minecraft:item", "name": "cobblemon:love_ball", "weight": 1 },
+            { "type": "minecraft:item", "name": "cobblemon:friend_ball", "weight": 1 },
+            { "type": "minecraft:item", "name": "cobblemon:moon_ball", "weight": 1 }
+          ]
+        },
+        {
+          "type": "minecraft:group",
+          "weight": 10,
+          "children": [
+            { "type": "minecraft:item", "name": "cobblemon:safari_ball", "weight": 1 },
+            { "type": "minecraft:item", "name": "cobblemon:sport_ball", "weight": 1 },
+            { "type": "minecraft:item", "name": "cobblemon:dream_ball", "weight": 1 },
+            { "type": "minecraft:item", "name": "cobblemon:beast_ball", "weight": 1 }
+          ]
+        }
+      ]
+    }
+  ]
+}

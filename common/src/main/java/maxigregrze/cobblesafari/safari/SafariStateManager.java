@@ -30,22 +30,42 @@ public class SafariStateManager {
 
     public static void onServerTick(MinecraftServer server) {
         currentServerTick++;
-        
-        List<ScheduledTask> tasksToExecute = new ArrayList<>();
+
+        List<ScheduledTask> tasksToExecute = null;
         synchronized (SCHEDULED_TASKS) {
             Iterator<ScheduledTask> iterator = SCHEDULED_TASKS.iterator();
             while (iterator.hasNext()) {
                 ScheduledTask task = iterator.next();
                 if (currentServerTick >= task.executionTick) {
+                    if (tasksToExecute == null) {
+                        tasksToExecute = new ArrayList<>();
+                    }
                     tasksToExecute.add(task);
                     iterator.remove();
                 }
             }
         }
-        
-        for (ScheduledTask task : tasksToExecute) {
-            task.action.run();
+
+        if (tasksToExecute != null) {
+            for (ScheduledTask task : tasksToExecute) {
+                task.action.run();
+            }
         }
+
+        // Drop state for Pokémon whose entity is gone (caught / despawned / unloaded) so the
+        // map cannot grow without bound on long-running servers.
+        if (currentServerTick % 1200 == 0 && !STATES.isEmpty()) {
+            STATES.keySet().removeIf(id -> !isEntityPresent(server, id));
+        }
+    }
+
+    private static boolean isEntityPresent(MinecraftServer server, UUID id) {
+        for (ServerLevel level : server.getAllLevels()) {
+            if (level.getEntity(id) != null) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private static class ScheduledTask {
@@ -76,9 +96,8 @@ public class SafariStateManager {
 
     public static boolean isInSafariDimension(PokemonEntity pokemonEntity) {
         if (!(pokemonEntity.level() instanceof ServerLevel serverLevel)) return false;
-        ResourceLocation safariDimension = ResourceLocation.parse(SafariTimerConfig.getSafariDimensionId());
         ResourceLocation currentDimension = serverLevel.dimension().location();
-        return currentDimension.equals(safariDimension);
+        return currentDimension.equals(SafariTimerConfig.getSafariDimensionRL());
     }
 
     public static void applyMudBall(PokemonEntity pokemonEntity) {
@@ -151,6 +170,16 @@ public class SafariStateManager {
 
         if (pokemonEntity.level() instanceof ServerLevel serverLevel) {
             state.setFleeStartTick(serverLevel.getServer().getTickCount());
+
+            UUID culprit = state.getLastInteractingPlayer();
+            if (culprit != null) {
+                ServerPlayer player = serverLevel.getServer().getPlayerList().getPlayer(culprit);
+                if (player != null) {
+                    int total = maxigregrze.cobblesafari.init.ModStats.awardAndGet(
+                            player, maxigregrze.cobblesafari.init.ModStats.POKEMON_FLED_SAFARI);
+                    maxigregrze.cobblesafari.advancement.ModCriteria.POKEMON_FLED.trigger(player, total);
+                }
+            }
 
             Component fleeMessage = Component.translatable(
                     "cobblesafari.safari.flee_warning",

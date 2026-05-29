@@ -1,0 +1,43 @@
+{
+  "type": "minecraft:chest",
+  "pools": [
+    {
+      "rolls": 1,
+      "entries": [
+        
+        {
+          "type": "minecraft:group",
+          "weight": 50,
+          "children": [
+            { "type": "minecraft:item", "name": "cobblesafari:hyperberry_starf", "weight": 2 }, 
+            { "type": "minecraft:item", "name": "cobblesafari:hyperberry_enigma", "weight": 1 } 
+          ]
+        },
+        {
+          "type": "minecraft:group",
+          "weight": 35,
+          "children": [
+            { "type": "minecraft:item", "name": "cobblesafari:hyperberry_grepa", "weight": 1 },
+            { "type": "minecraft:item", "name": "cobblesafari:hyperberry_hondew", "weight": 1 },
+            { "type": "minecraft:item", "name": "cobblesafari:hyperberry_kelpsy", "weight": 1 },
+            { "type": "minecraft:item", "name": "cobblesafari:hyperberry_qualot", "weight": 1 },
+            { "type": "minecraft:item", "name": "cobblesafari:hyperberry_tamato", "weight": 1 },
+            { "type": "minecraft:item", "name": "cobblesafari:hyperberry_pomeg", "weight": 1 }
+          ]
+        },
+        {
+          "type": "minecraft:group",
+          "weight": 15,
+          "children": [
+            { "type": "minecraft:item", "name": "cobblesafari:hyperberry_apicot", "weight": 1 },
+            { "type": "minecraft:item", "name": "cobblesafari:hyperberry_ganlon", "weight": 1 },
+            { "type": "minecraft:item", "name": "cobblesafari:hyperberry_liechi", "weight": 1 },
+            { "type": "minecraft:item", "name": "cobblesafari:hyperberry_petaya", "weight": 1 },
+            { "type": "minecraft:item", "name": "cobblesafari:hyperberry_salac", "weight": 1 },
+            { "type": "minecraft:item", "name": "cobblesafari:hyperberry_lansat", "weight": 1 }
+          ]
+        }
+      ]
+    }
+  ]
+}

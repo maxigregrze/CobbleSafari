@@ -16,6 +16,17 @@ import maxigregrze.cobblesafari.network.DimensionalBanSyncPayload;
 import maxigregrze.cobblesafari.network.OpenTpAcceptPayload;
 import maxigregrze.cobblesafari.network.OpenLostNoteBookPayload;
 import maxigregrze.cobblesafari.network.OpenRuneEditorPayload;
+import maxigregrze.cobblesafari.network.OpenLostItemConfigPayload;
+import maxigregrze.cobblesafari.network.OpenAuspiciousPokeballConfigPayload;
+import maxigregrze.cobblesafari.network.OpenAuspiciousPokeballGoldConfigPayload;
+import maxigregrze.cobblesafari.network.SaveLostItemConfigPayload;
+import maxigregrze.cobblesafari.network.SaveAuspiciousPokeballConfigPayload;
+import maxigregrze.cobblesafari.network.SaveAuspiciousPokeballGoldConfigPayload;
+import maxigregrze.cobblesafari.network.LostItemResetClaimsPayload;
+import maxigregrze.cobblesafari.network.AuspiciousPokeballResetClaimsPayload;
+import maxigregrze.cobblesafari.network.LostItemConfigServerHandler;
+import maxigregrze.cobblesafari.network.AuspiciousPokeballConfigServerHandler;
+import maxigregrze.cobblesafari.network.AuspiciousPokeballGoldConfigServerHandler;
 import maxigregrze.cobblesafari.network.SaveRuneTextPayload;
 import maxigregrze.cobblesafari.network.TimerSyncPayload;
 import maxigregrze.cobblesafari.network.TpAcceptResponsePayload;
@@ -59,6 +70,10 @@ public class CobbleSafariFabric implements ModInitializer {
         registerCommands();
         registerEvents();
 
+        if (net.fabricmc.loader.api.FabricLoader.getInstance().isModLoaded("accessories")) {
+            maxigregrze.cobblesafari.compat.accessories.AccessoriesCompat.registerAccessoryItem();
+        }
+
         CobbleSafari.LOGGER.info("CobbleSafari Fabric module loaded!");
     }
 
@@ -88,8 +103,24 @@ public class CobbleSafariFabric implements ModInitializer {
         PayloadTypeRegistry.playS2C().register(OpenTpAcceptPayload.TYPE, OpenTpAcceptPayload.STREAM_CODEC);
         PayloadTypeRegistry.playS2C().register(CloseTpAcceptPayload.TYPE, CloseTpAcceptPayload.STREAM_CODEC);
         PayloadTypeRegistry.playS2C().register(OpenRuneEditorPayload.TYPE, OpenRuneEditorPayload.STREAM_CODEC);
+        PayloadTypeRegistry.playS2C().register(OpenLostItemConfigPayload.TYPE, OpenLostItemConfigPayload.STREAM_CODEC);
+        PayloadTypeRegistry.playS2C().register(OpenAuspiciousPokeballConfigPayload.TYPE, OpenAuspiciousPokeballConfigPayload.STREAM_CODEC);
+        PayloadTypeRegistry.playS2C().register(OpenAuspiciousPokeballGoldConfigPayload.TYPE, OpenAuspiciousPokeballGoldConfigPayload.STREAM_CODEC);
         PayloadTypeRegistry.playS2C().register(OpenLostNoteBookPayload.TYPE, OpenLostNoteBookPayload.STREAM_CODEC);
         PayloadTypeRegistry.playS2C().register(DimensionalBanSyncPayload.TYPE, DimensionalBanSyncPayload.STREAM_CODEC);
+        PayloadTypeRegistry.playS2C().register(maxigregrze.cobblesafari.network.OpenRotomPhonePayload.TYPE, maxigregrze.cobblesafari.network.OpenRotomPhonePayload.STREAM_CODEC);
+        PayloadTypeRegistry.playS2C().register(maxigregrze.cobblesafari.network.OpenEmptyPhoneConfirmPayload.TYPE, maxigregrze.cobblesafari.network.OpenEmptyPhoneConfirmPayload.STREAM_CODEC);
+        PayloadTypeRegistry.playS2C().register(maxigregrze.cobblesafari.network.RotomPhoneConfigSyncPayload.TYPE, maxigregrze.cobblesafari.network.RotomPhoneConfigSyncPayload.STREAM_CODEC);
+        PayloadTypeRegistry.playS2C().register(maxigregrze.cobblesafari.network.UnionAppResultPayload.TYPE, maxigregrze.cobblesafari.network.UnionAppResultPayload.STREAM_CODEC);
+        PayloadTypeRegistry.playS2C().register(maxigregrze.cobblesafari.network.WonderAppResultPayload.TYPE, maxigregrze.cobblesafari.network.WonderAppResultPayload.STREAM_CODEC);
+        PayloadTypeRegistry.playS2C().register(maxigregrze.cobblesafari.network.GtsAppResultPayload.TYPE, maxigregrze.cobblesafari.network.GtsAppResultPayload.STREAM_CODEC);
+
+        PayloadTypeRegistry.playC2S().register(maxigregrze.cobblesafari.network.RotomPhoneActionPayload.TYPE, maxigregrze.cobblesafari.network.RotomPhoneActionPayload.STREAM_CODEC);
+        PayloadTypeRegistry.playC2S().register(maxigregrze.cobblesafari.network.UnionAppPayload.TYPE, maxigregrze.cobblesafari.network.UnionAppPayload.STREAM_CODEC);
+        PayloadTypeRegistry.playC2S().register(maxigregrze.cobblesafari.network.WonderAppPayload.TYPE, maxigregrze.cobblesafari.network.WonderAppPayload.STREAM_CODEC);
+        PayloadTypeRegistry.playC2S().register(maxigregrze.cobblesafari.network.GtsAppPayload.TYPE, maxigregrze.cobblesafari.network.GtsAppPayload.STREAM_CODEC);
+        PayloadTypeRegistry.playC2S().register(maxigregrze.cobblesafari.network.RotomPhoneRotoGlideRequestPayload.TYPE, maxigregrze.cobblesafari.network.RotomPhoneRotoGlideRequestPayload.STREAM_CODEC);
+        PayloadTypeRegistry.playC2S().register(maxigregrze.cobblesafari.network.EmptyPhoneConfirmPayload.TYPE, maxigregrze.cobblesafari.network.EmptyPhoneConfirmPayload.STREAM_CODEC);
 
         PayloadTypeRegistry.playC2S().register(
                 TpAcceptResponsePayload.TYPE,
@@ -99,6 +130,11 @@ public class CobbleSafariFabric implements ModInitializer {
                 SaveRuneTextPayload.TYPE,
                 SaveRuneTextPayload.STREAM_CODEC
         );
+        PayloadTypeRegistry.playC2S().register(SaveLostItemConfigPayload.TYPE, SaveLostItemConfigPayload.STREAM_CODEC);
+        PayloadTypeRegistry.playC2S().register(SaveAuspiciousPokeballConfigPayload.TYPE, SaveAuspiciousPokeballConfigPayload.STREAM_CODEC);
+        PayloadTypeRegistry.playC2S().register(SaveAuspiciousPokeballGoldConfigPayload.TYPE, SaveAuspiciousPokeballGoldConfigPayload.STREAM_CODEC);
+        PayloadTypeRegistry.playC2S().register(LostItemResetClaimsPayload.TYPE, LostItemResetClaimsPayload.STREAM_CODEC);
+        PayloadTypeRegistry.playC2S().register(AuspiciousPokeballResetClaimsPayload.TYPE, AuspiciousPokeballResetClaimsPayload.STREAM_CODEC);
         PayloadTypeRegistry.playC2S().register(
                 UndergroundPayloads.MineActionPayload.TYPE,
                 UndergroundPayloads.MineActionPayload.STREAM_CODEC
@@ -168,6 +204,124 @@ public class CobbleSafariFabric implements ModInitializer {
         );
 
         ServerPlayNetworking.registerGlobalReceiver(
+                SaveLostItemConfigPayload.TYPE,
+                (payload, context) -> {
+                    context.server().execute(() -> {
+                        if (context.player() instanceof ServerPlayer sp) {
+                            LostItemConfigServerHandler.handleSave(sp, payload);
+                        }
+                    });
+                }
+        );
+
+        ServerPlayNetworking.registerGlobalReceiver(
+                LostItemResetClaimsPayload.TYPE,
+                (payload, context) -> {
+                    context.server().execute(() -> {
+                        if (context.player() instanceof ServerPlayer sp) {
+                            LostItemConfigServerHandler.handleReset(sp, payload);
+                        }
+                    });
+                }
+        );
+
+        ServerPlayNetworking.registerGlobalReceiver(
+                AuspiciousPokeballResetClaimsPayload.TYPE,
+                (payload, context) -> {
+                    context.server().execute(() -> {
+                        if (context.player() instanceof ServerPlayer sp) {
+                            AuspiciousPokeballConfigServerHandler.handleReset(sp, payload);
+                        }
+                    });
+                }
+        );
+
+        ServerPlayNetworking.registerGlobalReceiver(
+                SaveAuspiciousPokeballGoldConfigPayload.TYPE,
+                (payload, context) -> {
+                    context.server().execute(() -> {
+                        if (context.player() instanceof ServerPlayer sp) {
+                            AuspiciousPokeballGoldConfigServerHandler.handleSave(sp, payload);
+                        }
+                    });
+                }
+        );
+
+        ServerPlayNetworking.registerGlobalReceiver(
+                SaveAuspiciousPokeballConfigPayload.TYPE,
+                (payload, context) -> {
+                    context.server().execute(() -> {
+                        if (context.player() instanceof ServerPlayer sp) {
+                            AuspiciousPokeballConfigServerHandler.handleSave(sp, payload);
+                        }
+                    });
+                }
+        );
+
+        ServerPlayNetworking.registerGlobalReceiver(
+                maxigregrze.cobblesafari.network.RotomPhoneActionPayload.TYPE,
+                (payload, context) -> {
+                    context.server().execute(() -> {
+                        maxigregrze.cobblesafari.rotomphone.RotomPhoneServerHandler.handleAction(context.player(), payload);
+                    });
+                }
+        );
+
+        ServerPlayNetworking.registerGlobalReceiver(
+                maxigregrze.cobblesafari.network.UnionAppPayload.TYPE,
+                (payload, context) -> {
+                    context.server().execute(() -> {
+                        if (context.player() instanceof ServerPlayer sp) {
+                            maxigregrze.cobblesafari.network.UnionAppServerHandler.handle(sp, payload);
+                        }
+                    });
+                }
+        );
+
+        ServerPlayNetworking.registerGlobalReceiver(
+                maxigregrze.cobblesafari.network.WonderAppPayload.TYPE,
+                (payload, context) -> {
+                    context.server().execute(() -> {
+                        if (context.player() instanceof ServerPlayer sp) {
+                            maxigregrze.cobblesafari.network.WonderAppServerHandler.handle(sp, payload);
+                        }
+                    });
+                }
+        );
+
+        ServerPlayNetworking.registerGlobalReceiver(
+                maxigregrze.cobblesafari.network.GtsAppPayload.TYPE,
+                (payload, context) -> {
+                    context.server().execute(() -> {
+                        if (context.player() instanceof ServerPlayer sp) {
+                            maxigregrze.cobblesafari.network.GtsAppServerHandler.handle(sp, payload);
+                        }
+                    });
+                }
+        );
+
+        ServerPlayNetworking.registerGlobalReceiver(
+                maxigregrze.cobblesafari.network.RotomPhoneRotoGlideRequestPayload.TYPE,
+                (payload, context) -> {
+                    context.server().execute(() -> {
+                        if (context.player() instanceof ServerPlayer sp) {
+                            maxigregrze.cobblesafari.rotomphone.RotoGlideServerLogic.onRotoGlideRequest(
+                                    sp, payload.horizontalMoveX(), payload.horizontalMoveZ());
+                        }
+                    });
+                }
+        );
+
+        ServerPlayNetworking.registerGlobalReceiver(
+                maxigregrze.cobblesafari.network.EmptyPhoneConfirmPayload.TYPE,
+                (payload, context) -> {
+                    context.server().execute(() -> {
+                        maxigregrze.cobblesafari.rotomphone.EmptyPhoneServerHandler.handleConfirm(context.player(), payload.confirmed());
+                    });
+                }
+        );
+
+        ServerPlayNetworking.registerGlobalReceiver(
                 UndergroundPayloads.MineActionPayload.TYPE,
                 (payload, context) -> {
                     context.server().execute(() -> {
@@ -200,6 +354,7 @@ public class CobbleSafariFabric implements ModInitializer {
                 CsTraderDataLoader.load(server);
                 UndergroundMinigame.loadDatapacks(server);
                 UndergroundMinigame.syncRegistryToAllPlayers(server);
+                maxigregrze.cobblesafari.rotomphone.RotomPhoneSkinDataLoader.load(server);
             }
         });
         ServerTickEvents.END_SERVER_TICK.register(server -> {
@@ -208,6 +363,7 @@ public class CobbleSafariFabric implements ModInitializer {
             DungeonTeleportCountdown.onServerTick(server);
             BalloonSpawnHandler.onServerTick(server);
             server.getPlayerList().getPlayers().forEach(LuckyMiningHelmetItem::tickEffect);
+            maxigregrze.cobblesafari.rotomphone.RotoGlideServerLogic.tickAll(server);
         });
 
         ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {

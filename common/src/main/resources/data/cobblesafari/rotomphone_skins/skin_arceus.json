@@ -1,0 +1,9 @@
+{
+  "id": "arceus",
+  "displayName": "Arc Phone",
+  "hasCustomScreen": false,
+  "color": "7affff",
+  "unlockedFromStart": false,
+  "hasShinyVariant": true,
+  "unlockingAdvancement": "story/mine_stone"
+}

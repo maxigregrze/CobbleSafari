@@ -9,6 +9,7 @@ import maxigregrze.cobblesafari.data.TimerSavedData;
 import maxigregrze.cobblesafari.dungeon.DungeonDimensions;
 import maxigregrze.cobblesafari.dungeon.DungeonTeleportHandler;
 import maxigregrze.cobblesafari.network.ModNetworking;
+import maxigregrze.cobblesafari.unionroom.UnionRoomManager;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
@@ -75,9 +76,8 @@ public class TimerManager {
     }
 
     public static boolean isInSafariDimension(ServerPlayer player) {
-        ResourceLocation dimensionId = ResourceLocation.parse(SafariTimerConfig.getSafariDimensionId());
         ResourceLocation playerDimension = player.level().dimension().location();
-        return playerDimension.equals(dimensionId);
+        return playerDimension.equals(SafariTimerConfig.getSafariDimensionRL());
     }
 
     public static Optional<String> getConfiguredDimensionId(ServerPlayer player) {
@@ -147,66 +147,89 @@ public class TimerManager {
     public static void tickAllTimers() {
         if (serverInstance == null) return;
 
+        int tickCount = serverInstance.getTickCount();
+
         for (Map.Entry<UUID, Map<String, PlayerTimerData>> playerEntry : activeTimers.entrySet()) {
             UUID playerId = playerEntry.getKey();
             Map<String, PlayerTimerData> dimensionTimers = playerEntry.getValue();
+
+            // Resolved once per player (all of a player's timers share the same player object,
+            // current dimension, and bypass flag for this tick).
+            ServerPlayer player = null;
+            boolean playerResolved = false;
+            String playerDimension = null;
+            Boolean bypassed = null;
 
             for (Map.Entry<String, PlayerTimerData> timerEntry : dimensionTimers.entrySet()) {
                 String timerDimensionId = timerEntry.getKey();
                 PlayerTimerData data = timerEntry.getValue();
 
-                if (data.isActive()) {
-                    ServerPlayer player = getPlayerByUUID(playerId);
+                if (!data.isActive()) {
+                    continue;
+                }
 
+                if (!playerResolved) {
+                    player = getPlayerByUUID(playerId);
+                    playerResolved = true;
                     if (player != null) {
-                        String playerDimension = player.level().dimension().location().toString();
+                        playerDimension = player.level().dimension().location().toString();
+                    }
+                }
 
-                        if (!playerDimension.equals(timerDimensionId)) {
-                            data.setActive(false);
-                            savePlayerData(player, data);
-                            syncToClient(player, data);
-                            CobbleSafari.LOGGER.debug("Timer auto-paused for player {} - no longer in dimension {}",
+                if (player != null) {
+                    if (!playerDimension.equals(timerDimensionId)) {
+                        data.setActive(false);
+                        savePlayerData(player, data);
+                        syncToClient(player, data);
+                        CobbleSafari.LOGGER.debug("Timer auto-paused for player {} - no longer in dimension {}",
+                                player.getName().getString(), timerDimensionId);
+                        continue;
+                    }
+
+                    if (DungeonDimensions.isDungeonDimension(timerDimensionId)) {
+                        // The dungeon-existence check is an O(active portals) scan; it does not need
+                        // per-tick precision, so throttle it. The void check stays per-tick (cheap).
+                        if (tickCount % 20 == 0 && !checkDungeonStillExists(player, timerDimensionId)) {
+                            CobbleSafari.LOGGER.warn("Player {} is in dungeon {} but dungeon no longer exists, evacuating",
                                     player.getName().getString(), timerDimensionId);
+                            expireActiveTimerAndTeleport(player, timerDimensionId, data, true);
                             continue;
                         }
-
-                        if (DungeonDimensions.isDungeonDimension(timerDimensionId)) {
-                            boolean dungeonStillExists = checkDungeonStillExists(player, timerDimensionId);
-                            if (!dungeonStillExists) {
-                                CobbleSafari.LOGGER.warn("Player {} is in dungeon {} but dungeon no longer exists, evacuating",
-                                        player.getName().getString(), timerDimensionId);
-                                expireActiveTimerAndTeleport(player, timerDimensionId, data, true);
-                                continue;
-                            }
-                        }
-
-                        if (DungeonDimensions.isDungeonDimension(timerDimensionId) && player.getY() < 0) {
+                        if (player.getY() < 0) {
                             expireActiveTimerAndTeleport(player, timerDimensionId, data, true);
                             CobbleSafari.LOGGER.info("Player {} detected in void in dungeon dimension {}, teleporting out",
                                     player.getName().getString(), timerDimensionId);
                             continue;
                         }
-
-                        if (shouldBypassTimer(player)) {
-                            if (serverInstance.getTickCount() % 20 == 0) {
-                                syncToClient(player, data, true);
-                            }
-                            continue;
-                        }
+                    } else if (UnionRoomManager.DIMENSION_ID.equals(timerDimensionId) && player.getY() < 0) {
+                        expireActiveTimerAndTeleport(player, timerDimensionId, data, true);
+                        CobbleSafari.LOGGER.info("Player {} detected in void in union room, teleporting out",
+                                player.getName().getString());
+                        continue;
                     }
 
-                    data.tick();
-
-                    if (data.isExpired()) {
-                        if (player != null) {
-                            expireActiveTimerAndTeleport(player, timerDimensionId, data, true);
-                        }
+                    if (bypassed == null) {
+                        bypassed = shouldBypassTimer(player);
                     }
-
-                    if (data.getRemainingTicks() % 20 == 0) {
-                        if (player != null) {
-                            syncToClient(player, data);
+                    if (bypassed) {
+                        if (tickCount % 20 == 0) {
+                            syncToClient(player, data, true);
                         }
+                        continue;
+                    }
+                }
+
+                data.tick();
+
+                if (data.isExpired()) {
+                    if (player != null) {
+                        expireActiveTimerAndTeleport(player, timerDimensionId, data, true);
+                    }
+                }
+
+                if (data.getRemainingTicks() % 20 == 0) {
+                    if (player != null) {
+                        syncToClient(player, data);
                     }
                 }
             }
@@ -346,6 +369,11 @@ public class TimerManager {
     }
 
     private static void teleportOnTimerExpired(ServerPlayer player, String dimensionId, PlayerTimerData data, boolean notifyExpired) {
+        teleportOnTimerExpired(player, dimensionId, data, notifyExpired, false);
+    }
+
+    private static void teleportOnTimerExpired(ServerPlayer player, String dimensionId, PlayerTimerData data, boolean notifyExpired,
+                                              boolean unionGracefulDeparture) {
         if (serverInstance == null) return;
 
         Optional<DimensionTimerEntry> config = SafariTimerConfig.getDimensionConfig(dimensionId);
@@ -403,15 +431,34 @@ public class TimerManager {
         }
 
         if (notifyExpired) {
-            player.sendSystemMessage(Component.translatable("cobblesafari.timer.expired"));
+            if (UnionRoomManager.DIMENSION_ID.equals(dimensionId) && unionGracefulDeparture) {
+                player.sendSystemMessage(Component.translatable("cobblesafari.unionroom.session_closed.thanks"));
+            } else {
+                player.sendSystemMessage(Component.translatable("cobblesafari.timer.expired"));
+            }
         }
         CobbleSafari.LOGGER.info("Player {} teleported to {} at {} (timer expired, returnToSpawn: {})",
                 player.getName().getString(), targetLevel.dimension().location(), targetPos, returnToSpawn);
     }
 
-    private static void expireActiveTimerAndTeleport(ServerPlayer player, String timerDimensionId, PlayerTimerData data, boolean notifyExpired) {
+    public static void expireActiveTimerAndTeleport(ServerPlayer player, String timerDimensionId, PlayerTimerData data, boolean notifyExpired) {
+        expireActiveTimerAndTeleport(player, timerDimensionId, data, notifyExpired, false);
+    }
+
+    /**
+     * @param unionGracefulDeparture when true and dimension is the Union Room, players see the friendly
+     *                                departure line instead of {@code cobblesafari.timer.expired} (session close / evac).
+     */
+    public static void expireActiveTimerAndTeleport(ServerPlayer player, String timerDimensionId, PlayerTimerData data,
+                                                    boolean notifyExpired, boolean unionGracefulDeparture) {
+        if (UnionRoomManager.DIMENSION_ID.equals(timerDimensionId)) {
+            UnionRoomManager.onBeforeUnionRoomTimerExpire(player);
+        }
         data.setRemainingTicks(0);
-        teleportOnTimerExpired(player, timerDimensionId, data, notifyExpired);
+        teleportOnTimerExpired(player, timerDimensionId, data, notifyExpired, unionGracefulDeparture);
+        if (UnionRoomManager.DIMENSION_ID.equals(timerDimensionId)) {
+            UnionRoomManager.onAfterUnionRoomTimerExpire(player);
+        }
         data.setActive(false);
         savePlayerData(player, data);
     }
@@ -552,6 +599,9 @@ public class TimerManager {
         player.setDeltaMovement(Vec3.ZERO);
         player.invulnerableTime = 20;
         player.sendSystemMessage(Component.translatable("cobblesafari.timer.death_drained"));
+        int saves = maxigregrze.cobblesafari.init.ModStats.awardAndGet(
+                player, maxigregrze.cobblesafari.init.ModStats.HOOPA_SAVES);
+        maxigregrze.cobblesafari.advancement.ModCriteria.HOOPA_SAVE.trigger(player, saves);
         expireActiveTimerAndTeleport(player, dimensionId, data, false);
         CobbleSafari.LOGGER.info("Death cancelled for {} in {}: timer expired (death rescue, same as void evac)",
                 player.getName().getString(), dimensionId);

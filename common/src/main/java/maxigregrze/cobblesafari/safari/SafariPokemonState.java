@@ -11,9 +11,18 @@ public class SafariPokemonState {
     private long fleeStartTick = 0;
     private int fleeToken = 0;
     private int moodLevel = 0;
+    private UUID lastInteractingPlayer = null;
 
     public SafariPokemonState(UUID pokemonEntityId) {
         this.pokemonEntityId = pokemonEntityId;
+    }
+
+    public UUID getLastInteractingPlayer() {
+        return lastInteractingPlayer;
+    }
+
+    public void setLastInteractingPlayer(UUID lastInteractingPlayer) {
+        this.lastInteractingPlayer = lastInteractingPlayer;
     }
 
     public UUID getPokemonEntityId() {

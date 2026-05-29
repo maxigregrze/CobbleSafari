@@ -1,0 +1,15 @@
+{
+    "name": "cobblemon.mark.cobblesafari.dungeon",
+    "title": "cobblemon.mark.cobblesafari.dungeon.title",
+	"titleColor": "f8b63a",
+	"description": "cobblemon.mark.cobblesafari.dungeon.desc",
+	"texture": "cobblesafari:textures/gui/mark/mark_dungeon.png",
+	"indexNumber": 5,
+    "chance": 1,
+    "spawnConditions": [
+        {
+            "dimensions": ["cobblesafari:dungeon_underground", "cobblesafari:dungeon_distortion", "cobblesafari:dungeon_jump", "cobblesafari:dungeon_paris", "cobblesafari:dungeon_space"]
+        }
+    ]
+
+}

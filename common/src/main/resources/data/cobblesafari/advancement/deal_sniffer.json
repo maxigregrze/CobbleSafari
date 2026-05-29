@@ -1,0 +1,16 @@
+{
+  "parent": "cobblesafari:root",
+  "display": {
+    "icon": { "id": "minecraft:spyglass" },
+    "title": { "translate": "advancement.cobblesafari.deal_sniffer.title" },
+    "description": { "translate": "advancement.cobblesafari.deal_sniffer.description" },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "done": { "trigger": "cobblesafari:gts_trade_confirmed", "conditions": { "count": 1 } }
+  },
+  "requirements": [["done"]]
+}

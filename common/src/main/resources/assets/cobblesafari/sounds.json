@@ -66,5 +66,32 @@
                 "stream": true
             }
         ]
+    },
+    "block.machine_union": {
+        "sounds": [
+            {
+                "name": "cobblesafari:blocks/machine_union",
+                "stream": true
+            }
+        ],
+        "subtitle": "subtitles.cobblesafari.block.machine_union"
+    },
+    "block.machine_gts": {
+        "sounds": [
+            {
+                "name": "cobblesafari:blocks/machine_gts",
+                "stream": true
+            }
+        ],
+        "subtitle": "subtitles.cobblesafari.block.machine_gts"
+    },
+    "block.machine_wonder": {
+        "sounds": [
+            {
+                "name": "cobblesafari:blocks/machine_wonder",
+                "stream": true
+            }
+        ],
+        "subtitle": "subtitles.cobblesafari.block.machine_wonder"
     }
 }

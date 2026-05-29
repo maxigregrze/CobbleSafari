@@ -27,5 +27,14 @@ public class ModSounds {
     public static final SoundEvent MUSIC_UNDERGROUND_LOOP = SoundEvent.createVariableRangeEvent(
             ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, "music.underground.loop"));
 
+    public static final SoundEvent MACHINE_UNION = SoundEvent.createVariableRangeEvent(
+            ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, "block.machine_union"));
+
+    public static final SoundEvent MACHINE_GTS = SoundEvent.createVariableRangeEvent(
+            ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, "block.machine_gts"));
+
+    public static final SoundEvent MACHINE_WONDER = SoundEvent.createVariableRangeEvent(
+            ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, "block.machine_wonder"));
+
     private ModSounds() {}
 }
