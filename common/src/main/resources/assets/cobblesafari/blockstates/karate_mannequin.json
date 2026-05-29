@@ -1,0 +1,8 @@
+{
+  "variants": {
+    "facing=north": { "model": "cobblesafari:block/karate_mannequin" },
+    "facing=south": { "model": "cobblesafari:block/karate_mannequin", "y": 180 },
+    "facing=east": { "model": "cobblesafari:block/karate_mannequin", "y": 90 },
+    "facing=west": { "model": "cobblesafari:block/karate_mannequin", "y": 270 }
+  }
+}

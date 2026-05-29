@@ -29,7 +29,6 @@ import maxigregrze.cobblesafari.underground.UndergroundMinigame;
 import maxigregrze.cobblesafari.underground.UndergroundScreen;
 import maxigregrze.cobblesafari.client.audio.DungeonMusicHandler;
 import maxigregrze.cobblesafari.client.DonutItemClientSetup;
-import maxigregrze.cobblesafari.client.UnionRoomColoredItemClientSetup;
 import maxigregrze.cobblesafari.client.donut.DonutFlavorClientTooltip;
 import maxigregrze.cobblesafari.item.donut.DonutTooltipPayload;
 import net.fabricmc.api.ClientModInitializer;
@@ -77,7 +76,6 @@ public class CobbleSafariClientFabric implements ClientModInitializer {
         );
         registerTooltips();
         DonutItemClientSetup.registerItemProperties();
-        UnionRoomColoredItemClientSetup.registerItemProperties();
         registerClientNetworking();
         registerHud();
         registerBlockRenderLayers();
@@ -217,8 +215,14 @@ public class CobbleSafariClientFabric implements ClientModInitializer {
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.UNION_ROOM_SCREEN_LEFT_DISPLAY, RenderType.translucent());
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.UNION_ROOM_SCREEN_RIGHT, RenderType.translucent());
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.UNION_ROOM_SCREEN_RIGHT_DISPLAY, RenderType.translucent());
-        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.UNION_ROOM_SPOTLIGHT, RenderType.translucent());
-        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.UNION_ROOM_SPOTLIGHT_DISPLAY_LIGHT, RenderType.translucent());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.UNION_ROOM_SPOTLIGHT_GREEN, RenderType.translucent());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.UNION_ROOM_SPOTLIGHT_YELLOW, RenderType.translucent());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.UNION_ROOM_SPOTLIGHT_BLUE, RenderType.translucent());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.UNION_ROOM_SPOTLIGHT_RED, RenderType.translucent());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.UNION_ROOM_SPOTLIGHT_DISPLAY_LIGHT_GREEN, RenderType.translucent());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.UNION_ROOM_SPOTLIGHT_DISPLAY_LIGHT_YELLOW, RenderType.translucent());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.UNION_ROOM_SPOTLIGHT_DISPLAY_LIGHT_BLUE, RenderType.translucent());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.UNION_ROOM_SPOTLIGHT_DISPLAY_LIGHT_RED, RenderType.translucent());
     }
 
     private void registerRenderers() {

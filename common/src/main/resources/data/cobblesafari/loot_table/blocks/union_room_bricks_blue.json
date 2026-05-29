@@ -6,14 +6,7 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "cobblesafari:union_room_bricks",
-          "functions": [
-            {
-              "function": "minecraft:copy_state",
-              "block": "cobblesafari:union_room_bricks",
-              "properties": ["color"]
-            }
-          ]
+          "name": "cobblesafari:union_room_bricks_blue"
         }
       ],
       "conditions": [

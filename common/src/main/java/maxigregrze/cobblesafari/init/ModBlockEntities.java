@@ -163,7 +163,11 @@ public class ModBlockEntities {
         UNION_ROOM_SPOTLIGHT = Registry.register(
                 BuiltInRegistries.BLOCK_ENTITY_TYPE,
                 ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, "union_room_spotlight"),
-                BlockEntityType.Builder.of(UnionRoomSpotlightBlockEntity::new, ModBlocks.UNION_ROOM_SPOTLIGHT).build(null)
+                BlockEntityType.Builder.of(UnionRoomSpotlightBlockEntity::new,
+                        ModBlocks.UNION_ROOM_SPOTLIGHT_GREEN,
+                        ModBlocks.UNION_ROOM_SPOTLIGHT_YELLOW,
+                        ModBlocks.UNION_ROOM_SPOTLIGHT_BLUE,
+                        ModBlocks.UNION_ROOM_SPOTLIGHT_RED).build(null)
         );
     }
 }

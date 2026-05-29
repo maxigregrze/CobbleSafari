@@ -6,14 +6,7 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "cobblesafari:union_room_spotlight",
-          "functions": [
-            {
-              "function": "minecraft:copy_state",
-              "block": "cobblesafari:union_room_spotlight",
-              "properties": ["color"]
-            }
-          ]
+          "name": "cobblesafari:union_room_spotlight_yellow"
         }
       ],
       "conditions": [

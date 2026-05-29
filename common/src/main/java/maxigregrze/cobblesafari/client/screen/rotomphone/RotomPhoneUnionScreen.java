@@ -13,6 +13,7 @@ public class RotomPhoneUnionScreen extends RotomPhoneBaseScreen {
     private enum SubScreen {
         LOADING,
         BEGIN,
+        CHOOSE_TYPE,
         UNION_ROOM,
         JOIN,
         ERROR,
@@ -80,6 +81,9 @@ public class RotomPhoneUnionScreen extends RotomPhoneBaseScreen {
         if (state == SubScreen.JOIN && p.subscreen() == UnionAppResultPayload.SUB_BEGIN) {
             return;
         }
+        if (state == SubScreen.CHOOSE_TYPE && p.subscreen() == UnionAppResultPayload.SUB_BEGIN) {
+            return;
+        }
 
         switch (p.subscreen()) {
             case UnionAppResultPayload.SUB_BEGIN -> state = SubScreen.BEGIN;
@@ -100,7 +104,7 @@ public class RotomPhoneUnionScreen extends RotomPhoneBaseScreen {
     @Override
     protected void renderPhoneContent(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
         switch (state) {
-            case BEGIN, UNION_ROOM, JOIN, GUEST -> renderHeader(graphics);
+            case BEGIN, CHOOSE_TYPE, UNION_ROOM, JOIN, GUEST -> renderHeader(graphics);
             case ERROR -> {
                 renderHeader(graphics);
                 renderErrorIcon(graphics);
@@ -118,6 +122,7 @@ public class RotomPhoneUnionScreen extends RotomPhoneBaseScreen {
         }
         switch (state) {
             case BEGIN -> renderBegin(graphics, mouseX, mouseY);
+            case CHOOSE_TYPE -> renderChooseType(graphics, mouseX, mouseY);
             case UNION_ROOM -> renderUnionRoom(graphics, mouseX, mouseY);
             case JOIN -> renderJoin(graphics, mouseX, mouseY);
             case GUEST -> renderGuest(graphics);
@@ -171,6 +176,25 @@ public class RotomPhoneUnionScreen extends RotomPhoneBaseScreen {
         g.blit(tex, x, y, 0, 0, w, h, w, h);
         g.setColor(1f, 1f, 1f, 1f);
         RenderSystem.disableBlend();
+    }
+
+    private void renderChooseType(GuiGraphics g, int mx, int my) {
+        int theme = getTintColor();
+        drawScaledCentered(g,
+                Component.translatable("gui.cobblesafari.rotomphone.union.choosetype"),
+                originX + 174, originY + 72, theme);
+
+        boolean roomHover = isInBounds(mx, my, originX + 98, originY + 96, 72, 32);
+        drawButton(g, originX + 98, originY + 96, roomHover, theme,
+                Component.translatable("gui.cobblesafari.rotomphone.union.room"));
+
+        boolean plazaHover = isInBounds(mx, my, originX + 178, originY + 96, 72, 32);
+        drawButton(g, originX + 178, originY + 96, plazaHover, theme,
+                Component.translatable("gui.cobblesafari.rotomphone.union.plaza"));
+
+        if (!lastErrorKey.isEmpty()) {
+            drawScaledCentered(g, Component.translatable(lastErrorKey), originX + 174, originY + 152, 0xFFFFFFFF);
+        }
     }
 
     private void renderBegin(GuiGraphics g, int mx, int my) {
@@ -272,6 +296,7 @@ public class RotomPhoneUnionScreen extends RotomPhoneBaseScreen {
         }
         return switch (state) {
             case BEGIN -> handleBeginClick(mouseX, mouseY);
+            case CHOOSE_TYPE -> handleChooseTypeClick(mouseX, mouseY);
             case JOIN -> handleJoinClick(mouseX, mouseY);
             case UNION_ROOM -> handleUnionRoomClick(mouseX, mouseY);
             default -> super.mouseClicked(mouseX, mouseY, button);
@@ -281,13 +306,27 @@ public class RotomPhoneUnionScreen extends RotomPhoneBaseScreen {
     private boolean handleBeginClick(double mx, double my) {
         if (isInBounds(mx, my, originX + 98, originY + 96, 72, 32)) {
             lastErrorKey = "";
-            Services.PLATFORM.sendPayloadToServer(new UnionAppPayload(UnionAppPayload.ACTION_CREATE, new int[0]));
+            state = SubScreen.CHOOSE_TYPE;
             return true;
         }
         if (isInBounds(mx, my, originX + 178, originY + 96, 72, 32)) {
             lastErrorKey = "";
             inputFilled = 0;
             state = SubScreen.JOIN;
+            return true;
+        }
+        return super.mouseClicked(mx, my, 0);
+    }
+
+    private boolean handleChooseTypeClick(double mx, double my) {
+        if (isInBounds(mx, my, originX + 98, originY + 96, 72, 32)) {
+            lastErrorKey = "";
+            Services.PLATFORM.sendPayloadToServer(new UnionAppPayload(UnionAppPayload.ACTION_CREATE, new int[]{0}));
+            return true;
+        }
+        if (isInBounds(mx, my, originX + 178, originY + 96, 72, 32)) {
+            lastErrorKey = "";
+            Services.PLATFORM.sendPayloadToServer(new UnionAppPayload(UnionAppPayload.ACTION_CREATE, new int[]{1}));
             return true;
         }
         return super.mouseClicked(mx, my, 0);
@@ -328,6 +367,11 @@ public class RotomPhoneUnionScreen extends RotomPhoneBaseScreen {
 
     @Override
     protected void onBackButtonClicked() {
+        if (state == SubScreen.CHOOSE_TYPE) {
+            lastErrorKey = "";
+            state = SubScreen.BEGIN;
+            return;
+        }
         if (state == SubScreen.JOIN) {
             inputFilled = 0;
             lastErrorKey = "";

@@ -1,7 +1,8 @@
 {
   "variants": {
-    "": {
-      "model": "cobblesafari:block/squirtle_statue"
-    }
+    "facing=north": { "model": "cobblesafari:block/squirtle_statue" },
+    "facing=south": { "model": "cobblesafari:block/squirtle_statue", "y": 180 },
+    "facing=east": { "model": "cobblesafari:block/squirtle_statue", "y": 90 },
+    "facing=west": { "model": "cobblesafari:block/squirtle_statue", "y": 270 }
   }
 }

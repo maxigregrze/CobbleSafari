@@ -47,6 +47,7 @@ public class UnionRoomSavedData extends SavedData {
         public BlockPos structurePos = BlockPos.ZERO;
         public BlockPos anchorPos = BlockPos.ZERO;
         public boolean occupied;
+        public String type = "room";
 
         CompoundTag toNbt() {
             CompoundTag t = new CompoundTag();
@@ -54,6 +55,7 @@ public class UnionRoomSavedData extends SavedData {
             t.putIntArray("StructurePos", new int[]{structurePos.getX(), structurePos.getY(), structurePos.getZ()});
             t.putIntArray("AnchorPos", new int[]{anchorPos.getX(), anchorPos.getY(), anchorPos.getZ()});
             t.putBoolean("Occupied", occupied);
+            t.putString("Type", type == null ? "room" : type);
             return t;
         }
 
@@ -69,6 +71,7 @@ public class UnionRoomSavedData extends SavedData {
                 d.anchorPos = new BlockPos(ap[0], ap[1], ap[2]);
             }
             d.occupied = t.getBoolean("Occupied");
+            d.type = t.contains("Type", Tag.TAG_STRING) ? t.getString("Type") : "room";
             return d;
         }
     }
@@ -233,6 +236,48 @@ public class UnionRoomSavedData extends SavedData {
 
     public int getInstanceCount() {
         return instances.size();
+    }
+
+    public Optional<InstanceData> findVacantInstance(String type) {
+        String normalized = normalizeInstanceType(type);
+        for (InstanceData inst : instances) {
+            if (!inst.occupied && normalized.equals(normalizeInstanceType(inst.type))) {
+                return Optional.of(inst);
+            }
+        }
+        return Optional.empty();
+    }
+
+    public int countInstancesOfType(String type) {
+        String normalized = normalizeInstanceType(type);
+        int count = 0;
+        for (InstanceData inst : instances) {
+            if (normalized.equals(normalizeInstanceType(inst.type))) {
+                count++;
+            }
+        }
+        return count;
+    }
+
+    public int countActiveRoomSessions() {
+        int count = 0;
+        for (SessionData s : activeSessions.values()) {
+            if (isRoomSessionType(s.roomType)) {
+                count++;
+            }
+        }
+        return count;
+    }
+
+    private static boolean isRoomSessionType(String roomType) {
+        if (roomType == null || roomType.isBlank() || "default".equals(roomType) || "room".equals(roomType)) {
+            return true;
+        }
+        return false;
+    }
+
+    private static String normalizeInstanceType(String type) {
+        return "plaza".equals(type) ? "plaza" : "room";
     }
 
     public void addInstance(InstanceData instance) {

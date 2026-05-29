@@ -48,6 +48,10 @@ public class MiscConfig {
     private int unionRoomMaxInstances = 10;
     /** Nombre maximal de guests par session Union Room (hôte non compté), type {@code default}. */
     private int unionRoomMaxGuestsPerSession = 6;
+    /** Nombre maximal d'instances Union Plaza concurrentes. */
+    private int unionRoomPlazaMaxInstances = 2;
+    /** Nombre maximal de guests par session Union Plaza (hôte non compté) — 4× la room (6) par défaut. */
+    private int unionRoomPlazaMaxGuestsPerSession = 24;
     /** Types de salon (clé → limites). Absent du JSON ⇒ reconstruit depuis les champs ci‑dessus. */
     private Map<String, RoomTypeConfig> unionRoomTypes = null;
     /** Dimensions depuis lesquelles un joueur ne peut pas entrer dans l'Union Room (IDs complets, ex. {@code cobblesafari:domedimension}). */
@@ -437,6 +441,8 @@ public class MiscConfig {
         }
         this.unionRoomMaxInstances = Math.max(1, Math.min(100, this.unionRoomMaxInstances));
         this.unionRoomMaxGuestsPerSession = Math.max(1, Math.min(100, this.unionRoomMaxGuestsPerSession));
+        this.unionRoomPlazaMaxInstances = Math.max(1, Math.min(100, this.unionRoomPlazaMaxInstances));
+        this.unionRoomPlazaMaxGuestsPerSession = Math.max(1, Math.min(100, this.unionRoomPlazaMaxGuestsPerSession));
         rebuildRoomTypeRuntime();
     }
 
@@ -445,6 +451,9 @@ public class MiscConfig {
         RoomTypeConfig defaultType =
                 new RoomTypeConfig(this.unionRoomMaxInstances, this.unionRoomMaxGuestsPerSession);
         roomTypeRuntime.put("default", defaultType);
+        roomTypeRuntime.put("room", defaultType);
+        roomTypeRuntime.put("plaza",
+                new RoomTypeConfig(this.unionRoomPlazaMaxInstances, this.unionRoomPlazaMaxGuestsPerSession));
         if (this.unionRoomTypes != null) {
             for (Map.Entry<String, RoomTypeConfig> e : this.unionRoomTypes.entrySet()) {
                 if (e.getKey() == null || e.getValue() == null) {
@@ -457,6 +466,7 @@ public class MiscConfig {
             }
         }
         roomTypeRuntime.put("default", defaultType);
+        roomTypeRuntime.put("room", defaultType);
     }
 
     public static RoomTypeConfig getRoomType(String key) {

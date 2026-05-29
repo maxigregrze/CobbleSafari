@@ -69,14 +69,20 @@ public final class UnionRoomManager {
     public static final String DIMENSION_ID = "cobblesafari:unionroom";
 
     private static final int INSTANCE_SPACING = 128;
+    private static final int PLAZA_SPACING = 512;
+    private static final int PLAZA_Z = 1024;
     private static final int INSTANCE_Y = 64;
     private static final int CODE_LENGTH = 4;
     private static final int CODE_MIN = 1;
     private static final int CODE_MAX = 6;
     private static final int TIMER_SECONDS = 3600;
     private static final int JIGSAW_DEPTH = 5;
-    private static final String JIGSAW_POOL = "cobblesafari:unionroom/start";
+    private static final String JIGSAW_POOL_ROOM = "cobblesafari:unionroom/start";
+    private static final String JIGSAW_POOL_PLAZA = "cobblesafari:unionplaza/start";
     private static final int EVAC_RADIUS = 64;
+    private static final int PLAZA_EVAC_RADIUS = 192;
+    private static final String TYPE_ROOM = "room";
+    private static final String TYPE_PLAZA = "plaza";
     private static final String MSG_VOLUNTARY_EXIT = "cobblesafari.unionroom.session_closed.exit";
     private static final String MSG_SESSION_GONE = "cobblesafari.unionroom.session_closed.session_gone";
     private static final String MSG_SESSION_TIMER = "cobblesafari.unionroom.session_closed.timer";
@@ -133,7 +139,8 @@ public final class UnionRoomManager {
         }
     }
 
-    public static CreateResult createSession(ServerPlayer player) {
+    public static CreateResult createSession(ServerPlayer player, String instanceType) {
+        String type = normalizeInstanceType(instanceType);
         MinecraftServer server = player.getServer();
         if (server == null) {
             return CreateResult.CREATION_FAILED;
@@ -165,19 +172,19 @@ public final class UnionRoomManager {
             return CreateResult.DIMENSION_NOT_FOUND;
         }
 
-        MiscConfig.RoomTypeConfig roomType = MiscConfig.getRoomType("default");
+        MiscConfig.RoomTypeConfig roomType = MiscConfig.getRoomType(type);
 
         synchronized (UnionRoomManager.class) {
-            Optional<UnionRoomSavedData.InstanceData> vacant = findVacantInstance(data);
+            Optional<UnionRoomSavedData.InstanceData> vacant = data.findVacantInstance(type);
             UnionRoomSavedData.InstanceData instance;
             if (vacant.isPresent()) {
                 instance = vacant.get();
             } else {
-                if (data.getInstanceCount() >= roomType.maxInstances) {
+                if (data.countInstancesOfType(type) >= roomType.maxInstances) {
                     player.sendSystemMessage(Component.translatable("cobblesafari.unionroom.error.max_instances"));
                     return CreateResult.MAX_INSTANCES;
                 }
-                instance = createNewInstance(server, data, unionLevel);
+                instance = createNewInstance(server, data, unionLevel, type);
                 if (instance == null) {
                     player.sendSystemMessage(Component.translatable("cobblesafari.unionroom.error.creation_failed"));
                     return CreateResult.CREATION_FAILED;
@@ -188,7 +195,7 @@ public final class UnionRoomManager {
             UnionRoomSavedData.SessionData session = new UnionRoomSavedData.SessionData();
             session.instanceId = instance.id;
             session.hostUUID = player.getUUID();
-            session.roomType = "default";
+            session.roomType = type;
             System.arraycopy(code, 0, session.code, 0, CODE_LENGTH);
             data.addSession(session);
             instance.occupied = true;
@@ -206,8 +213,8 @@ public final class UnionRoomManager {
             data.setDirty();
 
             CobbleSafari.LOGGER.info(
-                    "Union Room session created: instanceId={} host={} ({}) roomCode={}-{}-{}-{}",
-                    instance.id, player.getName().getString(), player.getUUID(),
+                    "Union {} session created: instanceId={} host={} ({}) roomCode={}-{}-{}-{}",
+                    type, instance.id, player.getName().getString(), player.getUUID(),
                     code[0], code[1], code[2], code[3]);
         }
         int created = maxigregrze.cobblesafari.init.ModStats.awardAndGet(
@@ -491,12 +498,16 @@ public final class UnionRoomManager {
                 .map(i -> i.structurePos.equals(BlockPos.ZERO) ? i.anchorPos : i.structurePos)
                 .orElse(BlockPos.ZERO);
 
+        int evacRadius = instOpt
+                .map(i -> TYPE_PLAZA.equals(normalizeInstanceType(i.type)) ? PLAZA_EVAC_RADIUS : EVAC_RADIUS)
+                .orElse(EVAC_RADIUS);
+
         List<ServerPlayer> toEvac = new ArrayList<>();
         for (ServerPlayer p : unionLevel.players()) {
             if (!members.contains(p.getUUID())) {
                 continue;
             }
-            if (instOpt.isPresent() && !inHorizontalRadius(p.blockPosition(), evacCenter, EVAC_RADIUS)) {
+            if (instOpt.isPresent() && !inHorizontalRadius(p.blockPosition(), evacCenter, evacRadius)) {
                 continue;
             }
             if (skipTeleportUuid != null && skipTeleportUuid.equals(p.getUUID())) {
@@ -579,22 +590,30 @@ public final class UnionRoomManager {
         return MiscConfig.getUnionRoomBannedDimensions().contains(dimId);
     }
 
-    private static Optional<UnionRoomSavedData.InstanceData> findVacantInstance(UnionRoomSavedData data) {
-        for (UnionRoomSavedData.InstanceData inst : data.getInstances()) {
-            if (!inst.occupied) {
-                return Optional.of(inst);
-            }
+    private static String normalizeInstanceType(String instanceType) {
+        return TYPE_PLAZA.equals(instanceType) ? TYPE_PLAZA : TYPE_ROOM;
+    }
+
+    private static BlockPos computeStructurePos(UnionRoomSavedData data, String instanceType) {
+        String type = normalizeInstanceType(instanceType);
+        if (TYPE_PLAZA.equals(type)) {
+            int index = data.countInstancesOfType(TYPE_PLAZA);
+            return new BlockPos(index * PLAZA_SPACING, INSTANCE_Y, PLAZA_Z);
         }
-        return Optional.empty();
+        int index = data.countInstancesOfType(TYPE_ROOM);
+        return new BlockPos(index * INSTANCE_SPACING, INSTANCE_Y, 0);
     }
 
     private static @Nullable UnionRoomSavedData.InstanceData createNewInstance(
-            MinecraftServer server, UnionRoomSavedData data, ServerLevel unionLevel) {
+            MinecraftServer server, UnionRoomSavedData data, ServerLevel unionLevel, String instanceType) {
+        String type = normalizeInstanceType(instanceType);
         int id = data.allocateNextInstanceId();
-        BlockPos structurePos = new BlockPos(id * INSTANCE_SPACING, INSTANCE_Y, 0);
+        BlockPos structurePos = computeStructurePos(data, type);
+        String jigsawPool = TYPE_PLAZA.equals(type) ? JIGSAW_POOL_PLAZA : JIGSAW_POOL_ROOM;
+        int chunkRadius = TYPE_PLAZA.equals(type) ? 8 : 3;
 
-        ensureChunksLoaded(unionLevel, structurePos, 3);
-        StructurePlacer.placeJigsawStructureStrict(unionLevel, structurePos, JIGSAW_POOL, JIGSAW_DEPTH);
+        ensureChunksLoaded(unionLevel, structurePos, chunkRadius);
+        StructurePlacer.placeJigsawStructureStrict(unionLevel, structurePos, jigsawPool, JIGSAW_DEPTH);
 
         // Jigsaw generation may complete on a later tick; queue a retry loop to
         // find the void_block once the structure is fully placed and swap it for
@@ -603,6 +622,7 @@ public final class UnionRoomManager {
 
         UnionRoomSavedData.InstanceData instance = new UnionRoomSavedData.InstanceData();
         instance.id = id;
+        instance.type = type;
         instance.structurePos = structurePos;
         // anchorPos = jigsaw start position (structurePos) — where the player spawns.
         // Updated to the void marker location once jigsaw completes if needed.
@@ -629,8 +649,7 @@ public final class UnionRoomManager {
     }
 
     /** Structure NBT marks the exit anchor with {@link ModBlocks#VOID_BLOCK} (single block). */
-    private static @Nullable BlockPos findUnionRoomVoidMarker(ServerLevel level, BlockPos center) {
-        int scanRadius = 48;
+    private static @Nullable BlockPos findUnionRoomVoidMarker(ServerLevel level, BlockPos center, int scanRadius) {
         BlockPos best = null;
         int bestDistSq = Integer.MAX_VALUE;
         for (int dx = -scanRadius; dx <= scanRadius; dx++) {
@@ -670,9 +689,18 @@ public final class UnionRoomManager {
             int instanceId = entry.getKey();
             int[] counter = entry.getValue();
 
-            ensureChunksLoaded(unionLevel, new BlockPos(instanceId * INSTANCE_SPACING, INSTANCE_Y, 0), 3);
-            BlockPos structurePos = new BlockPos(instanceId * INSTANCE_SPACING, INSTANCE_Y, 0);
-            BlockPos voidMarker = findUnionRoomVoidMarker(unionLevel, structurePos);
+            Optional<UnionRoomSavedData.InstanceData> instOpt = data.getInstance(instanceId);
+            if (instOpt.isEmpty()) {
+                iter.remove();
+                continue;
+            }
+            UnionRoomSavedData.InstanceData inst = instOpt.get();
+            BlockPos structurePos = inst.structurePos.equals(BlockPos.ZERO) ? inst.anchorPos : inst.structurePos;
+            int chunkRadius = TYPE_PLAZA.equals(normalizeInstanceType(inst.type)) ? 8 : 3;
+            int scanRadius = TYPE_PLAZA.equals(normalizeInstanceType(inst.type)) ? 128 : 48;
+
+            ensureChunksLoaded(unionLevel, structurePos, chunkRadius);
+            BlockPos voidMarker = findUnionRoomVoidMarker(unionLevel, structurePos, scanRadius);
 
             if (voidMarker != null) {
                 replaceVoidMarkerWithExit(unionLevel, voidMarker, instanceId);

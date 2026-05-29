@@ -1,29 +1,30 @@
 package maxigregrze.cobblesafari.client.renderer;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.math.Axis;
-import maxigregrze.cobblesafari.block.misc.UnionRoomColoredBlock;
+import maxigregrze.cobblesafari.block.misc.UnionRoomSpotlightBlock;
 import maxigregrze.cobblesafari.block.misc.UnionRoomSpotlightBlockEntity;
+import maxigregrze.cobblesafari.block.misc.UnionRoomSpotlightDisplayLightBlock;
 import maxigregrze.cobblesafari.init.ModBlocks;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.block.BlockRenderDispatcher;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
+import net.minecraft.core.Direction;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.AttachFace;
+import org.jetbrains.annotations.Nullable;
+import org.joml.Quaternionf;
+import org.joml.Vector3f;
 
 public class UnionRoomSpotlightBlockEntityRenderer implements BlockEntityRenderer<UnionRoomSpotlightBlockEntity> {
 
-    private static final float YAW_HALF_PERIOD_TICKS = 180f;
-    /** One full pitch cycle (up → down → up) per quarter of a complete Y rotation cycle. */
-    private static final float PITCH_PERIOD_TICKS = (2f * YAW_HALF_PERIOD_TICKS) / 4f;
+    /** Ticks for one full 360° yaw rotation (constant angular speed, one direction). */
+    private static final float YAW_PERIOD_TICKS = 180f;
+    private static final float PITCH_PERIOD_TICKS = 90f;
 
-    private static final float PITCH_MIN_DEG = 50f;
-    private static final float PITCH_MAX_DEG = 60f;
-
-    /** Bottom-center of the block cell (half X/Z, floor Y). */
-    private static final float PIVOT_X = 0.5f;
-    private static final float PIVOT_Y = 0f;
-    private static final float PIVOT_Z = 0.5f;
+    private static final float PITCH_MIN_DEG = 20f;
+    private static final float PITCH_MAX_DEG = 30f;
 
     private final BlockRenderDispatcher blockRenderDispatcher;
 
@@ -35,39 +36,101 @@ public class UnionRoomSpotlightBlockEntityRenderer implements BlockEntityRendere
     public void render(UnionRoomSpotlightBlockEntity blockEntity, float partialTick, PoseStack poseStack,
                        MultiBufferSource bufferSource, int packedLight, int packedOverlay) {
         BlockState state = blockEntity.getBlockState();
-        float t = blockEntity.getLevel() != null ? blockEntity.getLevel().getGameTime() + partialTick : partialTick;
-
-        float halfPeriod = YAW_HALF_PERIOD_TICKS;
-        float cycleT = t % (2f * halfPeriod);
-        float yawDeg;
-        if (cycleT < halfPeriod) {
-            yawDeg = (cycleT / halfPeriod) * 360f;
-        } else {
-            float u = (cycleT - halfPeriod) / halfPeriod;
-            yawDeg = 360f - u * 360f;
+        if (!state.hasProperty(UnionRoomSpotlightBlock.FACE) || !state.hasProperty(UnionRoomSpotlightBlock.FACING)) {
+            return;
         }
 
-        float pitchPhase = (t % PITCH_PERIOD_TICKS) / PITCH_PERIOD_TICKS;
-        float parabolic = 1.0f - 4.0f * (pitchPhase - 0.5f) * (pitchPhase - 0.5f);
-        float pitchDeg = PITCH_MIN_DEG + (PITCH_MAX_DEG - PITCH_MIN_DEG) * parabolic;
+        Block displayBlock = displayLightForSpotlight(state.getBlock());
+        if (displayBlock == null) {
+            return;
+        }
 
-        BlockState lightState = ModBlocks.UNION_ROOM_SPOTLIGHT_DISPLAY_LIGHT.defaultBlockState()
-                .setValue(UnionRoomColoredBlock.COLOR, state.getValue(UnionRoomColoredBlock.COLOR));
+        float t = blockEntity.getLevel() != null ? blockEntity.getLevel().getGameTime() + partialTick : partialTick;
+
+        float yawDeg = (t % YAW_PERIOD_TICKS) / YAW_PERIOD_TICKS * 360f;
+
+        float pitchMid = (PITCH_MIN_DEG + PITCH_MAX_DEG) * 0.5f;
+        float pitchAmplitude = (PITCH_MAX_DEG - PITCH_MIN_DEG) * 0.5f;
+        float pitchDeg = pitchMid + pitchAmplitude * (float) Math.sin(2.0 * Math.PI * t / PITCH_PERIOD_TICKS);
+
+        AttachFace face = state.getValue(UnionRoomSpotlightBlock.FACE);
+        Direction facing = state.getValue(UnionRoomSpotlightBlock.FACING);
+
+        BlockState lightState = displayBlock.defaultBlockState()
+                .setValue(UnionRoomSpotlightDisplayLightBlock.FACE, face)
+                .setValue(UnionRoomSpotlightDisplayLightBlock.FACING, facing);
 
         poseStack.pushPose();
-
-        // Yaw around world Y through bottom center (0.5, 0, 0.5).
-        poseStack.translate(PIVOT_X, PIVOT_Y, PIVOT_Z);
-        poseStack.mulPose(Axis.YP.rotationDegrees(yawDeg));
-        poseStack.translate(-PIVOT_X, -PIVOT_Y, -PIVOT_Z);
-
-        // Pitch around world X through the same bottom center.
-        poseStack.translate(PIVOT_X, PIVOT_Y, PIVOT_Z);
-        poseStack.mulPose(Axis.XP.rotationDegrees(pitchDeg));
-        poseStack.translate(-PIVOT_X, -PIVOT_Y, -PIVOT_Z);
-
+        applyAnimation(poseStack, face, facing, yawDeg, pitchDeg);
         this.blockRenderDispatcher.renderSingleBlock(lightState, poseStack, bufferSource, packedLight, packedOverlay);
-
         poseStack.popPose();
+    }
+
+    @Nullable
+    private static Block displayLightForSpotlight(Block spotlightBlock) {
+        if (spotlightBlock == ModBlocks.UNION_ROOM_SPOTLIGHT_GREEN) {
+            return ModBlocks.UNION_ROOM_SPOTLIGHT_DISPLAY_LIGHT_GREEN;
+        }
+        if (spotlightBlock == ModBlocks.UNION_ROOM_SPOTLIGHT_YELLOW) {
+            return ModBlocks.UNION_ROOM_SPOTLIGHT_DISPLAY_LIGHT_YELLOW;
+        }
+        if (spotlightBlock == ModBlocks.UNION_ROOM_SPOTLIGHT_BLUE) {
+            return ModBlocks.UNION_ROOM_SPOTLIGHT_DISPLAY_LIGHT_BLUE;
+        }
+        if (spotlightBlock == ModBlocks.UNION_ROOM_SPOTLIGHT_RED) {
+            return ModBlocks.UNION_ROOM_SPOTLIGHT_DISPLAY_LIGHT_RED;
+        }
+        return null;
+    }
+
+    /**
+     * Rotates the beam around the lamp base. The pivot is the center of the face the lamp is
+     * attached to; the yaw axis is the outward normal of that face (so the beam sweeps a cone
+     * pointing away from the wall/floor/ceiling); the pitch axis is perpendicular to the yaw
+     * axis in the plane of the attachment face.
+     */
+    private static void applyAnimation(PoseStack poseStack, AttachFace face, Direction facing,
+                                       float yawDeg, float pitchDeg) {
+        float pivotX;
+        float pivotY;
+        float pivotZ;
+        Vector3f yawAxis;
+        Vector3f pitchAxis;
+        float pitchSign;
+
+        switch (face) {
+            case FLOOR -> {
+                pivotX = 0.5f;
+                pivotY = 0f;
+                pivotZ = 0.5f;
+                yawAxis = new Vector3f(0f, 1f, 0f);
+                pitchAxis = new Vector3f(1f, 0f, 0f);
+                pitchSign = 1f;
+            }
+            case CEILING -> {
+                pivotX = 0.5f;
+                pivotY = 1f;
+                pivotZ = 0.5f;
+                yawAxis = new Vector3f(0f, 1f, 0f);
+                pitchAxis = new Vector3f(1f, 0f, 0f);
+                pitchSign = -1f;
+            }
+            case WALL -> {
+                pivotX = 0.5f - 0.5f * facing.getStepX();
+                pivotY = 0.5f;
+                pivotZ = 0.5f - 0.5f * facing.getStepZ();
+                yawAxis = new Vector3f(facing.getStepX(), 0f, facing.getStepZ());
+                pitchAxis = new Vector3f(-facing.getStepZ(), 0f, facing.getStepX());
+                pitchSign = 1f;
+            }
+            default -> {
+                return;
+            }
+        }
+
+        poseStack.translate(pivotX, pivotY, pivotZ);
+        poseStack.mulPose(new Quaternionf().fromAxisAngleDeg(yawAxis, yawDeg));
+        poseStack.mulPose(new Quaternionf().fromAxisAngleDeg(pitchAxis, pitchSign * pitchDeg));
+        poseStack.translate(-pivotX, -pivotY, -pivotZ);
     }
 }

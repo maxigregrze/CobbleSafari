@@ -4,6 +4,7 @@ import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
+import com.mojang.brigadier.suggestion.SuggestionProvider;
 import maxigregrze.cobblesafari.data.UnionRoomSavedData;
 import maxigregrze.cobblesafari.unionroom.UnionRoomManager;
 import net.minecraft.commands.CommandSourceStack;
@@ -17,12 +18,28 @@ import java.util.Optional;
 
 public final class UnionRoomCommand {
 
+    private static final SuggestionProvider<CommandSourceStack> INSTANCE_TYPE_SUGGESTIONS =
+            (ctx, builder) -> {
+                builder.suggest("room");
+                builder.suggest("plaza");
+                return builder.buildFuture();
+            };
+
     private UnionRoomCommand() {}
 
     public static LiteralArgumentBuilder<CommandSourceStack> build() {
         return Commands.literal("union")
                 .then(Commands.literal("create")
-                        .executes(UnionRoomCommand::executeCreate))
+                        .executes(ctx -> executeCreate(ctx, "room"))
+                        .then(Commands.argument("type", StringArgumentType.word())
+                                .suggests(INSTANCE_TYPE_SUGGESTIONS)
+                                .executes(ctx -> {
+                                    String type = StringArgumentType.getString(ctx, "type");
+                                    if (!"plaza".equals(type)) {
+                                        type = "room";
+                                    }
+                                    return executeCreate(ctx, type);
+                                })))
                 .then(Commands.literal("join")
                         .then(Commands.argument("d1", IntegerArgumentType.integer(1, 6))
                                 .then(Commands.argument("d2", IntegerArgumentType.integer(1, 6))
@@ -51,13 +68,13 @@ public final class UnionRoomCommand {
                                         .executes(UnionRoomCommand::executeDisbandWithReason))));
     }
 
-    private static int executeCreate(CommandContext<CommandSourceStack> ctx) {
+    private static int executeCreate(CommandContext<CommandSourceStack> ctx, String instanceType) {
         ServerPlayer player = ctx.getSource().getPlayer();
         if (player == null) {
             ctx.getSource().sendFailure(Component.literal("This command must be run by a player"));
             return 0;
         }
-        return UnionRoomManager.createSession(player) == UnionRoomManager.CreateResult.OK ? 1 : 0;
+        return UnionRoomManager.createSession(player, instanceType) == UnionRoomManager.CreateResult.OK ? 1 : 0;
     }
 
     private static int executeJoin(CommandContext<CommandSourceStack> ctx) {

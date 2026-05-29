@@ -1,8 +1,6 @@
 package maxigregrze.cobblesafari.init;
 
 import maxigregrze.cobblesafari.CobbleSafari;
-import maxigregrze.cobblesafari.block.misc.UnionRoomColor;
-import maxigregrze.cobblesafari.block.misc.UnionRoomColoredBlocks;
 import maxigregrze.cobblesafari.item.donut.DonutFlavorComponent;
 import maxigregrze.cobblesafari.item.donut.DonutMainFlavor;
 import net.minecraft.core.Registry;
@@ -220,10 +218,15 @@ public class ModCreativeTabs {
                 output.accept(ModBlocks.CHARMANDER_STATUE);
                 output.accept(ModBlocks.PIKACHU_STATUE);
                 output.accept(ModBlocks.SQUIRTLE_STATUE);
-                for (UnionRoomColor color : UnionRoomColor.VALUES) {
-                    output.accept(UnionRoomColoredBlocks.stackWithColor(ModBlocks.UNION_ROOM_BRICKS, color));
-                    output.accept(UnionRoomColoredBlocks.stackWithColor(ModBlocks.UNION_ROOM_SPOTLIGHT, color));
-                }
+                output.accept(ModBlocks.KARATE_MANNEQUIN);
+                output.accept(ModBlocks.UNION_ROOM_BRICKS_GREEN);
+                output.accept(ModBlocks.UNION_ROOM_BRICKS_YELLOW);
+                output.accept(ModBlocks.UNION_ROOM_BRICKS_BLUE);
+                output.accept(ModBlocks.UNION_ROOM_BRICKS_RED);
+                output.accept(ModBlocks.UNION_ROOM_SPOTLIGHT_GREEN);
+                output.accept(ModBlocks.UNION_ROOM_SPOTLIGHT_YELLOW);
+                output.accept(ModBlocks.UNION_ROOM_SPOTLIGHT_BLUE);
+                output.accept(ModBlocks.UNION_ROOM_SPOTLIGHT_RED);
             })
             .build();
 

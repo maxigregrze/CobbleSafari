@@ -43,8 +43,6 @@ import maxigregrze.cobblesafari.block.misc.OnlineFeaturePcBlock;
 import maxigregrze.cobblesafari.block.misc.UnionRoomGlobeBlock;
 import maxigregrze.cobblesafari.block.misc.UnionRoomExitTeleporterBlock;
 import maxigregrze.cobblesafari.block.misc.PokemonStatueBlock;
-import maxigregrze.cobblesafari.block.misc.UnionRoomBricksBlock;
-import maxigregrze.cobblesafari.block.misc.UnionRoomColoredBlockItem;
 import maxigregrze.cobblesafari.block.misc.UnionRoomPillarBlock;
 import maxigregrze.cobblesafari.block.misc.UnionRoomSpotlightBlock;
 import maxigregrze.cobblesafari.block.misc.UnionRoomSpotlightDisplayLightBlock;
@@ -1027,28 +1025,35 @@ public class ModBlocks {
             new PokemonStatueBlock.Pikachu(BlockBehaviour.Properties.ofFullCopy(Blocks.WHITE_WOOL)));
     public static final Block SQUIRTLE_STATUE = registerBlock("squirtle_statue",
             new PokemonStatueBlock.Squirtle(BlockBehaviour.Properties.ofFullCopy(Blocks.WHITE_WOOL)));
+    public static final Block KARATE_MANNEQUIN = registerBlock("karate_mannequin",
+            new PokemonStatueBlock.KarateMannequin(BlockBehaviour.Properties.ofFullCopy(Blocks.WHITE_WOOL)));
 
-    public static final Block UNION_ROOM_BRICKS = registerColoredBlock("union_room_bricks",
-            new UnionRoomBricksBlock(BlockBehaviour.Properties.of()
-                    .mapColor(MapColor.QUARTZ)
-                    .strength(0.4f, 6.0f)
-                    .sound(SoundType.STONE)));
+    public static final Block UNION_ROOM_BRICKS_GREEN = registerBlock("union_room_bricks_green",
+            unionRoomBricksBlock());
+    public static final Block UNION_ROOM_BRICKS_YELLOW = registerBlock("union_room_bricks_yellow",
+            unionRoomBricksBlock());
+    public static final Block UNION_ROOM_BRICKS_BLUE = registerBlock("union_room_bricks_blue",
+            unionRoomBricksBlock());
+    public static final Block UNION_ROOM_BRICKS_RED = registerBlock("union_room_bricks_red",
+            unionRoomBricksBlock());
 
-    public static final Block UNION_ROOM_SPOTLIGHT = registerColoredBlock("union_room_spotlight",
-            new UnionRoomSpotlightBlock(BlockBehaviour.Properties.of()
-                    .mapColor(MapColor.QUARTZ)
-                    .strength(0.4f, 6.0f)
-                    .sound(SoundType.STONE)
-                    .lightLevel(state -> 15)
-                    .noOcclusion()));
+    public static final Block UNION_ROOM_SPOTLIGHT_GREEN = registerBlock("union_room_spotlight_green",
+            unionRoomSpotlightBlock());
+    public static final Block UNION_ROOM_SPOTLIGHT_YELLOW = registerBlock("union_room_spotlight_yellow",
+            unionRoomSpotlightBlock());
+    public static final Block UNION_ROOM_SPOTLIGHT_BLUE = registerBlock("union_room_spotlight_blue",
+            unionRoomSpotlightBlock());
+    public static final Block UNION_ROOM_SPOTLIGHT_RED = registerBlock("union_room_spotlight_red",
+            unionRoomSpotlightBlock());
 
-    public static final Block UNION_ROOM_SPOTLIGHT_DISPLAY_LIGHT = registerBlockWithoutItem("union_room_spotlight_display_light",
-            new UnionRoomSpotlightDisplayLightBlock(BlockBehaviour.Properties.of()
-                    .mapColor(MapColor.QUARTZ)
-                    .strength(0.3f)
-                    .noOcclusion()
-                    .noLootTable()
-                    .noCollission()));
+    public static final Block UNION_ROOM_SPOTLIGHT_DISPLAY_LIGHT_GREEN = registerBlockWithoutItem(
+            "union_room_spotlight_display_light_green", unionRoomSpotlightDisplayLightBlock());
+    public static final Block UNION_ROOM_SPOTLIGHT_DISPLAY_LIGHT_YELLOW = registerBlockWithoutItem(
+            "union_room_spotlight_display_light_yellow", unionRoomSpotlightDisplayLightBlock());
+    public static final Block UNION_ROOM_SPOTLIGHT_DISPLAY_LIGHT_BLUE = registerBlockWithoutItem(
+            "union_room_spotlight_display_light_blue", unionRoomSpotlightDisplayLightBlock());
+    public static final Block UNION_ROOM_SPOTLIGHT_DISPLAY_LIGHT_RED = registerBlockWithoutItem(
+            "union_room_spotlight_display_light_red", unionRoomSpotlightDisplayLightBlock());
 
     public static final Block INCUBATOR = registerBlockWithoutItem("incubator",
             new IncubatorBlock(BlockBehaviour.Properties.of()
@@ -1101,10 +1106,29 @@ public class ModBlocks {
         };
     }
 
-    private static Block registerColoredBlock(String name, Block block) {
-        Registry.register(BuiltInRegistries.ITEM, ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, name),
-                new UnionRoomColoredBlockItem(block, new Item.Properties()));
-        return Registry.register(BuiltInRegistries.BLOCK, ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, name), block);
+    private static Block unionRoomBricksBlock() {
+        return new Block(BlockBehaviour.Properties.of()
+                .mapColor(MapColor.QUARTZ)
+                .strength(0.4f, 6.0f)
+                .sound(SoundType.STONE));
+    }
+
+    private static UnionRoomSpotlightBlock unionRoomSpotlightBlock() {
+        return new UnionRoomSpotlightBlock(BlockBehaviour.Properties.of()
+                .mapColor(MapColor.QUARTZ)
+                .strength(0.4f, 6.0f)
+                .sound(SoundType.STONE)
+                .lightLevel(state -> 15)
+                .noOcclusion());
+    }
+
+    private static UnionRoomSpotlightDisplayLightBlock unionRoomSpotlightDisplayLightBlock() {
+        return new UnionRoomSpotlightDisplayLightBlock(BlockBehaviour.Properties.of()
+                .mapColor(MapColor.QUARTZ)
+                .strength(0.3f)
+                .noOcclusion()
+                .noLootTable()
+                .noCollission());
     }
 
     private static Block registerBlock(String name, Block block) {

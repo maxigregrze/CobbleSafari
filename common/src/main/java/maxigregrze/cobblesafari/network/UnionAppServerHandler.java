@@ -41,7 +41,10 @@ public final class UnionAppServerHandler {
         switch (payload.actionType()) {
             case UnionAppPayload.ACTION_REQUEST_STATE -> sendSnapshot(player, "");
             case UnionAppPayload.ACTION_CREATE -> {
-                UnionRoomManager.CreateResult r = UnionRoomManager.createSession(player);
+                int[] createCode = payload.code();
+                String type = (createCode != null && createCode.length >= 1 && createCode[0] == 1)
+                        ? "plaza" : "room";
+                UnionRoomManager.CreateResult r = UnionRoomManager.createSession(player, type);
                 if (r == UnionRoomManager.CreateResult.OK) {
                     sendCloseGui(player);
                 } else {
@@ -132,7 +135,7 @@ public final class UnionAppServerHandler {
         UnionRoomSavedData data = server == null ? null : UnionRoomSavedData.get(server);
 
         int instancesMax = MiscConfig.getUnionRoomMaxInstances();
-        int instancesUsed = data == null ? 0 : data.getAllSessions().size();
+        int instancesUsed = data == null ? 0 : data.countActiveRoomSessions();
         int subscreen;
         int[] currentCode = new int[0];
 

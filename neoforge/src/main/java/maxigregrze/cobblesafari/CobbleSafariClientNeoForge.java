@@ -40,7 +40,6 @@ import maxigregrze.cobblesafari.underground.network.UndergroundPayloads;
 import maxigregrze.cobblesafari.client.DungeonDistortionDimensionEffects;
 import maxigregrze.cobblesafari.client.audio.DungeonMusicHandler;
 import maxigregrze.cobblesafari.client.DonutItemClientSetup;
-import maxigregrze.cobblesafari.client.UnionRoomColoredItemClientSetup;
 import maxigregrze.cobblesafari.client.donut.DonutFlavorClientTooltip;
 import maxigregrze.cobblesafari.item.donut.DonutTooltipPayload;
 import net.minecraft.ChatFormatting;
@@ -196,8 +195,14 @@ public class CobbleSafariClientNeoForge {
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.UNION_ROOM_SCREEN_LEFT_DISPLAY, RenderType.translucent());
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.UNION_ROOM_SCREEN_RIGHT, RenderType.translucent());
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.UNION_ROOM_SCREEN_RIGHT_DISPLAY, RenderType.translucent());
-            ItemBlockRenderTypes.setRenderLayer(ModBlocks.UNION_ROOM_SPOTLIGHT, RenderType.translucent());
-            ItemBlockRenderTypes.setRenderLayer(ModBlocks.UNION_ROOM_SPOTLIGHT_DISPLAY_LIGHT, RenderType.translucent());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.UNION_ROOM_SPOTLIGHT_GREEN, RenderType.translucent());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.UNION_ROOM_SPOTLIGHT_YELLOW, RenderType.translucent());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.UNION_ROOM_SPOTLIGHT_BLUE, RenderType.translucent());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.UNION_ROOM_SPOTLIGHT_RED, RenderType.translucent());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.UNION_ROOM_SPOTLIGHT_DISPLAY_LIGHT_GREEN, RenderType.translucent());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.UNION_ROOM_SPOTLIGHT_DISPLAY_LIGHT_YELLOW, RenderType.translucent());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.UNION_ROOM_SPOTLIGHT_DISPLAY_LIGHT_BLUE, RenderType.translucent());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.UNION_ROOM_SPOTLIGHT_DISPLAY_LIGHT_RED, RenderType.translucent());
 
             BlockEntityRenderers.register(ModBlockEntities.HOOPA_RING_PORTAL, HoopaRingPortalBlockEntityRenderer::new);
             BlockEntityRenderers.register(ModBlockEntities.DUNGEON_PORTAL, DungeonPortalBlockEntityRenderer::new);
@@ -213,10 +218,7 @@ public class CobbleSafariClientNeoForge {
             BlockEntityRenderers.register(ModBlockEntities.UNION_ROOM_SPOTLIGHT, maxigregrze.cobblesafari.client.renderer.UnionRoomSpotlightBlockEntityRenderer::new);
         });
 
-        event.enqueueWork(() -> {
-            DonutItemClientSetup.registerItemProperties();
-            UnionRoomColoredItemClientSetup.registerItemProperties();
-        });
+        event.enqueueWork(DonutItemClientSetup::registerItemProperties);
 
         NeoForge.EVENT_BUS.addListener(CobbleSafariClientNeoForge::onRenderGuiLayer);
         NeoForge.EVENT_BUS.addListener(CobbleSafariClientNeoForge::onItemTooltip);
