@@ -87,6 +87,8 @@ public class DimensionalBanData {
         public boolean allowBlockBreaking = true;
         public boolean allowBlockPlacing = true;
 
-        public DimensionRestrictions() {}
+        public DimensionRestrictions() {
+            // Required no-arg constructor for GSON deserialization.
+        }
     }
 }

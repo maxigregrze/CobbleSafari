@@ -27,6 +27,7 @@ public class SecretBasePCConfig {
     private Map<String, Integer> flagBattery = defaultFlagBattery();
 
     public SecretBasePCConfig() {
+        // Required no-arg constructor for GSON deserialization.
     }
 
     public static class TierEntry {

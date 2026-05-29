@@ -24,6 +24,7 @@ public class IncubatorConfig {
     private int eggNestMaxRefillTicks = 72000;
 
     public IncubatorConfig() {
+        // Required no-arg constructor for GSON deserialization.
     }
 
     public static void load() {

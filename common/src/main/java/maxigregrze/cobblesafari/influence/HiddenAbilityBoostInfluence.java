@@ -79,10 +79,14 @@ public class HiddenAbilityBoostInfluence implements SpawningInfluence {
     }
 
     @Override
-    public void affectAction(@NotNull SpawnAction<?> action) {}
+    public void affectAction(@NotNull SpawnAction<?> action) {
+        // No-op: this influence does not modify spawn actions.
+    }
 
     @Override
-    public void affectBucketWeights(@NotNull Map<SpawnBucket, Float> bucketWeights) {}
+    public void affectBucketWeights(@NotNull Map<SpawnBucket, Float> bucketWeights) {
+        // No-op: this influence does not alter bucket weights.
+    }
 
     @Override
     public boolean affectSpawnable(@NotNull SpawnDetail detail, @NotNull SpawnablePosition spawnablePosition) {

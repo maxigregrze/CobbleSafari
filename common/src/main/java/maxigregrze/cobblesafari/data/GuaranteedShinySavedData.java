@@ -18,15 +18,18 @@ import java.util.UUID;
 
 public class GuaranteedShinySavedData extends SavedData {
     private static final String DATA_NAME = CobbleSafari.MOD_ID + "_guaranteed_shiny";
+    private static final String KEY_PLAYERS = "Players";
 
     private final Map<UUID, Map<String, GuaranteedShinyRequest>> requests = new HashMap<>();
 
-    public GuaranteedShinySavedData() {}
+    public GuaranteedShinySavedData() {
+        // Required by the SavedData factory; state is populated in load().
+    }
 
     public static GuaranteedShinySavedData load(CompoundTag tag, HolderLookup.Provider registries) {
         GuaranteedShinySavedData data = new GuaranteedShinySavedData();
-        if (tag.contains("Players", Tag.TAG_LIST)) {
-            ListTag players = tag.getList("Players", Tag.TAG_COMPOUND);
+        if (tag.contains(KEY_PLAYERS, Tag.TAG_LIST)) {
+            ListTag players = tag.getList(KEY_PLAYERS, Tag.TAG_COMPOUND);
             for (int i = 0; i < players.size(); i++) {
                 CompoundTag playerTag = players.getCompound(i);
                 UUID uuid = playerTag.getUUID("Uuid");
@@ -60,7 +63,7 @@ public class GuaranteedShinySavedData extends SavedData {
             playerTag.put("Requests", reqList);
             players.add(playerTag);
         }
-        tag.put("Players", players);
+        tag.put(KEY_PLAYERS, players);
         return tag;
     }
 

@@ -48,13 +48,19 @@ public class RepelInfluence implements SpawningInfluence {
     }
 
     @Override
-    public void affectAction(@NotNull SpawnAction<?> action) {}
+    public void affectAction(@NotNull SpawnAction<?> action) {
+        // No-op: this influence does not modify spawn actions.
+    }
 
     @Override
-    public void affectSpawn(@NotNull SpawnAction<?> action, @NotNull Entity entity) {}
+    public void affectSpawn(@NotNull SpawnAction<?> action, @NotNull Entity entity) {
+        // No-op: this influence does not react to spawned entities.
+    }
 
     @Override
-    public void affectBucketWeights(@NotNull Map<SpawnBucket, Float> bucketWeights) {}
+    public void affectBucketWeights(@NotNull Map<SpawnBucket, Float> bucketWeights) {
+        // No-op: this influence does not alter bucket weights.
+    }
 
     @Override
     public boolean isAllowedPosition(@NotNull ServerLevel world, @NotNull BlockPos pos, @NotNull SpawnablePositionCalculator<?, ?> calculator) {

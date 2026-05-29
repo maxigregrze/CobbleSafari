@@ -22,6 +22,9 @@ import java.util.Map;
 public class DimensionalBanConfig {
     public static final int CONFIG_VERSION = 1;
 
+    private static final String KEY_CONFIG_VERSION = "CONFIG_VERSION";
+    private static final String KEY_DIMENSIONS = "dimensions";
+
     private static final Path CONFIG_DIR = Services.PLATFORM.getConfigDir().resolve("cobblesafari");
     private static final Path CONFIG_PATH = CONFIG_DIR.resolve("dimensional_restrictions_config.json");
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
@@ -100,27 +103,27 @@ public class DimensionalBanConfig {
             JsonObject json = JsonParser.parseReader(reader).getAsJsonObject();
             JsonObject defaultJson = GSON.toJsonTree(new DimensionalBanData()).getAsJsonObject();
 
-            JsonObject defaultDims = defaultJson.getAsJsonObject("dimensions");
-            JsonObject userDims = json.has("dimensions") && json.get("dimensions").isJsonObject()
-                    ? json.getAsJsonObject("dimensions")
+            JsonObject defaultDims = defaultJson.getAsJsonObject(KEY_DIMENSIONS);
+            JsonObject userDims = json.has(KEY_DIMENSIONS) && json.get(KEY_DIMENSIONS).isJsonObject()
+                    ? json.getAsJsonObject(KEY_DIMENSIONS)
                     : new JsonObject();
             JsonElement dimensionsSnapshotBeforeMerge = JsonParser.parseString(GSON.toJson(userDims));
             JsonObject mergedDims = mergeDimensionsPreservingCustomEntries(userDims, defaultDims);
             if (!dimensionsSnapshotBeforeMerge.equals(JsonParser.parseString(GSON.toJson(mergedDims)))) {
                 needsSave = true;
             }
-            json.add("dimensions", mergedDims);
+            json.add(KEY_DIMENSIONS, mergedDims);
 
-            int loadedVersion = json.has("CONFIG_VERSION") ? json.get("CONFIG_VERSION").getAsInt() : 0;
+            int loadedVersion = json.has(KEY_CONFIG_VERSION) ? json.get(KEY_CONFIG_VERSION).getAsInt() : 0;
             if (loadedVersion < CONFIG_VERSION) {
                 CobbleSafari.LOGGER.info("CobbleSafari >> Dimensional ban config migrating from v{} to v{}!", loadedVersion, CONFIG_VERSION);
-                json.addProperty("CONFIG_VERSION", CONFIG_VERSION);
+                json.addProperty(KEY_CONFIG_VERSION, CONFIG_VERSION);
                 needsSave = true;
             }
 
             List<String> topLevelKeys = new ArrayList<>(json.keySet());
             for (String key : topLevelKeys) {
-                if (!key.equals("dimensions") && !key.equals("CONFIG_VERSION")) {
+                if (!key.equals(KEY_DIMENSIONS) && !key.equals(KEY_CONFIG_VERSION)) {
                     json.remove(key);
                     needsSave = true;
                 }
@@ -176,21 +179,23 @@ public class DimensionalBanConfig {
         }
         try (Writer out = Files.newBufferedWriter(CONFIG_PATH)) {
             JsonObject json = new JsonObject();
-            json.addProperty("CONFIG_VERSION", CONFIG_VERSION);
+            json.addProperty(KEY_CONFIG_VERSION, CONFIG_VERSION);
             for (Field field : DimensionalBanData.class.getDeclaredFields()) {
                 if (Modifier.isStatic(field.getModifiers())) continue;
-                field.setAccessible(true);
-                try {
-                    Object value = field.get(data);
-                    JsonElement jsonVal = GSON.toJsonTree(value);
-                    json.add(field.getName(), jsonVal);
-                } catch (IllegalAccessException e) {
-                    CobbleSafari.LOGGER.error("CobbleSafari >> Failed to access config field: {}", field.getName(), e);
-                }
+                writeFieldTo(json, field);
             }
             GSON.toJson(json, out);
         } catch (Exception e) {
             CobbleSafari.LOGGER.error("CobbleSafari >> Failed to save dimensional_restrictions_config.json", e);
+        }
+    }
+
+    private static void writeFieldTo(JsonObject json, Field field) {
+        field.setAccessible(true);
+        try {
+            json.add(field.getName(), GSON.toJsonTree(field.get(data)));
+        } catch (IllegalAccessException e) {
+            CobbleSafari.LOGGER.error("CobbleSafari >> Failed to access config field: {}", field.getName(), e);
         }
     }
 
@@ -209,7 +214,7 @@ public class DimensionalBanConfig {
 
             List<String> keys = new ArrayList<>(origObj.keySet());
             for (String key : keys) {
-                if (!defObj.has(key) && !key.equals("CONFIG_VERSION")) {
+                if (!defObj.has(key) && !key.equals(KEY_CONFIG_VERSION)) {
                     origObj.remove(key);
                 }
             }

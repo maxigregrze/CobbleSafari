@@ -12,6 +12,14 @@ import net.minecraft.world.level.Level;
 import java.util.UUID;
 
 public class PlayerTimerData {
+    private static final String KEY_DIMENSION_ID = "dimensionId";
+    private static final String KEY_ORIGIN_X = "OriginX";
+    private static final String KEY_ORIGIN_DIMENSION = "OriginDimension";
+    private static final String KEY_LAST_SAFARI_BALL_GRANT_DAY = "lastSafariBallGrantDay";
+    private static final String KEY_TIMER_BYPASSED = "timerBypassed";
+    private static final String KEY_LAST_ENTRY_FEE_PAY_DAY = "lastEntryFeePayDay";
+    private static final String KEY_NEEDS_EVACUATION = "needsEvacuation";
+
     private final UUID playerId;
     private final String dimensionId;
     private int remainingTicks;
@@ -44,11 +52,13 @@ public class PlayerTimerData {
         this.originDimension = null;
     }
 
+    /** @deprecated use the dimension-aware constructor {@link #PlayerTimerData(UUID, String)} instead. */
     @Deprecated
     public PlayerTimerData(UUID playerId) {
         this(playerId, SafariTimerConfig.getSafariDimensionId());
     }
 
+    /** @deprecated use the dimension-aware constructor instead. */
     @Deprecated
     public PlayerTimerData(UUID playerId, int remainingTicks, long lastResetTimestamp, boolean isActive) {
         this(playerId, SafariTimerConfig.getSafariDimensionId(), remainingTicks, lastResetTimestamp, isActive);
@@ -184,33 +194,33 @@ public class PlayerTimerData {
     public CompoundTag toNbt() {
         CompoundTag tag = new CompoundTag();
         tag.putUUID("playerId", playerId);
-        tag.putString("dimensionId", dimensionId);
+        tag.putString(KEY_DIMENSION_ID, dimensionId);
         tag.putInt("remainingTicks", remainingTicks);
         tag.putLong("lastResetTimestamp", lastResetTimestamp);
         tag.putBoolean("isActive", isActive);
         
         if (originPos != null) {
-            tag.putInt("OriginX", originPos.getX());
+            tag.putInt(KEY_ORIGIN_X, originPos.getX());
             tag.putInt("OriginY", originPos.getY());
             tag.putInt("OriginZ", originPos.getZ());
         }
         
         if (originDimension != null) {
-            tag.putString("OriginDimension", originDimension.location().toString());
+            tag.putString(KEY_ORIGIN_DIMENSION, originDimension.location().toString());
         }
 
-        tag.putLong("lastSafariBallGrantDay", lastSafariBallGrantDay);
-        tag.putBoolean("timerBypassed", timerBypassed);
-        tag.putLong("lastEntryFeePayDay", lastEntryFeePayDay);
-        tag.putBoolean("needsEvacuation", needsEvacuation);
+        tag.putLong(KEY_LAST_SAFARI_BALL_GRANT_DAY, lastSafariBallGrantDay);
+        tag.putBoolean(KEY_TIMER_BYPASSED, timerBypassed);
+        tag.putLong(KEY_LAST_ENTRY_FEE_PAY_DAY, lastEntryFeePayDay);
+        tag.putBoolean(KEY_NEEDS_EVACUATION, needsEvacuation);
 
         return tag;
     }
 
     public static PlayerTimerData fromNbt(CompoundTag tag) {
         UUID playerId = tag.getUUID("playerId");
-        String dimensionId = tag.contains("dimensionId") 
-                ? tag.getString("dimensionId") 
+        String dimensionId = tag.contains(KEY_DIMENSION_ID) 
+                ? tag.getString(KEY_DIMENSION_ID) 
                 : SafariTimerConfig.getSafariDimensionId();
         int remainingTicks = tag.getInt("remainingTicks");
         long lastResetTimestamp = tag.getLong("lastResetTimestamp");
@@ -218,35 +228,35 @@ public class PlayerTimerData {
         
         PlayerTimerData data = new PlayerTimerData(playerId, dimensionId, remainingTicks, lastResetTimestamp, isActive);
         
-        if (tag.contains("OriginX")) {
+        if (tag.contains(KEY_ORIGIN_X)) {
             data.originPos = new BlockPos(
-                    tag.getInt("OriginX"),
+                    tag.getInt(KEY_ORIGIN_X),
                     tag.getInt("OriginY"),
                     tag.getInt("OriginZ")
             );
         }
         
-        if (tag.contains("OriginDimension")) {
+        if (tag.contains(KEY_ORIGIN_DIMENSION)) {
             data.originDimension = ResourceKey.create(
                     Registries.DIMENSION,
-                    ResourceLocation.parse(tag.getString("OriginDimension"))
+                    ResourceLocation.parse(tag.getString(KEY_ORIGIN_DIMENSION))
             );
         }
 
-        if (tag.contains("lastSafariBallGrantDay")) {
-            data.lastSafariBallGrantDay = tag.getLong("lastSafariBallGrantDay");
+        if (tag.contains(KEY_LAST_SAFARI_BALL_GRANT_DAY)) {
+            data.lastSafariBallGrantDay = tag.getLong(KEY_LAST_SAFARI_BALL_GRANT_DAY);
         }
 
-        if (tag.contains("timerBypassed")) {
-            data.timerBypassed = tag.getBoolean("timerBypassed");
+        if (tag.contains(KEY_TIMER_BYPASSED)) {
+            data.timerBypassed = tag.getBoolean(KEY_TIMER_BYPASSED);
         }
 
-        if (tag.contains("lastEntryFeePayDay")) {
-            data.lastEntryFeePayDay = tag.getLong("lastEntryFeePayDay");
+        if (tag.contains(KEY_LAST_ENTRY_FEE_PAY_DAY)) {
+            data.lastEntryFeePayDay = tag.getLong(KEY_LAST_ENTRY_FEE_PAY_DAY);
         }
 
-        if (tag.contains("needsEvacuation")) {
-            data.needsEvacuation = tag.getBoolean("needsEvacuation");
+        if (tag.contains(KEY_NEEDS_EVACUATION)) {
+            data.needsEvacuation = tag.getBoolean(KEY_NEEDS_EVACUATION);
         }
 
         return data;

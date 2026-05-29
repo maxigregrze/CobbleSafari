@@ -34,14 +34,14 @@ public class SafariPokemonState {
     }
 
     public int applyMudBall() {
-        int maxMood = SafariConfig.getMaxMoodLevel();
+        int maxMood = SafariConfig.MAX_MOOD_LEVEL;
         int oldMood = moodLevel;
         moodLevel = Math.max(-maxMood, moodLevel - 1);
         return oldMood - moodLevel;
     }
 
     public int applyBait() {
-        int maxMood = SafariConfig.getMaxMoodLevel();
+        int maxMood = SafariConfig.MAX_MOOD_LEVEL;
         int oldMood = moodLevel;
         moodLevel = Math.min(maxMood, moodLevel + 1);
         return moodLevel - oldMood;

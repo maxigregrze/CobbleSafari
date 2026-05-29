@@ -59,7 +59,10 @@ public class MiscConfig {
 
     private static Map<String, RoomTypeConfig> roomTypeRuntime = new HashMap<>();
 
+    private static final String ROOM_TYPE_DEFAULT = "default";
+
     public MiscConfig() {
+        // Required no-arg constructor for GSON deserialization.
     }
 
     public static final class LostItemDefaults {
@@ -450,7 +453,7 @@ public class MiscConfig {
         roomTypeRuntime = new HashMap<>();
         RoomTypeConfig defaultType =
                 new RoomTypeConfig(this.unionRoomMaxInstances, this.unionRoomMaxGuestsPerSession);
-        roomTypeRuntime.put("default", defaultType);
+        roomTypeRuntime.put(ROOM_TYPE_DEFAULT, defaultType);
         roomTypeRuntime.put("room", defaultType);
         roomTypeRuntime.put("plaza",
                 new RoomTypeConfig(this.unionRoomPlazaMaxInstances, this.unionRoomPlazaMaxGuestsPerSession));
@@ -465,7 +468,7 @@ public class MiscConfig {
                 roomTypeRuntime.put(e.getKey(), c);
             }
         }
-        roomTypeRuntime.put("default", defaultType);
+        roomTypeRuntime.put(ROOM_TYPE_DEFAULT, defaultType);
         roomTypeRuntime.put("room", defaultType);
     }
 
@@ -476,7 +479,7 @@ public class MiscConfig {
         if (roomTypeRuntime.isEmpty()) {
             INSTANCE.ensureUnionRoomDefaults();
         }
-        RoomTypeConfig def = roomTypeRuntime.get("default");
+        RoomTypeConfig def = roomTypeRuntime.get(ROOM_TYPE_DEFAULT);
         if (def == null) {
             return new RoomTypeConfig(10, 6);
         }
@@ -487,7 +490,7 @@ public class MiscConfig {
     }
 
     public static int getUnionRoomMaxInstances() {
-        return getRoomType("default").maxInstances;
+        return getRoomType(ROOM_TYPE_DEFAULT).maxInstances;
     }
 
     public static List<String> getUnionRoomBannedDimensions() {

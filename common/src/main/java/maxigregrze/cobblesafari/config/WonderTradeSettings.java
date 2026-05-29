@@ -45,7 +45,9 @@ public class WonderTradeSettings {
         public int weight = 1;
     }
 
-    public WonderTradeSettings() {}
+    public WonderTradeSettings() {
+        // Required no-arg constructor for GSON deserialization.
+    }
 
     public static void load() {
         if (Files.exists(CONFIG_PATH)) {
@@ -81,7 +83,9 @@ public class WonderTradeSettings {
         } else {
             try {
                 Files.createDirectories(CONFIG_DIR);
-            } catch (IOException ignored) {}
+            } catch (IOException ignored) {
+                // Directory creation is best-effort; save() below will surface any real error.
+            }
             INSTANCE = new WonderTradeSettings();
             INSTANCE.ensureDefaults();
             INSTANCE.validateAndFix();

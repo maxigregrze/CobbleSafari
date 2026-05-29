@@ -33,6 +33,15 @@ public class UnionRoomSavedData extends SavedData {
             ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, "unionroom"));
 
     private int nextInstanceId;
+    private static final String ROOM_TYPE_DEFAULT = "default";
+    private static final String KEY_GUESTS = "Guests";
+    private static final String KEY_ROOM_TYPE = "RoomType";
+    private static final String KEY_DIMENSION = "Dimension";
+    private static final String KEY_INSTANCES = "Instances";
+    private static final String KEY_SESSIONS = "Sessions";
+    private static final String KEY_PLAYER_ORIGINS = "PlayerOrigins";
+    private static final String KEY_RECONNECT = "Reconnect";
+
     private final List<InstanceData> instances = new ArrayList<>();
     private final Map<Integer, SessionData> activeSessions = new ConcurrentHashMap<>();
     private final Map<UUID, PlayerOriginData> playerOrigins = new ConcurrentHashMap<>();
@@ -81,13 +90,13 @@ public class UnionRoomSavedData extends SavedData {
         public UUID hostUUID;
         public final int[] code = new int[4];
         public final Set<UUID> guestUUIDs = new HashSet<>();
-        public String roomType = "default";
+        public String roomType = ROOM_TYPE_DEFAULT;
 
         CompoundTag toNbt() {
             CompoundTag t = new CompoundTag();
             t.putInt("InstanceId", instanceId);
             t.putUUID("Host", hostUUID);
-            t.putString("RoomType", roomType == null ? "default" : roomType);
+            t.putString(KEY_ROOM_TYPE, roomType == null ? ROOM_TYPE_DEFAULT : roomType);
             t.putIntArray("Code", code);
             ListTag guests = new ListTag();
             for (UUID g : guestUUIDs) {
@@ -95,7 +104,7 @@ public class UnionRoomSavedData extends SavedData {
                 gt.putUUID("Id", g);
                 guests.add(gt);
             }
-            t.put("Guests", guests);
+            t.put(KEY_GUESTS, guests);
             return t;
         }
 
@@ -107,8 +116,8 @@ public class UnionRoomSavedData extends SavedData {
             for (int i = 0; i < 4 && i < c.length; i++) {
                 s.code[i] = c[i];
             }
-            if (t.contains("Guests", Tag.TAG_LIST)) {
-                ListTag list = t.getList("Guests", Tag.TAG_COMPOUND);
+            if (t.contains(KEY_GUESTS, Tag.TAG_LIST)) {
+                ListTag list = t.getList(KEY_GUESTS, Tag.TAG_COMPOUND);
                 for (int i = 0; i < list.size(); i++) {
                     CompoundTag gt = list.getCompound(i);
                     if (gt.hasUUID("Id")) {
@@ -116,7 +125,7 @@ public class UnionRoomSavedData extends SavedData {
                     }
                 }
             }
-            s.roomType = t.contains("RoomType", Tag.TAG_STRING) ? t.getString("RoomType") : "default";
+            s.roomType = t.contains(KEY_ROOM_TYPE, Tag.TAG_STRING) ? t.getString(KEY_ROOM_TYPE) : ROOM_TYPE_DEFAULT;
             return s;
         }
     }
@@ -125,10 +134,10 @@ public class UnionRoomSavedData extends SavedData {
         public BlockPos position = BlockPos.ZERO;
         public ResourceKey<Level> dimension = Level.OVERWORLD;
 
-        CompoundTag toNbt(HolderLookup.Provider registries) {
+        CompoundTag toNbt() {
             CompoundTag t = new CompoundTag();
             t.putIntArray("Pos", new int[]{position.getX(), position.getY(), position.getZ()});
-            t.putString("Dimension", dimension.location().toString());
+            t.putString(KEY_DIMENSION, dimension.location().toString());
             return t;
         }
 
@@ -138,8 +147,8 @@ public class UnionRoomSavedData extends SavedData {
             if (p.length == 3) {
                 d.position = new BlockPos(p[0], p[1], p[2]);
             }
-            if (t.contains("Dimension")) {
-                ResourceLocation loc = ResourceLocation.parse(t.getString("Dimension"));
+            if (t.contains(KEY_DIMENSION)) {
+                ResourceLocation loc = ResourceLocation.parse(t.getString(KEY_DIMENSION));
                 d.dimension = ResourceKey.create(Registries.DIMENSION, loc);
             }
             return d;
@@ -149,31 +158,32 @@ public class UnionRoomSavedData extends SavedData {
     public static UnionRoomSavedData load(CompoundTag tag, HolderLookup.Provider registries) {
         UnionRoomSavedData data = new UnionRoomSavedData();
         data.nextInstanceId = tag.getInt("NextInstanceId");
-        if (tag.contains("Instances", Tag.TAG_LIST)) {
-            ListTag list = tag.getList("Instances", Tag.TAG_COMPOUND);
+        if (tag.contains(KEY_INSTANCES, Tag.TAG_LIST)) {
+            ListTag list = tag.getList(KEY_INSTANCES, Tag.TAG_COMPOUND);
             for (int i = 0; i < list.size(); i++) {
                 data.instances.add(InstanceData.fromNbt(list.getCompound(i)));
             }
         }
-        if (tag.contains("Sessions", Tag.TAG_LIST)) {
-            ListTag list = tag.getList("Sessions", Tag.TAG_COMPOUND);
+        if (tag.contains(KEY_SESSIONS, Tag.TAG_LIST)) {
+            ListTag list = tag.getList(KEY_SESSIONS, Tag.TAG_COMPOUND);
             for (int i = 0; i < list.size(); i++) {
                 SessionData s = SessionData.fromNbt(list.getCompound(i));
                 data.activeSessions.put(s.instanceId, s);
             }
         }
-        if (tag.contains("PlayerOrigins", Tag.TAG_COMPOUND)) {
-            CompoundTag origins = tag.getCompound("PlayerOrigins");
+        if (tag.contains(KEY_PLAYER_ORIGINS, Tag.TAG_COMPOUND)) {
+            CompoundTag origins = tag.getCompound(KEY_PLAYER_ORIGINS);
             for (String key : origins.getAllKeys()) {
                 try {
                     UUID id = UUID.fromString(key);
                     data.playerOrigins.put(id, PlayerOriginData.fromNbt(origins.getCompound(key)));
                 } catch (IllegalArgumentException ignored) {
+                    // Skip entries whose key is not a valid UUID (corrupt/legacy data).
                 }
             }
         }
-        if (tag.contains("Reconnect", Tag.TAG_LIST)) {
-            ListTag list = tag.getList("Reconnect", Tag.TAG_COMPOUND);
+        if (tag.contains(KEY_RECONNECT, Tag.TAG_LIST)) {
+            ListTag list = tag.getList(KEY_RECONNECT, Tag.TAG_COMPOUND);
             for (int i = 0; i < list.size(); i++) {
                 CompoundTag rt = list.getCompound(i);
                 if (rt.hasUUID("Id")) {
@@ -191,24 +201,24 @@ public class UnionRoomSavedData extends SavedData {
         for (InstanceData inst : instances) {
             instList.add(inst.toNbt());
         }
-        tag.put("Instances", instList);
+        tag.put(KEY_INSTANCES, instList);
         ListTag sessList = new ListTag();
         for (SessionData s : activeSessions.values()) {
             sessList.add(s.toNbt());
         }
-        tag.put("Sessions", sessList);
+        tag.put(KEY_SESSIONS, sessList);
         CompoundTag origins = new CompoundTag();
         for (Map.Entry<UUID, PlayerOriginData> e : playerOrigins.entrySet()) {
-            origins.put(e.getKey().toString(), e.getValue().toNbt(registries));
+            origins.put(e.getKey().toString(), e.getValue().toNbt());
         }
-        tag.put("PlayerOrigins", origins);
+        tag.put(KEY_PLAYER_ORIGINS, origins);
         ListTag reconnect = new ListTag();
         for (UUID id : reconnectPending) {
             CompoundTag rt = new CompoundTag();
             rt.putUUID("Id", id);
             reconnect.add(rt);
         }
-        tag.put("Reconnect", reconnect);
+        tag.put(KEY_RECONNECT, reconnect);
         return tag;
     }
 
@@ -270,10 +280,8 @@ public class UnionRoomSavedData extends SavedData {
     }
 
     private static boolean isRoomSessionType(String roomType) {
-        if (roomType == null || roomType.isBlank() || "default".equals(roomType) || "room".equals(roomType)) {
-            return true;
-        }
-        return false;
+        return roomType == null || roomType.isBlank()
+                || ROOM_TYPE_DEFAULT.equals(roomType) || "room".equals(roomType);
     }
 
     private static String normalizeInstanceType(String type) {
@@ -325,16 +333,21 @@ public class UnionRoomSavedData extends SavedData {
         if (code == null || code.length != 4) {
             return Optional.empty();
         }
-        outer:
         for (SessionData s : activeSessions.values()) {
-            for (int i = 0; i < 4; i++) {
-                if (s.code[i] != code[i]) {
-                    continue outer;
-                }
+            if (codeMatches(s.code, code)) {
+                return Optional.of(s);
             }
-            return Optional.of(s);
         }
         return Optional.empty();
+    }
+
+    private static boolean codeMatches(int[] sessionCode, int[] code) {
+        for (int i = 0; i < 4; i++) {
+            if (sessionCode[i] != code[i]) {
+                return false;
+            }
+        }
+        return true;
     }
 
     public Optional<SessionData> findSessionContainingGuest(UUID guest) {

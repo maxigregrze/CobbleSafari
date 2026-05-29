@@ -17,17 +17,19 @@ import java.util.UUID;
 
 public class TimerSavedData extends SavedData {
     private static final String DATA_NAME = CobbleSafari.MOD_ID + "_timer_data";
+    private static final String KEY_PLAYERS = "players";
 
     private final Map<UUID, Map<String, PlayerTimerData>> playerData = new HashMap<>();
 
     public TimerSavedData() {
+        // Required by the SavedData factory; state is populated in load().
     }
 
     public static TimerSavedData load(CompoundTag tag, HolderLookup.Provider registries) {
         TimerSavedData data = new TimerSavedData();
 
-        if (tag.contains("players", Tag.TAG_LIST)) {
-            ListTag playerList = tag.getList("players", Tag.TAG_COMPOUND);
+        if (tag.contains(KEY_PLAYERS, Tag.TAG_LIST)) {
+            ListTag playerList = tag.getList(KEY_PLAYERS, Tag.TAG_COMPOUND);
             for (int i = 0; i < playerList.size(); i++) {
                 CompoundTag playerTag = playerList.getCompound(i);
                 PlayerTimerData playerTimerData = PlayerTimerData.fromNbt(playerTag);
@@ -57,7 +59,7 @@ public class TimerSavedData extends SavedData {
             }
         }
 
-        tag.put("players", playerList);
+        tag.put(KEY_PLAYERS, playerList);
         int totalTimers = playerData.values().stream()
                 .mapToInt(Map::size)
                 .sum();
@@ -73,6 +75,7 @@ public class TimerSavedData extends SavedData {
         return dimensionTimers.get(dimensionId);
     }
 
+    /** @deprecated use {@link #getPlayerData(UUID, String)} with an explicit dimension id. */
     @Deprecated
     public PlayerTimerData getPlayerData(UUID playerId) {
         return getPlayerData(playerId, SafariTimerConfig.getSafariDimensionId());
@@ -84,6 +87,7 @@ public class TimerSavedData extends SavedData {
                 .computeIfAbsent(dimensionId, d -> new PlayerTimerData(playerId, dimensionId));
     }
 
+    /** @deprecated use {@link #getOrCreatePlayerData(UUID, String)} with an explicit dimension id. */
     @Deprecated
     public PlayerTimerData getOrCreatePlayerData(UUID playerId) {
         return getOrCreatePlayerData(playerId, SafariTimerConfig.getSafariDimensionId());
@@ -96,6 +100,7 @@ public class TimerSavedData extends SavedData {
         setDirty();
     }
 
+    /** @deprecated use {@link #setPlayerData(UUID, String, PlayerTimerData)} with an explicit dimension id. */
     @Deprecated
     public void setPlayerData(UUID playerId, PlayerTimerData data) {
         setPlayerData(playerId, data.getDimensionId(), data);

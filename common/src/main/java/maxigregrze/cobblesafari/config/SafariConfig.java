@@ -23,9 +23,14 @@ public class SafariConfig {
 
     private static SafariConfig INSTANCE;
 
+    private static final String DEFAULT_ENTRY_FEE = "cobblesafari:ticket_safari";
+    private static final String KEY_ALLOW_MULTIPLE_PAYMENT = "allowMultiplePayment";
+
+    public static final int MAX_MOOD_LEVEL = 6;
+
     private int dailySafariBallsCount = 16;
     private boolean enableEntryFee = false;
-    private String entryFee = "cobblesafari:ticket_safari";
+    private String entryFee = DEFAULT_ENTRY_FEE;
     private boolean cobbledollarEntryFee = false;
     private int entryFeeAmount = 5000;
     private boolean allowPaidReentry = false;
@@ -48,6 +53,7 @@ public class SafariConfig {
     private int dailyMudBallCount = 32;
 
     public SafariConfig() {
+        // Required no-arg constructor for GSON deserialization.
     }
 
     public static void load() {
@@ -90,13 +96,13 @@ public class SafariConfig {
     }
 
     private static void migrateLegacyAllowPaidReentry(JsonObject json) {
-        if (!json.has("allowMultiplePayment")) {
+        if (!json.has(KEY_ALLOW_MULTIPLE_PAYMENT)) {
             return;
         }
         if (!json.has("allowPaidReentry")) {
-            json.addProperty("allowPaidReentry", json.get("allowMultiplePayment").getAsBoolean());
+            json.addProperty("allowPaidReentry", json.get(KEY_ALLOW_MULTIPLE_PAYMENT).getAsBoolean());
         }
-        json.remove("allowMultiplePayment");
+        json.remove(KEY_ALLOW_MULTIPLE_PAYMENT);
     }
 
     private static void validateAndFixConfig() {
@@ -145,8 +151,8 @@ public class SafariConfig {
     }
 
     public static String getEntryFeeItem() {
-        if (INSTANCE == null) return "cobblesafari:ticket_safari";
-        return INSTANCE.entryFee != null ? INSTANCE.entryFee : "cobblesafari:ticket_safari";
+        if (INSTANCE == null) return DEFAULT_ENTRY_FEE;
+        return INSTANCE.entryFee != null ? INSTANCE.entryFee : DEFAULT_ENTRY_FEE;
     }
 
     public static boolean isCobbledollarFeeEnabled() {
@@ -222,10 +228,6 @@ public class SafariConfig {
     public static int getFleeGracePeriodTicks() {
         if (INSTANCE == null) return 100;
         return Math.max(20, INSTANCE.fleeGracePeriodTicks);
-    }
-
-    public static int getMaxMoodLevel() {
-        return 6;
     }
 
     public static float getShinyCatchMultiplier() {

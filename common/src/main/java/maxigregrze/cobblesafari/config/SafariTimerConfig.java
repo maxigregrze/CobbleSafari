@@ -106,10 +106,19 @@ public class SafariTimerConfig {
         }
     }
 
-    public static void syncDungeonDimensionTimersFromRegistry() {
+    /** Returns the loaded singleton, loading or creating defaults as needed. Never null. */
+    private static SafariTimerConfig getInstance() {
         if (INSTANCE == null) {
             load();
         }
+        if (INSTANCE == null) {
+            INSTANCE = new SafariTimerConfig();
+        }
+        return INSTANCE;
+    }
+
+    public static void syncDungeonDimensionTimersFromRegistry() {
+        SafariTimerConfig inst = getInstance();
         boolean modified = false;
         modified |= ensureDimensionConfig(SAFARI_DIMENSION_ID, 900);
         modified |= ensureDimensionConfig(DUNGEON_JUMP_DIMENSION_ID, 900);
@@ -120,7 +129,7 @@ public class SafariTimerConfig {
                 modified |= ensureDimensionConfig(dungeon.getDimensionId(), dungeon.getTimerDurationSeconds());
             }
         }
-        for (DimensionTimerEntry entry : INSTANCE.dimensions) {
+        for (DimensionTimerEntry entry : inst.dimensions) {
             modified |= entry.initializeDefaults();
         }
         if (modified) {
@@ -134,11 +143,12 @@ public class SafariTimerConfig {
     }
 
     private static boolean ensureDimensionConfig(String dimensionId, int defaultDurationSeconds, int resetHour) {
-        Optional<DimensionTimerEntry> existing = INSTANCE.dimensions.stream()
+        SafariTimerConfig inst = getInstance();
+        Optional<DimensionTimerEntry> existing = inst.dimensions.stream()
                 .filter(entry -> entry.getDimensionId().equals(dimensionId))
                 .findFirst();
         if (existing.isEmpty()) {
-            INSTANCE.dimensions.add(new DimensionTimerEntry(dimensionId, defaultDurationSeconds, resetHour));
+            inst.dimensions.add(new DimensionTimerEntry(dimensionId, defaultDurationSeconds, resetHour));
             CobbleSafari.LOGGER.info("Added missing dimension config: {} ({} min)", dimensionId, defaultDurationSeconds / 60);
             return true;
         }
@@ -146,14 +156,12 @@ public class SafariTimerConfig {
     }
 
     public static boolean ensureDimensionEntry(String dimensionId, int defaultDurationSeconds, int resetHour) {
-        if (INSTANCE == null) {
-            load();
-        }
-        Optional<DimensionTimerEntry> existing = INSTANCE.dimensions.stream()
+        SafariTimerConfig inst = getInstance();
+        Optional<DimensionTimerEntry> existing = inst.dimensions.stream()
                 .filter(entry -> entry.getDimensionId().equals(dimensionId))
                 .findFirst();
         if (existing.isEmpty()) {
-            INSTANCE.dimensions.add(new DimensionTimerEntry(dimensionId, defaultDurationSeconds, resetHour));
+            inst.dimensions.add(new DimensionTimerEntry(dimensionId, defaultDurationSeconds, resetHour));
             CobbleSafari.LOGGER.info("Added dimension timer entry: {} ({} min)", dimensionId, defaultDurationSeconds / 60);
             CobbleSafari.LOGGER.info("CobbleSafari >> Persisting dimensional_timer_config.json (new dimension timer entry)");
             save();
@@ -264,8 +272,10 @@ public class SafariTimerConfig {
                 .orElse(0);
     }
 
+    /** @deprecated use {@link #getSafariDimensionId()} instead. */
+    @Deprecated
     public static String getDimensionId() {
-        return SAFARI_DIMENSION_ID;
+        return getSafariDimensionId();
     }
 
 }

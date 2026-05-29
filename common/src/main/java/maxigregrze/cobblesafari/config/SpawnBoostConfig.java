@@ -21,6 +21,8 @@ import java.util.Map;
 
 public class SpawnBoostConfig {
     public static final int CONFIG_VERSION = 5;
+
+    private static final String KEY_CONFIG_VERSION = "CONFIG_VERSION";
     
     private static final Path CONFIG_DIR = Services.PLATFORM.getConfigDir().resolve("cobblesafari");
     private static final Path CONFIG_PATH = CONFIG_DIR.resolve("encounter_boost_config.json");
@@ -71,10 +73,10 @@ public class SpawnBoostConfig {
             JsonObject json = JsonParser.parseReader(reader).getAsJsonObject();
             JsonObject defaultJson = GSON.toJsonTree(new SpawnBoostConfigData()).getAsJsonObject();
 
-            int loadedVersion = json.has("CONFIG_VERSION") ? json.get("CONFIG_VERSION").getAsInt() : 0;
+            int loadedVersion = json.has(KEY_CONFIG_VERSION) ? json.get(KEY_CONFIG_VERSION).getAsInt() : 0;
             if (loadedVersion < CONFIG_VERSION) {
                 CobbleSafari.LOGGER.info("CobbleSafari >> Spawn boost config migrating from v{} to v{}!", loadedVersion, CONFIG_VERSION);
-                json.addProperty("CONFIG_VERSION", CONFIG_VERSION);
+                json.addProperty(KEY_CONFIG_VERSION, CONFIG_VERSION);
                 needsSave = true;
             }
 
@@ -109,21 +111,23 @@ public class SpawnBoostConfig {
         }
         try (Writer out = Files.newBufferedWriter(CONFIG_PATH)) {
             JsonObject json = new JsonObject();
-            json.addProperty("CONFIG_VERSION", CONFIG_VERSION);
+            json.addProperty(KEY_CONFIG_VERSION, CONFIG_VERSION);
             for (Field field : SpawnBoostConfigData.class.getDeclaredFields()) {
                 if (Modifier.isStatic(field.getModifiers())) continue;
-                field.setAccessible(true);
-                try {
-                    Object value = field.get(data);
-                    JsonElement jsonVal = GSON.toJsonTree(value);
-                    json.add(field.getName(), jsonVal);
-                } catch (IllegalAccessException e) {
-                    CobbleSafari.LOGGER.error("CobbleSafari >> Failed to access config field: {}", field.getName(), e);
-                }
+                writeFieldTo(json, field);
             }
             GSON.toJson(json, out);
         } catch (Exception e) {
             CobbleSafari.LOGGER.error("CobbleSafari >> Failed to save encounter_boost_config.json", e);
+        }
+    }
+
+    private static void writeFieldTo(JsonObject json, Field field) {
+        field.setAccessible(true);
+        try {
+            json.add(field.getName(), GSON.toJsonTree(field.get(data)));
+        } catch (IllegalAccessException e) {
+            CobbleSafari.LOGGER.error("CobbleSafari >> Failed to access config field: {}", field.getName(), e);
         }
     }
     

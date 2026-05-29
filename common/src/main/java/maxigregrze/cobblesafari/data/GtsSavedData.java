@@ -19,6 +19,11 @@ import java.util.UUID;
 
 public class GtsSavedData extends SavedData {
     private static final String DATA_NAME = CobbleSafari.MOD_ID + "_gts";
+    private static final String KEY_NEXT_OFFER_ID = "NextOfferId";
+    private static final String KEY_NEXT_SUCCESS_ID = "NextSuccessId";
+    private static final String KEY_LAST_DAILY_EPOCH_DAY = "LastDailyEpochDay";
+    private static final String KEY_OFFERS = "Offers";
+    private static final String KEY_SUCCESSES = "Successes";
 
     private int nextOfferId = 1;
     private int nextSuccessId = 1;
@@ -27,27 +32,29 @@ public class GtsSavedData extends SavedData {
     private final List<GtsOffer> offers = new ArrayList<>();
     private final List<GtsSuccess> successes = new ArrayList<>();
 
-    public GtsSavedData() {}
+    public GtsSavedData() {
+        // Required by the SavedData factory; state is populated in load().
+    }
 
     public static GtsSavedData load(CompoundTag tag, HolderLookup.Provider registries) {
         GtsSavedData data = new GtsSavedData();
-        if (tag.contains("NextOfferId")) {
-            data.nextOfferId = Math.max(1, tag.getInt("NextOfferId"));
+        if (tag.contains(KEY_NEXT_OFFER_ID)) {
+            data.nextOfferId = Math.max(1, tag.getInt(KEY_NEXT_OFFER_ID));
         }
-        if (tag.contains("NextSuccessId")) {
-            data.nextSuccessId = Math.max(1, tag.getInt("NextSuccessId"));
+        if (tag.contains(KEY_NEXT_SUCCESS_ID)) {
+            data.nextSuccessId = Math.max(1, tag.getInt(KEY_NEXT_SUCCESS_ID));
         }
-        if (tag.contains("LastDailyEpochDay")) {
-            data.lastDailyResetEpochDay = tag.getLong("LastDailyEpochDay");
+        if (tag.contains(KEY_LAST_DAILY_EPOCH_DAY)) {
+            data.lastDailyResetEpochDay = tag.getLong(KEY_LAST_DAILY_EPOCH_DAY);
         }
-        if (tag.contains("Offers", Tag.TAG_LIST)) {
-            ListTag list = tag.getList("Offers", Tag.TAG_COMPOUND);
+        if (tag.contains(KEY_OFFERS, Tag.TAG_LIST)) {
+            ListTag list = tag.getList(KEY_OFFERS, Tag.TAG_COMPOUND);
             for (int i = 0; i < list.size(); i++) {
                 data.offers.add(GtsOffer.fromNbt(list.getCompound(i)));
             }
         }
-        if (tag.contains("Successes", Tag.TAG_LIST)) {
-            ListTag list = tag.getList("Successes", Tag.TAG_COMPOUND);
+        if (tag.contains(KEY_SUCCESSES, Tag.TAG_LIST)) {
+            ListTag list = tag.getList(KEY_SUCCESSES, Tag.TAG_COMPOUND);
             for (int i = 0; i < list.size(); i++) {
                 data.successes.add(GtsSuccess.fromNbt(list.getCompound(i)));
             }
@@ -57,19 +64,19 @@ public class GtsSavedData extends SavedData {
 
     @Override
     public CompoundTag save(CompoundTag tag, HolderLookup.Provider registries) {
-        tag.putInt("NextOfferId", nextOfferId);
-        tag.putInt("NextSuccessId", nextSuccessId);
-        tag.putLong("LastDailyEpochDay", lastDailyResetEpochDay);
+        tag.putInt(KEY_NEXT_OFFER_ID, nextOfferId);
+        tag.putInt(KEY_NEXT_SUCCESS_ID, nextSuccessId);
+        tag.putLong(KEY_LAST_DAILY_EPOCH_DAY, lastDailyResetEpochDay);
         ListTag offerList = new ListTag();
         for (GtsOffer o : offers) {
             offerList.add(o.toNbt());
         }
-        tag.put("Offers", offerList);
+        tag.put(KEY_OFFERS, offerList);
         ListTag succList = new ListTag();
         for (GtsSuccess s : successes) {
             succList.add(s.toNbt());
         }
-        tag.put("Successes", succList);
+        tag.put(KEY_SUCCESSES, succList);
         return tag;
     }
 

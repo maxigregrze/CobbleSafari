@@ -27,11 +27,14 @@ import java.util.concurrent.ConcurrentHashMap;
 public class StatProgressSavedData extends SavedData {
 
     private static final String DATA_NAME = CobbleSafari.MOD_ID + "_stat_progress";
+    private static final String KEY_SPECIES = "Species";
 
     private final Map<UUID, Set<String>> safariSpecies = new ConcurrentHashMap<>();
     private final Map<UUID, Set<Long>> safariDays = new ConcurrentHashMap<>();
 
-    public StatProgressSavedData() {}
+    public StatProgressSavedData() {
+        // Required by the SavedData factory; state is populated in load().
+    }
 
     /** Records a captured species. Returns the new distinct-species count if it was new, else -1. */
     public int recordSafariSpecies(UUID playerId, String speciesId) {
@@ -55,8 +58,8 @@ public class StatProgressSavedData extends SavedData {
 
     public static StatProgressSavedData load(CompoundTag tag, HolderLookup.Provider registries) {
         StatProgressSavedData data = new StatProgressSavedData();
-        if (tag.contains("Species", Tag.TAG_COMPOUND)) {
-            CompoundTag species = tag.getCompound("Species");
+        if (tag.contains(KEY_SPECIES, Tag.TAG_COMPOUND)) {
+            CompoundTag species = tag.getCompound(KEY_SPECIES);
             for (String key : species.getAllKeys()) {
                 try {
                     UUID id = UUID.fromString(key);
@@ -67,6 +70,7 @@ public class StatProgressSavedData extends SavedData {
                     }
                     data.safariSpecies.put(id, set);
                 } catch (IllegalArgumentException ignored) {
+                    // Skip entries whose key is not a valid UUID (corrupt/legacy data).
                 }
             }
         }
@@ -81,6 +85,7 @@ public class StatProgressSavedData extends SavedData {
                     }
                     data.safariDays.put(id, set);
                 } catch (IllegalArgumentException ignored) {
+                    // Skip entries whose key is not a valid UUID (corrupt/legacy data).
                 }
             }
         }
@@ -97,7 +102,7 @@ public class StatProgressSavedData extends SavedData {
             }
             species.put(e.getKey().toString(), list);
         }
-        tag.put("Species", species);
+        tag.put(KEY_SPECIES, species);
 
         CompoundTag days = new CompoundTag();
         for (Map.Entry<UUID, Set<Long>> e : safariDays.entrySet()) {

@@ -19,6 +19,10 @@ import java.util.UUID;
 
 public class WonderTradeSavedData extends SavedData {
     private static final String DATA_NAME = CobbleSafari.MOD_ID + "_wonder_trade";
+    private static final String KEY_POOL = "Pool";
+    private static final String KEY_CREDITS = "Credits";
+    private static final String KEY_LAST_DAILY_EPOCH_DAY = "LastDailyEpochDay";
+    private static final String KEY_EVENT = "Event";
 
     /** Fichier neuf : pas de clé NBT ; {@link WonderTradeService} fixera avant le premier tick. */
     private long lastDailyResetEpochDay = -1L;
@@ -30,30 +34,34 @@ public class WonderTradeSavedData extends SavedData {
     private byte activeEventMode = 0;
     private int activeEventDaysLeft = 0;
 
-    public WonderTradeSavedData() {}
+    public WonderTradeSavedData() {
+        // Required by the SavedData factory; state is populated in load().
+    }
 
     public static WonderTradeSavedData load(CompoundTag tag, HolderLookup.Provider registries) {
         WonderTradeSavedData data = new WonderTradeSavedData();
-        if (tag.contains("Pool", Tag.TAG_LIST)) {
-            ListTag list = tag.getList("Pool", Tag.TAG_COMPOUND);
+        if (tag.contains(KEY_POOL, Tag.TAG_LIST)) {
+            ListTag list = tag.getList(KEY_POOL, Tag.TAG_COMPOUND);
             for (int i = 0; i < list.size(); i++) {
                 data.pool.add(WonderTradePoolEntry.fromNbt(list.getCompound(i)));
             }
         }
-        if (tag.contains("Credits", Tag.TAG_COMPOUND)) {
-            CompoundTag credits = tag.getCompound("Credits");
+        if (tag.contains(KEY_CREDITS, Tag.TAG_COMPOUND)) {
+            CompoundTag credits = tag.getCompound(KEY_CREDITS);
             for (String key : credits.getAllKeys()) {
                 try {
                     UUID id = UUID.fromString(key);
                     data.tradeCreditsRemaining.put(id, credits.getInt(key));
-                } catch (IllegalArgumentException ignored) {}
+                } catch (IllegalArgumentException ignored) {
+                    // Skip entries whose key is not a valid UUID (corrupt/legacy data).
+                }
             }
         }
-        if (tag.contains("LastDailyEpochDay")) {
-            data.lastDailyResetEpochDay = tag.getLong("LastDailyEpochDay");
+        if (tag.contains(KEY_LAST_DAILY_EPOCH_DAY)) {
+            data.lastDailyResetEpochDay = tag.getLong(KEY_LAST_DAILY_EPOCH_DAY);
         }
-        if (tag.contains("Event", Tag.TAG_COMPOUND)) {
-            CompoundTag ev = tag.getCompound("Event");
+        if (tag.contains(KEY_EVENT, Tag.TAG_COMPOUND)) {
+            CompoundTag ev = tag.getCompound(KEY_EVENT);
             data.activeEventId = ev.getString("Id");
             data.activeEventMode = ev.getByte("Mode");
             data.activeEventDaysLeft = ev.getInt("DaysLeft");
@@ -67,20 +75,20 @@ public class WonderTradeSavedData extends SavedData {
         for (WonderTradePoolEntry e : pool) {
             list.add(e.toNbt());
         }
-        tag.put("Pool", list);
+        tag.put(KEY_POOL, list);
 
         CompoundTag credits = new CompoundTag();
         for (Map.Entry<UUID, Integer> e : tradeCreditsRemaining.entrySet()) {
             credits.putInt(e.getKey().toString(), e.getValue());
         }
-        tag.put("Credits", credits);
-        tag.putLong("LastDailyEpochDay", lastDailyResetEpochDay);
+        tag.put(KEY_CREDITS, credits);
+        tag.putLong(KEY_LAST_DAILY_EPOCH_DAY, lastDailyResetEpochDay);
 
         CompoundTag ev = new CompoundTag();
         ev.putString("Id", activeEventId);
         ev.putByte("Mode", activeEventMode);
         ev.putInt("DaysLeft", activeEventDaysLeft);
-        tag.put("Event", ev);
+        tag.put(KEY_EVENT, ev);
         return tag;
     }
 

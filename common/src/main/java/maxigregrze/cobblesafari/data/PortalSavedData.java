@@ -20,17 +20,22 @@ import java.util.UUID;
 
 public class PortalSavedData extends SavedData {
     private static final String DATA_NAME = CobbleSafari.MOD_ID + "_portal_data";
+    private static final String KEY_PORTALS = "portals";
+    private static final String KEY_DUNGEON_DIMENSION_ID = "DungeonDimensionId";
+    private static final String KEY_DUNGEON_STRUCTURE_X = "DungeonStructureX";
+    private static final String KEY_HAS_DUNGEON_CHUNK_BOUNDS = "HasDungeonChunkBounds";
 
     private final Map<UUID, PortalData> portals = new HashMap<>();
 
     public PortalSavedData() {
+        // Required by the SavedData factory; state is populated in load().
     }
 
     public static PortalSavedData load(CompoundTag tag, HolderLookup.Provider registries) {
         PortalSavedData data = new PortalSavedData();
 
-        if (tag.contains("portals", Tag.TAG_LIST)) {
-            ListTag portalList = tag.getList("portals", Tag.TAG_COMPOUND);
+        if (tag.contains(KEY_PORTALS, Tag.TAG_LIST)) {
+            ListTag portalList = tag.getList(KEY_PORTALS, Tag.TAG_COMPOUND);
             for (int i = 0; i < portalList.size(); i++) {
                 CompoundTag portalTag = portalList.getCompound(i);
                 UUID portalId = portalTag.getUUID("PortalId");
@@ -46,16 +51,16 @@ public class PortalSavedData extends SavedData {
                 long spawnTick = portalTag.getLong("SpawnTick");
                 String dungeonId = portalTag.getString("DungeonId");
 
-                String dungeonDimensionId = portalTag.contains("DungeonDimensionId") ? portalTag.getString("DungeonDimensionId") : null;
+                String dungeonDimensionId = portalTag.contains(KEY_DUNGEON_DIMENSION_ID) ? portalTag.getString(KEY_DUNGEON_DIMENSION_ID) : null;
                 BlockPos dungeonStructurePos = null;
-                if (portalTag.contains("DungeonStructureX")) {
+                if (portalTag.contains(KEY_DUNGEON_STRUCTURE_X)) {
                     dungeonStructurePos = new BlockPos(
-                            portalTag.getInt("DungeonStructureX"),
+                            portalTag.getInt(KEY_DUNGEON_STRUCTURE_X),
                             portalTag.getInt("DungeonStructureY"),
                             portalTag.getInt("DungeonStructureZ")
                     );
                 }
-                boolean hasBounds = portalTag.contains("HasDungeonChunkBounds") && portalTag.getBoolean("HasDungeonChunkBounds");
+                boolean hasBounds = portalTag.contains(KEY_HAS_DUNGEON_CHUNK_BOUNDS) && portalTag.getBoolean(KEY_HAS_DUNGEON_CHUNK_BOUNDS);
                 int chunkMinX = portalTag.getInt("ChunkMinX");
                 int chunkMinZ = portalTag.getInt("ChunkMinZ");
                 int chunkMaxX = portalTag.getInt("ChunkMaxX");
@@ -84,15 +89,15 @@ public class PortalSavedData extends SavedData {
             portalTag.putLong("SpawnTick", portal.spawnTick());
             portalTag.putString("DungeonId", portal.dungeonId());
             if (portal.dungeonDimensionId() != null) {
-                portalTag.putString("DungeonDimensionId", portal.dungeonDimensionId());
+                portalTag.putString(KEY_DUNGEON_DIMENSION_ID, portal.dungeonDimensionId());
             }
             if (portal.dungeonStructurePos() != null) {
-                portalTag.putInt("DungeonStructureX", portal.dungeonStructurePos().getX());
+                portalTag.putInt(KEY_DUNGEON_STRUCTURE_X, portal.dungeonStructurePos().getX());
                 portalTag.putInt("DungeonStructureY", portal.dungeonStructurePos().getY());
                 portalTag.putInt("DungeonStructureZ", portal.dungeonStructurePos().getZ());
             }
             if (portal.hasDungeonChunkBounds()) {
-                portalTag.putBoolean("HasDungeonChunkBounds", true);
+                portalTag.putBoolean(KEY_HAS_DUNGEON_CHUNK_BOUNDS, true);
                 portalTag.putInt("ChunkMinX", portal.chunkMinX());
                 portalTag.putInt("ChunkMinZ", portal.chunkMinZ());
                 portalTag.putInt("ChunkMaxX", portal.chunkMaxX());
@@ -101,7 +106,7 @@ public class PortalSavedData extends SavedData {
             portalList.add(portalTag);
         }
 
-        tag.put("portals", portalList);
+        tag.put(KEY_PORTALS, portalList);
         CobbleSafari.LOGGER.info("Saved portal data: {} portals", portals.size());
         return tag;
     }

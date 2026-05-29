@@ -2,6 +2,7 @@ package maxigregrze.cobblesafari.config;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.annotations.SerializedName;
 import maxigregrze.cobblesafari.CobbleSafari;
 import maxigregrze.cobblesafari.platform.Services;
 
@@ -23,11 +24,20 @@ public class RotomPhoneConfig {
 
     private static RotomPhoneConfig INSTANCE;
 
-    private int CONFIG_VERSION = 1;
+    private static final String ADV_STORY_ROOT = "story/root";
+    private static final String DIM_DUNGEON_UNDERGROUND = "cobblesafari:dungeon_underground";
+    private static final String DIM_DUNGEON_DISTORTION = "cobblesafari:dungeon_distortion";
+    private static final String APP_UNION = "unionApp";
+    private static final String APP_WONDER = "wonderApp";
+    private static final String APP_GTS = "gtsApp";
+
+    @SerializedName("CONFIG_VERSION")
+    private int configVersion = 1;
     private Map<String, PhoneAppConfig> phoneApps = createDefaultApps();
     private boolean allowsShinyPhone = true;
 
     public RotomPhoneConfig() {
+        // Required no-arg constructor for GSON deserialization.
     }
 
     private void migrateHealToUnion() {
@@ -35,8 +45,8 @@ public class RotomPhoneConfig {
             return;
         }
         PhoneAppConfig heal = phoneApps.remove("healApp");
-        if (heal != null && !phoneApps.containsKey("unionApp")) {
-            phoneApps.put("unionApp", heal);
+        if (heal != null && !phoneApps.containsKey(APP_UNION)) {
+            phoneApps.put(APP_UNION, heal);
         }
     }
 
@@ -45,8 +55,8 @@ public class RotomPhoneConfig {
             return;
         }
         PhoneAppConfig portal = phoneApps.remove("portalFinderApp");
-        if (portal != null && !phoneApps.containsKey("wonderApp")) {
-            phoneApps.put("wonderApp", portal);
+        if (portal != null && !phoneApps.containsKey(APP_WONDER)) {
+            phoneApps.put(APP_WONDER, portal);
         }
     }
 
@@ -55,24 +65,24 @@ public class RotomPhoneConfig {
             return;
         }
         PhoneAppConfig pc = phoneApps.remove("pcApp");
-        if (pc != null && !phoneApps.containsKey("gtsApp")) {
-            phoneApps.put("gtsApp", pc);
+        if (pc != null && !phoneApps.containsKey(APP_GTS)) {
+            phoneApps.put(APP_GTS, pc);
         }
     }
 
     private static Map<String, PhoneAppConfig> createDefaultApps() {
         Map<String, PhoneAppConfig> apps = new LinkedHashMap<>();
-        apps.put("chatApp", new PhoneAppConfig(true, true, "story/root", new ArrayList<>()));
-        apps.put("gtsApp", new PhoneAppConfig(true, false, "story/root", List.of(
-                "cobblesafari:dungeon_underground", "cobblesafari:dungeon_distortion")));
-        apps.put("unionApp", new PhoneAppConfig(true, false, "story/root", List.of(
-                "cobblesafari:dungeon_underground", "cobblesafari:dungeon_distortion")));
-        apps.put("wonderApp", new PhoneAppConfig(true, false, "story/root", List.of(
-                "cobblesafari:dungeon_underground", "cobblesafari:dungeon_distortion")));
-        apps.put("itemFinderApp", new PhoneAppConfig(true, false, "story/root", List.of(
-                "cobblesafari:dungeon_underground", "cobblesafari:dungeon_distortion")));
-        apps.put("skinApp", new PhoneAppConfig(true, false, "story/root", new ArrayList<>()));
-        apps.put("settingsApp", new PhoneAppConfig(true, false, "story/root", new ArrayList<>()));
+        apps.put("chatApp", new PhoneAppConfig(true, true, ADV_STORY_ROOT, new ArrayList<>()));
+        apps.put(APP_GTS, new PhoneAppConfig(true, false, ADV_STORY_ROOT, List.of(
+                DIM_DUNGEON_UNDERGROUND, DIM_DUNGEON_DISTORTION)));
+        apps.put(APP_UNION, new PhoneAppConfig(true, false, ADV_STORY_ROOT, List.of(
+                DIM_DUNGEON_UNDERGROUND, DIM_DUNGEON_DISTORTION)));
+        apps.put(APP_WONDER, new PhoneAppConfig(true, false, ADV_STORY_ROOT, List.of(
+                DIM_DUNGEON_UNDERGROUND, DIM_DUNGEON_DISTORTION)));
+        apps.put("itemFinderApp", new PhoneAppConfig(true, false, ADV_STORY_ROOT, List.of(
+                DIM_DUNGEON_UNDERGROUND, DIM_DUNGEON_DISTORTION)));
+        apps.put("skinApp", new PhoneAppConfig(true, false, ADV_STORY_ROOT, new ArrayList<>()));
+        apps.put("settingsApp", new PhoneAppConfig(true, false, ADV_STORY_ROOT, new ArrayList<>()));
         return apps;
     }
 
@@ -131,7 +141,7 @@ public class RotomPhoneConfig {
 
     public static int getConfigVersion() {
         if (INSTANCE == null) return 1;
-        return INSTANCE.CONFIG_VERSION;
+        return INSTANCE.configVersion;
     }
 
     public static class PhoneAppConfig {
@@ -143,7 +153,7 @@ public class RotomPhoneConfig {
         public PhoneAppConfig() {
             this.enabled = true;
             this.unlockedByDefault = false;
-            this.unlockingAdvancement = "story/root";
+            this.unlockingAdvancement = ADV_STORY_ROOT;
             this.bannedDimensions = new ArrayList<>();
         }
 

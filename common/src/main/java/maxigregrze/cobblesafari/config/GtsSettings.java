@@ -60,7 +60,9 @@ public class GtsSettings {
         } else {
             try {
                 Files.createDirectories(CONFIG_DIR);
-            } catch (IOException ignored) {}
+            } catch (IOException ignored) {
+                // Directory creation is best-effort; save() below will surface any real error.
+            }
             INSTANCE = new GtsSettings();
             INSTANCE.validateAndFix();
             save();
