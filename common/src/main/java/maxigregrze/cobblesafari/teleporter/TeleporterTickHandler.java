@@ -22,7 +22,9 @@ import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.portal.DimensionTransition;
 import net.minecraft.world.phys.Vec3;
 
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
@@ -41,6 +43,8 @@ public class TeleporterTickHandler {
     private static final Map<UUID, Long> noTimeMessageCooldown = new ConcurrentHashMap<>();
     private static final Map<UUID, Long> resetDeniedCooldown = new ConcurrentHashMap<>();
     private static final Map<UUID, Long> teleportCooldown = new ConcurrentHashMap<>();
+    /** Players who accepted a Safari teleport; the actual changeDimension runs on the next tick (see onServerTick). */
+    private static final Set<UUID> pendingSafariTeleports = ConcurrentHashMap.newKeySet();
     private static long currentServerTick = 0;
 
     private TeleporterTickHandler() {}
@@ -51,6 +55,18 @@ public class TeleporterTickHandler {
 
     public static void onServerTick(MinecraftServer server) {
         currentServerTick++;
+
+        // Perform any deferred Safari teleports in a clean server-tick context (see handleAcceptResponse).
+        if (!pendingSafariTeleports.isEmpty()) {
+            List<UUID> toTeleport = new ArrayList<>(pendingSafariTeleports);
+            pendingSafariTeleports.clear();
+            for (UUID id : toTeleport) {
+                ServerPlayer player = server.getPlayerList().getPlayer(id);
+                if (player != null) {
+                    teleportToSafari(player);
+                }
+            }
+        }
 
         Iterator<Map.Entry<UUID, Long>> iterator = playersOnTeleporter.entrySet().iterator();
         while (iterator.hasNext()) {
@@ -211,7 +227,12 @@ public class TeleporterTickHandler {
 
         CobbleSafari.LOGGER.info("Player {} accepted safari teleport, initiating teleport sequence",
                 player.getName().getString());
-        teleportToSafari(player);
+        // Defer the dimension change to the next server tick. Running changeDimension synchronously
+        // inside the network packet handler can trip a vanilla DistanceManager chunk-ticket desync
+        // (NPE) on the first cross-dimension teleport after login. Set the cooldown now so the
+        // teleporter does not re-prompt during the one-tick gap.
+        teleportCooldown.put(playerId, currentServerTick);
+        pendingSafariTeleports.add(playerId);
     }
 
     public static void cancelTeleport(ServerPlayer player) {
