@@ -41,40 +41,44 @@ public class ThrownBaitEntity extends ThrowableItemProjectile {
         if (level().isClientSide()) return;
 
         if (result.getEntity() instanceof PokemonEntity pokemon && pokemon.getPokemon().isWild()) {
-            if (!SafariStateManager.isInSafariDimension(pokemon)) {
-                if (getOwner() instanceof ServerPlayer player) {
-                    player.sendSystemMessage(Component.translatable(
-                            "cobblesafari.safari.item_outside_safari",
-                            Component.translatable("item.cobblesafari.bait")
-                    ));
-                }
-                return;
-            }
-
-            ServerPlayer thrower = (getOwner() instanceof ServerPlayer sp) ? sp : null;
-            if (thrower != null) {
-                SafariStateManager.getOrCreate(pokemon.getUUID()).setLastInteractingPlayer(thrower.getUUID());
-            }
-
-            SafariPokemonState state = SafariStateManager.getState(pokemon.getUUID());
-            if (state != null && state.isFleeing()) {
-                SafariStateManager.triggerImmediateDespawn(pokemon);
-                return;
-            }
-
-            SafariStateManager.applyBait(pokemon);
-
-            if (thrower != null) {
-                int total = maxigregrze.cobblesafari.init.ModStats.awardAndGet(
-                        thrower, maxigregrze.cobblesafari.init.ModStats.BAIT_USED_SAFARI);
-                maxigregrze.cobblesafari.advancement.ModCriteria.BAIT_USED.trigger(thrower, total);
-            }
-
-            level().playSound(null, pokemon.getX(), pokemon.getY(), pokemon.getZ(),
-                    SoundEvents.ITEM_PICKUP, pokemon.getSoundSource(), 0.8f, 0.8f);
-
-            SafariStateManager.tryFlee(pokemon);
+            handleBaitHit(pokemon);
         }
+    }
+
+    private void handleBaitHit(PokemonEntity pokemon) {
+        if (!SafariStateManager.isInSafariDimension(pokemon)) {
+            if (getOwner() instanceof ServerPlayer player) {
+                player.sendSystemMessage(Component.translatable(
+                        "cobblesafari.safari.item_outside_safari",
+                        Component.translatable("item.cobblesafari.bait")
+                ));
+            }
+            return;
+        }
+
+        ServerPlayer thrower = (getOwner() instanceof ServerPlayer sp) ? sp : null;
+        if (thrower != null) {
+            SafariStateManager.getOrCreate(pokemon.getUUID()).setLastInteractingPlayer(thrower.getUUID());
+        }
+
+        SafariPokemonState state = SafariStateManager.getState(pokemon.getUUID());
+        if (state != null && state.isFleeing()) {
+            SafariStateManager.triggerImmediateDespawn(pokemon);
+            return;
+        }
+
+        SafariStateManager.applyBait(pokemon);
+
+        if (thrower != null) {
+            int total = maxigregrze.cobblesafari.init.ModStats.awardAndGet(
+                    thrower, maxigregrze.cobblesafari.init.ModStats.BAIT_USED_SAFARI);
+            maxigregrze.cobblesafari.advancement.ModCriteria.BAIT_USED.trigger(thrower, total);
+        }
+
+        level().playSound(null, pokemon.getX(), pokemon.getY(), pokemon.getZ(),
+                SoundEvents.ITEM_PICKUP, pokemon.getSoundSource(), 0.8f, 0.8f);
+
+        SafariStateManager.tryFlee(pokemon);
     }
 
     @Override

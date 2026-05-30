@@ -27,27 +27,31 @@ public class BalloonSpawnHandler {
         ResourceLocation safariDimensionId = SafariTimerConfig.getSafariDimensionRL();
 
         for (ServerPlayer player : server.getPlayerList().getPlayers()) {
-            ResourceLocation playerDimension = player.level().dimension().location();
-            boolean isOverworld = player.level().dimension() == Level.OVERWORLD;
-            boolean isSafari = playerDimension.equals(safariDimensionId);
-
-            if (!isOverworld && !isSafari) continue;
-            if (player.tickCount % checkInterval != 0) continue;
-            if (!canSeeSky(player)) continue;
-
-            double spawnChance;
-            if (isSafari) {
-                if (!SafariConfig.isBalloonSafariEnabled()) continue;
-                spawnChance = BASE_SPAWN_CHANCE * SafariConfig.getBalloonSafariSpawnMultiplier();
-            } else {
-                if (!MiscConfig.isBalloonEnabled()) continue;
-                spawnChance = BASE_SPAWN_CHANCE * MiscConfig.getBalloonSpawnMultiplier();
-            }
-
-            if (RANDOM.nextDouble() > spawnChance) continue;
-
-            trySpawnBalloon(player, isSafari);
+            tryBalloonSpawnForPlayer(player, safariDimensionId, checkInterval);
         }
+    }
+
+    private static void tryBalloonSpawnForPlayer(ServerPlayer player, ResourceLocation safariDimensionId, int checkInterval) {
+        ResourceLocation playerDimension = player.level().dimension().location();
+        boolean isOverworld = player.level().dimension() == Level.OVERWORLD;
+        boolean isSafari = playerDimension.equals(safariDimensionId);
+
+        if (!isOverworld && !isSafari) return;
+        if (player.tickCount % checkInterval != 0) return;
+        if (!canSeeSky(player)) return;
+
+        double spawnChance;
+        if (isSafari) {
+            if (!SafariConfig.isBalloonSafariEnabled()) return;
+            spawnChance = BASE_SPAWN_CHANCE * SafariConfig.getBalloonSafariSpawnMultiplier();
+        } else {
+            if (!MiscConfig.isBalloonEnabled()) return;
+            spawnChance = BASE_SPAWN_CHANCE * MiscConfig.getBalloonSpawnMultiplier();
+        }
+
+        if (RANDOM.nextDouble() > spawnChance) return;
+
+        trySpawnBalloon(player, isSafari);
     }
 
     private static boolean canSeeSky(ServerPlayer player) {
