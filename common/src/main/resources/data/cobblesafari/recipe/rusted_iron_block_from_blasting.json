@@ -3,7 +3,9 @@
   "category": "misc",
   "cookingtime": 100,
   "experience": 0.1,
-  "ingredient": "cobblesafari:rusted_iron_block",
+  "ingredient": {
+    "item": "cobblesafari:rusted_iron_block"
+  },
   "result": {
     "id": "minecraft:iron_nugget",
     "count": 1
