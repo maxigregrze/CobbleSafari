@@ -86,12 +86,7 @@ public class TeleporterTickHandler {
         }
 
         if (SafariResetManager.isResetPending()) {
-            Long lastMessageTick = resetDeniedCooldown.get(playerId);
-            if (lastMessageTick == null || currentServerTick - lastMessageTick > RESET_DENIED_COOLDOWN_TICKS) {
-                player.sendSystemMessage(Component.translatable(
-                        "cobblesafari.reset.entry_denied", SafariResetManager.getFormattedRemainingTime()));
-                resetDeniedCooldown.put(playerId, currentServerTick);
-            }
+            notifyResetDenied(player, playerId);
             return;
         }
 
@@ -99,24 +94,43 @@ public class TeleporterTickHandler {
         TimerManager.checkDailyReset(player, timerData);
 
         boolean bypassed = TimerManager.shouldBypassTimer(player);
-        boolean needsPaidReentryFee = timerData.getRemainingTicks() <= 0 && !bypassed
-                && SafariConfig.isAllowPaidReentry();
+        boolean outOfTime = timerData.getRemainingTicks() <= 0 && !bypassed;
+        boolean needsPaidReentryFee = outOfTime && SafariConfig.isAllowPaidReentry();
 
-        if (timerData.getRemainingTicks() <= 0 && !bypassed) {
-            boolean canPayAgain = SafariConfig.isAllowPaidReentry();
-            if (!canPayAgain) {
-                Long lastMessageTick = noTimeMessageCooldown.get(playerId);
-                if (lastMessageTick == null || currentServerTick - lastMessageTick > NO_TIME_MESSAGE_COOLDOWN_TICKS) {
-                    player.sendSystemMessage(Component.translatable(
-                            "cobblesafari.teleporter.no_time",
-                            TimerManager.formatTimeUntilNextDailyReset(timerData)));
-                    noTimeMessageCooldown.put(playerId, currentServerTick);
-                }
-                return;
-            }
-            timerData.resetEntryFeePayDay();
+        if (outOfTime && handleNoRemainingTime(player, playerId, timerData)) {
+            return;
         }
 
+        sendTeleportConfirmation(player, playerId, timerData, needsPaidReentryFee);
+    }
+
+    private static void notifyResetDenied(ServerPlayer player, UUID playerId) {
+        Long lastMessageTick = resetDeniedCooldown.get(playerId);
+        if (lastMessageTick == null || currentServerTick - lastMessageTick > RESET_DENIED_COOLDOWN_TICKS) {
+            player.sendSystemMessage(Component.translatable(
+                    "cobblesafari.reset.entry_denied", SafariResetManager.getFormattedRemainingTime()));
+            resetDeniedCooldown.put(playerId, currentServerTick);
+        }
+    }
+
+    /** Returns true if the player cannot enter (no time left and paid re-entry is disabled). */
+    private static boolean handleNoRemainingTime(ServerPlayer player, UUID playerId, PlayerTimerData timerData) {
+        if (!SafariConfig.isAllowPaidReentry()) {
+            Long lastMessageTick = noTimeMessageCooldown.get(playerId);
+            if (lastMessageTick == null || currentServerTick - lastMessageTick > NO_TIME_MESSAGE_COOLDOWN_TICKS) {
+                player.sendSystemMessage(Component.translatable(
+                        "cobblesafari.teleporter.no_time",
+                        TimerManager.formatTimeUntilNextDailyReset(timerData)));
+                noTimeMessageCooldown.put(playerId, currentServerTick);
+            }
+            return true;
+        }
+        timerData.resetEntryFeePayDay();
+        return false;
+    }
+
+    private static void sendTeleportConfirmation(ServerPlayer player, UUID playerId,
+                                                 PlayerTimerData timerData, boolean needsPaidReentryFee) {
         boolean enableFee = SafariConfig.isEntryFeeEnabled() || needsPaidReentryFee;
         boolean useCobbledollar = SafariConfig.isCobbledollarFeeEnabled();
         EntryFeeHelper.FeeType feeType = EntryFeeHelper.getEffectiveFeeType(enableFee, useCobbledollar);
@@ -126,7 +140,6 @@ public class TeleporterTickHandler {
         String feeItem = SafariConfig.getEntryFeeItem();
         String dimensionName = Component.translatable("dimension.cobblesafari.domedimension").getString();
         String dimensionId = "domedimension";
-
         boolean alreadyPaid = timerData.hasPaidEntryFeeToday();
 
         ModNetworking.sendOpenTpAccept(player, dimensionName, dimensionId, hasFee, isCobbledollarFee, feeAmount, feeItem, "safari", alreadyPaid);

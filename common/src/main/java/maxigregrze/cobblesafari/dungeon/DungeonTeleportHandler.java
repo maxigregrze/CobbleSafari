@@ -63,16 +63,8 @@ public class DungeonTeleportHandler {
         MinecraftServer server = player.getServer();
         if (server == null) return null;
 
-        String dungeonDimensionId = portalEntity.getDungeonDimensionId();
-        DungeonConfig config = DungeonDimensions.getDungeonById(dungeonDimensionId);
-
+        DungeonConfig config = resolveDungeonConfig(player, portalEntity);
         if (config == null) {
-            config = DungeonDimensions.getRandomDungeon();
-        }
-
-        if (config == null) {
-            CobbleSafari.LOGGER.error("No dungeon configuration found");
-            player.sendSystemMessage(Component.translatable("cobblesafari.dungeon.error.no_config"));
             return null;
         }
 
@@ -84,46 +76,18 @@ public class DungeonTeleportHandler {
         }
 
         String dimensionId = config.getDimensionId();
-        boolean playerHasEntered = portalEntity.hasPlayerEntered(player.getUUID());
+        boolean isReEntry = portalEntity.hasPlayerEntered(player.getUUID());
         PlayerTimerData timerData = TimerManager.getOrCreateData(player, dimensionId);
 
-        boolean isReEntry;
-        int timerTicks = 0;
-
-        if (playerHasEntered) {
-            if (timerData.getRemainingTicks() <= 0) {
-                Optional<DungeonDimensionEntry> dimEntry = PortalSpawnConfig.getDimensionConfig(config.getId());
-                boolean canPayAgain = dimEntry.map(DungeonDimensionEntry::isAllowMultiplePayment).orElse(false)
-                        && dimEntry.map(DungeonDimensionEntry::isEntryFeeEnabled).orElse(false);
-                if (!canPayAgain) {
-                    player.sendSystemMessage(Component.translatable("cobblesafari.dungeon.error.no_time_remaining"));
-                    return null;
-                }
-                timerData.resetEntryFeePayDay();
+        int timerTicks;
+        if (isReEntry) {
+            Integer reEntryTicks = computeReEntryTimerTicks(player, portalEntity, config, timerData);
+            if (reEntryTicks == null) {
+                return null;
             }
-            isReEntry = true;
-            
-            long portalRemaining = portalEntity.getRemainingLifetimeTicks();
-            if (portalRemaining >= 0 && timerData.getRemainingTicks() > portalRemaining) {
-                timerTicks = (int) portalRemaining;
-                CobbleSafari.LOGGER.info("Player {} re-entering dungeon: timer capped from {} to {} ticks (portal expiring)",
-                        player.getName().getString(), timerData.getRemainingTicks(), timerTicks);
-            } else {
-                timerTicks = timerData.getRemainingTicks();
-            }
+            timerTicks = reEntryTicks;
         } else {
-            isReEntry = false;
-
-            int configuredTicks = SafariTimerConfig.getDimensionConfig(dimensionId)
-                    .map(DimensionTimerEntry::getTimerDurationTicks)
-                    .orElse(SafariTimerConfig.getTimerDurationTicks());
-
-            long portalRemaining = portalEntity.getRemainingLifetimeTicks();
-            if (portalRemaining >= 0 && portalRemaining < configuredTicks) {
-                timerTicks = (int) portalRemaining;
-            } else {
-                timerTicks = configuredTicks;
-            }
+            timerTicks = computeNewEntryTimerTicks(portalEntity, dimensionId);
         }
 
         BlockPos playerOriginPos = player.blockPosition();
@@ -133,6 +97,53 @@ public class DungeonTeleportHandler {
                 config, dungeonLevel, dimensionId,
                 isReEntry, timerTicks, playerOriginPos, playerOriginDimension
         );
+    }
+
+    private static DungeonConfig resolveDungeonConfig(ServerPlayer player, DungeonPortalBlockEntity portalEntity) {
+        DungeonConfig config = DungeonDimensions.getDungeonById(portalEntity.getDungeonDimensionId());
+        if (config == null) {
+            config = DungeonDimensions.getRandomDungeon();
+        }
+        if (config == null) {
+            CobbleSafari.LOGGER.error("No dungeon configuration found");
+            player.sendSystemMessage(Component.translatable("cobblesafari.dungeon.error.no_config"));
+        }
+        return config;
+    }
+
+    /** Returns the timer ticks for a re-entry, or {@code null} if entry must be denied. */
+    private static Integer computeReEntryTimerTicks(ServerPlayer player, DungeonPortalBlockEntity portalEntity,
+                                                    DungeonConfig config, PlayerTimerData timerData) {
+        if (timerData.getRemainingTicks() <= 0) {
+            Optional<DungeonDimensionEntry> dimEntry = PortalSpawnConfig.getDimensionConfig(config.getId());
+            boolean canPayAgain = dimEntry.map(DungeonDimensionEntry::isAllowMultiplePayment).orElse(false)
+                    && dimEntry.map(DungeonDimensionEntry::isEntryFeeEnabled).orElse(false);
+            if (!canPayAgain) {
+                player.sendSystemMessage(Component.translatable("cobblesafari.dungeon.error.no_time_remaining"));
+                return null;
+            }
+            timerData.resetEntryFeePayDay();
+        }
+
+        long portalRemaining = portalEntity.getRemainingLifetimeTicks();
+        if (portalRemaining >= 0 && timerData.getRemainingTicks() > portalRemaining) {
+            CobbleSafari.LOGGER.info("Player {} re-entering dungeon: timer capped from {} to {} ticks (portal expiring)",
+                    player.getName().getString(), timerData.getRemainingTicks(), (int) portalRemaining);
+            return (int) portalRemaining;
+        }
+        return timerData.getRemainingTicks();
+    }
+
+    private static int computeNewEntryTimerTicks(DungeonPortalBlockEntity portalEntity, String dimensionId) {
+        int configuredTicks = SafariTimerConfig.getDimensionConfig(dimensionId)
+                .map(DimensionTimerEntry::getTimerDurationTicks)
+                .orElse(SafariTimerConfig.getTimerDurationTicks());
+
+        long portalRemaining = portalEntity.getRemainingLifetimeTicks();
+        if (portalRemaining >= 0 && portalRemaining < configuredTicks) {
+            return (int) portalRemaining;
+        }
+        return configuredTicks;
     }
 
     /** @deprecated superseded by the staged dungeon-preparation flow; retained for compatibility. */
