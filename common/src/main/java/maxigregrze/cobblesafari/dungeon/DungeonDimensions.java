@@ -35,15 +35,6 @@ public class DungeonDimensions {
     private static int totalWeight = 0;
 
     public static void register() {
-        /* REGISTERED_DUNGEONS.add(new DungeonConfig(
-                "dungeon_jump",
-                DUNGEON_JUMP,
-                "cobblesafari:test_dungeon",
-                16, 3, 2,
-                1800,
-                1
-        )); */
-
         REGISTERED_DUNGEONS.add(new DungeonConfig(
                 "dungeon_underground",
                 DUNGEON_UNDERGROUND,

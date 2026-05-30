@@ -138,10 +138,7 @@ public class DimensionalBanEventHandler {
             return true;
         }
         Level world = target.level();
-        if (!BannedItemsManager.isBlockBreakingAllowed(world.dimension())) {
-            return false;
-        }
-        return true;
+        return BannedItemsManager.isBlockBreakingAllowed(world.dimension());
     }
 
     public static void registerCobblemonEvents() {
@@ -163,11 +160,9 @@ public class DimensionalBanEventHandler {
 
         CobblemonEvents.POKEMON_SENT_PRE.subscribe(Priority.HIGHEST, event -> {
             var level = event.getLevel();
-            if (level != null) {
-                if (!BannedItemsManager.isBattleAllowed(level.dimension())) {
-                    event.cancel();
-                    return Unit.INSTANCE;
-                }
+            if (level != null && !BannedItemsManager.isBattleAllowed(level.dimension())) {
+                event.cancel();
+                return Unit.INSTANCE;
             }
             return Unit.INSTANCE;
         });
@@ -176,14 +171,13 @@ public class DimensionalBanEventHandler {
             var bobber = event.getBobber();
             if (bobber != null) {
                 var owner = bobber.getPlayerOwner();
-                if (owner instanceof ServerPlayer serverPlayer) {
-                    if (!BannedItemsManager.isBattleAllowed(serverPlayer.level().dimension())) {
-                        serverPlayer.sendSystemMessage(
-                                Component.translatable("cobblesafari.ban.fishing_banned")
-                        );
-                        event.cancel();
-                        return Unit.INSTANCE;
-                    }
+                if (owner instanceof ServerPlayer serverPlayer
+                        && !BannedItemsManager.isBattleAllowed(serverPlayer.level().dimension())) {
+                    serverPlayer.sendSystemMessage(
+                            Component.translatable("cobblesafari.ban.fishing_banned")
+                    );
+                    event.cancel();
+                    return Unit.INSTANCE;
                 }
             }
             return Unit.INSTANCE;

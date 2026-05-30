@@ -46,6 +46,7 @@ public class TeleporterTickHandler {
     private TeleporterTickHandler() {}
 
     public static void register() {
+        // No-op: registration hook kept for symmetry; tick logic is driven externally.
     }
 
     public static void onServerTick(MinecraftServer server) {

@@ -30,6 +30,7 @@ public class PortalSpawnManager {
 
     private static final Map<UUID, ActivePortal> ACTIVE_PORTALS = new ConcurrentHashMap<>();
     private static final Random RANDOM = new Random();
+    private static final String LOG_CALLBACK_FAILED = "Portal spawn callback failed for dungeon {}";
     private static long lastSpawnTick = 0;
     private static MinecraftServer serverInstance;
     private static volatile boolean suppressDungeonCleanup = false;
@@ -425,7 +426,7 @@ public class PortalSpawnManager {
                 try {
                     callback.onPortalSpawned(level, portalEntity);
                 } catch (Exception e) {
-                    CobbleSafari.LOGGER.error("Portal spawn callback failed for dungeon {}", dungeon.getId(), e);
+                    CobbleSafari.LOGGER.error(LOG_CALLBACK_FAILED, dungeon.getId(), e);
                 }
             }
         }
@@ -554,7 +555,7 @@ public class PortalSpawnManager {
                 try {
                     callback.onPortalSpawned(level, portalEntity);
                 } catch (Exception e) {
-                    CobbleSafari.LOGGER.error("Portal spawn callback failed for dungeon {}", dungeon.getId(), e);
+                    CobbleSafari.LOGGER.error(LOG_CALLBACK_FAILED, dungeon.getId(), e);
                 }
             }
         }
@@ -581,12 +582,14 @@ public class PortalSpawnManager {
         portalEntity.setChanged();
 
         String renewedDungeonDimensionId = dungeon != null ? dungeon.getId() : null;
+        String fallbackDungeonId = oldPortal != null ? oldPortal.dungeonId() : "random";
+        String activeDungeonId = dungeon != null ? dungeon.getId() : fallbackDungeonId;
         ACTIVE_PORTALS.put(newPortalId, new ActivePortal(
                 newPortalId,
                 pos,
                 level.dimension(),
                 level.getGameTime(),
-                dungeon != null ? dungeon.getId() : (oldPortal != null ? oldPortal.dungeonId() : "random"),
+                activeDungeonId,
                 renewedDungeonDimensionId,
                 null,
                 0, 0, 0, 0, false
@@ -599,7 +602,7 @@ public class PortalSpawnManager {
                 try {
                     callback.onPortalSpawned(level, portalEntity);
                 } catch (Exception e) {
-                    CobbleSafari.LOGGER.error("Portal spawn callback failed for dungeon {}", dungeon.getId(), e);
+                    CobbleSafari.LOGGER.error(LOG_CALLBACK_FAILED, dungeon.getId(), e);
                 }
             }
         }

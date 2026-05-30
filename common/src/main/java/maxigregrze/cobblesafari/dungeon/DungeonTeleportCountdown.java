@@ -38,6 +38,7 @@ public class DungeonTeleportCountdown {
     private DungeonTeleportCountdown() {}
 
     public static void register() {
+        // No-op: registration hook kept for symmetry; tick logic is driven externally.
     }
 
     public static boolean startTeleportSequence(ServerPlayer player, DungeonPortalBlockEntity portalEntity) {

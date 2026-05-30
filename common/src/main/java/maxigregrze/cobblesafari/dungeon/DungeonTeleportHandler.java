@@ -135,6 +135,7 @@ public class DungeonTeleportHandler {
         );
     }
 
+    /** @deprecated superseded by the staged dungeon-preparation flow; retained for compatibility. */
     @Deprecated
     public static DungeonPrepResult generateAndPrepareDungeon(
             ServerPlayer player, DungeonPortalBlockEntity portalEntity, DungeonValidationResult validation) {

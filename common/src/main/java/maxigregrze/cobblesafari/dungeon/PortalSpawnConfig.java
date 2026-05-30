@@ -116,14 +116,12 @@ public class PortalSpawnConfig {
     }
 
     public static boolean ensureDimensionEntry(String dungeonId, boolean defaultEnabled, int defaultWeight) {
-        if (INSTANCE == null) {
-            load();
-        }
-        Optional<DungeonDimensionEntry> existing = INSTANCE.dimensions.stream()
+        PortalSpawnConfig inst = getInstance();
+        Optional<DungeonDimensionEntry> existing = inst.dimensions.stream()
                 .filter(entry -> entry.getDimensionId().equals(dungeonId))
                 .findFirst();
         if (existing.isEmpty()) {
-            INSTANCE.dimensions.add(new DungeonDimensionEntry(dungeonId, defaultEnabled, defaultWeight));
+            inst.dimensions.add(new DungeonDimensionEntry(dungeonId, defaultEnabled, defaultWeight));
             CobbleSafari.LOGGER.info("Added dungeon dimension config: {} (enabled={}, weight={})",
                     dungeonId, defaultEnabled, defaultWeight);
             save();
@@ -215,9 +213,13 @@ public class PortalSpawnConfig {
         return new ArrayList<>(getInstance().dimensions);
     }
 
+    /** Returns the loaded singleton, loading or creating defaults as needed. Never null. */
     private static PortalSpawnConfig getInstance() {
         if (INSTANCE == null) {
             load();
+        }
+        if (INSTANCE == null) {
+            INSTANCE = new PortalSpawnConfig();
         }
         return INSTANCE;
     }
