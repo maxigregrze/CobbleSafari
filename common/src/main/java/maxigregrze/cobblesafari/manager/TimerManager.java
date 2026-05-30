@@ -107,6 +107,7 @@ public class TimerManager {
                 player.getName().getString(), dimensionId, data.getRemainingTicks());
     }
 
+    /** @deprecated use {@link #startTimer(ServerPlayer, String)} with an explicit dimension id. */
     @Deprecated
     public static void startTimer(ServerPlayer player) {
         startTimer(player, SafariTimerConfig.getSafariDimensionId());
@@ -129,6 +130,7 @@ public class TimerManager {
         }
     }
 
+    /** @deprecated use {@link #pauseTimer(ServerPlayer, String)} with an explicit dimension id. */
     @Deprecated
     public static void pauseTimer(ServerPlayer player) {
         pauseTimer(player, SafariTimerConfig.getSafariDimensionId());
@@ -226,16 +228,12 @@ public class TimerManager {
 
                 data.tick();
 
-                if (data.isExpired()) {
-                    if (player != null) {
-                        expireActiveTimerAndTeleport(player, timerDimensionId, data, true);
-                    }
+                if (data.isExpired() && player != null) {
+                    expireActiveTimerAndTeleport(player, timerDimensionId, data, true);
                 }
 
-                if (data.getRemainingTicks() % 20 == 0) {
-                    if (player != null) {
-                        syncToClient(player, data);
-                    }
+                if (data.getRemainingTicks() % 20 == 0 && player != null) {
+                    syncToClient(player, data);
                 }
             }
         }
@@ -259,11 +257,7 @@ public class TimerManager {
         boolean shouldReset = false;
 
         if (today.isAfter(lastResetDate)) {
-            if (now.getHour() >= resetHour) {
-                shouldReset = true;
-            } else if (today.isAfter(lastResetDate.plusDays(1))) {
-                shouldReset = true;
-            }
+            shouldReset = now.getHour() >= resetHour || today.isAfter(lastResetDate.plusDays(1));
         }
 
         if (shouldReset) {
@@ -560,6 +554,7 @@ public class TimerManager {
         return data;
     }
 
+    /** @deprecated use {@link #getOrCreateData(ServerPlayer, String)} with an explicit dimension id. */
     @Deprecated
     public static PlayerTimerData getOrCreateData(ServerPlayer player) {
         return getOrCreateData(player, SafariTimerConfig.getSafariDimensionId());

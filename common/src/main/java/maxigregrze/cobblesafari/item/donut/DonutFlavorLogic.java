@@ -21,6 +21,8 @@ import java.util.stream.Collectors;
 
 public final class DonutFlavorLogic {
 
+    private static final Random RNG = new Random();
+
     private static final float[] CALORIE_MULTIPLIERS = {1.5f, 1.4f, 1.3f, 1.2f, 1.1f, 1.0f};
 
     private static final int[][] GENERATION_RANGES = {
@@ -176,7 +178,7 @@ public final class DonutFlavorLogic {
             throw new IllegalArgumentException("mix_not_supported");
         }
         int t = Math.max(0, Math.min(tier, DonutFlavorComponent.MAX_TIER));
-        Random rng = new Random();
+        Random rng = RNG;
 
         int[] r = GENERATION_RANGES[t];
         int calMin = r[0];
@@ -353,7 +355,7 @@ public final class DonutFlavorLogic {
     }
 
     public static List<DonutBonus> rollBonuses(DonutMainFlavor mainFlavor, Map<DonutMainFlavor, Integer> flavorTotals) {
-        Random rng = new Random();
+        Random rng = RNG;
 
         Map<DonutMainFlavor, Integer> budgets = new EnumMap<>(DonutMainFlavor.class);
         for (Map.Entry<DonutMainFlavor, Integer> entry : flavorTotals.entrySet()) {

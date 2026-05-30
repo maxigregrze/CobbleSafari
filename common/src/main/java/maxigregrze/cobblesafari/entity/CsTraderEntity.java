@@ -163,6 +163,7 @@ public class CsTraderEntity extends AbstractVillager {
 
     @Override
     protected void updateTrades() {
+        // No-op: this trader uses a fixed offer list configured elsewhere, not the vanilla trade system.
     }
 
     @Override

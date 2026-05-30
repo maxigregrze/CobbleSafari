@@ -35,6 +35,9 @@ public class BalloonEntity extends PathfinderMob {
     private static final EntityDataAccessor<Boolean> DATA_HAS_DROPPED_LOOT =
             SynchedEntityData.defineId(BalloonEntity.class, EntityDataSerializers.BOOLEAN);
 
+    private static final String KEY_HAS_DROPPED_LOOT = "HasDroppedLoot";
+    private static final String KEY_FLY_AWAY_TIMER = "FlyAwayTimer";
+
     private static final float DESCENT_SPEED = -0.04F;
     private static final float ASCENT_SPEED = 0.48F; // 6x original speed
     private static final int DESPAWN_AFTER_LOOT_TICKS = 160; // 8 seconds after loot drop (doubled)
@@ -126,7 +129,7 @@ public class BalloonEntity extends PathfinderMob {
     @Override
     public InteractionResult mobInteract(Player player, InteractionHand hand) {
         if (!this.level().isClientSide && hand == InteractionHand.MAIN_HAND && !hasDroppedLoot()) {
-            dropBalloonLoot(player);
+            dropBalloonLoot();
             setHasDroppedLoot(true);
             flyAwayTimer = 0;
 
@@ -138,7 +141,7 @@ public class BalloonEntity extends PathfinderMob {
         return InteractionResult.sidedSuccess(this.level().isClientSide);
     }
 
-    private void dropBalloonLoot(Player player) {
+    private void dropBalloonLoot() {
         if (!(this.level() instanceof ServerLevel serverLevel)) return;
 
         LootTable lootTable = serverLevel.getServer().reloadableRegistries()
@@ -209,18 +212,18 @@ public class BalloonEntity extends PathfinderMob {
     @Override
     public void addAdditionalSaveData(CompoundTag tag) {
         super.addAdditionalSaveData(tag);
-        tag.putBoolean("HasDroppedLoot", hasDroppedLoot());
-        tag.putInt("FlyAwayTimer", flyAwayTimer);
+        tag.putBoolean(KEY_HAS_DROPPED_LOOT, hasDroppedLoot());
+        tag.putInt(KEY_FLY_AWAY_TIMER, flyAwayTimer);
     }
 
     @Override
     public void readAdditionalSaveData(CompoundTag tag) {
         super.readAdditionalSaveData(tag);
-        if (tag.contains("HasDroppedLoot")) {
-            setHasDroppedLoot(tag.getBoolean("HasDroppedLoot"));
+        if (tag.contains(KEY_HAS_DROPPED_LOOT)) {
+            setHasDroppedLoot(tag.getBoolean(KEY_HAS_DROPPED_LOOT));
         }
-        if (tag.contains("FlyAwayTimer")) {
-            flyAwayTimer = tag.getInt("FlyAwayTimer");
+        if (tag.contains(KEY_FLY_AWAY_TIMER)) {
+            flyAwayTimer = tag.getInt(KEY_FLY_AWAY_TIMER);
         }
     }
 }

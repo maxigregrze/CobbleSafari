@@ -46,6 +46,8 @@ public class ModItems {
 
     private ModItems() {}
 
+    private static final String ID_LUCKY_MINING_HELMET = "lucky_mining_helmet";
+
     public static final String[] BIOME_TYPES = {
         "bug", "dark", "dragon", "electric", "fairy", "fighting",
         "fire", "flying", "ghost", "grass", "ground", "ice",
@@ -298,7 +300,7 @@ public class ModItems {
 
         Holder<ArmorMaterial> luckyHelmetMaterial = Registry.registerForHolder(
                 BuiltInRegistries.ARMOR_MATERIAL,
-                ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, "lucky_mining_helmet"),
+                ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, ID_LUCKY_MINING_HELMET),
                 new ArmorMaterial(
                         Map.of(ArmorItem.Type.HELMET, 2),
                         25,
@@ -307,14 +309,14 @@ public class ModItems {
                                 ResourceLocation.fromNamespaceAndPath("cobblemon", "hard_stone")
                         ).orElse(Items.IRON_INGOT)),
                         List.of(new ArmorMaterial.Layer(
-                                ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, "lucky_mining_helmet")
+                                ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, ID_LUCKY_MINING_HELMET)
                         )),
                         0.0f,
                         0.0f
                 )
         );
 
-        LUCKY_MINING_HELMET = registerItem("lucky_mining_helmet",
+        LUCKY_MINING_HELMET = registerItem(ID_LUCKY_MINING_HELMET,
                 new LuckyMiningHelmetItem(luckyHelmetMaterial, new Item.Properties().stacksTo(1)));
 
         BATCH_ITEMS.add(AURORA_DIAL);

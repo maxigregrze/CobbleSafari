@@ -1072,10 +1072,12 @@ public class ModBlocks {
         "pale_s", "pale_l", "prism_s", "prism_l"
     };
 
+    private static final String SPHERE_PREFIX = "sphere_";
+
     static {
         for (String type : SPHERE_TYPES_ARRAY) {
             MapColor color = getSphereMapColor(type);
-            Block base = registerBlock("sphere_" + type + "_block",
+            Block base = registerBlock(SPHERE_PREFIX + type + "_block",
                     new Block(BlockBehaviour.Properties.of()
                             .mapColor(color)
                             .strength(1.5f, 6.0f)
@@ -1085,12 +1087,12 @@ public class ModBlocks {
         }
         for (String type : SPHERE_TYPES_ARRAY) {
             Block base = SPHERE_BLOCKS.get(type);
-            SPHERE_SLABS.put(type, registerBlock("sphere_" + type + "_slab",
+            SPHERE_SLABS.put(type, registerBlock(SPHERE_PREFIX + type + "_slab",
                     new SlabBlock(BlockBehaviour.Properties.ofFullCopy(base))));
         }
         for (String type : SPHERE_TYPES_ARRAY) {
             Block base = SPHERE_BLOCKS.get(type);
-            SPHERE_STAIRS.put(type, registerBlock("sphere_" + type + "_stairs",
+            SPHERE_STAIRS.put(type, registerBlock(SPHERE_PREFIX + type + "_stairs",
                     new StairBlock(base.defaultBlockState(), BlockBehaviour.Properties.ofFullCopy(base))));
         }
     }

@@ -30,10 +30,9 @@ public class LuckyMiningHelmetItem extends ArmorItem {
     }
 
     public static void tickEffect(Player player) {
-        if (player.getItemBySlot(EquipmentSlot.HEAD).getItem() instanceof LuckyMiningHelmetItem) {
-            if (!player.hasEffect(MobEffects.LUCK)) {
-                player.addEffect(new MobEffectInstance(MobEffects.LUCK, 40, 0, false, false));
-            }
+        if (player.getItemBySlot(EquipmentSlot.HEAD).getItem() instanceof LuckyMiningHelmetItem
+                && !player.hasEffect(MobEffects.LUCK)) {
+            player.addEffect(new MobEffectInstance(MobEffects.LUCK, 40, 0, false, false));
         }
     }
 }

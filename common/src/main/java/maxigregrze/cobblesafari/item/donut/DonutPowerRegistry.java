@@ -42,7 +42,7 @@ public final class DonutPowerRegistry {
     }
 
     private static void registerAll() {
-        /* register(new DonutPower("alpha", DonutMainFlavor.SWEET, 1, 1, 10, 20, 50)); */ // alpha are not yet implemented in pre-1.8.0
+        // "alpha" power is not yet implemented in pre-1.8.0
         register(new DonutPower("friendship", DonutMainFlavor.SWEET, 1, 1, 50, 75, 100));
         register(new DonutPower("hidden", DonutMainFlavor.DRY, 2, 19, 10, 20, 30));
         register(new DonutPower("atypical", DonutMainFlavor.SWEET, 2, 19, 1, 2, 3));
