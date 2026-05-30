@@ -225,7 +225,7 @@ public class UndergroundScreen extends AbstractContainerScreen<UndergroundScreen
         if (!gameEnded) {
             drawToolPreview(graphics, guiX, guiY, mouseX, mouseY);
         }
-        drawToolButtons(graphics, guiX, guiY, mouseX, mouseY);
+        drawToolButtons(graphics, guiX, guiY);
     }
     
     @Override
@@ -242,7 +242,7 @@ public class UndergroundScreen extends AbstractContainerScreen<UndergroundScreen
             frameIndex = STATUS_BAR_FRAME_COUNT - 1;
         } else {
             int level = (int) (STATUS_BAR_FRAME_COUNT * (float) currentStability / maxStability);
-            level = (int) Math.clamp(level, 0, STATUS_BAR_FRAME_COUNT - 1);
+            level = Math.clamp(level, 0, STATUS_BAR_FRAME_COUNT - 1);
             frameIndex = currentStability >= maxStability ? 0 : (STATUS_BAR_FRAME_COUNT - 1 - level);
         }
         int srcY = frameIndex * STATUS_BAR_HEIGHT;
@@ -410,7 +410,7 @@ public class UndergroundScreen extends AbstractContainerScreen<UndergroundScreen
         }
     }
     
-    private void drawToolButtons(GuiGraphics graphics, int guiX, int guiY, int mouseX, int mouseY) {
+    private void drawToolButtons(GuiGraphics graphics, int guiX, int guiY) {
         // Pickaxe button
         ResourceLocation pickaxeTexture = usingHammer ? BTN_PICKAXE : BTN_PICKAXE_SELECTED;
         graphics.blit(pickaxeTexture, 
@@ -536,6 +536,7 @@ public class UndergroundScreen extends AbstractContainerScreen<UndergroundScreen
             case "treasure_found" -> minecraft.player.playSound(SoundEvents.PLAYER_LEVELUP, 0.5f, 1.5f);
             case "wall_collapse" -> minecraft.player.playSound(SoundEvents.GENERIC_EXPLODE.value(), 0.5f, 0.8f);
             case "perfect_clear" -> minecraft.player.playSound(SoundEvents.UI_TOAST_CHALLENGE_COMPLETE, 1.0f, 1.0f);
+            default -> { /* unknown sound type: play nothing */ }
         }
     }
     

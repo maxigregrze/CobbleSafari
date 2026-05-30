@@ -3,6 +3,7 @@ package maxigregrze.cobblesafari.underground.logic;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
@@ -414,8 +415,8 @@ public class MiningGrid {
      * Get the cells affected by a mining action.
      */
     private List<int[]> getAffectedCells(int centerX, int centerY, boolean useHammer) {
-        List<int[]> cells = new ArrayList<>();
-        
+        List<int[]> affectedCells = new ArrayList<>();
+
         if (useHammer) {
             // 3x3 pattern
             // Corners get 1 damage, center and cardinals get 2
@@ -423,20 +424,20 @@ public class MiningGrid {
                 for (int dx = -1; dx <= 1; dx++) {
                     boolean isCorner = (dx != 0 && dy != 0);
                     int damage = isCorner ? 1 : 2;
-                    cells.add(new int[]{centerX + dx, centerY + dy, damage});
+                    affectedCells.add(new int[]{centerX + dx, centerY + dy, damage});
                 }
             }
         } else {
             // + pattern (pickaxe)
             // Center gets 2 damage, cardinals get 1
-            cells.add(new int[]{centerX, centerY, 2}); // Center
-            cells.add(new int[]{centerX, centerY - 1, 1}); // North
-            cells.add(new int[]{centerX, centerY + 1, 1}); // South
-            cells.add(new int[]{centerX - 1, centerY, 1}); // West
-            cells.add(new int[]{centerX + 1, centerY, 1}); // East
+            affectedCells.add(new int[]{centerX, centerY, 2}); // Center
+            affectedCells.add(new int[]{centerX, centerY - 1, 1}); // North
+            affectedCells.add(new int[]{centerX, centerY + 1, 1}); // South
+            affectedCells.add(new int[]{centerX - 1, centerY, 1}); // West
+            affectedCells.add(new int[]{centerX + 1, centerY, 1}); // East
         }
-        
-        return cells;
+
+        return affectedCells;
     }
     
     /**
@@ -510,7 +511,7 @@ public class MiningGrid {
             
             return baos.toByteArray();
         } catch (IOException e) {
-            throw new RuntimeException("Failed to serialize grid", e);
+            throw new UncheckedIOException("Failed to serialize grid", e);
         }
     }
     
