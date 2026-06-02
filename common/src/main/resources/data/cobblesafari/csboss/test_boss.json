@@ -1,0 +1,18 @@
+{
+  "bossId": "test_boss",
+  "displayName": "Test Boss",
+  "tags": ["test_tag"],
+  "maximumDuration": 1800,
+  "minimumDuration": 600,
+  "specie": "lapras",
+  "size": 3,
+  "moveSet": ["test"],
+  "moveCooldownMin": 2,
+  "moveCooldownMax": 4,
+  "isStatic": true,
+  "uniqueReward": "cobblesafari:csboss/test_unique",
+  "rewards": "cobblesafari:csboss/test_common",
+  "music": "cobblesafari:giratina",
+  "healthStyle": "notched_10",
+  "healthColor": "blue"
+}

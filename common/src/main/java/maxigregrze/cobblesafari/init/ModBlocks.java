@@ -58,6 +58,7 @@ import maxigregrze.cobblesafari.block.underground.UndergroundPCBlock;
 import maxigregrze.cobblesafari.block.underground.UndergroundSecretBlock;
 import maxigregrze.cobblesafari.block.incubator.IncubatorBlock;
 import maxigregrze.cobblesafari.block.incubator.IncubatorBlockItem;
+import maxigregrze.cobblesafari.block.csboss.CsBossTriggerBlock;
 import maxigregrze.cobblesafari.block.rotomphone.EmptyPhoneBlock;
 import maxigregrze.cobblesafari.block.underground.UndergroundTimberBlock;
 import net.minecraft.core.Registry;
@@ -646,6 +647,15 @@ public class ModBlocks {
                     .sound(SoundType.STONE)
                     .noOcclusion()
                     .noCollission()
+            ));
+
+    public static final Block CSBOSS_TRIGGER = registerBlock("csboss_trigger",
+            new CsBossTriggerBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.COLOR_BLACK)
+                    .strength(2.0f, 6.0f)
+                    .sound(SoundType.METAL)
+                    .requiresCorrectToolForDrops()
+                    .lightLevel(state -> state.getValue(CsBossTriggerBlock.ACTIVE) ? 10 : 3)
             ));
 
     public static final Block AUSPICIOUS_POKEBALL = registerBlock("auspicious_pokeball",

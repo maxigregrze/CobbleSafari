@@ -38,7 +38,7 @@ import maxigregrze.cobblesafari.underground.UndergroundMinigame;
 import maxigregrze.cobblesafari.underground.UndergroundScreen;
 import maxigregrze.cobblesafari.underground.network.UndergroundPayloads;
 import maxigregrze.cobblesafari.client.DungeonDistortionDimensionEffects;
-import maxigregrze.cobblesafari.client.audio.DungeonMusicHandler;
+import maxigregrze.cobblesafari.client.audio.CsMusicPlayer;
 import maxigregrze.cobblesafari.client.DonutItemClientSetup;
 import maxigregrze.cobblesafari.client.donut.DonutFlavorClientTooltip;
 import maxigregrze.cobblesafari.item.donut.DonutTooltipPayload;
@@ -246,6 +246,8 @@ public class CobbleSafariClientNeoForge {
         event.registerEntityRenderer(ModEntities.BALLOON_SAFARI, BalloonSafariRenderer::new);
         event.registerEntityRenderer(ModEntities.THROWN_MUD_BALL, net.minecraft.client.renderer.entity.ThrownItemRenderer::new);
         event.registerEntityRenderer(ModEntities.THROWN_BAIT, net.minecraft.client.renderer.entity.ThrownItemRenderer::new);
+        event.registerEntityRenderer(ModEntities.CSBOSS, maxigregrze.cobblesafari.client.renderer.CsBossEntityRenderer::new);
+        event.registerEntityRenderer(ModEntities.CSBOSS_BULLET, maxigregrze.cobblesafari.client.renderer.CsBossBulletEntityRenderer::new);
     }
 
     @SubscribeEvent
@@ -255,7 +257,7 @@ public class CobbleSafariClientNeoForge {
 
     public static void onClientTick(net.neoforged.neoforge.client.event.ClientTickEvent.Post event) {
         Minecraft mc = Minecraft.getInstance();
-        DungeonMusicHandler.onClientTick(mc);
+        CsMusicPlayer.onClientTick(mc);
         maxigregrze.cobblesafari.client.screen.rotomphone.RotomPhonePcSession.tickCleanup(mc);
         maxigregrze.cobblesafari.client.rotomphone.RotoGlideClient.tick(mc);
     }
@@ -327,6 +329,18 @@ public class CobbleSafariClientNeoForge {
         context.enqueueWork(() -> {
             Minecraft.getInstance().setScreen(new AuspiciousPokeballConfigScreen(payload));
         });
+    }
+
+    public static void handleOpenCsBossTriggerConfig(
+            maxigregrze.cobblesafari.network.OpenCsBossTriggerConfigPayload payload, IPayloadContext context) {
+        context.enqueueWork(() ->
+                Minecraft.getInstance().setScreen(
+                        new maxigregrze.cobblesafari.client.screen.CsBossTriggerConfigScreen(payload)));
+    }
+
+    public static void handleSetCsMusic(
+            maxigregrze.cobblesafari.network.SetCsMusicPayload payload, IPayloadContext context) {
+        context.enqueueWork(() -> CsMusicPlayer.accept(payload));
     }
 
     public static void handleOpenAuspiciousPokeballGoldConfig(OpenAuspiciousPokeballGoldConfigPayload payload, IPayloadContext context) {

@@ -5,6 +5,8 @@ import maxigregrze.cobblesafari.entity.BalloonEntity;
 import maxigregrze.cobblesafari.entity.BalloonSafariEntity;
 import maxigregrze.cobblesafari.entity.CsTraderEntity;
 import maxigregrze.cobblesafari.entity.HikerEntity;
+import maxigregrze.cobblesafari.entity.csboss.CsBossBulletEntity;
+import maxigregrze.cobblesafari.entity.csboss.CsBossEntity;
 import maxigregrze.cobblesafari.entity.projectile.ThrownBaitEntity;
 import maxigregrze.cobblesafari.entity.projectile.ThrownMudBallEntity;
 import net.minecraft.core.Registry;
@@ -93,6 +95,32 @@ public class ModEntities {
                     .updateInterval(10)
                     .build(CobbleSafari.MOD_ID + ":thrown_bait")
     );
+
+    public static final EntityType<CsBossEntity> CSBOSS = Registry.register(
+            BuiltInRegistries.ENTITY_TYPE,
+            ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, "csboss"),
+            EntityType.Builder.<CsBossEntity>of(CsBossEntity::new, MobCategory.MISC)
+                    .sized(2.0f, 2.0f)
+                    .clientTrackingRange(10)
+                    .fireImmune()
+                    .build(CobbleSafari.MOD_ID + ":csboss")
+    );
+
+    public static final EntityType<CsBossBulletEntity> CSBOSS_BULLET = Registry.register(
+            BuiltInRegistries.ENTITY_TYPE,
+            ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, "csboss_bullet"),
+            EntityType.Builder.<CsBossBulletEntity>of(CsBossBulletEntity::new, MobCategory.MISC)
+                    .sized(1.0f, 5.0f)
+                    .clientTrackingRange(8)
+                    .updateInterval(1)
+                    .fireImmune()
+                    .noSave()
+                    .build(CobbleSafari.MOD_ID + ":csboss_bullet")
+    );
+
+    public static AttributeSupplier.Builder getCsBossAttributes() {
+        return CsBossEntity.createAttributes();
+    }
 
     public static void register() {
         CobbleSafari.LOGGER.info("Registering entities for " + CobbleSafari.MOD_ID);

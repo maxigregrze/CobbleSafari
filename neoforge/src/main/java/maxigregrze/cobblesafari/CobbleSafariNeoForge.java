@@ -126,6 +126,7 @@ public class CobbleSafariNeoForge {
         event.put(ModEntities.CSTRADER_NPC, ModEntities.getCsTraderAttributes().build());
         event.put(ModEntities.BALLOON, ModEntities.getBalloonAttributes().build());
         event.put(ModEntities.BALLOON_SAFARI, ModEntities.getBalloonSafariAttributes().build());
+        event.put(ModEntities.CSBOSS, ModEntities.getCsBossAttributes().build());
     }
 
     private void onRegisterCommands(RegisterCommandsEvent event) {
@@ -162,6 +163,12 @@ public class CobbleSafariNeoForge {
                     CobbleSafariClientNeoForge::handleOpenAuspiciousPokeballConfig);
             registrar.playToClient(OpenAuspiciousPokeballGoldConfigPayload.TYPE, OpenAuspiciousPokeballGoldConfigPayload.STREAM_CODEC,
                     CobbleSafariClientNeoForge::handleOpenAuspiciousPokeballGoldConfig);
+            registrar.playToClient(maxigregrze.cobblesafari.network.OpenCsBossTriggerConfigPayload.TYPE,
+                    maxigregrze.cobblesafari.network.OpenCsBossTriggerConfigPayload.STREAM_CODEC,
+                    CobbleSafariClientNeoForge::handleOpenCsBossTriggerConfig);
+            registrar.playToClient(maxigregrze.cobblesafari.network.SetCsMusicPayload.TYPE,
+                    maxigregrze.cobblesafari.network.SetCsMusicPayload.STREAM_CODEC,
+                    CobbleSafariClientNeoForge::handleSetCsMusic);
         } else {
             registrar.playToClient(OpenTpAcceptPayload.TYPE, OpenTpAcceptPayload.STREAM_CODEC,
                     (payload, context) -> {});
@@ -176,6 +183,12 @@ public class CobbleSafariNeoForge {
             registrar.playToClient(OpenAuspiciousPokeballConfigPayload.TYPE, OpenAuspiciousPokeballConfigPayload.STREAM_CODEC,
                     (payload, context) -> {});
             registrar.playToClient(OpenAuspiciousPokeballGoldConfigPayload.TYPE, OpenAuspiciousPokeballGoldConfigPayload.STREAM_CODEC,
+                    (payload, context) -> {});
+            registrar.playToClient(maxigregrze.cobblesafari.network.OpenCsBossTriggerConfigPayload.TYPE,
+                    maxigregrze.cobblesafari.network.OpenCsBossTriggerConfigPayload.STREAM_CODEC,
+                    (payload, context) -> {});
+            registrar.playToClient(maxigregrze.cobblesafari.network.SetCsMusicPayload.TYPE,
+                    maxigregrze.cobblesafari.network.SetCsMusicPayload.STREAM_CODEC,
                     (payload, context) -> {});
         }
 
@@ -238,6 +251,16 @@ public class CobbleSafariNeoForge {
                     context.enqueueWork(() -> {
                         if (context.player() instanceof ServerPlayer sp) {
                             AuspiciousPokeballConfigServerHandler.handleSave(sp, payload);
+                        }
+                    });
+                });
+
+        registrar.playToServer(maxigregrze.cobblesafari.network.SaveCsBossTriggerConfigPayload.TYPE,
+                maxigregrze.cobblesafari.network.SaveCsBossTriggerConfigPayload.STREAM_CODEC,
+                (payload, context) -> {
+                    context.enqueueWork(() -> {
+                        if (context.player() instanceof ServerPlayer sp) {
+                            maxigregrze.cobblesafari.network.CsBossTriggerConfigServerHandler.handleSave(sp, payload);
                         }
                     });
                 });

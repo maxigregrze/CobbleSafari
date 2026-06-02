@@ -96,6 +96,7 @@ public class CobbleSafariFabric implements ModInitializer {
         FabricDefaultAttributeRegistry.register(ModEntities.CSTRADER_NPC, ModEntities.getCsTraderAttributes());
         FabricDefaultAttributeRegistry.register(ModEntities.BALLOON, ModEntities.getBalloonAttributes());
         FabricDefaultAttributeRegistry.register(ModEntities.BALLOON_SAFARI, ModEntities.getBalloonSafariAttributes());
+        FabricDefaultAttributeRegistry.register(ModEntities.CSBOSS, ModEntities.getCsBossAttributes());
     }
 
     private void registerNetworking() {
@@ -105,6 +106,8 @@ public class CobbleSafariFabric implements ModInitializer {
         PayloadTypeRegistry.playS2C().register(OpenRuneEditorPayload.TYPE, OpenRuneEditorPayload.STREAM_CODEC);
         PayloadTypeRegistry.playS2C().register(OpenLostItemConfigPayload.TYPE, OpenLostItemConfigPayload.STREAM_CODEC);
         PayloadTypeRegistry.playS2C().register(OpenAuspiciousPokeballConfigPayload.TYPE, OpenAuspiciousPokeballConfigPayload.STREAM_CODEC);
+        PayloadTypeRegistry.playS2C().register(maxigregrze.cobblesafari.network.OpenCsBossTriggerConfigPayload.TYPE, maxigregrze.cobblesafari.network.OpenCsBossTriggerConfigPayload.STREAM_CODEC);
+        PayloadTypeRegistry.playS2C().register(maxigregrze.cobblesafari.network.SetCsMusicPayload.TYPE, maxigregrze.cobblesafari.network.SetCsMusicPayload.STREAM_CODEC);
         PayloadTypeRegistry.playS2C().register(OpenAuspiciousPokeballGoldConfigPayload.TYPE, OpenAuspiciousPokeballGoldConfigPayload.STREAM_CODEC);
         PayloadTypeRegistry.playS2C().register(OpenLostNoteBookPayload.TYPE, OpenLostNoteBookPayload.STREAM_CODEC);
         PayloadTypeRegistry.playS2C().register(DimensionalBanSyncPayload.TYPE, DimensionalBanSyncPayload.STREAM_CODEC);
@@ -132,6 +135,7 @@ public class CobbleSafariFabric implements ModInitializer {
         );
         PayloadTypeRegistry.playC2S().register(SaveLostItemConfigPayload.TYPE, SaveLostItemConfigPayload.STREAM_CODEC);
         PayloadTypeRegistry.playC2S().register(SaveAuspiciousPokeballConfigPayload.TYPE, SaveAuspiciousPokeballConfigPayload.STREAM_CODEC);
+        PayloadTypeRegistry.playC2S().register(maxigregrze.cobblesafari.network.SaveCsBossTriggerConfigPayload.TYPE, maxigregrze.cobblesafari.network.SaveCsBossTriggerConfigPayload.STREAM_CODEC);
         PayloadTypeRegistry.playC2S().register(SaveAuspiciousPokeballGoldConfigPayload.TYPE, SaveAuspiciousPokeballGoldConfigPayload.STREAM_CODEC);
         PayloadTypeRegistry.playC2S().register(LostItemResetClaimsPayload.TYPE, LostItemResetClaimsPayload.STREAM_CODEC);
         PayloadTypeRegistry.playC2S().register(AuspiciousPokeballResetClaimsPayload.TYPE, AuspiciousPokeballResetClaimsPayload.STREAM_CODEC);
@@ -220,6 +224,17 @@ public class CobbleSafariFabric implements ModInitializer {
                     context.server().execute(() -> {
                         if (context.player() instanceof ServerPlayer sp) {
                             LostItemConfigServerHandler.handleReset(sp, payload);
+                        }
+                    });
+                }
+        );
+
+        ServerPlayNetworking.registerGlobalReceiver(
+                maxigregrze.cobblesafari.network.SaveCsBossTriggerConfigPayload.TYPE,
+                (payload, context) -> {
+                    context.server().execute(() -> {
+                        if (context.player() instanceof ServerPlayer sp) {
+                            maxigregrze.cobblesafari.network.CsBossTriggerConfigServerHandler.handleSave(sp, payload);
                         }
                     });
                 }
@@ -355,6 +370,8 @@ public class CobbleSafariFabric implements ModInitializer {
                 UndergroundMinigame.loadDatapacks(server);
                 UndergroundMinigame.syncRegistryToAllPlayers(server);
                 maxigregrze.cobblesafari.rotomphone.RotomPhoneSkinDataLoader.load(server);
+                maxigregrze.cobblesafari.csboss.CsBossDataLoader.load(server);
+                maxigregrze.cobblesafari.csmusic.CsMusicDataLoader.load(server);
             }
         });
         ServerTickEvents.END_SERVER_TICK.register(server -> {

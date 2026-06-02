@@ -272,6 +272,7 @@ public class ModCreativeTabs {
                 output.accept(ModBlocks.AUSPICIOUS_POKEBALL);
                 output.accept(ModBlocks.AUSPICIOUS_POKEBALL_SMALL);
                 output.accept(ModBlocks.AUSPICIOUS_POKEBALL_GOLD);
+                output.accept(ModBlocks.CSBOSS_TRIGGER);
                 output.accept(ModItems.ROTOM_PHONE);
                 output.accept(ModBlocks.EMPTYPHONE);
                 ModItems.WILD_EGGS.values().forEach(output::accept);

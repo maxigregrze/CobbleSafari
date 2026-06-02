@@ -20,6 +20,7 @@ import maxigregrze.cobblesafari.block.misc.UnionRoomExitTeleporterBlockEntity;
 import maxigregrze.cobblesafari.block.misc.VoidBlockEntity;
 import maxigregrze.cobblesafari.CobbleSafari;
 import maxigregrze.cobblesafari.block.incubator.IncubatorBlockEntity;
+import maxigregrze.cobblesafari.block.csboss.CsBossTriggerBlockEntity;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
@@ -48,6 +49,7 @@ public class ModBlockEntities {
     public static BlockEntityType<WhirlwindBlockEntity> WHIRLWIND;
     public static BlockEntityType<UnionRoomSpotlightBlockEntity> UNION_ROOM_SPOTLIGHT;
     public static BlockEntityType<PunchingBagBlockEntity> PUNCHINGBAG;
+    public static BlockEntityType<CsBossTriggerBlockEntity> CSBOSS_TRIGGER;
 
     public static void register() {
         CobbleSafari.LOGGER.info("Registering block entities for " + CobbleSafari.MOD_ID);
@@ -176,6 +178,12 @@ public class ModBlockEntities {
                 BuiltInRegistries.BLOCK_ENTITY_TYPE,
                 ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, "punchingbag"),
                 BlockEntityType.Builder.of(PunchingBagBlockEntity::new, ModBlocks.PUNCHINGBAG).build(null)
+        );
+
+        CSBOSS_TRIGGER = Registry.register(
+                BuiltInRegistries.BLOCK_ENTITY_TYPE,
+                ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, "csboss_trigger"),
+                BlockEntityType.Builder.of(CsBossTriggerBlockEntity::new, ModBlocks.CSBOSS_TRIGGER).build(null)
         );
     }
 }

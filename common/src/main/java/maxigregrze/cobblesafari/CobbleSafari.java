@@ -85,6 +85,9 @@ public class CobbleSafari {
         RandomizerItemsConfig.load();
         RotomPhoneConfig.load();
         WonderTradeSettings.load();
+        maxigregrze.cobblesafari.config.CsBossSettings.load();
+        maxigregrze.cobblesafari.csboss.attack.CsBossAttackRegistry.registerDefaults();
+        maxigregrze.cobblesafari.config.DimensionalMusicConfig.load();
 
         DungeonDimensions.register();
         SafariTimerConfig.syncDungeonDimensionTimersFromRegistry();

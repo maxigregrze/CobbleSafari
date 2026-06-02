@@ -67,31 +67,28 @@
             }
         ]
     },
-    "block.machine_union": {
+    "music.giratina1.intro": {
         "sounds": [
             {
-                "name": "cobblesafari:blocks/machine_union",
+                "name": "cobblesafari:music/bgm_giratina_1_intro",
                 "stream": true
             }
-        ],
-        "subtitle": "subtitles.cobblesafari.block.machine_union"
+        ]
     },
-    "block.machine_gts": {
+    "music.giratina1.loop": {
         "sounds": [
             {
-                "name": "cobblesafari:blocks/machine_gts",
+                "name": "cobblesafari:music/bgm_giratina_1_loop",
                 "stream": true
             }
-        ],
-        "subtitle": "subtitles.cobblesafari.block.machine_gts"
+        ]
     },
-    "block.machine_wonder": {
+    "music.giratina1.outro": {
         "sounds": [
             {
-                "name": "cobblesafari:blocks/machine_wonder",
+                "name": "cobblesafari:music/bgm_giratina_1_outro",
                 "stream": true
             }
-        ],
-        "subtitle": "subtitles.cobblesafari.block.machine_wonder"
+        ]
     }
 }

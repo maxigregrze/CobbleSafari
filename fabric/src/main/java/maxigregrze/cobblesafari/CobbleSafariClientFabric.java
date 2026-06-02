@@ -27,7 +27,7 @@ import maxigregrze.cobblesafari.block.basepc.BasePCMenu;
 import maxigregrze.cobblesafari.client.screen.BasePCScreen;
 import maxigregrze.cobblesafari.underground.UndergroundMinigame;
 import maxigregrze.cobblesafari.underground.UndergroundScreen;
-import maxigregrze.cobblesafari.client.audio.DungeonMusicHandler;
+import maxigregrze.cobblesafari.client.audio.CsMusicPlayer;
 import maxigregrze.cobblesafari.client.DonutItemClientSetup;
 import maxigregrze.cobblesafari.client.donut.DonutFlavorClientTooltip;
 import maxigregrze.cobblesafari.item.donut.DonutTooltipPayload;
@@ -119,6 +119,11 @@ public class CobbleSafariClientFabric implements ClientModInitializer {
                 DimensionalBanConfig.applyClientSync(payload.dimensions());
             });
         });
+
+        ClientPlayNetworking.registerGlobalReceiver(
+                maxigregrze.cobblesafari.network.SetCsMusicPayload.TYPE, (payload, context) -> {
+                    context.client().execute(() -> CsMusicPlayer.accept(payload));
+                });
 
         ClientNetworking.registerFabricClientReceivers();
     }
@@ -253,6 +258,8 @@ public class CobbleSafariClientFabric implements ClientModInitializer {
         EntityRendererRegistry.register(ModEntities.BALLOON_SAFARI, BalloonSafariRenderer::new);
         EntityRendererRegistry.register(ModEntities.THROWN_MUD_BALL, net.minecraft.client.renderer.entity.ThrownItemRenderer::new);
         EntityRendererRegistry.register(ModEntities.THROWN_BAIT, net.minecraft.client.renderer.entity.ThrownItemRenderer::new);
+        EntityRendererRegistry.register(ModEntities.CSBOSS, maxigregrze.cobblesafari.client.renderer.CsBossEntityRenderer::new);
+        EntityRendererRegistry.register(ModEntities.CSBOSS_BULLET, maxigregrze.cobblesafari.client.renderer.CsBossBulletEntityRenderer::new);
         EntityModelLayerRegistry.registerModelLayer(BalloonEntityModel.LAYER_LOCATION, BalloonEntityModel::createBodyLayer);
     }
 
@@ -262,6 +269,6 @@ public class CobbleSafariClientFabric implements ClientModInitializer {
     }
 
     private void registerDungeonMusic() {
-        ClientTickEvents.END_CLIENT_TICK.register(DungeonMusicHandler::onClientTick);
+        ClientTickEvents.END_CLIENT_TICK.register(CsMusicPlayer::onClientTick);
     }
 }

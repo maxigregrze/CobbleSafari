@@ -1,0 +1,6 @@
+{
+  "variants": {
+    "active=false": { "model": "cobblesafari:block/csboss_trigger" },
+    "active=true": { "model": "cobblesafari:block/csboss_trigger_active" }
+  }
+}

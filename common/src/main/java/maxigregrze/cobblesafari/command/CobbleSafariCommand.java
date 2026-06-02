@@ -53,6 +53,7 @@ public class CobbleSafariCommand {
         dispatcher.register(
                 Commands.literal("cobblesafari")
                         .requires(source -> source.hasPermission(2))
+                        .then(CsBossCommand.build())
                         .then(Commands.literal("reset")
                                 .requires(source -> source.hasPermission(4))
                                 .then(Commands.literal("safari")

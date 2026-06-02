@@ -55,6 +55,9 @@ public class DimensionEvents {
         GtsService.onServerStarted(server);
         maxigregrze.cobblesafari.underground.UndergroundMinigame.loadDatapacks(server);
         maxigregrze.cobblesafari.rotomphone.RotomPhoneSkinDataLoader.load(server);
+        maxigregrze.cobblesafari.csboss.CsBossDataLoader.load(server);
+        maxigregrze.cobblesafari.csboss.BossBattleManager.recoverAll(server);
+        maxigregrze.cobblesafari.csmusic.CsMusicDataLoader.load(server);
     }
 
     public static void onServerStopping(MinecraftServer server) {
@@ -68,6 +71,8 @@ public class DimensionEvents {
         DungeonRegionClearer.tick(server);
         PortalSpawnManager.tick(server);
         SafariResetManager.tick(server);
+        maxigregrze.cobblesafari.csboss.BossBattleManager.onServerTick(server);
+        maxigregrze.cobblesafari.csmusic.DimensionalMusicManager.tick(server);
         if ((server.getTickCount() % 100) == 0) {
             WonderTradeService.tickDailyScheduler(server);
             GtsService.tickDailyScheduler(server);
@@ -134,6 +139,8 @@ public class DimensionEvents {
         GtsService.releasePendingFor(player);
         UnionRoomDisconnectHandler.onPlayerDisconnect(player);
         TimerManager.onPlayerDisconnect(player);
+        maxigregrze.cobblesafari.csboss.BossBattleManager.onPlayerDisconnect(player);
+        maxigregrze.cobblesafari.csmusic.DimensionalMusicManager.onPlayerDisconnect(player.getUUID());
         DungeonTeleportHandler.clearPlayerData(player.getUUID());
         RotoGlideServerLogic.removeState(player.getUUID());
         RotoFallGroundClear.removePlayer(player.getUUID());
