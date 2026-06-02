@@ -1,0 +1,25 @@
+{
+    "type": "minecraft:random_patch",
+    "config": {
+        "tries": 6,
+        "xz_spread": 3,
+        "y_spread": 1,
+        "feature": {
+            "feature": {
+                "type": "minecraft:simple_block",
+                "config": {
+                    "to_place": {
+                        "type": "minecraft:weighted_state_provider",
+                        "entries": [
+                            { "weight": 1, "data": { "Name": "cobblesafari:sludge_pile", "Properties": { "facing": "north" } } },
+                            { "weight": 1, "data": { "Name": "cobblesafari:sludge_pile", "Properties": { "facing": "east" } } },
+                            { "weight": 1, "data": { "Name": "cobblesafari:sludge_pile", "Properties": { "facing": "south" } } },
+                            { "weight": 1, "data": { "Name": "cobblesafari:sludge_pile", "Properties": { "facing": "west" } } }
+                        ]
+                    }
+                }
+            },
+            "placement": []
+        }
+    }
+}

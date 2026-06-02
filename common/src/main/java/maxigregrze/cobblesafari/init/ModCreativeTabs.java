@@ -52,6 +52,9 @@ public class ModCreativeTabs {
                 output.accept(ModBlocks.UNDERGROUND_STONE_TRANSITION);
                 output.accept(ModBlocks.UNDERGROUND_HARDSTONE);
                 output.accept(ModBlocks.UNDERGROUND_HARDSTONE_STAIRS);
+                output.accept(ModBlocks.UNDERGROUND_POLISHED_HARDSTONE);
+                output.accept(ModBlocks.UNDERGROUND_STONEBRICKS);
+                output.accept(ModBlocks.UNDERGROUND_CRACKED_STONEBRICKS);
                 output.accept(ModBlocks.UNDERGROUND_TIMBER_VERTICAL_SMALL);
                 output.accept(ModBlocks.UNDERGROUND_TIMBER_VERTICAL_LARGE);
                 output.accept(ModBlocks.UNDERGROUND_TIMBER_VERTICAL_LARGE_LIGHT);
@@ -109,7 +112,20 @@ public class ModCreativeTabs {
                 output.accept(ModBlocks.AIR_BUBBLE_CORAL);
                 output.accept(ModBlocks.AIR_FIRE_CORAL);
                 output.accept(ModBlocks.AIR_HORN_CORAL);
+                output.accept(ModBlocks.MUD_PILE);
+                output.accept(ModBlocks.SLUDGE_PILE);
+                output.accept(ModBlocks.KARATE_MANNEQUIN);
+                output.accept(ModBlocks.PUNCHINGBAG);
+                output.accept(ModBlocks.TOMBSTONE);
+                output.accept(ModBlocks.TOMBSTONE_SMALL);
+                output.accept(ModBlocks.DISTORTION_ROCK_BLOCK);
+                output.accept(ModBlocks.DISTORTION_ROCK_BLOCK_STONEBRICKS);
+                output.accept(ModBlocks.DISTORTION_ROCK_BLOCK_STONEBRICKS_STAIRS);
+                output.accept(ModBlocks.DISTORTION_ROCK_BLOCK_STONEBRICKS_SLAB);
+                output.accept(ModBlocks.DISTORTION_ROCK_BLOCK_CHISELED);
+                output.accept(ModBlocks.DISTORTION_ROCK_BLOCK_CRACKED);
                 output.accept(ModItems.MUD_BALL);
+                output.accept(ModItems.TINKAGEAR);
                 output.accept(ModItems.BAIT);
             })
             .build();
@@ -124,6 +140,8 @@ public class ModCreativeTabs {
                 output.accept(ModBlocks.DISTORTION_STONE_BRICKS_RUNE);
                 output.accept(ModBlocks.DISTORTION_STONEBRICKS_RUBBLE);
                 output.accept(ModBlocks.DISTORTION_STONE_BRICKS_STAIRS);
+                output.accept(ModBlocks.DISTORTION_STONE_BRICKS_SLAB);
+                output.accept(ModBlocks.DISTORTION_STONE_BRICKS_CRACKED);
                 output.accept(ModBlocks.DISTORTION_STONEBRICKS_DOOR);
                 output.accept(ModBlocks.DISTORTION_ROCK_VERTICAL);
                 output.accept(ModBlocks.DISTORTION_ROCK_UPSIDEDOWN);

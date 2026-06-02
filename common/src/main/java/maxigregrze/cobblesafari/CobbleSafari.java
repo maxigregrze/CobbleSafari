@@ -62,6 +62,7 @@ public class CobbleSafari {
         ModPowerEffects.register();
         ModBlocks.register();
         ModBlockEntities.register();
+        maxigregrze.cobblesafari.init.ModFeatures.register();
         ModComponents.register();
         ModItems.register();
         DonutSeasoningProcessor.register();

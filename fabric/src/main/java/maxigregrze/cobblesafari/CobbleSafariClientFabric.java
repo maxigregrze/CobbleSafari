@@ -146,6 +146,7 @@ public class CobbleSafariClientFabric implements ClientModInitializer {
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.GIRATINA_CORE_MOVING, RenderType.translucent());
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.DISTORTION_PORTAL, RenderType.translucent());
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.DISTORTION_PORTAL_MOVING, RenderType.translucent());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.DISTORTION_PORTAL_MOVING_BACK, RenderType.translucent());
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.MAGNETIC_CRYSTAL, RenderType.translucent());
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.MAGNETIC_CLUSTER, RenderType.translucent());
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.UNDERGROUND_SECRET, RenderType.translucent());
@@ -190,6 +191,13 @@ public class CobbleSafariClientFabric implements ClientModInitializer {
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.LOST_ITEM_VISUAL, RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.WHIRLWIND, RenderType.translucent());
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.WHIRLWIND_DISPLAY, RenderType.translucent());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.MUD_PILE, RenderType.cutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.SLUDGE_PILE, RenderType.cutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.KARATE_MANNEQUIN, RenderType.cutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.PUNCHINGBAG, RenderType.cutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.PUNCHINGBAG_BAG_DISPLAY, RenderType.cutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.TOMBSTONE, RenderType.cutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.TOMBSTONE_SMALL, RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.AUSPICIOUS_POKEBALL, RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.AUSPICIOUS_POKEBALL_DISPLAY, RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.AUSPICIOUS_POKEBALL_SMALL, RenderType.cutout());
@@ -238,6 +246,7 @@ public class CobbleSafariClientFabric implements ClientModInitializer {
         BlockEntityRenderers.register(ModBlockEntities.WHIRLWIND, maxigregrze.cobblesafari.client.renderer.WhirlwindBlockEntityRenderer::new);
         BlockEntityRenderers.register(ModBlockEntities.UNION_ROOM_GLOBE_UPPER, maxigregrze.cobblesafari.client.renderer.UnionRoomGlobeUpperBlockEntityRenderer::new);
         BlockEntityRenderers.register(ModBlockEntities.UNION_ROOM_SPOTLIGHT, maxigregrze.cobblesafari.client.renderer.UnionRoomSpotlightBlockEntityRenderer::new);
+        BlockEntityRenderers.register(ModBlockEntities.PUNCHINGBAG, maxigregrze.cobblesafari.client.renderer.PunchingBagBlockEntityRenderer::new);
         EntityRendererRegistry.register(ModEntities.HIKER, HikerEntityRenderer::new);
         EntityRendererRegistry.register(ModEntities.CSTRADER_NPC, CsTraderEntityRenderer::new);
         EntityRendererRegistry.register(ModEntities.BALLOON, BalloonEntityRenderer::new);

@@ -1,0 +1,12 @@
+{
+    "type": "minecraft:crafting_shapeless",
+    "category": "misc",
+    "ingredients": [
+        { "item": "cobblemon:black_sludge" },
+        { "item": "cobblesafari:mud_pile" },
+        { "item": "cobblesafari:mud_pile" },
+        { "item": "cobblesafari:mud_pile" },
+        { "item": "cobblesafari:mud_pile" }
+    ],
+    "result": { "id": "cobblesafari:sludge_pile", "count": 4 }
+}

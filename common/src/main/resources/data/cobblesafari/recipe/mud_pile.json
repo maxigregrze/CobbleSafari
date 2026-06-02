@@ -1,0 +1,11 @@
+{
+    "type": "minecraft:crafting_shapeless",
+    "category": "misc",
+    "ingredients": [
+        { "item": "cobblesafari:mud_ball" },
+        { "item": "cobblesafari:mud_ball" },
+        { "item": "cobblesafari:mud_ball" },
+        { "item": "cobblesafari:mud_ball" }
+    ],
+    "result": { "id": "cobblesafari:mud_pile", "count": 1 }
+}

@@ -1,0 +1,19 @@
+{
+	"parent": "minecraft:block/block",
+	"texture_size": [32, 32],
+	"textures": {
+		"0": "cobblesafari:block/distortion_portal_back",
+		"particle": "cobblesafari:block/distortion_portal_back"
+	},
+	"elements": [
+		{
+			"from": [-4, 4, 8],
+			"to": [20, 28, 8],
+			"rotation": {"angle": 0, "axis": "y", "origin": [8, 16, 8]},
+			"faces": {
+				"north": {"uv": [0, 0, 12, 12], "texture": "#0"},
+				"south": {"uv": [0, 0, 12, 12], "texture": "#0"}
+			}
+		}
+	]
+}

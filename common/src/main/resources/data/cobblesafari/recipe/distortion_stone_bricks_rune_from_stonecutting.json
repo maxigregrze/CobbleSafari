@@ -1,0 +1,5 @@
+{
+    "type": "minecraft:stonecutting",
+    "ingredient": { "item": "cobblesafari:distortion_stone" },
+    "result": { "id": "cobblesafari:distortion_stone_bricks_rune", "count": 1 }
+}

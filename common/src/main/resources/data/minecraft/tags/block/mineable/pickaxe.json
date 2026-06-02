@@ -1,10 +1,32 @@
 {
-	"replace": false,
-	"values": [
-		"cobblesafari:magnetic_crystal",
-		"cobblesafari:magnetic_cluster",
-		"cobblesafari:underground_boulder",
-		"cobblesafari:icicle",
-		"cobblesafari:safari_teleporter"
-	]
+  "replace": false,
+  "values": [
+    "cobblesafari:magnetic_crystal",
+    "cobblesafari:magnetic_cluster",
+    "cobblesafari:underground_boulder",
+    "cobblesafari:icicle",
+    "cobblesafari:safari_teleporter",
+    "cobblesafari:tombstone",
+    "cobblesafari:tombstone_small",
+    "cobblesafari:distortion_rock_block",
+    "cobblesafari:distortion_rock_block_stonebricks",
+    "cobblesafari:distortion_rock_block_stonebricks_stairs",
+    "cobblesafari:distortion_rock_block_stonebricks_slab",
+    "cobblesafari:distortion_rock_block_chiseled",
+    "cobblesafari:distortion_rock_block_cracked",
+    "cobblesafari:rusted_iron_block",
+    "cobblesafari:rust_clump",
+    "cobblesafari:compacted_trash_block",
+    "cobblesafari:distortion_stone",
+    "cobblesafari:distortion_stone_bricks",
+    "cobblesafari:distortion_stone_bricks_rune",
+    "cobblesafari:distortion_stone_bricks_stairs",
+    "cobblesafari:distortion_stone_bricks_slab",
+    "cobblesafari:distortion_stone_bricks_cracked",
+    "cobblesafari:distortion_stonebricks_door",
+    "cobblesafari:distortion_stonebricks_rubble",
+    "cobblesafari:underground_polished_hardstone",
+    "cobblesafari:underground_stonebricks",
+    "cobblesafari:underground_cracked_stonebricks"
+  ]
 }

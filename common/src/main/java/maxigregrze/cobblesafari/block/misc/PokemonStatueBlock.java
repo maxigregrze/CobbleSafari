@@ -23,7 +23,6 @@ public abstract class PokemonStatueBlock extends HorizontalDirectionalBlock {
     public static final VoxelShape CHARMANDER_SHAPE = Block.box(0, 0, 7, 16, 16, 16);
     public static final VoxelShape PIKACHU_SHAPE = Block.box(0, 0, 6, 16, 16, 16);
     public static final VoxelShape SQUIRTLE_SHAPE = Block.box(0, 0, 5, 16, 16, 16);
-    public static final VoxelShape KARATE_MANNEQUIN_SHAPE = Block.box(4, 0, 4, 12, 16, 16);
 
     private final double minX;
     private final double minY;
@@ -138,19 +137,6 @@ public abstract class PokemonStatueBlock extends HorizontalDirectionalBlock {
 
         public Squirtle(Properties properties) {
             super(SQUIRTLE_SHAPE, properties);
-        }
-
-        @Override
-        protected MapCodec<? extends HorizontalDirectionalBlock> codec() {
-            return CODEC;
-        }
-    }
-
-    public static final class KarateMannequin extends PokemonStatueBlock {
-        public static final MapCodec<KarateMannequin> CODEC = simpleCodec(KarateMannequin::new);
-
-        public KarateMannequin(Properties properties) {
-            super(KARATE_MANNEQUIN_SHAPE, properties);
         }
 
         @Override

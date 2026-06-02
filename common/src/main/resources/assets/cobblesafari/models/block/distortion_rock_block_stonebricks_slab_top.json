@@ -1,0 +1,8 @@
+{
+	"parent": "minecraft:block/slab_top",
+	"textures": {
+		"bottom": "cobblesafari:block/distortion_rock_stonetop",
+		"top": "cobblesafari:block/distortion_rock_stonetop",
+		"side": "cobblesafari:block/distortion_rock_stonebricks"
+	}
+}

@@ -4,170 +4,78 @@
                      "0":  "cobblesafari:block/union_spotlight_1",
                      "particle":  "cobblesafari:block/union_spotlight_1"
                  },
-    "elements":  [
-                     {
-                         "from":  [
-                                      5,
-                                      -2,
-                                      5
-                                  ],
-                         "to":  [
-                                    5,
-                                    16,
-                                    11
-                                ],
-                         "rotation":  {
-                                          "angle":  0,
-                                          "axis":  "z",
-                                          "origin":  [
-                                                         5,
-                                                         -2,
-                                                         6
-                                                     ]
-                                      },
-                         "faces":  {
-                                       "east":  {
-                                                    "uv":  [
-                                                               0,
-                                                               0,
-                                                               6,
-                                                               16
-                                                           ],
-                                                    "texture":  "#0"
-                                                },
-                                       "west":  {
-                                                    "uv":  [
-                                                               0,
-                                                               0,
-                                                               6,
-                                                               16
-                                                           ],
-                                                    "texture":  "#0"
-                                                }
-                                   }
-                     },
-                     {
-                         "from":  [
-                                      11,
-                                      -2,
-                                      5
-                                  ],
-                         "to":  [
-                                    11,
-                                    16,
-                                    11
-                                ],
-                         "rotation":  {
-                                          "angle":  0,
-                                          "axis":  "z",
-                                          "origin":  [
-                                                         11,
-                                                         -2,
-                                                         6
-                                                     ]
-                                      },
-                         "faces":  {
-                                       "east":  {
-                                                    "uv":  [
-                                                               0,
-                                                               0,
-                                                               6,
-                                                               16
-                                                           ],
-                                                    "texture":  "#0"
-                                                },
-                                       "west":  {
-                                                    "uv":  [
-                                                               0,
-                                                               0,
-                                                               6,
-                                                               16
-                                                           ],
-                                                    "texture":  "#0"
-                                                }
-                                   }
-                     },
-                     {
-                         "from":  [
-                                      5,
-                                      -2,
-                                      5
-                                  ],
-                         "to":  [
-                                    11,
-                                    16,
-                                    5
-                                ],
-                         "rotation":  {
-                                          "angle":  0,
-                                          "axis":  "z",
-                                          "origin":  [
-                                                         7,
-                                                         -2,
-                                                         4
-                                                     ]
-                                      },
-                         "faces":  {
-                                       "north":  {
-                                                     "uv":  [
-                                                                0,
-                                                                0,
-                                                                6,
-                                                                16
-                                                            ],
-                                                     "texture":  "#0"
-                                                 },
-                                       "south":  {
-                                                     "uv":  [
-                                                                0,
-                                                                0,
-                                                                6,
-                                                                16
-                                                            ],
-                                                     "texture":  "#0"
-                                                 }
-                                   }
-                     },
-                     {
-                         "from":  [
-                                      5,
-                                      -2,
-                                      11
-                                  ],
-                         "to":  [
-                                    11,
-                                    16,
-                                    11
-                                ],
-                         "rotation":  {
-                                          "angle":  0,
-                                          "axis":  "z",
-                                          "origin":  [
-                                                         7,
-                                                         -2,
-                                                         10
-                                                     ]
-                                      },
-                         "faces":  {
-                                       "north":  {
-                                                     "uv":  [
-                                                                0,
-                                                                0,
-                                                                6,
-                                                                16
-                                                            ],
-                                                     "texture":  "#0"
-                                                 },
-                                       "south":  {
-                                                     "uv":  [
-                                                                0,
-                                                                0,
-                                                                6,
-                                                                16
-                                                            ],
-                                                     "texture":  "#0"
-                                                 }
-                                   }
-                     }
-                 ]
+    "elements": [
+		{
+			"from": [5, -2, 6.5],
+			"to": [5, 16, 9.5],
+			"rotation": {"angle": 0, "axis": "z", "origin": [5, -2, 7]},
+			"faces": {
+				"east": {"uv": [0, 0, 6, 16], "texture": "#0"},
+				"west": {"uv": [0, 0, 6, 16], "texture": "#0"}
+			}
+		},
+		{
+			"from": [11, -2, 6.5],
+			"to": [11, 16, 9.5],
+			"rotation": {"angle": 0, "axis": "z", "origin": [11, -2, 6]},
+			"faces": {
+				"east": {"uv": [0, 0, 6, 16], "texture": "#0"},
+				"west": {"uv": [0, 0, 6, 16], "texture": "#0"}
+			}
+		},
+		{
+			"from": [6.5, -2, 5],
+			"to": [9.5, 16, 5],
+			"rotation": {"angle": 0, "axis": "z", "origin": [7, -2, 4]},
+			"faces": {
+				"north": {"uv": [0, 0, 6, 16], "texture": "#0"},
+				"south": {"uv": [0, 0, 6, 16], "texture": "#0"}
+			}
+		},
+		{
+			"from": [6.5, -2, 11],
+			"to": [9.5, 16, 11],
+			"rotation": {"angle": 0, "axis": "z", "origin": [7, -2, 10]},
+			"faces": {
+				"north": {"uv": [0, 0, 6, 16], "texture": "#0"},
+				"south": {"uv": [0, 0, 6, 16], "texture": "#0"}
+			}
+		},
+		{
+			"from": [9.48, -2, 5],
+			"to": [11.63, 16, 5],
+			"rotation": {"angle": -45, "axis": "y", "origin": [9.5, 0, 5]},
+			"faces": {
+				"north": {"uv": [0, 0, 6, 16], "texture": "#0"},
+				"south": {"uv": [0, 0, 6, 16], "texture": "#0"}
+			}
+		},
+		{
+			"from": [5, -2, 4.38],
+			"to": [5, 16, 6.53],
+			"rotation": {"angle": -45, "axis": "y", "origin": [5, 0, 6.5]},
+			"faces": {
+				"east": {"uv": [0, 0, 6, 16], "texture": "#0"},
+				"west": {"uv": [0, 0, 6, 16], "texture": "#0"}
+			}
+		},
+		{
+			"from": [8.88, -2, 9.5],
+			"to": [11.03, 16, 9.5],
+			"rotation": {"angle": 45, "axis": "y", "origin": [11, 0, 9.5]},
+			"faces": {
+				"north": {"uv": [0, 0, 6, 16], "texture": "#0"},
+				"south": {"uv": [0, 0, 6, 16], "texture": "#0"}
+			}
+		},
+		{
+			"from": [6.5, -2, 8.85],
+			"to": [6.5, 16, 11],
+			"rotation": {"angle": 45, "axis": "y", "origin": [6.5, 0, 11]},
+			"faces": {
+				"east": {"uv": [0, 0, 6, 16], "texture": "#0"},
+				"west": {"uv": [0, 0, 6, 16], "texture": "#0"}
+			}
+		}
+	]
 }

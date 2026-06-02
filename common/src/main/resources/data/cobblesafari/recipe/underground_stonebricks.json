@@ -1,0 +1,7 @@
+{
+    "type": "minecraft:crafting_shaped",
+    "category": "building",
+    "pattern": [ "##", "##" ],
+    "key": { "#": { "item": "cobblesafari:underground_stone" } },
+    "result": { "id": "cobblesafari:underground_stonebricks", "count": 4 }
+}

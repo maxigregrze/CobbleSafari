@@ -1,9 +1,17 @@
 {
     "feature": "cobblesafari:whirlwind_patch",
     "placement": [
-        { "type": "minecraft:count", "count": 1 },
-        { "type": "minecraft:in_square" },
-        { "type": "minecraft:heightmap", "heightmap": "WORLD_SURFACE" },
+        {
+            "type": "minecraft:count",
+            "count": 2
+        },
+        {
+            "type": "minecraft:in_square"
+        },
+        {
+            "type": "minecraft:heightmap",
+            "heightmap": "WORLD_SURFACE"
+        },
         {
             "type": "minecraft:block_predicate_filter",
             "predicate": {
@@ -21,7 +29,11 @@
                             "minecraft:snow_block",
                             "minecraft:snow"
                         ],
-                        "offset": [0, -1, 0]
+                        "offset": [
+                            0,
+                            -1,
+                            0
+                        ]
                     },
                     {
                         "type": "minecraft:not",
@@ -33,6 +45,8 @@
                 ]
             }
         },
-        { "type": "minecraft:biome" }
+        {
+            "type": "minecraft:biome"
+        }
     ]
 }

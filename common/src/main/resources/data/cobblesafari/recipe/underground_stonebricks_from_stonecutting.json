@@ -1,0 +1,5 @@
+{
+    "type": "minecraft:stonecutting",
+    "ingredient": { "item": "cobblesafari:underground_stone" },
+    "result": { "id": "cobblesafari:underground_stonebricks", "count": 1 }
+}

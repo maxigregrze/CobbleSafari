@@ -1,0 +1,4 @@
+{
+    "type": "minecraft:forest_rock",
+    "config": { "state": { "Name": "cobblesafari:underground_hardstone" } }
+}

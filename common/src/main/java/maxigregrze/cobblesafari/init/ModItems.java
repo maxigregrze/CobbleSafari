@@ -108,6 +108,7 @@ public class ModItems {
     public static final Item ROTOM_PHONE = new RotomPhoneItem(new Item.Properties().stacksTo(1).rarity(Rarity.EPIC));
 
     public static final Item MUD_BALL = new MudBallItem(new Item.Properties().stacksTo(64));
+    public static final Item TINKAGEAR = new Item(new Item.Properties());
     public static final Item BAIT = new BaitItem(new Item.Properties().stacksTo(64));
 
     public static final Item REDCHAIN_RANDOM_BALL = new RedChainRandomBallItem(new Item.Properties().stacksTo(1), "redchain_random_ball");
@@ -257,6 +258,7 @@ public class ModItems {
         registerItem("rotomphone", ROTOM_PHONE);
 
         registerItem("mud_ball", MUD_BALL);
+        registerItem("tinkagear", TINKAGEAR);
         registerItem("bait", BAIT);
 
         registerItem("redchain_random_ball", REDCHAIN_RANDOM_BALL);

@@ -1,0 +1,8 @@
+{
+  "variants": {
+    "facing=north": { "model": "cobblesafari:block/sludge_pile" },
+    "facing=south": { "model": "cobblesafari:block/sludge_pile", "y": 180 },
+    "facing=east": { "model": "cobblesafari:block/sludge_pile", "y": 90 },
+    "facing=west": { "model": "cobblesafari:block/sludge_pile", "y": 270 }
+  }
+}

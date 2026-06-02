@@ -126,6 +126,7 @@ public class CobbleSafariClientNeoForge {
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.GIRATINA_CORE_MOVING, RenderType.translucent());
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.DISTORTION_PORTAL, RenderType.translucent());
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.DISTORTION_PORTAL_MOVING, RenderType.translucent());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.DISTORTION_PORTAL_MOVING_BACK, RenderType.translucent());
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.MAGNETIC_CRYSTAL, RenderType.translucent());
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.MAGNETIC_CLUSTER, RenderType.translucent());
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.UNDERGROUND_SECRET, RenderType.translucent());
@@ -170,6 +171,13 @@ public class CobbleSafariClientNeoForge {
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.LOST_ITEM_VISUAL, RenderType.cutout());
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.WHIRLWIND, RenderType.translucent());
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.WHIRLWIND_DISPLAY, RenderType.translucent());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.MUD_PILE, RenderType.cutout());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.SLUDGE_PILE, RenderType.cutout());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.KARATE_MANNEQUIN, RenderType.cutout());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.PUNCHINGBAG, RenderType.cutout());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.PUNCHINGBAG_BAG_DISPLAY, RenderType.cutout());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.TOMBSTONE, RenderType.cutout());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.TOMBSTONE_SMALL, RenderType.cutout());
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.AUSPICIOUS_POKEBALL, RenderType.cutout());
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.AUSPICIOUS_POKEBALL_DISPLAY, RenderType.cutout());
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.AUSPICIOUS_POKEBALL_SMALL, RenderType.cutout());
@@ -216,6 +224,7 @@ public class CobbleSafariClientNeoForge {
             BlockEntityRenderers.register(ModBlockEntities.WHIRLWIND, maxigregrze.cobblesafari.client.renderer.WhirlwindBlockEntityRenderer::new);
             BlockEntityRenderers.register(ModBlockEntities.UNION_ROOM_GLOBE_UPPER, maxigregrze.cobblesafari.client.renderer.UnionRoomGlobeUpperBlockEntityRenderer::new);
             BlockEntityRenderers.register(ModBlockEntities.UNION_ROOM_SPOTLIGHT, maxigregrze.cobblesafari.client.renderer.UnionRoomSpotlightBlockEntityRenderer::new);
+            BlockEntityRenderers.register(ModBlockEntities.PUNCHINGBAG, maxigregrze.cobblesafari.client.renderer.PunchingBagBlockEntityRenderer::new);
         });
 
         event.enqueueWork(DonutItemClientSetup::registerItemProperties);

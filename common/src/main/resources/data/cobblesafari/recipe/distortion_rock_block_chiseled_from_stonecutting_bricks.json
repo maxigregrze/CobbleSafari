@@ -1,0 +1,5 @@
+{
+    "type": "minecraft:stonecutting",
+    "ingredient": { "item": "cobblesafari:distortion_rock_block_stonebricks" },
+    "result": { "id": "cobblesafari:distortion_rock_block_chiseled", "count": 1 }
+}

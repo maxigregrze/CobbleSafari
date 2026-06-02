@@ -1,0 +1,7 @@
+{
+	"parent": "minecraft:block/cube_column",
+	"textures": {
+		"end": "cobblesafari:block/distortion_rock_stonetop",
+		"side": "cobblesafari:block/distortion_rock_chiseled"
+	}
+}

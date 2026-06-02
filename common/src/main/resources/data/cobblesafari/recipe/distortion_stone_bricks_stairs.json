@@ -1,0 +1,7 @@
+{
+    "type": "minecraft:crafting_shaped",
+    "category": "building",
+    "pattern": [ "#  ", "## ", "###" ],
+    "key": { "#": { "item": "cobblesafari:distortion_stone_bricks" } },
+    "result": { "id": "cobblesafari:distortion_stone_bricks_stairs", "count": 4 }
+}

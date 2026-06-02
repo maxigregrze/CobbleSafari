@@ -1,0 +1,14 @@
+{
+    "type": "minecraft:simple_block",
+    "config": {
+        "to_place": {
+            "type": "minecraft:weighted_state_provider",
+            "entries": [
+                { "weight": 1, "data": { "Name": "cobblesafari:karate_mannequin", "Properties": { "facing": "north" } } },
+                { "weight": 1, "data": { "Name": "cobblesafari:karate_mannequin", "Properties": { "facing": "east" } } },
+                { "weight": 1, "data": { "Name": "cobblesafari:karate_mannequin", "Properties": { "facing": "south" } } },
+                { "weight": 1, "data": { "Name": "cobblesafari:karate_mannequin", "Properties": { "facing": "west" } } }
+            ]
+        }
+    }
+}

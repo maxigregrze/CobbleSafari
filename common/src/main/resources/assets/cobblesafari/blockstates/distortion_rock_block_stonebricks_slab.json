@@ -1,0 +1,7 @@
+{
+    "variants": {
+        "type=bottom": { "model": "cobblesafari:block/distortion_rock_block_stonebricks_slab" },
+        "type=double": { "model": "cobblesafari:block/distortion_rock_block_stonebricks" },
+        "type=top":    { "model": "cobblesafari:block/distortion_rock_block_stonebricks_slab_top" }
+    }
+}

@@ -12,6 +12,7 @@ import maxigregrze.cobblesafari.block.misc.AuspiciousPokeballGoldBlockEntity;
 import maxigregrze.cobblesafari.block.misc.LostItemBlockEntity;
 import maxigregrze.cobblesafari.block.misc.SafariEggNestBlockEntity;
 import maxigregrze.cobblesafari.block.misc.WhirlwindBlockEntity;
+import maxigregrze.cobblesafari.block.misc.PunchingBagBlockEntity;
 import maxigregrze.cobblesafari.block.misc.UnionRoomDecorBlockEntity;
 import maxigregrze.cobblesafari.block.misc.UnionRoomGlobeUpperBlockEntity;
 import maxigregrze.cobblesafari.block.misc.UnionRoomSpotlightBlockEntity;
@@ -46,6 +47,7 @@ public class ModBlockEntities {
     public static BlockEntityType<UnionRoomExitTeleporterBlockEntity> UNION_ROOM_EXIT_TELEPORTER;
     public static BlockEntityType<WhirlwindBlockEntity> WHIRLWIND;
     public static BlockEntityType<UnionRoomSpotlightBlockEntity> UNION_ROOM_SPOTLIGHT;
+    public static BlockEntityType<PunchingBagBlockEntity> PUNCHINGBAG;
 
     public static void register() {
         CobbleSafari.LOGGER.info("Registering block entities for " + CobbleSafari.MOD_ID);
@@ -168,6 +170,12 @@ public class ModBlockEntities {
                         ModBlocks.UNION_ROOM_SPOTLIGHT_YELLOW,
                         ModBlocks.UNION_ROOM_SPOTLIGHT_BLUE,
                         ModBlocks.UNION_ROOM_SPOTLIGHT_RED).build(null)
+        );
+
+        PUNCHINGBAG = Registry.register(
+                BuiltInRegistries.BLOCK_ENTITY_TYPE,
+                ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, "punchingbag"),
+                BlockEntityType.Builder.of(PunchingBagBlockEntity::new, ModBlocks.PUNCHINGBAG).build(null)
         );
     }
 }

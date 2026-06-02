@@ -34,6 +34,11 @@ import maxigregrze.cobblesafari.block.misc.LostItemVisualBlock;
 import maxigregrze.cobblesafari.block.misc.MagneticClusterBlock;
 import maxigregrze.cobblesafari.block.misc.MagneticCrystalBlock;
 import maxigregrze.cobblesafari.block.misc.LiquidBarrierBlock;
+import maxigregrze.cobblesafari.block.misc.KarateMannequinBlock;
+import maxigregrze.cobblesafari.block.misc.MudPileBlock;
+import maxigregrze.cobblesafari.block.misc.SludgePileBlock;
+import maxigregrze.cobblesafari.block.misc.PunchingBagBlock;
+import maxigregrze.cobblesafari.block.misc.TombstoneBlock;
 import maxigregrze.cobblesafari.block.misc.SafariEggNestBlock;
 import maxigregrze.cobblesafari.block.misc.VoidBlock;
 import maxigregrze.cobblesafari.block.distortion.VanishingDistortionFlowerBlock;
@@ -295,6 +300,27 @@ public class ModBlocks {
                     .sound(SoundType.DEEPSLATE)
             ));
 
+    public static final Block UNDERGROUND_POLISHED_HARDSTONE = registerBlock("underground_polished_hardstone",
+            new Block(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.GOLD)
+                    .strength(3.0f, 6.0f)
+                    .sound(SoundType.DEEPSLATE)
+            ));
+
+    public static final Block UNDERGROUND_STONEBRICKS = registerBlock("underground_stonebricks",
+            new Block(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.TERRACOTTA_BROWN)
+                    .strength(1.5f, 6.0f)
+                    .sound(SoundType.STONE)
+            ));
+
+    public static final Block UNDERGROUND_CRACKED_STONEBRICKS = registerBlock("underground_cracked_stonebricks",
+            new Block(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.TERRACOTTA_BROWN)
+                    .strength(1.5f, 6.0f)
+                    .sound(SoundType.STONE)
+            ));
+
     public static final Block UNDERGROUND_TIMBER_VERTICAL_SMALL = registerBlock("underground_timber_vertical_small",
             new UndergroundTimberBlock(BlockBehaviour.Properties.of()
                     .strength(2.0f, 3.0f)
@@ -501,7 +527,11 @@ public class ModBlocks {
             new Block(BlockBehaviour.Properties.ofFullCopy(Blocks.IRON_BLOCK)));
 
     public static final Block COMPACTED_TRASH_BLOCK = registerBlock("compacted_trash_block",
-            new Block(BlockBehaviour.Properties.ofFullCopy(Blocks.RAW_IRON_BLOCK)));
+            new Block(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.RAW_IRON)
+                    .strength(5.0f, 6.0f)
+                    .sound(SoundType.METAL)
+                    .noOcclusion()));
 
     public static final Block RUST_CLUMP = registerBlock("rust_clump",
             new Block(BlockBehaviour.Properties.ofFullCopy(Blocks.RAW_IRON_BLOCK)));
@@ -543,24 +573,24 @@ public class ModBlocks {
     public static final Block DISTORTION_STONE = registerBlock("distortion_stone",
             new Block(BlockBehaviour.Properties.of()
                     .mapColor(MapColor.STONE)
-                    .strength(1.5f, 6.0f)
-                    .sound(SoundType.STONE)
+                    .strength(3.0f, 6.0f)
+                    .sound(SoundType.DEEPSLATE)
                     .requiresCorrectToolForDrops()
             ));
 
     public static final Block DISTORTION_STONE_BRICKS = registerBlock("distortion_stone_bricks",
             new Block(BlockBehaviour.Properties.of()
                     .mapColor(MapColor.STONE)
-                    .strength(1.5f, 6.0f)
-                    .sound(SoundType.STONE)
+                    .strength(3.0f, 6.0f)
+                    .sound(SoundType.DEEPSLATE)
                     .requiresCorrectToolForDrops()
             ));
 
     public static final Block DISTORTION_STONE_BRICKS_RUNE = registerBlock("distortion_stone_bricks_rune",
             new DistortionStoneBricksRuneBlock(BlockBehaviour.Properties.of()
                     .mapColor(MapColor.STONE)
-                    .strength(1.5f, 6.0f)
-                    .sound(SoundType.STONE)
+                    .strength(3.0f, 6.0f)
+                    .sound(SoundType.DEEPSLATE)
                     .requiresCorrectToolForDrops()
             ));
 
@@ -576,11 +606,17 @@ public class ModBlocks {
     public static final Block DISTORTION_STONE_BRICKS_STAIRS = registerBlock("distortion_stone_bricks_stairs",
             new StairBlock(DISTORTION_STONE_BRICKS.defaultBlockState(), BlockBehaviour.Properties.ofFullCopy(DISTORTION_STONE_BRICKS)));
 
+    public static final Block DISTORTION_STONE_BRICKS_SLAB = registerBlock("distortion_stone_bricks_slab",
+            new SlabBlock(BlockBehaviour.Properties.ofFullCopy(DISTORTION_STONE_BRICKS)));
+
+    public static final Block DISTORTION_STONE_BRICKS_CRACKED = registerBlock("distortion_stone_bricks_cracked",
+            new Block(BlockBehaviour.Properties.ofFullCopy(DISTORTION_STONE_BRICKS)));
+
     public static final Block DISTORTION_STONEBRICKS_DOOR = registerBlock("distortion_stonebricks_door",
             new DistortionDoorBlock(BlockBehaviour.Properties.of()
                     .mapColor(MapColor.STONE)
-                    .strength(1.5f, 6.0f)
-                    .sound(SoundType.STONE)
+                    .strength(3.0f, 6.0f)
+                    .sound(SoundType.DEEPSLATE)
                     .requiresCorrectToolForDrops()
                     .noOcclusion()
             ));
@@ -680,6 +716,17 @@ public class ModBlocks {
             ));
 
     public static final Block DISTORTION_PORTAL_MOVING = registerBlockWithoutItem("distortion_portal_moving",
+            new Block(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.COLOR_PURPLE)
+                    .strength(3.0f, 9.0f)
+                    .sound(SoundType.GLASS)
+                    .noOcclusion()
+                    .noCollission()
+                    .dynamicShape()
+                    .lightLevel(state -> 15)
+            ));
+
+    public static final Block DISTORTION_PORTAL_MOVING_BACK = registerBlockWithoutItem("distortion_portal_moving_back",
             new Block(BlockBehaviour.Properties.of()
                     .mapColor(MapColor.COLOR_PURPLE)
                     .strength(3.0f, 9.0f)
@@ -1026,7 +1073,77 @@ public class ModBlocks {
     public static final Block SQUIRTLE_STATUE = registerBlock("squirtle_statue",
             new PokemonStatueBlock.Squirtle(BlockBehaviour.Properties.ofFullCopy(Blocks.WHITE_WOOL)));
     public static final Block KARATE_MANNEQUIN = registerBlock("karate_mannequin",
-            new PokemonStatueBlock.KarateMannequin(BlockBehaviour.Properties.ofFullCopy(Blocks.WHITE_WOOL)));
+            new KarateMannequinBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.WOOD)
+                    .strength(2.0f)
+                    .sound(SoundType.WOOD)
+                    .noOcclusion()));
+
+    public static final Block MUD_PILE = registerBlock("mud_pile",
+            new MudPileBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.COLOR_BROWN)
+                    .strength(0.6f)
+                    .sound(SoundType.MUD)
+                    .noOcclusion()
+                    .pushReaction(PushReaction.DESTROY)));
+
+    public static final Block SLUDGE_PILE = registerBlock("sludge_pile",
+            new SludgePileBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.COLOR_PURPLE)
+                    .strength(0.6f)
+                    .sound(SoundType.MUD)
+                    .noOcclusion()
+                    .pushReaction(PushReaction.DESTROY)));
+
+    public static final Block PUNCHINGBAG = registerBlock("punchingbag",
+            new PunchingBagBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.METAL)
+                    .strength(1.0f)
+                    .sound(SoundType.METAL)
+                    .noOcclusion()));
+
+    public static final Block PUNCHINGBAG_BAG_DISPLAY = registerBlockWithoutItem("punchingbag_bag_display",
+            new Block(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.METAL)
+                    .strength(1.0f)
+                    .noOcclusion()
+                    .noLootTable()
+                    .noCollission()));
+
+    public static final Block TOMBSTONE = registerBlock("tombstone",
+            new TombstoneBlock.Standard(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.STONE)
+                    .strength(1.5f, 6.0f)
+                    .sound(SoundType.STONE)
+                    .requiresCorrectToolForDrops()
+                    .noOcclusion()));
+
+    public static final Block TOMBSTONE_SMALL = registerBlock("tombstone_small",
+            new TombstoneBlock.Small(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.STONE)
+                    .strength(1.5f, 6.0f)
+                    .sound(SoundType.STONE)
+                    .requiresCorrectToolForDrops()
+                    .noOcclusion()));
+
+    public static final Block DISTORTION_ROCK_BLOCK = registerBlock("distortion_rock_block",
+            new Block(BlockBehaviour.Properties.ofFullCopy(Blocks.DEEPSLATE)));
+
+    public static final Block DISTORTION_ROCK_BLOCK_STONEBRICKS = registerBlock("distortion_rock_block_stonebricks",
+            new Block(BlockBehaviour.Properties.ofFullCopy(Blocks.DEEPSLATE)));
+
+    public static final Block DISTORTION_ROCK_BLOCK_STONEBRICKS_STAIRS = registerBlock("distortion_rock_block_stonebricks_stairs",
+            new StairBlock(DISTORTION_ROCK_BLOCK_STONEBRICKS.defaultBlockState(),
+                    BlockBehaviour.Properties.ofFullCopy(DISTORTION_ROCK_BLOCK_STONEBRICKS)));
+
+    public static final Block DISTORTION_ROCK_BLOCK_STONEBRICKS_SLAB = registerBlock("distortion_rock_block_stonebricks_slab",
+            new SlabBlock(BlockBehaviour.Properties.ofFullCopy(DISTORTION_ROCK_BLOCK_STONEBRICKS)));
+
+    public static final Block DISTORTION_ROCK_BLOCK_CHISELED = registerBlock("distortion_rock_block_chiseled",
+            new Block(BlockBehaviour.Properties.ofFullCopy(Blocks.DEEPSLATE)));
+
+    public static final Block DISTORTION_ROCK_BLOCK_CRACKED = registerBlock("distortion_rock_block_cracked",
+            new Block(BlockBehaviour.Properties.ofFullCopy(Blocks.DEEPSLATE)));
 
     public static final Block UNION_ROOM_BRICKS_GREEN = registerBlock("union_room_bricks_green",
             unionRoomBricksBlock());
