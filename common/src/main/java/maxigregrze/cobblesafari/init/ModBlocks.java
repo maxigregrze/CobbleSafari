@@ -58,7 +58,11 @@ import maxigregrze.cobblesafari.block.underground.UndergroundPCBlock;
 import maxigregrze.cobblesafari.block.underground.UndergroundSecretBlock;
 import maxigregrze.cobblesafari.block.incubator.IncubatorBlock;
 import maxigregrze.cobblesafari.block.incubator.IncubatorBlockItem;
+import maxigregrze.cobblesafari.block.csboss.CsBossElectricityBlock;
 import maxigregrze.cobblesafari.block.csboss.CsBossTriggerBlock;
+import maxigregrze.cobblesafari.block.csboss.MeteoriteBlock;
+import maxigregrze.cobblesafari.block.balm.BalmDispenserBlock;
+import maxigregrze.cobblesafari.block.balm.BalmDispenserDistortionBlock;
 import maxigregrze.cobblesafari.block.rotomphone.EmptyPhoneBlock;
 import maxigregrze.cobblesafari.block.underground.UndergroundTimberBlock;
 import net.minecraft.core.Registry;
@@ -83,6 +87,36 @@ import java.util.Map;
 public class ModBlocks {
 
     private ModBlocks() {}
+
+    /** Blocs météorite éphémères posés par les attaques de boss roche/dragon (plan 107). Sans item créatif. */
+    public static final Block METEORITE = registerBlockWithoutItem("meteorite",
+            new MeteoriteBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.STONE)
+                    .sound(SoundType.STONE)
+                    .strength(1.5F), 200));
+
+    public static final Block DRACO_METEORITE = registerBlockWithoutItem("draco_meteorite",
+            new MeteoriteBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.COLOR_PURPLE)
+                    .sound(SoundType.STONE)
+                    .strength(1.5F), 400));
+
+    /** Bloc d'affichage (modèle uniquement) du tas de terre de {@code base_ground_1} (plan 113). */
+    public static final Block ATTACK_DIGDIRT_DISPLAY = registerBlockWithoutItem("attack_digdirt_display",
+            new Block(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.DIRT)
+                    .noCollission()
+                    .noOcclusion()
+                    .strength(0.0F)));
+
+    /** Champ électrique piège posé par {@code base_electric_2} (plan 108). Sans item créatif. */
+    public static final Block CSBOSS_ELECTRICITY = registerBlockWithoutItem("csboss_electricity",
+            new CsBossElectricityBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.COLOR_YELLOW)
+                    .noCollission()
+                    .noOcclusion()
+                    .strength(0.0F)
+                    .lightLevel(s -> 6)));
 
     public static final Block SAFARI_TELEPORTER = registerBlock("safari_teleporter",
             new SafariTeleporterBlock(BlockBehaviour.Properties.of()
@@ -656,6 +690,24 @@ public class ModBlocks {
                     .sound(SoundType.METAL)
                     .requiresCorrectToolForDrops()
                     .lightLevel(state -> state.getValue(CsBossTriggerBlock.ACTIVE) ? 10 : 3)
+            ));
+
+    public static final Block BALM_DISPENSER = registerBlock("balm_dispenser",
+            new BalmDispenserBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.COLOR_YELLOW)
+                    .strength(2.0f, 6.0f)
+                    .sound(SoundType.METAL)
+                    .requiresCorrectToolForDrops()
+                    .noOcclusion()
+            ));
+
+    public static final Block BALM_DISPENSER_DISTORTION = registerBlock("balm_dispenser_distortion",
+            new BalmDispenserDistortionBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.COLOR_PURPLE)
+                    .strength(2.0f, 6.0f)
+                    .sound(SoundType.METAL)
+                    .requiresCorrectToolForDrops()
+                    .noOcclusion()
             ));
 
     public static final Block AUSPICIOUS_POKEBALL = registerBlock("auspicious_pokeball",

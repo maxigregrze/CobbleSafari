@@ -150,9 +150,10 @@ public final class CsBossCommand {
         ctx.getSource().sendSuccess(() -> Component.literal("== CSBoss " + def.bossId() + " =="), false);
         ctx.getSource().sendSuccess(() -> Component.literal("displayName: " + def.effectiveDisplayName()), false);
         ctx.getSource().sendSuccess(() -> Component.literal("species: " + def.specie()), false);
+        ctx.getSource().sendSuccess(() -> Component.literal("minion: " + def.effectiveMinionSpecie()), false);
         ctx.getSource().sendSuccess(() -> Component.literal("tags: " + def.tags()), false);
         ctx.getSource().sendSuccess(() -> Component.literal("duration: " + def.minimumDuration()
-                + ".." + def.maximumDuration() + " ticks"), false);
+                + ".." + def.maximumDuration() + " s"), false);
         ctx.getSource().sendSuccess(() -> Component.literal("size: " + def.size()
                 + "  isStatic: " + def.isStatic()), false);
         ctx.getSource().sendSuccess(() -> Component.literal("cooldown: " + def.moveCooldownMin()
@@ -163,6 +164,10 @@ public final class CsBossCommand {
                 + (def.uniqueReward() != null ? "  unique: " + def.uniqueReward() : "")), false);
         ctx.getSource().sendSuccess(() -> Component.literal("bar: " + def.healthStyle()
                 + " / " + def.healthColor()), false);
+        if (def.hasSecondPhase()) {
+            ctx.getSource().sendSuccess(() -> Component.literal("secondPhase: " + def.secondPhase()
+                    + " (rewards before: " + def.giveRewardsBeforeSecondPhase() + ")"), false);
+        }
         return 1;
     }
 }

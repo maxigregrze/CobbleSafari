@@ -127,6 +127,8 @@ public class ModCreativeTabs {
                 output.accept(ModItems.MUD_BALL);
                 output.accept(ModItems.TINKAGEAR);
                 output.accept(ModItems.BAIT);
+                output.accept(ModItems.BALM);
+                output.accept(ModBlocks.BALM_DISPENSER);
             })
             .build();
 
@@ -169,6 +171,8 @@ public class ModCreativeTabs {
                 output.accept(ModItems.REDCHAIN_RANDOM_LEVEL);
                 output.accept(ModItems.REDCHAIN_RANDOM_SHINY);
                 output.accept(ModItems.REDCHAIN_FRAGMENT);
+                output.accept(ModItems.BALM_DISTORTION);
+                output.accept(ModBlocks.BALM_DISPENSER_DISTORTION);
             })
             .build();
 

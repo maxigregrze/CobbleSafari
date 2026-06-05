@@ -97,6 +97,8 @@ public final class CsBossDataLoader {
             return null;
         }
 
+        String minion = readMinionSpecie(json, source);
+
         ResourceLocation rewards = ResourceLocation.tryParse(json.get("rewards").getAsString().trim());
         if (rewards == null) {
             CobbleSafari.LOGGER.warn("[CSBoss] {} invalid rewards loot table id", source);
@@ -131,8 +133,34 @@ public final class CsBossDataLoader {
         BossEvent.BossBarColor color = parseColor(json.has("healthColor")
                 ? json.get("healthColor").getAsString() : null, source);
 
-        return new CsBossDefinition(bossId, displayName, tags, maximumDuration, minimumDuration, specie, size,
-                moveSet, cdMin, cdMax, isStatic, uniqueReward, rewards, music, overlay, color);
+        String secondPhase = json.has("secondPhase") && !json.get("secondPhase").getAsString().isBlank()
+                ? json.get("secondPhase").getAsString().trim() : null;
+        boolean giveRewardsBeforeSecondPhase = json.has("giveRewardsBeforeSecondPhase")
+                && json.get("giveRewardsBeforeSecondPhase").getAsBoolean();
+        boolean allowSimultaneousAttacks = json.has("allowSimultaneousAttacks")
+                && json.get("allowSimultaneousAttacks").getAsBoolean();
+
+        return new CsBossDefinition(bossId, displayName, tags, maximumDuration, minimumDuration, specie, minion,
+                size, moveSet, cdMin, cdMax, isStatic, uniqueReward, rewards, music, overlay, color,
+                secondPhase, giveRewardsBeforeSecondPhase, allowSimultaneousAttacks);
+    }
+
+    /** Espèce des minions (optionnelle) ; validée comme une ligne PokemonProperties, sinon ignorée. */
+    private static String readMinionSpecie(JsonObject json, String source) {
+        if (!json.has("minion") || json.get("minion").getAsString().isBlank()) {
+            return null;
+        }
+        String minion = json.get("minion").getAsString().trim();
+        try {
+            if (PokemonProperties.Companion.parse(minion).getSpecies() == null) {
+                CobbleSafari.LOGGER.warn("[CSBoss] {} 'minion' has no species: {} — ignored", source, minion);
+                return null;
+            }
+        } catch (Exception e) {
+            CobbleSafari.LOGGER.warn("[CSBoss] {} could not parse 'minion' '{}' — ignored", source, minion, e);
+            return null;
+        }
+        return minion;
     }
 
     /** Lit le nom affiché ({@code displayName}, alias toléré {@code displayname}). */

@@ -21,6 +21,7 @@ import maxigregrze.cobblesafari.block.misc.VoidBlockEntity;
 import maxigregrze.cobblesafari.CobbleSafari;
 import maxigregrze.cobblesafari.block.incubator.IncubatorBlockEntity;
 import maxigregrze.cobblesafari.block.csboss.CsBossTriggerBlockEntity;
+import maxigregrze.cobblesafari.block.balm.BalmDispenserBlockEntity;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
@@ -50,6 +51,7 @@ public class ModBlockEntities {
     public static BlockEntityType<UnionRoomSpotlightBlockEntity> UNION_ROOM_SPOTLIGHT;
     public static BlockEntityType<PunchingBagBlockEntity> PUNCHINGBAG;
     public static BlockEntityType<CsBossTriggerBlockEntity> CSBOSS_TRIGGER;
+    public static BlockEntityType<BalmDispenserBlockEntity> BALM_DISPENSER;
 
     public static void register() {
         CobbleSafari.LOGGER.info("Registering block entities for " + CobbleSafari.MOD_ID);
@@ -184,6 +186,13 @@ public class ModBlockEntities {
                 BuiltInRegistries.BLOCK_ENTITY_TYPE,
                 ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, "csboss_trigger"),
                 BlockEntityType.Builder.of(CsBossTriggerBlockEntity::new, ModBlocks.CSBOSS_TRIGGER).build(null)
+        );
+
+        BALM_DISPENSER = Registry.register(
+                BuiltInRegistries.BLOCK_ENTITY_TYPE,
+                ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, "balm_dispenser"),
+                BlockEntityType.Builder.of(BalmDispenserBlockEntity::new,
+                        ModBlocks.BALM_DISPENSER, ModBlocks.BALM_DISPENSER_DISTORTION).build(null)
         );
     }
 }

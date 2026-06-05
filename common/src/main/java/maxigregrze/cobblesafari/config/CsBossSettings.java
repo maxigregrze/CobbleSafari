@@ -25,8 +25,7 @@ public class CsBossSettings {
 
     private boolean uniqueLootCommunism = false;
     private int maximumConcurrentFights = 5;
-    private int minimumFightDuration = 120;   // secondes
-    private int maximumFightDuration = 900;   // secondes
+    private int maximumFightDuration = 900;   // secondes — plafond dur global (pas de plancher)
     private int defaultPlayerRadius = 24;     // blocs
     private int defaultBlockRadius = 2;       // chunks
     private int maxConcurrentBulletsPerSession = 256;
@@ -34,6 +33,9 @@ public class CsBossSettings {
     private int maxBlockRadius = 8;           // plafond dur (chunks)
     private int arenaYTolerance = 16;         // blocs (capture participants + barre)
     private String deathReasonCowardice = DEFAULT_COWARDICE_KEY;
+    private int balmDispenserRechargeSeconds = 30;
+    private int balmBossDamagePercent = 5;    // % de la barre/timer du boss retiré par baume touché
+    private boolean showFightingPokemons = true; // affiche les Pokémon des joueurs autour du boss (esthétique)
 
     public static void load() {
         if (Files.exists(CONFIG_PATH)) {
@@ -66,8 +68,7 @@ public class CsBossSettings {
     }
 
     private void validateAndFix() {
-        minimumFightDuration = Math.max(1, minimumFightDuration);
-        maximumFightDuration = Math.max(minimumFightDuration, maximumFightDuration);
+        maximumFightDuration = Math.max(1, maximumFightDuration);
         maximumConcurrentFights = Math.max(0, maximumConcurrentFights);
         defaultPlayerRadius = Math.max(1, defaultPlayerRadius);
         defaultBlockRadius = Math.max(0, defaultBlockRadius);
@@ -78,6 +79,8 @@ public class CsBossSettings {
         if (deathReasonCowardice == null || deathReasonCowardice.isBlank()) {
             deathReasonCowardice = DEFAULT_COWARDICE_KEY;
         }
+        balmDispenserRechargeSeconds = Math.max(1, balmDispenserRechargeSeconds);
+        balmBossDamagePercent = Math.max(0, Math.min(100, balmBossDamagePercent));
     }
 
     public static void save() {
@@ -107,10 +110,6 @@ public class CsBossSettings {
 
     public int getMaximumConcurrentFights() {
         return maximumConcurrentFights;
-    }
-
-    public int getMinimumFightDuration() {
-        return minimumFightDuration;
     }
 
     public int getMaximumFightDuration() {
@@ -143,5 +142,17 @@ public class CsBossSettings {
 
     public String getDeathReasonCowardice() {
         return deathReasonCowardice;
+    }
+
+    public int getBalmDispenserRechargeSeconds() {
+        return balmDispenserRechargeSeconds;
+    }
+
+    public int getBalmBossDamagePercent() {
+        return balmBossDamagePercent;
+    }
+
+    public boolean isShowFightingPokemons() {
+        return showFightingPokemons;
     }
 }

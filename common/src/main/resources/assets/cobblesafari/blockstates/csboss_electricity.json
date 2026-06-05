@@ -1,0 +1,6 @@
+{
+	"variants": {
+		"active=false": {"model": "cobblesafari:block/attack_electricity_charging"},
+		"active=true": {"model": "cobblesafari:block/attack_electricity"}
+	}
+}

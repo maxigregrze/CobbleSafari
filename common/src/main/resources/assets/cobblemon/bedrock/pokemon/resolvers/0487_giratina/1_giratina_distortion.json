@@ -1,0 +1,12 @@
+{
+  "species": "cobblemon:giratina",
+  "order": 1,
+  "variations": [
+    {
+      "aspects": ["distortion"],
+      "poser": "cobblesafari:giratinashadow",
+      "model": "cobblesafari:giratinashadow.geo",
+      "texture": "cobblesafari:textures/pokemon/giratina_distortion.png"
+    }
+  ]
+}

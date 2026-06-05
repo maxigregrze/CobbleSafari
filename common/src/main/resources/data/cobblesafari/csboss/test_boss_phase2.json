@@ -1,0 +1,20 @@
+{
+  "bossId": "test_boss_phase2",
+  "displayName": "Mega Blastoise",
+  "tags": ["test_tag"],
+  "maximumDuration": 120,
+  "minimumDuration": 90,
+  "specie": "blastoise mega_evolution=mega",
+  "minion": "blastoise mega_evolution=mega",
+  "size": 3,
+  "allowSimultaneousAttacks": true,
+  "moveSet": ["base_electric_1", "base_fire_1", "base_rock_1", "base_dragon_1", "distortion_1", "base_ghost_1", "base_electric_2", "base_electric_3", "base_rock_2", "base_water_1", "base_water_2"],
+  "moveCooldownMin": 1,
+  "moveCooldownMax": 2,
+  "isStatic": true,
+  "uniqueReward": "cobblesafari:csboss/test_unique",
+  "rewards": "cobblesafari:csboss/test_common",
+  "music": "cobblesafari:giratina",
+  "healthStyle": "notched_10",
+  "healthColor": "blue"
+}

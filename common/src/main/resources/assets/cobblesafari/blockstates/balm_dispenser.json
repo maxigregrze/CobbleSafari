@@ -1,0 +1,14 @@
+{
+  "variants": {
+    "active=false": { "model": "cobblesafari:block/balm_dispenser" },
+    "active=true,charge=0": { "model": "cobblesafari:block/balm_dispenser_active_0" },
+    "active=true,charge=1": { "model": "cobblesafari:block/balm_dispenser_active_1" },
+    "active=true,charge=2": { "model": "cobblesafari:block/balm_dispenser_active_2" },
+    "active=true,charge=3": { "model": "cobblesafari:block/balm_dispenser_active_3" },
+    "active=true,charge=4": { "model": "cobblesafari:block/balm_dispenser_active_4" },
+    "active=true,charge=5": { "model": "cobblesafari:block/balm_dispenser_active_5" },
+    "active=true,charge=6": { "model": "cobblesafari:block/balm_dispenser_active_6" },
+    "active=true,charge=7": { "model": "cobblesafari:block/balm_dispenser_active_7" },
+    "active=true,charge=8": { "model": "cobblesafari:block/balm_dispenser_active_8" }
+  }
+}

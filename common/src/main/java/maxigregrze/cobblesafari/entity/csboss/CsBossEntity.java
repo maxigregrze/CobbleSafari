@@ -48,8 +48,8 @@ public class CsBossEntity extends Mob {
 
     /** Hauteur (blocs) de chute pendant l'entrée. */
     public static final double ENTRANCE_HEIGHT = 5.0;
-    /** Décalage Y de la position cible au-dessus du bloc trigger. */
-    public static final double STAND_Y_OFFSET = 1.0;
+    /** Décalage Y de la position cible : 0 ⇒ le boss est « dans » le bloc trigger, pas posé dessus. */
+    public static final double STAND_Y_OFFSET = 0.0;
 
     private static final String KEY_SPECIE = "Specie";
     private static final String KEY_SIZE = "Size";
@@ -163,6 +163,10 @@ public class CsBossEntity extends Mob {
 
     public boolean isStaticBoss() {
         return this.staticBoss;
+    }
+
+    public void setStaticBoss(boolean staticBoss) {
+        this.staticBoss = staticBoss;
     }
 
     public int getAttackSeq() {

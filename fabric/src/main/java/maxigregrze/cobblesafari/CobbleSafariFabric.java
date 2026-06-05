@@ -97,6 +97,7 @@ public class CobbleSafariFabric implements ModInitializer {
         FabricDefaultAttributeRegistry.register(ModEntities.BALLOON, ModEntities.getBalloonAttributes());
         FabricDefaultAttributeRegistry.register(ModEntities.BALLOON_SAFARI, ModEntities.getBalloonSafariAttributes());
         FabricDefaultAttributeRegistry.register(ModEntities.CSBOSS, ModEntities.getCsBossAttributes());
+        FabricDefaultAttributeRegistry.register(ModEntities.CSBOSS_MINION, ModEntities.getCsBossMinionAttributes());
     }
 
     private void registerNetworking() {

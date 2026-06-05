@@ -25,27 +25,47 @@ public class AttackScheduler {
     private final List<String> pool;
     private final int cooldownMinTicks;
     private final int cooldownMaxTicks;
+    private final boolean allowSimultaneous;
 
-    private CsBossAttack current;
+    /** Attaques en cours (1, ou 2 de catégories différentes si {@code allowSimultaneousAttacks}). */
+    private final List<CsBossAttack> active = new ArrayList<>();
     private int cooldown;
 
     public AttackScheduler(CsBossDefinition def) {
         this.pool = resolvePool(def);
         this.cooldownMinTicks = def.moveCooldownMin() * 20;
         this.cooldownMaxTicks = def.moveCooldownMax() * 20;
+        this.allowSimultaneous = def.allowSimultaneousAttacks();
         this.cooldown = rollCooldown();
     }
 
     /** {@code true} si un pattern d'attaque est en cours (le boss doit alors rester immobile). */
     public boolean isAttacking() {
-        return current != null;
+        return !active.isEmpty();
+    }
+
+    /** {@code true} si un pattern en cours pilote l'orientation du boss (cf. {@code distortion_1}). */
+    public boolean attackControlsRotation() {
+        for (CsBossAttack a : active) {
+            if (a.controlsBossRotation()) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public void tick(ServerLevel level, BossBattleSession session, CsBossEntity boss) {
-        if (current != null) {
-            current.tick(level, session, boss);
-            if (current.isDone()) {
-                current = null;
+        if (!active.isEmpty()) {
+            boolean allDone = true;
+            for (CsBossAttack a : active) {
+                a.tick(level, session, boss);
+                if (!a.isDone()) {
+                    allDone = false;
+                }
+            }
+            // Le duo se termine quand la plus longue des deux attaques est finie.
+            if (allDone) {
+                active.clear();
                 cooldown = rollCooldown();
             }
             return;
@@ -57,14 +77,37 @@ public class AttackScheduler {
             cooldown--;
             return;
         }
-        String id = pool.get(random.nextInt(pool.size()));
-        CsBossAttack attack = CsBossAttackRegistry.create(id);
-        if (attack == null) {
+        startAttacks(level, session, boss);
+    }
+
+    private void startAttacks(ServerLevel level, BossBattleSession session, CsBossEntity boss) {
+        CsBossAttack first = CsBossAttackRegistry.create(pool.get(random.nextInt(pool.size())));
+        if (first == null) {
             cooldown = rollCooldown();
             return;
         }
-        current = attack;
-        current.begin(level, session, boss);
+        first.begin(level, session, boss);
+        active.add(first);
+
+        if (allowSimultaneous) {
+            // Seconde attaque d'une catégorie différente (sinon on n'en joue qu'une).
+            CsBossAttack second = pickDifferentCategory(first.category());
+            if (second != null) {
+                second.begin(level, session, boss);
+                active.add(second);
+            }
+        }
+    }
+
+    private CsBossAttack pickDifferentCategory(AttackCategory exclude) {
+        List<CsBossAttack> candidates = new ArrayList<>();
+        for (String id : pool) {
+            CsBossAttack a = CsBossAttackRegistry.create(id);
+            if (a != null && a.category() != exclude) {
+                candidates.add(a);
+            }
+        }
+        return candidates.isEmpty() ? null : candidates.get(random.nextInt(candidates.size()));
     }
 
     private int rollCooldown() {

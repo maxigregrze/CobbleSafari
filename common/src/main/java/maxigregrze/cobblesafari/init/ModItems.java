@@ -3,6 +3,7 @@ package maxigregrze.cobblesafari.init;
 import maxigregrze.cobblesafari.CobbleSafari;
 import maxigregrze.cobblesafari.config.SpawnBoostConfig;
 import maxigregrze.cobblesafari.item.BaitItem;
+import maxigregrze.cobblesafari.item.BalmItem;
 import maxigregrze.cobblesafari.item.CreativeEggItem;
 import maxigregrze.cobblesafari.item.CreativeFlagItem;
 import maxigregrze.cobblesafari.item.IncenseItem;
@@ -110,6 +111,8 @@ public class ModItems {
     public static final Item MUD_BALL = new MudBallItem(new Item.Properties().stacksTo(64));
     public static final Item TINKAGEAR = new Item(new Item.Properties());
     public static final Item BAIT = new BaitItem(new Item.Properties().stacksTo(64));
+    public static final Item BALM = new BalmItem(new Item.Properties().stacksTo(16));
+    public static final Item BALM_DISTORTION = new BalmItem(new Item.Properties().stacksTo(16));
 
     public static final Item REDCHAIN_RANDOM_BALL = new RedChainRandomBallItem(new Item.Properties().stacksTo(1), "redchain_random_ball");
     public static final Item REDCHAIN_RANDOM_EV = new RedChainRandomEVItem(new Item.Properties().stacksTo(1), "redchain_random_ev");
@@ -260,6 +263,8 @@ public class ModItems {
         registerItem("mud_ball", MUD_BALL);
         registerItem("tinkagear", TINKAGEAR);
         registerItem("bait", BAIT);
+        registerItem("balm", BALM);
+        registerItem("balm_distortion", BALM_DISTORTION);
 
         registerItem("redchain_random_ball", REDCHAIN_RANDOM_BALL);
         registerItem("redchain_random_ev", REDCHAIN_RANDOM_EV);

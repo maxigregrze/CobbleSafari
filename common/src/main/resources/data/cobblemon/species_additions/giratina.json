@@ -1,0 +1,34 @@
+{
+  "target": "cobblemon:giratina",
+  "features": ["distortion"],
+  "forms": [
+    {
+      "name": "Distortion",
+      "aspects": ["distortion"],
+      "baseStats": {
+        "hp": 150,
+        "attack": 150,
+        "defence": 150,
+        "special_attack": 150,
+        "special_defence": 150,
+        "speed": 90
+      },
+      "catchRate": 0,
+      "baseScale": 2.5,
+      "drops": {
+        "amount": 1,
+        "entries": [
+          {
+            "item": "cobblesafari:redchain_fragment",
+            "quantityRange": "1-1"
+          }
+        ]
+      },
+      "hitbox": {
+        "width": 1.5,
+        "height": 2.5,
+        "fixed": false
+      }
+    }
+  ]
+}

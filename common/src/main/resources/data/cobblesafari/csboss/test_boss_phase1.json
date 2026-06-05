@@ -1,0 +1,22 @@
+{
+  "bossId": "test_boss_phase1",
+  "displayName": "Blastoise",
+  "tags": ["test_tag"],
+  "maximumDuration": 120,
+  "minimumDuration": 90,
+  "specie": "blastoise",
+  "minion": "blastoise",
+  "size": 3,
+  "allowSimultaneousAttacks": false,
+  "moveSet": ["base_electric_1", "base_fire_1", "base_rock_1", "base_dragon_1", "distortion_1", "base_ghost_1", "base_electric_2", "base_electric_3", "base_rock_2", "base_water_1", "base_water_2"],
+  "moveCooldownMin": 2,
+  "moveCooldownMax": 4,
+  "isStatic": true,
+  "uniqueReward": "cobblesafari:csboss/test_unique",
+  "rewards": "cobblesafari:csboss/test_common",
+  "music": "cobblesafari:giratina",
+  "healthStyle": "notched_10",
+  "healthColor": "blue",
+  "secondPhase": "test_boss_phase2",
+  "giveRewardsBeforeSecondPhase": false
+}

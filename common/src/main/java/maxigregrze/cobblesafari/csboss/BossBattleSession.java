@@ -3,6 +3,7 @@ package maxigregrze.cobblesafari.csboss;
 import maxigregrze.cobblesafari.csboss.attack.AttackScheduler;
 import maxigregrze.cobblesafari.entity.csboss.CsBossBulletEntity;
 import maxigregrze.cobblesafari.entity.csboss.CsBossEntity;
+import maxigregrze.cobblesafari.entity.csboss.CsBossMinionEntity;
 import maxigregrze.cobblesafari.config.CsBossSettings;
 import maxigregrze.cobblesafari.data.CsBossSavedData;
 import maxigregrze.cobblesafari.init.ModEntities;
@@ -15,6 +16,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.BossEvent;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -43,18 +45,31 @@ public class BossBattleSession {
     private final BlockPos triggerPos;
     private final Vec3 arenaCenter;
     private final int playerRadius;
-    private final CsBossDefinition def;
     private final UUID bossUuid;
 
     private final ServerBossEvent bossBar;
     private final Map<UUID, ParticipantState> participants = new LinkedHashMap<>();
     private final List<BlockPos> changedBlocks;
     private final Set<UUID> activeBullets = new java.util.HashSet<>();
-    private final AttackScheduler scheduler;
+    private final Set<UUID> activeMinions = new java.util.HashSet<>();
+    private final Set<UUID> activeAttackEntities = new java.util.HashSet<>();
+    /** Minions « Pokémon combattants » décoratifs autour du boss (plan 112). */
+    private final Set<UUID> fightingPokemons = new java.util.HashSet<>();
+    private boolean fightingPokemonsSpawned = false;
+    private int activeTicks = 0;
     private final int maxBullets;
 
-    private final int totalDuration;
+    /** Définition de la phase courante (peut changer en seconde phase). */
+    private CsBossDefinition def;
+    private AttackScheduler scheduler;
+    private int totalDuration;
     private int remaining;
+
+    /** Y du boss au début de l'agonie (pour la remontée de +5 blocs). */
+    private double deathOriginY;
+    /** Définition de la phase suivante résolue, en attente (mi‑agonie), ou {@code null}. */
+    @Nullable
+    private CsBossDefinition pendingNextDef;
 
     public BossBattleSession(int id, ResourceKey<Level> dimension, BlockPos triggerPos,
                              CsBossDefinition def, UUID bossUuid, Set<UUID> participantUuids,
@@ -97,6 +112,43 @@ public class BossBattleSession {
 
     public int getPhaseTimer() {
         return phaseTimer;
+    }
+
+    public double getDeathOriginY() {
+        return deathOriginY;
+    }
+
+    public void setDeathOriginY(double y) {
+        this.deathOriginY = y;
+    }
+
+    @Nullable
+    public CsBossDefinition getPendingNextDef() {
+        return pendingNextDef;
+    }
+
+    public void setPendingNextDef(@Nullable CsBossDefinition next) {
+        this.pendingNextDef = next;
+    }
+
+    /**
+     * Bascule la session sur une nouvelle définition (seconde phase) : nouvelle durée, nouveau
+     * scheduler d'attaques, et mise à jour de la barre de boss (nom/couleur/style).
+     */
+    public void startPhase(CsBossDefinition newDef, int newDuration) {
+        this.def = newDef;
+        this.scheduler = new AttackScheduler(newDef);
+        this.totalDuration = Math.max(1, newDuration);
+        this.remaining = this.totalDuration;
+        this.pendingNextDef = null;
+        // Réinitialise les Pokémon décoratifs : ils réapparaîtront 3 s après le début de la nouvelle phase.
+        this.fightingPokemonsSpawned = false;
+        this.activeTicks = 0;
+        this.fightingPokemons.clear();
+        this.bossBar.setName(Component.literal(newDef.effectiveDisplayName()));
+        this.bossBar.setColor(newDef.healthColor());
+        this.bossBar.setOverlay(newDef.healthStyle());
+        this.bossBar.setProgress(1.0F);
     }
 
     // --- Accès ---------------------------------------------------------------
@@ -163,6 +215,16 @@ public class BossBattleSession {
         }
     }
 
+    /**
+     * Retire un pourcentage de la durée totale au compte à rebours (= barre de vie du boss).
+     * Utilisé par l'impact d'un baume lancé. {@code percent} est borné [0, 100].
+     */
+    public void reduceRemainingByPercent(int percent) {
+        int pct = Math.max(0, Math.min(100, percent));
+        int reduction = Math.round(totalDuration * (pct / 100.0F));
+        remaining = Math.max(0, remaining - reduction);
+    }
+
     public float progress() {
         return Math.max(0.0F, remaining / (float) totalDuration);
     }
@@ -196,6 +258,80 @@ public class BossBattleSession {
     /** Purge les bullets disparues + renvoie la liste à supprimer côté monde. */
     public void pruneBullets(ServerLevel level) {
         activeBullets.removeIf(uuid -> level.getEntity(uuid) == null);
+    }
+
+    // --- Minions -------------------------------------------------------------
+
+    public Set<UUID> getActiveMinions() {
+        return activeMinions;
+    }
+
+    /**
+     * Fait apparaître un minion de ce boss, à l'espèce {@code minion} du data model
+     * (sinon l'espèce du boss). Suivi pour le nettoyage en fin de combat.
+     */
+    public CsBossMinionEntity spawnMinion(ServerLevel level, Vec3 pos, int size) {
+        CsBossMinionEntity minion = CsBossMinionEntity.spawn(
+                level, pos.x, pos.y, pos.z, def.effectiveMinionSpecie(), size, id);
+        activeMinions.add(minion.getUUID());
+        return minion;
+    }
+
+    public CsBossMinionEntity spawnMinion(ServerLevel level, Vec3 pos) {
+        return spawnMinion(level, pos, def.size());
+    }
+
+    public void pruneMinions(ServerLevel level) {
+        activeMinions.removeIf(uuid -> level.getEntity(uuid) == null);
+    }
+
+    // --- Entités d'attaque custom (ombres, météorites, tiges) -----------------
+
+    /** Suivi générique des entités d'attaque (plan 107) pour le nettoyage en fin de combat. */
+    public Set<UUID> getActiveAttackEntities() {
+        return activeAttackEntities;
+    }
+
+    /** Enregistre une entité d'attaque pour le cleanup et renvoie l'entité (chaînage). */
+    public <T extends net.minecraft.world.entity.Entity> T trackAttackEntity(T entity) {
+        activeAttackEntities.add(entity.getUUID());
+        return entity;
+    }
+
+    public void pruneAttackEntities(ServerLevel level) {
+        activeAttackEntities.removeIf(uuid -> level.getEntity(uuid) == null);
+    }
+
+    // --- Pokémon combattants décoratifs (plan 112) ---------------------------
+
+    public Set<UUID> getFightingPokemons() {
+        return fightingPokemons;
+    }
+
+    public boolean isFightingPokemonsSpawned() {
+        return fightingPokemonsSpawned;
+    }
+
+    public void setFightingPokemonsSpawned(boolean spawned) {
+        this.fightingPokemonsSpawned = spawned;
+    }
+
+    public int getActiveTicks() {
+        return activeTicks;
+    }
+
+    public int incActiveTicks() {
+        return ++activeTicks;
+    }
+
+    /**
+     * Fait apparaître un minion à une espèce explicite (ex. Voltorb forcé pour {@code base_electric_1}),
+     * indépendamment du champ {@code minion} du data model. Suivi pour le nettoyage en fin de combat.
+     */
+    public CsBossMinionEntity spawnFixedMinion(ServerLevel level, Vec3 pos, String specie, int size) {
+        CsBossMinionEntity minion = CsBossMinionEntity.spawn(level, pos.x, pos.y, pos.z, specie, size, id);
+        activeMinions.add(minion.getUUID());
+        return minion;
     }
 
     // --- Participants vivants ------------------------------------------------

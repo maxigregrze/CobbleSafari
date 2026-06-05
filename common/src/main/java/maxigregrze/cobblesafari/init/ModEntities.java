@@ -7,7 +7,17 @@ import maxigregrze.cobblesafari.entity.CsTraderEntity;
 import maxigregrze.cobblesafari.entity.HikerEntity;
 import maxigregrze.cobblesafari.entity.csboss.CsBossBulletEntity;
 import maxigregrze.cobblesafari.entity.csboss.CsBossEntity;
+import maxigregrze.cobblesafari.entity.csboss.CsBossMinionEntity;
+import maxigregrze.cobblesafari.entity.csboss.attacks.AttackDistortionStemCoreEntity;
+import maxigregrze.cobblesafari.entity.csboss.attacks.AttackDistortionStemEntity;
+import maxigregrze.cobblesafari.entity.csboss.attacks.AttackDigdirtEntity;
+import maxigregrze.cobblesafari.entity.csboss.attacks.AttackDistortionFlowerEntity;
+import maxigregrze.cobblesafari.entity.csboss.attacks.AttackGiratinaOrbEntity;
+import maxigregrze.cobblesafari.entity.csboss.attacks.AttackMeteoriteEntity;
+import maxigregrze.cobblesafari.entity.csboss.attacks.AttackShadowEntity;
+import maxigregrze.cobblesafari.entity.csboss.attacks.AttackWaveEntity;
 import maxigregrze.cobblesafari.entity.projectile.ThrownBaitEntity;
+import maxigregrze.cobblesafari.entity.projectile.ThrownBalmEntity;
 import maxigregrze.cobblesafari.entity.projectile.ThrownMudBallEntity;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -96,6 +106,16 @@ public class ModEntities {
                     .build(CobbleSafari.MOD_ID + ":thrown_bait")
     );
 
+    public static final EntityType<ThrownBalmEntity> THROWN_BALM = Registry.register(
+            BuiltInRegistries.ENTITY_TYPE,
+            ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, "thrown_balm"),
+            EntityType.Builder.<ThrownBalmEntity>of(ThrownBalmEntity::new, MobCategory.MISC)
+                    .sized(0.25f, 0.25f)
+                    .clientTrackingRange(4)
+                    .updateInterval(10)
+                    .build(CobbleSafari.MOD_ID + ":thrown_balm")
+    );
+
     public static final EntityType<CsBossEntity> CSBOSS = Registry.register(
             BuiltInRegistries.ENTITY_TYPE,
             ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, "csboss"),
@@ -118,8 +138,118 @@ public class ModEntities {
                     .build(CobbleSafari.MOD_ID + ":csboss_bullet")
     );
 
+    public static final EntityType<CsBossMinionEntity> CSBOSS_MINION = Registry.register(
+            BuiltInRegistries.ENTITY_TYPE,
+            ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, "csboss_minion"),
+            EntityType.Builder.<CsBossMinionEntity>of(CsBossMinionEntity::new, MobCategory.MISC)
+                    .sized(1.0f, 1.0f)
+                    .clientTrackingRange(10)
+                    .fireImmune()
+                    .build(CobbleSafari.MOD_ID + ":csboss_minion")
+    );
+
+    public static final EntityType<AttackShadowEntity> ATTACK_SHADOW = Registry.register(
+            BuiltInRegistries.ENTITY_TYPE,
+            ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, "attack_shadow"),
+            EntityType.Builder.<AttackShadowEntity>of(AttackShadowEntity::new, MobCategory.MISC)
+                    .sized(1.0f, 0.05f)
+                    .clientTrackingRange(10)
+                    .updateInterval(1)
+                    .fireImmune()
+                    .noSave()
+                    .build(CobbleSafari.MOD_ID + ":attack_shadow")
+    );
+
+    public static final EntityType<AttackMeteoriteEntity> ATTACK_METEORITE = Registry.register(
+            BuiltInRegistries.ENTITY_TYPE,
+            ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, "attack_meteorite"),
+            EntityType.Builder.<AttackMeteoriteEntity>of(AttackMeteoriteEntity::new, MobCategory.MISC)
+                    .sized(1.0f, 1.0f)
+                    .clientTrackingRange(10)
+                    .updateInterval(1)
+                    .fireImmune()
+                    .noSave()
+                    .build(CobbleSafari.MOD_ID + ":attack_meteorite")
+    );
+
+    public static final EntityType<AttackDistortionStemEntity> ATTACK_DISTORTION_STEM = Registry.register(
+            BuiltInRegistries.ENTITY_TYPE,
+            ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, "attack_distortion_stem"),
+            EntityType.Builder.<AttackDistortionStemEntity>of(AttackDistortionStemEntity::new, MobCategory.MISC)
+                    .sized(1.0f, 1.0f)
+                    .clientTrackingRange(10)
+                    .updateInterval(1)
+                    .fireImmune()
+                    .noSave()
+                    .build(CobbleSafari.MOD_ID + ":attack_distortion_stem")
+    );
+
+    public static final EntityType<AttackDistortionStemCoreEntity> ATTACK_DISTORTION_STEM_CORE = Registry.register(
+            BuiltInRegistries.ENTITY_TYPE,
+            ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, "attack_distortion_stem_core"),
+            EntityType.Builder.<AttackDistortionStemCoreEntity>of(AttackDistortionStemCoreEntity::new, MobCategory.MISC)
+                    .sized(0.1f, 0.1f)
+                    .clientTrackingRange(10)
+                    .updateInterval(1)
+                    .fireImmune()
+                    .noSave()
+                    .build(CobbleSafari.MOD_ID + ":attack_distortion_stem_core")
+    );
+
+    public static final EntityType<AttackWaveEntity> ATTACK_WAVE = Registry.register(
+            BuiltInRegistries.ENTITY_TYPE,
+            ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, "attack_wave"),
+            EntityType.Builder.<AttackWaveEntity>of(AttackWaveEntity::new, MobCategory.MISC)
+                    .sized(3.0f, 3.0f)
+                    .clientTrackingRange(12)
+                    .updateInterval(1)
+                    .fireImmune()
+                    .noSave()
+                    .build(CobbleSafari.MOD_ID + ":attack_wave")
+    );
+
+    public static final EntityType<AttackDistortionFlowerEntity> ATTACK_DISTORTION_FLOWER = Registry.register(
+            BuiltInRegistries.ENTITY_TYPE,
+            ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, "attack_distortion_flower"),
+            EntityType.Builder.<AttackDistortionFlowerEntity>of(AttackDistortionFlowerEntity::new, MobCategory.MISC)
+                    .sized(1.0f, 0.5f)
+                    .clientTrackingRange(10)
+                    .updateInterval(1)
+                    .fireImmune()
+                    .noSave()
+                    .build(CobbleSafari.MOD_ID + ":attack_distortion_flower")
+    );
+
+    public static final EntityType<AttackGiratinaOrbEntity> ATTACK_GIRATINA_ORB = Registry.register(
+            BuiltInRegistries.ENTITY_TYPE,
+            ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, "attack_giratina_orb"),
+            EntityType.Builder.<AttackGiratinaOrbEntity>of(AttackGiratinaOrbEntity::new, MobCategory.MISC)
+                    .sized(0.9f, 0.9f)
+                    .clientTrackingRange(10)
+                    .updateInterval(1)
+                    .fireImmune()
+                    .noSave()
+                    .build(CobbleSafari.MOD_ID + ":attack_giratina_orb")
+    );
+
+    public static final EntityType<AttackDigdirtEntity> ATTACK_DIGDIRT = Registry.register(
+            BuiltInRegistries.ENTITY_TYPE,
+            ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, "attack_digdirt"),
+            EntityType.Builder.<AttackDigdirtEntity>of(AttackDigdirtEntity::new, MobCategory.MISC)
+                    .sized(1.0f, 0.5f)
+                    .clientTrackingRange(10)
+                    .updateInterval(1)
+                    .fireImmune()
+                    .noSave()
+                    .build(CobbleSafari.MOD_ID + ":attack_digdirt")
+    );
+
     public static AttributeSupplier.Builder getCsBossAttributes() {
         return CsBossEntity.createAttributes();
+    }
+
+    public static AttributeSupplier.Builder getCsBossMinionAttributes() {
+        return CsBossMinionEntity.createAttributes();
     }
 
     public static void register() {

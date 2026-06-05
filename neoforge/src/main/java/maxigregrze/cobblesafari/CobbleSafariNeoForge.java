@@ -127,6 +127,7 @@ public class CobbleSafariNeoForge {
         event.put(ModEntities.BALLOON, ModEntities.getBalloonAttributes().build());
         event.put(ModEntities.BALLOON_SAFARI, ModEntities.getBalloonSafariAttributes().build());
         event.put(ModEntities.CSBOSS, ModEntities.getCsBossAttributes().build());
+        event.put(ModEntities.CSBOSS_MINION, ModEntities.getCsBossMinionAttributes().build());
     }
 
     private void onRegisterCommands(RegisterCommandsEvent event) {

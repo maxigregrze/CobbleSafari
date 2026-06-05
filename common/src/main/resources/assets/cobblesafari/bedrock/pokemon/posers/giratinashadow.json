@@ -1,0 +1,16 @@
+{
+  "portraitScale": 0.55,
+  "portraitTranslation": [0, 0.6, 0],
+  "profileScale": 0.4,
+  "profileTranslation": [0, 0.9, 0],
+  "rootBone": "bone",
+  "animations": {
+    "cry": "q.bedrock_stateful('giratinashadow', 'cry')"
+  },
+  "poses": {
+    "standing": {
+      "poseTypes": ["STAND", "WALK", "SWIM", "FLOAT", "NONE", "PORTRAIT", "PROFILE"],
+      "animations": ["q.bedrock('giratinashadow', 'ground_idle')"]
+    }
+  }
+}
