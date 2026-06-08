@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.Locale;
 
 /**
- * Configuration serveur pour le Global Trade Station ({@code gts_settings.json}).
+ * Server configuration for the Global Trade Station ({@code gts_settings.json}).
  */
 public class GtsSettings {
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();

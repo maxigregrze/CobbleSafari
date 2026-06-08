@@ -54,8 +54,8 @@ public class LostItemBlock extends BaseEntityBlock {
     private static final Logger LOGGER = LogUtils.getLogger();
 
     /**
-     * Poids par categorie (berry, candy, balls, treasures) pour le mode 0.
-     * Modifiable ulterieurement pour des distributions non uniformes.
+     * Per-category weights (berry, candy, balls, treasures) for mode 0.
+     * Can be changed later for non-uniform distributions.
      */
     private static final int[] CATEGORY_WEIGHTS = {1, 1, 1, 1};
 

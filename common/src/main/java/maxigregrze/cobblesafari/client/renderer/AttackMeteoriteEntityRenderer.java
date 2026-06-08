@@ -12,8 +12,8 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.state.BlockState;
 
 /**
- * Rend la météorite tombante (plan 107 § 4.2) via le modèle de bloc {@code meteorite} ou
- * {@code draco_meteorite} selon la variante, centré sur l'entité.
+ * Renders the falling meteorite (plan 107 § 4.2) via the {@code meteorite} or
+ * {@code draco_meteorite} block model depending on variant, centered on the entity.
  */
 public class AttackMeteoriteEntityRenderer extends EntityRenderer<AttackMeteoriteEntity> {
 
@@ -39,7 +39,7 @@ public class AttackMeteoriteEntityRenderer extends EntityRenderer<AttackMeteorit
         float scale = entity.getRenderScale();
         float spin = entity.getSpin();
         ps.pushPose();
-        ps.translate(0.0, 0.5, 0.0); // pivote autour du centre du bloc
+        ps.translate(0.0, 0.5, 0.0); // pivot around block center
         if (spin != 0.0F) {
             ps.mulPose(com.mojang.math.Axis.XP.rotationDegrees(spin));
             ps.mulPose(com.mojang.math.Axis.YP.rotationDegrees(spin));
@@ -48,7 +48,7 @@ public class AttackMeteoriteEntityRenderer extends EntityRenderer<AttackMeteorit
         if (scale != 1.0F) {
             ps.scale(scale, scale, scale);
         }
-        ps.translate(-0.5, -0.5, -0.5); // recentre le modèle [0,1]³
+        ps.translate(-0.5, -0.5, -0.5); // re-center the model [0,1]³
         blockRenderer.renderSingleBlock(state, ps, buffer, packedLight, OverlayTexture.NO_OVERLAY);
         ps.popPose();
         super.render(entity, yaw, partialTicks, ps, buffer, packedLight);

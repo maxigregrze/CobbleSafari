@@ -8,7 +8,7 @@
   "minion": "blastoise",
   "size": 3,
   "allowSimultaneousAttacks": false,
-  "moveSet": ["base_electric_1", "base_fire_1", "base_rock_1", "base_dragon_1", "distortion_1", "base_ghost_1", "base_electric_2", "base_electric_3", "base_rock_2", "base_water_1", "base_water_2"],
+  "moveSet": ["base_electric_1", "base_fire_1", "base_rock_1", "base_dragon_1", "distortion_1", "base_ghost_1", "base_electric_2", "base_electric_3", "base_rock_2", "base_water_1", "base_water_2","distortion_2", "distortion_3", "distortion_4", "base_rock_3", "base_rock_4", "base_ground_1"],
   "moveCooldownMin": 2,
   "moveCooldownMax": 4,
   "isStatic": true,

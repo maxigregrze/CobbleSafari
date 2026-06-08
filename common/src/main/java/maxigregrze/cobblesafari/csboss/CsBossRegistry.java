@@ -11,8 +11,8 @@ import java.util.Optional;
 import java.util.TreeMap;
 
 /**
- * Registre en mémoire des CSBosses chargés depuis les datapacks (plan 100 § 2.1).
- * Indexé par id direct et par tag (sélection équiprobable).
+ * In-memory registry of CSBosses loaded from datapacks (plan 100 § 2.1).
+ * Indexed by direct id and by tag (uniform random selection).
  */
 public final class CsBossRegistry {
     private static final Map<String, CsBossDefinition> BY_ID = new TreeMap<>();
@@ -42,8 +42,8 @@ public final class CsBossRegistry {
     }
 
     /**
-     * Résout une référence : id exact prioritaire, sinon tirage équiprobable parmi un tag.
-     * Retourne {@code null} si rien ne correspond.
+     * Resolves a reference: exact id first, otherwise uniform random pick from a tag.
+     * Returns {@code null} if nothing matches.
      */
     public static CsBossDefinition resolve(String ref) {
         if (ref == null || ref.isBlank()) {

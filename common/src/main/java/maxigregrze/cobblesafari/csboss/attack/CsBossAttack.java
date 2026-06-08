@@ -5,32 +5,32 @@ import maxigregrze.cobblesafari.entity.csboss.CsBossEntity;
 import net.minecraft.server.level.ServerLevel;
 
 /**
- * Petit automate tické représentant un pattern d'attaque (plan 100 § 12).
+ * Small ticked automaton representing an attack pattern (plan 100 § 12).
  */
 public interface CsBossAttack {
 
-    /** Appelé une fois au démarrage du pattern. */
+    /** Called once when the pattern starts. */
     default void begin(ServerLevel level, BossBattleSession session, CsBossEntity boss) {
-        // par défaut : rien
+        // by default: nothing
     }
 
-    /** Appelé chaque tick serveur tant que {@link #isDone()} est faux. */
+    /** Called each server tick while {@link #isDone()} is false. */
     void tick(ServerLevel level, BossBattleSession session, CsBossEntity boss);
 
-    /** {@code true} quand le pattern est terminé. */
+    /** {@code true} when the pattern is finished. */
     boolean isDone();
 
     /**
-     * {@code true} si le pattern pilote lui‑même l'orientation du boss (le manager ne force alors
-     * pas {@code faceTarget}). Utilisé par {@code distortion_1} pour faire tourner le boss sur lui‑même.
+     * {@code true} if the pattern controls boss orientation itself (the manager does not then
+     * force {@code faceTarget}). Used by {@code distortion_1} to spin the boss on itself.
      */
     default boolean controlsBossRotation() {
         return false;
     }
 
     /**
-     * Catégorie d'effet (plan 111) — utilisée pour autoriser deux attaques simultanées de catégories
-     * différentes. Par défaut {@link AttackCategory#SPREAD} (cas {@code test} / volées de bullets).
+     * Effect category (plan 111) — used to allow two simultaneous attacks of different
+     * categories. By default {@link AttackCategory#SPREAD} ({@code test} case / bullet volleys).
      */
     default AttackCategory category() {
         return AttackCategory.SPREAD;

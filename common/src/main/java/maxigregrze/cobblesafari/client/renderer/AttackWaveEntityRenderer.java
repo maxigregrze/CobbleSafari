@@ -13,15 +13,15 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
 
 /**
- * Rend la vague (plan 110) d'après {@code vertical_wave.json} : un mur vertical 3 blocs de large
- * (face principale + crête repliée) orienté selon le cap de l'entité (sa direction de déplacement).
+ * Renders the wave (plan 110) from {@code vertical_wave.json}: a 3-block-wide vertical wall
+ * (main face + folded crest) oriented along the entity's heading (its movement direction).
  */
 public class AttackWaveEntityRenderer extends EntityRenderer<AttackWaveEntity> {
 
     private static final ResourceLocation TEXTURE =
             ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, "textures/entity/csboss/attack_wave.png");
 
-    // Mur centré : x ∈ [-1.5, 1.5] (3 large), face principale y ∈ [-1, 1.625], crête repliée jusqu'à ~2.
+    // Centered wall: x ∈ [-1.5, 1.5] (3 wide), main face y ∈ [-1, 1.625], folded crest up to ~2.
     private static final float HW = 1.5f;
     private static final float Y_BOTTOM = -1.0f;
     private static final float Y_MAIN_TOP = 1.625f;
@@ -43,18 +43,18 @@ public class AttackWaveEntityRenderer extends EntityRenderer<AttackWaveEntity> {
                        MultiBufferSource buffer, int packedLight) {
         VertexConsumer vc = buffer.getBuffer(RenderType.entityTranslucent(TEXTURE));
         ps.pushPose();
-        // Oriente le mur selon le cap de l'entité (yRot = atan2(dirX, dirZ), cf. WaterWaveAttack),
-        // +180° pour mettre l'avant du modèle dans le sens de déplacement.
+        // Orient the wall along the entity heading (yRot = atan2(dirX, dirZ), cf. WaterWaveAttack),
+        // +180° to face the model front in the movement direction.
         ps.mulPose(Axis.YP.rotationDegrees(yaw + 180.0F));
         PoseStack.Pose pose = ps.last();
 
-        // Face principale (double-face), v de 1 (bas) à 0.125 (haut).
+        // Main face (double-sided), v from 1 (bottom) to 0.125 (top).
         quad(vc, pose, packedLight,
                 -HW, Y_BOTTOM, 0, 0, 1,
                 HW, Y_BOTTOM, 0, 1, 1,
                 HW, Y_MAIN_TOP, 0, 1, V_MAIN_TOP,
                 -HW, Y_MAIN_TOP, 0, 0, V_MAIN_TOP);
-        // Crête repliée, v de 0.125 (bas) à 0 (haut).
+        // Folded crest, v from 0.125 (bottom) to 0 (top).
         quad(vc, pose, packedLight,
                 -HW, Y_MAIN_TOP, 0, 0, V_MAIN_TOP,
                 HW, Y_MAIN_TOP, 0, 1, V_MAIN_TOP,
@@ -65,7 +65,7 @@ public class AttackWaveEntityRenderer extends EntityRenderer<AttackWaveEntity> {
         super.render(entity, yaw, partialTicks, ps, buffer, packedLight);
     }
 
-    /** Quad double-face (avant + arrière) avec UV, opacité pleine. */
+    /** Double-sided quad (front + back) with UVs, full opacity. */
     private static void quad(VertexConsumer vc, PoseStack.Pose pose, int light,
                              float x1, float y1, float z1, float u1, float v1,
                              float x2, float y2, float z2, float u2, float v2,
@@ -75,7 +75,7 @@ public class AttackWaveEntityRenderer extends EntityRenderer<AttackWaveEntity> {
         v(vc, pose, x2, y2, z2, u2, v2, light);
         v(vc, pose, x3, y3, z3, u3, v3, light);
         v(vc, pose, x4, y4, z4, u4, v4, light);
-        // arrière (ordre inversé)
+        // back (reversed winding)
         v(vc, pose, x4, y4, z4, u4, v4, light);
         v(vc, pose, x3, y3, z3, u3, v3, light);
         v(vc, pose, x2, y2, z2, u2, v2, light);

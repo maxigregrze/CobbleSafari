@@ -30,9 +30,9 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * Sac de frappe : multibloc vertical (LOWER + UPPER) orientable, posé sur bloc solide.
- * La moitié UPPER porte un block entity dont le rendu (sac animé) oscille au clic droit,
- * accompagné d'un son d'épée vanilla. Modèle façon cloche (oscillation amortie).
+ * Punching bag: orientable vertical multiblock (LOWER + UPPER), placed on solid ground.
+ * The UPPER half has a block entity whose render (animated bag) swings on right-click,
+ * with a vanilla sword sound. Bell-like model (damped oscillation).
  */
 public class PunchingBagBlock extends HorizontalDirectionalBlock implements EntityBlock {
 
@@ -40,7 +40,7 @@ public class PunchingBagBlock extends HorizontalDirectionalBlock implements Enti
 
     public static final int EVENT_SWING = 1;
 
-    // Colonne centrale englobant le poteau et le sac (au lieu d'un cube plein).
+    // Central column wrapping post and bag (instead of a full cube).
     private static final VoxelShape SHAPE = Block.box(3, 0, 3, 13, 16, 13);
 
     public PunchingBagBlock(Properties properties) {
@@ -116,8 +116,8 @@ public class PunchingBagBlock extends HorizontalDirectionalBlock implements Enti
     protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hitResult) {
         BlockPos upperPos = state.getValue(BlockStateProperties.DOUBLE_BLOCK_HALF) == DoubleBlockHalf.UPPER ? pos : pos.above();
         if (!level.isClientSide()) {
-            // Le sac oscille dans le plan de l'axe de face du bloc ; le sens de départ dépend
-            // du côté où se trouve le joueur (comme la cloche) — change si on clique de l'autre côté.
+            // Bag swings in the facing-axis plane; start direction depends
+            // on which side the player is on (like a bell) — flips if clicked from the other side.
             Direction.Axis moveAxis = state.getValue(FACING).getAxis();
             double rel = moveAxis == Direction.Axis.Z
                     ? player.getZ() - (pos.getZ() + 0.5)

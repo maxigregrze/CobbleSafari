@@ -12,8 +12,8 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * Calcule la durée de survie (plan 100 § 9) à partir des niveaux d'équipe des participants.
- * Score 0 → maximumDuration ; 100 → minimumDuration ; interpolation linéaire ; clamp config.
+ * Computes survival duration (plan 100 § 9) from participant party levels.
+ * Score 0 → maximumDuration ; 100 → minimumDuration ; linear interpolation ; config clamp.
  */
 public final class DifficultyScaling {
 
@@ -23,30 +23,30 @@ public final class DifficultyScaling {
     private DifficultyScaling() {}
 
     public static int computeDuration(CsBossDefinition def, List<ServerPlayer> participants) {
-        // Score par joueur (médiane des niveaux de la party) + journalisation.
+        // Per-player score (party level median) + logging.
         double[] scores = new double[participants.size()];
-        CobbleSafari.LOGGER.info("[CSBoss] '{}' — calcul de durée pour {} participant(s) :",
+        CobbleSafari.LOGGER.info("[CSBoss] '{}' — duration calculation for {} participant(s):",
                 def.bossId(), participants.size());
         for (int i = 0; i < participants.size(); i++) {
             ServerPlayer p = participants.get(i);
             scores[i] = partyMedian(p);
-            CobbleSafari.LOGGER.info("[CSBoss]   joueur {} : score = {}",
+            CobbleSafari.LOGGER.info("[CSBoss]   player {}: score = {}",
                     p.getGameProfile().getName(), String.format("%.1f", scores[i]));
         }
         Arrays.sort(scores);
         double teamScore = participants.isEmpty() ? 0.0 : median(scores);
 
         double t = Mth.clamp(teamScore / 100.0, 0.0, 1.0);
-        // maximumDuration / minimumDuration sont en SECONDES (cohérent avec la config) → ×20 en ticks.
+        // maximumDuration / minimumDuration are in SECONDS (consistent with config) → ×20 in ticks.
         double rawSeconds = def.maximumDuration() + (def.minimumDuration() - def.maximumDuration()) * t;
         int rawTicks = (int) Math.round(rawSeconds * 20.0);
 
         CsBossSettings cfg = CsBossSettings.get();
-        int maxTicks = cfg.getMaximumFightDuration() * 20; // plafond dur global ; pas de plancher config
+        int maxTicks = cfg.getMaximumFightDuration() * 20; // global hard cap ; no config floor
         int clamped = Mth.clamp(rawTicks, 1, maxTicks);
 
         CobbleSafari.LOGGER.info(
-                "[CSBoss]   score du lobby (médiane) = {} → durée {}s ({} ticks ; brut {}s, plafond {}s)",
+                "[CSBoss]   lobby score (median) = {} → duration {}s ({} ticks ; raw {}s, cap {}s)",
                 String.format("%.1f", teamScore), clamped / 20, clamped,
                 String.format("%.0f", rawSeconds), cfg.getMaximumFightDuration());
         return clamped;
@@ -61,14 +61,14 @@ public final class DifficultyScaling {
                 levels[slot] = p == null ? 0 : Mth.clamp(p.getLevel(), 0, MAX_LEVEL);
             }
         } catch (Exception e) {
-            // En cas d'indisponibilité de la party, on retombe sur 0 (durée la plus longue).
+            // If the party is unavailable, fall back to 0 (longest duration).
             Arrays.fill(levels, 0);
         }
         Arrays.sort(levels);
         return median(levels);
     }
 
-    /** Médiane d'un tableau déjà trié. */
+    /** Median of an already-sorted array. */
     private static double median(double[] sorted) {
         int n = sorted.length;
         if (n == 0) {

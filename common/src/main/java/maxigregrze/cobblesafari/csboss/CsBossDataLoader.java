@@ -20,8 +20,8 @@ import java.util.Map;
 import java.util.regex.Pattern;
 
 /**
- * Charge les définitions CSBoss depuis {@code data/<ns>/csboss/*.json} (plan 100 § 2.2).
- * Calqué sur {@code GtsDataLoader} : validations strictes, jamais d'exception remontée.
+ * Loads CSBoss definitions from {@code data/<ns>/csboss/*.json} (plan 100 § 2.2).
+ * Modeled on {@code GtsDataLoader}: strict validation, never throws.
  */
 public final class CsBossDataLoader {
     private static final String PREFIX = "csboss";
@@ -145,7 +145,7 @@ public final class CsBossDataLoader {
                 secondPhase, giveRewardsBeforeSecondPhase, allowSimultaneousAttacks);
     }
 
-    /** Espèce des minions (optionnelle) ; validée comme une ligne PokemonProperties, sinon ignorée. */
+    /** Minion species (optional); validated as a PokemonProperties line, otherwise ignored. */
     private static String readMinionSpecie(JsonObject json, String source) {
         if (!json.has("minion") || json.get("minion").getAsString().isBlank()) {
             return null;
@@ -163,7 +163,7 @@ public final class CsBossDataLoader {
         return minion;
     }
 
-    /** Lit le nom affiché ({@code displayName}, alias toléré {@code displayname}). */
+    /** Reads the display name ({@code displayName}, tolerated alias {@code displayname}). */
     private static String readDisplayName(JsonObject json) {
         for (String key : new String[]{"displayName", "displayname"}) {
             if (json.has(key) && json.get(key).isJsonPrimitive()) {

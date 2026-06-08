@@ -15,8 +15,8 @@ import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
 import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConfiguration;
 
 /**
- * Place une « souche de fleur distordue » verticale (base + tiges + fleur) de 4 à 7 blocs
- * de haut, posée au sol dans le biome Psy.
+ * Places a vertical "distorted flower stump" (base + stems + flower) 4 to 7 blocks
+ * tall, on the ground in the Psy biome.
  */
 public class DistortionStumpFeature extends Feature<NoneFeatureConfiguration> {
 

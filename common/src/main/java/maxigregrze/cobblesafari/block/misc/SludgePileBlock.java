@@ -14,7 +14,7 @@ public class SludgePileBlock extends PileBlock {
 
     public static final MapCodec<SludgePileBlock> CODEC = simpleCodec(SludgePileBlock::new);
 
-    // 2 secondes de poison (40 ticks).
+    // 2 seconds of poison (40 ticks).
     private static final int POISON_DURATION_TICKS = 40;
 
     public SludgePileBlock(Properties properties) {

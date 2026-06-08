@@ -45,7 +45,7 @@ public class UnionRoomGlobeBlock extends HorizontalDirectionalBlock implements E
 
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
-        // Comme MagneticClusterBlock : ne pas s'appuyer sur super seul — enregistrer FACING explicitement avec HALF.
+        // Like MagneticClusterBlock: do not rely on super alone — register FACING explicitly with HALF.
         builder.add(FACING, BlockStateProperties.DOUBLE_BLOCK_HALF);
     }
 
@@ -75,10 +75,10 @@ public class UnionRoomGlobeBlock extends HorizontalDirectionalBlock implements E
         DoubleBlockHalf half = state.getValue(BlockStateProperties.DOUBLE_BLOCK_HALF);
         Direction facing = state.getValue(FACING);
         if (half == DoubleBlockHalf.LOWER) {
-            // Au moment du placement, le bloc UPPER n'existe pas encore : on vérifie seulement le support sous le bas.
+            // At placement time the UPPER block does not exist yet: only check support under the lower half.
             return level.getBlockState(pos.below()).isFaceSturdy(level, pos.below(), Direction.UP);
         }
-        // Pour la moitié UPPER : exiger que la moitié LOWER correspondante soit bien en dessous.
+        // For the UPPER half: require the matching LOWER half directly below.
         BlockState below = level.getBlockState(pos.below());
         return below.is(this)
                 && below.getValue(BlockStateProperties.DOUBLE_BLOCK_HALF) == DoubleBlockHalf.LOWER

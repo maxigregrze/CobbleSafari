@@ -114,6 +114,9 @@ public class ModCreativeTabs {
                 output.accept(ModBlocks.AIR_HORN_CORAL);
                 output.accept(ModBlocks.MUD_PILE);
                 output.accept(ModBlocks.SLUDGE_PILE);
+                output.accept(ModBlocks.VOLCANIC_CRATER);
+                output.accept(ModBlocks.HOT_GEYSER);
+                output.accept(ModBlocks.DRACONIC_CRATER);
                 output.accept(ModBlocks.KARATE_MANNEQUIN);
                 output.accept(ModBlocks.PUNCHINGBAG);
                 output.accept(ModBlocks.TOMBSTONE);

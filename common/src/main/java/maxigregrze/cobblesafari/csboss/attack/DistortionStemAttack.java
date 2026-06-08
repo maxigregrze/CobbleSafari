@@ -14,10 +14,10 @@ import java.util.ArrayList;
 import java.util.UUID;
 
 /**
- * {@code distortion_1} (plan 107 § 6.5, révisé) : 4 cores invisibles plantés dans le repère du boss
- * (relatif à son orientation), qui se propagent (≤ 20/direction) en faisant pousser des colonnes de
- * tiges semi‑transparentes (≤ 5/core). Le boss tourne lentement sur lui‑même : toute la structure
- * orbite autour de lui. Les tiges infligent 5 cœurs + knockback au contact.
+ * {@code distortion_1} (plan 107 § 6.5, revised): 4 invisible cores planted in the boss frame
+ * (relative to its orientation), which spread (≤ 20/direction) by growing columns of
+ * semi-transparent stems (≤ 5/core). The boss spins slowly on itself: the entire structure
+ * orbits around it. Stems deal 5 hearts + knockback on contact.
  */
 public class DistortionStemAttack implements CsBossAttack {
 
@@ -25,8 +25,8 @@ public class DistortionStemAttack implements CsBossAttack {
     private static final double UNDER_BOSS = 2.0;
     private static final double FORWARD = 1.5;
     private static final int DURATION = 200;
-    private static final float SPIN_DEG_PER_TICK = 2.0F; // rotation lente du boss
-    private static final float STEM_DAMAGE = 10.0F;      // 5 cœurs
+    private static final float SPIN_DEG_PER_TICK = 1.0F; // slow boss rotation
+    private static final float STEM_DAMAGE = 10.0F;      // 5 hearts
     private static final double KNOCKBACK = 0.7;
 
     private final String id;
@@ -51,7 +51,7 @@ public class DistortionStemAttack implements CsBossAttack {
         this.tick = 0;
         this.done = false;
         boss.triggerAttackAnimation();
-        // 4 directions relatives à l'orientation du boss (0/90/180/270°), 1.5 bloc en avant, 2 sous lui.
+        // 4 directions relative to boss orientation (0/90/180/270°), 1.5 blocks forward, 2 below.
         for (int dir = 0; dir < 4; dir++) {
             AttackDistortionStemCoreEntity core = AttackDistortionStemCoreEntity.spawn(
                     level, session.getId(), boss, dir * 90.0, FORWARD, -UNDER_BOSS, CORE_SEED);
@@ -67,13 +67,13 @@ public class DistortionStemAttack implements CsBossAttack {
             return;
         }
 
-        // Rotation lente du boss sur lui-même (entraîne toute la structure attachée à son repère).
+        // Slow boss spin (drags the entire structure attached to its frame).
         float yaw = boss.getYRot() + SPIN_DEG_PER_TICK;
         boss.setYRot(yaw);
         boss.setYHeadRot(yaw);
         boss.yBodyRot = yaw;
 
-        // Bourdonnement périodique de distorsion.
+        // Periodic distortion hum.
         if (tick % 30 == 0) {
             CsBossAttackLib.sound(level, boss.getX(), boss.getY(), boss.getZ(),
                     "minecraft:block.portal.ambient", SoundSource.HOSTILE, 1.2F, 0.5F);
@@ -93,7 +93,7 @@ public class DistortionStemAttack implements CsBossAttack {
         }
     }
 
-    /** Inflige 5 cœurs + knockback aux participants en contact avec une tige (i‑frames vanilla = anti‑spam). */
+    /** Deals 5 hearts + knockback to participants in contact with a stem (vanilla i-frames = anti-spam). */
     private void damageOnContact(ServerLevel level, BossBattleSession session, CsBossEntity boss) {
         for (UUID u : new ArrayList<>(session.getActiveAttackEntities())) {
             if (!(level.getEntity(u) instanceof AttackDistortionStemEntity stem) || !stem.isAlive()) {

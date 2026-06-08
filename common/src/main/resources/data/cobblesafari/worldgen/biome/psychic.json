@@ -25,9 +25,7 @@
   "features": [
     [],
     [],
-    [
-      "cobblesafari:distortion_stone_clump"
-    ],
+    [],
     [],
     [],
     [],
@@ -36,7 +34,9 @@
     [],
     [
       "minecraft:chorus_plant",
-      "cobblesafari:distortion_stump"
+      "cobblesafari:distortion_stump",
+      "cobblesafari:distortion_stone_clump",
+      "cobblesafari:distortion_weed_field"
     ],
     []
   ]

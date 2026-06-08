@@ -10,7 +10,7 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 
 /**
- * GUI créative « command-block-like » du trigger d'arène (plan 100 § 3.3).
+ * Creative "command-block-like" arena trigger GUI (plan 100 § 3.3).
  */
 public class CsBossTriggerConfigScreen extends Screen {
 

@@ -118,11 +118,14 @@ public class CobbleSafariFabric implements ModInitializer {
         PayloadTypeRegistry.playS2C().register(maxigregrze.cobblesafari.network.UnionAppResultPayload.TYPE, maxigregrze.cobblesafari.network.UnionAppResultPayload.STREAM_CODEC);
         PayloadTypeRegistry.playS2C().register(maxigregrze.cobblesafari.network.WonderAppResultPayload.TYPE, maxigregrze.cobblesafari.network.WonderAppResultPayload.STREAM_CODEC);
         PayloadTypeRegistry.playS2C().register(maxigregrze.cobblesafari.network.GtsAppResultPayload.TYPE, maxigregrze.cobblesafari.network.GtsAppResultPayload.STREAM_CODEC);
+        PayloadTypeRegistry.playS2C().register(maxigregrze.cobblesafari.network.ChatAppResultPayload.TYPE, maxigregrze.cobblesafari.network.ChatAppResultPayload.STREAM_CODEC);
+        PayloadTypeRegistry.playS2C().register(maxigregrze.cobblesafari.network.ChatConversationSyncPayload.TYPE, maxigregrze.cobblesafari.network.ChatConversationSyncPayload.STREAM_CODEC);
 
         PayloadTypeRegistry.playC2S().register(maxigregrze.cobblesafari.network.RotomPhoneActionPayload.TYPE, maxigregrze.cobblesafari.network.RotomPhoneActionPayload.STREAM_CODEC);
         PayloadTypeRegistry.playC2S().register(maxigregrze.cobblesafari.network.UnionAppPayload.TYPE, maxigregrze.cobblesafari.network.UnionAppPayload.STREAM_CODEC);
         PayloadTypeRegistry.playC2S().register(maxigregrze.cobblesafari.network.WonderAppPayload.TYPE, maxigregrze.cobblesafari.network.WonderAppPayload.STREAM_CODEC);
         PayloadTypeRegistry.playC2S().register(maxigregrze.cobblesafari.network.GtsAppPayload.TYPE, maxigregrze.cobblesafari.network.GtsAppPayload.STREAM_CODEC);
+        PayloadTypeRegistry.playC2S().register(maxigregrze.cobblesafari.network.ChatAppPayload.TYPE, maxigregrze.cobblesafari.network.ChatAppPayload.STREAM_CODEC);
         PayloadTypeRegistry.playC2S().register(maxigregrze.cobblesafari.network.RotomPhoneRotoGlideRequestPayload.TYPE, maxigregrze.cobblesafari.network.RotomPhoneRotoGlideRequestPayload.STREAM_CODEC);
         PayloadTypeRegistry.playC2S().register(maxigregrze.cobblesafari.network.EmptyPhoneConfirmPayload.TYPE, maxigregrze.cobblesafari.network.EmptyPhoneConfirmPayload.STREAM_CODEC);
 
@@ -317,6 +320,17 @@ public class CobbleSafariFabric implements ModInitializer {
         );
 
         ServerPlayNetworking.registerGlobalReceiver(
+                maxigregrze.cobblesafari.network.ChatAppPayload.TYPE,
+                (payload, context) -> {
+                    context.server().execute(() -> {
+                        if (context.player() instanceof ServerPlayer sp) {
+                            maxigregrze.cobblesafari.network.ChatAppServerHandler.handle(sp, payload);
+                        }
+                    });
+                }
+        );
+
+        ServerPlayNetworking.registerGlobalReceiver(
                 maxigregrze.cobblesafari.network.RotomPhoneRotoGlideRequestPayload.TYPE,
                 (payload, context) -> {
                     context.server().execute(() -> {
@@ -371,6 +385,8 @@ public class CobbleSafariFabric implements ModInitializer {
                 UndergroundMinigame.loadDatapacks(server);
                 UndergroundMinigame.syncRegistryToAllPlayers(server);
                 maxigregrze.cobblesafari.rotomphone.RotomPhoneSkinDataLoader.load(server);
+                maxigregrze.cobblesafari.chat.ChatConversationDataLoader.load(server);
+                maxigregrze.cobblesafari.rotomphone.ChatConversationSync.syncToAll(server);
                 maxigregrze.cobblesafari.csboss.CsBossDataLoader.load(server);
                 maxigregrze.cobblesafari.csmusic.CsMusicDataLoader.load(server);
             }

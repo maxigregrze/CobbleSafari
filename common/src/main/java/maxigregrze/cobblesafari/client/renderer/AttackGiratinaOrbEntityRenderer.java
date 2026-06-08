@@ -12,8 +12,8 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
 
 /**
- * Rend l'orbe de Giratina via le modèle/texture du bloc {@code giratina_core_moving}, en pleine
- * luminosité (émissif). La lueur rouge est portée par les particules de l'entité.
+ * Renders the Giratina orb via the {@code giratina_core_moving} block model/texture at full
+ * brightness (emissive). The red glow is driven by the entity's particles.
  */
 public class AttackGiratinaOrbEntityRenderer extends EntityRenderer<AttackGiratinaOrbEntity> {
 
@@ -36,6 +36,8 @@ public class AttackGiratinaOrbEntityRenderer extends EntityRenderer<AttackGirati
     public void render(AttackGiratinaOrbEntity entity, float yaw, float partialTicks, PoseStack ps,
                        MultiBufferSource buffer, int packedLight) {
         ps.pushPose();
+        // Rotate around the block centre so the orb faces the player it follows.
+        ps.mulPose(com.mojang.math.Axis.YP.rotationDegrees(-yaw));
         ps.translate(-0.5, 0.0, -0.5);
         blockRenderer.renderSingleBlock(ModBlocks.GIRATINA_CORE_MOVING.defaultBlockState(),
                 ps, buffer, LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY);

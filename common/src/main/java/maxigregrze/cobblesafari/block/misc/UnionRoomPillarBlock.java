@@ -11,13 +11,13 @@ import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
 /**
- * Pilier décoratif Salle Union : géométrie 8×16×8 (centrée), texture avec canal alpha.
+ * Union Room decorative pillar: 8×16×8 geometry (centered), texture with alpha channel.
  */
 public class UnionRoomPillarBlock extends Block {
 
     public static final MapCodec<UnionRoomPillarBlock> CODEC = simpleCodec(UnionRoomPillarBlock::new);
 
-    /** Aligné sur le modèle bloc (from 4,0,4 → to 12,16,12). */
+    /** Aligned to the block model (from 4,0,4 → to 12,16,12). */
     private static final VoxelShape SHAPE = Block.box(4, 0, 4, 12, 16, 12);
 
     public UnionRoomPillarBlock(Properties properties) {

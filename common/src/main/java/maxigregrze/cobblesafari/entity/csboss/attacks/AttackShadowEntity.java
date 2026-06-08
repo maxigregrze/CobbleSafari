@@ -9,9 +9,9 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.Level;
 
 /**
- * Décalque plat au sol (plan 107 § 4.1, étendu plan 108) : suit un joueur, piloté par l'attaque.
- * Variante {@code large} (3×3, texture {@code attack_shadow_large.png}) et opacité réglable
- * ({@code alpha}) pour le fondu de {@code base_ghost_1}.
+ * Flat ground decal (plan 107 § 4.1, extended plan 108): follows a player, driven by the attack.
+ * {@code large} variant (3×3, texture {@code attack_shadow_large.png}) and adjustable
+ * opacity ({@code alpha}) for the {@code base_ghost_1} fade.
  */
 public class AttackShadowEntity extends AbstractAttackEntity {
 

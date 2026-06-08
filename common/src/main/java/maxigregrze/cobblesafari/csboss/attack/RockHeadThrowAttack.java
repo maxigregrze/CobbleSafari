@@ -15,20 +15,22 @@ import java.util.List;
 import java.util.UUID;
 
 /**
- * {@code base_rock_3} (plan 113, Type A) : pour chaque joueur, une météorite naît sur la tête du boss
- * (échelle 0 → 1), tourne sur les 3 axes (vitesse 0 → rapide sur 3 s), puis est lancée en courbe vers
- * le joueur ; elle pose un bloc météorite à l'impact au sol. Répété 3‑5 fois.
+ * {@code base_rock_3} (plan 113, Type A): for each player, a meteor spawns near the middle of the
+ * arena (slightly off-centered toward a world axis), grows (scale 0 → 1), spins on all 3 axes
+ * (speed 0 → fast over 3 s), then is thrown in an arc toward the player; it places a meteorite block
+ * on ground impact. Repeated 3–5 times.
  */
 public class RockHeadThrowAttack implements CsBossAttack {
 
     private static final int GROW_TICKS = 10;
-    private static final int SPIN_TICKS = 60;     // 3 s de montée en régime sur place
-    private static final int THROW_TICKS = 30;    // courbe vers le joueur
+    private static final int SPIN_TICKS = 60;     // 3 s spin-up in place
+    private static final int THROW_TICKS = 30;    // arc toward player
     private static final int IMPACT_AT = SPIN_TICKS + THROW_TICKS; // 90
     private static final int WAVE_INTERVAL = IMPACT_AT;
-    private static final int NOMINAL_WAVES = 4;   // ±25 % ⇒ 3‑5
-    private static final float MAX_SPIN = 25.0F;  // deg/tick au max
-    private static final double HEAD_OFFSET = 2.0; // y+2 au-dessus de la hitbox
+    private static final int NOMINAL_WAVES = 4;   // ±25% ⇒ 3–5
+    private static final float MAX_SPIN = 25.0F;  // deg/tick at max
+    private static final double SPAWN_HEIGHT = 3.0;  // above the trigger floor, over the arena center
+    private static final double CENTER_OFFSET = 1.5; // slight off-center toward one world axis
     private static final double ARC = 2.5;
     private static final float METEOR_DAMAGE = 18.0F;
 
@@ -105,7 +107,7 @@ public class RockHeadThrowAttack implements CsBossAttack {
                 continue;
             }
             int age = tick - r.birthTick;
-            driveRock(level, session, boss, r, age);
+            driveRock(level, session, r, age);
             if (age >= IMPACT_AT) {
                 it.remove();
             }
@@ -119,12 +121,14 @@ public class RockHeadThrowAttack implements CsBossAttack {
 
     private void spawnWave(ServerLevel level, BossBattleSession session, CsBossEntity boss) {
         List<ServerPlayer> alive = session.aliveParticipants(level);
-        double headRadius = boss.getBbWidth() * 0.4;
-        double headY = boss.getY() + boss.getBbHeight() + HEAD_OFFSET;
+        net.minecraft.world.phys.Vec3 center = session.getArenaCenter();
+        double headY = session.getTriggerPos().getY() + SPAWN_HEIGHT;
+        // Slight off-center offsets toward the four world axes (+X, -X, +Z, -Z).
+        double[][] axes = {{CENTER_OFFSET, 0}, {-CENTER_OFFSET, 0}, {0, CENTER_OFFSET}, {0, -CENTER_OFFSET}};
         for (int i = 0; i < alive.size(); i++) {
-            double angle = Math.toRadians(i * (360.0 / Math.max(1, alive.size())));
-            double hx = boss.getX() + Math.cos(angle) * headRadius;
-            double hz = boss.getZ() + Math.sin(angle) * headRadius;
+            double[] off = axes[rng.nextInt(axes.length)];
+            double hx = center.x + off[0];
+            double hz = center.z + off[1];
             AttackMeteoriteEntity meteor = AttackMeteoriteEntity.spawn(level, hx, headY, hz, session.getId(), false);
             meteor.setRenderScale(0.0F);
             session.trackAttackEntity(meteor);
@@ -135,18 +139,18 @@ public class RockHeadThrowAttack implements CsBossAttack {
                 "cobblemon:move.rockthrow.actor", net.minecraft.sounds.SoundSource.HOSTILE, 1.3F, 0.8F);
     }
 
-    private void driveRock(ServerLevel level, BossBattleSession session, CsBossEntity boss, Rock r, int age) {
-        double headY = boss.getY() + boss.getBbHeight() + HEAD_OFFSET;
+    private void driveRock(ServerLevel level, BossBattleSession session, Rock r, int age) {
+        double headY = session.getTriggerPos().getY() + SPAWN_HEIGHT;
         if (age < SPIN_TICKS) {
-            // Croissance + culbute sur place au-dessus de la tête.
+            // Growth + tumble in place above the arena center.
             float scale = Math.min(1.0F, age / (float) GROW_TICKS);
             float spinSpeed = MAX_SPIN * (age / (float) SPIN_TICKS);
             r.spin += spinSpeed;
             r.meteor.setRenderScale(scale);
             r.meteor.setSpin(r.spin);
-            r.meteor.setPos(boss.getX() + (r.headX - boss.getX()), headY, boss.getZ() + (r.headZ - boss.getZ()));
+            r.meteor.setPos(r.headX, headY, r.headZ);
         } else if (age == SPIN_TICKS) {
-            // Capture la cible (position sol du joueur) et le point de départ.
+            // Capture target (player ground position) and start point.
             r.startX = r.meteor.getX();
             r.startY = r.meteor.getY();
             r.startZ = r.meteor.getZ();

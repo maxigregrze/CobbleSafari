@@ -20,7 +20,7 @@ import org.joml.Vector3f;
 public class UnionRoomSpotlightBlockEntityRenderer implements BlockEntityRenderer<UnionRoomSpotlightBlockEntity> {
 
     /** Ticks for one full 360° yaw rotation (constant angular speed, one direction). */
-    private static final float YAW_PERIOD_TICKS = 180f;
+    private static final float YAW_PERIOD_TICKS = 90f;
     private static final float PITCH_PERIOD_TICKS = 90f;
 
     private static final float PITCH_MIN_DEG = 20f;

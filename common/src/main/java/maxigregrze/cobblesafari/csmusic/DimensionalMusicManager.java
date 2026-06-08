@@ -15,24 +15,24 @@ import java.util.Objects;
 import java.util.UUID;
 
 /**
- * Arbitrage serveur de la musique (plan 105 § 4). Calcule, par joueur, le morceau gagnant
- * entre la source « dimension » (config) et la source « boss » (override) <b>par priorité</b> :
- * la musique de boss ne l'emporte que si sa {@code priority} (csmusic JSON) est strictement
- * supérieure à celle de la dimension — ou si la dimension n'a pas de musique. Serveur autoritaire ;
- * n'émet un paquet que sur changement.
+ * Server-side music arbitration (plan 105 § 4). Computes, per player, the winning track
+ * between the "dimension" source (config) and the "boss" source (override) <b>by priority</b>:
+ * boss music wins only if its {@code priority} (csmusic JSON) is strictly
+ * higher than the dimension's — or if the dimension has no music. Server-authoritative;
+ * sends a packet only on change.
  */
 public final class DimensionalMusicManager {
 
-    /** Dernier csmusic id envoyé par joueur ("" = silence). */
+    /** Last csmusic id sent per player ("" = silence). */
     private static final Map<UUID, String> lastSent = new HashMap<>();
-    /** Override « boss » par joueur (csmusic id) tant que le combat dure. */
+    /** Per-player "boss" override (csmusic id) while the fight lasts. */
     private static final Map<UUID, String> bossOverride = new HashMap<>();
-    /** Mode de sortie à appliquer au prochain envoi pour ce joueur (sinon FADE). One‑shot. */
+    /** Exit mode to apply on the next send for this player (otherwise FADE). One-shot. */
     private static final Map<UUID, Integer> nextMode = new HashMap<>();
 
     private DimensionalMusicManager() {}
 
-    // --- Balayage par tick ---------------------------------------------------
+    // --- Per-tick sweep --------------------------------------------------------
 
     public static void tick(MinecraftServer server) {
         for (ServerPlayer player : server.getPlayerList().getPlayers()) {
@@ -40,7 +40,7 @@ public final class DimensionalMusicManager {
         }
     }
 
-    /** Recalcule le morceau gagnant pour ce joueur et l'envoie si différent du dernier envoyé. */
+    /** Recomputes the winning track for this player and sends if different from the last sent. */
     private static void updatePlayer(ServerPlayer player) {
         UUID uuid = player.getUUID();
         CsMusicDefinition boss = CsMusicRegistry.get(bossOverride.get(uuid)).orElse(null);
@@ -49,7 +49,7 @@ public final class DimensionalMusicManager {
 
         String desiredId = winner != null ? winner.id() : "";
         if (Objects.equals(lastSent.get(uuid), desiredId)) {
-            nextMode.remove(uuid); // pas de changement : on consomme un éventuel mode en attente
+            nextMode.remove(uuid); // no change: consume any pending mode
             return;
         }
         int mode = nextMode.getOrDefault(uuid, SetCsMusicPayload.MODE_FADE);
@@ -58,9 +58,9 @@ public final class DimensionalMusicManager {
     }
 
     /**
-     * Le boss ne gagne que s'il est <b>strictement</b> plus prioritaire que la dimension
-     * (ou si la dimension n'a pas de musique). À priorité égale, la dimension reste — la musique
-     * de boss n'a aucun avantage « par défaut » (elle se distingue par sa {@code priority}).
+     * Boss wins only if it is <b>strictly</b> higher priority than the dimension
+     * (or if the dimension has no music). At equal priority, dimension stays — boss music
+     * has no "default" advantage (it distinguishes itself via {@code priority}).
      */
     @Nullable
     private static CsMusicDefinition pickWinner(@Nullable CsMusicDefinition boss, @Nullable CsMusicDefinition dim) {
@@ -85,25 +85,25 @@ public final class DimensionalMusicManager {
 
     // --- Hooks boss (plan 105 § 4.2) -----------------------------------------
 
-    /** Démarrage du combat : enregistre l'override boss, l'arbitrage par priorité décide de l'effet. */
+    /** Fight start: registers boss override; priority arbitration decides the effect. */
     public static void onBossStart(Collection<ServerPlayer> aliveParticipants, String csmusicId) {
         if (!CsMusicRegistry.has(csmusicId)) {
             return;
         }
         for (ServerPlayer p : aliveParticipants) {
             bossOverride.put(p.getUUID(), csmusicId);
-            updatePlayer(p); // FADE par défaut si le boss l'emporte
+            updatePlayer(p); // FADE by default if boss wins
         }
     }
 
-    /** Victoire : si la musique de boss jouait, outro puis reprise de la dimension. */
+    /** Victory: if boss music was playing, outro then resume dimension music. */
     public static void onBossWin(Collection<ServerPlayer> aliveParticipants) {
         for (ServerPlayer p : aliveParticipants) {
             endBossFor(p, SetCsMusicPayload.MODE_OUTRO);
         }
     }
 
-    /** Défaite / participant écarté (mort, déco, hors‑dim) : coupure sèche, pas d'outro. */
+    /** Defeat / discarded participant (death, disconnect, out-of-dim): hard cut, no outro. */
     public static void onBossLossOrLeave(ServerPlayer player) {
         endBossFor(player, SetCsMusicPayload.MODE_CUT);
     }
@@ -114,7 +114,7 @@ public final class DimensionalMusicManager {
         if (bid == null) {
             return;
         }
-        // Le mode de sortie (outro/cut) ne s'applique que si la musique de boss jouait réellement.
+        // Exit mode (outro/cut) applies only if boss music was actually playing.
         if (bid.equals(lastSent.get(uuid))) {
             nextMode.put(uuid, mode);
         }
@@ -127,7 +127,7 @@ public final class DimensionalMusicManager {
         nextMode.remove(uuid);
     }
 
-    // --- Envoi ---------------------------------------------------------------
+    // --- Send ------------------------------------------------------------------
 
     private static void send(ServerPlayer player, @Nullable CsMusicDefinition def, int mode) {
         SetCsMusicPayload payload = def != null

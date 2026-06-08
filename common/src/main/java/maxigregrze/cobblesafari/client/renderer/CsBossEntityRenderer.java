@@ -1,7 +1,5 @@
 package maxigregrze.cobblesafari.client.renderer;
 
-import com.cobblemon.mod.common.client.render.models.blockbench.FloatingState;
-import com.cobblemon.mod.common.client.render.models.blockbench.PosableState;
 import com.mojang.blaze3d.vertex.PoseStack;
 import maxigregrze.cobblesafari.CobbleSafari;
 import maxigregrze.cobblesafari.entity.csboss.CsBossEntity;
@@ -17,15 +15,15 @@ import java.util.Set;
 import java.util.UUID;
 
 /**
- * Rendu du Boss : modèle d'espèce Cobblemon emprunté via {@link CsBossModelRenderer},
- * avec échelle d'entrée et fondu de mort pilotés par la phase d'entité.
+ * Boss rendering: borrowed Cobblemon species model via {@link CsBossModelRenderer},
+ * with entry scale and death fade driven by entity phase.
  */
 public class CsBossEntityRenderer extends EntityRenderer<CsBossEntity> {
 
     private static final ResourceLocation FALLBACK_TEXTURE =
             ResourceLocation.withDefaultNamespace("textures/misc/white.png");
 
-    private final Map<UUID, PosableState> states = new HashMap<>();
+    private final Map<UUID, CsBossPosableState> states = new HashMap<>();
     private final Map<String, CsBossModelRenderer.SpeciesInfo> speciesCache = new HashMap<>();
     private final Map<UUID, Integer> lastAttackSeq = new HashMap<>();
     private final Map<UUID, Integer> lastPhase = new HashMap<>();
@@ -58,7 +56,11 @@ public class CsBossEntityRenderer extends EntityRenderer<CsBossEntity> {
 
     private void renderBoss(CsBossEntity boss, float partialTicks, PoseStack ps,
                             MultiBufferSource buffer, int packedLight, CsBossModelRenderer.SpeciesInfo info) {
-        PosableState state = states.computeIfAbsent(boss.getUUID(), u -> new FloatingState());
+        CsBossPosableState state = states.computeIfAbsent(boss.getUUID(), u -> new CsBossPosableState());
+        // Drive the animation clock from the entity tick count (real-time), not from accumulated
+        // partial ticks; otherwise playback speed scales with the framerate. See CsBossPosableState.
+        state.setEntity(boss);
+        state.updateAge(boss.tickCount);
 
         float limbSwing = boss.walkAnimation.position(partialTicks);
         float limbSwingAmount = Math.min(1.0f, boss.walkAnimation.speed(partialTicks));
@@ -68,7 +70,7 @@ public class CsBossEntityRenderer extends EntityRenderer<CsBossEntity> {
         float scaleMul = phase == CsBossEntity.PHASE_ENTERING ? anim : 1.0f;
         float alpha = phase == CsBossEntity.PHASE_DYING ? Math.max(0.0f, 1.0f - anim) : 1.0f;
         if (scaleMul <= 0.001f) {
-            return; // échelle nulle au tout début de l'entrée : rien à dessiner
+            return; // zero scale at the very start of entry: nothing to draw
         }
 
         float scale = info.baseScale() * boss.getSize() * scaleMul;
@@ -81,17 +83,17 @@ public class CsBossEntityRenderer extends EntityRenderer<CsBossEntity> {
                 boss.tickCount + partialTicks, partialTicks, afterPose);
     }
 
-    /** Déclenche les animations nommées (attaque sur DATA_ATTACK_SEQ, faint à l'entrée en mort). */
-    private void triggerAnimations(CsBossEntity boss, PosableState state, int phase) {
+    /** Triggers named animations (attack on DATA_ATTACK_SEQ, faint on entering death). */
+    private void triggerAnimations(CsBossEntity boss, CsBossPosableState state, int phase) {
         int seq = boss.getAttackSeq();
         Integer lastSeq = lastAttackSeq.get(boss.getUUID());
-        if (lastSeq == null || lastSeq != seq) {
+        // Only start the attack animation when no primary animation is playing: this queues it (plays
+        // as soon as the model is free) instead of cutting one short, which visually breaks the model.
+        if (seq != 0 && (lastSeq == null || lastSeq != seq) && state.getPrimaryAnimation() == null) {
             lastAttackSeq.put(boss.getUUID(), seq);
-            if (seq != 0) {
-                // « cry » en repli si l'espèce n'a pas d'animation de combat (ordre garanti via LinkedHashSet).
-                state.addFirstAnimation(new java.util.LinkedHashSet<>(
-                        java.util.List.of("physical", "special", "status", "cry")));
-            }
+            // "cry" as fallback if the species has no battle animation (order guaranteed via LinkedHashSet).
+            state.addFirstAnimation(new java.util.LinkedHashSet<>(
+                    java.util.List.of("physical", "special", "status", "cry")));
         }
         Integer prevPhase = lastPhase.put(boss.getUUID(), phase);
         if (phase == CsBossEntity.PHASE_DYING && (prevPhase == null || prevPhase != CsBossEntity.PHASE_DYING)) {

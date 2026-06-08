@@ -18,9 +18,9 @@ import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
 /**
- * Mannequin de karaté : bloc décoratif orientable, posable uniquement sur un bloc solide.
- * Son de bois, minage accéléré à la hache (tag {@code mineable/axe}), drop sans outil.
- * Classe indépendante des statues Pokémon.
+ * Karate mannequin: orientable decorative block, placeable only on solid ground.
+ * Wood sound, faster mining with axe (tag {@code mineable/axe}), drops without tool.
+ * Independent class from Pokémon statues.
  */
 public class KarateMannequinBlock extends HorizontalDirectionalBlock {
 
@@ -85,7 +85,7 @@ public class KarateMannequinBlock extends HorizontalDirectionalBlock {
     }
 
     private static VoxelShape shapeForFacing(Direction facing) {
-        // SHAPE = box(4,0,4,12,16,16) défini pour FACING=NORTH (modèle « front » vers +Z géré par le blockstate).
+        // SHAPE = box(4,0,4,12,16,16) defined for FACING=NORTH ("front" toward +Z handled by blockstate).
         return switch (facing) {
             case SOUTH -> Block.box(4, 0, 0, 12, 16, 12);
             case EAST -> Block.box(0, 0, 4, 12, 16, 12);

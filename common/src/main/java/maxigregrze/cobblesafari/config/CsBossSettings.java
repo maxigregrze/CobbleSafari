@@ -12,7 +12,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 /**
- * Configuration serveur du Boss Battle System ({@code csboss_settings.json}).
+ * Server configuration for the Boss Battle System ({@code csboss_settings.json}).
  */
 public class CsBossSettings {
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
@@ -25,17 +25,17 @@ public class CsBossSettings {
 
     private boolean uniqueLootCommunism = false;
     private int maximumConcurrentFights = 5;
-    private int maximumFightDuration = 900;   // secondes — plafond dur global (pas de plancher)
-    private int defaultPlayerRadius = 24;     // blocs
+    private int maximumFightDuration = 900;   // seconds — hard global cap (no floor)
+    private int defaultPlayerRadius = 24;     // blocks
     private int defaultBlockRadius = 2;       // chunks
     private int maxConcurrentBulletsPerSession = 256;
-    private int maxPlayerRadius = 64;         // plafond dur (blocs)
-    private int maxBlockRadius = 8;           // plafond dur (chunks)
-    private int arenaYTolerance = 16;         // blocs (capture participants + barre)
+    private int maxPlayerRadius = 64;         // hard cap (blocks)
+    private int maxBlockRadius = 8;           // hard cap (chunks)
+    private int arenaYTolerance = 16;         // blocks (participant capture + bar)
     private String deathReasonCowardice = DEFAULT_COWARDICE_KEY;
     private int balmDispenserRechargeSeconds = 30;
-    private int balmBossDamagePercent = 5;    // % de la barre/timer du boss retiré par baume touché
-    private boolean showFightingPokemons = true; // affiche les Pokémon des joueurs autour du boss (esthétique)
+    private int balmBossDamagePercent = 5;    // % of boss bar/timer removed per balm hit
+    private boolean showFightingPokemons = true; // show players' Pokémon around the boss (cosmetic)
 
     public static void load() {
         if (Files.exists(CONFIG_PATH)) {
@@ -58,7 +58,7 @@ public class CsBossSettings {
             try {
                 Files.createDirectories(CONFIG_DIR);
             } catch (IOException ignored) {
-                // best-effort ; save() ci-dessous remontera toute erreur réelle.
+                // best-effort; save() below will surface any real error.
             }
             INSTANCE = new CsBossSettings();
             INSTANCE.validateAndFix();

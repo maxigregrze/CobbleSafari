@@ -27,6 +27,9 @@
     "cobblesafari:distortion_stonebricks_rubble",
     "cobblesafari:underground_polished_hardstone",
     "cobblesafari:underground_stonebricks",
-    "cobblesafari:underground_cracked_stonebricks"
+    "cobblesafari:underground_cracked_stonebricks",
+    "cobblesafari:volcanic_crater",
+    "cobblesafari:hot_geyser",
+    "cobblesafari:draconic_crater"
   ]
 }

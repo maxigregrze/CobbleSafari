@@ -1,0 +1,21 @@
+{
+    "bossId": "giratina_2",
+    "displayName": "Distorted Shadow",
+    "tags": ["test_tag"],
+    "maximumDuration": 120,
+    "minimumDuration": 90,
+    "specie": "giratina distortion",
+    "minion": "giratina distortion",
+    "size": 4,
+    "allowSimultaneousAttacks": true,
+    "moveSet": ["distortion_1","distortion_2", "distortion_3", "distortion_4", "base_ghost_1", "base_dragon_1"],
+    "moveCooldownMin": 0,
+    "moveCooldownMax": 1,
+    "isStatic": true,
+    "uniqueReward": "cobblesafari:csboss/test_unique",
+    "rewards": "cobblesafari:csboss/test_common",
+    "music": "cobblesafari:giratina",
+    "healthStyle": "notched_10",
+    "healthColor": "red"
+  }
+  

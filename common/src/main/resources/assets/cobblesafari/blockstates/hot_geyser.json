@@ -1,0 +1,8 @@
+{
+  "variants": {
+    "facing=north": { "model": "cobblesafari:block/hot_geyser" },
+    "facing=south": { "model": "cobblesafari:block/hot_geyser", "y": 180 },
+    "facing=east": { "model": "cobblesafari:block/hot_geyser", "y": 90 },
+    "facing=west": { "model": "cobblesafari:block/hot_geyser", "y": 270 }
+  }
+}

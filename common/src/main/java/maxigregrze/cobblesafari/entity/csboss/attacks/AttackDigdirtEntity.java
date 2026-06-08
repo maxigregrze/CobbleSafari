@@ -6,8 +6,8 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.Level;
 
 /**
- * Tas de terre fouisseur (plan 113, base_ground_1) : équivalent de l'ombre pour l'attaque sol, rendu
- * avec le modèle {@code attack_digdirt} (texture météorite). Piloté par l'attaque (suit le joueur).
+ * Burrowing dirt pile (plan 113, base_ground_1): ground-attack equivalent of the shadow, rendered
+ * with the {@code attack_digdirt} model (meteorite texture). Driven by the attack (follows the player).
  */
 public class AttackDigdirtEntity extends AbstractAttackEntity {
 

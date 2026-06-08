@@ -17,27 +17,27 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 /**
- * Librairie partagée des patterns d'attaque CSBoss (plan 107 § 3). Regroupe les helpers communs
- * (directions, ciblage, poursuite, dégâts de zone limités aux participants, particules) afin
- * d'éviter le copier‑coller entre les attaques. Toute la détection de collision reste limitée au
- * set des participants vivants — jamais de scan monde.
+ * Shared library for CSBoss attack patterns (plan 107 § 3). Groups common helpers
+ * (directions, targeting, pursuit, area damage limited to participants, particles) to
+ * avoid copy-paste between attacks. All collision detection remains limited to the
+ * set of living participants — never a world scan.
  */
 public final class CsBossAttackLib {
 
-    /** Vitesse de poursuite des entités d'attaque (> sprint joueur ≈ 0.28 b/t : injoignable à la course). */
+    /** Chase speed for attack entities (> player sprint ≈ 0.28 b/t : uncatchable while running). */
     public static final double CHASE_SPEED = 0.45;
 
-    /** 8 directions de boussole (unitaires), ordre N, NE, E, SE, S, SO, O, NO. */
+    /** 8 compass directions (unit vectors), order N, NE, E, SE, S, SW, W, NW. */
     public static final Vec3[] EIGHT_DIRS = buildEightDirs();
 
-    /** Taux de variation du nombre d'occurrences d'une attaque (plan 109). */
+    /** Variation rate for attack occurrence counts (plan 109). */
     public static final double OCCURRENCE_VARIATION = 0.25;
 
     private CsBossAttackLib() {}
 
     /**
-     * Nombre d'occurrences randomisé autour de {@code nominal} avec ±25 % de variation (borné ≥ 1).
-     * Ex. {@code nominal = 4 → [3, 5]}.
+     * Randomized occurrence count around {@code nominal} with ±25% variation (bounded ≥ 1).
+     * E.g. {@code nominal = 4 → [3, 5]}.
      */
     public static int varyOccurrences(int nominal, RandomSource rng) {
         int min = Math.max(1, (int) Math.round(nominal * (1.0 - OCCURRENCE_VARIATION)));
@@ -54,7 +54,7 @@ public final class CsBossAttackLib {
         return dirs;
     }
 
-    // --- Ciblage -------------------------------------------------------------
+    // --- Targeting -------------------------------------------------------------
 
     @Nullable
     public static ServerPlayer nearestAlive(BossBattleSession session, ServerLevel level, Vec3 from) {
@@ -76,11 +76,11 @@ public final class CsBossAttackLib {
         return alive.isEmpty() ? null : alive.get(rng.nextInt(alive.size()));
     }
 
-    // --- Poursuite -----------------------------------------------------------
+    // --- Pursuit -----------------------------------------------------------
 
     /**
-     * Déplace {@code e} vers ({@code tx},{@code tz}) en bornant le pas horizontal à {@code maxStep},
-     * et fixe son Y à {@code ty} (suit le sol du joueur).
+     * Moves {@code e} toward ({@code tx},{@code tz}) while bounding horizontal step to {@code maxStep},
+     * and fixes its Y to {@code ty} (follows player ground level).
      */
     public static void chase(Entity e, double tx, double ty, double tz, double maxStep) {
         double dx = tx - e.getX();
@@ -98,11 +98,11 @@ public final class CsBossAttackLib {
         e.setPos(nx, ty, nz);
     }
 
-    // --- Dégâts de zone (participants uniquement) ----------------------------
+    // --- Area damage (participants only) ----------------------------
 
     /**
-     * Inflige des dégâts + feu aux participants vivants dans un cylindre vertical centré sur
-     * ({@code cx},{@code cz}) au sol {@code baseY}. Équivalent « bloc de feu ».
+     * Deals damage + fire to living participants in a vertical cylinder centered on
+     * ({@code cx},{@code cz}) at ground {@code baseY}. Equivalent to a "fire block".
      */
     public static void damagePlayersInColumn(ServerLevel level, BossBattleSession session,
                                              double cx, double baseY, double cz,
@@ -112,8 +112,8 @@ public final class CsBossAttackLib {
     }
 
     /**
-     * Variante avec source de dégâts explicite et feu optionnel ({@code fireTicks = 0} ⇒ pas
-     * d'embrasement). Utilisée par {@code base_water_1} (dégâts sans feu).
+     * Variant with explicit damage source and optional fire ({@code fireTicks = 0} ⇒ no
+     * ignition). Used by {@code base_water_1} (damage without fire).
      */
     public static void damagePlayersInColumn(ServerLevel level, BossBattleSession session,
                                              double cx, double baseY, double cz,
@@ -138,8 +138,8 @@ public final class CsBossAttackLib {
     }
 
     /**
-     * Explosion sans dégât de bloc : particules + son, et dégâts (dégressifs avec la distance)
-     * aux participants vivants dans le rayon. Aucun bloc n'est cassé.
+     * Explosion without block damage: particles + sound, and damage (falling off with distance)
+     * to living participants within radius. No blocks are broken.
      */
     public static void nonBlockExplosion(ServerLevel level, BossBattleSession session,
                                          Vec3 center, double radius, float maxDamage) {
@@ -158,9 +158,9 @@ public final class CsBossAttackLib {
         }
     }
 
-    // --- Particules ----------------------------------------------------------
+    // --- Particles ----------------------------------------------------------
 
-    /** Colonne de particules montantes générique. */
+    /** Generic rising particle column. */
     public static void particleColumn(ServerLevel level, double x, double baseY, double z, double height,
                                       net.minecraft.core.particles.ParticleOptions particle) {
         for (double dy = 0; dy < height; dy += 0.5) {
@@ -168,47 +168,47 @@ public final class CsBossAttackLib {
         }
     }
 
-    /** Émet une bouffée de flammes montantes (style colonne {@code bubble_column_up}). */
+    /** Emits a burst of rising flames (style {@code bubble_column_up} column). */
     public static void flameColumn(ServerLevel level, double x, double baseY, double z, double height) {
         particleColumn(level, x, baseY, z, height, ParticleTypes.FLAME);
         level.sendParticles(ParticleTypes.LAVA, x, baseY + 0.2, z, 1, 0.2, 0.0, 0.2, 0.0);
     }
 
-    /** Émet une colonne de bulles montantes ({@code base_water_1}). */
+    /** Emits a rising bubble column ({@code base_water_1}). */
     public static void bubbleColumn(ServerLevel level, double x, double baseY, double z, double height) {
         particleColumn(level, x, baseY, z, height, ParticleTypes.BUBBLE_COLUMN_UP);
         level.sendParticles(ParticleTypes.SPLASH, x, baseY + 0.2, z, 6, 0.25, 0.1, 0.25, 0.1);
     }
 
-    /** Bouffée de particules blanches autour d'une position (flash de télégraphe). */
+    /** Burst of white particles around a position (telegraph flash). */
     public static void whiteFlash(ServerLevel level, double x, double y, double z) {
         level.sendParticles(ParticleTypes.END_ROD, x, y, z, 12, 0.4, 0.4, 0.4, 0.02);
     }
 
-    /** Poussière météorite (#ad857d) tombant du ciel. */
+    /** Meteor dust (#ad857d) falling from the sky. */
     public static final net.minecraft.core.particles.DustParticleOptions METEOR_DUST =
             new net.minecraft.core.particles.DustParticleOptions(
                     new org.joml.Vector3f(0.678f, 0.522f, 0.490f), 1.5f);
-    /** Poussière dracométéore (#c3476b). */
+    /** Dracometeor dust (#c3476b). */
     public static final net.minecraft.core.particles.DustParticleOptions DRACO_DUST =
             new net.minecraft.core.particles.DustParticleOptions(
                     new org.joml.Vector3f(0.765f, 0.278f, 0.420f), 1.5f);
 
     /**
-     * Télégraphe météorite : un peu de poussière colorée tombant du ciel, 2 blocs au‑dessus de
-     * l'ombre (rend l'attaque visible même en vue première personne). À émettre chaque tick.
+     * Meteor telegraph: a little colored dust falling from the sky, 2 blocks above
+     * the shadow (makes the attack visible even in first-person view). Emit each tick.
      */
     public static void meteorTelegraph(ServerLevel level, double x, double y, double z,
                                        net.minecraft.core.particles.DustParticleOptions dust) {
-        // Étalé sur ~1 bloc en horizontal (count=0 ⇒ vitesse vers le bas) pour tomber dans le champ de vision.
+        // Spread over ~1 block horizontally (count=0 ⇒ downward velocity) to fall into the field of view.
         double ox = level.getRandom().nextDouble() - 0.5;
         double oz = level.getRandom().nextDouble() - 0.5;
         level.sendParticles(dust, x + ox, y + 2.0, z + oz, 0, 0.0, -1.0, 0.0, 0.25);
     }
 
     /**
-     * Petite quantité de particules montantes depuis l'ombre, réparties jusqu'à ~2 blocs de haut
-     * (télégraphe colonne feu/eau).
+     * Small amount of rising particles from the shadow, spread up to ~2 blocks high
+     * (fire/water column telegraph).
      */
     public static void risingTelegraph(ServerLevel level, double x, double y, double z,
                                        net.minecraft.core.particles.ParticleOptions particle) {
@@ -217,10 +217,10 @@ public final class CsBossAttackLib {
     }
 
     /**
-     * Dégât « balayé » d'une météorite tombante : couvre tout le segment vertical parcouru ce tick
-     * ({@code fromY} → {@code toY}), pas seulement la position d'arrivée — sinon un pas de chute plus
-     * grand que la hitbox saute par‑dessus le joueur (cause des ratés). Inflige une fois et renvoie
-     * {@code true} si un participant a été touché.
+     * "Swept" damage from a falling meteorite: covers the entire vertical segment traveled this tick
+     * ({@code fromY} → {@code toY}), not just the landing position — otherwise a fall step larger
+     * than the hitbox skips over the player (causes misses). Hits once and returns
+     * {@code true} if a participant was struck.
      */
     public static boolean meteorSweepHit(ServerLevel level, BossBattleSession session,
                                          net.minecraft.world.entity.Entity meteor,
@@ -236,11 +236,11 @@ public final class CsBossAttackLib {
         return false;
     }
 
-    // --- Effets de statut ----------------------------------------------------
+    // --- Status effects ----------------------------------------------------
 
     /**
-     * Applique un effet à tous les participants vivants (plan 113). À rappeler chaque tick avec une
-     * petite durée pour qu'il « dure le temps de l'attaque », ou une fois avec la durée voulue.
+     * Applies an effect to all living participants (plan 113). Re-apply each tick with a
+     * short duration so it "lasts for the attack", or once with the desired duration.
      */
     public static void applyEffectToAll(ServerLevel level, BossBattleSession session,
                                         net.minecraft.core.Holder<net.minecraft.world.effect.MobEffect> effect,
@@ -250,12 +250,12 @@ public final class CsBossAttackLib {
         }
     }
 
-    // --- Sons ----------------------------------------------------------------
+    // --- Sounds ----------------------------------------------------------------
 
     /**
-     * Joue un son par identifiant ({@code "namespace:path"}, vanilla ou Cobblemon) à une position.
-     * Utilise un {@code SoundEvent} direct : le client résout le son par sa location même s'il n'est
-     * pas dans le registre côté serveur.
+     * Plays a sound by id ({@code "namespace:path"}, vanilla or Cobblemon) at a position.
+     * Uses a direct {@code SoundEvent}: the client resolves the sound by location even if it is
+     * not in the server-side registry.
      */
     public static void sound(ServerLevel level, double x, double y, double z,
                              String id, SoundSource source, float volume, float pitch) {

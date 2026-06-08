@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "hayley",
+  "displayName": "Hayley",
+  "displayPriority": 0,
+  "textureFile": "hayley",
+  "unlockedFromStart": true,
+  "steps": [
+    {
+      "messagesBefore": ["chat.test.hayley.s1.b1", "chat.test.hayley.s1.b2"],
+      "advancement": "cobblesafari:up_and_downs",
+      "rewardItems": "cobblesafari:gifts/test_basic",
+      "messagesAfter": ["chat.test.hayley.s1.a1"],
+      "waitNextDay": false
+    },
+    {
+      "messagesBefore": ["chat.test.hayley.s2.b1"],
+      "advancement": "cobblesafari:safari_geographer",
+      "rewardPersonalTrade": "sample_shiny_eevee_for_pikachu",
+      "messagesAfter": ["chat.test.hayley.s2.a1"],
+      "waitNextDay": true
+    },
+    {
+      "messagesBefore": ["chat.test.hayley.s3.b1"],
+      "advancement": "cobblesafari:dig_deeper",
+      "rewardItems": "cobblesafari:gifts/test_basic",
+      "messagesAfter": ["chat.test.hayley.s3.a1"],
+      "waitNextDay": false
+    }
+  ]
+}

@@ -32,6 +32,9 @@ public final class ModCriteria {
     public static CountTrigger GTS_TRADE_DEPOSIT_SOLD;
     public static CountTrigger UNION_CREATED;
 
+    // Boss battle
+    public static CsBossWinTrigger CSBOSS_WIN;
+
     // One-shot events
     public static SimpleEventTrigger ROTOM_PHONE_MADE;
     public static SimpleEventTrigger ROTOM_PHONE_SHINY;
@@ -55,6 +58,8 @@ public final class ModCriteria {
         GTS_TRADE_CONFIRMED = reg("gts_trade_confirmed", new CountTrigger());
         GTS_TRADE_DEPOSIT_SOLD = reg("gts_trade_deposit_sold", new CountTrigger());
         UNION_CREATED = reg("union_created", new CountTrigger());
+
+        CSBOSS_WIN = reg("csboss_win", new CsBossWinTrigger());
 
         ROTOM_PHONE_MADE = reg("rotom_phone_made", new SimpleEventTrigger());
         ROTOM_PHONE_SHINY = reg("rotom_phone_shiny", new SimpleEventTrigger());

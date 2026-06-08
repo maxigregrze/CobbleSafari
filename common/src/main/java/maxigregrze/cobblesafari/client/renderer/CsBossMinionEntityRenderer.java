@@ -1,7 +1,5 @@
 package maxigregrze.cobblesafari.client.renderer;
 
-import com.cobblemon.mod.common.client.render.models.blockbench.FloatingState;
-import com.cobblemon.mod.common.client.render.models.blockbench.PosableState;
 import com.mojang.blaze3d.vertex.PoseStack;
 import maxigregrze.cobblesafari.CobbleSafari;
 import maxigregrze.cobblesafari.entity.csboss.CsBossMinionEntity;
@@ -16,15 +14,15 @@ import java.util.Map;
 import java.util.UUID;
 
 /**
- * Rendu d'un Minion : modèle d'espèce Cobblemon via {@link CsBossModelRenderer}, poses idle/walk
- * et animation d'attaque sur DATA_ATTACK_SEQ.
+ * Minion rendering: Cobblemon species model via {@link CsBossModelRenderer}, idle/walk poses
+ * and attack animation on DATA_ATTACK_SEQ.
  */
 public class CsBossMinionEntityRenderer extends EntityRenderer<CsBossMinionEntity> {
 
     private static final ResourceLocation FALLBACK_TEXTURE =
             ResourceLocation.withDefaultNamespace("textures/misc/white.png");
 
-    private final Map<UUID, PosableState> states = new HashMap<>();
+    private final Map<UUID, CsBossPosableState> states = new HashMap<>();
     private final Map<String, CsBossModelRenderer.SpeciesInfo> speciesCache = new HashMap<>();
     private final Map<UUID, Integer> lastAttackSeq = new HashMap<>();
 
@@ -56,7 +54,11 @@ public class CsBossMinionEntityRenderer extends EntityRenderer<CsBossMinionEntit
 
     private void renderMinion(CsBossMinionEntity minion, float partialTicks, PoseStack ps,
                               MultiBufferSource buffer, int packedLight, CsBossModelRenderer.SpeciesInfo info) {
-        PosableState state = states.computeIfAbsent(minion.getUUID(), u -> new FloatingState());
+        CsBossPosableState state = states.computeIfAbsent(minion.getUUID(), u -> new CsBossPosableState());
+        // Real-time animation clock (entity tick count), not framerate-dependent accumulated partial
+        // ticks. See CsBossPosableState.
+        state.setEntity(minion);
+        state.updateAge(minion.tickCount);
 
         float limbSwing = minion.walkAnimation.position(partialTicks);
         float limbSwingAmount = Math.min(1.0f, minion.walkAnimation.speed(partialTicks));
@@ -66,13 +68,12 @@ public class CsBossMinionEntityRenderer extends EntityRenderer<CsBossMinionEntit
         Runnable afterPose = () -> {
             int seq = minion.getAttackSeq();
             Integer lastSeq = lastAttackSeq.get(minion.getUUID());
-            if (lastSeq == null || lastSeq != seq) {
+            // Queue: only start when no primary animation is playing, so we never cut one short.
+            if (seq != 0 && (lastSeq == null || lastSeq != seq) && state.getPrimaryAnimation() == null) {
                 lastAttackSeq.put(minion.getUUID(), seq);
-                if (seq != 0) {
-                    // « cry » en repli si l'espèce n'a pas d'animation de combat (ordre garanti).
-                    state.addFirstAnimation(new java.util.LinkedHashSet<>(
-                            java.util.List.of("physical", "special", "status", "cry")));
-                }
+                // "cry" as fallback if the species has no battle animation (order guaranteed).
+                state.addFirstAnimation(new java.util.LinkedHashSet<>(
+                        java.util.List.of("physical", "special", "status", "cry")));
             }
         };
 

@@ -17,22 +17,22 @@ import java.util.List;
 import java.util.UUID;
 
 /**
- * Base partagée des pluies de météorites (plan 107 § 6.3/6.4). Par vagues, des ombres traquent un
- * joueur 3 s, se figent 1 s, puis une météorite tombe (20 blocs) et, à l'impact (0.5 s), pose un
- * bloc éphémère à la place de l'ombre. {@code base_rock_1} et {@code base_dragon_1} ne diffèrent que
- * par leurs paramètres (cadence, nombre, variante, bloc, cooldown final).
+ * Shared base for meteor showers (plan 107 § 6.3/6.4). In waves, shadows track a
+ * player for 3 s, freeze for 1 s, then a meteor falls (20 blocks) and, on impact (0.5 s), places an
+ * ephemeral block where the shadow was. {@code base_rock_1} and {@code base_dragon_1} differ only
+ * in their parameters (cadence, count, variant, block, final cooldown).
  */
 public class MeteorShowerAttack implements CsBossAttack {
 
-    // Cycle de vie d'une ombre (offsets depuis son apparition).
-    private static final int FOLLOW_TICKS = 60;   // 3 s de poursuite
-    private static final int FREEZE_TICKS = 20;   // 1 s d'immobilité
-    private static final int FALL_TICKS = 20;     // chute 2× plus lente (10→20), visible plus longtemps
-    private static final int IMPACT_AT = 90;      // impact inchangé (pose du bloc)
-    private static final int SPAWN_AT = IMPACT_AT - FALL_TICKS; // 70 : météorite apparaît plus tôt
+    // Shadow lifecycle (offsets from spawn).
+    private static final int FOLLOW_TICKS = 60;   // 3 s of pursuit
+    private static final int FREEZE_TICKS = 20;   // 1 s immobile
+    private static final int FALL_TICKS = 20;     // fall 2× slower (10→20), visible longer
+    private static final int IMPACT_AT = 90;      // impact unchanged (block placement)
+    private static final int SPAWN_AT = IMPACT_AT - FALL_TICKS; // 70: meteor appears earlier
     private static final double FALL_HEIGHT = 20.0;
 
-    private static final float METEOR_DAMAGE = 18.0F; // dégâts d'une météorite tombant sur un joueur
+    private static final float METEOR_DAMAGE = 18.0F; // damage from a meteor falling on a player
 
     private final String id;
     private final int spawnInterval;
@@ -74,12 +74,12 @@ public class MeteorShowerAttack implements CsBossAttack {
         this.endDelay = endDelay;
     }
 
-    /** {@code base_rock_1} : 1 vague/s (~10 vagues ±25 %), 1 ombre garantie/joueur, bloc météorite (10 s). */
+    /** {@code base_rock_1}: 1 wave/s (~10 waves ±25%), 1 shadow guaranteed/player, meteorite block (10 s). */
     public static MeteorShowerAttack rock(String id) {
         return new MeteorShowerAttack(id, 20, 10, true, false, ModBlocks.METEORITE, 100);
     }
 
-    /** {@code base_dragon_1} : comme {@code rock} mais ×1,5 plus long (~15 vagues ±25 %), dracométéore. */
+    /** {@code base_dragon_1}: like {@code rock} but ×1.5 longer (~15 waves ±25%), draco meteorite. */
     public static MeteorShowerAttack draco(String id) {
         return new MeteorShowerAttack(id, 20, 15, true, true, ModBlocks.DRACO_METEORITE, 100);
     }
@@ -103,13 +103,13 @@ public class MeteorShowerAttack implements CsBossAttack {
             return;
         }
 
-        // Apparition des vagues.
+        // Wave spawning.
         if (wavesSpawned < waves && tick == wavesSpawned * spawnInterval) {
             spawnWave(level, session);
             wavesSpawned++;
         }
 
-        // Pilotage du cycle de vie de chaque ombre.
+        // Drive each shadow's lifecycle.
         Iterator<Shadow> it = shadows.iterator();
         while (it.hasNext()) {
             Shadow s = it.next();
@@ -141,7 +141,7 @@ public class MeteorShowerAttack implements CsBossAttack {
                 spawnShadow(level, session, p);
             }
         } else {
-            int count = (alive.size() + 1) / 2; // ceil(joueurs/2)
+            int count = (alive.size() + 1) / 2; // ceil(players/2)
             for (int i = 0; i < count; i++) {
                 spawnShadow(level, session, alive.get(rng.nextInt(alive.size())));
             }
@@ -153,7 +153,7 @@ public class MeteorShowerAttack implements CsBossAttack {
                 session.getId());
         session.trackAttackEntity(e);
         shadows.add(new Shadow(e, tick, target.getUUID()));
-        // Indice sonore d'attaque imminente (visible/audible dès l'apparition de l'ombre).
+        // Audio cue of imminent attack (visible/audible as soon as the shadow appears).
         CsBossAttackLib.sound(level, target.getX(), target.getY(), target.getZ(),
                 draco ? "cobblemon:move.dragonclaw.target" : "cobblemon:move.rockthrow.target",
                 net.minecraft.sounds.SoundSource.HOSTILE, 0.8F, 1.0F);
@@ -161,7 +161,7 @@ public class MeteorShowerAttack implements CsBossAttack {
 
     private void driveShadow(ServerLevel level, BossBattleSession session, Shadow s, int age) {
         if (age < SPAWN_AT) {
-            // Poussière colorée tombant du ciel au‑dessus de l'ombre : télégraphe avant la météorite.
+            // Colored dust falling from the sky above the shadow: telegraph before the meteor.
             CsBossAttackLib.meteorTelegraph(level, s.entity.getX(), s.entity.getY(), s.entity.getZ(),
                     draco ? CsBossAttackLib.DRACO_DUST : CsBossAttackLib.METEOR_DUST);
         }
@@ -184,7 +184,7 @@ public class MeteorShowerAttack implements CsBossAttack {
                 double prevY = s.entity.getY() + FALL_HEIGHT * (1.0 - prevProgress);
                 double newY = s.entity.getY() + FALL_HEIGHT * (1.0 - progress);
                 s.meteor.setPos(s.entity.getX(), newY, s.entity.getZ());
-                // Dégât balayé sur tout le segment parcouru ce tick (jusqu'au sol au dernier tick).
+                // Swept damage over the entire segment traveled this tick (to ground on last tick).
                 if (!s.damaged && CsBossAttackLib.meteorSweepHit(level, session, s.meteor, prevY, newY, METEOR_DAMAGE)) {
                     s.damaged = true;
                 }

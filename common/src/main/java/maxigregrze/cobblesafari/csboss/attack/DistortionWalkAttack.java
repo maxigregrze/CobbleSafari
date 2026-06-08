@@ -6,43 +6,47 @@ import maxigregrze.cobblesafari.entity.csboss.attacks.AttackDistortionFlowerEnti
 import maxigregrze.cobblesafari.entity.csboss.attacks.AttackShadowEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.RandomSource;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.UUID;
 
 /**
- * {@code distortion_2} (plan 113, Type A) : pour chaque joueur, une ombre part du boss et le suit 5 s.
- * Sur chaque bloc qu'elle traverse, une fleur de distorsion apparaît ; 2 s plus tard la fleur pousse
- * un mur de tiges verticales (6 blocs, actif 10 s). Répété 1‑3 fois.
+ * {@code distortion_2} (plan 113, Type C / SPREAD): every couple of seconds the boss sends out a
+ * shadow in a <b>random direction</b>. The shadow travels straight forward (with a small one-time
+ * deviation a few degrees left or right around mid-course) while leaving a distortion-flower trail;
+ * each flower later grows a vertical stem wall. 4–6 shadows over the attack.
  */
 public class DistortionWalkAttack implements CsBossAttack {
 
-    private static final int FOLLOW_TICKS = 100;  // 5 s de poursuite
-    private static final double WALK_SPEED = 0.2; // l'ombre trace un chemin
+    private static final int SEND_INTERVAL = 40;   // a new shadow every 2 s
+    private static final int SHADOW_LIFE = 100;    // 5 s of forward travel
+    private static final double WALK_SPEED = 0.2;  // shadow traces a path
+    private static final double DEVIATION_DEG = 12.0; // max mid-course turn (left or right)
     private static final int END_DELAY = 40;
 
     private final String id;
     private final RandomSource rng = RandomSource.create();
     private final List<Walk> walks = new ArrayList<>();
-    private int waves;
+    private int count;
     private int tick;
-    private int wavesSpawned;
+    private int sent;
     private boolean done;
 
     private static final class Walk {
         final AttackShadowEntity shadow;
-        final UUID target;
         final int birthTick;
+        double dirX;
+        double dirZ;
         BlockPos lastBlock;
+        boolean deviated;
 
-        Walk(AttackShadowEntity shadow, UUID target, int birthTick) {
+        Walk(AttackShadowEntity shadow, int birthTick, double dirX, double dirZ) {
             this.shadow = shadow;
-            this.target = target;
             this.birthTick = birthTick;
+            this.dirX = dirX;
+            this.dirZ = dirZ;
         }
     }
 
@@ -56,16 +60,16 @@ public class DistortionWalkAttack implements CsBossAttack {
 
     @Override
     public AttackCategory category() {
-        return AttackCategory.TARGETED;
+        return AttackCategory.SPREAD;
     }
 
     @Override
     public void begin(ServerLevel level, BossBattleSession session, CsBossEntity boss) {
         this.tick = 0;
-        this.wavesSpawned = 0;
+        this.sent = 0;
         this.done = false;
         this.walks.clear();
-        this.waves = 1 + rng.nextInt(3); // 1‑3
+        this.count = 4 + rng.nextInt(3); // 4‑6
     }
 
     @Override
@@ -73,14 +77,9 @@ public class DistortionWalkAttack implements CsBossAttack {
         if (done) {
             return;
         }
-        if (wavesSpawned < waves && tick == wavesSpawned * FOLLOW_TICKS) {
-            for (ServerPlayer p : session.aliveParticipants(level)) {
-                AttackShadowEntity shadow = AttackShadowEntity.spawn(level, boss.getX(),
-                        session.getTriggerPos().getY(), boss.getZ(), session.getId());
-                session.trackAttackEntity(shadow);
-                walks.add(new Walk(shadow, p.getUUID(), tick));
-            }
-            wavesSpawned++;
+        if (sent < count && tick == sent * SEND_INTERVAL) {
+            sendShadow(level, session, boss);
+            sent++;
         }
 
         Iterator<Walk> it = walks.iterator();
@@ -91,25 +90,47 @@ public class DistortionWalkAttack implements CsBossAttack {
                 continue;
             }
             int age = tick - w.birthTick;
-            if (age >= FOLLOW_TICKS) {
+            if (age >= SHADOW_LIFE) {
                 w.shadow.discard();
                 it.remove();
                 continue;
             }
-            driveWalk(level, session, w);
+            driveWalk(level, session, w, age);
         }
 
-        if (wavesSpawned >= waves && walks.isEmpty()
-                && tick >= (waves - 1) * FOLLOW_TICKS + FOLLOW_TICKS + END_DELAY) {
+        if (sent >= count && walks.isEmpty()
+                && tick >= (count - 1) * SEND_INTERVAL + SHADOW_LIFE + END_DELAY) {
             done = true;
         }
         tick++;
     }
 
-    private void driveWalk(ServerLevel level, BossBattleSession session, Walk w) {
-        if (level.getPlayerByUUID(w.target) instanceof ServerPlayer p && p.isAlive()) {
-            CsBossAttackLib.chase(w.shadow, p.getX(), p.getY(), p.getZ(), WALK_SPEED);
+    private void sendShadow(ServerLevel level, BossBattleSession session, CsBossEntity boss) {
+        double theta = rng.nextDouble() * Math.PI * 2.0;
+        AttackShadowEntity shadow = AttackShadowEntity.spawn(level, boss.getX(),
+                session.getTriggerPos().getY(), boss.getZ(), session.getId());
+        session.trackAttackEntity(shadow);
+        walks.add(new Walk(shadow, tick, Math.cos(theta), Math.sin(theta)));
+        boss.triggerAttackAnimation();
+        CsBossAttackLib.sound(level, boss.getX(), boss.getY(), boss.getZ(),
+                "cobblemon:move.shadowball.actor", net.minecraft.sounds.SoundSource.HOSTILE, 1.2F, 0.8F);
+    }
+
+    private void driveWalk(ServerLevel level, BossBattleSession session, Walk w, int age) {
+        // One-time slight course deviation around mid-life.
+        if (!w.deviated && age >= SHADOW_LIFE / 2) {
+            w.deviated = true;
+            double delta = Math.toRadians((rng.nextDouble() * 2.0 - 1.0) * DEVIATION_DEG);
+            double cos = Math.cos(delta);
+            double sin = Math.sin(delta);
+            double nx = w.dirX * cos - w.dirZ * sin;
+            double nz = w.dirX * sin + w.dirZ * cos;
+            w.dirX = nx;
+            w.dirZ = nz;
         }
+        w.shadow.setPos(w.shadow.getX() + w.dirX * WALK_SPEED, w.shadow.getY(),
+                w.shadow.getZ() + w.dirZ * WALK_SPEED);
+
         BlockPos here = BlockPos.containing(w.shadow.getX(), w.shadow.getY(), w.shadow.getZ());
         if (!here.equals(w.lastBlock)) {
             w.lastBlock = here;

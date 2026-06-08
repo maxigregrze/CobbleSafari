@@ -5,7 +5,7 @@ import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 
 /**
- * Même logique, GUI et {@link AuspiciousPokeballBlockEntity} que {@link AuspiciousPokeballBlock} ; variante visuelle plus petite.
+ * Same logic, GUI, and {@link AuspiciousPokeballBlockEntity} as {@link AuspiciousPokeballBlock}; smaller visual variant.
  */
 public class AuspiciousPokeballSmallBlock extends AuspiciousPokeballBlock {
 

@@ -14,9 +14,9 @@ import java.util.Map;
 import java.util.regex.Pattern;
 
 /**
- * Charge les définitions csmusic depuis {@code data/<ns>/csmusic/*.json} (plan 105 § 2.2).
- * Calqué sur {@code CsBossDataLoader} : validations strictes, jamais d'exception remontée.
- * Les ids de son ne sont pas validés ici (ils vivent dans le resourcepack client).
+ * Loads csmusic definitions from {@code data/<ns>/csmusic/*.json} (plan 105 § 2.2).
+ * Modeled on {@code CsBossDataLoader}: strict validation, never throws.
+ * Sound ids are not validated here (they live in the client resource pack).
  */
 public final class CsMusicDataLoader {
     private static final String PREFIX = "csmusic";
@@ -59,7 +59,7 @@ public final class CsMusicDataLoader {
             CobbleSafari.LOGGER.warn("[CSMusic] {} invalid music id", file);
             return null;
         }
-        // id pleinement qualifié : <namespace>:<nom de fichier> (ex. cobblesafari:underground)
+        // fully qualified id: <namespace>:<filename> (e.g. cobblesafari:underground)
         String id = file.getNamespace() + ":" + name;
         if (!json.has("loop")) {
             CobbleSafari.LOGGER.warn("[CSMusic] {} missing required 'loop'", file);

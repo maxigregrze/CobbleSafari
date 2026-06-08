@@ -13,10 +13,9 @@ import maxigregrze.cobblesafari.config.RandomizerItemsConfig;
 import maxigregrze.cobblesafari.config.GtsSettings;
 import maxigregrze.cobblesafari.config.WonderTradeSettings;
 import maxigregrze.cobblesafari.config.RotomPhoneConfig;
-import maxigregrze.cobblesafari.data.DungeonPositionSavedData;
 import maxigregrze.cobblesafari.dungeon.DungeonConfig;
 import maxigregrze.cobblesafari.dungeon.DungeonDimensions;
-import maxigregrze.cobblesafari.dungeon.DungeonRegionClearer;
+import maxigregrze.cobblesafari.dungeon.DungeonInstanceCleanup;
 import maxigregrze.cobblesafari.dungeon.PortalSpawnConfig;
 import maxigregrze.cobblesafari.dungeon.PortalSpawnManager;
 import maxigregrze.cobblesafari.manager.SafariResetManager;
@@ -25,7 +24,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.level.ChunkPos;
 
 import java.util.List;
 
@@ -126,43 +124,12 @@ public class ResetCommand {
             }
         }
 
+        DungeonInstanceCleanup.scheduleResetForAllInstances(server);
         PortalSpawnManager.removeAllDungeonPortals(server);
 
-        for (DungeonConfig dungeon : dungeons) {
-            ServerLevel dungeonLevel = server.getLevel(dungeon.getDimensionKey());
-            if (dungeonLevel != null) {
-                clearAllForcedChunks(dungeonLevel);
-            }
-        }
-
-        DungeonPositionSavedData.get(server).clearAllDungeons();
-
         source.sendSuccess(() -> Component.translatable("cobblesafari.command.reset.dungeon_success", dungeons.size()), true);
-        CobbleSafari.LOGGER.info("All dungeon dimensions reset by {}", source.getTextName());
+        CobbleSafari.LOGGER.info("All dungeon dimensions reset by {} (structure clears scheduled async)", source.getTextName());
 
         return 1;
-    }
-
-    private static void clearAllForcedChunks(ServerLevel level) {
-        var forcedChunks = level.getForcedChunks();
-        if (forcedChunks.isEmpty()) return;
-
-        int minCX = Integer.MAX_VALUE;
-        int minCZ = Integer.MAX_VALUE;
-        int maxCX = Integer.MIN_VALUE;
-        int maxCZ = Integer.MIN_VALUE;
-
-        for (long pos : forcedChunks) {
-            int cx = ChunkPos.getX(pos);
-            int cz = ChunkPos.getZ(pos);
-            minCX = Math.min(minCX, cx);
-            minCZ = Math.min(minCZ, cz);
-            maxCX = Math.max(maxCX, cx);
-            maxCZ = Math.max(maxCZ, cz);
-        }
-
-        DungeonRegionClearer.clearRegion(level, minCX, minCZ, maxCX, maxCZ);
-        CobbleSafari.LOGGER.info("Cleared all forced chunks in dimension {}: [{},{}] to [{},{}]",
-                level.dimension().location(), minCX, minCZ, maxCX, maxCZ);
     }
 }

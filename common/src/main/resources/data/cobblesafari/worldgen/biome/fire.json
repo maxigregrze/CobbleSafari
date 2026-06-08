@@ -25,7 +25,9 @@
   "features": [
     [],
     [],
-    [],
+    [
+      "cobblesafari:volcanic_crater_patch"
+    ],
     [],
     [],
     [],

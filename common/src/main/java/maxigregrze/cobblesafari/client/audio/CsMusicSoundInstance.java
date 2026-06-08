@@ -6,9 +6,9 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
 
 /**
- * Instance sonore custom (plan 105 § 7.1) : non positionnelle, optionnellement bouclée, avec
- * rampe de volume pour le fondu. {@link SoundEvent#createVariableRangeEvent} permet de jouer
- * n'importe quel id de son du resourcepack sans l'enregistrer.
+ * Custom sound instance (plan 105 § 7.1): non-positional, optionally looped, with
+ * volume ramp for fading. {@link SoundEvent#createVariableRangeEvent} allows playing
+ * any resource-pack sound id without registering it.
  */
 public class CsMusicSoundInstance extends AbstractTickableSoundInstance {
 

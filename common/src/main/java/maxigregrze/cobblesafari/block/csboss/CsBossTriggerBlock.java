@@ -22,7 +22,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * Bloc Arena Trigger (plan 100 § 3). Deux états : {@code active} false/true (modèles distincts).
+ * Arena Trigger block (plan 100 § 3). Two states: {@code active} false/true (distinct models).
  */
 public class CsBossTriggerBlock extends BaseEntityBlock {
 
@@ -66,7 +66,7 @@ public class CsBossTriggerBlock extends BaseEntityBlock {
                 || !(level.getBlockEntity(pos) instanceof CsBossTriggerBlockEntity be)) {
             return InteractionResult.PASS;
         }
-        // Créatif + main vide + sans shift ⇒ GUI de config.
+        // Creative + empty hand + no shift ⇒ config GUI.
         if (sp.isCreative() && !sp.isShiftKeyDown()) {
             Services.PLATFORM.sendPayloadToPlayer(sp, be.createOpenPayload());
             return InteractionResult.CONSUME;
@@ -77,7 +77,7 @@ public class CsBossTriggerBlock extends BaseEntityBlock {
     @Override
     protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos,
                                               Player player, InteractionHand hand, BlockHitResult hit) {
-        // Main vide : laisse useWithoutItem gérer (GUI / activation).
+        // Empty hand: let useWithoutItem handle (GUI / activation).
         if (stack.isEmpty()) {
             return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
         }

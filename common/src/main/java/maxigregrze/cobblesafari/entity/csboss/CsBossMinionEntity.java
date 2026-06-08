@@ -22,10 +22,10 @@ import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * Minion de boss : entité légère qui <b>emprunte le modèle d'une espèce Cobblemon</b> (comme
- * {@link CsBossEntity}), destinée à être pilotée par un pattern d'attaque (plan 104).
- * Pas d'AI vanilla, pas de gravité, immunisée — le mouvement et la disparition sont décidés par
- * le code d'attaque. Hitbox dérivée de l'espèce × size.
+ * Boss minion: lightweight entity that <b>borrows the model of a Cobblemon species</b> (like
+ * {@link CsBossEntity}), meant to be driven by an attack pattern (plan 104).
+ * No vanilla AI, no gravity, immune — movement and removal are decided by
+ * attack code. Hitbox derived from species × size.
  */
 public class CsBossMinionEntity extends Mob {
 
@@ -33,16 +33,16 @@ public class CsBossMinionEntity extends Mob {
             SynchedEntityData.defineId(CsBossMinionEntity.class, EntityDataSerializers.STRING);
     private static final EntityDataAccessor<Integer> DATA_SIZE =
             SynchedEntityData.defineId(CsBossMinionEntity.class, EntityDataSerializers.INT);
-    /** Incrémenté côté serveur pour déclencher une animation d'attaque côté client. */
+    /** Incremented server-side to trigger a client attack animation. */
     private static final EntityDataAccessor<Integer> DATA_ATTACK_SEQ =
             SynchedEntityData.defineId(CsBossMinionEntity.class, EntityDataSerializers.INT);
-    /** Flash blanc (overlay) piloté par un pattern d'attaque (plan 107 § 5.3). */
+    /** White flash (overlay) driven by an attack pattern (plan 107 § 5.3). */
     private static final EntityDataAccessor<Boolean> DATA_FLASH =
             SynchedEntityData.defineId(CsBossMinionEntity.class, EntityDataSerializers.BOOLEAN);
-    /** Opacité du rendu (fondu de {@code base_ghost_1}, plan 108). */
+    /** Render opacity (fade of {@code base_ghost_1}, plan 108). */
     private static final EntityDataAccessor<Float> DATA_ALPHA =
             SynchedEntityData.defineId(CsBossMinionEntity.class, EntityDataSerializers.FLOAT);
-    /** Échelle flottante (≤ 0 ⇒ utilise {@code size} entier). Permet un redimensionnement précis (plan 111). */
+    /** Floating scale (≤ 0 ⇒ uses integer {@code size}). Enables precise resizing (plan 111). */
     private static final EntityDataAccessor<Float> DATA_SCALE =
             SynchedEntityData.defineId(CsBossMinionEntity.class, EntityDataSerializers.FLOAT);
 
@@ -68,7 +68,7 @@ public class CsBossMinionEntity extends Mob {
                 .add(Attributes.FOLLOW_RANGE, 0.0D);
     }
 
-    /** Fait apparaître un minion à une position donnée. */
+    /** Spawns a minion at the given position. */
     public static CsBossMinionEntity spawn(ServerLevel level, double x, double y, double z,
                                            String specie, int size, int sessionId) {
         CsBossMinionEntity minion = new CsBossMinionEntity(ModEntities.CSBOSS_MINION, level);
@@ -91,15 +91,15 @@ public class CsBossMinionEntity extends Mob {
         builder.define(DATA_SCALE, 0.0F);
     }
 
-    /** Échelle effective : {@code DATA_SCALE} si &gt; 0, sinon le {@code size} entier. */
+    /** Effective scale: {@code DATA_SCALE} if &gt; 0, otherwise the integer {@code size}. */
     public float getRenderScale() {
         float fs = this.entityData.get(DATA_SCALE);
         return fs > 0.0F ? fs : getSize();
     }
 
     /**
-     * Redimensionne le minion pour que sa hauteur de hitbox vise {@code targetBlocks} blocs, en
-     * tenant compte de la hitbox naturelle de l'espèce × baseScale (plan 111, {@code base_ghost_1}).
+     * Resizes the minion so its hitbox height targets {@code targetBlocks} blocks, accounting for
+     * the species' natural hitbox × baseScale (plan 111, {@code base_ghost_1}).
      */
     public void resizeToHeight(double targetBlocks) {
         String specie = getSpecie();
@@ -114,7 +114,7 @@ public class CsBossMinionEntity extends Mob {
                 this.entityData.set(DATA_SCALE, (float) (targetBlocks / natural));
             }
         } catch (Exception ignored) {
-            // espèce non résolue : on garde l'échelle courante
+            // unresolved species: keep current scale
         }
     }
 
@@ -154,7 +154,7 @@ public class CsBossMinionEntity extends Mob {
             this.cachedDims = box.scale(scale);
             refreshDimensions();
         } catch (Exception ignored) {
-            // espèce non résolue : on garde les dimensions précédentes / par défaut
+            // unresolved species: keep previous / default dimensions
         }
     }
 
@@ -165,7 +165,7 @@ public class CsBossMinionEntity extends Mob {
 
     @Override
     protected void registerGoals() {
-        // Aucune AI vanilla : le mouvement est piloté par le pattern d'attaque.
+        // No vanilla AI: movement is driven by the attack pattern.
     }
 
     public String getSpecie() {
@@ -200,7 +200,7 @@ public class CsBossMinionEntity extends Mob {
         this.entityData.set(DATA_ATTACK_SEQ, getAttackSeq() + 1);
     }
 
-    /** Oriente le minion vers une cible (yaw du corps/tête), pour le rendu. */
+    /** Rotates the minion toward a target (body/head yaw), for rendering. */
     public void faceTarget(@Nullable Vec3 targetPos) {
         if (targetPos == null) {
             return;
@@ -216,7 +216,18 @@ public class CsBossMinionEntity extends Mob {
         this.yBodyRot = yaw;
     }
 
-    // --- Immunité / inertie ------------------------------------------------------
+    /**
+     * Like {@link #faceTarget(Vec3)} but also snaps the previous-frame rotations so the minion is
+     * already oriented on its very first rendered frame (no visible turn after spawning).
+     */
+    public void faceTargetInstant(@Nullable Vec3 targetPos) {
+        faceTarget(targetPos);
+        this.yRotO = this.getYRot();
+        this.yHeadRotO = this.yHeadRot;
+        this.yBodyRotO = this.yBodyRot;
+    }
+
+    // --- Immunity / inertia ------------------------------------------------------
 
     @Override
     public boolean hurt(DamageSource source, float amount) {

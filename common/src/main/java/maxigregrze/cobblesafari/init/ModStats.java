@@ -37,6 +37,8 @@ public final class ModStats {
     public static final ResourceLocation UNION_ROOM_WRONG_CODES = id("union_room_wrong_codes");
     public static final ResourceLocation TIME_IN_UNION_ROOM = id("time_in_union_room");
     public static final ResourceLocation CSTRADER_TRADES = id("cstrader_trades");
+    public static final ResourceLocation CSBOSS_BATTLES_ATTEMPTED = id("csboss_battles_attempted");
+    public static final ResourceLocation CSBOSS_BATTLES_WON = id("csboss_battles_won");
 
     public static void register() {
         timeStat(TIME_IN_SAFARI);
@@ -60,6 +62,8 @@ public final class ModStats {
         countStat(UNION_ROOM_WRONG_CODES);
         timeStat(TIME_IN_UNION_ROOM);
         countStat(CSTRADER_TRADES);
+        countStat(CSBOSS_BATTLES_ATTEMPTED);
+        countStat(CSBOSS_BATTLES_WON);
 
         CobbleSafari.LOGGER.info("CobbleSafari >> Custom statistics registered!");
     }

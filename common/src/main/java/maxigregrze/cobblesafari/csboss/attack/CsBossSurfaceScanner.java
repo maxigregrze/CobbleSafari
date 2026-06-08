@@ -11,9 +11,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Util d'arène (plan 108 § 1) : repère les blocs « surface » (sommet exposé, {@code y = triggerY ± tol})
- * dans le disque des participants, et pose des blocs sur cette surface. Appelé ponctuellement
- * (pas par tick) — un scan complet du disque est acceptable.
+ * Arena util (plan 108 § 1): identifies "surface" blocks (exposed top, {@code y = triggerY ± tol})
+ * in the participant disk, and places blocks on that surface. Called occasionally
+ * (not per tick) — a full disk scan is acceptable.
  */
 public final class CsBossSurfaceScanner {
 
@@ -21,15 +21,15 @@ public final class CsBossSurfaceScanner {
 
     private CsBossSurfaceScanner() {}
 
-    /** Surfaces du disque de l'arène, ancrées sur le Y du bloc trigger ± {@link #DEFAULT_Y_TOLERANCE}. */
+    /** Surfaces of the arena disk, anchored to trigger block Y ± {@link #DEFAULT_Y_TOLERANCE}. */
     public static List<BlockPos> scanSurface(ServerLevel level, BossBattleSession session) {
         return scanSurface(level, session.getArenaCenter(), session.getPlayerRadius(),
                 session.getTriggerPos().getY(), DEFAULT_Y_TOLERANCE);
     }
 
     /**
-     * Pour chaque colonne du disque ({@code dx²+dz² ≤ radius²}), le premier bloc solide (en partant
-     * du haut) dont le bloc au‑dessus est remplaçable, avec {@code y ∈ [triggerY−tol, triggerY+tol]}.
+     * For each column of the disk ({@code dx²+dz² ≤ radius²}), the first solid block (from the top)
+     * whose block above is replaceable, with {@code y ∈ [triggerY−tol, triggerY+tol]}.
      */
     public static List<BlockPos> scanSurface(ServerLevel level, Vec3 center, int radius, int triggerY, int yTolerance) {
         List<BlockPos> out = new ArrayList<>();
@@ -57,8 +57,8 @@ public final class CsBossSurfaceScanner {
     }
 
     /**
-     * Surface d'une colonne ({@code x},{@code z}) : premier bloc solide en partant du haut, dont le
-     * bloc au‑dessus est remplaçable, avec {@code y ∈ [triggerY−tol, triggerY+tol]} ({@code null} sinon).
+     * Surface of a column ({@code x},{@code z}): first solid block from the top, whose
+     * block above is replaceable, with {@code y ∈ [triggerY−tol, triggerY+tol]} ({@code null} otherwise).
      */
     @org.jetbrains.annotations.Nullable
     public static BlockPos findSurfaceColumn(ServerLevel level, int x, int z, int triggerY, int yTolerance) {
@@ -81,7 +81,7 @@ public final class CsBossSurfaceScanner {
         return above.isAir() || above.canBeReplaced();
     }
 
-    /** Pose {@code state} au‑dessus d'une surface si la case est remplaçable. */
+    /** Places {@code state} above a surface if the cell is replaceable. */
     public static boolean placeOnSurface(ServerLevel level, BlockPos surface, BlockState state) {
         BlockPos pos = surface.above();
         if (!level.getBlockState(pos).canBeReplaced()) {

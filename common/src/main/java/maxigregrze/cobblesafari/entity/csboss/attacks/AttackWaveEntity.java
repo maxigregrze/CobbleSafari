@@ -15,9 +15,9 @@ import java.util.Set;
 import java.util.UUID;
 
 /**
- * Vague d'eau projectile (plan 110 § base_water_2) : se déplace en ligne droite (modèle
- * {@code vertical_wave}), inflige 8 dégâts et repousse fortement les participants au contact
- * (« la vague ne traverse pas le joueur »). Trois vagues forment un arc envoyé par le boss.
+ * Projectile water wave (plan 110 § base_water_2): moves in a straight line (model
+ * {@code vertical_wave}), deals 8 damage and strongly knocks back participants on contact
+ * ("the wave does not pass through the player"). Three waves form an arc sent by the boss.
  */
 public class AttackWaveEntity extends AbstractAttackEntity {
 
@@ -57,7 +57,7 @@ public class AttackWaveEntity extends AbstractAttackEntity {
             }
             alreadyHit.add(p.getUUID());
             p.hurt(CsBossDamage.bullet(level), DAMAGE);
-            // Repousse le joueur dans le sens de déplacement de la vague (il ne la traverse pas).
+            // Knocks the player in the wave's direction of travel (they cannot pass through it).
             p.knockback(KNOCKBACK, -velocity.x, -velocity.z);
         }
     }

@@ -207,6 +207,8 @@ public class SafariResetManager {
     private static void performDataReset(MinecraftServer server, String safariDimensionId) {
         TimerSavedData.get(server).resetDimensionTimers(safariDimensionId);
         TimerManager.resetDimensionTimers(safariDimensionId);
+        // A safari reset (timer reset OR the reset command) also unblocks chat questline "waitNextDay" steps.
+        maxigregrze.cobblesafari.chat.ChatConversationService.onDailyReset(server);
     }
 
     private static void performSoftReset(MinecraftServer server, String safariDimensionId) {

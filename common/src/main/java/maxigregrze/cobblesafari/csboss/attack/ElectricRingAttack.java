@@ -12,15 +12,15 @@ import net.minecraft.world.level.block.state.BlockState;
 import java.util.List;
 
 /**
- * {@code base_electric_3} (plan 109) : autour de <b>chaque joueur</b>, un anneau (rayon 3) de champs
- * {@code csboss_electricity}. Une nouvelle vague 7 s plus tard (1 s après la disparition des blocs).
- * 3‑5 vagues au total. Les blocs gèrent eux‑mêmes leur cycle (charge/actif/disparition, plan 108).
+ * {@code base_electric_3} (plan 109): around <b>each player</b>, a ring (radius 3) of
+ * {@code csboss_electricity} fields. A new wave 7 s later (1 s after blocks disappear).
+ * 3–5 waves total. Blocks manage their own cycle (charge/active/disappear, plan 108).
  */
 public class ElectricRingAttack implements CsBossAttack {
 
     private static final int RING_RADIUS = 3;
     private static final int WAVE_INTERVAL = 140; // 7 s
-    private static final int NOMINAL_WAVES = 4;   // ±25 % ⇒ 3‑5
+    private static final int NOMINAL_WAVES = 4;   // ±25% ⇒ 3–5
     private static final List<BlockPos> RING = CsBossGridShapes.filledCircle(RING_RADIUS);
 
     private final String id;

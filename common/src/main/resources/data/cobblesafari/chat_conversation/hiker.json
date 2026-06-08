@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "id": "locked",
+  "displayName": "Mystery",
+  "displayPriority": 2,
+  "textureFile": "hiker",
+  "unlockedFromStart": false,
+  "unlockingAdvancement": "cobblesafari:dig_deeper",
+  "steps": [
+    {
+      "messagesBefore": ["chat.test.locked.s1.b1"],
+      "advancement": "cobblesafari:up_and_downs",
+      "rewardItems": "cobblesafari:gifts/test_basic",
+      "messagesAfter": ["chat.test.locked.s1.a1"],
+      "waitNextDay": false
+    }
+  ]
+}

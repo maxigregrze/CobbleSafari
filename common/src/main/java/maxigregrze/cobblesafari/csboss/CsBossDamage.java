@@ -9,7 +9,7 @@ import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.level.Level;
 
 /**
- * Sources de dégâts custom du Boss Battle System (types de dégât datapack).
+ * Custom damage sources for the Boss Battle System (datapack damage types).
  * Voir {@code data/cobblesafari/damage_type/csboss_*.json}.
  */
 public final class CsBossDamage {

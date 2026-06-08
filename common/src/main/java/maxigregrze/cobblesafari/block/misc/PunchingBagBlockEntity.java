@@ -6,10 +6,10 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 
 /**
- * Block entity de la moitié supérieure du sac de frappe.
- * Garde l'instant du dernier coup (clic droit) pour piloter l'oscillation amortie
- * côté rendu. Aucune donnée persistante : l'animation est purement visuelle et
- * déclenchée par {@code Level#blockEvent} (comme la cloche vanilla).
+ * Block entity for the upper half of the punching bag.
+ * Stores the time of the last hit (right-click) to drive damped oscillation
+ * on the client. No persistent data: animation is purely visual and
+ * triggered by {@code Level#blockEvent} (like the vanilla bell).
  */
 public class PunchingBagBlockEntity extends BlockEntity {
 

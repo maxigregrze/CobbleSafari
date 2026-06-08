@@ -10,12 +10,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Scan + bascule des blocs réactifs autour d'un trigger (plan 100 § 10).
- * Rayon en chunks (X/Z) + plage Y fixe bornée.
+ * Scan + toggle reactive blocks around a trigger (plan 100 § 10).
+ * Radius in chunks (X/Z) + bounded fixed Y range.
  */
 public final class ArenaBlockScanner {
 
-    /** Plage Y relative au trigger (bornée pour éviter un scan démesuré). */
+    /** Y range relative to trigger (bounded to avoid an oversized scan). */
     private static final int ARENA_Y_BELOW = 8;
     private static final int ARENA_Y_ABOVE = 24;
 
@@ -50,7 +50,7 @@ public final class ArenaBlockScanner {
         }
     }
 
-    /** Pratique pour le restore du trigger lui-même via son bloc. */
+    /** Convenience check for restoring the trigger itself via its block. */
     public static boolean isReactiveBlock(Block block) {
         return block instanceof BattleReactiveBlock;
     }

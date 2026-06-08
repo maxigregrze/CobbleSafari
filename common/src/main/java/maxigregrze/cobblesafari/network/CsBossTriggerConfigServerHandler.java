@@ -7,8 +7,8 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 
 /**
- * Validation serveur de la GUI du trigger (plan 100 § 3.3) : créatif + proximité,
- * jamais de confiance au client.
+ * Server validation for the trigger GUI (plan 100 § 3.3): creative + proximity,
+ * never trust the client.
  */
 public final class CsBossTriggerConfigServerHandler {
 

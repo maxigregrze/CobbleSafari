@@ -12,8 +12,8 @@ import java.util.List;
 import java.util.UUID;
 
 /**
- * {@code base_ground_1} (plan 113, Type A) : identique à {@code base_fire_1}, mais l'entité traqueuse
- * est un tas de terre (modèle {@code attack_digdirt}, texture météorite) au lieu de l'ombre plate.
+ * {@code base_ground_1} (plan 113, Type A): identical to {@code base_fire_1}, but the tracking entity
+ * is a dirt mound (model {@code attack_digdirt}, meteorite texture) instead of the flat shadow.
  */
 public class GroundShadowAttack implements CsBossAttack {
 

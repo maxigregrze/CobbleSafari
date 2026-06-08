@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.Locale;
 
 /**
- * Configuration serveur pour la piscine Wonder Trade ({@code wondertrade_settings.json}).
+ * Server configuration for the Wonder Trade pool ({@code wondertrade_settings.json}).
  */
 public class WonderTradeSettings {
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();

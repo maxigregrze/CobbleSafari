@@ -1,0 +1,22 @@
+{
+  "parent": "cobblesafari:upside_down",
+  "display": {
+    "icon": { "id": "cobblesafari:redchain_fragment" },
+    "title": { "translate": "advancement.cobblesafari.fadded_shadow.title" },
+    "description": { "translate": "advancement.cobblesafari.fadded_shadow.description" },
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "won": {
+      "trigger": "cobblesafari:csboss_win",
+      "conditions": {
+        "dimension": "cobblesafari:dungeon_distortion",
+        "boss": "giratina"
+      }
+    }
+  },
+  "requirements": [["won"]]
+}

@@ -15,9 +15,9 @@ import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
 import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConfiguration;
 
 /**
- * Feature de worldgen plaçant le sac de frappe (multibloc 2 de haut), car
- * {@code minecraft:simple_block} ne déclenche pas {@code setPlacedBy} et ne
- * poserait donc que la moitié inférieure.
+ * Worldgen feature placing the punching bag (2-block multiblock), because
+ * {@code minecraft:simple_block} does not call {@code setPlacedBy} and would
+ * therefore place only the lower half.
  */
 public class PunchingBagFeature extends Feature<NoneFeatureConfiguration> {
 

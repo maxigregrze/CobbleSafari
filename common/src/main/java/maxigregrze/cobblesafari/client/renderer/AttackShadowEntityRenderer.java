@@ -12,8 +12,8 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
 
 /**
- * Rend l'ombre d'attaque (plan 107 § 4.1) comme un quad horizontal texturé, parallèle au sol,
- * à ~½ pixel au‑dessus du sol, visible des deux côtés.
+ * Renders the attack shadow (plan 107 § 4.1) as a textured horizontal quad, parallel to the
+ * ground, ~½ pixel above the ground, visible from both sides.
  */
 public class AttackShadowEntityRenderer extends EntityRenderer<AttackShadowEntity> {
 
@@ -22,7 +22,7 @@ public class AttackShadowEntityRenderer extends EntityRenderer<AttackShadowEntit
     private static final ResourceLocation TEXTURE_LARGE =
             ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, "textures/entity/csboss/attack_shadow_large.png");
 
-    private static final float Y = 0.03f; // ~½ pixel au-dessus du sol
+    private static final float Y = 0.03f; // ~½ pixel above the ground
 
     public AttackShadowEntityRenderer(EntityRendererProvider.Context context) {
         super(context);
@@ -37,7 +37,7 @@ public class AttackShadowEntityRenderer extends EntityRenderer<AttackShadowEntit
     public void render(AttackShadowEntity entity, float yaw, float partialTicks, PoseStack ps,
                        MultiBufferSource buffer, int packedLight) {
         ResourceLocation tex = entity.isLarge() ? TEXTURE_LARGE : TEXTURE;
-        float half = entity.isLarge() ? 1.5f : 0.5f; // 3×3 ou 1×1
+        float half = entity.isLarge() ? 1.5f : 0.5f; // 3×3 or 1×1
         float a = entity.getAlpha();
         if (a > 0.001f) {
             VertexConsumer vc = buffer.getBuffer(RenderType.entityTranslucent(tex));

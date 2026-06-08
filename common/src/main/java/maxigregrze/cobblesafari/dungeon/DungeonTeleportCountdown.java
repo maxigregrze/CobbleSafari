@@ -123,71 +123,103 @@ public class DungeonTeleportCountdown {
             }
 
             if (!state.generationDone) {
-                if (state.ticksRemaining <= PHASE_POSITION_CALCULATION && state.generationPhase == 0) {
-                    if (!DungeonTeleportHandler.calculatePosition(player, portalEntity, state.validation)) {
-                        ModNetworking.sendCloseTpAccept(player);
-                        toRemove.add(playerId);
-                        continue;
+                if (state.waitingForOtherGeneration) {
+                    if (portalEntity.getDungeonStructurePos() != null) {
+                        DungeonTeleportHandler.DungeonPrepResult prepResult =
+                                DungeonTeleportHandler.buildPrepResultFromPortal(player, portalEntity, state.validation);
+                        if (prepResult == null) {
+                            ModNetworking.sendCloseTpAccept(player);
+                            toRemove.add(playerId);
+                            continue;
+                        }
+                        state.prepResult = prepResult;
+                        state.generationDone = true;
+                        state.waitingForOtherGeneration = false;
+                        CobbleSafari.LOGGER.info("Player {} joined existing dungeon for portal {} (generation completed by another player)",
+                                player.getName().getString(), portalEntity.getPortalId());
                     }
-                    state.generationPhase = 1;
-                    CobbleSafari.LOGGER.debug("Phase 1 (95-90s): Position calculated for player {}", player.getName().getString());
-                }
-
-                if (state.ticksRemaining <= PHASE_CHUNK_LOADING && state.generationPhase == 1) {
-                    if (!DungeonTeleportHandler.loadChunks(player, portalEntity, state.validation)) {
-                        ModNetworking.sendCloseTpAccept(player);
-                        toRemove.add(playerId);
-                        continue;
+                } else {
+                    if (state.ticksRemaining <= PHASE_POSITION_CALCULATION && state.generationPhase == 0) {
+                        if (!DungeonTeleportHandler.calculatePosition(player, portalEntity, state.validation)) {
+                            if (DungeonTeleportHandler.isGenerationInProgress(portalEntity.getPortalId())) {
+                                state.waitingForOtherGeneration = true;
+                                CobbleSafari.LOGGER.debug("Player {} waiting for existing generation on portal {}",
+                                        player.getName().getString(), portalEntity.getPortalId());
+                            } else {
+                                ModNetworking.sendCloseTpAccept(player);
+                                toRemove.add(playerId);
+                                continue;
+                            }
+                        } else {
+                            state.generationPhase = 1;
+                            CobbleSafari.LOGGER.debug("Phase 1 (95-90s): Position calculated for player {}", player.getName().getString());
+                        }
                     }
-                    state.generationPhase = 2;
-                    CobbleSafari.LOGGER.debug("Phase 2 (90-85s): Chunks loaded for player {}", player.getName().getString());
-                }
 
-                if (state.ticksRemaining <= PHASE_STRUCTURE_GENERATION && state.generationPhase == 2) {
-                    if (!DungeonTeleportHandler.generateStructure(player, portalEntity, state.validation)) {
-                        ModNetworking.sendCloseTpAccept(player);
-                        toRemove.add(playerId);
-                        continue;
+                    if (state.ticksRemaining <= PHASE_CHUNK_LOADING && state.generationPhase == 1) {
+                        if (!DungeonTeleportHandler.loadChunks(player, portalEntity, state.validation)) {
+                            ModNetworking.sendCloseTpAccept(player);
+                            toRemove.add(playerId);
+                            continue;
+                        }
+                        state.generationPhase = 2;
+                        CobbleSafari.LOGGER.debug("Phase 2 (90-85s): Chunks loaded for player {}", player.getName().getString());
                     }
-                    state.generationPhase = 3;
-                    CobbleSafari.LOGGER.debug("Phase 3 (85-80s): Structure generated for player {}", player.getName().getString());
-                }
 
-                if (state.ticksRemaining <= PHASE_BLOCK_REPLACEMENT_START && state.generationPhase == 3) {
-                    if (!DungeonTeleportHandler.startFinalization(player, portalEntity, state.validation)) {
-                        ModNetworking.sendCloseTpAccept(player);
-                        toRemove.add(playerId);
-                        continue;
+                    if (state.ticksRemaining <= PHASE_STRUCTURE_GENERATION && state.generationPhase == 2) {
+                        if (!DungeonTeleportHandler.generateStructure(player, portalEntity, state.validation)) {
+                            ModNetworking.sendCloseTpAccept(player);
+                            toRemove.add(playerId);
+                            continue;
+                        }
+                        state.generationPhase = 3;
+                        CobbleSafari.LOGGER.debug("Phase 3 (85-80s): Structure generated for player {}", player.getName().getString());
                     }
-                    state.generationPhase = 4;
-                    CobbleSafari.LOGGER.debug("Phase 4.1 (80-60s): Exit portal placement started for player {}", player.getName().getString());
-                }
 
-                if (state.ticksRemaining <= PHASE_BLOCK_REPLACEMENT_STEP_2 && state.generationPhase == 4) {
-                    state.generationPhase = 5;
-                    CobbleSafari.LOGGER.debug("Phase 4.2 (60-40s): Block replacement step 2 for player {}", player.getName().getString());
-                }
-
-                if (state.ticksRemaining <= PHASE_BLOCK_REPLACEMENT_STEP_3 && state.generationPhase == 5) {
-                    state.generationPhase = 6;
-                    CobbleSafari.LOGGER.debug("Phase 4.3 (40-20s): Block replacement step 3 for player {}", player.getName().getString());
-                }
-
-                if (state.ticksRemaining <= PHASE_BLOCK_REPLACEMENT_STEP_4 && state.generationPhase == 6) {
-                    DungeonTeleportHandler.DungeonPrepResult prepResult =
-                            DungeonTeleportHandler.completeFinalization(player, portalEntity, state.validation);
-                    if (prepResult == null) {
-                        ModNetworking.sendCloseTpAccept(player);
-                        toRemove.add(playerId);
-                        continue;
+                    if (state.ticksRemaining <= PHASE_BLOCK_REPLACEMENT_START && state.generationPhase == 3) {
+                        if (!DungeonTeleportHandler.startFinalization(player, portalEntity, state.validation)) {
+                            ModNetworking.sendCloseTpAccept(player);
+                            toRemove.add(playerId);
+                            continue;
+                        }
+                        state.generationPhase = 4;
+                        CobbleSafari.LOGGER.debug("Phase 4.1 (80-60s): Exit portal placement started for player {}", player.getName().getString());
                     }
-                    state.prepResult = prepResult;
-                    state.generationDone = true;
-                    CobbleSafari.LOGGER.debug("Phase 4.4 (20-0s): Generation finalized for player {}", player.getName().getString());
+
+                    if (state.ticksRemaining <= PHASE_BLOCK_REPLACEMENT_STEP_2 && state.generationPhase == 4) {
+                        state.generationPhase = 5;
+                        CobbleSafari.LOGGER.debug("Phase 4.2 (60-40s): Block replacement step 2 for player {}", player.getName().getString());
+                    }
+
+                    if (state.ticksRemaining <= PHASE_BLOCK_REPLACEMENT_STEP_3 && state.generationPhase == 5) {
+                        state.generationPhase = 6;
+                        CobbleSafari.LOGGER.debug("Phase 4.3 (40-20s): Block replacement step 3 for player {}", player.getName().getString());
+                    }
+
+                    if (state.ticksRemaining <= PHASE_BLOCK_REPLACEMENT_STEP_4 && state.generationPhase == 6) {
+                        DungeonTeleportHandler.DungeonPrepResult prepResult =
+                                DungeonTeleportHandler.completeFinalization(player, portalEntity, state.validation);
+                        if (prepResult == null) {
+                            ModNetworking.sendCloseTpAccept(player);
+                            toRemove.add(playerId);
+                            continue;
+                        }
+                        state.prepResult = prepResult;
+                        state.generationDone = true;
+                        CobbleSafari.LOGGER.debug("Phase 4.4 (20-0s): Generation finalized for player {}", player.getName().getString());
+                    }
                 }
             }
 
             state.ticksRemaining--;
+
+            if (state.ticksRemaining <= -100 && state.waitingForOtherGeneration) {
+                CobbleSafari.LOGGER.warn("Player {} timed out waiting for portal {} generation by another player",
+                        player.getName().getString(), portalEntity.getPortalId());
+                ModNetworking.sendCloseTpAccept(player);
+                toRemove.add(playerId);
+                continue;
+            }
 
             if (state.ticksRemaining <= 0 && state.prepResult != null) {
                 long portalRemaining = portalEntity.getRemainingLifetimeTicks();
@@ -243,6 +275,7 @@ public class DungeonTeleportCountdown {
         DungeonTeleportHandler.DungeonPrepResult prepResult;
         boolean generationDone;
         int generationPhase;
+        boolean waitingForOtherGeneration;
 
         TeleportState(BlockPos portalPos, ResourceKey<Level> portalDimension, Vec3 startPos,
                       int ticksRemaining, DungeonTeleportHandler.DungeonValidationResult validation,
@@ -255,6 +288,7 @@ public class DungeonTeleportCountdown {
             this.prepResult = prepResult;
             this.generationDone = generationDone;
             this.generationPhase = 0;
+            this.waitingForOtherGeneration = false;
         }
     }
 }

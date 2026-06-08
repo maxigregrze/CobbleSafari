@@ -12,20 +12,20 @@ import java.util.List;
 import java.util.UUID;
 
 /**
- * {@code base_fire_1} (plan 107 § 6.2, révisé plan 109) : une ombre plate <b>par joueur</b> qui le
- * traque puis se fige ; 1 s plus tard une colonne de flammes jaillit (dégâts + feu). Durées de
- * poursuite et de colonne <b>divisées par deux</b>. Le cycle se répète 3‑5 fois sans pause, avec un
- * délai uniquement à la fin.
+ * {@code base_fire_1} (plan 107 § 6.2, revised plan 109): a flat shadow <b>per player</b> that
+ * tracks then freezes; 1 s later a flame column erupts (damage + fire). Pursuit and column
+ * durations <b>halved</b>. The cycle repeats 3–5 times without pause, with a
+ * delay only at the end.
  */
 public class FireShadowAttack implements CsBossAttack {
 
-    private static final int FREEZE_AT = 60;      // 3 s de poursuite (moitié)
-    private static final int COLUMN_START = 80;   // +1 s après le gel
-    private static final int COLUMN_END = 110;    // colonne 1,5 s (moitié)
+    private static final int FREEZE_AT = 60;      // 3 s pursuit (halved)
+    private static final int COLUMN_START = 80;   // +1 s after freeze
+    private static final int COLUMN_END = 110;    // column 1.5 s (halved)
     private static final int DISCARD_AT = 110;
     private static final int CYCLE_LEN = 112;
-    private static final int END_DELAY = 40;      // 2 s en fin d'attaque
-    private static final int NOMINAL_CYCLES = 4;  // ±25 % ⇒ 3‑5
+    private static final int END_DELAY = 40;      // 2 s at end of attack
+    private static final int NOMINAL_CYCLES = 4;  // ±25% ⇒ 3–5
     private static final double COLUMN_RADIUS = 1.0;
     private static final double COLUMN_HEIGHT = 4.0;
     private static final float FIRE_DAMAGE = 1.0F;
@@ -89,7 +89,7 @@ public class FireShadowAttack implements CsBossAttack {
     }
 
     private void driveCycle(ServerLevel level, BossBattleSession session, CsBossEntity boss, int cycleTick) {
-        // Petites flammes montantes depuis l'ombre avant la colonne (télégraphe).
+        // Small rising flames from the shadow before the column (telegraph).
         if (cycleTick < COLUMN_START) {
             for (Shadow s : shadows) {
                 if (s.entity.isAlive()) {

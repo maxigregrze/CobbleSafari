@@ -42,7 +42,7 @@ public class BalmDispenserBlock extends BaseEntityBlock implements BattleReactiv
     public static final int CHARGE_READY = 0;
     public static final int CHARGE_MAX = 8;
 
-    /** Aligné sur le modèle Blockbench (corps + pieds, y max = 10). */
+    /** Aligned to the Blockbench model (body + feet, y max = 10). */
     private static final VoxelShape SHAPE = Block.box(3, 0, 3, 13, 10, 13);
 
     public BalmDispenserBlock(Properties properties) {
@@ -52,7 +52,7 @@ public class BalmDispenserBlock extends BaseEntityBlock implements BattleReactiv
                 .setValue(CHARGE, CHARGE_READY));
     }
 
-    /** Item distribué au clic droit quand le distributeur est chargé. */
+    /** Item dispensed on right-click when the dispenser is charged. */
     public Item getDispensedItem() {
         return ModItems.BALM;
     }

@@ -431,7 +431,7 @@ public final class WonderTradeService {
     }
 
     /**
-     * Vide la piscine (entièrement ou seulement les entrées générées par le système), puis réapplique l'autofill si activé.
+     * Clears the pool (entirely or only system-generated entries), then reapplies autofill if enabled.
      */
     public static PoolResetSummary resetPoolAndRefill(MinecraftServer server, boolean onlyGenerated) {
         WonderTradeSavedData data = WonderTradeSavedData.get(server);
@@ -448,7 +448,7 @@ public final class WonderTradeService {
         return new PoolResetSummary(removed, data.getPoolSize());
     }
 
-    /** Valeur effective des crédits (jamais {@link Integer#MIN_VALUE}). */
+    /** Effective credit value (never {@link Integer#MIN_VALUE}). */
     public static int getEffectiveTicketCount(MinecraftServer server, UUID playerId) {
         WonderTradeSettings cfg = WonderTradeSettings.get();
         if (cfg.isUnlimitedDailyTrades()) {

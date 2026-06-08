@@ -16,8 +16,8 @@ import java.util.Locale;
 import java.util.Set;
 
 /**
- * Scheduler d'attaques d'une session (plan 100 § 12.1) : entre deux patterns, attend un délai
- * aléatoire ∈ [moveCooldownMin, moveCooldownMax] secondes, puis lance un pattern du pool effectif.
+ * Attack scheduler for a session (plan 100 § 12.1): between two patterns, waits a random delay
+ * ∈ [moveCooldownMin, moveCooldownMax] seconds, then launches a pattern from the effective pool.
  */
 public class AttackScheduler {
 
@@ -27,7 +27,7 @@ public class AttackScheduler {
     private final int cooldownMaxTicks;
     private final boolean allowSimultaneous;
 
-    /** Attaques en cours (1, ou 2 de catégories différentes si {@code allowSimultaneousAttacks}). */
+    /** Attacks in progress (1, or 2 of different categories if {@code allowSimultaneousAttacks}). */
     private final List<CsBossAttack> active = new ArrayList<>();
     private int cooldown;
 
@@ -39,12 +39,12 @@ public class AttackScheduler {
         this.cooldown = rollCooldown();
     }
 
-    /** {@code true} si un pattern d'attaque est en cours (le boss doit alors rester immobile). */
+    /** {@code true} if an attack pattern is in progress (the boss must then stay immobile). */
     public boolean isAttacking() {
         return !active.isEmpty();
     }
 
-    /** {@code true} si un pattern en cours pilote l'orientation du boss (cf. {@code distortion_1}). */
+    /** {@code true} if an in-progress pattern controls boss orientation (cf. {@code distortion_1}). */
     public boolean attackControlsRotation() {
         for (CsBossAttack a : active) {
             if (a.controlsBossRotation()) {
@@ -63,7 +63,7 @@ public class AttackScheduler {
                     allDone = false;
                 }
             }
-            // Le duo se termine quand la plus longue des deux attaques est finie.
+            // The pair ends when the longer of the two attacks finishes.
             if (allDone) {
                 active.clear();
                 cooldown = rollCooldown();
@@ -90,7 +90,7 @@ public class AttackScheduler {
         active.add(first);
 
         if (allowSimultaneous) {
-            // Seconde attaque d'une catégorie différente (sinon on n'en joue qu'une).
+            // Second attack of a different category (otherwise only one is played).
             CsBossAttack second = pickDifferentCategory(first.category());
             if (second != null) {
                 second.begin(level, session, boss);
@@ -134,12 +134,12 @@ public class AttackScheduler {
                 return out;
             }
         }
-        // Pool par type(s) de l'espèce
+        // Pool by species type(s)
         List<String> typed = poolFromSpecies(def.specie());
         if (!typed.isEmpty()) {
             return typed;
         }
-        // Filet de sécurité
+        // Safety net
         return List.of(CsBossAttackRegistry.TEST);
     }
 

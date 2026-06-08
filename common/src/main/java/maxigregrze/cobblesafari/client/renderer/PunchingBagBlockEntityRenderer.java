@@ -13,24 +13,24 @@ import net.minecraft.world.level.block.HorizontalDirectionalBlock;
 import net.minecraft.world.level.block.state.BlockState;
 
 /**
- * Rend le sac (modèle {@code punchingbag_bag}) suspendu sous le bras du sac de frappe.
- * Au clic droit (event {@link maxigregrze.cobblesafari.block.misc.PunchingBagBlock#EVENT_SWING}),
- * il effectue une oscillation amortie en va‑et‑vient autour du point (0.5, 0.375, 0.5),
- * sur l'axe horizontal perpendiculaire à la direction de face du bloc.
+ * Renders the bag ({@code punchingbag_bag} model) suspended under the punching bag arm.
+ * On right-click (event {@link maxigregrze.cobblesafari.block.misc.PunchingBagBlock#EVENT_SWING}),
+ * it performs a damped back-and-forth swing around point (0.5, 0.375, 0.5),
+ * on the horizontal axis perpendicular to the block's facing direction.
  */
 public class PunchingBagBlockEntityRenderer implements BlockEntityRenderer<PunchingBagBlockEntity> {
 
-    // Pivot demandé par la spec (coordonnées bloc).
+    // Pivot specified by the spec (block coordinates).
     private static final float PIVOT_X = 0.5f;
     private static final float PIVOT_Y = 0.375f;
     private static final float PIVOT_Z = 0.5f;
-    // Le sac « pend » : il est descendu d'un bloc de sorte que le repère 32 px du modèle
-    // s'aligne sur le haut de la moitié supérieure (à calibrer en jeu).
+    // The bag "hangs": lowered by one block so the model's 32 px reference frame
+    // aligns with the top of the upper half (tune in-game).
     private static final float BAG_Y_OFFSET = -1.0f;
 
     private static final float MAX_ANGLE_DEG = 22.0f;
     private static final float OMEGA = 0.45f;     // rad/tick
-    private static final float TAU = 7.0f;        // amortissement (ticks)
+    private static final float TAU = 7.0f;        // damping (ticks)
     private static final float DURATION_TICKS = 50.0f;
 
     private final BlockRenderDispatcher blockRenderDispatcher;
@@ -47,7 +47,8 @@ public class PunchingBagBlockEntityRenderer implements BlockEntityRenderer<Punch
 
         BlockState state = blockEntity.getBlockState();
         Direction facing = state.getValue(HorizontalDirectionalBlock.FACING);
-        Axis swingAxis = facing.getAxis() == Direction.Axis.Z ? Axis.XP : Axis.ZP;
+        // X and Z rotations are opposite-handed in world space; XN matches ZP swing for N/S facings.
+        Axis swingAxis = facing.getAxis() == Direction.Axis.Z ? Axis.XN : Axis.ZP;
 
         float t = blockEntity.getLevel().getGameTime() + partialTick;
         float angle = swingAngle(t - blockEntity.getLastSwingGameTime());

@@ -7,8 +7,8 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 /**
- * Définition immuable d'un CSBoss, chargée depuis {@code data/cobblesafari/csboss/<bossId>.json}.
- * Voir le plan d'action 100 § 2.
+ * Immutable CSBoss definition, loaded from {@code data/cobblesafari/csboss/<bossId>.json}.
+ * See action plan 100 § 2.
  */
 public record CsBossDefinition(
         String bossId,
@@ -28,13 +28,13 @@ public record CsBossDefinition(
         @Nullable String music,
         BossEvent.BossBarOverlay healthStyle,
         BossEvent.BossBarColor healthColor,
-        /** Id ou tag d'un CSBoss enchaîné en seconde phase (même session), ou {@code null}. */
+        /** Id or tag of a CSBoss chained as second phase (same session), or {@code null}. */
         @Nullable String secondPhase,
-        /** Si {@code true}, distribue les récompenses de cette phase avant d'enchaîner la suivante. */
+        /** If {@code true}, grants this phase's rewards before chaining to the next. */
         boolean giveRewardsBeforeSecondPhase,
         /**
-         * Si {@code true}, le boss tente de jouer deux attaques de catégories différentes en même
-         * temps (plan 111). À défaut d'attaques de catégories distinctes, il n'en joue qu'une.
+         * If {@code true}, the boss tries to play two attacks of different categories at once
+         * (plan 111). If no distinct categories are available, only one is played.
          */
         boolean allowSimultaneousAttacks
 ) {
@@ -42,7 +42,7 @@ public record CsBossDefinition(
     public static final int DEFAULT_COOLDOWN_MIN = 4;
     public static final int DEFAULT_COOLDOWN_MAX = 8;
 
-    /** Mot-clé du moveSet octroyant toutes les attaques enregistrées. */
+    /** moveSet keyword granting all registered attacks. */
     public static final String ALL_MOVES = "ALLMOVES";
 
     public boolean grantsAllMoves() {
@@ -53,12 +53,12 @@ public record CsBossDefinition(
         return !moveSet.isEmpty();
     }
 
-    /** Nom affiché au-dessus de la barre de boss : {@code displayName} si défini, sinon {@code bossId}. */
+    /** Name shown above the boss bar: {@code displayName} if set, otherwise {@code bossId}. */
     public String effectiveDisplayName() {
         return displayName != null && !displayName.isBlank() ? displayName : bossId;
     }
 
-    /** Espèce des minions de ce boss : {@code minion} si défini, sinon l'espèce du boss. */
+    /** Minion species for this boss: {@code minion} if set, otherwise the boss species. */
     public String effectiveMinionSpecie() {
         return minion != null && !minion.isBlank() ? minion : specie;
     }

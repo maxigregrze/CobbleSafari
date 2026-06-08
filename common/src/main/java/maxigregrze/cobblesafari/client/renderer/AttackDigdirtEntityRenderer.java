@@ -10,7 +10,7 @@ import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
 
-/** Rend le tas de terre via le modèle de bloc {@code attack_digdirt} (texture météorite). */
+/** Renders the dirt pile via the {@code attack_digdirt} block model (meteorite texture). */
 public class AttackDigdirtEntityRenderer extends EntityRenderer<AttackDigdirtEntity> {
 
     private static final ResourceLocation FALLBACK =

@@ -13,25 +13,25 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * {@code base_electric_1} (plan 107 § 6.1, révisé plan 109) : des Électrodes Voltorb apparaissent
- * <b>une par joueur toutes les 3 s</b> (3‑5 vagues), traquent le joueur le plus proche à vitesse
- * réduite, clignotent (amorce TNT jouée <b>une seule fois</b> au début du clignotement), puis
- * explosent (dégâts joueurs, aucun bloc). Durée avant détonation réduite de 30 %. L'attaque se
- * termine 2 s après la dernière détonation.
+ * {@code base_electric_1} (plan 107 § 6.1, revised plan 109): Voltorb Electrodes spawn
+ * <b>one per player every 3 s</b> (3–5 waves), chase the nearest player at reduced speed,
+ * flash (TNT fuse played <b>once only</b> at flash start), then
+ * explode (player damage, no blocks). Time before detonation reduced by 30%. The attack
+ * ends 2 s after the last detonation.
  */
 public class ElectricVoltorbAttack implements CsBossAttack {
 
     private static final String VOLTORB = "voltorb";
     private static final double SPAWN_DISTANCE = 3.0;
     private static final double CHASE_SPEED = CsBossAttackLib.CHASE_SPEED * 0.5;
-    private static final int WAVE_INTERVAL = 60;   // une vague toutes les 3 s
-    private static final int NOMINAL_WAVES = 4;    // ±25 % ⇒ 3‑5
-    // Cycle d'une Électrode (depuis son apparition), −30 % vs 160 t : 120→84 (poursuite), 40→28 (flash).
+    private static final int WAVE_INTERVAL = 60;   // one wave every 3 s
+    private static final int NOMINAL_WAVES = 4;    // ±25% ⇒ 3–5
+    // Single Electrode cycle (from spawn), −30% vs 160 t: 120→84 (pursuit), 40→28 (flash).
     private static final int CHASE_TICKS = 84;
     private static final int FLASH_TICKS = 28;
     private static final int DETONATE_AGE = CHASE_TICKS + FLASH_TICKS; // 112
     private static final int FLASH_SEGMENT = 7;
-    private static final int END_DELAY = 40;       // 2 s après la dernière détonation
+    private static final int END_DELAY = 40;       // 2 s after last detonation
     private static final double EXPLOSION_RADIUS = 3.0;
     private static final float EXPLOSION_DAMAGE = 12.0F;
 
@@ -123,7 +123,7 @@ public class ElectricVoltorbAttack implements CsBossAttack {
         } else if (age < DETONATE_AGE) {
             int into = age - CHASE_TICKS;
             if (into == 0) {
-                // Amorce TNT une seule fois, au démarrage du clignotement.
+                // TNT fuse once only, at flash start.
                 level.playSound(null, e.minion.getX(), e.minion.getY(), e.minion.getZ(),
                         net.minecraft.sounds.SoundEvents.TNT_PRIMED, SoundSource.HOSTILE, 1.0F, 1.2F);
             }
@@ -133,7 +133,7 @@ public class ElectricVoltorbAttack implements CsBossAttack {
                 CsBossAttackLib.whiteFlash(level, e.minion.getX(), e.minion.getY() + 0.5, e.minion.getZ());
             }
         } else {
-            // Détonation.
+            // Detonation.
             boss.triggerAttackAnimation();
             Vec3 center = new Vec3(e.minion.getX(), e.minion.getY() + 0.5, e.minion.getZ());
             CsBossAttackLib.nonBlockExplosion(level, session, center, EXPLOSION_RADIUS, EXPLOSION_DAMAGE);

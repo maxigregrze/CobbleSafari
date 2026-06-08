@@ -13,8 +13,8 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
 
 /**
- * Rend la tige de distorsion (plan 107 § 4.3) comme une croix de 4 plans verticaux (cf.
- * {@code distortion_stem.json}), semi‑transparente (alpha 0.5), double‑face.
+ * Renders the distortion stem (plan 107 § 4.3) as a cross of 4 vertical planes (see
+ * {@code distortion_stem.json}), semi-transparent (alpha 0.5), double-sided.
  */
 public class AttackDistortionStemEntityRenderer extends EntityRenderer<AttackDistortionStemEntity> {
 
@@ -40,20 +40,20 @@ public class AttackDistortionStemEntityRenderer extends EntityRenderer<AttackDis
         VertexConsumer vc = buffer.getBuffer(RenderType.entityTranslucent(TEXTURE));
         ps.pushPose();
         if (entity.isVertical()) {
-            // Mur : tige verticale (pointe vers le haut), pas de bascule.
+            // Wall: vertical stem (pointing up), no tilt.
             ps.translate(-0.5, 0.0, -0.5);
         } else {
-            // Tourne le modèle de 90° : la tige pointe radialement (vers l'extérieur du boss).
+            // Rotate the model 90°: stem points radially (outward from the boss).
             ps.mulPose(Axis.YP.rotationDegrees(-yaw));
             ps.mulPose(Axis.XP.rotationDegrees(90.0F));
             ps.translate(-0.5, -0.5, -0.5);
         }
         PoseStack.Pose pose = ps.last();
 
-        // Plans perpendiculaires à Z (à z = A et z = B), double-face.
+        // Planes perpendicular to Z (at z = A and z = B), double-sided.
         planeZ(vc, pose, packedLight, A);
         planeZ(vc, pose, packedLight, B);
-        // Plans perpendiculaires à X (à x = A et x = B), double-face.
+        // Planes perpendicular to X (at x = A and x = B), double-sided.
         planeX(vc, pose, packedLight, A);
         planeX(vc, pose, packedLight, B);
 

@@ -35,7 +35,10 @@ import maxigregrze.cobblesafari.block.misc.MagneticClusterBlock;
 import maxigregrze.cobblesafari.block.misc.MagneticCrystalBlock;
 import maxigregrze.cobblesafari.block.misc.LiquidBarrierBlock;
 import maxigregrze.cobblesafari.block.misc.KarateMannequinBlock;
+import maxigregrze.cobblesafari.block.misc.DraconicCraterBlock;
+import maxigregrze.cobblesafari.block.misc.HotGeyserBlock;
 import maxigregrze.cobblesafari.block.misc.MudPileBlock;
+import maxigregrze.cobblesafari.block.misc.VolcanicCraterBlock;
 import maxigregrze.cobblesafari.block.misc.SludgePileBlock;
 import maxigregrze.cobblesafari.block.misc.PunchingBagBlock;
 import maxigregrze.cobblesafari.block.misc.TombstoneBlock;
@@ -88,7 +91,7 @@ public class ModBlocks {
 
     private ModBlocks() {}
 
-    /** Blocs météorite éphémères posés par les attaques de boss roche/dragon (plan 107). Sans item créatif. */
+    /** Ephemeral meteorite blocks placed by rock/dragon boss attacks (plan 107). No creative item. */
     public static final Block METEORITE = registerBlockWithoutItem("meteorite",
             new MeteoriteBlock(BlockBehaviour.Properties.of()
                     .mapColor(MapColor.STONE)
@@ -101,7 +104,7 @@ public class ModBlocks {
                     .sound(SoundType.STONE)
                     .strength(1.5F), 400));
 
-    /** Bloc d'affichage (modèle uniquement) du tas de terre de {@code base_ground_1} (plan 113). */
+    /** Display block (model only) for the dirt pile of {@code base_ground_1} (plan 113). */
     public static final Block ATTACK_DIGDIRT_DISPLAY = registerBlockWithoutItem("attack_digdirt_display",
             new Block(BlockBehaviour.Properties.of()
                     .mapColor(MapColor.DIRT)
@@ -109,7 +112,7 @@ public class ModBlocks {
                     .noOcclusion()
                     .strength(0.0F)));
 
-    /** Champ électrique piège posé par {@code base_electric_2} (plan 108). Sans item créatif. */
+    /** Trap electric field placed by {@code base_electric_2} (plan 108). No creative item. */
     public static final Block CSBOSS_ELECTRICITY = registerBlockWithoutItem("csboss_electricity",
             new CsBossElectricityBlock(BlockBehaviour.Properties.of()
                     .mapColor(MapColor.COLOR_YELLOW)
@@ -1156,6 +1159,30 @@ public class ModBlocks {
                     .sound(SoundType.MUD)
                     .noOcclusion()
                     .pushReaction(PushReaction.DESTROY)));
+
+    public static final Block VOLCANIC_CRATER = registerBlock("volcanic_crater",
+            new VolcanicCraterBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.NETHER)
+                    .strength(1.5f, 6.0f)
+                    .sound(SoundType.NETHERRACK)
+                    .requiresCorrectToolForDrops()
+                    .noOcclusion()));
+
+    public static final Block HOT_GEYSER = registerBlock("hot_geyser",
+            new HotGeyserBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.COLOR_CYAN)
+                    .strength(1.5f, 6.0f)
+                    .sound(SoundType.STONE)
+                    .requiresCorrectToolForDrops()
+                    .noOcclusion()));
+
+    public static final Block DRACONIC_CRATER = registerBlock("draconic_crater",
+            new DraconicCraterBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.COLOR_BLACK)
+                    .strength(1.5f, 6.0f)
+                    .sound(SoundType.BASALT)
+                    .requiresCorrectToolForDrops()
+                    .noOcclusion()));
 
     public static final Block PUNCHINGBAG = registerBlock("punchingbag",
             new PunchingBagBlock(BlockBehaviour.Properties.of()

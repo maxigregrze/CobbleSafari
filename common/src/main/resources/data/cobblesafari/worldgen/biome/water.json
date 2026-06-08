@@ -25,7 +25,9 @@
   "features": [
     [],
     [],
-    [],
+    [
+      "cobblesafari:hot_geyser_patch"
+    ],
     [],
     [],
     [],

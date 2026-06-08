@@ -31,30 +31,30 @@ public class MiscConfig {
     private boolean balloonEnabled = true;
 
     /**
-     * Valeurs par défaut pour un bloc « lost item » nouvellement placé (voir {@code misc_config.json}, clé {@code lostItem}).
+     * Default values for a newly placed "lost item" block (see {@code misc_config.json}, key {@code lostItem}).
      */
     private LostItemDefaults lostItem = new LostItemDefaults();
 
-    /** Valeurs par défaut pour un bloc « pokéball auspicieuse » nouvellement placé (clé {@code auspiciousPokeball}). */
+    /** Default values for a newly placed "auspicious pokéball" block (key {@code auspiciousPokeball}). */
     private AuspiciousPokeballDefaults auspiciousPokeball = new AuspiciousPokeballDefaults();
 
-    /** Défauts au placement pour {@code cobblesafari:auspiciouspokeball_small} (clé {@code auspiciousPokeballSmall}). */
+    /** Placement defaults for {@code cobblesafari:auspiciouspokeball_small} (key {@code auspiciousPokeballSmall}). */
     private AuspiciousPokeballDefaults auspiciousPokeballSmall = new AuspiciousPokeballDefaults();
 
-    /** Défauts au placement pour {@code cobblesafari:auspiciouspokeball_gold} (clé {@code auspiciousPokeballGold}). */
+    /** Placement defaults for {@code cobblesafari:auspiciouspokeball_gold} (key {@code auspiciousPokeballGold}). */
     private AuspiciousPokeballDefaults auspiciousPokeballGold = new AuspiciousPokeballDefaults();
 
-    /** Nombre maximal d'instances Union Room (structures) dans {@code cobblesafari:unionroom}. */
+    /** Maximum Union Room instances (structures) in {@code cobblesafari:unionroom}. */
     private int unionRoomMaxInstances = 10;
-    /** Nombre maximal de guests par session Union Room (hôte non compté), type {@code default}. */
+    /** Maximum guests per Union Room session (host not counted), type {@code default}. */
     private int unionRoomMaxGuestsPerSession = 6;
-    /** Nombre maximal d'instances Union Plaza concurrentes. */
+    /** Maximum concurrent Union Plaza instances. */
     private int unionRoomPlazaMaxInstances = 2;
-    /** Nombre maximal de guests par session Union Plaza (hôte non compté) — 4× la room (6) par défaut. */
+    /** Maximum guests per Union Plaza session (host not counted) — 4× room (6) by default. */
     private int unionRoomPlazaMaxGuestsPerSession = 24;
-    /** Types de salon (clé → limites). Absent du JSON ⇒ reconstruit depuis les champs ci‑dessus. */
+    /** Room types (key → limits). Missing from JSON ⇒ rebuilt from fields above. */
     private Map<String, RoomTypeConfig> unionRoomTypes = null;
-    /** Dimensions depuis lesquelles un joueur ne peut pas entrer dans l'Union Room (IDs complets, ex. {@code cobblesafari:domedimension}). */
+    /** Dimensions from which a player cannot enter the Union Room (full IDs, e.g. {@code cobblesafari:domedimension}). */
     private List<String> unionRoomBannedDimensions = new ArrayList<>();
 
     private static Map<String, RoomTypeConfig> roomTypeRuntime = new HashMap<>();

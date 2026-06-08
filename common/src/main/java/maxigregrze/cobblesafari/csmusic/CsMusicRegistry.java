@@ -6,7 +6,7 @@ import java.util.Optional;
 import java.util.TreeMap;
 
 /**
- * Registre en mémoire des musiques chargées depuis les datapacks (plan 105 § 2.1).
+ * In-memory registry of music loaded from datapacks (plan 105 § 2.1).
  */
 public final class CsMusicRegistry {
     private static final Map<String, CsMusicDefinition> BY_ID = new TreeMap<>();

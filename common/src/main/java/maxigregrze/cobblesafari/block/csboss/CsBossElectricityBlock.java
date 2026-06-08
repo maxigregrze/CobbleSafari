@@ -26,10 +26,10 @@ import java.util.Map;
 import java.util.UUID;
 
 /**
- * Champ électrique piège (plan 108 § 4.1) posé par {@code base_electric_2}. Cycle géré par le bloc
- * lui‑même (tick programmé), indépendant de l'attaque : charge 3 s ({@code ACTIVE=false}, texture
- * animée) → actif 3 s ({@code ACTIVE=true}) → disparition. En mode actif, foudroie tout joueur au
- * contact, avec un cooldown de 2 s par joueur.
+ * Trap electric field (plan 108 § 4.1) placed by {@code base_electric_2}. Cycle managed by the block
+ * itself (scheduled tick), independent of the attack: charge 3 s ({@code ACTIVE=false}, animated
+ * texture) → active 3 s ({@code ACTIVE=true}) → removal. When active, strikes any player on
+ * contact, with a 2 s cooldown per player.
  */
 public class CsBossElectricityBlock extends Block {
 
@@ -37,11 +37,11 @@ public class CsBossElectricityBlock extends Block {
 
     private static final int CHARGE_TICKS = 60; // 3 s
     private static final int ACTIVE_TICKS = 60;  // 3 s
-    private static final int STRIKE_COOLDOWN = 40; // 2 s/joueur
+    private static final int STRIKE_COOLDOWN = 40; // 2 s per player
     private static final VoxelShape SHAPE = Block.box(0.0, 0.0, 0.0, 16.0, 2.0, 16.0);
     private static final SoundEvent BUZZ =
             SoundEvent.createVariableRangeEvent(ResourceLocation.parse("cobblemon:move.thundershock.actor"));
-    /** Cooldown global par joueur (gametime du prochain foudroiement autorisé). */
+    /** Per-player global cooldown (game time of next allowed strike). */
     private static final Map<UUID, Long> NEXT_STRIKE = new HashMap<>();
 
     public CsBossElectricityBlock(Properties properties) {
@@ -63,9 +63,9 @@ public class CsBossElectricityBlock extends Block {
     public void onPlace(BlockState state, Level level, BlockPos pos, BlockState oldState, boolean movedByPiston) {
         super.onPlace(state, level, pos, oldState, movedByPiston);
         if (!level.isClientSide()) {
-            // Pas de son ici : la pose massive (perlin) jouerait des centaines de sons le même tick.
-            // Le bourdonnement « placement » est joué une fois par l'attaque ; l'ambiance actif est
-            // émise en local par animateTick (cf. plan 108 § 4.1).
+            // No sound here: bulk placement (perlin) would play hundreds of sounds the same tick.
+            // The "placement" buzz is played once by the attack; active ambience is
+            // emitted locally by animateTick (cf. plan 108 § 4.1).
             level.scheduleTick(pos, this, CHARGE_TICKS);
         }
     }
@@ -110,7 +110,7 @@ public class CsBossElectricityBlock extends Block {
                     pos.getX() + random.nextDouble(), pos.getY() + 0.2, pos.getZ() + random.nextDouble(),
                     0.0, 0.0, 0.0);
         }
-        // Bourdonnement d'ambiance en mode actif, émis localement (pas de paquet réseau).
+        // Active-mode ambience buzz, emitted locally (no network packet).
         if (random.nextInt(24) == 0) {
             level.playLocalSound(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5,
                     BUZZ, SoundSource.HOSTILE, 0.4F, 1.3F, false);

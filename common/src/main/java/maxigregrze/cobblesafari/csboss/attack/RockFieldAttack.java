@@ -14,9 +14,9 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
- * {@code base_rock_4} (plan 113, Type B) : sélectionne ~10 % de la surface par bruit de Perlin (même
- * méthode que {@code base_electric_2}) et y fait tomber des météorites (comme {@code base_rock_2}),
- * toutes <b>simultanément</b>.
+ * {@code base_rock_4} (plan 113, Type B): selects ~10% of the surface via Perlin noise (same
+ * method as {@code base_electric_2}) and drops meteors there (like {@code base_rock_2}),
+ * all <b>simultaneously</b>.
  */
 public class RockFieldAttack implements CsBossAttack {
 
@@ -27,7 +27,8 @@ public class RockFieldAttack implements CsBossAttack {
     private static final double FALL_HEIGHT = 20.0;
     private static final float METEOR_DAMAGE = 18.0F;
     private static final double PERLIN_SCALE = 0.2;
-    private static final double COVERAGE_THRESHOLD = 0.9; // ~10 %
+    // Perlin (normalized) peaks around ~0.85; lower threshold ⇒ more coverage (~30 %).
+    private static final double COVERAGE_THRESHOLD = 0.6;
 
     private final String id;
     private final List<Rock> rocks = new ArrayList<>();

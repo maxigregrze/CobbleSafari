@@ -55,14 +55,14 @@ public class AuspiciousPokeballBlockEntity extends BlockEntity {
     }
 
     /**
-     * Bloc rendu par le BER (variante {@code _display}).
+     * Block rendered by the BER ({@code _display} variant).
      */
     public Block displayRenderBlock() {
         return ModBlocks.AUSPICIOUS_POKEBALL_DISPLAY;
     }
 
     /**
-     * Hitbox vide en survie pour ce joueur (réclamé ou règles spécifiques sous-classe).
+     * Empty hitbox in survival for this player (claimed or subclass-specific rules).
      */
     public boolean shouldHideShapeForSurvivalPlayer(Player player) {
         if (player.isCreative()) {
@@ -79,7 +79,7 @@ public class AuspiciousPokeballBlockEntity extends BlockEntity {
     }
 
     /**
-     * Masquer le modèle monde pour le joueur local (client).
+     * Hide the world model for the local player (client).
      */
     public boolean shouldHideWorldModelForLocalPlayer(Player player) {
         if (this.hasClaimed(player.getUUID())) {
@@ -97,7 +97,7 @@ public class AuspiciousPokeballBlockEntity extends BlockEntity {
     }
 
     /**
-     * La variante or lit {@link MiscConfig} sous {@code auspiciousPokeballGold} plutôt que la grande Pokéball.
+     * The gold variant reads {@link MiscConfig} under {@code auspiciousPokeballGold} rather than the large Pokéball.
      */
     protected boolean usesGoldMiscConfigDefaults() {
         return false;

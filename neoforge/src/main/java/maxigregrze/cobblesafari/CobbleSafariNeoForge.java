@@ -323,6 +323,12 @@ public class CobbleSafariNeoForge {
             registrar.playToClient(maxigregrze.cobblesafari.network.GtsAppResultPayload.TYPE,
                     maxigregrze.cobblesafari.network.GtsAppResultPayload.STREAM_CODEC,
                     CobbleSafariClientNeoForge::handleGtsAppResult);
+            registrar.playToClient(maxigregrze.cobblesafari.network.ChatAppResultPayload.TYPE,
+                    maxigregrze.cobblesafari.network.ChatAppResultPayload.STREAM_CODEC,
+                    CobbleSafariClientNeoForge::handleChatAppResult);
+            registrar.playToClient(maxigregrze.cobblesafari.network.ChatConversationSyncPayload.TYPE,
+                    maxigregrze.cobblesafari.network.ChatConversationSyncPayload.STREAM_CODEC,
+                    CobbleSafariClientNeoForge::handleChatConversationSync);
         } else {
             registrar.playToClient(maxigregrze.cobblesafari.network.OpenRotomPhonePayload.TYPE,
                     maxigregrze.cobblesafari.network.OpenRotomPhonePayload.STREAM_CODEC,
@@ -341,6 +347,12 @@ public class CobbleSafariNeoForge {
                     (payload, context) -> {});
             registrar.playToClient(maxigregrze.cobblesafari.network.GtsAppResultPayload.TYPE,
                     maxigregrze.cobblesafari.network.GtsAppResultPayload.STREAM_CODEC,
+                    (payload, context) -> {});
+            registrar.playToClient(maxigregrze.cobblesafari.network.ChatAppResultPayload.TYPE,
+                    maxigregrze.cobblesafari.network.ChatAppResultPayload.STREAM_CODEC,
+                    (payload, context) -> {});
+            registrar.playToClient(maxigregrze.cobblesafari.network.ChatConversationSyncPayload.TYPE,
+                    maxigregrze.cobblesafari.network.ChatConversationSyncPayload.STREAM_CODEC,
                     (payload, context) -> {});
         }
 
@@ -380,6 +392,16 @@ public class CobbleSafariNeoForge {
                     context.enqueueWork(() -> {
                         if (context.player() instanceof ServerPlayer sp) {
                             maxigregrze.cobblesafari.network.GtsAppServerHandler.handle(sp, payload);
+                        }
+                    });
+                });
+
+        registrar.playToServer(maxigregrze.cobblesafari.network.ChatAppPayload.TYPE,
+                maxigregrze.cobblesafari.network.ChatAppPayload.STREAM_CODEC,
+                (payload, context) -> {
+                    context.enqueueWork(() -> {
+                        if (context.player() instanceof ServerPlayer sp) {
+                            maxigregrze.cobblesafari.network.ChatAppServerHandler.handle(sp, payload);
                         }
                     });
                 });

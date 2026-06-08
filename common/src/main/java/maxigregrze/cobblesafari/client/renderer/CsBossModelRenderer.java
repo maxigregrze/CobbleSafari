@@ -25,18 +25,18 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * Helper de rendu partagé : dessine un modèle d'espèce Cobblemon emprunté via
- * {@link VaryingModelRepository}, à l'endroit, à l'échelle voulue, avec poses idle/walk et fondu.
- * Réutilisé par le Boss et les Minions pour éviter toute dérive de la recette de rendu.
+ * Shared rendering helper: draws a borrowed Cobblemon species model via
+ * {@link VaryingModelRepository}, upright, at the desired scale, with idle/walk poses and fade.
+ * Reused by the Boss and Minions to avoid any drift in the rendering recipe.
  */
 public final class CsBossModelRenderer {
 
-    /** Seuil de vitesse au-delà duquel on bascule en pose WALK. */
+    /** Speed threshold above which the pose switches to WALK. */
     public static final float MOVE_THRESHOLD = 0.05f;
 
     private CsBossModelRenderer() {}
 
-    /** Espèce résolue + aspects + baseScale, mise en cache par chaîne {@code specie}. */
+    /** Resolved species + aspects + baseScale, cached by {@code specie} string. */
     public record SpeciesInfo(ResourceLocation species, Set<String> aspects, float baseScale) {}
 
     @Nullable
@@ -61,11 +61,11 @@ public final class CsBossModelRenderer {
     }
 
     /**
-     * Dessine le modèle posé. {@code afterPose} est exécuté après le choix de pose et avant
-     * l'application des animations (sert à déclencher des animations nommées : attaque, faint…).
+     * Draws the posed model. {@code afterPose} runs after pose selection and before
+     * animations are applied (used to trigger named animations: attack, faint…).
      *
-     * @param scale échelle finale (baseScale × size × éventuel multiplicateur d'animation).
-     * @param alpha 1 = opaque ; &lt; 1 = fondu (translucide).
+     * @param scale final scale (baseScale × size × optional animation multiplier).
+     * @param alpha 1 = opaque; &lt; 1 = fade (translucent).
      */
     public static void render(
             PoseStack ps, MultiBufferSource buffer, int packedLight,
@@ -77,7 +77,7 @@ public final class CsBossModelRenderer {
                 scale, alpha, bodyYaw, limbSwing, limbSwingAmount, ageInTicks, partialTicks, afterPose);
     }
 
-    /** Variante avec overlay explicite (flash blanc des minions, plan 107 § 5.3). */
+    /** Variant with explicit overlay (minion white flash, plan 107 § 5.3). */
     public static void render(
             PoseStack ps, MultiBufferSource buffer, int packedLight, int packedOverlay,
             @Nullable Entity entity, SpeciesInfo info, PosableState state,
@@ -110,21 +110,30 @@ public final class CsBossModelRenderer {
 
         state.updatePartialTicks(partialTicks);
 
+        // try/finally guarantees the PoseStack is balanced even if the borrowed Cobblemon model
+        // throws while posing/rendering (notably on an entity's first frame right after it spawns).
+        // An unbalanced PoseStack would corrupt every subsequent draw that frame → screen-wide flicker.
         ps.pushPose();
-        ps.mulPose(Axis.YP.rotationDegrees(180.0f - bodyYaw));
-        ps.scale(-scale, -scale, scale);     // flip vanilla combiné à l'échelle du form
-        ps.translate(0.0, -0.001, 0.0);      // net de -1.501 (vanilla) + 1.5 (Cobblemon)
+        try {
+            ps.mulPose(Axis.YP.rotationDegrees(180.0f - bodyYaw));
+            ps.scale(-scale, -scale, scale);     // vanilla flip combined with form scale
+            ps.translate(0.0, -0.001, 0.0);      // net of -1.501 (vanilla) + 1.5 (Cobblemon)
 
-        model.applyAnimations(entity, state, limbSwing, limbSwingAmount, ageInTicks, 0f, 0f);
+            model.applyAnimations(entity, state, limbSwing, limbSwingAmount, ageInTicks, 0f, 0f);
 
-        int color = (Mth.clamp((int) (alpha * 255.0f), 0, 255) << 24) | 0x00FFFFFF;
-        RenderType renderType = alpha < 1.0f
-                ? RenderType.entityTranslucent(texture)
-                : RenderType.entityCutout(texture);
-        VertexConsumer vc = buffer.getBuffer(renderType);
-        model.setLayerContext(buffer, state, VaryingModelRepository.INSTANCE.getLayers(species, state));
-        model.render(ctx, ps, vc, packedLight, packedOverlay, color);
-        model.resetLayerContext();
-        ps.popPose();
+            int color = (Mth.clamp((int) (alpha * 255.0f), 0, 255) << 24) | 0x00FFFFFF;
+            RenderType renderType = alpha < 1.0f
+                    ? RenderType.entityTranslucent(texture)
+                    : RenderType.entityCutout(texture);
+            VertexConsumer vc = buffer.getBuffer(renderType);
+            model.setLayerContext(buffer, state, VaryingModelRepository.INSTANCE.getLayers(species, state));
+            try {
+                model.render(ctx, ps, vc, packedLight, packedOverlay, color);
+            } finally {
+                model.resetLayerContext();
+            }
+        } finally {
+            ps.popPose();
+        }
     }
 }

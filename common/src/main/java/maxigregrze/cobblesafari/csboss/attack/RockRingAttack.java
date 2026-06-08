@@ -15,20 +15,20 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
- * {@code base_rock_2} (plan 109) : autour de <b>chaque joueur</b>, un anneau (rayon 3) d'ombres
- * statiques ; 1 s plus tard, une météorite tombe sur chacune (comme {@code base_rock_1}) et pose un
- * bloc météorite. 1 s après l'impact, on recommence. 3‑5 vagues au total. La météorite blesse (18)
- * un joueur traversé.
+ * {@code base_rock_2} (plan 109): around <b>each player</b>, a ring (radius 3) of static shadows;
+ * 1 s later, a meteor falls on each (like {@code base_rock_1}) and places a
+ * meteorite block. 1 s after impact, repeat. 3–5 waves total. The meteor damages (18)
+ * a player it passes through.
  */
 public class RockRingAttack implements CsBossAttack {
 
     private static final int RING_RADIUS = 3;
-    private static final int FALL_TICKS = 20;    // chute 2× plus lente (10→20), visible plus longtemps
-    private static final int IMPACT_AT = 30;     // impact inchangé
-    private static final int METEOR_AT = IMPACT_AT - FALL_TICKS; // 10 : météorite apparaît plus tôt
-    private static final int WAVE_INTERVAL = IMPACT_AT + 20;     // 1 s après l'impact ⇒ 50
-    private static final int NOMINAL_WAVES = 4;  // ±25 % ⇒ 3‑5
-    private static final int RING_STAGGER = 4;   // ticks de décalage de chute par anneau (centre → extérieur)
+    private static final int FALL_TICKS = 20;    // fall 2× slower (10→20), visible longer
+    private static final int IMPACT_AT = 30;     // impact unchanged
+    private static final int METEOR_AT = IMPACT_AT - FALL_TICKS; // 10: meteor appears earlier
+    private static final int WAVE_INTERVAL = IMPACT_AT + 20;     // 1 s after impact ⇒ 50
+    private static final int NOMINAL_WAVES = 4;  // ±25% ⇒ 3–5
+    private static final int RING_STAGGER = 4;   // fall stagger ticks per ring (center → outer)
     private static final double FALL_HEIGHT = 20.0;
     private static final float METEOR_DAMAGE = 18.0F;
     private static final List<BlockPos> RING = CsBossGridShapes.filledCircle(RING_RADIUS);
@@ -112,7 +112,7 @@ public class RockRingAttack implements CsBossAttack {
                 double y = surface != null ? surface.getY() + 1.0 : p.getY();
                 AttackShadowEntity shadow = AttackShadowEntity.spawn(level, x + 0.5, y, z + 0.5, session.getId());
                 session.trackAttackEntity(shadow);
-                // Décalage par anneau : les cases centrales tombent d'abord, puis cercle par cercle.
+                // Ring stagger: center cells fall first, then circle by circle.
                 int ringDist = (int) Math.round(Math.sqrt((double) off.getX() * off.getX() + (double) off.getZ() * off.getZ()));
                 rocks.add(new Rock(shadow, tick + ringDist * RING_STAGGER));
             }
@@ -124,7 +124,7 @@ public class RockRingAttack implements CsBossAttack {
 
     private void driveRock(ServerLevel level, BossBattleSession session, Rock r, int age) {
         if (age < METEOR_AT) {
-            // Poussière colorée tombant du ciel : télégraphe au‑dessus de l'ombre.
+            // Colored dust falling from the sky: telegraph above the shadow.
             CsBossAttackLib.meteorTelegraph(level, r.shadow.getX(), r.shadow.getY(), r.shadow.getZ(),
                     CsBossAttackLib.METEOR_DUST);
         }

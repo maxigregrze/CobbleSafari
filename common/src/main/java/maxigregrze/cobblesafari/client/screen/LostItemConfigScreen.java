@@ -16,9 +16,9 @@ public class LostItemConfigScreen extends Screen {
 
     private static final int OUT_OF_VIEW = -4096;
     private static final int EDIT_HEIGHT = 20;
-    /** Espace entre le bas du libellé et le haut de la zone de saisie */
+    /** Gap between the bottom of the label and the top of the input field */
     private static final int LABEL_TO_FIELD_GAP = 4;
-    /** Espace vertical sous une ligne de champ avant le libellé suivant */
+    /** Vertical gap below a field row before the next label */
     private static final int AFTER_FIELD_GAP = 10;
 
     private final OpenLostItemConfigPayload initial;

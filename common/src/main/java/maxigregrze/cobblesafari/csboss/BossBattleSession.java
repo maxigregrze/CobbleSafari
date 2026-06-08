@@ -26,14 +26,14 @@ import java.util.Set;
 import java.util.UUID;
 
 /**
- * Instance runtime d'un combat de boss (plan 100 § 6.1).
+ * Runtime instance of a boss battle (plan 100 § 6.1).
  */
 public class BossBattleSession {
 
-    /** Phases d'une session : entrée (temporisation), combat actif, agonie (animation de mort). */
+    /** Session phases: entrance (delay), active combat, dying (death animation). */
     public enum Phase { ENTRANCE, ACTIVE, DYING }
 
-    /** Durée de l'entrée (2 s) et de l'agonie. */
+    /** Entrance (2 s) and dying duration. */
     public static final int ENTRANCE_TICKS = 40;
     public static final int DEATH_TICKS = 60;
 
@@ -41,6 +41,8 @@ public class BossBattleSession {
     private int phaseTimer = 0;
 
     private final int id;
+    /** Root boss id from activation (unchanged across chained phases). */
+    private final String rootBossId;
     private final ResourceKey<Level> dimension;
     private final BlockPos triggerPos;
     private final Vec3 arenaCenter;
@@ -53,21 +55,21 @@ public class BossBattleSession {
     private final Set<UUID> activeBullets = new java.util.HashSet<>();
     private final Set<UUID> activeMinions = new java.util.HashSet<>();
     private final Set<UUID> activeAttackEntities = new java.util.HashSet<>();
-    /** Minions « Pokémon combattants » décoratifs autour du boss (plan 112). */
+    /** Decorative "fighting Pokémon" minions around the boss (plan 112). */
     private final Set<UUID> fightingPokemons = new java.util.HashSet<>();
     private boolean fightingPokemonsSpawned = false;
     private int activeTicks = 0;
     private final int maxBullets;
 
-    /** Définition de la phase courante (peut changer en seconde phase). */
+    /** Current phase definition (may change on second phase). */
     private CsBossDefinition def;
     private AttackScheduler scheduler;
     private int totalDuration;
     private int remaining;
 
-    /** Y du boss au début de l'agonie (pour la remontée de +5 blocs). */
+    /** Boss Y at start of dying (for the +5 block rise). */
     private double deathOriginY;
-    /** Définition de la phase suivante résolue, en attente (mi‑agonie), ou {@code null}. */
+    /** Resolved next phase definition, pending (mid-dying), or {@code null}. */
     @Nullable
     private CsBossDefinition pendingNextDef;
 
@@ -75,6 +77,7 @@ public class BossBattleSession {
                              CsBossDefinition def, UUID bossUuid, Set<UUID> participantUuids,
                              List<BlockPos> changedBlocks, int playerRadius, int totalDuration) {
         this.id = id;
+        this.rootBossId = def.bossId();
         this.dimension = dimension;
         this.triggerPos = triggerPos;
         this.arenaCenter = Vec3.atCenterOf(triggerPos);
@@ -132,8 +135,8 @@ public class BossBattleSession {
     }
 
     /**
-     * Bascule la session sur une nouvelle définition (seconde phase) : nouvelle durée, nouveau
-     * scheduler d'attaques, et mise à jour de la barre de boss (nom/couleur/style).
+     * Switches the session to a new definition (second phase): new duration, new
+     * attack scheduler, and boss bar update (name/color/style).
      */
     public void startPhase(CsBossDefinition newDef, int newDuration) {
         this.def = newDef;
@@ -141,7 +144,7 @@ public class BossBattleSession {
         this.totalDuration = Math.max(1, newDuration);
         this.remaining = this.totalDuration;
         this.pendingNextDef = null;
-        // Réinitialise les Pokémon décoratifs : ils réapparaîtront 3 s après le début de la nouvelle phase.
+        // Reset decorative Pokémon: they respawn 3 s after the new phase starts.
         this.fightingPokemonsSpawned = false;
         this.activeTicks = 0;
         this.fightingPokemons.clear();
@@ -151,10 +154,14 @@ public class BossBattleSession {
         this.bossBar.setProgress(1.0F);
     }
 
-    // --- Accès ---------------------------------------------------------------
+    // --- Access ----------------------------------------------------------------
 
     public int getId() {
         return id;
+    }
+
+    public String getRootBossId() {
+        return rootBossId;
     }
 
     public ResourceKey<Level> getDimension() {
@@ -216,8 +223,8 @@ public class BossBattleSession {
     }
 
     /**
-     * Retire un pourcentage de la durée totale au compte à rebours (= barre de vie du boss).
-     * Utilisé par l'impact d'un baume lancé. {@code percent} est borné [0, 100].
+     * Removes a percentage of total duration from the countdown (= boss health bar).
+     * Used by a thrown balm impact. {@code percent} is clamped to [0, 100].
      */
     public void reduceRemainingByPercent(int percent) {
         int pct = Math.max(0, Math.min(100, percent));
@@ -242,7 +249,7 @@ public class BossBattleSession {
 
     // --- Bullets -------------------------------------------------------------
 
-    /** Spawne une bullet si le cap n'est pas atteint (plan 100 § 12.3). */
+    /** Spawns a bullet if the cap is not reached (plan 100 § 12.3). */
     public boolean trySpawnBullet(ServerLevel level, Vec3 origin, Vec3 velocity) {
         if (activeBullets.size() >= maxBullets) {
             return false;
@@ -255,7 +262,7 @@ public class BossBattleSession {
         return true;
     }
 
-    /** Purge les bullets disparues + renvoie la liste à supprimer côté monde. */
+    /** Purges vanished bullets (world-side removal list is derived from tracking). */
     public void pruneBullets(ServerLevel level) {
         activeBullets.removeIf(uuid -> level.getEntity(uuid) == null);
     }
@@ -267,8 +274,8 @@ public class BossBattleSession {
     }
 
     /**
-     * Fait apparaître un minion de ce boss, à l'espèce {@code minion} du data model
-     * (sinon l'espèce du boss). Suivi pour le nettoyage en fin de combat.
+     * Spawns a minion for this boss at the data model {@code minion} species
+     * (otherwise the boss species). Tracked for cleanup at fight end.
      */
     public CsBossMinionEntity spawnMinion(ServerLevel level, Vec3 pos, int size) {
         CsBossMinionEntity minion = CsBossMinionEntity.spawn(
@@ -285,14 +292,14 @@ public class BossBattleSession {
         activeMinions.removeIf(uuid -> level.getEntity(uuid) == null);
     }
 
-    // --- Entités d'attaque custom (ombres, météorites, tiges) -----------------
+    // --- Custom attack entities (shadows, meteorites, stems) -------------------
 
-    /** Suivi générique des entités d'attaque (plan 107) pour le nettoyage en fin de combat. */
+    /** Generic attack-entity tracking (plan 107) for cleanup at fight end. */
     public Set<UUID> getActiveAttackEntities() {
         return activeAttackEntities;
     }
 
-    /** Enregistre une entité d'attaque pour le cleanup et renvoie l'entité (chaînage). */
+    /** Registers an attack entity for cleanup and returns it (chaining). */
     public <T extends net.minecraft.world.entity.Entity> T trackAttackEntity(T entity) {
         activeAttackEntities.add(entity.getUUID());
         return entity;
@@ -302,7 +309,7 @@ public class BossBattleSession {
         activeAttackEntities.removeIf(uuid -> level.getEntity(uuid) == null);
     }
 
-    // --- Pokémon combattants décoratifs (plan 112) ---------------------------
+    // --- Decorative fighting Pokémon (plan 112) ------------------------------
 
     public Set<UUID> getFightingPokemons() {
         return fightingPokemons;
@@ -325,8 +332,8 @@ public class BossBattleSession {
     }
 
     /**
-     * Fait apparaître un minion à une espèce explicite (ex. Voltorb forcé pour {@code base_electric_1}),
-     * indépendamment du champ {@code minion} du data model. Suivi pour le nettoyage en fin de combat.
+     * Spawns a minion at an explicit species (e.g. forced Voltorb for {@code base_electric_1}),
+     * independent of the data model {@code minion} field. Tracked for cleanup at fight end.
      */
     public CsBossMinionEntity spawnFixedMinion(ServerLevel level, Vec3 pos, String specie, int size) {
         CsBossMinionEntity minion = CsBossMinionEntity.spawn(level, pos.x, pos.y, pos.z, specie, size, id);
@@ -334,7 +341,7 @@ public class BossBattleSession {
         return minion;
     }
 
-    // --- Participants vivants ------------------------------------------------
+    // --- Living participants ---------------------------------------------------
 
     public List<ServerPlayer> aliveParticipants(ServerLevel level) {
         List<ServerPlayer> out = new ArrayList<>();
@@ -349,7 +356,7 @@ public class BossBattleSession {
         return out;
     }
 
-    // --- Snapshot persistant -------------------------------------------------
+    // --- Persistent snapshot -------------------------------------------------
 
     public CsBossSavedData.Snapshot snapshot() {
         return new CsBossSavedData.Snapshot(id, dimension, triggerPos, bossUuid,

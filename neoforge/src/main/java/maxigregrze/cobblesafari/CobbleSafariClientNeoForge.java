@@ -259,7 +259,10 @@ public class CobbleSafariClientNeoForge {
         event.registerEntityRenderer(ModEntities.ATTACK_WAVE, maxigregrze.cobblesafari.client.renderer.AttackWaveEntityRenderer::new);
         event.registerEntityRenderer(ModEntities.ATTACK_DISTORTION_FLOWER, maxigregrze.cobblesafari.client.renderer.AttackDistortionFlowerEntityRenderer::new);
         event.registerEntityRenderer(ModEntities.ATTACK_GIRATINA_ORB, maxigregrze.cobblesafari.client.renderer.AttackGiratinaOrbEntityRenderer::new);
+        event.registerEntityRenderer(ModEntities.ATTACK_BEAM, maxigregrze.cobblesafari.client.renderer.AttackBeamEntityRenderer::new);
         event.registerEntityRenderer(ModEntities.ATTACK_DIGDIRT, maxigregrze.cobblesafari.client.renderer.AttackDigdirtEntityRenderer::new);
+        event.registerEntityRenderer(ModEntities.SAFARI_SHADOW_HAZARD, maxigregrze.cobblesafari.client.renderer.SafariShadowHazardEntityRenderer::new);
+        event.registerEntityRenderer(ModEntities.SAFARI_BALLISTIC_METEOR, maxigregrze.cobblesafari.client.renderer.SafariBallisticMeteorEntityRenderer::new);
     }
 
     @SubscribeEvent
@@ -415,6 +418,20 @@ public class CobbleSafariClientNeoForge {
             if (Minecraft.getInstance().screen
                     instanceof maxigregrze.cobblesafari.client.screen.rotomphone.RotomPhoneGTSScreen rg) {
                 rg.applyServerSnapshot(payload);
+            }
+        });
+    }
+
+    public static void handleChatConversationSync(maxigregrze.cobblesafari.network.ChatConversationSyncPayload payload, IPayloadContext context) {
+        context.enqueueWork(() ->
+                maxigregrze.cobblesafari.rotomphone.ChatConversationClientCache.setConversations(payload.conversations()));
+    }
+
+    public static void handleChatAppResult(maxigregrze.cobblesafari.network.ChatAppResultPayload payload, IPayloadContext context) {
+        context.enqueueWork(() -> {
+            if (Minecraft.getInstance().screen
+                    instanceof maxigregrze.cobblesafari.client.screen.rotomphone.RotomPhoneChatScreen rc) {
+                rc.applyServerSnapshot(payload);
             }
         });
     }

@@ -20,13 +20,13 @@ import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
 /**
- * Bloc « amas » orientable posé au sol (Amas de boue / Amas de bouillasse).
- * Boîte de sélection = cube 8×8 centré au bas de la cellule. Ralentit les entités
- * qui le traversent (comme une toile). Posable uniquement sur un bloc solide.
+ * Orientable ground "pile" block (mud pile / sludge pile).
+ * Selection box = 8×8 cube centered at the bottom of the cell. Slows entities
+ * passing through (like a web). Placeable only on solid ground.
  */
 public abstract class PileBlock extends HorizontalDirectionalBlock {
 
-    // Cube 8×8 centré sur X/Z, au bas de la cellule (symétrique sous rotation Y).
+    // 8×8 cube centered on X/Z at the bottom of the cell (symmetric under Y rotation).
     protected static final VoxelShape SHAPE = Block.box(4, 0, 4, 12, 8, 12);
     private static final Vec3 STUCK_MULTIPLIER = new Vec3(0.25, 0.05F, 0.25);
 

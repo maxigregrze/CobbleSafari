@@ -48,6 +48,7 @@ public class DimensionEvents {
 
     public static void onServerStarted(MinecraftServer server) {
         TimerManager.setServer(server);
+        maxigregrze.cobblesafari.dungeon.DungeonInstanceCleanup.resumePendingClears(server);
         PortalSpawnManager.setServer(server);
         maxigregrze.cobblesafari.incubator.EggIncubatorRegistry.load(server);
         CsTraderDataLoader.load(server);
@@ -55,6 +56,7 @@ public class DimensionEvents {
         GtsService.onServerStarted(server);
         maxigregrze.cobblesafari.underground.UndergroundMinigame.loadDatapacks(server);
         maxigregrze.cobblesafari.rotomphone.RotomPhoneSkinDataLoader.load(server);
+        maxigregrze.cobblesafari.chat.ChatConversationDataLoader.load(server);
         maxigregrze.cobblesafari.csboss.CsBossDataLoader.load(server);
         maxigregrze.cobblesafari.csboss.BossBattleManager.recoverAll(server);
         maxigregrze.cobblesafari.csmusic.CsMusicDataLoader.load(server);
@@ -64,6 +66,7 @@ public class DimensionEvents {
         TimerManager.saveAllData();
         TimerManager.clearServer();
         PortalSpawnManager.clearServer();
+        maxigregrze.cobblesafari.dungeon.DungeonTeleportHandler.clearGenerationStates();
     }
 
     public static void onServerTick(MinecraftServer server) {
@@ -77,6 +80,7 @@ public class DimensionEvents {
             WonderTradeService.tickDailyScheduler(server);
             GtsService.tickDailyScheduler(server);
             GtsService.tickGcLocks(server);
+            maxigregrze.cobblesafari.chat.ChatConversationService.tickDailyScheduler(server);
         }
         maxigregrze.cobblesafari.safari.SafariStateManager.onServerTick(server);
         maxigregrze.cobblesafari.unionroom.UnionRoomManager.tickSessionCheck(server);
@@ -128,6 +132,7 @@ public class DimensionEvents {
                 new DimensionalBanSyncPayload(DimensionalBanConfig.data.dimensions));
         maxigregrze.cobblesafari.underground.UndergroundMinigame.syncRegistryToPlayer(player);
         maxigregrze.cobblesafari.rotomphone.RotomPhoneConfigSync.syncToPlayer(player);
+        maxigregrze.cobblesafari.rotomphone.ChatConversationSync.syncToPlayer(player);
         GtsService.onPlayerJoin(player);
     }
 

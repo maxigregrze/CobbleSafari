@@ -20,8 +20,8 @@ import java.util.List;
 import java.util.UUID;
 
 /**
- * Snapshots des combats de boss en cours (plan 100 § 7), pour annuler tout combat au reboot.
- * On ne persiste QUE le minimum nécessaire au nettoyage.
+ * Snapshots of in-progress boss fights (plan 100 § 7), to cancel any fight on reboot.
+ * Only the minimum needed for cleanup is persisted.
  */
 public class CsBossSavedData extends SavedData {
     private static final String DATA_NAME = CobbleSafari.MOD_ID + "_csboss";
@@ -32,7 +32,7 @@ public class CsBossSavedData extends SavedData {
     private final List<Snapshot> snapshots = new ArrayList<>();
 
     public CsBossSavedData() {
-        // état peuplé dans load()
+        // state populated in load()
     }
 
     public static CsBossSavedData load(CompoundTag tag, HolderLookup.Provider registries) {
@@ -98,7 +98,7 @@ public class CsBossSavedData extends SavedData {
     }
 
     /**
-     * Données minimales pour nettoyer un combat au reboot.
+     * Minimal data to clean up a fight on reboot.
      */
     public record Snapshot(
             int sessionId,

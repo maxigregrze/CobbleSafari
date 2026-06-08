@@ -10,18 +10,18 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.Level;
 
 /**
- * Rocher tombant (plan 107 § 4.2) : piloté par l'attaque (descente rapide). Variante
- * {@code METEORITE} (texture roche, traînée flamme) ou {@code DRACO} (texture dracométéore,
- * traînée flamme d'âme). Rendu via le modèle de bloc correspondant.
+ * Falling rock (plan 107 § 4.2): driven by the attack (fast descent). Variant
+ * {@code METEORITE} (rock texture, flame trail) or {@code DRACO} (draco-meteor texture,
+ * soul flame trail). Rendered via the corresponding block model.
  */
 public class AttackMeteoriteEntity extends AbstractAttackEntity {
 
     private static final EntityDataAccessor<Boolean> DATA_DRACO =
             SynchedEntityData.defineId(AttackMeteoriteEntity.class, EntityDataSerializers.BOOLEAN);
-    /** Échelle du rendu (1 = normale). Permet une croissance 0→1 (plan 113, base_rock_3). */
+    /** Render scale (1 = normal). Enables 0→1 growth (plan 113, base_rock_3). */
     private static final EntityDataAccessor<Float> DATA_SCALE =
             SynchedEntityData.defineId(AttackMeteoriteEntity.class, EntityDataSerializers.FLOAT);
-    /** Angle de culbute (degrés) appliqué sur les 3 axes au rendu. */
+    /** Tumble angle (degrees) applied on all 3 axes at render time. */
     private static final EntityDataAccessor<Float> DATA_SPIN =
             SynchedEntityData.defineId(AttackMeteoriteEntity.class, EntityDataSerializers.FLOAT);
 
@@ -73,7 +73,7 @@ public class AttackMeteoriteEntity extends AbstractAttackEntity {
 
     @Override
     protected void clientTick() {
-        // Traînée de particules suivant la chute (émise à chaque tick côté client).
+        // Particle trail following the fall (emitted each tick on the client).
         var particle = isDraco() ? ParticleTypes.SOUL_FIRE_FLAME : ParticleTypes.FLAME;
         for (int i = 0; i < 4; i++) {
             double ox = (this.random.nextDouble() - 0.5) * 1.2;

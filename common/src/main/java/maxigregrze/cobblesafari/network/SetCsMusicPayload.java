@@ -8,8 +8,8 @@ import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * S2C : indique au client quel morceau csmusic jouer (ou le silence), et comment terminer le
- * morceau actuellement en cours (plan 105 § 5). Le client n'a aucune autorité (pas de C2S).
+ * S2C: tells the client which csmusic track to play (or silence), and how to end the
+ * currently playing track (plan 105 § 5). Client has no authority (no C2S).
  */
 public record SetCsMusicPayload(
         boolean hasTrack,

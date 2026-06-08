@@ -10,7 +10,7 @@ import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
 
-/** Rend la fleur de distorsion via le modèle du bloc {@code distortion_flower_carpet}. */
+/** Renders the distortion flower via the {@code distortion_flower_carpet} block model. */
 public class AttackDistortionFlowerEntityRenderer extends EntityRenderer<AttackDistortionFlowerEntity> {
 
     private static final ResourceLocation FALLBACK =

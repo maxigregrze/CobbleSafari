@@ -6,9 +6,9 @@ import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * Lecteur client csmusic (plan 105 § 7) : machine à états intro → loop → outro, avec fondu,
- * morceau en attente, et priorité sur la musique de fond vanilla (exception jukebox, § 7.3).
- * Remplace l'ancien {@code DungeonMusicHandler}.
+ * Client csmusic player (plan 105 § 7): intro → loop → outro state machine, with fade,
+ * pending track, and priority over vanilla background music (jukebox exception, § 7.3).
+ * Replaces the old {@code DungeonMusicHandler}.
  */
 public final class CsMusicPlayer {
 
@@ -32,12 +32,12 @@ public final class CsMusicPlayer {
 
     private CsMusicPlayer() {}
 
-    // --- Réception serveur ---------------------------------------------------
+    // --- Server receive --------------------------------------------------------
 
     public static void accept(SetCsMusicPayload payload) {
         TrackDef next = payload.hasTrack() ? TrackDef.of(payload) : null;
 
-        // Déjà en train de jouer ce morceau (intro/loop) ⇒ no‑op.
+        // Already playing this track (intro/loop) ⇒ no-op.
         if (next != null && next.id.equals(currentId) && (phase == Phase.INTRO || phase == Phase.LOOP) && !fading) {
             return;
         }
@@ -76,7 +76,7 @@ public final class CsMusicPlayer {
         if (phase == Phase.IDLE) {
             return;
         }
-        // Priorité sur la musique de fond vanilla (le jukebox, sur SoundSource.RECORDS, n'est pas touché).
+        // Priority over vanilla background music (jukebox on SoundSource.RECORDS is untouched).
         mc.getMusicManager().stopPlaying();
 
         if (mc.isPaused()) {
@@ -101,8 +101,8 @@ public final class CsMusicPlayer {
                     pending = null;
                     startTrack(next);
                 }
-                case LOOP -> playLoop(mc); // sécurité : relance la boucle si stoppée prématurément
-                default -> { /* IDLE : rien */ }
+                case LOOP -> playLoop(mc); // safety: restart loop if stopped prematurely
+                default -> { /* IDLE: nothing */ }
             }
         }
     }

@@ -8,7 +8,7 @@ import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.resources.ResourceLocation;
 
 /**
- * Le core de distorsion (plan 107 § 4.4) est invisible : nœud logique de propagation, aucun rendu.
+ * The distortion core (plan 107 § 4.4) is invisible: logical propagation node, no rendering.
  */
 public class AttackDistortionStemCoreEntityRenderer extends EntityRenderer<AttackDistortionStemCoreEntity> {
 

@@ -16,21 +16,21 @@ import java.util.List;
 import java.util.UUID;
 
 /**
- * {@code base_ghost_1} (plan 107/108 § 3, révisé plan 109) : une grande ombre 3×3 <b>par joueur</b>,
- * qui traque sa cible (accélération 0 → course) puis se fige ; un {@code csboss_minion} (espèce
- * minion du boss) surgit du sol jusqu'à mi‑ombre, blesse au contact (8), puis ombre + minion se
- * dissipent. Le cycle se répète 2‑5 fois sans pause, avec un délai seulement à la fin.
+ * {@code base_ghost_1} (plan 107/108 § 3, revised plan 109): a large 3×3 shadow <b>per player</b>,
+ * which tracks its target (acceleration 0 → run) then freezes; a {@code csboss_minion} (boss
+ * minion species) erupts from the ground to mid-shadow, damages on contact (8), then shadow + minion
+ * dissipate. The cycle repeats 2–5 times without pause, with a delay only at the end.
  */
 public class GhostShadowAttack implements CsBossAttack {
 
-    private static final int FOLLOW_END = 120;   // 6 s de poursuite
-    private static final int RAMP_TICKS = 60;    // accélération 0 → course sur 3 s
-    private static final int RISE_START = 130;   // 0,5 s après le gel
-    private static final int RISE_END = 140;     // montée du minion (0,5 s)
-    private static final int FADE_END = 150;     // fondu (0,5 s) + discard
+    private static final int FOLLOW_END = 120;   // 6 s of pursuit
+    private static final int RAMP_TICKS = 60;    // acceleration 0 → run over 3 s
+    private static final int RISE_START = 130;   // 0.5 s after freeze
+    private static final int RISE_END = 140;     // minion rise (0.5 s)
+    private static final int FADE_END = 150;     // fade (0.5 s) + discard
     private static final int CYCLE_LEN = 152;
-    private static final int END_DELAY = 20;     // délai en fin d'attaque
-    private static final int NOMINAL_CYCLES = 3; // ~2‑5 (plage demandée)
+    private static final int END_DELAY = 20;     // delay at end of attack
+    private static final int NOMINAL_CYCLES = 3; // ~2–5 (requested range)
     private static final double RUN_SPEED = 0.30;
     private static final double MINION_DROP = 2.0;
     private static final float MINION_DAMAGE = 8.0F;
@@ -67,7 +67,7 @@ public class GhostShadowAttack implements CsBossAttack {
         this.tick = 0;
         this.done = false;
         this.ghosts.clear();
-        // Plage demandée 2‑5 ; le ±25 % autour de 3 donne ~2‑4, on élargit le haut à 5.
+        // Requested range 2–5; ±25% around 3 gives ~2–4, extend top to 5.
         this.cycles = 2 + rng.nextInt(4);
     }
 
@@ -116,7 +116,11 @@ public class GhostShadowAttack implements CsBossAttack {
                 g.shadowY = g.shadow.getY();
                 Vec3 pos = new Vec3(g.shadow.getX(), g.shadowY - MINION_DROP, g.shadow.getZ());
                 g.minion = session.spawnMinion(level, pos);
-                g.minion.resizeToHeight(2.0); // hitbox ~2 blocs quelle que soit l'espèce
+                g.minion.resizeToHeight(2.5); // hitbox ~2.5 blocks regardless of species
+                // Face the player from the very first frame it starts emerging from the shadow.
+                if (level.getPlayerByUUID(g.target) instanceof ServerPlayer tp) {
+                    g.minion.faceTargetInstant(tp.position());
+                }
 
                 CsBossAttackLib.sound(level, pos.x, pos.y, pos.z,
                         "minecraft:entity.vex.charge", SoundSource.HOSTILE, 1.2F, 0.7F);
@@ -139,7 +143,7 @@ public class GhostShadowAttack implements CsBossAttack {
             }
 
             if (g.minion != null && g.minion.isAlive() && cycleTick >= RISE_START && cycleTick < FADE_END) {
-                // Le minion fait toujours face au joueur qu'il suit.
+                // Minion always faces the player it follows.
                 if (level.getPlayerByUUID(g.target) instanceof ServerPlayer tp) {
                     g.minion.faceTarget(tp.position());
                 }

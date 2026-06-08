@@ -23,8 +23,8 @@ import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * Entité Boss custom (plan 100 § 5). Modèle emprunté à une espèce Cobblemon (rendu client),
- * immunisée à tous les dégâts ; sa « vie » est le compte à rebours géré par la session.
+ * Custom boss entity (plan 100 § 5). Borrows the model from a Cobblemon species (client render),
+ * immune to all damage; its "health" is the countdown managed by the session.
  */
 public class CsBossEntity extends Mob {
 
@@ -32,13 +32,13 @@ public class CsBossEntity extends Mob {
             SynchedEntityData.defineId(CsBossEntity.class, EntityDataSerializers.STRING);
     private static final EntityDataAccessor<Integer> DATA_SIZE =
             SynchedEntityData.defineId(CsBossEntity.class, EntityDataSerializers.INT);
-    /** Incrémenté côté serveur à chaque attaque pour déclencher l'animation d'attaque côté client. */
+    /** Incremented server-side on each attack to trigger the client attack animation. */
     private static final EntityDataAccessor<Integer> DATA_ATTACK_SEQ =
             SynchedEntityData.defineId(CsBossEntity.class, EntityDataSerializers.INT);
-    /** Phase d'animation d'entité : 0 = entrée, 1 = actif, 2 = mort. */
+    /** Entity animation phase: 0 = entrance, 1 = active, 2 = death. */
     private static final EntityDataAccessor<Integer> DATA_PHASE =
             SynchedEntityData.defineId(CsBossEntity.class, EntityDataSerializers.INT);
-    /** Progression 0..1 de la phase courante (entrée ⇒ échelle ; mort ⇒ fondu). */
+    /** Progress 0..1 for the current phase (entrance ⇒ scale; death ⇒ fade). */
     private static final EntityDataAccessor<Float> DATA_ANIM =
             SynchedEntityData.defineId(CsBossEntity.class, EntityDataSerializers.FLOAT);
 
@@ -46,9 +46,9 @@ public class CsBossEntity extends Mob {
     public static final int PHASE_ACTIVE = 1;
     public static final int PHASE_DYING = 2;
 
-    /** Hauteur (blocs) de chute pendant l'entrée. */
+    /** Fall height (blocks) during entrance. */
     public static final double ENTRANCE_HEIGHT = 5.0;
-    /** Décalage Y de la position cible : 0 ⇒ le boss est « dans » le bloc trigger, pas posé dessus. */
+    /** Y offset of the target position: 0 ⇒ the boss is "inside" the trigger block, not standing on top. */
     public static final double STAND_Y_OFFSET = 0.0;
 
     private static final String KEY_SPECIE = "Specie";
@@ -58,7 +58,7 @@ public class CsBossEntity extends Mob {
 
     private int sessionId;
     private boolean staticBoss = true;
-    /** Hitbox dérivée de l'espèce (null ⇒ dimensions par défaut du type). */
+    /** Hitbox derived from the species (null ⇒ default type dimensions). */
     @Nullable
     private EntityDimensions cachedDims;
 
@@ -76,7 +76,7 @@ public class CsBossEntity extends Mob {
                 .add(Attributes.FOLLOW_RANGE, 0.0D);
     }
 
-    /** Fait apparaître un boss au centre, au-dessus du trigger. */
+    /** Spawns a boss at the center, above the trigger. */
     public static CsBossEntity spawnAbove(ServerLevel level, BlockPos triggerPos, CsBossDefinition def, int sessionId) {
         CsBossEntity boss = new CsBossEntity(ModEntities.CSBOSS, level);
         boss.setSpecie(def.specie());
@@ -85,7 +85,7 @@ public class CsBossEntity extends Mob {
         boss.sessionId = sessionId;
         boss.setPhase(PHASE_ENTERING);
         boss.setAnim(0.0F);
-        // Entrée : apparaît ENTRANCE_HEIGHT blocs au-dessus de la position cible, à l'échelle 0.
+        // Entrance: spawns ENTRANCE_HEIGHT blocks above the target position, at scale 0.
         double standY = triggerPos.getY() + STAND_Y_OFFSET;
         boss.moveTo(triggerPos.getX() + 0.5, standY + ENTRANCE_HEIGHT, triggerPos.getZ() + 0.5, 0.0F, 0.0F);
         level.addFreshEntity(boss);
@@ -110,7 +110,7 @@ public class CsBossEntity extends Mob {
         }
     }
 
-    /** Recalcule la hitbox depuis l'espèce Cobblemon (hitbox du form × baseScale × effectiveScale × size). */
+    /** Recomputes the hitbox from the Cobblemon species (form hitbox × baseScale × effectiveScale × size). */
     private void recomputeDimensions() {
         String specie = getSpecie();
         if (specie == null || specie.isBlank()) {
@@ -123,7 +123,7 @@ public class CsBossEntity extends Mob {
             this.cachedDims = box.scale(scale);
             refreshDimensions();
         } catch (Exception ignored) {
-            // espèce non résolue : on garde les dimensions précédentes / par défaut
+            // unresolved species: keep previous / default dimensions
         }
     }
 
@@ -134,7 +134,7 @@ public class CsBossEntity extends Mob {
 
     @Override
     protected void registerGoals() {
-        // Aucune AI vanilla : le mouvement est piloté par BossBattleManager.
+        // No vanilla AI: movement is driven by BossBattleManager.
     }
 
     public String getSpecie() {
@@ -173,7 +173,7 @@ public class CsBossEntity extends Mob {
         return this.entityData.get(DATA_ATTACK_SEQ);
     }
 
-    /** Serveur : signale au client de jouer une animation d'attaque. */
+    /** Server: signals the client to play an attack animation. */
     public void triggerAttackAnimation() {
         this.entityData.set(DATA_ATTACK_SEQ, getAttackSeq() + 1);
     }
@@ -186,7 +186,7 @@ public class CsBossEntity extends Mob {
         this.entityData.set(DATA_PHASE, phase);
     }
 
-    /** Progression 0..1 de la phase courante (échelle d'entrée / fondu de mort). */
+    /** Progress 0..1 for the current phase (entrance scale / death fade). */
     public float getAnim() {
         return this.entityData.get(DATA_ANIM);
     }
@@ -195,7 +195,7 @@ public class CsBossEntity extends Mob {
         this.entityData.set(DATA_ANIM, Mth.clamp(anim, 0.0F, 1.0F));
     }
 
-    /** Oriente le boss vers une cible (yaw du corps/tête), pour le rendu et les animations. */
+    /** Rotates the boss toward a target (body/head yaw), for rendering and animations. */
     public void faceTarget(@Nullable Vec3 targetPos) {
         if (targetPos == null) {
             return;
@@ -212,7 +212,7 @@ public class CsBossEntity extends Mob {
     }
 
     /**
-     * Suit le participant le plus proche à très faible vitesse, sans jamais sortir du rayon d'arène.
+     * Follows the nearest participant at very low speed, never leaving the arena radius.
      */
     public void driveTowards(@Nullable Vec3 targetPos, Vec3 arenaCenter, int radius) {
         if (this.staticBoss || targetPos == null) {
@@ -232,7 +232,7 @@ public class CsBossEntity extends Mob {
         this.setDeltaMovement(step.x, this.getDeltaMovement().y, step.z);
     }
 
-    // --- Immunité / inertie totale ------------------------------------------------
+    // --- Immunity / total inertia ------------------------------------------------
 
     @Override
     public boolean hurt(DamageSource source, float amount) {
@@ -251,7 +251,7 @@ public class CsBossEntity extends Mob {
 
     @Override
     protected void doPush(Entity entity) {
-        // no-op : pas de collision pushback
+        // no-op: no collision pushback
     }
 
     @Override

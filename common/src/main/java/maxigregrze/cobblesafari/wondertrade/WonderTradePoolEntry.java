@@ -8,7 +8,7 @@ public final class WonderTradePoolEntry {
 
     private CompoundTag pokemonData;
     private int timeSinceDeposit;
-    /** {@code true} = généré par autofill ; {@code false} = déposé via échange joueur. */
+    /** {@code true} = autofill-generated; {@code false} = deposited via player trade. */
     private boolean systemGenerated;
 
     public WonderTradePoolEntry(CompoundTag pokemonData, int timeSinceDeposit, boolean systemGenerated) {

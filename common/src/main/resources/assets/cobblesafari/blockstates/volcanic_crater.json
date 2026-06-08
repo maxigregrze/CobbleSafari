@@ -1,0 +1,8 @@
+{
+  "variants": {
+    "facing=north": { "model": "cobblesafari:block/volcanic_crater" },
+    "facing=south": { "model": "cobblesafari:block/volcanic_crater", "y": 180 },
+    "facing=east": { "model": "cobblesafari:block/volcanic_crater", "y": 90 },
+    "facing=west": { "model": "cobblesafari:block/volcanic_crater", "y": 270 }
+  }
+}

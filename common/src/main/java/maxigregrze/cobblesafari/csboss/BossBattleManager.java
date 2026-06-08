@@ -3,7 +3,9 @@ package maxigregrze.cobblesafari.csboss;
 import com.cobblemon.mod.common.Cobblemon;
 import com.cobblemon.mod.common.api.pokemon.PokemonPropertyExtractor;
 import com.cobblemon.mod.common.pokemon.Pokemon;
+import maxigregrze.cobblesafari.advancement.ModCriteria;
 import maxigregrze.cobblesafari.block.csboss.CsBossTriggerBlock;
+import maxigregrze.cobblesafari.init.ModStats;
 import maxigregrze.cobblesafari.block.csboss.CsBossTriggerBlockEntity;
 import maxigregrze.cobblesafari.config.CsBossSettings;
 import maxigregrze.cobblesafari.data.CsBossSavedData;
@@ -34,8 +36,8 @@ import java.util.Map;
 import java.util.UUID;
 
 /**
- * Orchestrateur des combats de boss (plan 100 § 4/6). Sessions en mémoire, tick serveur,
- * activation, résolution et reprise après crash.
+ * Orchestrates boss battles (plan 100 § 4/6). In-memory sessions, server tick,
+ * activation, resolution, and recovery after a crash.
  */
 public final class BossBattleManager {
 
@@ -45,7 +47,7 @@ public final class BossBattleManager {
 
     private BossBattleManager() {}
 
-    /** Session active par id (utilisé par les entités d'attaque auto‑réplicantes, plan 107). */
+    /** Active session by id (used by self-replicating attack entities, plan 107). */
     @org.jetbrains.annotations.Nullable
     public static BossBattleSession getSession(int id) {
         return SESSIONS.get(id);
@@ -57,24 +59,24 @@ public final class BossBattleManager {
                                                 CsBossTriggerBlockEntity be) {
         BlockState state = level.getBlockState(pos);
 
-        // 1. trigger déjà occupé ?
+        // 1. trigger already busy?
         if (be.getActiveSessionId() != 0
                 || (state.hasProperty(CsBossTriggerBlock.ACTIVE) && state.getValue(CsBossTriggerBlock.ACTIVE))) {
             feedback(sp, "busy");
             return InteractionResult.CONSUME;
         }
-        // 2. plafond serveur
+        // 2. server cap
         if (SESSIONS.size() >= CsBossSettings.get().getMaximumConcurrentFights()) {
             feedback(sp, "try_later");
             return InteractionResult.CONSUME;
         }
-        // 3. résolution boss AVANT toute consommation
+        // 3. resolve boss BEFORE any consumption
         CsBossDefinition def = CsBossRegistry.resolve(be.getBossRef());
         if (def == null) {
             feedback(sp, "no_boss");
             return InteractionResult.CONSUME;
         }
-        // 4. item de coût
+        // 4. cost item
         if (!be.getCostItemId().isBlank()) {
             ResourceLocation costLoc = ResourceLocation.tryParse(be.getCostItemId());
             Item cost = costLoc == null ? null : BuiltInRegistries.ITEM.getOptional(costLoc).orElse(null);
@@ -87,7 +89,7 @@ public final class BossBattleManager {
                 return InteractionResult.CONSUME;
             }
         }
-        // 5. participants figés
+        // 5. participants locked in
         int radius = be.effectivePlayerRadius();
         int yTol = CsBossSettings.get().getArenaYTolerance();
         Vec3 center = Vec3.atCenterOf(pos);
@@ -97,14 +99,14 @@ public final class BossBattleManager {
             feedback(sp, "no_players");
             return InteractionResult.CONSUME;
         }
-        // 6/7. scan + bascule blocs réactifs
+        // 6/7. scan + toggle reactive blocks
         List<BlockPos> reactive = ArenaBlockScanner.scan(level, pos, be.effectiveBlockRadius());
         ArenaBlockScanner.setBattleState(level, reactive, true);
         // 8. session id + boss
         CsBossSavedData data = CsBossSavedData.get(level.getServer());
         int id = data.allocateSessionId();
         CsBossEntity boss = CsBossEntity.spawnAbove(level, pos, def, id);
-        // 9. durée
+        // 9. duration
         int duration = DifficultyScaling.computeDuration(def, participants);
         // 10. session
         List<UUID> uuids = new ArrayList<>();
@@ -120,6 +122,7 @@ public final class BossBattleManager {
         }
         for (ServerPlayer p : participants) {
             session.getBossBar().addPlayer(p);
+            ModStats.award(p, ModStats.CSBOSS_BATTLES_ATTEMPTED);
         }
         data.putSnapshot(session.snapshot());
         if (def.music() != null && !def.music().isBlank()) {
@@ -162,7 +165,7 @@ public final class BossBattleManager {
                     switch (tickDying(level, s)) {
                         case FINALIZE_WIN -> toFinalizeWin.add(s.getId());
                         case NEXT_PHASE -> toNextPhase.add(s.getId());
-                        case CONTINUE -> { /* en cours */ }
+                        case CONTINUE -> { /* in progress */ }
                     }
                 }
             }
@@ -183,12 +186,12 @@ public final class BossBattleManager {
 
     private enum DyingResult { CONTINUE, FINALIZE_WIN, NEXT_PHASE }
 
-    /** Phase d'entrée : le boss descend de ENTRANCE_HEIGHT et grandit de l'échelle 0 à sa taille. */
+    /** Entrance phase: boss descends from ENTRANCE_HEIGHT and scales from 0 to its size. */
     private static void tickEntrance(MinecraftServer server, ServerLevel level, BossBattleSession s) {
         int t = s.tickPhase();
         float p = Math.min(1.0f, t / (float) BossBattleSession.ENTRANCE_TICKS);
         updateParticipants(server, level, s);
-        s.getBossBar().setProgress(1.0f); // la barre reste pleine pendant l'entrée
+        s.getBossBar().setProgress(1.0f); // bar stays full during entrance
         if (level.getEntity(s.getBossUuid()) instanceof CsBossEntity boss) {
             boss.setAnim(p);
             double standY = s.getTriggerPos().getY() + CsBossEntity.STAND_Y_OFFSET;
@@ -206,7 +209,7 @@ public final class BossBattleManager {
         }
     }
 
-    /** Phase active : compte à rebours, attaques, mouvement. Renvoie l'issue ou {@code null}. */
+    /** Active phase: countdown, attacks, movement. Returns the outcome or {@code null}. */
     @Nullable
     private static Outcome tickActive(MinecraftServer server, ServerLevel level, BossBattleSession s) {
         s.decrementRemaining();
@@ -237,14 +240,14 @@ public final class BossBattleManager {
         return null;
     }
 
-    // --- Pokémon combattants décoratifs (plan 112) ---------------------------
+    // --- Decorative fighting Pokémon (plan 112) ------------------------------
 
-    private static final int FIGHTING_POKEMON_DELAY = 60; // 3 s après le début du combat
-    private static final int FIGHTING_POKEMON_LOOP = 30;  // ré-déclenchement de l'animation d'attaque
-    /** Diagonales NE / SE / SO / NO (offsets unitaires × distance). */
+    private static final int FIGHTING_POKEMON_DELAY = 60; // 3 s after fight start
+    private static final int FIGHTING_POKEMON_LOOP = 30;  // re-trigger attack animation
+    /** NE / SE / SW / NW diagonals (unit offsets × distance). */
     private static final double[][] FIGHTING_DIAGONALS = {{1, -1}, {1, 1}, {-1, 1}, {-1, -1}};
 
-    /** Fait apparaître (à 3 s) puis pilote les Pokémon décoratifs autour du boss. */
+    /** Spawns (at 3 s) then drives decorative Pokémon around the boss. */
     private static void manageFightingPokemons(ServerLevel level, BossBattleSession s, CsBossEntity boss) {
         if (!s.isFightingPokemonsSpawned() && s.getActiveTicks() >= FIGHTING_POKEMON_DELAY) {
             if (CsBossSettings.get().isShowFightingPokemons()) {
@@ -258,9 +261,9 @@ public final class BossBattleManager {
         boolean loop = s.getActiveTicks() % FIGHTING_POKEMON_LOOP == 0;
         for (UUID uuid : s.getFightingPokemons()) {
             if (level.getEntity(uuid) instanceof CsBossMinionEntity m && m.isAlive()) {
-                m.faceTarget(boss.position()); // toujours orienté vers le boss
+                m.faceTarget(boss.position()); // always facing the boss
                 if (loop) {
-                    m.triggerAttackAnimation(); // boucle l'animation d'attaque
+                    m.triggerAttackAnimation(); // loop attack animation
                 }
             }
         }
@@ -271,9 +274,9 @@ public final class BossBattleManager {
         if (players.isEmpty()) {
             return;
         }
-        // ≤4 : tous ; >4 : 4 au hasard (mélange + on s'arrête à 4 emplacements).
+        // ≤4: all; >4: 4 at random (shuffle + stop at 4 slots).
         java.util.Collections.shuffle(players);
-        // Distance = bord de la hitbox du boss + 1 bloc ; projetée sur la diagonale (composante / √2).
+        // Distance = boss hitbox edge + 1 block; projected on diagonal (component / √2).
         double distance = boss.getBbWidth() / 2.0 + 1.0;
         double d = distance / Math.sqrt(2.0);
         int triggerY = s.getTriggerPos().getY();
@@ -284,11 +287,11 @@ public final class BossBattleManager {
             }
             Pokemon first = firstPartyPokemon(p);
             if (first == null) {
-                continue; // équipe vide : on saute ce joueur
+                continue; // empty party: skip this player
             }
             double x = boss.getX() + FIGHTING_DIAGONALS[idx][0] * d;
             double z = boss.getZ() + FIGHTING_DIAGONALS[idx][1] * d;
-            // Au sol : surface trouvée via l'util de scan (sinon niveau du boss).
+            // On ground: surface from scan util (otherwise boss level).
             net.minecraft.core.BlockPos surface = maxigregrze.cobblesafari.csboss.attack.CsBossSurfaceScanner
                     .findSurfaceColumn(level, (int) Math.floor(x), (int) Math.floor(z), triggerY,
                             maxigregrze.cobblesafari.csboss.attack.CsBossSurfaceScanner.DEFAULT_Y_TOLERANCE);
@@ -297,7 +300,7 @@ public final class BossBattleManager {
                     pokemonModelLine(first), 1, s.getId());
             m.faceTarget(boss.position());
             m.triggerAttackAnimation();
-            s.getActiveMinions().add(m.getUUID());   // nettoyé en fin de combat avec les autres minions
+            s.getActiveMinions().add(m.getUUID());   // cleaned up at fight end with other minions
             s.getFightingPokemons().add(m.getUUID());
             idx++;
         }
@@ -313,8 +316,8 @@ public final class BossBattleManager {
     }
 
     /**
-     * Ligne {@code PokemonProperties} reproduisant le modèle (espèce + forme + aspects + shiny + genre).
-     * On exclut nickname/pokeball : un surnom à espaces casserait le parse séparé par espaces.
+     * {@code PokemonProperties} line matching the model (species + form + aspects + shiny + gender).
+     * Nickname/pokeball excluded: a spaced nickname would break space-separated parsing.
      */
     private static final List<PokemonPropertyExtractor> MODEL_EXTRACTORS = List.of(
             PokemonPropertyExtractor.SPECIES, PokemonPropertyExtractor.FORM,
@@ -328,14 +331,14 @@ public final class BossBattleManager {
                 return line;
             }
         } catch (Exception ignored) {
-            // repli sur l'espèce seule
+            // fall back to species only
         }
         return mon.getSpecies().getResourceIdentifier().toString();
     }
 
     /**
-     * Phase d'agonie : fondu du modèle + remontée de +5 blocs (sommet à mi‑animation) + effet
-     * « mort du dragon ». S'il y a une phase suivante en attente, on s'arrête à mi‑animation.
+     * Dying phase: model fade + rise of +5 blocks (peak at mid-animation) + "dragon death"
+     * effect. If a next phase is pending, stop at mid-animation.
      */
     private static DyingResult tickDying(ServerLevel level, BossBattleSession s) {
         int t = s.tickPhase();
@@ -343,7 +346,7 @@ public final class BossBattleManager {
         float p = Math.min(1.0f, t / (float) BossBattleSession.DEATH_TICKS);
         if (level.getEntity(s.getBossUuid()) instanceof CsBossEntity boss) {
             boss.setAnim(p);
-            double riseFrac = Math.min(1.0, t / (double) half); // remontée +5, sommet atteint à mi‑animation
+            double riseFrac = Math.min(1.0, t / (double) half); // +5 rise, peak at mid-animation
             boss.setPos(boss.getX(), s.getDeathOriginY() + CsBossEntity.ENTRANCE_HEIGHT * riseFrac, boss.getZ());
             boss.setDeltaMovement(Vec3.ZERO);
             spawnDeathParticles(level, boss);
@@ -361,7 +364,7 @@ public final class BossBattleManager {
             ServerPlayer player = server.getPlayerList().getPlayer(e.getKey());
 
             if (st.discarded) {
-                // Mort « lâche » : un participant écarté revenu vivant dans l'arène.
+                // Coward death: a discarded participant returned alive to the arena.
                 if (player != null && player.isAlive()
                         && player.level().dimension() == s.getDimension()
                         && s.withinArena(player.position(), yTol)) {
@@ -376,7 +379,7 @@ public final class BossBattleManager {
                 st.discarded = true;
                 if (player != null) {
                     s.getBossBar().removePlayer(player);
-                    // Musique de boss réservée aux vivants : coupure sèche pour ce participant écarté.
+                    // Boss music for living participants only: hard cut for this discarded player.
                     maxigregrze.cobblesafari.csmusic.DimensionalMusicManager.onBossLossOrLeave(player);
                 }
                 continue;
@@ -405,9 +408,9 @@ public final class BossBattleManager {
         return nearest;
     }
 
-    // --- Résolution ----------------------------------------------------------
+    // --- Resolution ----------------------------------------------------------
 
-    /** Défaite (ou arrêt forcé) : coupure sèche, retrait immédiat, aucune récompense. */
+    /** Defeat (or forced stop): hard cut, immediate removal, no rewards. */
     private static void resolveLoss(MinecraftServer server, BossBattleSession s) {
         if (s == null) {
             return;
@@ -434,9 +437,8 @@ public final class BossBattleManager {
     }
 
     /**
-     * Victoire de la phase : démarre l'agonie. S'il existe une {@code secondPhase}, c'est une
-     * transition (récompenses optionnelles, musique/barre conservées) ; sinon c'est la mort
-     * définitive (récompenses + outro + barre retirée).
+     * Phase victory: starts dying. If a {@code secondPhase} exists, it is a transition
+     * (optional rewards, music/bar kept); otherwise final death (rewards + outro + bar removed).
      */
     private static void startDeathSequence(MinecraftServer server, BossBattleSession s) {
         if (s == null || s.getPhase() == BossBattleSession.Phase.DYING) {
@@ -467,20 +469,21 @@ public final class BossBattleManager {
                 s.setDeathOriginY(boss.getY());
             }
             if (nextDef == null) {
-                // Mort définitive.
+                // Final death.
                 RewardService.grant(level, s);
+                triggerWinAdvancements(level, s);
                 maxigregrze.cobblesafari.csmusic.DimensionalMusicManager.onBossWin(s.aliveParticipants(level));
                 s.getBossBar().removeAllPlayers();
             } else if (current.giveRewardsBeforeSecondPhase()) {
-                // Transition : récompenses de cette phase avant la suivante (musique/barre conservées).
+                // Transition: this phase's rewards before the next (music/bar kept).
                 RewardService.grant(level, s);
             }
         }
     }
 
     /**
-     * Mi‑agonie d'une phase à {@code secondPhase} : bascule sur le boss suivant (même session,
-     * même entité) et relance l'animation d'entrée.
+     * Mid-dying of a {@code secondPhase} phase: switch to the next boss (same session,
+     * same entity) and restart the entrance animation.
      */
     private static void beginNextPhase(MinecraftServer server, BossBattleSession s) {
         if (s == null) {
@@ -489,7 +492,7 @@ public final class BossBattleManager {
         CsBossDefinition nextDef = s.getPendingNextDef();
         ServerLevel level = server.getLevel(s.getDimension());
         if (nextDef == null || level == null) {
-            finalizeWin(server, s); // sécurité : pas de phase suivante exploitable
+            finalizeWin(server, s); // safety: no usable next phase
             return;
         }
         List<ServerPlayer> alive = s.aliveParticipants(level);
@@ -515,7 +518,17 @@ public final class BossBattleManager {
         }
     }
 
-    /** Fin de l'agonie : explosion finale, retrait du boss, restauration de l'arène. */
+    private static void triggerWinAdvancements(ServerLevel level, BossBattleSession session) {
+        int yTol = CsBossSettings.get().getArenaYTolerance();
+        for (ServerPlayer player : session.aliveParticipants(level)) {
+            if (session.withinArena(player.position(), yTol)) {
+                ModCriteria.CSBOSS_WIN.trigger(player, session.getDimension(), session.getRootBossId());
+                ModStats.award(player, ModStats.CSBOSS_BATTLES_WON);
+            }
+        }
+    }
+
+    /** End of dying: final explosion, boss removal, arena restoration. */
     private static void finalizeWin(MinecraftServer server, BossBattleSession s) {
         if (s == null) {
             return;
@@ -544,7 +557,7 @@ public final class BossBattleManager {
         CsBossSavedData.get(server).removeSnapshot(s.getId());
     }
 
-    /** Effet de mort « dragon » : explosions + éclairs autour du boss à chaque tick d'agonie. */
+    /** "Dragon death" effect: explosions + lightning around the boss each dying tick. */
     private static void spawnDeathParticles(ServerLevel level, CsBossEntity boss) {
         double cx = boss.getX();
         double cy = boss.getY() + boss.getBbHeight() * 0.5;
@@ -587,7 +600,7 @@ public final class BossBattleManager {
         }
     }
 
-    // --- Reprise après crash -------------------------------------------------
+    // --- Recovery after crash ------------------------------------------------
 
     public static void recoverAll(MinecraftServer server) {
         SESSIONS.clear();
@@ -632,11 +645,11 @@ public final class BossBattleManager {
         }
     }
 
-    // --- Impact baume --------------------------------------------------------
+    // --- Balm impact ---------------------------------------------------------
 
     /**
-     * Un baume lancé a touché ce boss : retire de son compte à rebours le pourcentage configuré
-     * ({@code balmBossDamagePercent}). Ignoré hors phase active.
+     * A thrown balm hit this boss: removes the configured percentage from its countdown
+     * ({@code balmBossDamagePercent}). Ignored outside the active phase.
      */
     public static void onBalmHit(CsBossEntity boss) {
         BossBattleSession s = SESSIONS.get(boss.getSessionId());
@@ -647,7 +660,7 @@ public final class BossBattleManager {
         s.getBossBar().setProgress(s.progress());
     }
 
-    // --- API commandes -------------------------------------------------------
+    // --- Command API ---------------------------------------------------------
 
     public static List<BossBattleSession> sessions() {
         return new ArrayList<>(SESSIONS.values());

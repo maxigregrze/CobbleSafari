@@ -24,7 +24,7 @@ public class WonderTradeSavedData extends SavedData {
     private static final String KEY_LAST_DAILY_EPOCH_DAY = "LastDailyEpochDay";
     private static final String KEY_EVENT = "Event";
 
-    /** Fichier neuf : pas de clé NBT ; {@link WonderTradeService} fixera avant le premier tick. */
+    /** Fresh file: no NBT key; {@link WonderTradeService} will set before the first tick. */
     private long lastDailyResetEpochDay = -1L;
 
     private final List<WonderTradePoolEntry> pool = new ArrayList<>();

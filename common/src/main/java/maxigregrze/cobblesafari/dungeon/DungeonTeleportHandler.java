@@ -26,6 +26,7 @@ import net.minecraft.world.phys.Vec3;
 
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -34,6 +35,7 @@ public class DungeonTeleportHandler {
     private static final Map<UUID, DungeonInstance> ACTIVE_INSTANCES = new ConcurrentHashMap<>();
     private static final Map<UUID, PlayerOrigin> PLAYER_ORIGINS = new ConcurrentHashMap<>();
     private static final Map<UUID, GenerationState> GENERATION_STATES = new ConcurrentHashMap<>();
+    private static final Set<UUID> PORTALS_GENERATING = ConcurrentHashMap.newKeySet();
     public static final int ZONE_SIZE = 512;
 
     private DungeonTeleportHandler() {}
@@ -370,6 +372,11 @@ public class DungeonTeleportHandler {
         ACTIVE_INSTANCES.remove(portalId);
     }
 
+    public static void clearGenerationStates() {
+        GENERATION_STATES.clear();
+        PORTALS_GENERATING.clear();
+    }
+
     public static Map<UUID, DungeonInstance> getActiveInstances() {
         return ACTIVE_INSTANCES;
     }
@@ -394,9 +401,16 @@ public class DungeonTeleportHandler {
         MinecraftServer server = player.getServer();
         if (server == null) return false;
 
+        UUID portalId = portalEntity.getPortalId();
         DungeonConfig config = validation.config();
         ServerLevel dungeonLevel = validation.dungeonLevel();
         boolean isFirstPortalUse = portalEntity.getDungeonStructurePos() == null;
+
+        if (isFirstPortalUse && !PORTALS_GENERATING.add(portalId)) {
+            CobbleSafari.LOGGER.info("Portal {} already has generation in progress, player {} will wait",
+                    portalId, player.getName().getString());
+            return false;
+        }
 
         GenerationState state = new GenerationState(config, dungeonLevel, isFirstPortalUse);
 
@@ -404,14 +418,21 @@ public class DungeonTeleportHandler {
             state.structurePos = portalEntity.getDungeonStructurePos();
             state.exitPortalPos = portalEntity.getDungeonExitPortalPos();
             CobbleSafari.LOGGER.info("Reusing existing dungeon for portal {}: structure at {}, exit portal at {}",
-                    portalEntity.getPortalId(), state.structurePos, state.exitPortalPos);
+                    portalId, state.structurePos, state.exitPortalPos);
         } else {
             state.structurePos = calculateUniquePosition(server, config);
             CobbleSafari.LOGGER.info("Calculated new dungeon position at {}", state.structurePos);
         }
 
-        GENERATION_STATES.put(portalEntity.getPortalId(), state);
+        GENERATION_STATES.put(portalId, state);
         return true;
+    }
+
+    /**
+     * Returns true if a dungeon generation is currently in progress for the given portal.
+     */
+    public static boolean isGenerationInProgress(UUID portalId) {
+        return PORTALS_GENERATING.contains(portalId);
     }
 
     public static boolean loadChunks(ServerPlayer player, DungeonPortalBlockEntity portalEntity, DungeonValidationResult validation) {
@@ -451,6 +472,7 @@ public class DungeonTeleportHandler {
             CobbleSafari.LOGGER.error("Failed to place dungeon structure");
             player.sendSystemMessage(Component.translatable("cobblesafari.dungeon.error.structure_failed"));
             GENERATION_STATES.remove(portalEntity.getPortalId());
+            PORTALS_GENERATING.remove(portalEntity.getPortalId());
             return false;
         }
 
@@ -539,6 +561,17 @@ public class DungeonTeleportHandler {
 
             CobbleSafari.LOGGER.info("Finalized dungeon for portal {}: structure at {}, exit portal at {}",
                     portalEntity.getPortalId(), state.structurePos, state.exitPortalPos);
+
+            DungeonInstanceCleanup.registerActiveInstance(
+                    server,
+                    portalEntity.getPortalId(),
+                    state.config,
+                    state.structurePos,
+                    portalEntity.getDungeonChunkMinX(),
+                    portalEntity.getDungeonChunkMinZ(),
+                    portalEntity.getDungeonChunkMaxX(),
+                    portalEntity.getDungeonChunkMaxZ()
+            );
         }
 
         BlockPos playerSpawnPos;
@@ -553,6 +586,7 @@ public class DungeonTeleportHandler {
         }
 
         GENERATION_STATES.remove(portalEntity.getPortalId());
+        PORTALS_GENERATING.remove(portalEntity.getPortalId());
 
         return new DungeonPrepResult(
                 state.dungeonLevel, playerSpawnPos, playerYaw, validation.dimensionId(),

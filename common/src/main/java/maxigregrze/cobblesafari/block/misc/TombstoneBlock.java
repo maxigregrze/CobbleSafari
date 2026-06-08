@@ -19,8 +19,8 @@ import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
 /**
- * Pierre tombale orientable. Posable uniquement sur un bloc solide, minée à la pioche,
- * se drope elle‑même. Hitbox alignée sur le modèle, tournée selon FACING.
+ * Orientable tombstone. Placeable only on solid ground, mined with pickaxe,
+ * drops itself. Hitbox aligned to the model, rotated by FACING.
  */
 public abstract class TombstoneBlock extends HorizontalDirectionalBlock {
 

@@ -1,7 +1,6 @@
 package maxigregrze.cobblesafari.csboss.attack;
 
 import maxigregrze.cobblesafari.csboss.BossBattleSession;
-import maxigregrze.cobblesafari.csboss.CsBossDamage;
 import maxigregrze.cobblesafari.entity.csboss.CsBossEntity;
 import maxigregrze.cobblesafari.entity.csboss.attacks.AttackGiratinaOrbEntity;
 import net.minecraft.server.level.ServerLevel;
@@ -14,25 +13,21 @@ import java.util.List;
 import java.util.UUID;
 
 /**
- * {@code distortion_4} (plan 113, Type A) : aveuglement 10 s à tous les joueurs ; pour chaque joueur,
- * une orbe de Giratina (lueur rouge, flotte 1 bloc au‑dessus du sol) apparaît toutes les 2 s pendant
- * 10 s et le suit à vitesse de marche. Au contact : poison 10 s + 6 dégâts.
+ * {@code distortion_4} (plan 113, Type A): one Giratina orb (red glow, floats 1 block above the
+ * ground) spawns per player at the very start and follows it at walking speed while always facing it,
+ * until it despawns ({@link #ORB_LIFETIME}). Darkness lasts 1 s longer than that despawn time. The
+ * orb itself deals no contact damage — it only obscures vision.
  */
 public class DistortionOrbAttack implements CsBossAttack {
 
-    private static final int BLINDNESS_TICKS = 200; // 10 s
-    private static final int POISON_TICKS = 200;    // 10 s
-    private static final int SPAWN_INTERVAL = 40;   // une orbe / 2 s
-    private static final int WAVES = 5;             // sur 10 s
-    private static final int END_DELAY = 120;
+    private static final int ORB_LIFETIME = 200;                // 10 s before the orbs despawn
+    private static final int DARKNESS_TICKS = ORB_LIFETIME + 20; // 1 s longer than the orbs
     private static final double WALK_SPEED = 0.2;
     private static final double FLOAT_HEIGHT = 1.0;
-    private static final float DAMAGE = 6.0F;
 
     private final String id;
     private final List<Orb> orbs = new ArrayList<>();
     private int tick;
-    private int wavesSpawned;
     private boolean done;
 
     private static final class Orb {
@@ -61,10 +56,16 @@ public class DistortionOrbAttack implements CsBossAttack {
     @Override
     public void begin(ServerLevel level, BossBattleSession session, CsBossEntity boss) {
         this.tick = 0;
-        this.wavesSpawned = 0;
         this.done = false;
         this.orbs.clear();
-        CsBossAttackLib.applyEffectToAll(level, session, MobEffects.BLINDNESS, BLINDNESS_TICKS, 0);
+        CsBossAttackLib.applyEffectToAll(level, session, MobEffects.DARKNESS, DARKNESS_TICKS, 0);
+        // One orb per player, all spawned at the very start.
+        for (ServerPlayer p : session.aliveParticipants(level)) {
+            AttackGiratinaOrbEntity orb = AttackGiratinaOrbEntity.spawn(level,
+                    boss.getX(), boss.getY() + 1.0, boss.getZ(), session.getId());
+            session.trackAttackEntity(orb);
+            orbs.add(new Orb(orb, p.getUUID()));
+        }
     }
 
     @Override
@@ -72,16 +73,6 @@ public class DistortionOrbAttack implements CsBossAttack {
         if (done) {
             return;
         }
-        if (wavesSpawned < WAVES && tick == wavesSpawned * SPAWN_INTERVAL) {
-            for (ServerPlayer p : session.aliveParticipants(level)) {
-                AttackGiratinaOrbEntity orb = AttackGiratinaOrbEntity.spawn(level,
-                        boss.getX(), boss.getY() + 1.0, boss.getZ(), session.getId());
-                session.trackAttackEntity(orb);
-                orbs.add(new Orb(orb, p.getUUID()));
-            }
-            wavesSpawned++;
-        }
-
         Iterator<Orb> it = orbs.iterator();
         while (it.hasNext()) {
             Orb o = it.next();
@@ -91,17 +82,18 @@ public class DistortionOrbAttack implements CsBossAttack {
             }
             if (level.getPlayerByUUID(o.target) instanceof ServerPlayer p && p.isAlive()) {
                 CsBossAttackLib.chase(o.entity, p.getX(), p.getY() + FLOAT_HEIGHT, p.getZ(), WALK_SPEED);
-                if (o.entity.getBoundingBox().intersects(p.getBoundingBox())) {
-                    if (p.hurt(CsBossDamage.bullet(level), DAMAGE)) {
-                        p.addEffect(new net.minecraft.world.effect.MobEffectInstance(MobEffects.POISON, POISON_TICKS, 0));
-                    }
-                    o.entity.discard();
-                    it.remove();
-                }
+                o.entity.facePlayer(p.getX(), p.getZ()); // always look at the player it follows
             }
         }
 
-        if (wavesSpawned >= WAVES && tick >= (WAVES - 1) * SPAWN_INTERVAL + END_DELAY) {
+        // Orbs despawn after their lifetime (darkness outlasts them by 1 s).
+        if (tick >= ORB_LIFETIME) {
+            for (Orb o : orbs) {
+                if (o.entity.isAlive()) {
+                    o.entity.discard();
+                }
+            }
+            orbs.clear();
             done = true;
         }
         tick++;

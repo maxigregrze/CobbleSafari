@@ -18,8 +18,8 @@ import net.minecraft.util.Mth;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * Block entity du trigger d'arène (plan 100 § 3.1) : persiste la config réglée en créatif
- * (boss, coût, rayons) + l'id de session active (0 = libre).
+ * Arena trigger block entity (plan 100 § 3.1): persists creative-tuned config
+ * (boss, cost, radii) + active session id (0 = free).
  */
 public class CsBossTriggerBlockEntity extends BlockEntity {
 
@@ -29,7 +29,7 @@ public class CsBossTriggerBlockEntity extends BlockEntity {
     private static final String KEY_BLOCK_RADIUS = "BlockRadius";
     private static final String KEY_SESSION = "ActiveSessionId";
 
-    /** -1 = pas d'override : utilise le défaut config. */
+    /** -1 = no override: use config default. */
     private static final int NO_OVERRIDE = -1;
 
     private String bossRef = "";
@@ -135,7 +135,7 @@ public class CsBossTriggerBlockEntity extends BlockEntity {
         super.loadAdditional(tag, registries);
         this.bossRef = tag.getString(KEY_BOSS_REF);
         this.costItemId = tag.getString(KEY_COST);
-        // re-clampe les overrides au chargement (sécurité : NBT trafiqué)
+        // re-clamp overrides on load (safety: tampered NBT)
         setPlayerRadiusOverride(tag.contains(KEY_PLAYER_RADIUS) ? tag.getInt(KEY_PLAYER_RADIUS) : NO_OVERRIDE);
         setBlockRadiusOverride(tag.contains(KEY_BLOCK_RADIUS) ? tag.getInt(KEY_BLOCK_RADIUS) : NO_OVERRIDE);
         this.activeSessionId = tag.getInt(KEY_SESSION);

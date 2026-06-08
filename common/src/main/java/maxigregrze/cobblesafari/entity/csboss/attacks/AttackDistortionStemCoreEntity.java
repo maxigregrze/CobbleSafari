@@ -9,15 +9,15 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.Level;
 
 /**
- * Nœud invisible de propagation (plan 107 § 4.4, révisé § 107.bis). Sa position est exprimée en
- * coordonnées polaires <b>dans le repère du boss</b> ({@code angleDeg} relatif à l'orientation du
- * boss, {@code radius} horizontal, {@code localY} vertical) : recalculée chaque tick, elle suit donc
- * la rotation du boss (toutes les entités tournent autour de lui). Après 5 ticks, le core crée le
- * core suivant (radius + 1) et une colonne de tiges (au‑dessus). Cap horizontal ≤ 20/direction.
+ * Invisible propagation node (plan 107 § 4.4, revised § 107.bis). Its position is expressed in
+ * polar coordinates <b>in the boss frame</b> ({@code angleDeg} relative to the boss
+ * orientation, horizontal {@code radius}, vertical {@code localY}): recomputed each tick, it therefore
+ * follows the boss rotation (all entities orbit around it). After 5 ticks, the core creates the
+ * next core (radius + 1) and a column of stems (above). Horizontal cap ≤ 20/direction.
  */
 public class AttackDistortionStemCoreEntity extends AbstractAttackEntity {
 
-    public static final int STEM_SEED = 4; // 4 ⇒ 5 tiges/colonne avec la base
+    public static final int STEM_SEED = 4; // 4 ⇒ 5 stems/column including the base
     private static final int WAIT_TICKS = 5;
 
     private static final String KEY_ANGLE = "Angle";
@@ -56,7 +56,7 @@ public class AttackDistortionStemCoreEntity extends AbstractAttackEntity {
         if (boss == null) {
             return;
         }
-        // Suit le repère tournant du boss.
+        // Follows the boss's rotating frame.
         double[] p = DistortionFrame.world(boss, angleDeg, radius, localY);
         setPos(p[0], p[1], p[2]);
 

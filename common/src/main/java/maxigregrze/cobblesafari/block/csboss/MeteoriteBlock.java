@@ -11,14 +11,14 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
 /**
- * Bloc météorite éphémère (plan 107 § 5.1) posé par les attaques roche/dragon. Il programme sa
- * propre destruction {@code ttlTicks} ticks après sa pose ({@code onPlace} → {@code scheduleTick}),
- * indépendamment de l'attaque qui l'a créé. À l'expiration : particules {@code block_destruct} +
- * son de cassage via {@code levelEvent(2001)}.
+ * Ephemeral meteorite block (plan 107 § 5.1) placed by rock/dragon attacks. Schedules its own
+ * destruction {@code ttlTicks} ticks after placement ({@code onPlace} → {@code scheduleTick}),
+ * independent of the attack that created it. On expiry: {@code block_destruct} particles +
+ * break sound via {@code levelEvent(2001)}.
  */
 public class MeteoriteBlock extends Block {
 
-    /** Hauteur 1,15 bloc (clôture ≈ 1,5) : dépasse le cube visuel pour bloquer le saut par-dessus. */
+    /** Height 1.15 blocks (fence ≈ 1.5): extends past the visual cube to block jumping over. */
     private static final VoxelShape SHAPE = Block.box(0.0, 0.0, 0.0, 16.0, 1.5 * 16.0, 16.0);
 
     private final int ttlTicks;
@@ -48,7 +48,7 @@ public class MeteoriteBlock extends Block {
 
     @Override
     public void tick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
-        level.levelEvent(2001, pos, Block.getId(state)); // particules + son de cassage
+        level.levelEvent(2001, pos, Block.getId(state)); // particles + break sound
         level.removeBlock(pos, false);
     }
 }

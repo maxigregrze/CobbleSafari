@@ -9,18 +9,19 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.phys.Vec3;
 
 /**
- * {@code base_water_2} (plan 110) : attaque <b>projectile</b> (pas par joueur). Le boss envoie, une
- * fois par seconde (8‑10 fois) dans une direction aléatoire, un trio de vagues en arc : la vague
- * centrale (3 blocs de large) fait face à la direction d'envoi, les deux latérales sont collées à
- * ses bords mais inclinées de 25° pour former un arc. 8 dégâts + forte poussée au contact.
+ * {@code base_water_2} (plan 110): <b>projectile</b> attack (not per player). Every 2 s (4–5 times)
+ * the boss fires an <b>X</b>: the same arc trio of waves in 4 directions, 90° apart, oriented from a
+ * random base angle. Each trio's center wave (3 blocks wide) faces its launch direction, the two side
+ * waves are flush with its edges but tilted 25° to form an arc. 8 damage + strong knockback on contact.
  */
 public class WaterWaveAttack implements CsBossAttack {
 
-    private static final int WAVE_INTERVAL = 20;  // un trio par seconde
+    private static final int WAVE_INTERVAL = 40;  // one X-volley every 2 s (half as often)
     private static final int WAVE_LIFESPAN = 50;
-    private static final double SPEED = 0.5;
+    private static final double SPEED = 0.375;     // 25 % slower
+    private static final int CROSS_DIRECTIONS = 4; // X shape: 4 trios, 90° apart
     private static final double SIDE_ANGLE_DEG = 25.0;
-    private static final double HALF_WIDTH = 1.5;  // demi-largeur du mur (3 blocs)
+    private static final double HALF_WIDTH = 1.5;  // half wall width (3 blocks)
     private static final double SPAWN_Y_OFFSET = 1.0;
 
     private final String id;
@@ -43,7 +44,7 @@ public class WaterWaveAttack implements CsBossAttack {
         this.tick = 0;
         this.wavesSpawned = 0;
         this.done = false;
-        this.waves = 8 + rng.nextInt(3); // 8‑10
+        this.waves = 4 + rng.nextInt(2); // 4‑5 volleys (half as often)
     }
 
     @Override
@@ -52,7 +53,7 @@ public class WaterWaveAttack implements CsBossAttack {
             return;
         }
         if (wavesSpawned < waves && tick == wavesSpawned * WAVE_INTERVAL) {
-            sendTrio(level, session, boss);
+            sendCross(level, session, boss);
             wavesSpawned++;
         }
         if (tick >= (waves - 1) * WAVE_INTERVAL + WAVE_LIFESPAN) {
@@ -61,33 +62,39 @@ public class WaterWaveAttack implements CsBossAttack {
         tick++;
     }
 
-    private void sendTrio(ServerLevel level, BossBattleSession session, CsBossEntity boss) {
-        double theta = rng.nextDouble() * Math.PI * 2.0;
-        // Cap (F) et perpendiculaire droite (P) dans le plan horizontal.
+    private void sendCross(ServerLevel level, BossBattleSession session, CsBossEntity boss) {
+        // X shape: the same trio fired in 4 directions 90° apart, from one random base angle.
+        double base = rng.nextDouble() * Math.PI * 2.0;
+        for (int k = 0; k < CROSS_DIRECTIONS; k++) {
+            sendTrio(level, session, boss, base + k * (Math.PI / 2.0));
+        }
+        boss.triggerAttackAnimation();
+        CsBossAttackLib.sound(level, boss.getX(), session.getTriggerPos().getY() + SPAWN_Y_OFFSET, boss.getZ(),
+                "cobblemon:move.waterpulse.actor", SoundSource.HOSTILE, 1.4F, 0.9F);
+    }
+
+    private void sendTrio(ServerLevel level, BossBattleSession session, CsBossEntity boss, double theta) {
+        // Heading (F) and right perpendicular (P) in the horizontal plane.
         Vec3 f = new Vec3(Math.cos(theta), 0, Math.sin(theta));
         Vec3 p = new Vec3(Math.sin(theta), 0, -Math.cos(theta));
         double cos = Math.cos(Math.toRadians(SIDE_ANGLE_DEG));
         double sin = Math.sin(Math.toRadians(SIDE_ANGLE_DEG));
-        double offLat = HALF_WIDTH + HALF_WIDTH * cos; // bord latéral interne collé au bord du milieu
+        double offLat = HALF_WIDTH + HALF_WIDTH * cos; // inner side edge flush with center edge
         double offFwd = HALF_WIDTH * sin;
 
         Vec3 origin = new Vec3(boss.getX(), session.getTriggerPos().getY() + SPAWN_Y_OFFSET, boss.getZ());
         Vec3 velocity = f.scale(SPEED);
 
-        // Milieu : face à F, avancé d'1 bloc + 5/16 vers l'avant par rapport aux latérales.
+        // Center: facing F, advanced 1 block + 5/16 forward relative to side waves.
         spawnWave(level, session, origin.add(f.scale(1.0 + 5.0 / 16.0)), velocity, f);
-        // Droite : décalée +offLat*P (+offFwd*F), inclinée +25° vers P.
+        // Right: offset +offLat*P (+offFwd*F), tilted +25° toward P.
         Vec3 rightDir = f.scale(cos).add(p.scale(sin));
         Vec3 rightPos = origin.add(p.scale(offLat)).add(f.scale(offFwd));
         spawnWave(level, session, rightPos, velocity, rightDir);
-        // Gauche : symétrique.
+        // Left: symmetric.
         Vec3 leftDir = f.scale(cos).subtract(p.scale(sin));
         Vec3 leftPos = origin.subtract(p.scale(offLat)).add(f.scale(offFwd));
         spawnWave(level, session, leftPos, velocity, leftDir);
-
-        boss.triggerAttackAnimation();
-        CsBossAttackLib.sound(level, origin.x, origin.y, origin.z,
-                "cobblemon:move.waterpulse.actor", SoundSource.HOSTILE, 1.4F, 0.9F);
     }
 
     private void spawnWave(ServerLevel level, BossBattleSession session, Vec3 pos, Vec3 velocity, Vec3 facing) {

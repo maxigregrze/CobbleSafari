@@ -15,20 +15,20 @@ import java.util.List;
 import java.util.UUID;
 
 /**
- * {@code base_water_1} (plan 110) : variante aquatique de {@code base_fire_1}. Une ombre <b>par
- * joueur</b> qui le traque puis se fige ; 1 s plus tard une colonne de bulles jaillit (8 dégâts,
- * <b>sans feu</b>). La vague suivante apparaît dès que la précédente <b>cesse de bouger</b> (au gel),
- * d'où des cycles qui se chevauchent. +20 % d'occurrences vs feu.
+ * {@code base_water_1} (plan 110): aquatic variant of {@code base_fire_1}. A shadow <b>per
+ * player</b> that tracks then freezes; 1 s later a bubble column erupts (8 damage,
+ * <b>no fire</b>). The next wave appears as soon as the previous one <b>stops moving</b> (on freeze),
+ * so cycles overlap. +20% occurrences vs fire.
  */
 public class WaterShadowAttack implements CsBossAttack {
 
-    private static final int FREEZE_AT = 60;      // l'ombre se fige (et déclenche la vague suivante)
-    private static final int COLUMN_START = 80;   // +1 s après le gel
-    private static final int COLUMN_END = 110;    // colonne 1,5 s
+    private static final int FREEZE_AT = 60;      // shadow freezes (and triggers next wave)
+    private static final int COLUMN_START = 80;   // +1 s after freeze
+    private static final int COLUMN_END = 110;    // column 1.5 s
     private static final int DISCARD_AT = 110;
-    private static final int SPAWN_INTERVAL = FREEZE_AT; // vague dès que la précédente se fige
+    private static final int SPAWN_INTERVAL = FREEZE_AT; // wave as soon as previous freezes
     private static final int END_DELAY = 40;
-    private static final int NOMINAL_WAVES = 5;   // +20 % vs feu (4) ; ±25 % ⇒ ~4‑6
+    private static final int NOMINAL_WAVES = 5;   // +20% vs fire (4); ±25% ⇒ ~4–6
     private static final double COLUMN_RADIUS = 1.0;
     private static final double COLUMN_HEIGHT = 4.0;
     private static final float WATER_DAMAGE = 8.0F;
@@ -108,7 +108,7 @@ public class WaterShadowAttack implements CsBossAttack {
     }
 
     private void driveShadow(ServerLevel level, BossBattleSession session, CsBossEntity boss, Shadow s, int age) {
-        // Petites bulles montantes depuis l'ombre avant la colonne (télégraphe).
+        // Small rising bubbles from the shadow before the column (telegraph).
         if (age < COLUMN_START) {
             CsBossAttackLib.risingTelegraph(level, s.entity.getX(), s.entity.getY(), s.entity.getZ(),
                     net.minecraft.core.particles.ParticleTypes.BUBBLE_COLUMN_UP);

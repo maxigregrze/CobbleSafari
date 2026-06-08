@@ -247,5 +247,21 @@ public class ClientNetworking {
                     });
                 }
         );
+        ClientPlayNetworking.registerGlobalReceiver(
+                maxigregrze.cobblesafari.network.ChatConversationSyncPayload.TYPE,
+                (payload, context) -> context.client().execute(() ->
+                        maxigregrze.cobblesafari.rotomphone.ChatConversationClientCache.setConversations(payload.conversations()))
+        );
+        ClientPlayNetworking.registerGlobalReceiver(
+                maxigregrze.cobblesafari.network.ChatAppResultPayload.TYPE,
+                (payload, context) -> {
+                    context.client().execute(() -> {
+                        if (net.minecraft.client.Minecraft.getInstance().screen
+                                instanceof maxigregrze.cobblesafari.client.screen.rotomphone.RotomPhoneChatScreen rc) {
+                            rc.applyServerSnapshot(payload);
+                        }
+                    });
+                }
+        );
     }
 }

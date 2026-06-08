@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "id": "cyrus",
+  "displayName": "Unknown",
+  "displayPriority": 2,
+  "textureFile": "cyrus",
+  "unlockedFromStart": false,
+  "unlockingAdvancement": "cobblesafari:upside_down",
+  "steps": [
+    {
+      "messagesBefore": ["cobblesafari.chat.cyrus.s1.b1", "cobblesafari.chat.cyrus.s1.b2", "cobblesafari.chat.cyrus.s1.b3"],
+      "advancement": "cobblesafari:fadded_shadow",
+      "rewardItems": "cobblesafari:gifts/test_basic",
+      "messagesAfter": ["cobblesafari.chat.cyrus.s1.a1", "cobblesafari.chat.cyrus.s1.a2", "cobblesafari.chat.cyrus.s1.a3"],
+      "waitNextDay": false
+    }
+  ]
+}

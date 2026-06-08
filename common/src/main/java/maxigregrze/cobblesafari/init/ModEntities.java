@@ -8,6 +8,7 @@ import maxigregrze.cobblesafari.entity.HikerEntity;
 import maxigregrze.cobblesafari.entity.csboss.CsBossBulletEntity;
 import maxigregrze.cobblesafari.entity.csboss.CsBossEntity;
 import maxigregrze.cobblesafari.entity.csboss.CsBossMinionEntity;
+import maxigregrze.cobblesafari.entity.csboss.attacks.AttackBeamEntity;
 import maxigregrze.cobblesafari.entity.csboss.attacks.AttackDistortionStemCoreEntity;
 import maxigregrze.cobblesafari.entity.csboss.attacks.AttackDistortionStemEntity;
 import maxigregrze.cobblesafari.entity.csboss.attacks.AttackDigdirtEntity;
@@ -19,6 +20,8 @@ import maxigregrze.cobblesafari.entity.csboss.attacks.AttackWaveEntity;
 import maxigregrze.cobblesafari.entity.projectile.ThrownBaitEntity;
 import maxigregrze.cobblesafari.entity.projectile.ThrownBalmEntity;
 import maxigregrze.cobblesafari.entity.projectile.ThrownMudBallEntity;
+import maxigregrze.cobblesafari.entity.safari.SafariBallisticMeteorEntity;
+import maxigregrze.cobblesafari.entity.safari.SafariShadowHazardEntity;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
@@ -220,6 +223,18 @@ public class ModEntities {
                     .build(CobbleSafari.MOD_ID + ":attack_distortion_flower")
     );
 
+    public static final EntityType<AttackBeamEntity> ATTACK_BEAM = Registry.register(
+            BuiltInRegistries.ENTITY_TYPE,
+            ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, "attack_beam"),
+            EntityType.Builder.<AttackBeamEntity>of(AttackBeamEntity::new, MobCategory.MISC)
+                    .sized(0.5f, 0.5f)
+                    .clientTrackingRange(16)
+                    .updateInterval(1)
+                    .fireImmune()
+                    .noSave()
+                    .build(CobbleSafari.MOD_ID + ":attack_beam")
+    );
+
     public static final EntityType<AttackGiratinaOrbEntity> ATTACK_GIRATINA_ORB = Registry.register(
             BuiltInRegistries.ENTITY_TYPE,
             ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, "attack_giratina_orb"),
@@ -242,6 +257,30 @@ public class ModEntities {
                     .fireImmune()
                     .noSave()
                     .build(CobbleSafari.MOD_ID + ":attack_digdirt")
+    );
+
+    public static final EntityType<SafariShadowHazardEntity> SAFARI_SHADOW_HAZARD = Registry.register(
+            BuiltInRegistries.ENTITY_TYPE,
+            ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, "safari_shadow_hazard"),
+            EntityType.Builder.<SafariShadowHazardEntity>of(SafariShadowHazardEntity::new, MobCategory.MISC)
+                    .sized(0.1f, 0.1f)
+                    .clientTrackingRange(10)
+                    .updateInterval(1)
+                    .fireImmune()
+                    .noSave()
+                    .build(CobbleSafari.MOD_ID + ":safari_shadow_hazard")
+    );
+
+    public static final EntityType<SafariBallisticMeteorEntity> SAFARI_BALLISTIC_METEOR = Registry.register(
+            BuiltInRegistries.ENTITY_TYPE,
+            ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, "safari_ballistic_meteor"),
+            EntityType.Builder.<SafariBallisticMeteorEntity>of(SafariBallisticMeteorEntity::new, MobCategory.MISC)
+                    .sized(0.9f, 0.9f)
+                    .clientTrackingRange(10)
+                    .updateInterval(1)
+                    .fireImmune()
+                    .noSave()
+                    .build(CobbleSafari.MOD_ID + ":safari_ballistic_meteor")
     );
 
     public static AttributeSupplier.Builder getCsBossAttributes() {

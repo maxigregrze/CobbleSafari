@@ -5,16 +5,16 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.block.state.BlockState;
 
 /**
- * Bloc « réactif » d'arène (plan 100 § 10) : implémenté par les blocs qui changent d'état
- * au démarrage/fin d'un combat de boss (porte d'entrée, etc.). Le scan ne touche QUE
- * les blocs portant cette interface — jamais d'édition de monde arbitraire.
+ * Arena "reactive" block (plan 100 § 10): implemented by blocks that change state
+ * at boss fight start/end (entrance gate, etc.). The scan touches ONLY
+ * blocks implementing this interface — never arbitrary world edits.
  */
 public interface BattleReactiveBlock {
 
-    /** Bascule l'état idle↔combat. Doit être idempotent et purement local au bloc. */
+    /** Toggles idle↔combat state. Must be idempotent and purely local to the block. */
     void setBattleState(ServerLevel level, BlockPos pos, BlockState state, boolean battle);
 
-    /** {@code true} si ce bloc, dans cet état, doit être capturé par le scan. */
+    /** {@code true} if this block, in this state, should be captured by the scan. */
     default boolean isReactive(BlockState state) {
         return true;
     }

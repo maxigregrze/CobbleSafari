@@ -56,7 +56,7 @@ public class AuspiciousPokeballGoldBlockEntity extends AuspiciousPokeballBlockEn
     }
 
     /**
-     * Réservé à une future API / GUI ; borne la taille et normalise la casse stockée telle quelle.
+     * Reserved for a future API / GUI; bounds size and stores casing as provided.
      */
     public void setEarnersFromServer(List<String> names) {
         this.earners.clear();

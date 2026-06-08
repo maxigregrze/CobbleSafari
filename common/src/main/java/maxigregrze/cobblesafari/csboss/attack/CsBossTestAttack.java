@@ -6,18 +6,18 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.phys.Vec3;
 
 /**
- * Attaque de référence {@code test} (plan 100 § 12.2/12.3) : volées de 8 bullets dans les
- * 8 directions de boussole, 5 ticks entre chaque volée, +22,5° de rotation par volée,
- * puis 80 ticks d'attente. Les 18 attaques typées {@code base_<type>_1} en héritent telles quelles.
+ * Reference {@code test} attack (plan 100 § 12.2/12.3): volleys of 8 bullets in the
+ * 8 compass directions, 5 ticks between each volley, +22.5° rotation per volley,
+ * then 80 ticks of waiting. The 18 typed {@code base_<type>_1} attacks inherit as-is.
  */
 public class CsBossTestAttack implements CsBossAttack {
 
     private static final int VOLLEY_COUNT = 8;
-    private static final int VOLLEY_DELAY = 5;       // ticks entre volées
-    private static final int BULLETS_PER_VOLLEY = 8; // 8 directions de boussole
+    private static final int VOLLEY_DELAY = 5;       // ticks between volleys
+    private static final int BULLETS_PER_VOLLEY = 8; // 8 compass directions
     private static final double ROTATION_STEP_DEG = 22.5;
-    private static final double BULLET_SPEED = 0.6;  // blocs/tick
-    private static final int TAIL_DELAY = 80;        // attente après la dernière volée
+    private static final double BULLET_SPEED = 0.6;  // blocks/tick
+    private static final int TAIL_DELAY = 80;        // wait after the last volley
 
     private final String id;
     private int tick = -1;
@@ -60,7 +60,7 @@ public class CsBossTestAttack implements CsBossAttack {
     private void fireVolley(ServerLevel level, BossBattleSession session, CsBossEntity boss, int volleyIndex) {
         boss.triggerAttackAnimation();
         double baseRad = Math.toRadians(volleyIndex * ROTATION_STEP_DEG);
-        // Ancrage vertical sur le bloc trigger : la bullet (5 de haut) couvre blockY .. blockY+5.
+        // Vertical anchor on the trigger block: the bullet (5 tall) covers blockY .. blockY+5.
         double anchorY = session.getTriggerPos().getY();
         Vec3 origin = new Vec3(boss.getX(), anchorY, boss.getZ());
         for (int i = 0; i < BULLETS_PER_VOLLEY; i++) {

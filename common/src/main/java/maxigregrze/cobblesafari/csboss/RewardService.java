@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Distribution des récompenses à la victoire (plan 100 § 16).
+ * Reward distribution on victory (plan 100 § 16).
  */
 public final class RewardService {
 
@@ -28,7 +28,7 @@ public final class RewardService {
         int yTol = cfg.getArenaYTolerance();
         CsBossDefinition def = session.getDefinition();
 
-        // Survivants vivants ET encore dans le rayon au moment du win.
+        // Living survivors AND still in radius at win time.
         List<ServerPlayer> winners = new ArrayList<>();
         for (ServerPlayer p : session.aliveParticipants(level)) {
             if (session.withinArena(p.position(), yTol)) {
@@ -39,7 +39,7 @@ public final class RewardService {
             return;
         }
 
-        // Récompense unique (avant la générale pour limiter le drop au sol).
+        // Unique reward (before common to limit ground drops).
         if (def.uniqueReward() != null) {
             List<ItemStack> unique = roll(level, session, def.uniqueReward());
             if (!unique.isEmpty()) {
@@ -54,7 +54,7 @@ public final class RewardService {
             }
         }
 
-        // Récompense générale : MÊME roll pour tous.
+        // Common reward: SAME roll for everyone.
         List<ItemStack> common = roll(level, session, def.rewards());
         for (ServerPlayer p : winners) {
             give(level, session, p, copy(common));

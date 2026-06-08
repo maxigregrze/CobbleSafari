@@ -8,7 +8,7 @@
   "minion": "gengar",
   "size": 3,
   "allowSimultaneousAttacks": false,
-  "moveSet": ["base_water_2"],
+  "moveSet": ["base_electric_3", "distortion_3", "base_rock_3", "base_rock_4"],
   "moveCooldownMin": 2,
   "moveCooldownMax": 4,
   "isStatic": true,

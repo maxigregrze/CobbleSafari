@@ -18,8 +18,8 @@ import java.util.Set;
 import java.util.UUID;
 
 /**
- * Projectile « bullet-hell » ultra-léger (plan 100 § 12.3) : pas d'AI ni de physique,
- * traverse les murs, durée de vie fixe, détection limitée au Set de participants.
+ * Ultra-light "bullet-hell" projectile (plan 100 § 12.3): no AI or physics,
+ * passes through walls, fixed lifespan, detection limited to the participant Set.
  */
 public class CsBossBulletEntity extends Entity {
 
@@ -34,7 +34,7 @@ public class CsBossBulletEntity extends Entity {
     private static final String KEY_SESSION = "SessionId";
 
     private static final int MAX_AGE = 60;
-    private static final float DEFAULT_DAMAGE = 16.0F; // 8 cœurs
+    private static final float DEFAULT_DAMAGE = 16.0F; // 8 hearts
 
     private int age;
     private int sessionId;

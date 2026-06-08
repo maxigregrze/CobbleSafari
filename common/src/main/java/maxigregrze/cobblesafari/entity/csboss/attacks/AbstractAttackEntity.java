@@ -12,10 +12,10 @@ import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * Base des entités d'attaque CSBoss (plan 107) : entités ultra‑légères sans physique ni AI,
- * immunisées, no‑gravity, traversant les blocs, pilotées par le code d'attaque ou par
- * auto‑réplication interne. Un TTL de sécurité ({@link #maxLifespan()}) évite toute fuite si la
- * session disparaît avant le nettoyage normal.
+ * Base for CSBoss attack entities (plan 107): ultra-light entities with no physics or AI,
+ * immune, no-gravity, passing through blocks, driven by attack code or by
+ * internal self-replication. A safety TTL ({@link #maxLifespan()}) prevents leaks if the
+ * session disappears before normal cleanup.
  */
 public abstract class AbstractAttackEntity extends Entity {
 
@@ -31,7 +31,7 @@ public abstract class AbstractAttackEntity extends Entity {
         this.setNoGravity(true);
     }
 
-    /** Durée de vie maximale en ticks (filet anti‑fuite). */
+    /** Maximum lifespan in ticks (anti-leak safety net). */
     protected abstract int maxLifespan();
 
     public int getSessionId() {
@@ -42,13 +42,13 @@ public abstract class AbstractAttackEntity extends Entity {
         this.sessionId = sessionId;
     }
 
-    /** Session courante (ou {@code null} si terminée) — pour l'auto‑réplication. */
+    /** Current session (or {@code null} if ended) — for self-replication. */
     @Nullable
     protected BossBattleSession session() {
         return BossBattleManager.getSession(this.sessionId);
     }
 
-    /** Boss de la session (ou {@code null}) — pour les entités attachées au repère tournant du boss. */
+    /** Session boss (or {@code null}) — for entities attached to the boss's rotating frame. */
     @Nullable
     protected CsBossEntity boss(ServerLevel level) {
         BossBattleSession s = session();
@@ -69,20 +69,20 @@ public abstract class AbstractAttackEntity extends Entity {
         serverTick((ServerLevel) this.level());
     }
 
-    /** Logique serveur spécifique (auto‑réplication). Par défaut : rien. */
+    /** Specific server logic (self-replication). Default: nothing. */
     protected void serverTick(ServerLevel level) {
     }
 
-    /** Particules / effets client. Par défaut : rien. */
+    /** Client particles / effects. Default: nothing. */
     protected void clientTick() {
     }
 
     @Override
     protected void defineSynchedData(net.minecraft.network.syncher.SynchedEntityData.Builder builder) {
-        // Les sous-classes ajoutent leurs accesseurs en surchargeant + super().
+        // Subclasses add their accessors by overriding + super().
     }
 
-    // --- Immunité / inertie ------------------------------------------------------
+    // --- Immunity / inertia ------------------------------------------------------
 
     @Override
     public boolean hurt(DamageSource source, float amount) {
