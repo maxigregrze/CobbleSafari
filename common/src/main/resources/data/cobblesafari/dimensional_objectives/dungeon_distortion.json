@@ -1,0 +1,45 @@
+{
+    "schemaVersion": 1,
+    "dimensionId": "cobblesafari:dungeon_distortion",
+    "isInstanciated": true,
+    "enableFinalCompletionAuspiciousReward": false,
+    "auspiciousPokeballRewardDisplayName": "cobblesafari.dimensional_objectives.auspicious_pokeball_reward_display_name",
+    "fallbackCompletionReward": "cobblesafari:dimensional_objectives/fallback",
+    "enableFinalCompletionReward": true,
+    "finalCompletionReward": "cobblesafari:dimensional_objectives/final",
+    "tasks": [
+      {
+        "taskId": "task_loot",
+        "weight": 30,
+        "countRange": [1, 9],
+        "taskReward": "cobblesafari:dimensional_objectives/task_small"
+      },
+      {
+        "taskId": "task_fight_base",
+        "weight": 25,
+        "countRange": [1, 3],
+        "taskReward": "cobblesafari:dimensional_objectives/task_small"
+      },
+      {
+        "taskId": "task_fight_unique",
+        "weight": 15,
+        "countRange": [1, 3],
+        "taskReward": "cobblesafari:dimensional_objectives/task_small"
+      },
+      {
+        "taskId": "task_giratinacore_base",
+        "weight": 10,
+        "taskReward": "cobblesafari:dimensional_objectives/task_small"
+      },
+      {
+        "taskId": "task_csboss_base",
+        "weight": 15,
+        "taskReward": "cobblesafari:dimensional_objectives/task_small"
+      },
+      {
+        "taskId": "task_csboss_win",
+        "weight": 5,
+        "taskReward": "cobblesafari:dimensional_objectives/task_small"
+      }
+    ]
+  }

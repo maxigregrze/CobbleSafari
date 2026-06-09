@@ -1,5 +1,6 @@
 package maxigregrze.cobblesafari.block.distortion;
 
+import maxigregrze.cobblesafari.config.MiscConfig;
 import maxigregrze.cobblesafari.init.ModBlockEntities;
 import maxigregrze.cobblesafari.init.ModBlocks;
 import net.minecraft.core.BlockPos;
@@ -75,7 +76,7 @@ public class GiratinaCoreBlockEntity extends BlockEntity {
         if (lastTradeGameTime < 0L) {
             return true;
         }
-        return now - lastTradeGameTime >= 100L;
+        return now - lastTradeGameTime >= MiscConfig.getGiratinaCoreCooldown();
     }
 
     public void markTrade(Level level) {

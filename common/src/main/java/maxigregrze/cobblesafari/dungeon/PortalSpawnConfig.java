@@ -5,14 +5,20 @@ import com.google.gson.GsonBuilder;
 import maxigregrze.cobblesafari.CobbleSafari;
 import maxigregrze.cobblesafari.platform.Services;
 
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.Level;
+
 import java.io.IOException;
 import java.io.Reader;
 import java.io.Writer;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 public class PortalSpawnConfig {
 
@@ -24,6 +30,8 @@ public class PortalSpawnConfig {
     private static final String DUNGEON_UNDERGROUND_ID = "dungeon_underground";
     private static final String DUNGEON_JUMP_ID = "dungeon_jump";
     private static final String DUNGEON_DISTORTION_ID = "dungeon_distortion";
+    private static final String DEFAULT_ALLOWED_DIMENSION = "minecraft:overworld";
+    private static final List<String> DEFAULT_ALLOWED_DIMENSIONS = List.of(DEFAULT_ALLOWED_DIMENSION);
 
     private static PortalSpawnConfig INSTANCE;
 
@@ -35,6 +43,8 @@ public class PortalSpawnConfig {
     private int spawnRadiusMax = 80;
     private boolean enabled = true;
     private Float spawnChance = 1.0f;
+    private List<String> allowedDimensions = new ArrayList<>(DEFAULT_ALLOWED_DIMENSIONS);
+    private List<String> bannedBlocks = new ArrayList<>();
     private List<DungeonDimensionEntry> dimensions = new ArrayList<>();
 
     public PortalSpawnConfig() {
@@ -76,8 +86,12 @@ public class PortalSpawnConfig {
                 if (INSTANCE.dimensions == null) {
                     INSTANCE.dimensions = new ArrayList<>();
                 }
+                if (INSTANCE.bannedBlocks == null) {
+                    INSTANCE.bannedBlocks = new ArrayList<>();
+                }
                 clampSpawnChanceInInstance();
                 addMissingDimensions();
+                normalizeAllowedDimensions();
                 save();
                 CobbleSafari.LOGGER.info("Dungeon portal config loaded from {}", CONFIG_PATH);
             } catch (IOException e) {
@@ -128,6 +142,72 @@ public class PortalSpawnConfig {
             return true;
         }
         return false;
+    }
+
+    private static Set<String> collectDungeonDestinationDimensionIds() {
+        Set<String> ids = new HashSet<>();
+        if (INSTANCE == null || INSTANCE.dimensions == null) {
+            return ids;
+        }
+        for (DungeonDimensionEntry entry : INSTANCE.dimensions) {
+            String raw = entry.getDimensionId();
+            if (raw == null || raw.isBlank()) {
+                continue;
+            }
+            String trimmed = raw.trim();
+            if (trimmed.contains(":")) {
+                ids.add(trimmed);
+            } else {
+                ids.add("cobblesafari:" + trimmed);
+            }
+        }
+        return ids;
+    }
+
+    private static boolean isUnsafeSpawnDimension(String trimmed, Set<String> dungeonDestIds) {
+        if (trimmed.startsWith("cobblesafari:")) {
+            return true;
+        }
+        if (dungeonDestIds.contains(trimmed)) {
+            return true;
+        }
+        String normalized = trimmed.contains(":") ? trimmed : "cobblesafari:" + trimmed;
+        return dungeonDestIds.contains(normalized);
+    }
+
+    private static void normalizeAllowedDimensions() {
+        if (INSTANCE == null) {
+            return;
+        }
+        List<String> raw = INSTANCE.allowedDimensions;
+        if (raw == null) {
+            INSTANCE.allowedDimensions = new ArrayList<>(DEFAULT_ALLOWED_DIMENSIONS);
+            return;
+        }
+        Set<String> dungeonDestIds = collectDungeonDestinationDimensionIds();
+        List<String> filtered = new ArrayList<>();
+        for (String entry : raw) {
+            if (entry == null || entry.isBlank()) {
+                continue;
+            }
+            String trimmed = entry.trim();
+            if (isUnsafeSpawnDimension(trimmed, dungeonDestIds)) {
+                CobbleSafari.LOGGER.warn(
+                        "The dimension \"{}\" was removed from the list of dimensions where the hoopa portals can spawn for safety reasons.",
+                        trimmed);
+                continue;
+            }
+            if (ResourceLocation.tryParse(trimmed) == null) {
+                CobbleSafari.LOGGER.warn("Ignoring invalid allowedDimensions entry: {}", trimmed);
+                continue;
+            }
+            if (!filtered.contains(trimmed)) {
+                filtered.add(trimmed);
+            }
+        }
+        INSTANCE.allowedDimensions = filtered.isEmpty()
+                ? new ArrayList<>(DEFAULT_ALLOWED_DIMENSIONS)
+                : filtered;
     }
 
     private static boolean ensureDimensionConfig(String dimensionId, boolean defaultEnabled, int defaultWeight) {
@@ -211,6 +291,19 @@ public class PortalSpawnConfig {
 
     public static List<DungeonDimensionEntry> getAllDimensionConfigs() {
         return new ArrayList<>(getInstance().dimensions);
+    }
+
+    public static List<String> getAllowedDimensions() {
+        return List.copyOf(getInstance().allowedDimensions);
+    }
+
+    public static boolean isSpawnDimensionAllowed(ResourceKey<Level> dimension) {
+        return getAllowedDimensions().contains(dimension.location().toString());
+    }
+
+    public static List<String> getBannedBlocks() {
+        List<String> list = getInstance().bannedBlocks;
+        return list == null ? List.of() : List.copyOf(list);
     }
 
     /** Returns the loaded singleton, loading or creating defaults as needed. Never null. */

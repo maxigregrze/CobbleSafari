@@ -7,6 +7,10 @@ import maxigregrze.cobblesafari.CobbleSafari;
 import maxigregrze.cobblesafari.manager.BannedItemsManager;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.TagKey;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundBlockUpdatePacket;
 import net.minecraft.server.level.ServerPlayer;
@@ -17,6 +21,7 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.resources.ResourceKey;
@@ -24,6 +29,9 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.phys.BlockHitResult;
 
 public class DimensionalBanEventHandler {
+
+    private static final TagKey<Item> TUMBLESTONES_TAG = TagKey.create(
+            Registries.ITEM, ResourceLocation.fromNamespaceAndPath("cobblemon", "tumblestones"));
 
     private DimensionalBanEventHandler() {}
 
@@ -47,6 +55,28 @@ public class DimensionalBanEventHandler {
 
     public static InteractionResult onUseBlock(Player player, Level world, InteractionHand hand, BlockHitResult hitResult) {
         ItemStack stack = player.getItemInHand(hand);
+
+        if (!stack.isEmpty() && !player.isCreative()) {
+            if (BannedItemsManager.isItemBanned(world.dimension(), stack.getItem())) {
+                if (!world.isClientSide() && player instanceof ServerPlayer serverPlayer) {
+                    serverPlayer.sendSystemMessage(
+                            Component.translatable("cobblesafari.ban.item_banned")
+                    );
+                    resyncBlock(serverPlayer, hitResult);
+                }
+                return InteractionResult.FAIL;
+            }
+            if (!BannedItemsManager.isBlockPlacingAllowed(world.dimension())
+                    && isCustomBlockPlacingItem(stack)) {
+                if (!world.isClientSide() && player instanceof ServerPlayer serverPlayer) {
+                    serverPlayer.sendSystemMessage(
+                            Component.translatable("cobblesafari.ban.block_placing_banned")
+                    );
+                    resyncBlock(serverPlayer, hitResult);
+                }
+                return InteractionResult.FAIL;
+            }
+        }
 
         if (stack.isEmpty() || !(stack.getItem() instanceof BlockItem blockItem)) {
             return InteractionResult.PASS;
@@ -78,6 +108,16 @@ public class DimensionalBanEventHandler {
         }
 
         return InteractionResult.PASS;
+    }
+
+    private static boolean isCustomBlockPlacingItem(ItemStack stack) {
+        if (stack.is(TUMBLESTONES_TAG)) {
+            return true;
+        }
+        ResourceLocation id = BuiltInRegistries.ITEM.getKey(stack.getItem());
+        String path = id.getPath();
+        return "cobblemon".equals(id.getNamespace())
+                && ("tumblestone".equals(path) || "black_tumblestone".equals(path) || "sky_tumblestone".equals(path));
     }
 
     private static void resyncBlock(ServerPlayer player, BlockHitResult hitResult) {

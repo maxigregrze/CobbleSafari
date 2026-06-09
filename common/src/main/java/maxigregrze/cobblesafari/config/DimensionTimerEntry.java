@@ -3,16 +3,26 @@ package maxigregrze.cobblesafari.config;
 public class DimensionTimerEntry {
     private String dimensionId;
     private int timerDurationSeconds;
-    private int resetHour;
+    /** {@code null} ⇒ inherit the server-wide {@code dailySystemResetHour} (plan 118 §6.2). */
+    private Integer resetHour;
     private boolean returnToSpawn;
     private Boolean allowReset;
 
     public DimensionTimerEntry() {
         this.dimensionId = "cobblesafari:domedimension";
         this.timerDurationSeconds = 900;
-        this.resetHour = 0;
+        this.resetHour = null;
         this.returnToSpawn = false;
         this.allowReset = true;
+    }
+
+    /** Creates an entry whose reset hour inherits {@code dailySystemResetHour} (resetHour unset). */
+    public DimensionTimerEntry(String dimensionId, int timerDurationSeconds) {
+        this.dimensionId = dimensionId;
+        this.timerDurationSeconds = timerDurationSeconds;
+        this.resetHour = null;
+        this.returnToSpawn = false;
+        this.allowReset = defaultAllowReset(dimensionId);
     }
 
     public DimensionTimerEntry(String dimensionId, int timerDurationSeconds, int resetHour) {
@@ -61,7 +71,9 @@ public class DimensionTimerEntry {
     }
 
     public int getResetHour() {
-        return resetHour;
+        return resetHour != null
+                ? resetHour
+                : maxigregrze.cobblesafari.config.MiscConfig.getDailySystemResetHour();
     }
 
     public boolean isReturnToSpawn() {

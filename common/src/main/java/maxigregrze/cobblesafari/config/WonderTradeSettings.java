@@ -24,6 +24,8 @@ public class WonderTradeSettings {
 
     private static WonderTradeSettings INSTANCE;
 
+    /** @deprecated legacy field kept only to migrate the value to {@code misc_config.json} (plan 118 §6.1). */
+    @Deprecated
     private int resetHour = 0;
     private int dailyTrades = 3;
     private boolean doPokemonExpire = true;
@@ -91,6 +93,10 @@ public class WonderTradeSettings {
             INSTANCE.validateAndFix();
             save();
             CobbleSafari.LOGGER.info("CobbleSafari >> Created default wondertrade_settings.json at {}", CONFIG_PATH);
+        }
+        // Plan 118 §6.1 — one-shot migration of the legacy reset hour to misc_config.json.
+        if (INSTANCE != null) {
+            maxigregrze.cobblesafari.config.MiscConfig.migrateDailyResetHourIfUnset(INSTANCE.resetHour);
         }
     }
 
@@ -164,10 +170,6 @@ public class WonderTradeSettings {
             load();
         }
         return INSTANCE;
-    }
-
-    public int getResetHour() {
-        return resetHour;
     }
 
     public int getDailyTrades() {

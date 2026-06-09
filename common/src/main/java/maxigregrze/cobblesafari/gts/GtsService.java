@@ -12,7 +12,6 @@ import com.cobblemon.mod.common.pokemon.Gender;
 import com.cobblemon.mod.common.pokemon.Pokemon;
 import maxigregrze.cobblesafari.CobbleSafari;
 import maxigregrze.cobblesafari.config.GtsSettings;
-import maxigregrze.cobblesafari.config.WonderTradeSettings;
 import maxigregrze.cobblesafari.data.GtsSavedData;
 import maxigregrze.cobblesafari.security.TradeNbtSanitizer;
 import maxigregrze.cobblesafari.security.WishLineValidator;
@@ -60,7 +59,7 @@ public final class GtsService {
         LocalTime now = LocalTime.now(ZONE);
         long todayEpoch = today.toEpochDay();
         long last = data.getLastDailyResetEpochDay();
-        int rh = WonderTradeSettings.get().getResetHour();
+        int rh = maxigregrze.cobblesafari.config.MiscConfig.getDailySystemResetHour();
         if (last < 0) {
             return;
         }

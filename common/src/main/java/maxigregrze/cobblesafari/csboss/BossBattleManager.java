@@ -123,6 +123,7 @@ public final class BossBattleManager {
         for (ServerPlayer p : participants) {
             session.getBossBar().addPlayer(p);
             ModStats.award(p, ModStats.CSBOSS_BATTLES_ATTEMPTED);
+            maxigregrze.cobblesafari.objectives.ObjectivesManager.onBossStart(p);
         }
         data.putSnapshot(session.snapshot());
         if (def.music() != null && !def.music().isBlank()) {
@@ -524,6 +525,7 @@ public final class BossBattleManager {
             if (session.withinArena(player.position(), yTol)) {
                 ModCriteria.CSBOSS_WIN.trigger(player, session.getDimension(), session.getRootBossId());
                 ModStats.award(player, ModStats.CSBOSS_BATTLES_WON);
+                maxigregrze.cobblesafari.objectives.ObjectivesManager.onBossWin(player);
             }
         }
     }

@@ -34,6 +34,7 @@ import maxigregrze.cobblesafari.item.donut.DonutTooltipPayload;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
+import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.fabric.api.client.rendering.v1.TooltipComponentCallback;
 import net.fabricmc.fabric.api.client.item.v1.ItemTooltipCallback;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
@@ -83,6 +84,9 @@ public class CobbleSafariClientFabric implements ClientModInitializer {
         registerScreens();
         registerDungeonMusic();
         maxigregrze.cobblesafari.client.RotomPhoneModelLoadingPlugin.register();
+        KeyBindingHelper.registerKeyBinding(maxigregrze.cobblesafari.client.rotomphone.RotomPhoneKeybind.OPEN_PHONE);
+        KeyBindingHelper.registerKeyBinding(maxigregrze.cobblesafari.client.objectives.ObjectivesKeybind.TOGGLE_HUD);
+        maxigregrze.cobblesafari.client.hud.HudClientConfig.reload();
 
         if (net.fabricmc.loader.api.FabricLoader.getInstance().isModLoaded("accessories")) {
             maxigregrze.cobblesafari.compat.accessories.AccessoriesClientCompat.init();
@@ -92,6 +96,9 @@ public class CobbleSafariClientFabric implements ClientModInitializer {
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             maxigregrze.cobblesafari.client.screen.rotomphone.RotomPhonePcSession.tickCleanup(client);
             maxigregrze.cobblesafari.client.rotomphone.RotoGlideClient.tick(client);
+            maxigregrze.cobblesafari.client.rotomphone.RotomPhoneKeybind.clientTick(client);
+            maxigregrze.cobblesafari.client.objectives.ObjectivesKeybind.clientTick(client);
+            maxigregrze.cobblesafari.client.objectives.ObjectivesHudController.clientTick(client);
         });
     }
 
@@ -125,11 +132,22 @@ public class CobbleSafariClientFabric implements ClientModInitializer {
                     context.client().execute(() -> CsMusicPlayer.accept(payload));
                 });
 
+        ClientPlayNetworking.registerGlobalReceiver(
+                maxigregrze.cobblesafari.network.ObjectivesHudSyncPayload.TYPE, (payload, context) -> {
+                    context.client().execute(() -> maxigregrze.cobblesafari.client.objectives.ObjectivesHudController.accept(payload));
+                });
+
+        ClientPlayNetworking.registerGlobalReceiver(
+                maxigregrze.cobblesafari.network.HudConfigRefreshPayload.TYPE, (payload, context) -> {
+                    context.client().execute(maxigregrze.cobblesafari.client.hud.HudClientConfig::reload);
+                });
+
         ClientNetworking.registerFabricClientReceivers();
     }
 
     private void registerHud() {
         HudRenderCallback.EVENT.register(TimerHudOverlay::renderText);
+        HudRenderCallback.EVENT.register(maxigregrze.cobblesafari.client.hud.ObjectivesHudOverlay::render);
     }
 
     private void registerBlockRenderLayers() {

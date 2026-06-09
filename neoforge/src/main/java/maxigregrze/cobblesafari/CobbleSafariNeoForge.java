@@ -170,6 +170,12 @@ public class CobbleSafariNeoForge {
             registrar.playToClient(maxigregrze.cobblesafari.network.SetCsMusicPayload.TYPE,
                     maxigregrze.cobblesafari.network.SetCsMusicPayload.STREAM_CODEC,
                     CobbleSafariClientNeoForge::handleSetCsMusic);
+            registrar.playToClient(maxigregrze.cobblesafari.network.ObjectivesHudSyncPayload.TYPE,
+                    maxigregrze.cobblesafari.network.ObjectivesHudSyncPayload.STREAM_CODEC,
+                    CobbleSafariClientNeoForge::handleObjectivesHudSync);
+            registrar.playToClient(maxigregrze.cobblesafari.network.HudConfigRefreshPayload.TYPE,
+                    maxigregrze.cobblesafari.network.HudConfigRefreshPayload.STREAM_CODEC,
+                    CobbleSafariClientNeoForge::handleHudConfigRefresh);
         } else {
             registrar.playToClient(OpenTpAcceptPayload.TYPE, OpenTpAcceptPayload.STREAM_CODEC,
                     (payload, context) -> {});
@@ -190,6 +196,12 @@ public class CobbleSafariNeoForge {
                     (payload, context) -> {});
             registrar.playToClient(maxigregrze.cobblesafari.network.SetCsMusicPayload.TYPE,
                     maxigregrze.cobblesafari.network.SetCsMusicPayload.STREAM_CODEC,
+                    (payload, context) -> {});
+            registrar.playToClient(maxigregrze.cobblesafari.network.ObjectivesHudSyncPayload.TYPE,
+                    maxigregrze.cobblesafari.network.ObjectivesHudSyncPayload.STREAM_CODEC,
+                    (payload, context) -> {});
+            registrar.playToClient(maxigregrze.cobblesafari.network.HudConfigRefreshPayload.TYPE,
+                    maxigregrze.cobblesafari.network.HudConfigRefreshPayload.STREAM_CODEC,
                     (payload, context) -> {});
         }
 
@@ -413,6 +425,16 @@ public class CobbleSafariNeoForge {
                         if (context.player() instanceof ServerPlayer sp) {
                             maxigregrze.cobblesafari.rotomphone.RotoGlideServerLogic.onRotoGlideRequest(
                                     sp, payload.horizontalMoveX(), payload.horizontalMoveZ());
+                        }
+                    });
+                });
+
+        registrar.playToServer(maxigregrze.cobblesafari.network.OpenRotomPhoneRequestPayload.TYPE,
+                maxigregrze.cobblesafari.network.OpenRotomPhoneRequestPayload.STREAM_CODEC,
+                (payload, context) -> {
+                    context.enqueueWork(() -> {
+                        if (context.player() instanceof ServerPlayer sp) {
+                            maxigregrze.cobblesafari.rotomphone.RotomPhoneServerHandler.openFromInventory(sp);
                         }
                     });
                 });

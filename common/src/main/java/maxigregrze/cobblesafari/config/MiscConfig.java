@@ -31,6 +31,19 @@ public class MiscConfig {
     private boolean balloonEnabled = true;
 
     /**
+     * Hour (0–23) at which the "daily systems" reset (Wonder Trade, GTS, chat conversations,
+     * dimensional objectives). Moved here from {@code wondertrade_settings.json} (plan 118 §6).
+     * {@code null} until explicitly set or migrated from the legacy Wonder Trade value.
+     */
+    private Integer dailySystemResetHour;
+
+    /** Chunk radius scanned for a Golden Auspicious Pokeball on objectives completion (plan 118 §8.4). */
+    private int dimensionalObjectivesGoldScanRadius = 8;
+
+    /** Cooldown between Giratina Core trades, in ticks (20 ticks = 1 s). */
+    private int giratinaCoreCooldown = 40;
+
+    /**
      * Default values for a newly placed "lost item" block (see {@code misc_config.json}, key {@code lostItem}).
      */
     private LostItemDefaults lostItem = new LostItemDefaults();
@@ -209,6 +222,42 @@ public class MiscConfig {
     public static boolean isBalloonEnabled() {
         if (INSTANCE == null) return true;
         return INSTANCE.balloonEnabled;
+    }
+
+    /** Hour (0–23) at which all daily systems reset (plan 118 §6). Defaults to 0 until set/migrated. */
+    public static int getDailySystemResetHour() {
+        if (INSTANCE == null || INSTANCE.dailySystemResetHour == null) {
+            return 0;
+        }
+        return Math.max(0, Math.min(23, INSTANCE.dailySystemResetHour));
+    }
+
+    /**
+     * One-shot migration of the legacy {@code wondertrade_settings.json} {@code resetHour}: if
+     * {@code dailySystemResetHour} was never set, seed it with the legacy value and persist.
+     */
+    public static void migrateDailyResetHourIfUnset(int legacyValue) {
+        if (INSTANCE == null) {
+            return;
+        }
+        if (INSTANCE.dailySystemResetHour == null) {
+            INSTANCE.dailySystemResetHour = Math.max(0, Math.min(23, legacyValue));
+            save();
+        }
+    }
+
+    public static int getDimensionalObjectivesGoldScanRadius() {
+        if (INSTANCE == null) {
+            return 8;
+        }
+        return Math.max(0, INSTANCE.dimensionalObjectivesGoldScanRadius);
+    }
+
+    public static int getGiratinaCoreCooldown() {
+        if (INSTANCE == null) {
+            return 40;
+        }
+        return Math.max(0, INSTANCE.giratinaCoreCooldown);
     }
 
     public void ensureLostItemDefaults() {

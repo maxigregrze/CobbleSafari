@@ -1,7 +1,6 @@
 package maxigregrze.cobblesafari.chat;
 
 import maxigregrze.cobblesafari.CobbleSafari;
-import maxigregrze.cobblesafari.config.WonderTradeSettings;
 import maxigregrze.cobblesafari.data.ChatProgressSavedData;
 import maxigregrze.cobblesafari.data.ChatProgressSavedData.Phase;
 import maxigregrze.cobblesafari.data.ChatProgressSavedData.ProgressEntry;
@@ -337,7 +336,7 @@ public final class ChatConversationService {
             data.setLastDailyResetEpochDay(todayEpoch - 1);
             return;
         }
-        int resetHour = WonderTradeSettings.get().getResetHour();
+        int resetHour = maxigregrze.cobblesafari.config.MiscConfig.getDailySystemResetHour();
         boolean pastResetHour = LocalTime.now(ZONE).getHour() >= resetHour;
         boolean shouldRun = (todayEpoch > last && pastResetHour) || (todayEpoch > last + 1);
         if (!shouldRun) {

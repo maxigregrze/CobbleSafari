@@ -233,13 +233,12 @@ public final class WonderTradeService {
     }
 
     public static void tickDailyScheduler(MinecraftServer server) {
-        WonderTradeSettings cfg = WonderTradeSettings.get();
         WonderTradeSavedData data = WonderTradeSavedData.get(server);
         LocalDate today = LocalDate.now(ZONE);
         LocalTime now = LocalTime.now(ZONE);
         long todayEpoch = today.toEpochDay();
         long last = data.getLastDailyResetEpochDay();
-        int rh = cfg.getResetHour();
+        int rh = maxigregrze.cobblesafari.config.MiscConfig.getDailySystemResetHour();
 
         if (last < 0) {
             return;
@@ -300,9 +299,9 @@ public final class WonderTradeService {
     }
 
     public static long getNextResetEpochSeconds() {
-        WonderTradeSettings cfg = WonderTradeSettings.get();
         ZonedDateTime now = ZonedDateTime.now(ZONE);
-        ZonedDateTime next = now.withHour(cfg.getResetHour()).withMinute(0).withSecond(0).withNano(0);
+        ZonedDateTime next = now.withHour(maxigregrze.cobblesafari.config.MiscConfig.getDailySystemResetHour())
+                .withMinute(0).withSecond(0).withNano(0);
         if (!next.isAfter(now)) {
             next = next.plusDays(1);
         }

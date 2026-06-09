@@ -37,10 +37,11 @@ public class SafariTimerConfig {
     private List<DimensionTimerEntry> dimensions = new ArrayList<>();
 
     public SafariTimerConfig() {
-        dimensions.add(new DimensionTimerEntry(SAFARI_DIMENSION_ID, 900, 0));
-        dimensions.add(new DimensionTimerEntry(DUNGEON_JUMP_DIMENSION_ID, 900, 0));
-        dimensions.add(new DimensionTimerEntry(DUNGEON_UNDERGROUND_DIMENSION_ID, 900, 0));
-        dimensions.add(new DimensionTimerEntry(UNION_ROOM_DIMENSION_ID, 3600, 0));
+        // resetHour left unset ⇒ inherits dailySystemResetHour (plan 118 §6.2).
+        dimensions.add(new DimensionTimerEntry(SAFARI_DIMENSION_ID, 900));
+        dimensions.add(new DimensionTimerEntry(DUNGEON_JUMP_DIMENSION_ID, 900));
+        dimensions.add(new DimensionTimerEntry(DUNGEON_UNDERGROUND_DIMENSION_ID, 900));
+        dimensions.add(new DimensionTimerEntry(UNION_ROOM_DIMENSION_ID, 3600));
     }
 
     public static void load() {
@@ -139,16 +140,13 @@ public class SafariTimerConfig {
     }
 
     private static boolean ensureDimensionConfig(String dimensionId, int defaultDurationSeconds) {
-        return ensureDimensionConfig(dimensionId, defaultDurationSeconds, 0);
-    }
-
-    private static boolean ensureDimensionConfig(String dimensionId, int defaultDurationSeconds, int resetHour) {
         SafariTimerConfig inst = getInstance();
         Optional<DimensionTimerEntry> existing = inst.dimensions.stream()
                 .filter(entry -> entry.getDimensionId().equals(dimensionId))
                 .findFirst();
         if (existing.isEmpty()) {
-            inst.dimensions.add(new DimensionTimerEntry(dimensionId, defaultDurationSeconds, resetHour));
+            // resetHour left unset ⇒ inherits dailySystemResetHour (plan 118 §6.2).
+            inst.dimensions.add(new DimensionTimerEntry(dimensionId, defaultDurationSeconds));
             CobbleSafari.LOGGER.info("Added missing dimension config: {} ({} min)", dimensionId, defaultDurationSeconds / 60);
             return true;
         }
@@ -269,7 +267,7 @@ public class SafariTimerConfig {
     public static int getResetHour() {
         return getDimensionConfig(SAFARI_DIMENSION_ID)
                 .map(DimensionTimerEntry::getResetHour)
-                .orElse(0);
+                .orElseGet(MiscConfig::getDailySystemResetHour);
     }
 
     /** @deprecated use {@link #getSafariDimensionId()} instead. */

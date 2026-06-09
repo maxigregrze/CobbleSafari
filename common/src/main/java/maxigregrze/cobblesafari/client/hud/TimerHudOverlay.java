@@ -85,6 +85,10 @@ public class TimerHudOverlay {
             return;
         }
 
+        if (!maxigregrze.cobblesafari.config.HudConfig.isDisplayTimerBackground()) {
+            return;
+        }
+
         Minecraft mc = Minecraft.getInstance();
         if (mc.player == null) {
             return;

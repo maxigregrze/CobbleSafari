@@ -54,6 +54,30 @@ public class AccessoriesCompat {
         return ItemStack.EMPTY;
     }
 
+    public static void markPhoneContainerChanged(Player player) {
+        AccessoriesCapability capability = AccessoriesCapability.get(player);
+        if (capability == null) {
+            return;
+        }
+
+        Map<String, AccessoriesContainer> containers = capability.getContainers();
+        AccessoriesContainer preferred = containers.get(PHONE_SLOT_KEY);
+        if (preferred != null && !firstRotomPhoneIn(preferred).isEmpty()) {
+            preferred.markChanged();
+            return;
+        }
+
+        for (AccessoriesContainer container : containers.values()) {
+            if (preferred != null && container == preferred) {
+                continue;
+            }
+            if (!firstRotomPhoneIn(container).isEmpty()) {
+                container.markChanged();
+                return;
+            }
+        }
+    }
+
     private static ItemStack firstRotomPhoneIn(AccessoriesContainer container) {
         var stacks = container.getAccessories();
         for (int i = 0; i < stacks.getContainerSize(); i++) {

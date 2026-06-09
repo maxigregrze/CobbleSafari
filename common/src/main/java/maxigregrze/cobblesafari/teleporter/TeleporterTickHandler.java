@@ -129,8 +129,15 @@ public class TeleporterTickHandler {
         }
     }
 
-    /** Returns true if the player cannot enter (no time left and paid re-entry is disabled). */
+    /** Returns true if the player cannot enter (no time left and this is a disallowed re-entry). */
     private static boolean handleNoRemainingTime(ServerPlayer player, UUID playerId, PlayerTimerData timerData) {
+        boolean paymentEnabled = SafariConfig.isEntryFeeEnabled();
+        boolean firstPaidEntryToday = paymentEnabled && !timerData.hasPaidEntryFeeToday();
+
+        if (firstPaidEntryToday) {
+            return false;
+        }
+
         if (!SafariConfig.isAllowPaidReentry()) {
             Long lastMessageTick = noTimeMessageCooldown.get(playerId);
             if (lastMessageTick == null || currentServerTick - lastMessageTick > NO_TIME_MESSAGE_COOLDOWN_TICKS) {
@@ -186,14 +193,13 @@ public class TeleporterTickHandler {
         TimerManager.checkDailyReset(player, timerData);
 
         boolean bypassed = TimerManager.shouldBypassTimer(player);
-        boolean needsPaidReentryFee = timerData.getRemainingTicks() <= 0 && !bypassed
-                && SafariConfig.isAllowPaidReentry();
-        boolean chargeFeeEnabled = SafariConfig.isEntryFeeEnabled() || needsPaidReentryFee;
+        boolean paymentEnabled = SafariConfig.isEntryFeeEnabled();
+        boolean outOfTime = timerData.getRemainingTicks() <= 0 && !bypassed;
         boolean needsTimerReset = false;
 
-        if (timerData.getRemainingTicks() <= 0 && !bypassed) {
-            boolean canPayAgain = SafariConfig.isAllowPaidReentry();
-            if (!canPayAgain) {
+        if (outOfTime) {
+            boolean firstPaidEntryToday = paymentEnabled && !timerData.hasPaidEntryFeeToday();
+            if (!firstPaidEntryToday && !SafariConfig.isAllowPaidReentry()) {
                 player.sendSystemMessage(Component.translatable(
                         "cobblesafari.teleporter.no_time",
                         TimerManager.formatTimeUntilNextDailyReset(timerData)));
@@ -203,6 +209,8 @@ public class TeleporterTickHandler {
             }
             needsTimerReset = true;
         }
+
+        boolean chargeFeeEnabled = paymentEnabled || (outOfTime && SafariConfig.isAllowPaidReentry());
 
         if (!timerData.hasPaidEntryFeeToday()) {
             boolean charged = EntryFeeHelper.tryChargeFee(player,

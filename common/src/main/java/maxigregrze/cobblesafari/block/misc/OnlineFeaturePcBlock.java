@@ -157,11 +157,10 @@ public class OnlineFeaturePcBlock extends HorizontalDirectionalBlock {
         return LOWER_SHAPE;
     }
 
-    /** Upper-half rotation; N/S were mirrored — swap their transforms. */
     private static VoxelShape rotateTopShape(VoxelShape shape, Direction facing) {
         return switch (facing) {
-            case NORTH -> mirrorSouth(shape);
-            case SOUTH -> shape;
+            case NORTH -> shape;
+            case SOUTH -> mirrorSouth(shape);
             case EAST -> Shapes.box(
                     shape.min(Direction.Axis.Z), shape.min(Direction.Axis.Y), 1 - shape.max(Direction.Axis.X),
                     shape.max(Direction.Axis.Z), shape.max(Direction.Axis.Y), 1 - shape.min(Direction.Axis.X));

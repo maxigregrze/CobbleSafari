@@ -6,7 +6,15 @@
       "aspects": ["distortion"],
       "poser": "cobblesafari:giratinashadow",
       "model": "cobblesafari:giratinashadow.geo",
-      "texture": "cobblesafari:textures/pokemon/giratina_distortion.png"
+      "texture": "cobblesafari:textures/pokemon/giratina_distortion.png",
+      "layers": [
+        {
+          "name": "distortion_glow",
+          "texture": "cobblesafari:textures/pokemon/giratina_distortion_emissives.png",
+          "emissive": true,
+          "translucent": true
+        }
+      ]
     }
   ]
 }

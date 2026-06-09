@@ -114,7 +114,7 @@ public class TimerSavedData extends SavedData {
         for (Map<String, PlayerTimerData> dimensionTimers : playerData.values()) {
             PlayerTimerData data = dimensionTimers.get(dimensionId);
             if (data != null) {
-                data.reset();
+                data.resetForDailyCycle();
                 data.setLastSafariBallGrantDay(0);
                 data.resetEntryFeePayDay();
                 data.setActive(false);

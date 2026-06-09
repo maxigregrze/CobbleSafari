@@ -14,6 +14,12 @@ public class RotomPhoneServerHandler {
 
     private RotomPhoneServerHandler() {}
 
+    public static void openFromInventory(ServerPlayer player) {
+        ItemStack phone = findPhoneInInventory(player);
+        if (phone.isEmpty()) return;
+        openPhone(player, phone);
+    }
+
     public static void openPhone(ServerPlayer player, ItemStack phoneStack) {
         RotomPhoneConfigSync.syncToPlayer(player);
         String name = RotomPhoneItem.getRotomName(phoneStack);
@@ -34,21 +40,25 @@ public class RotomPhoneServerHandler {
                 String skinId = payload.data();
                 if (skinId == null || skinId.isEmpty()) {
                     RotomPhoneItem.setCurrentSkin(phoneStack, "");
+                    markAccessoryPhoneChangedIfNeeded(player);
                 } else {
                     RotomPhoneSkinDefinition skin = RotomPhoneSkinRegistry.getSkin(skinId);
                     if (skin != null && RotomPhoneSkinRegistry.isUnlockedByPlayer(player, skin)) {
                         RotomPhoneItem.setCurrentSkin(phoneStack, skinId);
                         maxigregrze.cobblesafari.advancement.ModCriteria.ROTOM_SKIN_CHANGED.trigger(player);
+                        markAccessoryPhoneChangedIfNeeded(player);
                     }
                 }
             }
             case RotomPhoneActionPayload.ACTION_TOGGLE_SAFETY -> {
                 boolean current = RotomPhoneItem.isSafetyMode(phoneStack);
                 RotomPhoneItem.setSafetyMode(phoneStack, !current);
+                markAccessoryPhoneChangedIfNeeded(player);
             }
             case RotomPhoneActionPayload.ACTION_TOGGLE_ROTO_GLIDE -> {
                 boolean current = RotomPhoneItem.isRotoGlideEnabled(phoneStack);
                 RotomPhoneItem.setRotoGlideEnabled(phoneStack, !current);
+                markAccessoryPhoneChangedIfNeeded(player);
             }
             case RotomPhoneActionPayload.ACTION_OPEN_PC -> {
                 try {
@@ -64,6 +74,12 @@ public class RotomPhoneServerHandler {
                 // no-op
             }
             default -> CobbleSafari.LOGGER.warn("Unknown rotom phone action: {}", payload.actionType());
+        }
+    }
+
+    private static void markAccessoryPhoneChangedIfNeeded(ServerPlayer player) {
+        if (Services.PLATFORM.isModLoaded("accessories")) {
+            maxigregrze.cobblesafari.compat.accessories.AccessoriesCompat.markPhoneContainerChanged(player);
         }
     }
 

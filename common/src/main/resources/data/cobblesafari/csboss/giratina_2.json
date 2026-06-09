@@ -8,7 +8,7 @@
     "minion": "giratina distortion",
     "size": 4,
     "allowSimultaneousAttacks": true,
-    "moveSet": ["distortion_1","distortion_2", "distortion_3", "distortion_4", "base_ghost_1", "base_dragon_1"],
+    "moveSet": ["distortion_1","distortion_2", "distortion_3", "distortion_4", "base_ghost_1", "base_ghost_2", "base_ghost_3", "base_dragon_1", "base_dragon_2", "base_dragon_3"],
     "moveCooldownMin": 0,
     "moveCooldownMax": 1,
     "isStatic": true,

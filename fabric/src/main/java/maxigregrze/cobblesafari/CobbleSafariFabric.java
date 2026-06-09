@@ -120,6 +120,8 @@ public class CobbleSafariFabric implements ModInitializer {
         PayloadTypeRegistry.playS2C().register(maxigregrze.cobblesafari.network.GtsAppResultPayload.TYPE, maxigregrze.cobblesafari.network.GtsAppResultPayload.STREAM_CODEC);
         PayloadTypeRegistry.playS2C().register(maxigregrze.cobblesafari.network.ChatAppResultPayload.TYPE, maxigregrze.cobblesafari.network.ChatAppResultPayload.STREAM_CODEC);
         PayloadTypeRegistry.playS2C().register(maxigregrze.cobblesafari.network.ChatConversationSyncPayload.TYPE, maxigregrze.cobblesafari.network.ChatConversationSyncPayload.STREAM_CODEC);
+        PayloadTypeRegistry.playS2C().register(maxigregrze.cobblesafari.network.ObjectivesHudSyncPayload.TYPE, maxigregrze.cobblesafari.network.ObjectivesHudSyncPayload.STREAM_CODEC);
+        PayloadTypeRegistry.playS2C().register(maxigregrze.cobblesafari.network.HudConfigRefreshPayload.TYPE, maxigregrze.cobblesafari.network.HudConfigRefreshPayload.STREAM_CODEC);
 
         PayloadTypeRegistry.playC2S().register(maxigregrze.cobblesafari.network.RotomPhoneActionPayload.TYPE, maxigregrze.cobblesafari.network.RotomPhoneActionPayload.STREAM_CODEC);
         PayloadTypeRegistry.playC2S().register(maxigregrze.cobblesafari.network.UnionAppPayload.TYPE, maxigregrze.cobblesafari.network.UnionAppPayload.STREAM_CODEC);
@@ -127,6 +129,7 @@ public class CobbleSafariFabric implements ModInitializer {
         PayloadTypeRegistry.playC2S().register(maxigregrze.cobblesafari.network.GtsAppPayload.TYPE, maxigregrze.cobblesafari.network.GtsAppPayload.STREAM_CODEC);
         PayloadTypeRegistry.playC2S().register(maxigregrze.cobblesafari.network.ChatAppPayload.TYPE, maxigregrze.cobblesafari.network.ChatAppPayload.STREAM_CODEC);
         PayloadTypeRegistry.playC2S().register(maxigregrze.cobblesafari.network.RotomPhoneRotoGlideRequestPayload.TYPE, maxigregrze.cobblesafari.network.RotomPhoneRotoGlideRequestPayload.STREAM_CODEC);
+        PayloadTypeRegistry.playC2S().register(maxigregrze.cobblesafari.network.OpenRotomPhoneRequestPayload.TYPE, maxigregrze.cobblesafari.network.OpenRotomPhoneRequestPayload.STREAM_CODEC);
         PayloadTypeRegistry.playC2S().register(maxigregrze.cobblesafari.network.EmptyPhoneConfirmPayload.TYPE, maxigregrze.cobblesafari.network.EmptyPhoneConfirmPayload.STREAM_CODEC);
 
         PayloadTypeRegistry.playC2S().register(
@@ -337,6 +340,17 @@ public class CobbleSafariFabric implements ModInitializer {
                         if (context.player() instanceof ServerPlayer sp) {
                             maxigregrze.cobblesafari.rotomphone.RotoGlideServerLogic.onRotoGlideRequest(
                                     sp, payload.horizontalMoveX(), payload.horizontalMoveZ());
+                        }
+                    });
+                }
+        );
+
+        ServerPlayNetworking.registerGlobalReceiver(
+                maxigregrze.cobblesafari.network.OpenRotomPhoneRequestPayload.TYPE,
+                (payload, context) -> {
+                    context.server().execute(() -> {
+                        if (context.player() instanceof ServerPlayer sp) {
+                            maxigregrze.cobblesafari.rotomphone.RotomPhoneServerHandler.openFromInventory(sp);
                         }
                     });
                 }

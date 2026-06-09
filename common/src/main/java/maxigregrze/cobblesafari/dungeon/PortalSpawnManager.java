@@ -10,7 +10,11 @@ import maxigregrze.cobblesafari.data.DungeonPositionSavedData;
 import maxigregrze.cobblesafari.data.PortalSavedData;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -102,18 +106,33 @@ public class PortalSpawnManager {
     }
 
     private static int scanWorldForPortals(MinecraftServer server, boolean forceLoad) {
-        ServerLevel overworld = server.overworld();
-        if (overworld == null) return 0;
+        int foundPortals = 0;
+        for (String dimId : PortalSpawnConfig.getAllowedDimensions()) {
+            ResourceKey<Level> key = ResourceKey.create(Registries.DIMENSION, ResourceLocation.parse(dimId));
+            ServerLevel level = server.getLevel(key);
+            if (level != null) {
+                foundPortals += scanLevelForPortals(level, forceLoad);
+            }
+        }
 
+        if (foundPortals > 0) {
+            CobbleSafari.LOGGER.info("Found {} additional portals in world not in saved data (forceLoad: {})", foundPortals, forceLoad);
+            savePortals();
+        }
+
+        return foundPortals;
+    }
+
+    private static int scanLevelForPortals(ServerLevel level, boolean forceLoad) {
         int foundPortals = 0;
 
         for (int chunkX = -32; chunkX <= 32; chunkX++) {
             for (int chunkZ = -32; chunkZ <= 32; chunkZ++) {
-                if (!forceLoad && !overworld.hasChunk(chunkX, chunkZ)) {
+                if (!forceLoad && !level.hasChunk(chunkX, chunkZ)) {
                     continue;
                 }
 
-                net.minecraft.world.level.chunk.ChunkAccess chunk = overworld.getChunk(chunkX, chunkZ);
+                net.minecraft.world.level.chunk.ChunkAccess chunk = level.getChunk(chunkX, chunkZ);
                 if (chunk instanceof net.minecraft.world.level.chunk.LevelChunk levelChunk) {
                     for (BlockEntity blockEntity : levelChunk.getBlockEntities().values()) {
                         if (blockEntity instanceof DungeonPortalBlockEntity portalEntity) {
@@ -129,13 +148,13 @@ public class PortalSpawnManager {
                                 if (portalEntity.getSpawnTick() >= 0) {
                                     spawnTick = portalEntity.getSpawnTick();
                                 } else {
-                                    spawnTick = overworld.getGameTime() - (PortalSpawnConfig.getPortalLifetimeTicks() / 2);
+                                    spawnTick = level.getGameTime() - (PortalSpawnConfig.getPortalLifetimeTicks() / 2);
                                 }
 
                                 ACTIVE_PORTALS.put(portalId, new ActivePortal(
                                         portalId,
                                         pos,
-                                        overworld.dimension(),
+                                        level.dimension(),
                                         spawnTick,
                                         dungeonId
                                 ));
@@ -147,11 +166,6 @@ public class PortalSpawnManager {
                     }
                 }
             }
-        }
-
-        if (foundPortals > 0) {
-            CobbleSafari.LOGGER.info("Found {} additional portals in world not in saved data (forceLoad: {})", foundPortals, forceLoad);
-            savePortals();
         }
 
         return foundPortals;
@@ -211,27 +225,28 @@ public class PortalSpawnManager {
             return;
         }
 
-        ServerLevel overworld = server.overworld();
-        List<ServerPlayer> overworldPlayers = new ArrayList<>();
+        List<ServerPlayer> eligiblePlayers = new ArrayList<>();
 
         for (ServerPlayer player : server.getPlayerList().getPlayers()) {
-            if (player.level().dimension() == Level.OVERWORLD) {
-                overworldPlayers.add(player);
+            if (player.level() instanceof ServerLevel playerLevel
+                    && PortalSpawnConfig.isSpawnDimensionAllowed(playerLevel.dimension())) {
+                eligiblePlayers.add(player);
             }
         }
 
-        if (overworldPlayers.isEmpty()) {
-            CobbleSafari.LOGGER.debug("No players in overworld for portal spawn");
+        if (eligiblePlayers.isEmpty()) {
+            CobbleSafari.LOGGER.debug("No players in allowed spawn dimensions for portal spawn");
             return;
         }
 
         int maxAttempts = 3;
         for (int attempt = 0; attempt < maxAttempts; attempt++) {
-            ServerPlayer targetPlayer = overworldPlayers.get(RANDOM.nextInt(overworldPlayers.size()));
-            BlockPos portalPos = findValidSpawnPosition(overworld, targetPlayer.blockPosition());
+            ServerPlayer targetPlayer = eligiblePlayers.get(RANDOM.nextInt(eligiblePlayers.size()));
+            ServerLevel spawnLevel = (ServerLevel) targetPlayer.level();
+            BlockPos portalPos = findValidSpawnPosition(spawnLevel, targetPlayer.blockPosition());
 
             if (portalPos != null) {
-                spawnPortal(overworld, portalPos, targetPlayer, null);
+                spawnPortal(spawnLevel, portalPos, targetPlayer, null);
                 return;
             }
         }
@@ -253,9 +268,12 @@ public class PortalSpawnManager {
             return false;
         }
 
-        if (level.dimension() != Level.OVERWORLD) {
-            player.sendSystemMessage(Component.translatable("cobblesafari.command.dungeon.spawn.overworld_only"));
-            CobbleSafari.LOGGER.warn("Cannot spawn portal: player {} is not in the Overworld", player.getName().getString());
+        if (!PortalSpawnConfig.isSpawnDimensionAllowed(level.dimension())) {
+            player.sendSystemMessage(Component.translatable(
+                    "cobblesafari.command.dungeon.spawn.dimension_not_allowed",
+                    level.dimension().location()));
+            CobbleSafari.LOGGER.warn("Cannot spawn portal: dimension {} is not allowed for Hoopa portal spawn",
+                    level.dimension().location());
             return false;
         }
 
@@ -340,6 +358,13 @@ public class PortalSpawnManager {
 
         if (!isSolid && !isAir) {
             return String.format("Block below (%s) is not solid or air: %s", below, belowState.getBlock().getName().getString());
+        }
+
+        String belowId = BuiltInRegistries.BLOCK.getKey(belowState.getBlock()).toString();
+        for (String bannedId : PortalSpawnConfig.getBannedBlocks()) {
+            if (belowId.equals(bannedId)) {
+                return String.format("Block below (%s) is banned: %s", below, bannedId);
+            }
         }
 
         for (int dy = 0; dy < 3; dy++) {

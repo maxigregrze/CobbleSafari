@@ -105,7 +105,7 @@ public class RotomPhoneGTSScreen extends RotomPhoneBaseScreen {
     private static final float CONFIRM_SLOT_BASE_SCALE = 8.5f;
     private static final float CONFIRM_SLOT_MODEL_SCALE = 6.2f;
     /** Screen-pixel lift for confirm slots; negative moves the model up. */
-    private static final float CONFIRM_SLOT_MODEL_Y_OFFSET = -20f;
+    private static final float CONFIRM_SLOT_MODEL_Y_OFFSET = -30f;
     private static final long TRADE_ICON_ROTATION_PERIOD_MS = 4000L;
     private static final int ANIM_DISAPPEAR_FRAME = 4;
     private static final int ANIM_APPEAR_FORWARD_INDEX = 10;

@@ -14,6 +14,8 @@ import maxigregrze.cobblesafari.config.GtsSettings;
 import maxigregrze.cobblesafari.config.WonderTradeSettings;
 import maxigregrze.cobblesafari.config.RotomPhoneConfig;
 import maxigregrze.cobblesafari.dungeon.DungeonConfig;
+import maxigregrze.cobblesafari.network.HudConfigRefreshPayload;
+import maxigregrze.cobblesafari.platform.Services;
 import maxigregrze.cobblesafari.dungeon.DungeonDimensions;
 import maxigregrze.cobblesafari.dungeon.DungeonInstanceCleanup;
 import maxigregrze.cobblesafari.dungeon.PortalSpawnConfig;
@@ -99,6 +101,10 @@ public class ResetCommand {
         maxigregrze.cobblesafari.wondertrade.WonderTradeDataLoader.load(source.getServer());
         maxigregrze.cobblesafari.wondertrade.WonderTradeService.runAutofillIfNeeded(source.getServer());
         maxigregrze.cobblesafari.gts.GtsDataLoader.load(source.getServer());
+
+        if (source.getEntity() instanceof ServerPlayer executor) {
+            Services.PLATFORM.sendPayloadToPlayer(executor, new HudConfigRefreshPayload());
+        }
 
         source.sendSuccess(() -> Component.translatable("cobblesafari.command.refresh.success"), true);
         CobbleSafari.LOGGER.info("All configs refreshed by {}", source.getTextName());

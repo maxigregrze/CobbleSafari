@@ -172,6 +172,7 @@ public class CsTraderEntity extends AbstractVillager {
             int trades = maxigregrze.cobblesafari.init.ModStats.awardAndGet(
                     player, maxigregrze.cobblesafari.init.ModStats.CSTRADER_TRADES);
             maxigregrze.cobblesafari.advancement.ModCriteria.CSTRADER_TRADE.trigger(player, trades);
+            maxigregrze.cobblesafari.objectives.ObjectivesManager.onCsTraderTrade(player);
         }
     }
 

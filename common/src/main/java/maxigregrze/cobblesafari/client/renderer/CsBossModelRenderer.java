@@ -39,6 +39,22 @@ public final class CsBossModelRenderer {
     /** Resolved species + aspects + baseScale, cached by {@code specie} string. */
     public record SpeciesInfo(ResourceLocation species, Set<String> aspects, float baseScale) {}
 
+    /**
+     * Resets the shared {@link PosableModel} singleton for {@code info}. Required when a chained
+     * boss phase interrupts an in-progress animation (e.g. faint cut short at mid-dying): bone
+     * transforms and tints would otherwise carry over even with a fresh {@link PosableState}.
+     */
+    public static void resetSharedModel(SpeciesInfo info, PosableState state) {
+        state.setCurrentAspects(info.aspects());
+        PosableModel model = VaryingModelRepository.INSTANCE.getPoser(info.species(), state);
+        model.resetLayerContext();
+        model.setDefault();
+        model.setRed(1.0f);
+        model.setGreen(1.0f);
+        model.setBlue(1.0f);
+        model.setAlpha(1.0f);
+    }
+
     @Nullable
     public static SpeciesInfo resolve(String specie, Map<String, SpeciesInfo> cache) {
         SpeciesInfo cached = cache.get(specie);
@@ -90,6 +106,7 @@ public final class CsBossModelRenderer {
 
         PosableModel model = VaryingModelRepository.INSTANCE.getPoser(species, state);
         ResourceLocation texture = VaryingModelRepository.INSTANCE.getTexture(species, state);
+        var layers = VaryingModelRepository.INSTANCE.getLayers(species, state);
 
         RenderContext ctx = new RenderContext();
         model.setContext(ctx);
@@ -97,7 +114,18 @@ public final class CsBossModelRenderer {
         ctx.put(RenderContext.Companion.getSPECIES(), species);
         ctx.put(RenderContext.Companion.getASPECTS(), info.aspects());
         ctx.put(RenderContext.Companion.getPOSABLE_STATE(), state);
+        ctx.put(RenderContext.Companion.getTEXTURE(), texture);
+        ctx.put(RenderContext.Companion.getSCALE(), info.baseScale());
+        if (entity != null) {
+            ctx.setEntity(entity);
+        }
         state.setCurrentModel(model);
+
+        // PosableModel instances are shared via VaryingModelRepository; reset tint like Cobblemon renderers do.
+        model.setRed(1.0f);
+        model.setGreen(1.0f);
+        model.setBlue(1.0f);
+        model.setAlpha(1.0f);
 
         boolean moving = limbSwingAmount > MOVE_THRESHOLD;
         Pose desired = model.getFirstSuitablePose(state, moving ? PoseType.WALK : PoseType.STAND);
@@ -126,13 +154,19 @@ public final class CsBossModelRenderer {
                     ? RenderType.entityTranslucent(texture)
                     : RenderType.entityCutout(texture);
             VertexConsumer vc = buffer.getBuffer(renderType);
-            model.setLayerContext(buffer, state, VaryingModelRepository.INSTANCE.getLayers(species, state));
+            // Emissive / translucent resolver layers use PosableModel.getLayer() internally (same as Cobblemon mobs).
+            model.setLayerContext(buffer, state, layers);
             try {
                 model.render(ctx, ps, vc, packedLight, packedOverlay, color);
+                model.setDefault();
             } finally {
                 model.resetLayerContext();
             }
         } finally {
+            model.setRed(1.0f);
+            model.setGreen(1.0f);
+            model.setBlue(1.0f);
+            model.setAlpha(1.0f);
             ps.popPose();
         }
     }

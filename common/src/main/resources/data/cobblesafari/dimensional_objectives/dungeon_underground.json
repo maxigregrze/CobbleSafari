@@ -1,0 +1,36 @@
+{
+    "schemaVersion": 1,
+    "dimensionId": "cobblesafari:dungeon_underground",
+    "isInstanciated": true,
+    "enableFinalCompletionAuspiciousReward": false,
+    "auspiciousPokeballRewardDisplayName": "cobblesafari.dimensional_objectives.auspicious_pokeball_reward_display_name",
+    "fallbackCompletionReward": "cobblesafari:dimensional_objectives/fallback",
+    "enableFinalCompletionReward": true,
+    "finalCompletionReward": "cobblesafari:dimensional_objectives/final",
+    "tasks": [
+      {
+        "taskId": "task_underground_base",
+        "weight": 40,
+        "countRange": [2, 5],
+        "allowedSpecies": ["random"],
+        "allowedTypes": ["fire", "water", "grass"],
+        "taskReward": "cobblesafari:dimensional_objectives/task_small"
+      },
+      {
+        "taskId": "task_underground_perfect",
+        "weight": 10,
+        "taskReward": "cobblesafari:dimensional_objectives/task_small"
+      },
+      {
+        "taskId": "task_catch_base",
+        "weight": 35,
+        "countRange": [2, 4],
+        "taskReward": "cobblesafari:dimensional_objectives/task_small"
+      },
+      {
+        "taskId": "task_cstrader_base",
+        "weight": 15,
+        "taskReward": "cobblesafari:dimensional_objectives/task_small"
+      }
+    ]
+  }

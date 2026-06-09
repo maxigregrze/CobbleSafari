@@ -207,6 +207,26 @@ public class DungeonPositionSavedData extends SavedData {
         return List.copyOf(instances.values());
     }
 
+    /**
+     * Resolves the live dungeon instance occupying the slot at {@code pos} in {@code dimensionId}
+     * (plan 118 §5.2). Returns {@code null} if the dimension is not a dungeon or no live instance
+     * (non-pending) matches the slot.
+     */
+    public DungeonInstanceRecord findInstanceByPosition(String dimensionId, BlockPos pos) {
+        DungeonConfig config = resolveDungeonConfig(dimensionId);
+        if (config == null || config.getZoneSize() <= 0) {
+            return null;
+        }
+        int slot = slotFromPos(pos, config.getZoneSize());
+        for (DungeonInstanceRecord record : instances.values()) {
+            if (!record.pendingDeletion() && record.slot() == slot
+                    && dimensionId.equals(record.dimensionId())) {
+                return record;
+            }
+        }
+        return null;
+    }
+
     public List<DungeonInstanceRecord> getPendingDeletionInstances() {
         return instances.values().stream()
                 .filter(DungeonInstanceRecord::pendingDeletion)

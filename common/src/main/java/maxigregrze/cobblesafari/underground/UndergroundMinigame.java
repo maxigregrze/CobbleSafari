@@ -72,6 +72,7 @@ public class UndergroundMinigame {
             return;
         }
         activeSessions.remove(sessionId);
+        maxigregrze.cobblesafari.objectives.ObjectivesManager.onExcavationFinished(serverPlayer);
 
         List<PlacedTreasure> collected = session.getGrid().getRevealedTreasures();
         if (!collected.isEmpty()) {

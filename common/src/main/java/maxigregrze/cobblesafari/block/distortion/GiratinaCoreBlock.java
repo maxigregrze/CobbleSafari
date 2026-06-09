@@ -169,6 +169,7 @@ public class GiratinaCoreBlock extends BaseEntityBlock {
             int trades = maxigregrze.cobblesafari.init.ModStats.awardAndGet(
                     serverPlayer, maxigregrze.cobblesafari.init.ModStats.DARK_ONE_TRADES);
             maxigregrze.cobblesafari.advancement.ModCriteria.GIRATINA_TRADE.trigger(serverPlayer, trades);
+            maxigregrze.cobblesafari.objectives.ObjectivesManager.onGiratinaTrade(serverPlayer);
         }
 
         serverLevel.playSound(null, corePos, ModSounds.GIRATINA_TRADE, SoundSource.BLOCKS, 1.0f, 1.0f);

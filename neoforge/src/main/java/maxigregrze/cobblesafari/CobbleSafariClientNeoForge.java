@@ -58,6 +58,7 @@ import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 import net.neoforged.neoforge.client.event.RegisterDimensionSpecialEffectsEvent;
 import net.neoforged.neoforge.client.event.RegisterClientTooltipComponentFactoriesEvent;
+import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
 import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
 import net.neoforged.neoforge.client.event.RenderGuiLayerEvent;
 import net.neoforged.neoforge.client.gui.VanillaGuiLayers;
@@ -84,6 +85,13 @@ public class CobbleSafariClientNeoForge {
             );
         }
         return unimplementedItems;
+    }
+
+    @SubscribeEvent
+    public static void onRegisterKeyMappings(RegisterKeyMappingsEvent event) {
+        event.register(maxigregrze.cobblesafari.client.rotomphone.RotomPhoneKeybind.OPEN_PHONE);
+        event.register(maxigregrze.cobblesafari.client.objectives.ObjectivesKeybind.TOGGLE_HUD);
+        maxigregrze.cobblesafari.client.hud.HudClientConfig.reload();
     }
 
     @SubscribeEvent
@@ -275,12 +283,27 @@ public class CobbleSafariClientNeoForge {
         CsMusicPlayer.onClientTick(mc);
         maxigregrze.cobblesafari.client.screen.rotomphone.RotomPhonePcSession.tickCleanup(mc);
         maxigregrze.cobblesafari.client.rotomphone.RotoGlideClient.tick(mc);
+        maxigregrze.cobblesafari.client.rotomphone.RotomPhoneKeybind.clientTick(mc);
+        maxigregrze.cobblesafari.client.objectives.ObjectivesKeybind.clientTick(mc);
+        maxigregrze.cobblesafari.client.objectives.ObjectivesHudController.clientTick(mc);
     }
 
     public static void onRenderGuiLayer(RenderGuiLayerEvent.Post event) {
         if (event.getName().equals(VanillaGuiLayers.HOTBAR)) {
             TimerHudOverlay.renderText(event.getGuiGraphics(), event.getPartialTick());
+            maxigregrze.cobblesafari.client.hud.ObjectivesHudOverlay.render(event.getGuiGraphics(), event.getPartialTick());
         }
+    }
+
+    public static void handleObjectivesHudSync(
+            maxigregrze.cobblesafari.network.ObjectivesHudSyncPayload payload, IPayloadContext context) {
+        context.enqueueWork(() ->
+                maxigregrze.cobblesafari.client.objectives.ObjectivesHudController.accept(payload));
+    }
+
+    public static void handleHudConfigRefresh(
+            maxigregrze.cobblesafari.network.HudConfigRefreshPayload payload, IPayloadContext context) {
+        context.enqueueWork(maxigregrze.cobblesafari.client.hud.HudClientConfig::reload);
     }
 
     public static void onItemTooltip(ItemTooltipEvent event) {

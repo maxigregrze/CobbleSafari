@@ -99,6 +99,7 @@ public class UndergroundNetworking {
                 int perfect = maxigregrze.cobblesafari.init.ModStats.awardAndGet(
                         player, maxigregrze.cobblesafari.init.ModStats.PERFECT_EXCAVATIONS);
                 maxigregrze.cobblesafari.advancement.ModCriteria.EXCAVATION_PERFECT.trigger(player, perfect);
+                maxigregrze.cobblesafari.objectives.ObjectivesManager.onExcavationPerfect(player);
 
                 Services.PLATFORM.sendPayloadToPlayer(player, new UndergroundPayloads.GameEndPayload(
                         payload.sessionId(),

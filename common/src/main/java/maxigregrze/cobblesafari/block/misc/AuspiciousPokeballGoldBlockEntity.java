@@ -154,4 +154,25 @@ public class AuspiciousPokeballGoldBlockEntity extends AuspiciousPokeballBlockEn
     public Set<String> getEarnersUnmodifiable() {
         return Collections.unmodifiableSet(this.earners);
     }
+
+    /**
+     * Appends a single earner name, switches the block to earnable mode and resyncs it
+     * (used by the dimensional-objectives auspicious redeem, plan 118 §8.4). No-op if the name is
+     * blank, too long, or the list is full.
+     */
+    public void addEarner(String name) {
+        if (name == null) {
+            return;
+        }
+        String trimmed = name.trim();
+        if (trimmed.isEmpty() || trimmed.length() > MAX_EARNER_NAME_LENGTH || this.earners.size() >= MAX_EARNERS) {
+            return;
+        }
+        this.earners.add(trimmed);
+        this.earnable = true;
+        setChanged();
+        if (this.level != null && !this.level.isClientSide()) {
+            this.level.sendBlockUpdated(getBlockPos(), getBlockState(), getBlockState(), Block.UPDATE_ALL);
+        }
+    }
 }

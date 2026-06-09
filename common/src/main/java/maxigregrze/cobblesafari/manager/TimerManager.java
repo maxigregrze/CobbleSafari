@@ -270,10 +270,14 @@ public class TimerManager {
                 player.sendSystemMessage(Component.translatable("cobblesafari.reset.daily_kick"));
             }
 
-            data.reset();
+            data.resetForDailyCycle();
             data.resetEntryFeePayDay();
             data.setLastSafariBallGrantDay(0);
-            player.sendSystemMessage(Component.translatable("cobblesafari.timer.reset"));
+            if (isSafari && SafariConfig.isEntryFeeEnabled()) {
+                player.sendSystemMessage(Component.translatable("cobblesafari.timer.reset_paid"));
+            } else {
+                player.sendSystemMessage(Component.translatable("cobblesafari.timer.reset"));
+            }
             CobbleSafari.LOGGER.info("Timer reset for player {} in dimension {} (daily reset)",
                     player.getName().getString(), data.getDimensionId());
         }

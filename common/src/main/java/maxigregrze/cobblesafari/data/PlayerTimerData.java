@@ -1,6 +1,7 @@
 package maxigregrze.cobblesafari.data;
 
 import maxigregrze.cobblesafari.config.DimensionTimerEntry;
+import maxigregrze.cobblesafari.config.SafariConfig;
 import maxigregrze.cobblesafari.config.SafariTimerConfig;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.Registries;
@@ -82,6 +83,22 @@ public class PlayerTimerData {
 
     public void reset() {
         this.remainingTicks = getInitialTicks(dimensionId);
+        this.lastResetTimestamp = System.currentTimeMillis();
+    }
+
+    /**
+     * Daily reset: when Safari entry fee is enabled, start at 0 (player must pay at the teleporter).
+     * Otherwise credit the full quota as before.
+     */
+    public void resetForDailyCycle() {
+        boolean paymentGatedSafari =
+                dimensionId.equals(SafariTimerConfig.getSafariDimensionId())
+                && SafariConfig.isEntryFeeEnabled();
+        if (paymentGatedSafari) {
+            this.remainingTicks = 0;
+        } else {
+            this.remainingTicks = getInitialTicks(dimensionId);
+        }
         this.lastResetTimestamp = System.currentTimeMillis();
     }
 

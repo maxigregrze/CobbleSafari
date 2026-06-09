@@ -60,6 +60,7 @@ public class DimensionEvents {
         maxigregrze.cobblesafari.csboss.CsBossDataLoader.load(server);
         maxigregrze.cobblesafari.csboss.BossBattleManager.recoverAll(server);
         maxigregrze.cobblesafari.csmusic.CsMusicDataLoader.load(server);
+        maxigregrze.cobblesafari.objectives.DimensionalObjectivesDataLoader.load(server);
     }
 
     public static void onServerStopping(MinecraftServer server) {
@@ -81,11 +82,13 @@ public class DimensionEvents {
             GtsService.tickDailyScheduler(server);
             GtsService.tickGcLocks(server);
             maxigregrze.cobblesafari.chat.ChatConversationService.tickDailyScheduler(server);
+            maxigregrze.cobblesafari.objectives.ObjectivesManager.tickDailyScheduler(server);
         }
         maxigregrze.cobblesafari.safari.SafariStateManager.onServerTick(server);
         maxigregrze.cobblesafari.unionroom.UnionRoomManager.tickSessionCheck(server);
         maxigregrze.cobblesafari.unionroom.UnionRoomManager.tickPendingExitSetups(server);
         tickPlaytimeStats(server);
+        maxigregrze.cobblesafari.objectives.ObjectivesManager.tickContext(server);
     }
 
     /**
@@ -150,5 +153,6 @@ public class DimensionEvents {
         RotoGlideServerLogic.removeState(player.getUUID());
         RotoFallGroundClear.removePlayer(player.getUUID());
         LAST_DIMENSION.remove(player.getUUID());
+        maxigregrze.cobblesafari.objectives.ObjectivesManager.onPlayerDisconnect(player.getUUID());
     }
 }

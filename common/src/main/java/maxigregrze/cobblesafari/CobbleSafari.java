@@ -104,7 +104,9 @@ public class CobbleSafari {
         PlayerSpawnerFactory.INSTANCE.getInfluenceBuilders().add(TypedEncounterBoostInfluence::new);
         PlayerSpawnerFactory.INSTANCE.getInfluenceBuilders().add(WildLevelModifierInfluence::new);
         PlayerSpawnerFactory.INSTANCE.getInfluenceBuilders().add(GuaranteedShinyInfluence::new);
+        PlayerSpawnerFactory.INSTANCE.getInfluenceBuilders().add(maxigregrze.cobblesafari.influence.ObjectivesShinyInfluence::new);
         SafariCatchEventHandler.register();
+        maxigregrze.cobblesafari.objectives.ObjectivesManager.register();
         PowerCaptureCatchRateHandler.register();
         PowerSalvageLootHandler.register();
         PowerFriendshipCatchHandler.register();

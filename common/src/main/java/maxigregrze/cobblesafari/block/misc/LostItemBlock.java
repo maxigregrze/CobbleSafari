@@ -178,6 +178,7 @@ public class LostItemBlock extends BaseEntityBlock {
 
         blockEntity.tryClaim(playerId);
         giveOrDropFromLootTable(serverLevel, pos, serverPlayer, blockEntity);
+        maxigregrze.cobblesafari.objectives.ObjectivesManager.onPokeballOpened(serverPlayer);
         return InteractionResult.CONSUME;
     }
 
