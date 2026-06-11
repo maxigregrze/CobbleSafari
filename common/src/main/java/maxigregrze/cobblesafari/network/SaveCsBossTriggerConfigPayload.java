@@ -12,7 +12,8 @@ public record SaveCsBossTriggerConfigPayload(
         String bossRef,
         String costItemId,
         String playerRadiusStr,
-        String blockRadiusStr
+        String blockRadiusStr,
+        String variant
 ) implements CustomPacketPayload {
 
     public static final CustomPacketPayload.Type<SaveCsBossTriggerConfigPayload> TYPE =
@@ -27,13 +28,15 @@ public record SaveCsBossTriggerConfigPayload(
                 buf.writeUtf(p.costItemId, MAX_STR);
                 buf.writeUtf(p.playerRadiusStr, 16);
                 buf.writeUtf(p.blockRadiusStr, 16);
+                buf.writeUtf(p.variant, MAX_STR);
             },
             buf -> new SaveCsBossTriggerConfigPayload(
                     buf.readBlockPos(),
                     buf.readUtf(MAX_STR),
                     buf.readUtf(MAX_STR),
                     buf.readUtf(16),
-                    buf.readUtf(16)
+                    buf.readUtf(16),
+                    buf.readUtf(MAX_STR)
             )
     );
 

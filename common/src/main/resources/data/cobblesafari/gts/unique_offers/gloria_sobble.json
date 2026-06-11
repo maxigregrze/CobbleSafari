@@ -1,0 +1,17 @@
+{
+  "offerId": "gloria_sobble",
+  "tags": [
+    "trainerspokemon"
+  ],
+  "given": "sobble level=1 originaltrainertype=npc originaltrainer=Gloria",
+  "givenMarks": [
+    "cobblemon:ribbon_partner"
+  ],
+  "givenActiveMark": "cobblemon:ribbon_partner",
+  "wish": {
+    "species": "inteleon",
+    "levelBucket": 9,
+    "gender": "any",
+    "shiny": "any"
+  }
+}

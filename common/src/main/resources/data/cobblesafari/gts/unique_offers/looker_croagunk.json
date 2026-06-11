@@ -1,0 +1,17 @@
+{
+  "offerId": "looker_croagunk",
+  "tags": [
+    "trainerspokemon"
+  ],
+  "given": "croagunk level=1 originaltrainertype=npc originaltrainer=Looker",
+  "givenMarks": [
+    "cobblemon:ribbon_partner"
+  ],
+  "givenActiveMark": "cobblemon:ribbon_partner",
+  "wish": {
+    "species": "croagunk",
+    "levelBucket": 9,
+    "gender": "any",
+    "shiny": "any"
+  }
+}

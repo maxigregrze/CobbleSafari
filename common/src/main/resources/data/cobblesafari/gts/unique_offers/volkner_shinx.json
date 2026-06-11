@@ -1,0 +1,17 @@
+{
+  "offerId": "volkner_shinx",
+  "tags": [
+    "trainerspokemon"
+  ],
+  "given": "shinx level=1 originaltrainertype=npc originaltrainer=Volkner",
+  "givenMarks": [
+    "cobblemon:ribbon_partner"
+  ],
+  "givenActiveMark": "cobblemon:ribbon_partner",
+  "wish": {
+    "species": "luxray",
+    "levelBucket": 9,
+    "gender": "any",
+    "shiny": "any"
+  }
+}

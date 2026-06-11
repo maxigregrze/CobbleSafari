@@ -1,0 +1,17 @@
+{
+  "offerId": "miriam_mareanie",
+  "tags": [
+    "trainerspokemon"
+  ],
+  "given": "mareanie level=1 originaltrainertype=npc originaltrainer=Miriam",
+  "givenMarks": [
+    "cobblemon:ribbon_partner"
+  ],
+  "givenActiveMark": "cobblemon:ribbon_partner",
+  "wish": {
+    "species": "toxapex",
+    "levelBucket": 9,
+    "gender": "any",
+    "shiny": "any"
+  }
+}

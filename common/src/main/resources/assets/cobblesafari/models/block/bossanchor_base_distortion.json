@@ -1,0 +1,7 @@
+{
+  "parent": "cobblesafari:block/bossanchor_base",
+  "textures": {
+    "0": "cobblesafari:block/bossanchor_base_distortion",
+    "particle": "cobblesafari:block/bossanchor_base_distortion"
+  }
+}

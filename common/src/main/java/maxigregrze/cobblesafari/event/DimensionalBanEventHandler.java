@@ -4,6 +4,7 @@ import com.cobblemon.mod.common.api.Priority;
 import com.cobblemon.mod.common.api.events.CobblemonEvents;
 import kotlin.Unit;
 import maxigregrze.cobblesafari.CobbleSafari;
+import maxigregrze.cobblesafari.effect.RedShackledPlayerGuard;
 import maxigregrze.cobblesafari.manager.BannedItemsManager;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -41,6 +42,11 @@ public class DimensionalBanEventHandler {
             return InteractionResultHolder.pass(stack);
         }
 
+        InteractionResultHolder<ItemStack> shackled = RedShackledPlayerGuard.onUseItem(player, world, hand);
+        if (shackled != null) {
+            return shackled;
+        }
+
         if (BannedItemsManager.isItemBanned(world.dimension(), stack.getItem())) {
             if (!world.isClientSide() && player instanceof ServerPlayer serverPlayer) {
                 serverPlayer.sendSystemMessage(
@@ -54,6 +60,11 @@ public class DimensionalBanEventHandler {
     }
 
     public static InteractionResult onUseBlock(Player player, Level world, InteractionHand hand, BlockHitResult hitResult) {
+        InteractionResult shackled = RedShackledPlayerGuard.onUseBlock(player, world, hand);
+        if (shackled != InteractionResult.PASS) {
+            return shackled;
+        }
+
         ItemStack stack = player.getItemInHand(hand);
 
         if (!stack.isEmpty() && !player.isCreative()) {
@@ -128,6 +139,11 @@ public class DimensionalBanEventHandler {
     }
 
     public static InteractionResult onAttackBlock(Player player, Level world, InteractionHand hand, BlockPos pos, Direction direction) {
+        InteractionResult shackled = RedShackledPlayerGuard.onAttackBlock(player, world, hand, pos, direction);
+        if (shackled != InteractionResult.PASS) {
+            return shackled;
+        }
+
         if (player.isCreative()) {
             return InteractionResult.PASS;
         }
@@ -148,6 +164,10 @@ public class DimensionalBanEventHandler {
     }
 
     public static boolean onBlockBreakTry(ResourceKey<Level> dimension, Player player, BlockPos pos) {
+        if (!RedShackledPlayerGuard.onBlockBreakTry(dimension, player, pos)) {
+            return false;
+        }
+
         if (player.isCreative()) {
             return true;
         }
@@ -222,6 +242,8 @@ public class DimensionalBanEventHandler {
             }
             return Unit.INSTANCE;
         });
+
+        RedShackledPlayerGuard.registerCobblemonEvents();
 
         CobbleSafari.LOGGER.info("CobbleSafari >> Dimensional ban event handlers registered!");
     }

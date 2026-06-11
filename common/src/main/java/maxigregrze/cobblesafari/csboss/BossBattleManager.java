@@ -12,8 +12,12 @@ import maxigregrze.cobblesafari.data.CsBossSavedData;
 import maxigregrze.cobblesafari.entity.csboss.CsBossBulletEntity;
 import maxigregrze.cobblesafari.entity.csboss.CsBossEntity;
 import maxigregrze.cobblesafari.entity.csboss.CsBossMinionEntity;
+import maxigregrze.cobblesafari.entity.csboss.attacks.CsBossPortalEntity;
+import maxigregrze.cobblesafari.entity.csboss.attacks.CsBossSpawnProjectileEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -44,6 +48,10 @@ public final class BossBattleManager {
     public enum Outcome { WIN, LOSS }
 
     private static final Map<Integer, BossBattleSession> SESSIONS = new LinkedHashMap<>();
+
+    /** Knockback d'activation (plan 122 § 5) : rayon horizontal et force (≥ 8 blocs de recul). */
+    private static final double ACTIVATION_KNOCKBACK_RADIUS = 6.0;
+    private static final double ACTIVATION_KNOCKBACK_STRENGTH = 2.0;
 
     private BossBattleManager() {}
 
@@ -120,6 +128,12 @@ public final class BossBattleManager {
         if (state.hasProperty(CsBossTriggerBlock.ACTIVE)) {
             level.setBlock(pos, state.setValue(CsBossTriggerBlock.ACTIVE, true), Block.UPDATE_ALL);
         }
+        // Plan 122 : projectile d'invocation au-dessus de l'ancre + knockback des joueurs proches.
+        Vec3 center2 = session.getArenaCenter();
+        CsBossSpawnProjectileEntity proj = CsBossSpawnProjectileEntity.spawn(
+                level, center2.x, pos.getY() + 1.0, center2.z, id);
+        session.setSummonProjectileUuid(proj.getUUID());
+        knockbackNearbyPlayers(level, pos);
         for (ServerPlayer p : participants) {
             session.getBossBar().addPlayer(p);
             ModStats.award(p, ModStats.CSBOSS_BATTLES_ATTEMPTED);
@@ -148,6 +162,18 @@ public final class BossBattleManager {
                 continue;
             }
             switch (s.getPhase()) {
+                case SUMMON_RISE -> {
+                    tickSummonRise(server, level, s);
+                    if (s.allDiscarded()) {
+                        toResolveLoss.add(s.getId());
+                    }
+                }
+                case PORTAL_OPENING -> {
+                    tickPortalOpening(server, level, s);
+                    if (s.allDiscarded()) {
+                        toResolveLoss.add(s.getId());
+                    }
+                }
                 case ENTRANCE -> {
                     tickEntrance(server, level, s);
                     if (s.allDiscarded()) {
@@ -164,9 +190,14 @@ public final class BossBattleManager {
                 }
                 case DYING -> {
                     switch (tickDying(level, s)) {
-                        case FINALIZE_WIN -> toFinalizeWin.add(s.getId());
+                        case FINALIZE_WIN -> s.setPhase(BossBattleSession.Phase.PORTAL_CLOSING); // plan 122
                         case NEXT_PHASE -> toNextPhase.add(s.getId());
                         case CONTINUE -> { /* in progress */ }
+                    }
+                }
+                case PORTAL_CLOSING -> {
+                    if (tickPortalClosing(level, s)) {
+                        toFinalizeWin.add(s.getId());
                     }
                 }
             }
@@ -186,6 +217,80 @@ public final class BossBattleManager {
     }
 
     private enum DyingResult { CONTINUE, FINALIZE_WIN, NEXT_PHASE }
+
+    // --- Invocation : projectile + portail (plan 122) ------------------------
+
+    /**
+     * Phase {@code SUMMON_RISE} : le projectile d'ancre monte rapidement jusqu'à la hauteur
+     * d'apparition du boss. En fin : explosion (sans dégâts), suppression du projectile, spawn du
+     * portail (échelle 0).
+     */
+    private static void tickSummonRise(MinecraftServer server, ServerLevel level, BossBattleSession s) {
+        int t = s.tickPhase();
+        updateParticipants(server, level, s);
+        s.getBossBar().setProgress(1.0f);
+        Vec3 c = s.getArenaCenter();
+        double startY = s.getTriggerPos().getY() + 1.0;
+        double targetY = s.getTriggerPos().getY() + CsBossEntity.STAND_Y_OFFSET + CsBossEntity.ENTRANCE_HEIGHT;
+        float p = Math.min(1.0f, t / (float) BossBattleSession.SUMMON_RISE_TICKS);
+        double y = startY + (targetY - startY) * p;
+        if (level.getEntity(s.getSummonProjectileUuid()) instanceof CsBossSpawnProjectileEntity proj) {
+            proj.setPos(c.x, y, c.z);
+            proj.setDeltaMovement(Vec3.ZERO);
+        }
+        parkBoss(level, s); // boss invisible (échelle 0) tant que le portail n'est pas ouvert
+        if (t >= BossBattleSession.SUMMON_RISE_TICKS) {
+            // Explosion sans dégâts (son + visuel).
+            level.sendParticles(ParticleTypes.EXPLOSION_EMITTER, c.x, targetY, c.z, 1, 0, 0, 0, 0);
+            level.playSound(null, c.x, targetY, c.z, SoundEvents.GENERIC_EXPLODE.value(),
+                    SoundSource.HOSTILE, 1.0f, 1.0f);
+            removeEntity(level, s.getSummonProjectileUuid());
+            s.setSummonProjectileUuid(null);
+            CsBossPortalEntity portal = CsBossPortalEntity.spawn(level, c.x, targetY, c.z,
+                    s.getId(), s.getDefinition().portalType());
+            s.setPortalUuid(portal.getUUID());
+            s.setPhase(BossBattleSession.Phase.PORTAL_OPENING);
+        }
+    }
+
+    /** Phase {@code PORTAL_OPENING} : le portail passe de l'échelle 0 à 1 sur {@code PORTAL_OPEN_TICKS}. */
+    private static void tickPortalOpening(MinecraftServer server, ServerLevel level, BossBattleSession s) {
+        int t = s.tickPhase();
+        updateParticipants(server, level, s);
+        s.getBossBar().setProgress(1.0f);
+        float p = Math.min(1.0f, t / (float) BossBattleSession.PORTAL_OPEN_TICKS);
+        if (level.getEntity(s.getPortalUuid()) instanceof CsBossPortalEntity portal) {
+            portal.setAnim(p);
+        }
+        parkBoss(level, s);
+        if (t >= BossBattleSession.PORTAL_OPEN_TICKS) {
+            if (level.getEntity(s.getPortalUuid()) instanceof CsBossPortalEntity portal) {
+                portal.setAnim(1.0f);
+            }
+            s.setPhase(BossBattleSession.Phase.ENTRANCE); // déclenche l'entrée existante du boss
+        }
+    }
+
+    /**
+     * Phase {@code PORTAL_CLOSING} : après la mort finale du boss, le portail rétrécit jusqu'à 0
+     * sur {@code PORTAL_CLOSE_TICKS}. Renvoie {@code true} une fois terminé.
+     */
+    private static boolean tickPortalClosing(ServerLevel level, BossBattleSession s) {
+        int t = s.tickPhase();
+        float p = Math.min(1.0f, t / (float) BossBattleSession.PORTAL_CLOSE_TICKS);
+        if (level.getEntity(s.getPortalUuid()) instanceof CsBossPortalEntity portal) {
+            portal.setAnim(1.0f - p);
+        }
+        return t >= BossBattleSession.PORTAL_CLOSE_TICKS;
+    }
+
+    /** Maintient le boss parqué et invisible (échelle 0, immobile) pendant les pré‑phases. */
+    private static void parkBoss(ServerLevel level, BossBattleSession s) {
+        if (level.getEntity(s.getBossUuid()) instanceof CsBossEntity boss) {
+            boss.setAnim(0.0f);
+            boss.setDeltaMovement(Vec3.ZERO);
+        }
+    }
 
     /** Entrance phase: boss descends from ENTRANCE_HEIGHT and scales from 0 to its size. */
     private static void tickEntrance(MinecraftServer server, ServerLevel level, BossBattleSession s) {
@@ -277,8 +382,8 @@ public final class BossBattleManager {
         }
         // ≤4: all; >4: 4 at random (shuffle + stop at 4 slots).
         java.util.Collections.shuffle(players);
-        // Distance = boss hitbox edge + 1 block; projected on diagonal (component / √2).
-        double distance = boss.getBbWidth() / 2.0 + 1.0;
+        // Distance = boss hitbox edge + 2.5 blocks; projected on diagonal (component / √2).
+        double distance = boss.getBbWidth() / 2.0 + 2.5;
         double d = distance / Math.sqrt(2.0);
         int triggerY = s.getTriggerPos().getY();
         int idx = 0;
@@ -421,6 +526,8 @@ public final class BossBattleManager {
         if (level != null) {
             stopBossMusic(server, s);
             removeEntity(level, s.getBossUuid());
+            removeEntity(level, s.getSummonProjectileUuid()); // plan 122
+            removeEntity(level, s.getPortalUuid());           // plan 122 : coupure nette, sans fermeture
             for (UUID u : new ArrayList<>(s.getActiveBullets())) {
                 removeEntity(level, u);
             }
@@ -543,6 +650,8 @@ public final class BossBattleManager {
                         boss.getX(), boss.getY() + boss.getBbHeight() * 0.5, boss.getZ(), 1, 0, 0, 0, 0);
             }
             removeEntity(level, s.getBossUuid());
+            removeEntity(level, s.getSummonProjectileUuid()); // plan 122
+            removeEntity(level, s.getPortalUuid());           // plan 122 : portail fermé (échelle 0)
             for (UUID u : new ArrayList<>(s.getActiveBullets())) {
                 removeEntity(level, u);
             }
@@ -596,6 +705,9 @@ public final class BossBattleManager {
     }
 
     private static void removeEntity(ServerLevel level, UUID uuid) {
+        if (uuid == null) {
+            return;
+        }
         Entity e = level.getEntity(uuid);
         if (e != null) {
             e.discard();
@@ -627,7 +739,8 @@ public final class BossBattleManager {
     private static void removeStrayBullets(ServerLevel level) {
         List<Entity> stray = new ArrayList<>();
         for (Entity e : level.getAllEntities()) {
-            if (e instanceof CsBossBulletEntity || e instanceof CsBossMinionEntity) {
+            if (e instanceof CsBossBulletEntity || e instanceof CsBossMinionEntity
+                    || e instanceof CsBossSpawnProjectileEntity || e instanceof CsBossPortalEntity) {
                 stray.add(e);
             }
         }
@@ -691,6 +804,31 @@ public final class BossBattleManager {
     }
 
     // --- Helpers -------------------------------------------------------------
+
+    /** Repousse horizontalement vers l'extérieur tous les joueurs proches de l'ancre (plan 122 § 5). */
+    private static void knockbackNearbyPlayers(ServerLevel level, BlockPos pos) {
+        double cx = pos.getX() + 0.5;
+        double cz = pos.getZ() + 0.5;
+        double r2 = ACTIVATION_KNOCKBACK_RADIUS * ACTIVATION_KNOCKBACK_RADIUS;
+        for (ServerPlayer p : level.getPlayers(pl -> {
+            if (!pl.isAlive()) {
+                return false;
+            }
+            double dx = pl.getX() - cx;
+            double dz = pl.getZ() - cz;
+            return dx * dx + dz * dz <= r2;
+        })) {
+            // knockback(strength, x, z) repousse à l'opposé de (x, z) : on pousse loin de l'ancre.
+            double dirX = cx - p.getX();
+            double dirZ = cz - p.getZ();
+            if (dirX * dirX + dirZ * dirZ < 1.0e-4) {
+                dirX = 1.0; // joueur pile sur l'ancre : direction de secours
+                dirZ = 0.0;
+            }
+            p.knockback(ACTIVATION_KNOCKBACK_STRENGTH, dirX, dirZ);
+            p.hurtMarked = true; // force la synchro de la vélocité au client
+        }
+    }
 
     private static boolean withinArena(Vec3 pos, Vec3 center, int radius, int yTol) {
         double dx = pos.x - center.x;

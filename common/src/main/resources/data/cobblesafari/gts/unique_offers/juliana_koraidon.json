@@ -1,0 +1,17 @@
+{
+  "offerId": "juliana_koraidon",
+  "tags": [
+    "trainerspokemon"
+  ],
+  "given": "koraidon level=1 originaltrainertype=npc originaltrainer=Juliana",
+  "givenMarks": [
+    "cobblemon:ribbon_partner"
+  ],
+  "givenActiveMark": "cobblemon:ribbon_partner",
+  "wish": {
+    "species": "koraidon",
+    "levelBucket": 9,
+    "gender": "any",
+    "shiny": "any"
+  }
+}

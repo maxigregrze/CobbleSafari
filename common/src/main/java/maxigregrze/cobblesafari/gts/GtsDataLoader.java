@@ -186,6 +186,19 @@ public final class GtsDataLoader {
             return null;
         }
 
+        List<String> tags = new ArrayList<>();
+        if (json.has("tags") && json.get("tags").isJsonArray()) {
+            for (JsonElement el : json.getAsJsonArray("tags")) {
+                if (!el.isJsonPrimitive()) {
+                    continue;
+                }
+                String tag = el.getAsString().trim().toLowerCase(Locale.ROOT);
+                if (!tag.isEmpty() && !tags.contains(tag)) {
+                    tags.add(tag);
+                }
+            }
+        }
+
         return new GtsUniqueOfferDefinition(
                 offerId,
                 given,
@@ -195,6 +208,7 @@ public final class GtsDataLoader {
                 levelBucket,
                 wishGender,
                 wishShiny,
-                sourcePath);
+                sourcePath,
+                tags);
     }
 }

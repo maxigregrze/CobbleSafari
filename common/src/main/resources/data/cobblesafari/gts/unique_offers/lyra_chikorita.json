@@ -1,0 +1,17 @@
+{
+  "offerId": "lyra_chikorita",
+  "tags": [
+    "trainerspokemon"
+  ],
+  "given": "chikorita level=1 originaltrainertype=npc originaltrainer=Lyra",
+  "givenMarks": [
+    "cobblemon:ribbon_partner"
+  ],
+  "givenActiveMark": "cobblemon:ribbon_partner",
+  "wish": {
+    "species": "meganium",
+    "levelBucket": 9,
+    "gender": "any",
+    "shiny": "any"
+  }
+}

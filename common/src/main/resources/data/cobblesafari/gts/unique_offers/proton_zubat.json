@@ -1,0 +1,17 @@
+{
+  "offerId": "proton_zubat",
+  "tags": [
+    "trainerspokemon"
+  ],
+  "given": "zubat level=1 originaltrainertype=npc originaltrainer=Proton",
+  "givenMarks": [
+    "cobblemon:ribbon_partner"
+  ],
+  "givenActiveMark": "cobblemon:ribbon_partner",
+  "wish": {
+    "species": "golbat",
+    "levelBucket": 9,
+    "gender": "any",
+    "shiny": "any"
+  }
+}

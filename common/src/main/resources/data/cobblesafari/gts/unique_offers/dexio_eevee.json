@@ -1,0 +1,17 @@
+{
+  "offerId": "dexio_eevee",
+  "tags": [
+    "trainerspokemon"
+  ],
+  "given": "eevee level=1 originaltrainertype=npc originaltrainer=Dexio",
+  "givenMarks": [
+    "cobblemon:ribbon_partner"
+  ],
+  "givenActiveMark": "cobblemon:ribbon_partner",
+  "wish": {
+    "species": "espeon",
+    "levelBucket": 9,
+    "gender": "any",
+    "shiny": "any"
+  }
+}

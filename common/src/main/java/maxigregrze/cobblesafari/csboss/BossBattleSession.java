@@ -30,14 +30,21 @@ import java.util.UUID;
  */
 public class BossBattleSession {
 
-    /** Session phases: entrance (delay), active combat, dying (death animation). */
-    public enum Phase { ENTRANCE, ACTIVE, DYING }
+    /**
+     * Session phases (plan 122) : montée du projectile d'ancre, ouverture du portail, entrée,
+     * combat, mort, fermeture du portail.
+     */
+    public enum Phase { SUMMON_RISE, PORTAL_OPENING, ENTRANCE, ACTIVE, DYING, PORTAL_CLOSING }
 
     /** Entrance (2 s) and dying duration. */
     public static final int ENTRANCE_TICKS = 40;
     public static final int DEATH_TICKS = 60;
+    /** Pré‑phases / post‑phase d'invocation (plan 122). */
+    public static final int SUMMON_RISE_TICKS = 12;   // ~0,6 s : montée rapide du projectile
+    public static final int PORTAL_OPEN_TICKS = 40;   // 2 s : échelle 0 → 1
+    public static final int PORTAL_CLOSE_TICKS = 20;  // 1 s : échelle 1 → 0
 
-    private Phase phase = Phase.ENTRANCE;
+    private Phase phase = Phase.SUMMON_RISE;
     private int phaseTimer = 0;
 
     private final int id;
@@ -72,6 +79,13 @@ public class BossBattleSession {
     /** Resolved next phase definition, pending (mid-dying), or {@code null}. */
     @Nullable
     private CsBossDefinition pendingNextDef;
+
+    /** Projectile d'invocation (plan 122) ; transitoire, nettoyé après l'explosion. */
+    @Nullable
+    private UUID summonProjectileUuid;
+    /** Portail d'invocation (plan 122) ; vit tout le combat, fermé après la mort. */
+    @Nullable
+    private UUID portalUuid;
 
     public BossBattleSession(int id, ResourceKey<Level> dimension, BlockPos triggerPos,
                              CsBossDefinition def, UUID bossUuid, Set<UUID> participantUuids,
@@ -132,6 +146,24 @@ public class BossBattleSession {
 
     public void setPendingNextDef(@Nullable CsBossDefinition next) {
         this.pendingNextDef = next;
+    }
+
+    @Nullable
+    public UUID getSummonProjectileUuid() {
+        return summonProjectileUuid;
+    }
+
+    public void setSummonProjectileUuid(@Nullable UUID uuid) {
+        this.summonProjectileUuid = uuid;
+    }
+
+    @Nullable
+    public UUID getPortalUuid() {
+        return portalUuid;
+    }
+
+    public void setPortalUuid(@Nullable UUID uuid) {
+        this.portalUuid = uuid;
     }
 
     /**

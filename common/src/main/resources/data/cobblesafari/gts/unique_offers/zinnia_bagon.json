@@ -1,0 +1,17 @@
+{
+  "offerId": "zinnia_bagon",
+  "tags": [
+    "trainerspokemon"
+  ],
+  "given": "bagon level=1 originaltrainertype=npc originaltrainer=Zinnia",
+  "givenMarks": [
+    "cobblemon:ribbon_partner"
+  ],
+  "givenActiveMark": "cobblemon:ribbon_partner",
+  "wish": {
+    "species": "salamence",
+    "levelBucket": 9,
+    "gender": "any",
+    "shiny": "any"
+  }
+}

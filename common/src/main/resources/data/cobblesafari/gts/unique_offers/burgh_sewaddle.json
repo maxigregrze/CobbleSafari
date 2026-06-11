@@ -1,0 +1,17 @@
+{
+  "offerId": "burgh_sewaddle",
+  "tags": [
+    "trainerspokemon"
+  ],
+  "given": "sewaddle level=1 originaltrainertype=npc originaltrainer=Burgh",
+  "givenMarks": [
+    "cobblemon:ribbon_partner"
+  ],
+  "givenActiveMark": "cobblemon:ribbon_partner",
+  "wish": {
+    "species": "leavanny",
+    "levelBucket": 9,
+    "gender": "any",
+    "shiny": "any"
+  }
+}

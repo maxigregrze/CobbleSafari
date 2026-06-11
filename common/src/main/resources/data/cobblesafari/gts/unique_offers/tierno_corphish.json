@@ -1,0 +1,17 @@
+{
+  "offerId": "tierno_corphish",
+  "tags": [
+    "trainerspokemon"
+  ],
+  "given": "corphish level=1 originaltrainertype=npc originaltrainer=Tierno",
+  "givenMarks": [
+    "cobblemon:ribbon_partner"
+  ],
+  "givenActiveMark": "cobblemon:ribbon_partner",
+  "wish": {
+    "species": "crawdaunt",
+    "levelBucket": 9,
+    "gender": "any",
+    "shiny": "any"
+  }
+}

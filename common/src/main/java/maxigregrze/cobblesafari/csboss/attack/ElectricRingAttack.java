@@ -19,12 +19,11 @@ import java.util.List;
 public class ElectricRingAttack implements CsBossAttack {
 
     private static final int RING_RADIUS = 3;
-    private static final int WAVE_INTERVAL = 140; // 7 s
-    private static final int NOMINAL_WAVES = 4;   // ±25% ⇒ 3–5
+    private static final int WAVE_INTERVAL = 120; // 6 s (rings at 0 s and 6 s)
+    private static final int WAVES = 2;           // deterministic (2*120 = 240)
     private static final List<BlockPos> RING = CsBossGridShapes.filledCircle(RING_RADIUS);
 
     private final String id;
-    private final net.minecraft.util.RandomSource rng = net.minecraft.util.RandomSource.create();
     private int waves;
     private int tick;
     private int wavesSpawned;
@@ -43,7 +42,7 @@ public class ElectricRingAttack implements CsBossAttack {
         this.tick = 0;
         this.wavesSpawned = 0;
         this.done = false;
-        this.waves = CsBossAttackLib.varyOccurrences(NOMINAL_WAVES, rng);
+        this.waves = WAVES;
     }
 
     @Override

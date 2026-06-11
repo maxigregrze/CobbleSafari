@@ -1,0 +1,17 @@
+{
+  "offerId": "naveen_scraggy",
+  "tags": [
+    "trainerspokemon"
+  ],
+  "given": "scraggy level=1 originaltrainertype=npc originaltrainer=Naveen",
+  "givenMarks": [
+    "cobblemon:ribbon_partner"
+  ],
+  "givenActiveMark": "cobblemon:ribbon_partner",
+  "wish": {
+    "species": "scrafty",
+    "levelBucket": 9,
+    "gender": "any",
+    "shiny": "any"
+  }
+}

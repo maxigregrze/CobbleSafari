@@ -1,0 +1,17 @@
+{
+  "offerId": "dana_regice",
+  "tags": [
+    "trainerspokemon"
+  ],
+  "given": "regice level=1 originaltrainertype=npc originaltrainer=Dana",
+  "givenMarks": [
+    "cobblemon:ribbon_partner"
+  ],
+  "givenActiveMark": "cobblemon:ribbon_partner",
+  "wish": {
+    "species": "regice",
+    "levelBucket": 9,
+    "gender": "any",
+    "shiny": "any"
+  }
+}

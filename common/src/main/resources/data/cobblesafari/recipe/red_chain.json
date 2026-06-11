@@ -1,0 +1,16 @@
+{
+    "type": "minecraft:crafting_shaped",
+    "pattern": [
+        "FFF",
+        "FCF",
+        "FFF"
+    ],
+    "key": {
+        "F": { "item": "cobblesafari:redchain_fragment" },
+        "C": { "item": "cobblesafari:red_chain_core" }
+    },
+    "result": {
+        "id": "cobblesafari:red_chain",
+        "count": 1
+    }
+}

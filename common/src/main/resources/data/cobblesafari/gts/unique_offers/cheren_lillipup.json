@@ -1,0 +1,17 @@
+{
+  "offerId": "cheren_lillipup",
+  "tags": [
+    "trainerspokemon"
+  ],
+  "given": "lillipup level=1 originaltrainertype=npc originaltrainer=Cheren",
+  "givenMarks": [
+    "cobblemon:ribbon_partner"
+  ],
+  "givenActiveMark": "cobblemon:ribbon_partner",
+  "wish": {
+    "species": "stoutland",
+    "levelBucket": 9,
+    "gender": "any",
+    "shiny": "any"
+  }
+}

@@ -1,5 +1,6 @@
 package maxigregrze.cobblesafari.client.screen;
 
+import maxigregrze.cobblesafari.block.csboss.AnchorVariant;
 import maxigregrze.cobblesafari.network.OpenCsBossTriggerConfigPayload;
 import maxigregrze.cobblesafari.network.SaveCsBossTriggerConfigPayload;
 import maxigregrze.cobblesafari.platform.Services;
@@ -18,6 +19,7 @@ public class CsBossTriggerConfigScreen extends Screen {
     private static final int AFTER_FIELD_GAP = 12;
     private static final int EDIT_HEIGHT = 20;
     private static final int CONTENT_TOP_Y = 48;
+    private static final int VARIANT_ROW_HEIGHT = 20;
 
     private final OpenCsBossTriggerConfigPayload initial;
 
@@ -25,10 +27,15 @@ public class CsBossTriggerConfigScreen extends Screen {
     private EditBox costItemBox;
     private EditBox playerRadiusBox;
     private EditBox blockRadiusBox;
+    private AnchorVariant variant;
+    private int variantRowY;
+    private Button variantPrevButton;
+    private Button variantNextButton;
 
     public CsBossTriggerConfigScreen(OpenCsBossTriggerConfigPayload initial) {
         super(Component.translatable("gui.cobblesafari.csboss.title"));
         this.initial = initial;
+        this.variant = AnchorVariant.byName(initial.variant());
     }
 
     @Override
@@ -41,13 +48,23 @@ public class CsBossTriggerConfigScreen extends Screen {
         this.blockRadiusBox = makeBox(left, 150, Integer.toString(this.initial.blockRadius()));
 
         int duoY = this.height - 28;
+        this.variantPrevButton = Button.builder(Component.literal("< "), b -> {
+            this.variant = this.variant.prev();
+        }).bounds(left, 0, 20, VARIANT_ROW_HEIGHT).build();
+        this.variantNextButton = Button.builder(Component.literal(" >"), b -> {
+            this.variant = this.variant.next();
+        }).bounds(left + 236, 0, 20, VARIANT_ROW_HEIGHT).build();
+        this.addRenderableWidget(this.variantPrevButton);
+        this.addRenderableWidget(this.variantNextButton);
+
         this.addRenderableWidget(Button.builder(Component.translatable("gui.cobblesafari.csboss.save"), b -> {
             Services.PLATFORM.sendPayloadToServer(new SaveCsBossTriggerConfigPayload(
                     this.initial.pos(),
                     this.bossRefBox.getValue(),
                     this.costItemBox.getValue(),
                     this.playerRadiusBox.getValue(),
-                    this.blockRadiusBox.getValue()
+                    this.blockRadiusBox.getValue(),
+                    this.variant.getSerializedName()
             ));
             this.onClose();
         }).bounds(left, duoY, 150, 20).build());
@@ -79,6 +96,10 @@ public class CsBossTriggerConfigScreen extends Screen {
         y += stride();
         this.playerRadiusBox.setPosition(left, y);
         this.blockRadiusBox.setPosition(left + 158, y);
+        y += stride();
+        this.variantRowY = y;
+        this.variantPrevButton.setPosition(left, y);
+        this.variantNextButton.setPosition(left + 236, y);
     }
 
     private EditBox[] boxes() {
@@ -119,6 +140,11 @@ public class CsBossTriggerConfigScreen extends Screen {
         label(g, this.costItemBox, "gui.cobblesafari.csboss.cost_item");
         label(g, this.playerRadiusBox, "gui.cobblesafari.csboss.player_radius");
         label(g, this.blockRadiusBox, "gui.cobblesafari.csboss.block_radius");
+        int left = this.width / 2 - 154;
+        g.drawString(this.font, Component.translatable("gui.cobblesafari.csboss.variant"), left,
+                this.variantRowY - LABEL_TO_FIELD_GAP - this.font.lineHeight, 0xA0A0A0, false);
+        g.drawCenteredString(this.font, Component.translatable("gui.cobblesafari.csboss.variant." + this.variant.getSerializedName()),
+                left + 128, this.variantRowY + (VARIANT_ROW_HEIGHT - this.font.lineHeight) / 2, 0xFFFFFF);
     }
 
     @Override

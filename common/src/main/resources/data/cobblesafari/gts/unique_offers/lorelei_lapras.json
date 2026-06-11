@@ -1,0 +1,17 @@
+{
+  "offerId": "lorelei_lapras",
+  "tags": [
+    "trainerspokemon"
+  ],
+  "given": "lapras level=1 originaltrainertype=npc originaltrainer=Lorelei",
+  "givenMarks": [
+    "cobblemon:ribbon_partner"
+  ],
+  "givenActiveMark": "cobblemon:ribbon_partner",
+  "wish": {
+    "species": "lapras",
+    "levelBucket": 9,
+    "gender": "any",
+    "shiny": "any"
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "offerId": "liza_lunatone",
+  "tags": [
+    "trainerspokemon"
+  ],
+  "given": "lunatone level=1 originaltrainertype=npc originaltrainer=Liza",
+  "givenMarks": [
+    "cobblemon:ribbon_partner"
+  ],
+  "givenActiveMark": "cobblemon:ribbon_partner",
+  "wish": {
+    "species": "lunatone",
+    "levelBucket": 9,
+    "gender": "any",
+    "shiny": "any"
+  }
+}

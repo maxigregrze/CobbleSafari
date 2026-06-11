@@ -1,0 +1,17 @@
+{
+  "offerId": "ghetsis_deino",
+  "tags": [
+    "trainerspokemon"
+  ],
+  "given": "deino level=1 originaltrainertype=npc originaltrainer=Ghetsis",
+  "givenMarks": [
+    "cobblemon:ribbon_partner"
+  ],
+  "givenActiveMark": "cobblemon:ribbon_partner",
+  "wish": {
+    "species": "hydreigon",
+    "levelBucket": 9,
+    "gender": "any",
+    "shiny": "any"
+  }
+}

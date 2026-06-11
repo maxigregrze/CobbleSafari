@@ -1,0 +1,17 @@
+{
+  "offerId": "olympia_sigilyph",
+  "tags": [
+    "trainerspokemon"
+  ],
+  "given": "sigilyph level=1 originaltrainertype=npc originaltrainer=Olympia",
+  "givenMarks": [
+    "cobblemon:ribbon_partner"
+  ],
+  "givenActiveMark": "cobblemon:ribbon_partner",
+  "wish": {
+    "species": "sigilyph",
+    "levelBucket": 9,
+    "gender": "any",
+    "shiny": "any"
+  }
+}

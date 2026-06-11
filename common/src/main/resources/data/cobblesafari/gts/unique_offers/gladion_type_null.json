@@ -1,0 +1,17 @@
+{
+  "offerId": "gladion_type_null",
+  "tags": [
+    "trainerspokemon"
+  ],
+  "given": "type_null level=1 originaltrainertype=npc originaltrainer=Gladion",
+  "givenMarks": [
+    "cobblemon:ribbon_partner"
+  ],
+  "givenActiveMark": "cobblemon:ribbon_partner",
+  "wish": {
+    "species": "silvally",
+    "levelBucket": 9,
+    "gender": "any",
+    "shiny": "any"
+  }
+}

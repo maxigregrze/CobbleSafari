@@ -36,11 +36,14 @@ public record CsBossDefinition(
          * If {@code true}, the boss tries to play two attacks of different categories at once
          * (plan 111). If no distinct categories are available, only one is played.
          */
-        boolean allowSimultaneousAttacks
+        boolean allowSimultaneousAttacks,
+        /** Visual variant of the summon portal (plan 122): selects csboss_spawnportal_type{N}_layer{1..3}. */
+        int portalType
 ) {
     public static final int DEFAULT_SIZE = 5;
     public static final int DEFAULT_COOLDOWN_MIN = 4;
     public static final int DEFAULT_COOLDOWN_MAX = 8;
+    public static final int DEFAULT_PORTAL_TYPE = 1;
 
     /** moveSet keyword granting all registered attacks. */
     public static final String ALL_MOVES = "ALLMOVES";

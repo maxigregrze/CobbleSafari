@@ -1,0 +1,17 @@
+{
+  "offerId": "hassel_frigibax",
+  "tags": [
+    "trainerspokemon"
+  ],
+  "given": "frigibax level=1 originaltrainertype=npc originaltrainer=Hassel",
+  "givenMarks": [
+    "cobblemon:ribbon_partner"
+  ],
+  "givenActiveMark": "cobblemon:ribbon_partner",
+  "wish": {
+    "species": "baxcalibur",
+    "levelBucket": 9,
+    "gender": "any",
+    "shiny": "any"
+  }
+}

@@ -15,17 +15,17 @@ import java.util.List;
 
 /**
  * {@code base_dragon_3} (Type B / AREA): covers ~10% of the arena surface — chosen at <b>random</b>
- * (no Perlin noise) — with shadows that each drop a falling draco meteorite. Repeated 4 times over
- * roughly 10 s. Each impact places a draco-meteorite block.
+ * (no Perlin noise) — with shadows that each drop a falling draco meteorite. Two waves (at 0 s and
+ * 6 s) over ~12 s. Each impact places a draco-meteorite block.
  */
 public class DracoMeteorFieldAttack implements CsBossAttack {
 
     private static final int WAVES = 2;
-    private static final int WAVE_INTERVAL = 50;   // 2 waves
+    private static final int WAVE_INTERVAL = 120;  // 2 waves at 0 s and 6 s
     private static final int METEOR_AT = 10;
     private static final int FALL_TICKS = 20;
     private static final int IMPACT_AT = METEOR_AT + FALL_TICKS; // 30
-    private static final int END_DELAY = 30;
+    private static final int END_DELAY = 90;       // 120 + 30 + 90 = 240
     private static final double FALL_HEIGHT = 20.0;
     private static final float METEOR_DAMAGE = 18.0F;
     private static final double COVERAGE = 0.10;   // ~10 % of the surface, picked at random

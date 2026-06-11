@@ -1,0 +1,17 @@
+{
+  "offerId": "archie_carvanha",
+  "tags": [
+    "trainerspokemon"
+  ],
+  "given": "carvanha level=1 originaltrainertype=npc originaltrainer=Archie",
+  "givenMarks": [
+    "cobblemon:ribbon_partner"
+  ],
+  "givenActiveMark": "cobblemon:ribbon_partner",
+  "wish": {
+    "species": "sharpedo",
+    "levelBucket": 9,
+    "gender": "any",
+    "shiny": "any"
+  }
+}

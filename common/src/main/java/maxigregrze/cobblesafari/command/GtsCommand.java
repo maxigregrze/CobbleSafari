@@ -121,7 +121,7 @@ public final class GtsCommand {
                 .then(Commands.literal("uniqueoffer")
                         .then(Commands.literal("add")
                                 .requires(s -> s.hasPermission(4))
-                                .then(Commands.argument(ARG_OFFER_ID, StringArgumentType.string())
+                                .then(Commands.argument(ARG_OFFER_ID, StringArgumentType.greedyString())
                                         .suggests(GtsCommand::suggestUniqueOfferIds)
                                         .executes(GtsCommand::uniqueOfferAdd)))
                         .then(Commands.literal("list")
@@ -133,14 +133,14 @@ public final class GtsCommand {
                                                         ctx, IntegerArgumentType.getInteger(ctx, ARG_PAGE)))))
                         .then(Commands.literal("details")
                                 .requires(s -> s.hasPermission(4))
-                                .then(Commands.argument(ARG_OFFER_ID, StringArgumentType.string())
+                                .then(Commands.argument(ARG_OFFER_ID, StringArgumentType.greedyString())
                                         .suggests(GtsCommand::suggestUniqueOfferIds)
                                         .executes(GtsCommand::uniqueOfferDetails)))
                         .then(Commands.literal("personal")
                                 .requires(s -> s.hasPermission(4))
                                 .then(Commands.literal("add")
                                         .then(Commands.argument(ARG_PLAYER, EntityArgument.player())
-                                                .then(Commands.argument(ARG_OFFER_ID, StringArgumentType.string())
+                                                .then(Commands.argument(ARG_OFFER_ID, StringArgumentType.greedyString())
                                                         .suggests(GtsCommand::suggestUniqueOfferIds)
                                                         .executes(GtsCommand::personalAdd))))
                                 .then(Commands.literal("list")
@@ -162,15 +162,18 @@ public final class GtsCommand {
                                                                                         ctx, ARG_PAGE))))))
                                 .then(Commands.literal("remove")
                                         .then(Commands.argument(ARG_PLAYER, EntityArgument.player())
-                                                .then(Commands.argument(ARG_OFFER_ID, StringArgumentType.string())
+                                                .then(Commands.argument(ARG_OFFER_ID, StringArgumentType.greedyString())
                                                         .suggests(GtsCommand::suggestUniqueOfferIds)
                                                         .executes(GtsCommand::personalRemove))))));
     }
 
     private static java.util.concurrent.CompletableFuture<com.mojang.brigadier.suggestion.Suggestions> suggestUniqueOfferIds(
             CommandContext<CommandSourceStack> ctx, com.mojang.brigadier.suggestion.SuggestionsBuilder builder) {
+        java.util.stream.Stream<String> ids = GtsUniqueOfferRegistry.getAll().keySet().stream();
+        java.util.stream.Stream<String> tagTokens =
+                GtsUniqueOfferRegistry.getAllTags().stream().map(t -> GtsService.TAG_PREFIX + t);
         return SharedSuggestionProvider.suggest(
-                GtsUniqueOfferRegistry.getAll().keySet().stream().sorted(), builder);
+                java.util.stream.Stream.concat(ids, tagTokens).sorted(), builder);
     }
 
     private static int parseLevelBucketToken(String raw) throws CommandSyntaxException {
@@ -438,9 +441,23 @@ public final class GtsCommand {
     }
 
     private static int uniqueOfferAdd(CommandContext<CommandSourceStack> ctx) {
-        String templateId = StringArgumentType.getString(ctx, ARG_OFFER_ID);
-        GtsService.AddUniqueOfferOutcome outcome =
-                GtsService.addUniqueOffer(ctx.getSource().getServer(), templateId);
+        String token = StringArgumentType.getString(ctx, ARG_OFFER_ID).trim();
+        MinecraftServer server = ctx.getSource().getServer();
+        GtsService.AddUniqueOfferOutcome outcome;
+        String tagForError = null;
+        if (token.toLowerCase(Locale.ROOT).startsWith(GtsService.TAG_PREFIX)) {
+            tagForError = token.substring(GtsService.TAG_PREFIX.length()).trim();
+            outcome = GtsService.addUniqueOfferByTag(server, tagForError);
+        } else {
+            outcome = GtsService.addUniqueOffer(server, token);
+        }
+        final String resolvedTemplateId =
+                outcome.result() == GtsService.AddUniqueOfferResult.SUCCESS
+                        ? GtsSavedData.get(server)
+                                .findOffer(outcome.runtimeOfferId())
+                                .map(GtsOffer::getUniqueOfferTemplateId)
+                                .orElse(token)
+                        : token;
         return switch (outcome.result()) {
             case SUCCESS -> {
                 ctx.getSource()
@@ -448,12 +465,19 @@ public final class GtsCommand {
                                 () -> Component.translatable(
                                         "cobblesafari.command.gts.uniqueoffer.add_success",
                                         outcome.runtimeOfferId(),
-                                        templateId),
+                                        resolvedTemplateId),
                                 true);
                 yield 1;
             }
             case UNKNOWN_OFFER_ID -> {
                 ctx.getSource().sendFailure(Component.translatable("cobblesafari.command.gts.uniqueoffer.add_unknown"));
+                yield 0;
+            }
+            case NO_TAG_MATCH -> {
+                ctx.getSource()
+                        .sendFailure(
+                                Component.translatable(
+                                        "cobblesafari.command.gts.uniqueoffer.add_no_tag_match", tagForError));
                 yield 0;
             }
             case INVALID_GIVEN -> {
@@ -584,9 +608,23 @@ public final class GtsCommand {
 
     private static int personalAdd(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
         ServerPlayer target = EntityArgument.getPlayer(ctx, ARG_PLAYER);
-        String templateId = StringArgumentType.getString(ctx, ARG_OFFER_ID);
-        GtsService.AddPersonalOfferOutcome outcome =
-                GtsService.addPersonalOffer(ctx.getSource().getServer(), target.getUUID(), templateId);
+        String token = StringArgumentType.getString(ctx, ARG_OFFER_ID).trim();
+        MinecraftServer server = ctx.getSource().getServer();
+        GtsService.AddPersonalOfferOutcome outcome;
+        String tagForError = null;
+        if (token.toLowerCase(Locale.ROOT).startsWith(GtsService.TAG_PREFIX)) {
+            tagForError = token.substring(GtsService.TAG_PREFIX.length()).trim();
+            outcome = GtsService.addPersonalOfferByTag(server, target.getUUID(), tagForError);
+        } else {
+            outcome = GtsService.addPersonalOffer(server, target.getUUID(), token);
+        }
+        final String resolvedTemplateId =
+                outcome.result() == GtsService.AddPersonalOfferResult.SUCCESS
+                        ? GtsSavedData.get(server)
+                                .findOffer(outcome.runtimeOfferId())
+                                .map(GtsOffer::getUniqueOfferTemplateId)
+                                .orElse(token)
+                        : token;
         return switch (outcome.result()) {
             case SUCCESS -> {
                 ctx.getSource()
@@ -594,7 +632,7 @@ public final class GtsCommand {
                                 () -> Component.translatable(
                                         "cobblesafari.command.gts.uniqueoffer.personal.add_success",
                                         outcome.runtimeOfferId(),
-                                        templateId,
+                                        resolvedTemplateId,
                                         target.getName().getString()),
                                 true);
                 yield 1;
@@ -607,6 +645,14 @@ public final class GtsCommand {
             }
             case UNKNOWN_OFFER_ID -> {
                 ctx.getSource().sendFailure(Component.translatable("cobblesafari.command.gts.uniqueoffer.personal.add_unknown"));
+                yield 0;
+            }
+            case NO_TAG_MATCH -> {
+                ctx.getSource()
+                        .sendFailure(
+                                Component.translatable(
+                                        "cobblesafari.command.gts.uniqueoffer.personal.add_no_tag_match",
+                                        tagForError));
                 yield 0;
             }
             case INVALID_GIVEN -> {

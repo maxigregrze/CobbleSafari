@@ -1,0 +1,17 @@
+{
+  "offerId": "shauntal_litwick",
+  "tags": [
+    "trainerspokemon"
+  ],
+  "given": "litwick level=1 originaltrainertype=npc originaltrainer=Shauntal",
+  "givenMarks": [
+    "cobblemon:ribbon_partner"
+  ],
+  "givenActiveMark": "cobblemon:ribbon_partner",
+  "wish": {
+    "species": "chandelure",
+    "levelBucket": 9,
+    "gender": "any",
+    "shiny": "any"
+  }
+}

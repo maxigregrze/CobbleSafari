@@ -24,7 +24,7 @@ public class AttackWaveEntity extends AbstractAttackEntity {
     private static final String KEY_VX = "Vx";
     private static final String KEY_VY = "Vy";
     private static final String KEY_VZ = "Vz";
-    private static final float DAMAGE = 8.0F;
+    private static final float DAMAGE = 12.0F; // vague lente et télégraphiée, esquivable
     private static final double KNOCKBACK = 1.2;
 
     private Vec3 velocity = Vec3.ZERO;

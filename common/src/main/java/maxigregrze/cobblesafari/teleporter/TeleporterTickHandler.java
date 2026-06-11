@@ -89,6 +89,10 @@ public class TeleporterTickHandler {
     }
 
     public static void updatePlayerOnTeleporter(ServerPlayer player) {
+        if (maxigregrze.cobblesafari.effect.RedShackledEffects.isShackled(player)) {
+            return;
+        }
+
         UUID playerId = player.getUUID();
         playersOnTeleporter.put(playerId, currentServerTick);
 

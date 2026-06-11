@@ -1,0 +1,17 @@
+{
+  "offerId": "nanu_meowth",
+  "tags": [
+    "trainerspokemon"
+  ],
+  "given": "meowth level=1 form=alola originaltrainertype=npc originaltrainer=Nanu",
+  "givenMarks": [
+    "cobblemon:ribbon_partner"
+  ],
+  "givenActiveMark": "cobblemon:ribbon_partner",
+  "wish": {
+    "species": "persian alola",
+    "levelBucket": 9,
+    "gender": "any",
+    "shiny": "any"
+  }
+}

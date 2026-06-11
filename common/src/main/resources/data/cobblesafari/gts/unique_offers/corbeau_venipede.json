@@ -1,0 +1,17 @@
+{
+  "offerId": "corbeau_venipede",
+  "tags": [
+    "trainerspokemon"
+  ],
+  "given": "venipede level=1 originaltrainertype=npc originaltrainer=Corbeau",
+  "givenMarks": [
+    "cobblemon:ribbon_partner"
+  ],
+  "givenActiveMark": "cobblemon:ribbon_partner",
+  "wish": {
+    "species": "scolipede",
+    "levelBucket": 9,
+    "gender": "any",
+    "shiny": "any"
+  }
+}

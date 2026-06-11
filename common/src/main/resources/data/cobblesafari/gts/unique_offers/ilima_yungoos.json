@@ -1,0 +1,17 @@
+{
+  "offerId": "ilima_yungoos",
+  "tags": [
+    "trainerspokemon"
+  ],
+  "given": "yungoos level=1 originaltrainertype=npc originaltrainer=Ilima",
+  "givenMarks": [
+    "cobblemon:ribbon_partner"
+  ],
+  "givenActiveMark": "cobblemon:ribbon_partner",
+  "wish": {
+    "species": "gumshoos",
+    "levelBucket": 9,
+    "gender": "any",
+    "shiny": "any"
+  }
+}

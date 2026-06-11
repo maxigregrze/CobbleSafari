@@ -1,0 +1,17 @@
+{
+  "offerId": "archer_houndour",
+  "tags": [
+    "trainerspokemon"
+  ],
+  "given": "houndour level=1 originaltrainertype=npc originaltrainer=Archer",
+  "givenMarks": [
+    "cobblemon:ribbon_partner"
+  ],
+  "givenActiveMark": "cobblemon:ribbon_partner",
+  "wish": {
+    "species": "houndoom",
+    "levelBucket": 9,
+    "gender": "any",
+    "shiny": "any"
+  }
+}

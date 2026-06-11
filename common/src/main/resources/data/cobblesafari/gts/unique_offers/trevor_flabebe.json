@@ -1,0 +1,17 @@
+{
+  "offerId": "trevor_flabebe",
+  "tags": [
+    "trainerspokemon"
+  ],
+  "given": "flabebe level=1 originaltrainertype=npc originaltrainer=Trevor",
+  "givenMarks": [
+    "cobblemon:ribbon_partner"
+  ],
+  "givenActiveMark": "cobblemon:ribbon_partner",
+  "wish": {
+    "species": "florges",
+    "levelBucket": 9,
+    "gender": "any",
+    "shiny": "any"
+  }
+}

@@ -107,7 +107,8 @@ public class CsBossTriggerBlockEntity extends BlockEntity {
                 this.bossRef,
                 this.costItemId,
                 this.playerRadius == NO_OVERRIDE ? CsBossSettings.get().getDefaultPlayerRadius() : this.playerRadius,
-                this.blockRadius == NO_OVERRIDE ? CsBossSettings.get().getDefaultBlockRadius() : this.blockRadius
+                this.blockRadius == NO_OVERRIDE ? CsBossSettings.get().getDefaultBlockRadius() : this.blockRadius,
+                this.getBlockState().getValue(CsBossTriggerBlock.VARIANT).getSerializedName()
         );
     }
 

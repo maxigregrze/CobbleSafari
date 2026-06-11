@@ -7,7 +7,6 @@ import maxigregrze.cobblesafari.entity.csboss.attacks.AttackShadowEntity;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.util.RandomSource;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -27,14 +26,13 @@ public class WaterShadowAttack implements CsBossAttack {
     private static final int COLUMN_END = 110;    // column 1.5 s
     private static final int DISCARD_AT = 110;
     private static final int SPAWN_INTERVAL = FREEZE_AT; // wave as soon as previous freezes
-    private static final int END_DELAY = 40;
-    private static final int NOMINAL_WAVES = 5;   // +20% vs fire (4); ±25% ⇒ ~4–6
+    private static final int END_DELAY = 10;      // ≈240 t total
+    private static final int WAVES = 3;           // deterministic (2*60+110+10 = 240)
     private static final double COLUMN_RADIUS = 1.0;
     private static final double COLUMN_HEIGHT = 4.0;
     private static final float WATER_DAMAGE = 8.0F;
 
     private final String id;
-    private final RandomSource rng = RandomSource.create();
     private final List<Shadow> shadows = new ArrayList<>();
     private int waves;
     private int tick;
@@ -67,7 +65,7 @@ public class WaterShadowAttack implements CsBossAttack {
         this.wavesSpawned = 0;
         this.done = false;
         this.shadows.clear();
-        this.waves = CsBossAttackLib.varyOccurrences(NOMINAL_WAVES, rng);
+        this.waves = WAVES;
     }
 
     @Override

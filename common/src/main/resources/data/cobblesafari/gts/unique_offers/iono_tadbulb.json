@@ -1,0 +1,17 @@
+{
+  "offerId": "iono_tadbulb",
+  "tags": [
+    "trainerspokemon"
+  ],
+  "given": "tadbulb level=1 originaltrainertype=npc originaltrainer=Iono",
+  "givenMarks": [
+    "cobblemon:ribbon_partner"
+  ],
+  "givenActiveMark": "cobblemon:ribbon_partner",
+  "wish": {
+    "species": "bellibolt",
+    "levelBucket": 9,
+    "gender": "any",
+    "shiny": "any"
+  }
+}

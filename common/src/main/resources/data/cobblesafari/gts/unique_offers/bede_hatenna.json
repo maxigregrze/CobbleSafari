@@ -1,0 +1,17 @@
+{
+  "offerId": "bede_hatenna",
+  "tags": [
+    "trainerspokemon"
+  ],
+  "given": "hatenna level=1 originaltrainertype=npc originaltrainer=Bede",
+  "givenMarks": [
+    "cobblemon:ribbon_partner"
+  ],
+  "givenActiveMark": "cobblemon:ribbon_partner",
+  "wish": {
+    "species": "hatterene",
+    "levelBucket": 9,
+    "gender": "any",
+    "shiny": "any"
+  }
+}

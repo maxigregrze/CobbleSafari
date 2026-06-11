@@ -1,0 +1,17 @@
+{
+  "offerId": "kieran_applin",
+  "tags": [
+    "trainerspokemon"
+  ],
+  "given": "applin level=1 originaltrainertype=npc originaltrainer=Kieran",
+  "givenMarks": [
+    "cobblemon:ribbon_partner"
+  ],
+  "givenActiveMark": "cobblemon:ribbon_partner",
+  "wish": {
+    "species": "hydrapple",
+    "levelBucket": 9,
+    "gender": "any",
+    "shiny": "any"
+  }
+}

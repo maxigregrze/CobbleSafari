@@ -2,6 +2,7 @@ package maxigregrze.cobblesafari.init;
 
 import maxigregrze.cobblesafari.CobbleSafari;
 import maxigregrze.cobblesafari.effect.BasicStatusEffect;
+import maxigregrze.cobblesafari.effect.RedShackledMobEffect;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -23,7 +24,8 @@ public enum ModEffects {
     PARADOX_BOOST("paradox_boost", () -> new BasicStatusEffect(MobEffectCategory.BENEFICIAL, 0xFF1493)),
     LEGENDARY_BOOST("legendary_boost", () -> new BasicStatusEffect(MobEffectCategory.BENEFICIAL, 0xFFD700)),
     MYTHICAL_BOOST("mythical_boost", () -> new BasicStatusEffect(MobEffectCategory.BENEFICIAL, 0xE6E6FA)),
-    ROTO_FALL("roto_fall", () -> new BasicStatusEffect(MobEffectCategory.BENEFICIAL, 0x7AFFFF));
+    ROTO_FALL("roto_fall", () -> new BasicStatusEffect(MobEffectCategory.BENEFICIAL, 0x7AFFFF)),
+    RED_SHACKLED("red_shackled", RedShackledMobEffect::new);
 
     public final Holder<MobEffect> holder;
     public final MobEffect effect;

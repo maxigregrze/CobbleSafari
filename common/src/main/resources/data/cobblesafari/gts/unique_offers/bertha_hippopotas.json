@@ -1,0 +1,17 @@
+{
+  "offerId": "bertha_hippopotas",
+  "tags": [
+    "trainerspokemon"
+  ],
+  "given": "hippopotas level=1 originaltrainertype=npc originaltrainer=Bertha",
+  "givenMarks": [
+    "cobblemon:ribbon_partner"
+  ],
+  "givenActiveMark": "cobblemon:ribbon_partner",
+  "wish": {
+    "species": "hippowdon",
+    "levelBucket": 9,
+    "gender": "any",
+    "shiny": "any"
+  }
+}

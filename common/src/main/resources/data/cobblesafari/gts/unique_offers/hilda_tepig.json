@@ -1,0 +1,17 @@
+{
+  "offerId": "hilda_tepig",
+  "tags": [
+    "trainerspokemon"
+  ],
+  "given": "tepig level=1 originaltrainertype=npc originaltrainer=Hilda",
+  "givenMarks": [
+    "cobblemon:ribbon_partner"
+  ],
+  "givenActiveMark": "cobblemon:ribbon_partner",
+  "wish": {
+    "species": "emboar",
+    "levelBucket": 9,
+    "gender": "any",
+    "shiny": "any"
+  }
+}

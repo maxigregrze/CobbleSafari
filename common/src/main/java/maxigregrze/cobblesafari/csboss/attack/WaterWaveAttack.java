@@ -16,19 +16,23 @@ import net.minecraft.world.phys.Vec3;
  */
 public class WaterWaveAttack implements CsBossAttack {
 
-    private static final int WAVE_INTERVAL = 40;  // one X-volley every 2 s (half as often)
+    private static final int WAVE_INTERVAL = 38;  // 5*38 + 50 = 240 t
     private static final int WAVE_LIFESPAN = 50;
+    private static final int WAVES = 6;           // deterministic
     private static final double SPEED = 0.375;     // 25 % slower
     private static final int CROSS_DIRECTIONS = 4; // X shape: 4 trios, 90° apart
     private static final double SIDE_ANGLE_DEG = 25.0;
     private static final double HALF_WIDTH = 1.5;  // half wall width (3 blocks)
     private static final double SPAWN_Y_OFFSET = 1.0;
+    private static final double STEP_DEG = 10.0;   // each volley rotates 10° from the previous (wave)
 
     private final String id;
     private final RandomSource rng = RandomSource.create();
     private int waves;
     private int tick;
     private int wavesSpawned;
+    private double baseAngle;  // random heading of the first volley
+    private double stepRad;    // ±10° per volley (random clockwise / anti-clockwise)
     private boolean done;
 
     public WaterWaveAttack(String id) {
@@ -44,7 +48,10 @@ public class WaterWaveAttack implements CsBossAttack {
         this.tick = 0;
         this.wavesSpawned = 0;
         this.done = false;
-        this.waves = 4 + rng.nextInt(2); // 4‑5 volleys (half as often)
+        this.waves = WAVES;
+        // Première volée dans une direction aléatoire, puis rotation de ±10° à chaque volée (vague).
+        this.baseAngle = rng.nextDouble() * Math.PI * 2.0;
+        this.stepRad = Math.toRadians(STEP_DEG) * (rng.nextBoolean() ? 1.0 : -1.0);
     }
 
     @Override
@@ -63,8 +70,9 @@ public class WaterWaveAttack implements CsBossAttack {
     }
 
     private void sendCross(ServerLevel level, BossBattleSession session, CsBossEntity boss) {
-        // X shape: the same trio fired in 4 directions 90° apart, from one random base angle.
-        double base = rng.nextDouble() * Math.PI * 2.0;
+        // X shape: the same trio fired in 4 directions 90° apart. The base angle rotates ±10°
+        // per volley from the initial random heading, sweeping the X like a wave.
+        double base = baseAngle + stepRad * wavesSpawned;
         for (int k = 0; k < CROSS_DIRECTIONS; k++) {
             sendTrio(level, session, boss, base + k * (Math.PI / 2.0));
         }

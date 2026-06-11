@@ -1,0 +1,17 @@
+{
+  "offerId": "professor_oak_nidoranm",
+  "tags": [
+    "trainerspokemon"
+  ],
+  "given": "nidoranm level=1 originaltrainertype=npc originaltrainer=Professor Oak",
+  "givenMarks": [
+    "cobblemon:ribbon_partner"
+  ],
+  "givenActiveMark": "cobblemon:ribbon_partner",
+  "wish": {
+    "species": "nidorino",
+    "levelBucket": 9,
+    "gender": "any",
+    "shiny": "any"
+  }
+}

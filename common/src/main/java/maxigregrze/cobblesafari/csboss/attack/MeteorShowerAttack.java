@@ -74,14 +74,14 @@ public class MeteorShowerAttack implements CsBossAttack {
         this.endDelay = endDelay;
     }
 
-    /** {@code base_rock_1}: 1 wave/s (~10 waves ±25%), 1 shadow guaranteed/player, meteorite block (10 s). */
+    /** {@code base_rock_1}: 1 wave/s, 8 waves (≈240 t), 1 shadow/player, meteorite block. */
     public static MeteorShowerAttack rock(String id) {
-        return new MeteorShowerAttack(id, 20, 10, true, false, ModBlocks.METEORITE, 100);
+        return new MeteorShowerAttack(id, 20, 8, true, false, ModBlocks.METEORITE, 100);
     }
 
-    /** {@code base_dragon_1}: like {@code rock} but ×1.5 longer (~15 waves ±25%), draco meteorite. */
+    /** {@code base_dragon_1}: denser than {@code rock} (13 waves @ 12 t ≈240 t), draco meteorite. */
     public static MeteorShowerAttack draco(String id) {
-        return new MeteorShowerAttack(id, 20, 15, true, true, ModBlocks.DRACO_METEORITE, 100);
+        return new MeteorShowerAttack(id, 12, 13, true, true, ModBlocks.DRACO_METEORITE, 96);
     }
 
     public String id() {
@@ -94,7 +94,7 @@ public class MeteorShowerAttack implements CsBossAttack {
         this.wavesSpawned = 0;
         this.done = false;
         this.shadows.clear();
-        this.waves = CsBossAttackLib.varyOccurrences(nominalWaves, rng);
+        this.waves = nominalWaves; // deterministic ≈240 t
     }
 
     @Override

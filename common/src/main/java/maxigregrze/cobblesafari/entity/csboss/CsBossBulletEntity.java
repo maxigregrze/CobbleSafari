@@ -34,7 +34,7 @@ public class CsBossBulletEntity extends Entity {
     private static final String KEY_SESSION = "SessionId";
 
     private static final int MAX_AGE = 60;
-    private static final float DEFAULT_DAMAGE = 16.0F; // 8 hearts
+    private static final float DEFAULT_DAMAGE = 12.0F; // 6 hearts (fast spread, easy gaps)
 
     private int age;
     private int sessionId;

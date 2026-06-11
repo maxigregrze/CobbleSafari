@@ -18,6 +18,8 @@ import maxigregrze.cobblesafari.item.hyperberries.HyperBerryEVItem;
 import maxigregrze.cobblesafari.item.hyperberries.HyperBerryIVItem;
 import maxigregrze.cobblesafari.item.hyperberries.HyperBerryStarfItem;
 import maxigregrze.cobblesafari.item.donut.DungeonIngredientItem;
+import maxigregrze.cobblesafari.item.redchain.RedChainCoreItem;
+import maxigregrze.cobblesafari.item.redchain.RedChainItem;
 import maxigregrze.cobblesafari.item.redchainrandom.RedChainFragmentItem;
 import maxigregrze.cobblesafari.item.redchainrandom.RedChainRandomBallItem;
 import maxigregrze.cobblesafari.item.redchainrandom.RedChainRandomEVItem;
@@ -121,6 +123,8 @@ public class ModItems {
     public static final Item REDCHAIN_RANDOM_LEVEL = new RedChainRandomLevelItem(new Item.Properties().stacksTo(1), "redchain_random_level");
     public static final Item REDCHAIN_RANDOM_SHINY = new RedChainRandomShinyItem(new Item.Properties().stacksTo(1), "redchain_random_shiny");
     public static final Item REDCHAIN_FRAGMENT = new RedChainFragmentItem(new Item.Properties().stacksTo(64));
+    public static final Item RED_CHAIN_CORE = new RedChainCoreItem(new Item.Properties().stacksTo(64));
+    public static final Item RED_CHAIN = new RedChainItem(new Item.Properties().stacksTo(16));
 
     public static final Item HYPERBERRY_ENIGMA = new HyperBerryEnigmaItem(new Item.Properties().rarity(Rarity.RARE), "hyperberry_enigma");
     public static final Item HYPERBERRY_TAMATO = new HyperBerryEVItem(new Item.Properties().rarity(Rarity.RARE), "hyperberry_tamato", Stats.SPEED);
@@ -273,6 +277,8 @@ public class ModItems {
         registerItem("redchain_random_level", REDCHAIN_RANDOM_LEVEL);
         registerItem("redchain_random_shiny", REDCHAIN_RANDOM_SHINY);
         registerItem("redchain_fragment", REDCHAIN_FRAGMENT);
+        registerItem("red_chain_core", RED_CHAIN_CORE);
+        registerItem("red_chain", RED_CHAIN);
 
         registerItem("hyperberry_enigma", HYPERBERRY_ENIGMA);
         registerItem("hyperberry_tamato", HYPERBERRY_TAMATO);
@@ -365,6 +371,8 @@ public class ModItems {
         BATCH_ITEMS.add(REDCHAIN_RANDOM_LEVEL);
         BATCH_ITEMS.add(REDCHAIN_RANDOM_SHINY);
         BATCH_ITEMS.add(REDCHAIN_FRAGMENT);
+        BATCH_ITEMS.add(RED_CHAIN_CORE);
+        BATCH_ITEMS.add(RED_CHAIN);
         BATCH_ITEMS.add(HYPERBERRY_ENIGMA);
         BATCH_ITEMS.add(HYPERBERRY_TAMATO);
         BATCH_ITEMS.add(HYPERBERRY_GREPA);

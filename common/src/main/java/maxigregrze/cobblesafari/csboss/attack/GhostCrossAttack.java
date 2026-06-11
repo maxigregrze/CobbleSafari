@@ -39,6 +39,7 @@ public class GhostCrossAttack implements CsBossAttack {
     private static final double HIT_RADIUS = 2.5;
     private static final float DAMAGE = 8.0F;
     private static final int PARTICLES_PER_TICK = 14;
+    private static final double STEP_DEG = 10.0;   // each volley rotates 10° from the previous (wave)
     /** Purple. */
     private static final DustParticleOptions PURPLE_DUST =
             new DustParticleOptions(new Vector3f(0.60f, 0.18f, 0.82f), 1.3f);
@@ -48,6 +49,8 @@ public class GhostCrossAttack implements CsBossAttack {
     private final List<Formation> formations = new ArrayList<>();
     private int tick;
     private int sent;
+    private double baseAngle;  // random heading of the first volley
+    private double stepRad;    // ±10° per volley (random clockwise / anti-clockwise)
     private boolean done;
 
     private static final class Formation {
@@ -91,6 +94,9 @@ public class GhostCrossAttack implements CsBossAttack {
         this.sent = 0;
         this.done = false;
         this.formations.clear();
+        // Première volée dans une direction aléatoire, puis rotation de ±10° à chaque volée (vague).
+        this.baseAngle = rng.nextDouble() * Math.PI * 2.0;
+        this.stepRad = Math.toRadians(STEP_DEG) * (rng.nextBoolean() ? 1.0 : -1.0);
     }
 
     @Override
@@ -122,7 +128,8 @@ public class GhostCrossAttack implements CsBossAttack {
     }
 
     private void spawnFormation(ServerLevel level, BossBattleSession session, CsBossEntity boss) {
-        double theta = rng.nextDouble() * Math.PI * 2.0;
+        // La direction part d'un angle aléatoire et tourne de ±10° à chaque volée (effet de vague).
+        double theta = baseAngle + stepRad * sent;
         double dirX = Math.cos(theta);
         double dirZ = Math.sin(theta);
         double baseY = session.getTriggerPos().getY() + CENTER_HEIGHT;

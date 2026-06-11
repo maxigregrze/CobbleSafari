@@ -3,8 +3,10 @@ package maxigregrze.cobblesafari.entity.csboss;
 import com.cobblemon.mod.common.api.pokemon.PokemonProperties;
 import com.cobblemon.mod.common.pokemon.Pokemon;
 import maxigregrze.cobblesafari.csboss.CsBossDefinition;
+import maxigregrze.cobblesafari.init.ModEffects;
 import maxigregrze.cobblesafari.init.ModEntities;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -242,6 +244,15 @@ public class CsBossMinionEntity extends Mob {
     @Override
     public boolean isInvulnerable() {
         return true;
+    }
+
+    @Override
+    public boolean canBeAffected(MobEffectInstance effect) {
+        // Les minions ne peuvent pas être enchaînés (red_shackled, plan 122 § 6).
+        if (effect.getEffect().equals(ModEffects.RED_SHACKLED.holder)) {
+            return false;
+        }
+        return super.canBeAffected(effect);
     }
 
     @Override

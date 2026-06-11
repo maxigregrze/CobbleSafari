@@ -1,10 +1,14 @@
 package maxigregrze.cobblesafari.network;
 
+import maxigregrze.cobblesafari.block.csboss.CsBossTriggerBlock;
 import maxigregrze.cobblesafari.block.csboss.CsBossTriggerBlockEntity;
+import maxigregrze.cobblesafari.block.csboss.AnchorVariant;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
 
 /**
  * Server validation for the trigger GUI (plan 100 § 3.3): creative + proximity,
@@ -44,6 +48,12 @@ public final class CsBossTriggerConfigServerHandler {
 
         be.setPlayerRadiusOverride(parseIntOrDefault(payload.playerRadiusStr(), -1));
         be.setBlockRadiusOverride(parseIntOrDefault(payload.blockRadiusStr(), -1));
+
+        AnchorVariant variant = AnchorVariant.byName(payload.variant());
+        BlockState state = player.level().getBlockState(payload.pos());
+        if (state.getBlock() instanceof CsBossTriggerBlock && state.getValue(CsBossTriggerBlock.VARIANT) != variant) {
+            player.level().setBlock(payload.pos(), state.setValue(CsBossTriggerBlock.VARIANT, variant), Block.UPDATE_ALL);
+        }
 
         be.syncToClients();
     }

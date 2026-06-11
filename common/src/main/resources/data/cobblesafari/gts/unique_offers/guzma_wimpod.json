@@ -1,0 +1,17 @@
+{
+  "offerId": "guzma_wimpod",
+  "tags": [
+    "trainerspokemon"
+  ],
+  "given": "wimpod level=1 originaltrainertype=npc originaltrainer=Guzma",
+  "givenMarks": [
+    "cobblemon:ribbon_partner"
+  ],
+  "givenActiveMark": "cobblemon:ribbon_partner",
+  "wish": {
+    "species": "golisopod",
+    "levelBucket": 9,
+    "gender": "any",
+    "shiny": "any"
+  }
+}

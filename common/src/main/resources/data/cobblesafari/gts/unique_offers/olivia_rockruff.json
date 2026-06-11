@@ -1,0 +1,17 @@
+{
+  "offerId": "olivia_rockruff",
+  "tags": [
+    "trainerspokemon"
+  ],
+  "given": "rockruff level=1 form=midnight originaltrainertype=npc originaltrainer=Olivia",
+  "givenMarks": [
+    "cobblemon:ribbon_partner"
+  ],
+  "givenActiveMark": "cobblemon:ribbon_partner",
+  "wish": {
+    "species": "lycanroc midnight",
+    "levelBucket": 9,
+    "gender": "any",
+    "shiny": "any"
+  }
+}

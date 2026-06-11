@@ -1,0 +1,17 @@
+{
+  "offerId": "chili_pansear",
+  "tags": [
+    "trainerspokemon"
+  ],
+  "given": "pansear level=1 originaltrainertype=npc originaltrainer=Chili",
+  "givenMarks": [
+    "cobblemon:ribbon_partner"
+  ],
+  "givenActiveMark": "cobblemon:ribbon_partner",
+  "wish": {
+    "species": "simisear",
+    "levelBucket": 9,
+    "gender": "any",
+    "shiny": "any"
+  }
+}

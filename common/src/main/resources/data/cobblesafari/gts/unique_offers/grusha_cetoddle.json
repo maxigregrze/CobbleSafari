@@ -1,0 +1,17 @@
+{
+  "offerId": "grusha_cetoddle",
+  "tags": [
+    "trainerspokemon"
+  ],
+  "given": "cetoddle level=1 originaltrainertype=npc originaltrainer=Grusha",
+  "givenMarks": [
+    "cobblemon:ribbon_partner"
+  ],
+  "givenActiveMark": "cobblemon:ribbon_partner",
+  "wish": {
+    "species": "cetitan",
+    "levelBucket": 9,
+    "gender": "any",
+    "shiny": "any"
+  }
+}

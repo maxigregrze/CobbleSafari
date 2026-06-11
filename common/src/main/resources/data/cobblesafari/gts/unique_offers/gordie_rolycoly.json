@@ -1,0 +1,17 @@
+{
+  "offerId": "gordie_rolycoly",
+  "tags": [
+    "trainerspokemon"
+  ],
+  "given": "rolycoly level=1 originaltrainertype=npc originaltrainer=Gordie",
+  "givenMarks": [
+    "cobblemon:ribbon_partner"
+  ],
+  "givenActiveMark": "cobblemon:ribbon_partner",
+  "wish": {
+    "species": "coalossal",
+    "levelBucket": 9,
+    "gender": "any",
+    "shiny": "any"
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "offerId": "rika_wooper",
+  "tags": [
+    "trainerspokemon"
+  ],
+  "given": "wooper level=1 form=paldea originaltrainertype=npc originaltrainer=Rika",
+  "givenMarks": [
+    "cobblemon:ribbon_partner"
+  ],
+  "givenActiveMark": "cobblemon:ribbon_partner",
+  "wish": {
+    "species": "clodsire paldea",
+    "levelBucket": 9,
+    "gender": "any",
+    "shiny": "any"
+  }
+}

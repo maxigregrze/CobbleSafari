@@ -1,0 +1,17 @@
+{
+  "offerId": "sophocles_togedemaru",
+  "tags": [
+    "trainerspokemon"
+  ],
+  "given": "togedemaru level=1 originaltrainertype=npc originaltrainer=Sophocles",
+  "givenMarks": [
+    "cobblemon:ribbon_partner"
+  ],
+  "givenActiveMark": "cobblemon:ribbon_partner",
+  "wish": {
+    "species": "togedemaru",
+    "levelBucket": 9,
+    "gender": "any",
+    "shiny": "any"
+  }
+}

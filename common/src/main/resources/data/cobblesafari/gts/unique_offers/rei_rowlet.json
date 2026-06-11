@@ -1,0 +1,17 @@
+{
+  "offerId": "rei_rowlet",
+  "tags": [
+    "trainerspokemon"
+  ],
+  "given": "rowlet level=1 form=hisui originaltrainertype=npc originaltrainer=Rei",
+  "givenMarks": [
+    "cobblemon:ribbon_partner"
+  ],
+  "givenActiveMark": "cobblemon:ribbon_partner",
+  "wish": {
+    "species": "decidueye hisui",
+    "levelBucket": 9,
+    "gender": "any",
+    "shiny": "any"
+  }
+}

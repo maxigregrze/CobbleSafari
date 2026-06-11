@@ -94,6 +94,15 @@ public class ClientNetworking {
         );
 
         ClientPlayNetworking.registerGlobalReceiver(
+                maxigregrze.cobblesafari.network.OpenCsBossMimicConfigPayload.TYPE,
+                (payload, context) -> {
+                    context.client().execute(() ->
+                            Minecraft.getInstance().setScreen(
+                                    new maxigregrze.cobblesafari.client.screen.CsBossMimicConfigScreen(payload)));
+                }
+        );
+
+        ClientPlayNetworking.registerGlobalReceiver(
                 OpenLostNoteBookPayload.TYPE,
                 (payload, context) -> {
                     context.client().execute(() -> {

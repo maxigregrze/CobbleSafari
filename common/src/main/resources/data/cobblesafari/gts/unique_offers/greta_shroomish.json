@@ -1,0 +1,17 @@
+{
+  "offerId": "greta_shroomish",
+  "tags": [
+    "trainerspokemon"
+  ],
+  "given": "shroomish level=1 originaltrainertype=npc originaltrainer=Greta",
+  "givenMarks": [
+    "cobblemon:ribbon_partner"
+  ],
+  "givenActiveMark": "cobblemon:ribbon_partner",
+  "wish": {
+    "species": "breloom",
+    "levelBucket": 9,
+    "gender": "any",
+    "shiny": "any"
+  }
+}

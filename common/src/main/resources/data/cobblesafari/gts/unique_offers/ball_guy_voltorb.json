@@ -1,0 +1,17 @@
+{
+  "offerId": "ball_guy_voltorb",
+  "tags": [
+    "trainerspokemon"
+  ],
+  "given": "voltorb level=1 originaltrainertype=npc originaltrainer=Ball Guy",
+  "givenMarks": [
+    "cobblemon:ribbon_partner"
+  ],
+  "givenActiveMark": "cobblemon:ribbon_partner",
+  "wish": {
+    "species": "electrode",
+    "levelBucket": 9,
+    "gender": "any",
+    "shiny": "any"
+  }
+}

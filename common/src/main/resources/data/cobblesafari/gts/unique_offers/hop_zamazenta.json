@@ -1,0 +1,17 @@
+{
+  "offerId": "hop_zamazenta",
+  "tags": [
+    "trainerspokemon"
+  ],
+  "given": "zamazenta level=1 originaltrainertype=npc originaltrainer=Hop",
+  "givenMarks": [
+    "cobblemon:ribbon_partner"
+  ],
+  "givenActiveMark": "cobblemon:ribbon_partner",
+  "wish": {
+    "species": "zacian",
+    "levelBucket": 9,
+    "gender": "any",
+    "shiny": "any"
+  }
+}

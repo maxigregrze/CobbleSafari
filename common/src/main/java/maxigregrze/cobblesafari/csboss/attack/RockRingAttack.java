@@ -8,7 +8,6 @@ import maxigregrze.cobblesafari.init.ModBlocks;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.util.RandomSource;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -26,15 +25,14 @@ public class RockRingAttack implements CsBossAttack {
     private static final int FALL_TICKS = 20;    // fall 2× slower (10→20), visible longer
     private static final int IMPACT_AT = 30;     // impact unchanged
     private static final int METEOR_AT = IMPACT_AT - FALL_TICKS; // 10: meteor appears earlier
-    private static final int WAVE_INTERVAL = IMPACT_AT + 20;     // 1 s after impact ⇒ 50
-    private static final int NOMINAL_WAVES = 4;  // ±25% ⇒ 3–5
+    private static final int WAVE_INTERVAL = 48;  // ≈1 s after impact (5*48 = 240)
+    private static final int WAVES = 5;           // deterministic
     private static final int RING_STAGGER = 4;   // fall stagger ticks per ring (center → outer)
     private static final double FALL_HEIGHT = 20.0;
     private static final float METEOR_DAMAGE = 18.0F;
     private static final List<BlockPos> RING = CsBossGridShapes.filledCircle(RING_RADIUS);
 
     private final String id;
-    private final RandomSource rng = RandomSource.create();
     private final List<Rock> rocks = new ArrayList<>();
     private int waves;
     private int tick;
@@ -67,7 +65,7 @@ public class RockRingAttack implements CsBossAttack {
         this.wavesSpawned = 0;
         this.done = false;
         this.rocks.clear();
-        this.waves = CsBossAttackLib.varyOccurrences(NOMINAL_WAVES, rng);
+        this.waves = WAVES;
     }
 
     @Override

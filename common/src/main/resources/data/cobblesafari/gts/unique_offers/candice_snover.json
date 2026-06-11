@@ -1,0 +1,17 @@
+{
+  "offerId": "candice_snover",
+  "tags": [
+    "trainerspokemon"
+  ],
+  "given": "snover level=1 originaltrainertype=npc originaltrainer=Candice",
+  "givenMarks": [
+    "cobblemon:ribbon_partner"
+  ],
+  "givenActiveMark": "cobblemon:ribbon_partner",
+  "wish": {
+    "species": "abomasnow",
+    "levelBucket": 9,
+    "gender": "any",
+    "shiny": "any"
+  }
+}

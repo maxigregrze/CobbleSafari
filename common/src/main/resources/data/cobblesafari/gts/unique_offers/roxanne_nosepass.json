@@ -1,0 +1,17 @@
+{
+  "offerId": "roxanne_nosepass",
+  "tags": [
+    "trainerspokemon"
+  ],
+  "given": "nosepass level=1 originaltrainertype=npc originaltrainer=Roxanne",
+  "givenMarks": [
+    "cobblemon:ribbon_partner"
+  ],
+  "givenActiveMark": "cobblemon:ribbon_partner",
+  "wish": {
+    "species": "probopass",
+    "levelBucket": 9,
+    "gender": "any",
+    "shiny": "any"
+  }
+}

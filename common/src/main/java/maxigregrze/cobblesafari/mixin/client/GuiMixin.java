@@ -16,4 +16,5 @@ public abstract class GuiMixin {
     private void renderTimerBackground(GuiGraphics graphics, DeltaTracker deltaTracker, CallbackInfo ci) {
         TimerHudOverlay.renderBackground(graphics);
     }
+
 }

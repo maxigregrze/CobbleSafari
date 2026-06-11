@@ -1,0 +1,17 @@
+{
+  "offerId": "nate_rufflet",
+  "tags": [
+    "trainerspokemon"
+  ],
+  "given": "rufflet level=1 originaltrainertype=npc originaltrainer=Nate",
+  "givenMarks": [
+    "cobblemon:ribbon_partner"
+  ],
+  "givenActiveMark": "cobblemon:ribbon_partner",
+  "wish": {
+    "species": "braviary",
+    "levelBucket": 9,
+    "gender": "any",
+    "shiny": "any"
+  }
+}

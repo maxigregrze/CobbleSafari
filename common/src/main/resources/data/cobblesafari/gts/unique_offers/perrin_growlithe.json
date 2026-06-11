@@ -1,0 +1,17 @@
+{
+  "offerId": "perrin_growlithe",
+  "tags": [
+    "trainerspokemon"
+  ],
+  "given": "growlithe level=1 form=hisui originaltrainertype=npc originaltrainer=Perrin",
+  "givenMarks": [
+    "cobblemon:ribbon_partner"
+  ],
+  "givenActiveMark": "cobblemon:ribbon_partner",
+  "wish": {
+    "species": "growlithe hisui",
+    "levelBucket": 9,
+    "gender": "any",
+    "shiny": "any"
+  }
+}

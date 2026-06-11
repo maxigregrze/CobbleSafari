@@ -1,0 +1,17 @@
+{
+  "offerId": "kiawe_cubone",
+  "tags": [
+    "trainerspokemon"
+  ],
+  "given": "cubone level=1 form=alola originaltrainertype=npc originaltrainer=Kiawe",
+  "givenMarks": [
+    "cobblemon:ribbon_partner"
+  ],
+  "givenActiveMark": "cobblemon:ribbon_partner",
+  "wish": {
+    "species": "marowak alola",
+    "levelBucket": 9,
+    "gender": "any",
+    "shiny": "any"
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "offerId": "professor_sycamore_skiddo",
+  "tags": [
+    "trainerspokemon"
+  ],
+  "given": "skiddo level=1 originaltrainertype=npc originaltrainer=Professor Sycamore",
+  "givenMarks": [
+    "cobblemon:ribbon_partner"
+  ],
+  "givenActiveMark": "cobblemon:ribbon_partner",
+  "wish": {
+    "species": "gogoat",
+    "levelBucket": 9,
+    "gender": "any",
+    "shiny": "any"
+  }
+}

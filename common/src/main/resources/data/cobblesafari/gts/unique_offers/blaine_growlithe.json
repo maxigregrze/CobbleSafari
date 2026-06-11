@@ -1,0 +1,17 @@
+{
+  "offerId": "blaine_growlithe",
+  "tags": [
+    "trainerspokemon"
+  ],
+  "given": "growlithe level=1 originaltrainertype=npc originaltrainer=Blaine",
+  "givenMarks": [
+    "cobblemon:ribbon_partner"
+  ],
+  "givenActiveMark": "cobblemon:ribbon_partner",
+  "wish": {
+    "species": "arcanine",
+    "levelBucket": 9,
+    "gender": "any",
+    "shiny": "any"
+  }
+}

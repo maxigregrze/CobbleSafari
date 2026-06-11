@@ -235,6 +235,8 @@ public class CobbleSafariClientNeoForge {
             BlockEntityRenderers.register(ModBlockEntities.UNION_ROOM_SPOTLIGHT, maxigregrze.cobblesafari.client.renderer.UnionRoomSpotlightBlockEntityRenderer::new);
             BlockEntityRenderers.register(ModBlockEntities.PUNCHINGBAG, maxigregrze.cobblesafari.client.renderer.PunchingBagBlockEntityRenderer::new);
             BlockEntityRenderers.register(ModBlockEntities.BALM_DISPENSER, maxigregrze.cobblesafari.client.renderer.BalmDispenserBlockEntityRenderer::new);
+            BlockEntityRenderers.register(ModBlockEntities.CSBOSS_TRIGGER, maxigregrze.cobblesafari.client.renderer.CsBossTriggerBlockEntityRenderer::new);
+            BlockEntityRenderers.register(ModBlockEntities.CSBOSS_MIMIC, maxigregrze.cobblesafari.client.renderer.CsBossMimicBlockEntityRenderer::new);
         });
 
         event.enqueueWork(DonutItemClientSetup::registerItemProperties);
@@ -257,6 +259,7 @@ public class CobbleSafariClientNeoForge {
         event.registerEntityRenderer(ModEntities.THROWN_MUD_BALL, net.minecraft.client.renderer.entity.ThrownItemRenderer::new);
         event.registerEntityRenderer(ModEntities.THROWN_BAIT, net.minecraft.client.renderer.entity.ThrownItemRenderer::new);
         event.registerEntityRenderer(ModEntities.THROWN_BALM, net.minecraft.client.renderer.entity.ThrownItemRenderer::new);
+        event.registerEntityRenderer(ModEntities.THROWN_RED_CHAIN, maxigregrze.cobblesafari.client.renderer.ThrownRedChainEntityRenderer::new);
         event.registerEntityRenderer(ModEntities.CSBOSS, maxigregrze.cobblesafari.client.renderer.CsBossEntityRenderer::new);
         event.registerEntityRenderer(ModEntities.CSBOSS_MINION, maxigregrze.cobblesafari.client.renderer.CsBossMinionEntityRenderer::new);
         event.registerEntityRenderer(ModEntities.CSBOSS_BULLET, maxigregrze.cobblesafari.client.renderer.CsBossBulletEntityRenderer::new);
@@ -265,10 +268,16 @@ public class CobbleSafariClientNeoForge {
         event.registerEntityRenderer(ModEntities.ATTACK_DISTORTION_STEM, maxigregrze.cobblesafari.client.renderer.AttackDistortionStemEntityRenderer::new);
         event.registerEntityRenderer(ModEntities.ATTACK_DISTORTION_STEM_CORE, maxigregrze.cobblesafari.client.renderer.AttackDistortionStemCoreEntityRenderer::new);
         event.registerEntityRenderer(ModEntities.ATTACK_WAVE, maxigregrze.cobblesafari.client.renderer.AttackWaveEntityRenderer::new);
+        event.registerEntityRenderer(ModEntities.ATTACK_SHOCKWAVE, maxigregrze.cobblesafari.client.renderer.AttackShockwaveEntityRenderer::new);
         event.registerEntityRenderer(ModEntities.ATTACK_DISTORTION_FLOWER, maxigregrze.cobblesafari.client.renderer.AttackDistortionFlowerEntityRenderer::new);
         event.registerEntityRenderer(ModEntities.ATTACK_GIRATINA_ORB, maxigregrze.cobblesafari.client.renderer.AttackGiratinaOrbEntityRenderer::new);
         event.registerEntityRenderer(ModEntities.ATTACK_BEAM, maxigregrze.cobblesafari.client.renderer.AttackBeamEntityRenderer::new);
         event.registerEntityRenderer(ModEntities.ATTACK_DIGDIRT, maxigregrze.cobblesafari.client.renderer.AttackDigdirtEntityRenderer::new);
+        event.registerEntityRenderer(ModEntities.ATTACK_PILE_PROJECTILE, maxigregrze.cobblesafari.client.renderer.AttackPileProjectileEntityRenderer::new);
+        event.registerEntityRenderer(ModEntities.ATTACK_SHADOWBALL, maxigregrze.cobblesafari.client.renderer.AttackShadowballEntityRenderer::new);
+        event.registerEntityRenderer(ModEntities.ATTACK_RED_CHAIN, maxigregrze.cobblesafari.client.renderer.AttackRedChainEntityRenderer::new);
+        event.registerEntityRenderer(ModEntities.CSBOSS_SPAWN_PROJECTILE, maxigregrze.cobblesafari.client.renderer.CsBossSpawnProjectileEntityRenderer::new);
+        event.registerEntityRenderer(ModEntities.CSBOSS_PORTAL, maxigregrze.cobblesafari.client.renderer.CsBossPortalEntityRenderer::new);
         event.registerEntityRenderer(ModEntities.SAFARI_SHADOW_HAZARD, maxigregrze.cobblesafari.client.renderer.SafariShadowHazardEntityRenderer::new);
         event.registerEntityRenderer(ModEntities.SAFARI_BALLISTIC_METEOR, maxigregrze.cobblesafari.client.renderer.SafariBallisticMeteorEntityRenderer::new);
     }
@@ -374,6 +383,13 @@ public class CobbleSafariClientNeoForge {
         context.enqueueWork(() ->
                 Minecraft.getInstance().setScreen(
                         new maxigregrze.cobblesafari.client.screen.CsBossTriggerConfigScreen(payload)));
+    }
+
+    public static void handleOpenCsBossMimicConfig(
+            maxigregrze.cobblesafari.network.OpenCsBossMimicConfigPayload payload, IPayloadContext context) {
+        context.enqueueWork(() ->
+                Minecraft.getInstance().setScreen(
+                        new maxigregrze.cobblesafari.client.screen.CsBossMimicConfigScreen(payload)));
     }
 
     public static void handleSetCsMusic(

@@ -1,0 +1,17 @@
+{
+  "offerId": "jessie_ekans",
+  "tags": [
+    "trainerspokemon"
+  ],
+  "given": "ekans level=1 originaltrainertype=npc originaltrainer=Jessie",
+  "givenMarks": [
+    "cobblemon:ribbon_partner"
+  ],
+  "givenActiveMark": "cobblemon:ribbon_partner",
+  "wish": {
+    "species": "arbok",
+    "levelBucket": 9,
+    "gender": "any",
+    "shiny": "any"
+  }
+}

@@ -140,9 +140,12 @@ public final class CsBossDataLoader {
         boolean allowSimultaneousAttacks = json.has("allowSimultaneousAttacks")
                 && json.get("allowSimultaneousAttacks").getAsBoolean();
 
+        int portalType = json.has("portalType")
+                ? Math.max(1, json.get("portalType").getAsInt()) : CsBossDefinition.DEFAULT_PORTAL_TYPE;
+
         return new CsBossDefinition(bossId, displayName, tags, maximumDuration, minimumDuration, specie, minion,
                 size, moveSet, cdMin, cdMax, isStatic, uniqueReward, rewards, music, overlay, color,
-                secondPhase, giveRewardsBeforeSecondPhase, allowSimultaneousAttacks);
+                secondPhase, giveRewardsBeforeSecondPhase, allowSimultaneousAttacks, portalType);
     }
 
     /** Minion species (optional); validated as a PokemonProperties line, otherwise ignored. */

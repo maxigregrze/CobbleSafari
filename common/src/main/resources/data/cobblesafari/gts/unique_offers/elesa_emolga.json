@@ -1,0 +1,17 @@
+{
+  "offerId": "elesa_emolga",
+  "tags": [
+    "trainerspokemon"
+  ],
+  "given": "emolga level=1 originaltrainertype=npc originaltrainer=Elesa",
+  "givenMarks": [
+    "cobblemon:ribbon_partner"
+  ],
+  "givenActiveMark": "cobblemon:ribbon_partner",
+  "wish": {
+    "species": "emolga",
+    "levelBucket": 9,
+    "gender": "any",
+    "shiny": "any"
+  }
+}

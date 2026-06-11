@@ -24,10 +24,10 @@ public class DragonBeamAttack implements CsBossAttack {
     private static final int BEAMS = 8;
     private static final int BEAM_LENGTH = 30;
     private static final double BEAM_HALF_WIDTH = 1.0;
-    private static final float BEAM_DAMAGE = 6.0F;
+    private static final float BEAM_DAMAGE = 8.0F;        // sweeping beams fill space (i-frame gated)
     private static final double SWING_DEG = 45.0;
     private static final int SWING_PERIOD = 100;          // ticks for a full up→down→up cycle
-    private static final int DURATION = 200;              // distortion_1 duration
+    private static final int DURATION = 240;              // ≈12 s
     private static final float SPIN_DEG_PER_TICK = 0.5F;  // reduced spin speed
     private static final double PARTICLE_STEP = 1.0;
     private static final int BEAM_COLOR = 0xFFCC55BA;

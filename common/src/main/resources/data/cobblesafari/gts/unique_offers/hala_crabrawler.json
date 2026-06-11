@@ -1,0 +1,17 @@
+{
+  "offerId": "hala_crabrawler",
+  "tags": [
+    "trainerspokemon"
+  ],
+  "given": "crabrawler level=1 originaltrainertype=npc originaltrainer=Hala",
+  "givenMarks": [
+    "cobblemon:ribbon_partner"
+  ],
+  "givenActiveMark": "cobblemon:ribbon_partner",
+  "wish": {
+    "species": "crabominable",
+    "levelBucket": 9,
+    "gender": "any",
+    "shiny": "any"
+  }
+}

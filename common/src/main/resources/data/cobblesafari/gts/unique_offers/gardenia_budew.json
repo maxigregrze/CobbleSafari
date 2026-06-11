@@ -1,0 +1,17 @@
+{
+  "offerId": "gardenia_budew",
+  "tags": [
+    "trainerspokemon"
+  ],
+  "given": "budew level=1 originaltrainertype=npc originaltrainer=Gardenia",
+  "givenMarks": [
+    "cobblemon:ribbon_partner"
+  ],
+  "givenActiveMark": "cobblemon:ribbon_partner",
+  "wish": {
+    "species": "roserade",
+    "levelBucket": 9,
+    "gender": "any",
+    "shiny": "any"
+  }
+}

@@ -1,6 +1,20 @@
 {
   "variants": {
-    "active=false": { "model": "cobblesafari:block/csboss_trigger" },
-    "active=true": { "model": "cobblesafari:block/csboss_trigger_active" }
+    "variant=default,active=false,facing=north": { "model": "cobblesafari:block/bossanchor_base" },
+    "variant=default,active=false,facing=east": { "model": "cobblesafari:block/bossanchor_base", "y": 90 },
+    "variant=default,active=false,facing=south": { "model": "cobblesafari:block/bossanchor_base", "y": 180 },
+    "variant=default,active=false,facing=west": { "model": "cobblesafari:block/bossanchor_base", "y": 270 },
+    "variant=default,active=true,facing=north": { "model": "cobblesafari:block/bossanchor_base_active" },
+    "variant=default,active=true,facing=east": { "model": "cobblesafari:block/bossanchor_base_active", "y": 90 },
+    "variant=default,active=true,facing=south": { "model": "cobblesafari:block/bossanchor_base_active", "y": 180 },
+    "variant=default,active=true,facing=west": { "model": "cobblesafari:block/bossanchor_base_active", "y": 270 },
+    "variant=distortion,active=false,facing=north": { "model": "cobblesafari:block/bossanchor_base_distortion" },
+    "variant=distortion,active=false,facing=east": { "model": "cobblesafari:block/bossanchor_base_distortion", "y": 90 },
+    "variant=distortion,active=false,facing=south": { "model": "cobblesafari:block/bossanchor_base_distortion", "y": 180 },
+    "variant=distortion,active=false,facing=west": { "model": "cobblesafari:block/bossanchor_base_distortion", "y": 270 },
+    "variant=distortion,active=true,facing=north": { "model": "cobblesafari:block/bossanchor_base_distortion_active" },
+    "variant=distortion,active=true,facing=east": { "model": "cobblesafari:block/bossanchor_base_distortion_active", "y": 90 },
+    "variant=distortion,active=true,facing=south": { "model": "cobblesafari:block/bossanchor_base_distortion_active", "y": 180 },
+    "variant=distortion,active=true,facing=west": { "model": "cobblesafari:block/bossanchor_base_distortion_active", "y": 270 }
   }
 }

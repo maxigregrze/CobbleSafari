@@ -1,0 +1,17 @@
+{
+  "offerId": "molayne_diglett",
+  "tags": [
+    "trainerspokemon"
+  ],
+  "given": "diglett level=1 form=alola originaltrainertype=npc originaltrainer=Molayne",
+  "givenMarks": [
+    "cobblemon:ribbon_partner"
+  ],
+  "givenActiveMark": "cobblemon:ribbon_partner",
+  "wish": {
+    "species": "dugtrio alola",
+    "levelBucket": 9,
+    "gender": "any",
+    "shiny": "any"
+  }
+}

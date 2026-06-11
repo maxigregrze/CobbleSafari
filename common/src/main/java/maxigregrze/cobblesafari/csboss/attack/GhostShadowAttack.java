@@ -8,7 +8,6 @@ import maxigregrze.cobblesafari.entity.csboss.attacks.AttackShadowEntity;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.util.RandomSource;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.ArrayList;
@@ -23,20 +22,19 @@ import java.util.UUID;
  */
 public class GhostShadowAttack implements CsBossAttack {
 
-    private static final int FOLLOW_END = 120;   // 6 s of pursuit
-    private static final int RAMP_TICKS = 60;    // acceleration 0 → run over 3 s
-    private static final int RISE_START = 130;   // 0.5 s after freeze
-    private static final int RISE_END = 140;     // minion rise (0.5 s)
-    private static final int FADE_END = 150;     // fade (0.5 s) + discard
-    private static final int CYCLE_LEN = 152;
-    private static final int END_DELAY = 20;     // delay at end of attack
-    private static final int NOMINAL_CYCLES = 3; // ~2–5 (requested range)
+    private static final int FOLLOW_END = 70;    // 3.5 s of pursuit (compressed)
+    private static final int RAMP_TICKS = 40;    // acceleration 0 → run over 2 s
+    private static final int RISE_START = 80;    // 0.5 s after freeze
+    private static final int RISE_END = 90;      // minion rise (0.5 s)
+    private static final int FADE_END = 100;     // fade (0.5 s) + discard
+    private static final int CYCLE_LEN = 112;
+    private static final int END_DELAY = 16;     // ≈240 t total (2 cycles)
+    private static final int CYCLES = 2;         // deterministic (2*112+16 = 240)
     private static final double RUN_SPEED = 0.30;
     private static final double MINION_DROP = 2.0;
     private static final float MINION_DAMAGE = 8.0F;
 
     private final String id;
-    private final RandomSource rng = RandomSource.create();
     private final List<Ghost> ghosts = new ArrayList<>();
     private int cycles;
     private int tick;
@@ -67,8 +65,7 @@ public class GhostShadowAttack implements CsBossAttack {
         this.tick = 0;
         this.done = false;
         this.ghosts.clear();
-        // Requested range 2–5; ±25% around 3 gives ~2–4, extend top to 5.
-        this.cycles = 2 + rng.nextInt(4);
+        this.cycles = CYCLES;
     }
 
     @Override
@@ -117,6 +114,7 @@ public class GhostShadowAttack implements CsBossAttack {
                 Vec3 pos = new Vec3(g.shadow.getX(), g.shadowY - MINION_DROP, g.shadow.getZ());
                 g.minion = session.spawnMinion(level, pos);
                 g.minion.resizeToHeight(2.5); // hitbox ~2.5 blocks regardless of species
+                g.minion.setAlpha(0.0F); // masqué 1 tick pour éviter le flash à l'échelle boss (plan 126 § 5)
                 // Face the player from the very first frame it starts emerging from the shadow.
                 if (level.getPlayerByUUID(g.target) instanceof ServerPlayer tp) {
                     g.minion.faceTargetInstant(tp.position());
@@ -124,6 +122,10 @@ public class GhostShadowAttack implements CsBossAttack {
 
                 CsBossAttackLib.sound(level, pos.x, pos.y, pos.z,
                         "minecraft:entity.vex.charge", SoundSource.HOSTILE, 1.2F, 0.7F);
+            } else if (cycleTick == RISE_START + 1) {
+                if (g.minion != null && g.minion.isAlive()) {
+                    g.minion.setAlpha(1.0F);
+                }
             } else if (cycleTick > RISE_START && cycleTick < RISE_END) {
                 if (g.minion != null && g.minion.isAlive()) {
                     double progress = (cycleTick - RISE_START) / (double) (RISE_END - RISE_START);

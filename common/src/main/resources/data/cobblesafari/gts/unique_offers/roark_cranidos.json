@@ -1,0 +1,17 @@
+{
+  "offerId": "roark_cranidos",
+  "tags": [
+    "trainerspokemon"
+  ],
+  "given": "cranidos level=1 originaltrainertype=npc originaltrainer=Roark",
+  "givenMarks": [
+    "cobblemon:ribbon_partner"
+  ],
+  "givenActiveMark": "cobblemon:ribbon_partner",
+  "wish": {
+    "species": "rampardos",
+    "levelBucket": 9,
+    "gender": "any",
+    "shiny": "any"
+  }
+}

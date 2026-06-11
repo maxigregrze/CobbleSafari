@@ -1,0 +1,17 @@
+{
+  "offerId": "elio_popplio",
+  "tags": [
+    "trainerspokemon"
+  ],
+  "given": "popplio level=1 originaltrainertype=npc originaltrainer=Elio",
+  "givenMarks": [
+    "cobblemon:ribbon_partner"
+  ],
+  "givenActiveMark": "cobblemon:ribbon_partner",
+  "wish": {
+    "species": "primarina",
+    "levelBucket": 9,
+    "gender": "any",
+    "shiny": "any"
+  }
+}

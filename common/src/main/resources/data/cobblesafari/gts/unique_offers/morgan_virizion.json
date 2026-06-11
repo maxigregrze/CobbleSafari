@@ -1,0 +1,17 @@
+{
+  "offerId": "morgan_virizion",
+  "tags": [
+    "trainerspokemon"
+  ],
+  "given": "virizion level=1 originaltrainertype=npc originaltrainer=Morgan",
+  "givenMarks": [
+    "cobblemon:ribbon_partner"
+  ],
+  "givenActiveMark": "cobblemon:ribbon_partner",
+  "wish": {
+    "species": "virizion",
+    "levelBucket": 9,
+    "gender": "any",
+    "shiny": "any"
+  }
+}

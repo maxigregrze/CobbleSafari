@@ -1,0 +1,17 @@
+{
+  "offerId": "the_masked_royal_litten",
+  "tags": [
+    "trainerspokemon"
+  ],
+  "given": "litten level=1 originaltrainertype=npc originaltrainer=The Masked Royal",
+  "givenMarks": [
+    "cobblemon:ribbon_partner"
+  ],
+  "givenActiveMark": "cobblemon:ribbon_partner",
+  "wish": {
+    "species": "incineroar",
+    "levelBucket": 9,
+    "gender": "any",
+    "shiny": "any"
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "offerId": "hau_pikachu",
+  "tags": [
+    "trainerspokemon"
+  ],
+  "given": "pikachu level=1 form=alola originaltrainertype=npc originaltrainer=Hau",
+  "givenMarks": [
+    "cobblemon:ribbon_partner"
+  ],
+  "givenActiveMark": "cobblemon:ribbon_partner",
+  "wish": {
+    "species": "raichu alola",
+    "levelBucket": 9,
+    "gender": "any",
+    "shiny": "any"
+  }
+}

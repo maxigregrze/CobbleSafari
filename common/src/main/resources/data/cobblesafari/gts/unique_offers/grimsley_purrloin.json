@@ -1,0 +1,17 @@
+{
+  "offerId": "grimsley_purrloin",
+  "tags": [
+    "trainerspokemon"
+  ],
+  "given": "purrloin level=1 originaltrainertype=npc originaltrainer=Grimsley",
+  "givenMarks": [
+    "cobblemon:ribbon_partner"
+  ],
+  "givenActiveMark": "cobblemon:ribbon_partner",
+  "wish": {
+    "species": "liepard",
+    "levelBucket": 9,
+    "gender": "any",
+    "shiny": "any"
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "offerId": "emmet_archen",
+  "tags": [
+    "trainerspokemon"
+  ],
+  "given": "archen level=1 originaltrainertype=npc originaltrainer=Emmet",
+  "givenMarks": [
+    "cobblemon:ribbon_partner"
+  ],
+  "givenActiveMark": "cobblemon:ribbon_partner",
+  "wish": {
+    "species": "archeops",
+    "levelBucket": 9,
+    "gender": "any",
+    "shiny": "any"
+  }
+}

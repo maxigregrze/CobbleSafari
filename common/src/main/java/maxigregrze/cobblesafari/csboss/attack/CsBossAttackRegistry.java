@@ -69,15 +69,33 @@ public final class CsBossAttackRegistry {
         // New patterns (ghost / dragon batch).
         register("base_ghost_2", () -> new GhostCrossAttack("base_ghost_2"));
         register("base_ghost_3", () -> new GhostJumpscareAttack("base_ghost_3"));
+        register("base_ghost_4", () -> new GhostShadowballAttack("base_ghost_4"));
         register("base_dragon_2", () -> new DragonBeamAttack("base_dragon_2"));
         register("base_dragon_3", () -> new DracoMeteorFieldAttack("base_dragon_3"));
 
-        TYPE_POOLS.put("ghost", List.of("base_ghost_1", "base_ghost_2", "base_ghost_3"));
+        // Distortion red-chain volley (not in a TYPE_POOL: explicit moveSet or ALLMOVES).
+        register("distortion_5", () -> new DistortionRedChainAttack("distortion_5"));
+
+        // Ground shockwave rings (plan 124).
+        register("base_water_3", () -> GroundWaveAttack.water("base_water_3"));
+        register("base_poison_1", () -> GroundWaveAttack.poison("base_poison_1"));
+        register("base_steel_1", () -> GroundWaveAttack.steel("base_steel_1"));
+        register("base_normal_1", () -> GroundWaveAttack.normal("base_normal_1"));
+
+        // Ground eruption + pile barrages (plan 126).
+        register("base_ground_2", () -> new GroundEruptionAttack("base_ground_2"));
+        register("base_poison_2", () -> new PoisonPileBarrageAttack("base_poison_2"));
+        register("base_ground_3", () -> new MudPileFieldAttack("base_ground_3"));
+
+        TYPE_POOLS.put("ghost", List.of("base_ghost_1", "base_ghost_2", "base_ghost_3", "base_ghost_4"));
         TYPE_POOLS.put("rock", List.of("base_rock_1", "base_rock_2", "base_rock_3", "base_rock_4"));
         TYPE_POOLS.put("electric", List.of("base_electric_1", "base_electric_2", "base_electric_3"));
-        TYPE_POOLS.put("water", List.of("base_water_1", "base_water_2"));
-        TYPE_POOLS.put("ground", List.of("base_ground_1"));
+        TYPE_POOLS.put("water", List.of("base_water_1", "base_water_2", "base_water_3"));
+        TYPE_POOLS.put("ground", List.of("base_ground_1", "base_ground_2", "base_ground_3"));
         TYPE_POOLS.put("dragon", List.of("base_dragon_1", "base_dragon_2", "base_dragon_3"));
+        TYPE_POOLS.put("poison", List.of("base_poison_1", "base_poison_2"));
+        TYPE_POOLS.put("steel", List.of("base_steel_1"));
+        TYPE_POOLS.put("normal", List.of("base_normal_1"));
     }
 
     public static void register(String id, Supplier<CsBossAttack> factory) {

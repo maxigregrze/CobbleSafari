@@ -1,0 +1,17 @@
+{
+  "offerId": "iris_axew",
+  "tags": [
+    "trainerspokemon"
+  ],
+  "given": "axew level=1 originaltrainertype=npc originaltrainer=Iris",
+  "givenMarks": [
+    "cobblemon:ribbon_partner"
+  ],
+  "givenActiveMark": "cobblemon:ribbon_partner",
+  "wish": {
+    "species": "haxorus",
+    "levelBucket": 9,
+    "gender": "any",
+    "shiny": "any"
+  }
+}

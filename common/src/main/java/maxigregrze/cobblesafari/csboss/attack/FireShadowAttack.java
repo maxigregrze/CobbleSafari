@@ -5,7 +5,6 @@ import maxigregrze.cobblesafari.entity.csboss.CsBossEntity;
 import maxigregrze.cobblesafari.entity.csboss.attacks.AttackShadowEntity;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.util.RandomSource;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,15 +23,14 @@ public class FireShadowAttack implements CsBossAttack {
     private static final int COLUMN_END = 110;    // column 1.5 s (halved)
     private static final int DISCARD_AT = 110;
     private static final int CYCLE_LEN = 112;
-    private static final int END_DELAY = 40;      // 2 s at end of attack
-    private static final int NOMINAL_CYCLES = 4;  // ±25% ⇒ 3–5
+    private static final int END_DELAY = 16;      // ≈240 t total (2 cycles)
+    private static final int CYCLES = 2;          // deterministic (2*112+16 = 240)
     private static final double COLUMN_RADIUS = 1.0;
     private static final double COLUMN_HEIGHT = 4.0;
     private static final float FIRE_DAMAGE = 1.0F;
     private static final int FIRE_TICKS = 60;
 
     private final String id;
-    private final RandomSource rng = RandomSource.create();
     private final List<Shadow> shadows = new ArrayList<>();
     private int cycles;
     private int tick;
@@ -53,7 +51,7 @@ public class FireShadowAttack implements CsBossAttack {
         this.tick = 0;
         this.done = false;
         this.shadows.clear();
-        this.cycles = CsBossAttackLib.varyOccurrences(NOMINAL_CYCLES, rng);
+        this.cycles = CYCLES;
     }
 
     @Override

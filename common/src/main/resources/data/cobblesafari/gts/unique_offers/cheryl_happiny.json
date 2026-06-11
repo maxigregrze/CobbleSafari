@@ -1,0 +1,17 @@
+{
+  "offerId": "cheryl_happiny",
+  "tags": [
+    "trainerspokemon"
+  ],
+  "given": "happiny level=1 originaltrainertype=npc originaltrainer=Cheryl",
+  "givenMarks": [
+    "cobblemon:ribbon_partner"
+  ],
+  "givenActiveMark": "cobblemon:ribbon_partner",
+  "wish": {
+    "species": "blissey",
+    "levelBucket": 9,
+    "gender": "any",
+    "shiny": "any"
+  }
+}

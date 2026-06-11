@@ -1,0 +1,17 @@
+{
+  "offerId": "norman_slakoth",
+  "tags": [
+    "trainerspokemon"
+  ],
+  "given": "slakoth level=1 originaltrainertype=npc originaltrainer=Norman",
+  "givenMarks": [
+    "cobblemon:ribbon_partner"
+  ],
+  "givenActiveMark": "cobblemon:ribbon_partner",
+  "wish": {
+    "species": "slaking",
+    "levelBucket": 9,
+    "gender": "any",
+    "shiny": "any"
+  }
+}

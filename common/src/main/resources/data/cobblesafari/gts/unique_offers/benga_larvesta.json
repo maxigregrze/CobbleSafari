@@ -1,0 +1,17 @@
+{
+  "offerId": "benga_larvesta",
+  "tags": [
+    "trainerspokemon"
+  ],
+  "given": "larvesta level=1 originaltrainertype=npc originaltrainer=Benga",
+  "givenMarks": [
+    "cobblemon:ribbon_partner"
+  ],
+  "givenActiveMark": "cobblemon:ribbon_partner",
+  "wish": {
+    "species": "volcarona",
+    "levelBucket": 9,
+    "gender": "any",
+    "shiny": "any"
+  }
+}

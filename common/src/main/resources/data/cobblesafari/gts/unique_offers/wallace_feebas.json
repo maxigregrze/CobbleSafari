@@ -1,0 +1,17 @@
+{
+  "offerId": "wallace_feebas",
+  "tags": [
+    "trainerspokemon"
+  ],
+  "given": "feebas level=1 originaltrainertype=npc originaltrainer=Wallace",
+  "givenMarks": [
+    "cobblemon:ribbon_partner"
+  ],
+  "givenActiveMark": "cobblemon:ribbon_partner",
+  "wish": {
+    "species": "milotic",
+    "levelBucket": 9,
+    "gender": "any",
+    "shiny": "any"
+  }
+}

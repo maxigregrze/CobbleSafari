@@ -1,0 +1,17 @@
+{
+  "offerId": "melony_lapras",
+  "tags": [
+    "trainerspokemon"
+  ],
+  "given": "lapras level=1 originaltrainertype=npc originaltrainer=Melony",
+  "givenMarks": [
+    "cobblemon:ribbon_partner"
+  ],
+  "givenActiveMark": "cobblemon:ribbon_partner",
+  "wish": {
+    "species": "lapras",
+    "levelBucket": 9,
+    "gender": "any",
+    "shiny": "any"
+  }
+}

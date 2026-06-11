@@ -1,0 +1,17 @@
+{
+  "offerId": "lebanne_skrelp",
+  "tags": [
+    "trainerspokemon"
+  ],
+  "given": "skrelp level=1 originaltrainertype=npc originaltrainer=Lebanne",
+  "givenMarks": [
+    "cobblemon:ribbon_partner"
+  ],
+  "givenActiveMark": "cobblemon:ribbon_partner",
+  "wish": {
+    "species": "dragalge",
+    "levelBucket": 9,
+    "gender": "any",
+    "shiny": "any"
+  }
+}

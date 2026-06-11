@@ -1,0 +1,17 @@
+{
+  "offerId": "noland_pinsir",
+  "tags": [
+    "trainerspokemon"
+  ],
+  "given": "pinsir level=1 originaltrainertype=npc originaltrainer=Noland",
+  "givenMarks": [
+    "cobblemon:ribbon_partner"
+  ],
+  "givenActiveMark": "cobblemon:ribbon_partner",
+  "wish": {
+    "species": "pinsir",
+    "levelBucket": 9,
+    "gender": "any",
+    "shiny": "any"
+  }
+}

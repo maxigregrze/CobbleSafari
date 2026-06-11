@@ -1,0 +1,17 @@
+{
+  "offerId": "ingo_drilbur",
+  "tags": [
+    "trainerspokemon"
+  ],
+  "given": "drilbur level=1 originaltrainertype=npc originaltrainer=Ingo",
+  "givenMarks": [
+    "cobblemon:ribbon_partner"
+  ],
+  "givenActiveMark": "cobblemon:ribbon_partner",
+  "wish": {
+    "species": "excadrill",
+    "levelBucket": 9,
+    "gender": "any",
+    "shiny": "any"
+  }
+}

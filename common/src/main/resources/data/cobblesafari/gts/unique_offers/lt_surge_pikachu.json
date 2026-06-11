@@ -1,0 +1,17 @@
+{
+  "offerId": "lt_surge_pikachu",
+  "tags": [
+    "trainerspokemon"
+  ],
+  "given": "pikachu level=1 originaltrainertype=npc originaltrainer=Lt. Surge",
+  "givenMarks": [
+    "cobblemon:ribbon_partner"
+  ],
+  "givenActiveMark": "cobblemon:ribbon_partner",
+  "wish": {
+    "species": "raichu",
+    "levelBucket": 9,
+    "gender": "any",
+    "shiny": "any"
+  }
+}

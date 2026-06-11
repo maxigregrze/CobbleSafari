@@ -1,0 +1,17 @@
+{
+  "offerId": "lusamine_nihilego",
+  "tags": [
+    "trainerspokemon"
+  ],
+  "given": "nihilego level=1 originaltrainertype=npc originaltrainer=Lusamine",
+  "givenMarks": [
+    "cobblemon:ribbon_partner"
+  ],
+  "givenActiveMark": "cobblemon:ribbon_partner",
+  "wish": {
+    "species": "nihilego",
+    "levelBucket": 9,
+    "gender": "any",
+    "shiny": "any"
+  }
+}

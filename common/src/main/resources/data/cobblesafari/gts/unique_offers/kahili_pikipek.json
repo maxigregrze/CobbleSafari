@@ -1,0 +1,17 @@
+{
+  "offerId": "kahili_pikipek",
+  "tags": [
+    "trainerspokemon"
+  ],
+  "given": "pikipek level=1 originaltrainertype=npc originaltrainer=Kahili",
+  "givenMarks": [
+    "cobblemon:ribbon_partner"
+  ],
+  "givenActiveMark": "cobblemon:ribbon_partner",
+  "wish": {
+    "species": "toucannon",
+    "levelBucket": 9,
+    "gender": "any",
+    "shiny": "any"
+  }
+}

@@ -1,0 +1,21 @@
+{
+	"parent": "minecraft:block/block",
+	"textures": {
+		"0": "cobblesafari:block/mud_pile",
+		"particle": "cobblesafari:block/mud_pile"
+	},
+	"elements": [
+		{
+			"from": [4, 4, 4],
+			"to": [12, 12, 12],
+			"faces": {
+				"north": {"uv": [4, 4, 12, 12], "texture": "#0"},
+				"east": {"uv": [4, 4, 12, 12], "texture": "#0"},
+				"south": {"uv": [4, 4, 12, 12], "texture": "#0"},
+				"west": {"uv": [4, 4, 12, 12], "texture": "#0"},
+				"up": {"uv": [4, 4, 12, 12], "texture": "#0"},
+				"down": {"uv": [4, 4, 12, 12], "texture": "#0"}
+			}
+		}
+	]
+}

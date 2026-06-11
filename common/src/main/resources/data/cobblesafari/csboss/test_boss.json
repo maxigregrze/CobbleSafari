@@ -8,7 +8,7 @@
   "minion": "gengar",
   "size": 3,
   "allowSimultaneousAttacks": false,
-  "moveSet": ["base_electric_3", "distortion_3", "base_rock_3", "base_rock_4"],
+  "moveSet": [ "base_ground_2", "base_steel_1"],
   "moveCooldownMin": 2,
   "moveCooldownMax": 4,
   "isStatic": true,
@@ -16,5 +16,6 @@
   "rewards": "cobblesafari:csboss/test_common",
   "music": "cobblesafari:giratina",
   "healthStyle": "notched_10",
-  "healthColor": "blue"
+  "healthColor": "blue",
+  "portalType": 3
 }

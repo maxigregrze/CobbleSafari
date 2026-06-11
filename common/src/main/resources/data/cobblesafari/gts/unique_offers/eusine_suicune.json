@@ -1,0 +1,17 @@
+{
+  "offerId": "eusine_suicune",
+  "tags": [
+    "trainerspokemon"
+  ],
+  "given": "suicune level=1 originaltrainertype=npc originaltrainer=Eusine",
+  "givenMarks": [
+    "cobblemon:ribbon_partner"
+  ],
+  "givenActiveMark": "cobblemon:ribbon_partner",
+  "wish": {
+    "species": "suicune",
+    "levelBucket": 9,
+    "gender": "any",
+    "shiny": "any"
+  }
+}

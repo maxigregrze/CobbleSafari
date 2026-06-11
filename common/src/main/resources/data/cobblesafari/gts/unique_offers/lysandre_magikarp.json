@@ -1,0 +1,17 @@
+{
+  "offerId": "lysandre_magikarp",
+  "tags": [
+    "trainerspokemon"
+  ],
+  "given": "magikarp level=1 originaltrainertype=npc originaltrainer=Lysandre",
+  "givenMarks": [
+    "cobblemon:ribbon_partner"
+  ],
+  "givenActiveMark": "cobblemon:ribbon_partner",
+  "wish": {
+    "species": "gyarados",
+    "levelBucket": 9,
+    "gender": "any",
+    "shiny": "any"
+  }
+}

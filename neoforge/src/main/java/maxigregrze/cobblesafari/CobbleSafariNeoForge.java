@@ -167,6 +167,9 @@ public class CobbleSafariNeoForge {
             registrar.playToClient(maxigregrze.cobblesafari.network.OpenCsBossTriggerConfigPayload.TYPE,
                     maxigregrze.cobblesafari.network.OpenCsBossTriggerConfigPayload.STREAM_CODEC,
                     CobbleSafariClientNeoForge::handleOpenCsBossTriggerConfig);
+            registrar.playToClient(maxigregrze.cobblesafari.network.OpenCsBossMimicConfigPayload.TYPE,
+                    maxigregrze.cobblesafari.network.OpenCsBossMimicConfigPayload.STREAM_CODEC,
+                    CobbleSafariClientNeoForge::handleOpenCsBossMimicConfig);
             registrar.playToClient(maxigregrze.cobblesafari.network.SetCsMusicPayload.TYPE,
                     maxigregrze.cobblesafari.network.SetCsMusicPayload.STREAM_CODEC,
                     CobbleSafariClientNeoForge::handleSetCsMusic);
@@ -193,6 +196,9 @@ public class CobbleSafariNeoForge {
                     (payload, context) -> {});
             registrar.playToClient(maxigregrze.cobblesafari.network.OpenCsBossTriggerConfigPayload.TYPE,
                     maxigregrze.cobblesafari.network.OpenCsBossTriggerConfigPayload.STREAM_CODEC,
+                    (payload, context) -> {});
+            registrar.playToClient(maxigregrze.cobblesafari.network.OpenCsBossMimicConfigPayload.TYPE,
+                    maxigregrze.cobblesafari.network.OpenCsBossMimicConfigPayload.STREAM_CODEC,
                     (payload, context) -> {});
             registrar.playToClient(maxigregrze.cobblesafari.network.SetCsMusicPayload.TYPE,
                     maxigregrze.cobblesafari.network.SetCsMusicPayload.STREAM_CODEC,
@@ -274,6 +280,16 @@ public class CobbleSafariNeoForge {
                     context.enqueueWork(() -> {
                         if (context.player() instanceof ServerPlayer sp) {
                             maxigregrze.cobblesafari.network.CsBossTriggerConfigServerHandler.handleSave(sp, payload);
+                        }
+                    });
+                });
+
+        registrar.playToServer(maxigregrze.cobblesafari.network.SaveCsBossMimicConfigPayload.TYPE,
+                maxigregrze.cobblesafari.network.SaveCsBossMimicConfigPayload.STREAM_CODEC,
+                (payload, context) -> {
+                    context.enqueueWork(() -> {
+                        if (context.player() instanceof ServerPlayer sp) {
+                            maxigregrze.cobblesafari.network.CsBossMimicConfigServerHandler.handleSave(sp, payload);
                         }
                     });
                 });

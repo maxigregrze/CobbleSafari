@@ -24,7 +24,7 @@ public class DistortionStemAttack implements CsBossAttack {
     private static final int CORE_SEED = 19;      // 1 + 19 = 20 cores max/direction
     private static final double UNDER_BOSS = 2.0;
     private static final double FORWARD = 1.5;
-    private static final int DURATION = 200;
+    private static final int DURATION = 240;             // ≈12 s
     private static final float SPIN_DEG_PER_TICK = 1.0F; // slow boss rotation
     private static final float STEM_DAMAGE = 10.0F;      // 5 hearts
     private static final double KNOCKBACK = 0.7;

@@ -2,8 +2,10 @@ package maxigregrze.cobblesafari.gts;
 
 import net.minecraft.resources.ResourceLocation;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 
 public final class GtsUniqueOfferDefinition {
     private final String offerId;
@@ -15,6 +17,7 @@ public final class GtsUniqueOfferDefinition {
     private final GenderFilter wishGender;
     private final GtsOffer.ShinyWish wishShiny;
     private final String sourcePath;
+    private final List<String> tags;
 
     public GtsUniqueOfferDefinition(
             String offerId,
@@ -25,7 +28,8 @@ public final class GtsUniqueOfferDefinition {
             int wishLevelBucket,
             GenderFilter wishGender,
             GtsOffer.ShinyWish wishShiny,
-            String sourcePath) {
+            String sourcePath,
+            List<String> tags) {
         this.offerId = offerId;
         this.givenLine = givenLine;
         this.givenMarkIds = Collections.unmodifiableList(givenMarkIds);
@@ -35,6 +39,10 @@ public final class GtsUniqueOfferDefinition {
         this.wishGender = wishGender;
         this.wishShiny = wishShiny == null ? GtsOffer.ShinyWish.ANY : wishShiny;
         this.sourcePath = sourcePath == null ? "" : sourcePath;
+        this.tags =
+                tags == null
+                        ? List.of()
+                        : Collections.unmodifiableList(new ArrayList<>(tags));
     }
 
     public String getOfferId() {
@@ -71,5 +79,13 @@ public final class GtsUniqueOfferDefinition {
 
     public String getSourcePath() {
         return sourcePath;
+    }
+
+    public List<String> getTags() {
+        return tags;
+    }
+
+    public boolean hasTag(String tag) {
+        return tag != null && tags.contains(tag.toLowerCase(Locale.ROOT));
     }
 }

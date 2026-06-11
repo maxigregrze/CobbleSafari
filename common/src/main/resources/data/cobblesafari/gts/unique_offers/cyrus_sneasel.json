@@ -1,0 +1,17 @@
+{
+  "offerId": "cyrus_sneasel",
+  "tags": [
+    "trainerspokemon"
+  ],
+  "given": "sneasel level=1 originaltrainertype=npc originaltrainer=Cyrus",
+  "givenMarks": [
+    "cobblemon:ribbon_partner"
+  ],
+  "givenActiveMark": "cobblemon:ribbon_partner",
+  "wish": {
+    "species": "weavile",
+    "levelBucket": 9,
+    "gender": "any",
+    "shiny": "any"
+  }
+}

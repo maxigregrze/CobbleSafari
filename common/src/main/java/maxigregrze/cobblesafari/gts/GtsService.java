@@ -28,10 +28,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
+
+import net.minecraft.util.RandomSource;
 
 public final class GtsService {
+    public static final String TAG_PREFIX = "tag:";
+
     public static final UUID UNIQUE_OFFER_DEPOSITOR_UUID =
             UUID.fromString("00000000-0000-0000-0000-000000000000");
 
@@ -407,6 +413,7 @@ public final class GtsService {
     public enum AddUniqueOfferResult {
         SUCCESS,
         UNKNOWN_OFFER_ID,
+        NO_TAG_MATCH,
         INVALID_GIVEN,
         BANNED_GIVEN,
         BANNED_WISH,
@@ -427,6 +434,17 @@ public final class GtsService {
 
     public static AddUniqueOfferOutcome addUniqueOffer(MinecraftServer server, String templateOfferId) {
         return publishUniqueOffer(server, templateOfferId, null);
+    }
+
+    /** Picks a random definition with {@code tag} and publishes it as a global unique offer. */
+    public static AddUniqueOfferOutcome addUniqueOfferByTag(MinecraftServer server, String tag) {
+        List<GtsUniqueOfferDefinition> matches = GtsUniqueOfferRegistry.getByTag(tag);
+        if (matches.isEmpty()) {
+            return AddUniqueOfferOutcome.fail(AddUniqueOfferResult.NO_TAG_MATCH);
+        }
+        RandomSource rng = server.overworld().getRandom();
+        GtsUniqueOfferDefinition chosen = matches.get(rng.nextInt(matches.size()));
+        return publishUniqueOffer(server, chosen.getOfferId(), null);
     }
 
     /**
@@ -493,6 +511,7 @@ public final class GtsService {
     public enum AddPersonalOfferResult {
         SUCCESS,
         UNKNOWN_OFFER_ID,
+        NO_TAG_MATCH,
         INVALID_GIVEN,
         BANNED_GIVEN,
         BANNED_WISH,
@@ -518,6 +537,32 @@ public final class GtsService {
      *
      * <p>At most one personal offer per {@code (targetUuid, templateOfferId)} pair may exist.
      */
+    /**
+     * Picks a random definition with {@code tag} that the target does not already hold, then grants it as a personal
+     * offer.
+     */
+    public static AddPersonalOfferOutcome addPersonalOfferByTag(
+            MinecraftServer server, UUID targetUuid, String tag) {
+        List<GtsUniqueOfferDefinition> matches = GtsUniqueOfferRegistry.getByTag(tag);
+        if (matches.isEmpty()) {
+            return AddPersonalOfferOutcome.fail(AddPersonalOfferResult.NO_TAG_MATCH);
+        }
+        GtsSavedData data = GtsSavedData.get(server);
+        Set<String> owned =
+                data.getOffers().stream()
+                        .filter(o -> o.isPersonalOffer() && targetUuid.equals(o.getPersonalTargetUuid()))
+                        .map(GtsOffer::getUniqueOfferTemplateId)
+                        .collect(Collectors.toSet());
+        List<GtsUniqueOfferDefinition> avail =
+                matches.stream().filter(d -> !owned.contains(d.getOfferId())).toList();
+        if (avail.isEmpty()) {
+            return AddPersonalOfferOutcome.fail(AddPersonalOfferResult.ALREADY_HAS_PERSONAL);
+        }
+        RandomSource rng = server.overworld().getRandom();
+        GtsUniqueOfferDefinition chosen = avail.get(rng.nextInt(avail.size()));
+        return addPersonalOffer(server, targetUuid, chosen.getOfferId());
+    }
+
     public static AddPersonalOfferOutcome addPersonalOffer(
             MinecraftServer server, UUID targetUuid, String templateOfferId) {
         GtsSavedData data = GtsSavedData.get(server);
@@ -536,6 +581,7 @@ public final class GtsService {
                 switch (outcome.result()) {
                     case SUCCESS -> AddPersonalOfferResult.SUCCESS;
                     case UNKNOWN_OFFER_ID -> AddPersonalOfferResult.UNKNOWN_OFFER_ID;
+                    case NO_TAG_MATCH -> AddPersonalOfferResult.NO_TAG_MATCH;
                     case INVALID_GIVEN -> AddPersonalOfferResult.INVALID_GIVEN;
                     case BANNED_GIVEN -> AddPersonalOfferResult.BANNED_GIVEN;
                     case BANNED_WISH -> AddPersonalOfferResult.BANNED_WISH;

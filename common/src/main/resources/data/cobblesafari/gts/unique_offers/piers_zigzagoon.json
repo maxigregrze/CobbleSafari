@@ -1,0 +1,17 @@
+{
+  "offerId": "piers_zigzagoon",
+  "tags": [
+    "trainerspokemon"
+  ],
+  "given": "zigzagoon level=1 form=galar originaltrainertype=npc originaltrainer=Piers",
+  "givenMarks": [
+    "cobblemon:ribbon_partner"
+  ],
+  "givenActiveMark": "cobblemon:ribbon_partner",
+  "wish": {
+    "species": "obstagoon galar",
+    "levelBucket": 9,
+    "gender": "any",
+    "shiny": "any"
+  }
+}

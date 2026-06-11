@@ -8,6 +8,9 @@
     "ServerPlayerMixin",
     "LivingEntitySelfCombatDamageMixin",
     "LivingEntityRotoFallMixin",
+    "LivingEntityRedShackledMixin",
+    "LivingEntityRedShackledCombatMixin",
+    "LivingEntityShackledSyncMixin",
     "PlayerRotoFallMixin",
     "JigsawPlacementMixin",
     "JigsawStructureMixin",
@@ -16,6 +19,9 @@
   ],
   "client": [
     "client.GuiMixin",
+    "client.GameRendererRedShackledMixin",
+    "client.LivingEntityRendererRedShackledMixin",
+    "client.CsBossEntityRendererRedShackledMixin",
     "client.DimensionSpecialEffectsAccessor",
     "client.RotomPhoneScreenMixin",
     "client.MarksWidgetMixin"

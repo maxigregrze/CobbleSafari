@@ -54,7 +54,7 @@ public class RotomPhoneChatScreen extends RotomPhoneBaseScreen {
     private static final ResourceLocation TEX_TYPING = loc("chat/rotomphone_gui_typing.png");
 
     private static final int COL_WHITE = 0xFFFFFFFF;
-    private static final int COL_TINT_HOVER = 0x80FFFFFF;
+    private static final int COL_BLACK = 0xFF000000;
 
     private static final long STREAM_STEP_MS = 3000L;
     private static final long POLL_MS = 1000L;
@@ -301,10 +301,13 @@ public class RotomPhoneChatScreen extends RotomPhoneBaseScreen {
         for (ChatConversationSyncPayload.Entry e : contacts) {
             int bx = originX + CONTACT_BTN_X;
             ResourceLocation tex = loc("chat/rotomphone_gui_chat_" + e.textureFile() + ".png");
-            drawTinted(g, tex, bx, y, CONTACT_BTN_SIZE, CONTACT_BTN_SIZE, COL_WHITE);
-            if (inArea && isInBounds(mouseX, mouseY, bx, y, CONTACT_BTN_SIZE, CONTACT_BTN_SIZE)) {
-                drawTinted(g, tex, bx, y, CONTACT_BTN_SIZE, CONTACT_BTN_SIZE, COL_TINT_HOVER);
+            boolean hovered = inArea && isInBounds(mouseX, mouseY, bx, y, CONTACT_BTN_SIZE, CONTACT_BTN_SIZE);
+            boolean selected = e.id().equals(activeConvId);
+            if (hovered || selected) {
+                // White square the size of the icon, drawn behind the texture.
+                g.fill(bx, y, bx + CONTACT_BTN_SIZE, y + CONTACT_BTN_SIZE, COL_WHITE);
             }
+            drawTinted(g, tex, bx, y, CONTACT_BTN_SIZE, CONTACT_BTN_SIZE, COL_WHITE);
             y += CONTACT_BTN_SIZE + CONTACT_GAP;
         }
         g.disableScissor();
@@ -427,7 +430,7 @@ public class RotomPhoneChatScreen extends RotomPhoneBaseScreen {
             switch (type) {
                 case 0 -> {
                     fillRoundedRect(g, x, y, BUBBLE_W, height, CORNER_R, COL_WHITE, true, true, false, true);
-                    drawLines(g, lines, x + BUBBLE_PAD, y, theme);
+                    drawLines(g, lines, x + BUBBLE_PAD, y, COL_BLACK);
                 }
                 case 1 -> renderTask(g, x, y, theme, mouseX, mouseY);
                 case 2 -> {
@@ -446,7 +449,7 @@ public class RotomPhoneChatScreen extends RotomPhoneBaseScreen {
 
         private void renderTask(GuiGraphics g, int x, int y, int theme, int mouseX, int mouseY) {
             fillRoundedRect(g, x, y, BUBBLE_W, height, CORNER_R, theme, true, true, true, false);
-            drawLines(g, lines, x + BUBBLE_PAD, y, COL_WHITE);
+            drawLines(g, lines, x + BUBBLE_PAD, y, COL_BLACK);
 
             int n = taskLineCount == null ? 1 : taskLineCount;
             int yb = n * 8 + (n + 1) * 2 + 2;

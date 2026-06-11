@@ -1,0 +1,17 @@
+{
+  "offerId": "leaf_bulbasaur",
+  "tags": [
+    "trainerspokemon"
+  ],
+  "given": "bulbasaur level=1 originaltrainertype=npc originaltrainer=Leaf",
+  "givenMarks": [
+    "cobblemon:ribbon_partner"
+  ],
+  "givenActiveMark": "cobblemon:ribbon_partner",
+  "wish": {
+    "species": "venusaur",
+    "levelBucket": 9,
+    "gender": "any",
+    "shiny": "any"
+  }
+}

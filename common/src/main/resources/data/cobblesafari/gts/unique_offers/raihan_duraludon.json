@@ -1,0 +1,17 @@
+{
+  "offerId": "raihan_duraludon",
+  "tags": [
+    "trainerspokemon"
+  ],
+  "given": "duraludon level=1 originaltrainertype=npc originaltrainer=Raihan",
+  "givenMarks": [
+    "cobblemon:ribbon_partner"
+  ],
+  "givenActiveMark": "cobblemon:ribbon_partner",
+  "wish": {
+    "species": "duraludon",
+    "levelBucket": 9,
+    "gender": "any",
+    "shiny": "any"
+  }
+}

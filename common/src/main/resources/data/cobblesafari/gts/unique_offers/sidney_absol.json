@@ -1,0 +1,17 @@
+{
+  "offerId": "sidney_absol",
+  "tags": [
+    "trainerspokemon"
+  ],
+  "given": "absol level=1 originaltrainertype=npc originaltrainer=Sidney",
+  "givenMarks": [
+    "cobblemon:ribbon_partner"
+  ],
+  "givenActiveMark": "cobblemon:ribbon_partner",
+  "wish": {
+    "species": "absol",
+    "levelBucket": 9,
+    "gender": "any",
+    "shiny": "any"
+  }
+}

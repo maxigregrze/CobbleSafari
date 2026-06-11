@@ -1,0 +1,17 @@
+{
+  "offerId": "bea_machop",
+  "tags": [
+    "trainerspokemon"
+  ],
+  "given": "machop level=1 originaltrainertype=npc originaltrainer=Bea",
+  "givenMarks": [
+    "cobblemon:ribbon_partner"
+  ],
+  "givenActiveMark": "cobblemon:ribbon_partner",
+  "wish": {
+    "species": "machamp",
+    "levelBucket": 9,
+    "gender": "any",
+    "shiny": "any"
+  }
+}

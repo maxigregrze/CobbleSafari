@@ -1,0 +1,17 @@
+{
+  "offerId": "lance_dratini",
+  "tags": [
+    "trainerspokemon"
+  ],
+  "given": "dratini level=1 originaltrainertype=npc originaltrainer=Lance",
+  "givenMarks": [
+    "cobblemon:ribbon_partner"
+  ],
+  "givenActiveMark": "cobblemon:ribbon_partner",
+  "wish": {
+    "species": "dragonite",
+    "levelBucket": 9,
+    "gender": "any",
+    "shiny": "any"
+  }
+}

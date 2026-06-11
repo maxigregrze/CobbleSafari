@@ -3,8 +3,10 @@ package maxigregrze.cobblesafari.entity.csboss;
 import com.cobblemon.mod.common.api.pokemon.PokemonProperties;
 import com.cobblemon.mod.common.pokemon.Pokemon;
 import maxigregrze.cobblesafari.csboss.CsBossDefinition;
+import maxigregrze.cobblesafari.init.ModEffects;
 import maxigregrze.cobblesafari.init.ModEntities;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -46,8 +48,8 @@ public class CsBossEntity extends Mob {
     public static final int PHASE_ACTIVE = 1;
     public static final int PHASE_DYING = 2;
 
-    /** Fall height (blocks) during entrance. */
-    public static final double ENTRANCE_HEIGHT = 5.0;
+    /** Fall height (blocks) during entrance — also the portal / death-rise height (plan 122). */
+    public static final double ENTRANCE_HEIGHT = 12.0;
     /** Y offset of the target position: 0 ⇒ the boss is "inside" the trigger block, not standing on top. */
     public static final double STAND_Y_OFFSET = 0.0;
 
@@ -242,6 +244,15 @@ public class CsBossEntity extends Mob {
     @Override
     public boolean isInvulnerableTo(DamageSource source) {
         return true;
+    }
+
+    @Override
+    public boolean canBeAffected(MobEffectInstance effect) {
+        // Le boss ne peut pas être enchaîné (red_shackled, plan 122 § 6).
+        if (effect.getEffect().equals(ModEffects.RED_SHACKLED.holder)) {
+            return false;
+        }
+        return super.canBeAffected(effect);
     }
 
     @Override

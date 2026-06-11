@@ -1,0 +1,17 @@
+{
+  "offerId": "penny_eevee",
+  "tags": [
+    "trainerspokemon"
+  ],
+  "given": "eevee level=1 originaltrainertype=npc originaltrainer=Penny",
+  "givenMarks": [
+    "cobblemon:ribbon_partner"
+  ],
+  "givenActiveMark": "cobblemon:ribbon_partner",
+  "wish": {
+    "species": "sylveon",
+    "levelBucket": 9,
+    "gender": "any",
+    "shiny": "any"
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "offerId": "bugsy_scyther",
+  "tags": [
+    "trainerspokemon"
+  ],
+  "given": "scyther level=1 originaltrainertype=npc originaltrainer=Bugsy",
+  "givenMarks": [
+    "cobblemon:ribbon_partner"
+  ],
+  "givenActiveMark": "cobblemon:ribbon_partner",
+  "wish": {
+    "species": "scyther",
+    "levelBucket": 9,
+    "gender": "any",
+    "shiny": "any"
+  }
+}

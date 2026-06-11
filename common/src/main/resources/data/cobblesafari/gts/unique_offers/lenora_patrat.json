@@ -1,0 +1,17 @@
+{
+  "offerId": "lenora_patrat",
+  "tags": [
+    "trainerspokemon"
+  ],
+  "given": "patrat level=1 originaltrainertype=npc originaltrainer=Lenora",
+  "givenMarks": [
+    "cobblemon:ribbon_partner"
+  ],
+  "givenActiveMark": "cobblemon:ribbon_partner",
+  "wish": {
+    "species": "watchog",
+    "levelBucket": 9,
+    "gender": "any",
+    "shiny": "any"
+  }
+}

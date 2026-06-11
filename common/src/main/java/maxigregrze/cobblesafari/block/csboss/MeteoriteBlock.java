@@ -18,8 +18,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
  */
 public class MeteoriteBlock extends Block {
 
-    /** Height 1.15 blocks (fence ≈ 1.5): extends past the visual cube to block jumping over. */
-    private static final VoxelShape SHAPE = Block.box(0.0, 0.0, 0.0, 16.0, 1.5 * 16.0, 16.0);
+    private static final VoxelShape SHAPE = Block.box(0.0, 0.0, 0.0, 16.0, 1.1 * 16.0, 16.0);
 
     private final int ttlTicks;
 

@@ -1,0 +1,17 @@
+{
+  "offerId": "irida_eevee",
+  "tags": [
+    "trainerspokemon"
+  ],
+  "given": "eevee level=1 originaltrainertype=npc originaltrainer=Irida",
+  "givenMarks": [
+    "cobblemon:ribbon_partner"
+  ],
+  "givenActiveMark": "cobblemon:ribbon_partner",
+  "wish": {
+    "species": "glaceon",
+    "levelBucket": 9,
+    "gender": "any",
+    "shiny": "any"
+  }
+}

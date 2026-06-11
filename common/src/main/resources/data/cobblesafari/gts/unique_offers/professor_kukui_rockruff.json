@@ -1,0 +1,17 @@
+{
+  "offerId": "professor_kukui_rockruff",
+  "tags": [
+    "trainerspokemon"
+  ],
+  "given": "rockruff level=1 originaltrainertype=npc originaltrainer=Professor Kukui",
+  "givenMarks": [
+    "cobblemon:ribbon_partner"
+  ],
+  "givenActiveMark": "cobblemon:ribbon_partner",
+  "wish": {
+    "species": "lycanroc",
+    "levelBucket": 9,
+    "gender": "any",
+    "shiny": "any"
+  }
+}

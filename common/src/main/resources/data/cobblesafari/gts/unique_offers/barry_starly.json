@@ -1,0 +1,17 @@
+{
+  "offerId": "barry_starly",
+  "tags": [
+    "trainerspokemon"
+  ],
+  "given": "starly level=1 originaltrainertype=npc originaltrainer=Barry",
+  "givenMarks": [
+    "cobblemon:ribbon_partner"
+  ],
+  "givenActiveMark": "cobblemon:ribbon_partner",
+  "wish": {
+    "species": "staraptor",
+    "levelBucket": 9,
+    "gender": "any",
+    "shiny": "any"
+  }
+}

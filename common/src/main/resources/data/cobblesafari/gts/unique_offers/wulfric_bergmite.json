@@ -1,0 +1,17 @@
+{
+  "offerId": "wulfric_bergmite",
+  "tags": [
+    "trainerspokemon"
+  ],
+  "given": "bergmite level=1 originaltrainertype=npc originaltrainer=Wulfric",
+  "givenMarks": [
+    "cobblemon:ribbon_partner"
+  ],
+  "givenActiveMark": "cobblemon:ribbon_partner",
+  "wish": {
+    "species": "avalugg",
+    "levelBucket": 9,
+    "gender": "any",
+    "shiny": "any"
+  }
+}

@@ -99,6 +99,11 @@ public class DungeonTpAcceptHandler {
     public static void handleAcceptResponse(ServerPlayer player, boolean accepted) {
         UUID playerId = player.getUUID();
 
+        if (maxigregrze.cobblesafari.effect.RedShackledEffects.isShackled(player)) {
+            pendingConfirmations.remove(playerId);
+            return;
+        }
+
         PendingDungeonEntry pending = pendingConfirmations.remove(playerId);
         if (pending == null) {
             return;

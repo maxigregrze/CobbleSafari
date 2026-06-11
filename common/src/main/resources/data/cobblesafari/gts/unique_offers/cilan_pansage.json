@@ -1,0 +1,17 @@
+{
+  "offerId": "cilan_pansage",
+  "tags": [
+    "trainerspokemon"
+  ],
+  "given": "pansage level=1 originaltrainertype=npc originaltrainer=Cilan",
+  "givenMarks": [
+    "cobblemon:ribbon_partner"
+  ],
+  "givenActiveMark": "cobblemon:ribbon_partner",
+  "wish": {
+    "species": "simisage",
+    "levelBucket": 9,
+    "gender": "any",
+    "shiny": "any"
+  }
+}

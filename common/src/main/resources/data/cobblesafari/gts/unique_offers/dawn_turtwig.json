@@ -1,0 +1,17 @@
+{
+  "offerId": "dawn_turtwig",
+  "tags": [
+    "trainerspokemon"
+  ],
+  "given": "turtwig level=1 originaltrainertype=npc originaltrainer=Dawn",
+  "givenMarks": [
+    "cobblemon:ribbon_partner"
+  ],
+  "givenActiveMark": "cobblemon:ribbon_partner",
+  "wish": {
+    "species": "torterra",
+    "levelBucket": 9,
+    "gender": "any",
+    "shiny": "any"
+  }
+}

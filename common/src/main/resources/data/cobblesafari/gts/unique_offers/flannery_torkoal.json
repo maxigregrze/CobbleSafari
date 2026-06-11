@@ -1,0 +1,17 @@
+{
+  "offerId": "flannery_torkoal",
+  "tags": [
+    "trainerspokemon"
+  ],
+  "given": "torkoal level=1 originaltrainertype=npc originaltrainer=Flannery",
+  "givenMarks": [
+    "cobblemon:ribbon_partner"
+  ],
+  "givenActiveMark": "cobblemon:ribbon_partner",
+  "wish": {
+    "species": "torkoal",
+    "levelBucket": 9,
+    "gender": "any",
+    "shiny": "any"
+  }
+}

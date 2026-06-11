@@ -1,0 +1,17 @@
+{
+  "offerId": "oleana_trubbish",
+  "tags": [
+    "trainerspokemon"
+  ],
+  "given": "trubbish level=1 originaltrainertype=npc originaltrainer=Oleana",
+  "givenMarks": [
+    "cobblemon:ribbon_partner"
+  ],
+  "givenActiveMark": "cobblemon:ribbon_partner",
+  "wish": {
+    "species": "garbodor",
+    "levelBucket": 9,
+    "gender": "any",
+    "shiny": "any"
+  }
+}

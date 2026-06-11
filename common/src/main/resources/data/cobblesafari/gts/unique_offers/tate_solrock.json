@@ -1,0 +1,17 @@
+{
+  "offerId": "tate_solrock",
+  "tags": [
+    "trainerspokemon"
+  ],
+  "given": "solrock level=1 originaltrainertype=npc originaltrainer=Tate",
+  "givenMarks": [
+    "cobblemon:ribbon_partner"
+  ],
+  "givenActiveMark": "cobblemon:ribbon_partner",
+  "wish": {
+    "species": "solrock",
+    "levelBucket": 9,
+    "gender": "any",
+    "shiny": "any"
+  }
+}

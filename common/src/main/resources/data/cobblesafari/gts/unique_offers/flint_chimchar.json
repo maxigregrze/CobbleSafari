@@ -1,0 +1,17 @@
+{
+  "offerId": "flint_chimchar",
+  "tags": [
+    "trainerspokemon"
+  ],
+  "given": "chimchar level=1 originaltrainertype=npc originaltrainer=Flint",
+  "givenMarks": [
+    "cobblemon:ribbon_partner"
+  ],
+  "givenActiveMark": "cobblemon:ribbon_partner",
+  "wish": {
+    "species": "infernape",
+    "levelBucket": 9,
+    "gender": "any",
+    "shiny": "any"
+  }
+}

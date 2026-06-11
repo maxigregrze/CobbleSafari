@@ -24,7 +24,8 @@ public class DistortionWalkAttack implements CsBossAttack {
     private static final int SHADOW_LIFE = 100;    // 5 s of forward travel
     private static final double WALK_SPEED = 0.2;  // shadow traces a path
     private static final double DEVIATION_DEG = 12.0; // max mid-course turn (left or right)
-    private static final int END_DELAY = 40;
+    private static final int END_DELAY = 20;       // 3*40 + 100 + 20 = 240 t
+    private static final int COUNT = 4;            // deterministic
 
     private final String id;
     private final RandomSource rng = RandomSource.create();
@@ -69,7 +70,7 @@ public class DistortionWalkAttack implements CsBossAttack {
         this.sent = 0;
         this.done = false;
         this.walks.clear();
-        this.count = 4 + rng.nextInt(3); // 4‑6
+        this.count = COUNT;
     }
 
     @Override

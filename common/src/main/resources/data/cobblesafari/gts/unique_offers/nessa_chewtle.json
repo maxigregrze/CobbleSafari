@@ -1,0 +1,17 @@
+{
+  "offerId": "nessa_chewtle",
+  "tags": [
+    "trainerspokemon"
+  ],
+  "given": "chewtle level=1 originaltrainertype=npc originaltrainer=Nessa",
+  "givenMarks": [
+    "cobblemon:ribbon_partner"
+  ],
+  "givenActiveMark": "cobblemon:ribbon_partner",
+  "wish": {
+    "species": "drednaw",
+    "levelBucket": 9,
+    "gender": "any",
+    "shiny": "any"
+  }
+}

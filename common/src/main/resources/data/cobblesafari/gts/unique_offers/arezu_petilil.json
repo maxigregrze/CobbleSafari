@@ -1,0 +1,17 @@
+{
+  "offerId": "arezu_petilil",
+  "tags": [
+    "trainerspokemon"
+  ],
+  "given": "petilil level=1 form=hisui originaltrainertype=npc originaltrainer=Arezu",
+  "givenMarks": [
+    "cobblemon:ribbon_partner"
+  ],
+  "givenActiveMark": "cobblemon:ribbon_partner",
+  "wish": {
+    "species": "lilligant hisui",
+    "levelBucket": 9,
+    "gender": "any",
+    "shiny": "any"
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "offerId": "rose_cufant",
+  "tags": [
+    "trainerspokemon"
+  ],
+  "given": "cufant level=1 originaltrainertype=npc originaltrainer=Rose",
+  "givenMarks": [
+    "cobblemon:ribbon_partner"
+  ],
+  "givenActiveMark": "cobblemon:ribbon_partner",
+  "wish": {
+    "species": "copperajah",
+    "levelBucket": 9,
+    "gender": "any",
+    "shiny": "any"
+  }
+}

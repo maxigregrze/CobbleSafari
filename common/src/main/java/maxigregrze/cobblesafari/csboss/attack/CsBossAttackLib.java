@@ -9,11 +9,13 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -34,6 +36,48 @@ public final class CsBossAttackLib {
     public static final double OCCURRENCE_VARIATION = 0.25;
 
     private CsBossAttackLib() {}
+
+    /**
+     * Parabole 0 → {@code height} → 0 sur [0, {@code period}] ; util pour un boss qui « saute ».
+     */
+    public static double hopOffset(int t, int period, double height) {
+        double x = Mth.clamp(t / (double) period, 0.0, 1.0);
+        return 4.0 * height * x * (1.0 - x);
+    }
+
+    /**
+     * Échantillonne {@code count} points au sol dans un disque, écart minimal {@code minDist}
+     * (rejet, essais bornés — plan 126 § 4).
+     */
+    public static List<Vec3> scatterPoints(Vec3 center, double radius, int count, double minDist,
+                                           RandomSource rng) {
+        List<Vec3> points = new ArrayList<>();
+        if (count <= 0 || radius <= 0.0) {
+            return points;
+        }
+        double minDistSq = minDist * minDist;
+        int maxAttempts = count * 50;
+        for (int attempt = 0; attempt < maxAttempts && points.size() < count; attempt++) {
+            double angle = rng.nextDouble() * Math.PI * 2.0;
+            double dist = rng.nextDouble() * radius;
+            double x = center.x + Math.cos(angle) * dist;
+            double z = center.z + Math.sin(angle) * dist;
+            Vec3 candidate = new Vec3(x, center.y, z);
+            boolean ok = true;
+            for (Vec3 existing : points) {
+                double dx = candidate.x - existing.x;
+                double dz = candidate.z - existing.z;
+                if (dx * dx + dz * dz < minDistSq) {
+                    ok = false;
+                    break;
+                }
+            }
+            if (ok) {
+                points.add(candidate);
+            }
+        }
+        return points;
+    }
 
     /**
      * Randomized occurrence count around {@code nominal} with ±25% variation (bounded ≥ 1).

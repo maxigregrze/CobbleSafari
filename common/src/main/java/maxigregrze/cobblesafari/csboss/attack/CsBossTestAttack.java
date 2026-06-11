@@ -12,12 +12,12 @@ import net.minecraft.world.phys.Vec3;
  */
 public class CsBossTestAttack implements CsBossAttack {
 
-    private static final int VOLLEY_COUNT = 8;
-    private static final int VOLLEY_DELAY = 5;       // ticks between volleys
+    private static final int VOLLEY_COUNT = 11;
+    private static final int VOLLEY_DELAY = 20;      // ticks between volleys
     private static final int BULLETS_PER_VOLLEY = 8; // 8 compass directions
     private static final double ROTATION_STEP_DEG = 22.5;
     private static final double BULLET_SPEED = 0.6;  // blocks/tick
-    private static final int TAIL_DELAY = 80;        // wait after the last volley
+    private static final int TAIL_DELAY = 40;        // wait after the last volley (≈240 t total)
 
     private final String id;
     private int tick = -1;

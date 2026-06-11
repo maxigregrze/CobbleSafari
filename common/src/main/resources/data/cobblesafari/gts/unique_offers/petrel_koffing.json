@@ -1,0 +1,17 @@
+{
+  "offerId": "petrel_koffing",
+  "tags": [
+    "trainerspokemon"
+  ],
+  "given": "koffing level=1 originaltrainertype=npc originaltrainer=Petrel",
+  "givenMarks": [
+    "cobblemon:ribbon_partner"
+  ],
+  "givenActiveMark": "cobblemon:ribbon_partner",
+  "wish": {
+    "species": "weezing",
+    "levelBucket": 9,
+    "gender": "any",
+    "shiny": "any"
+  }
+}

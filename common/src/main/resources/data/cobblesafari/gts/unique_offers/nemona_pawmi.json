@@ -1,0 +1,17 @@
+{
+  "offerId": "nemona_pawmi",
+  "tags": [
+    "trainerspokemon"
+  ],
+  "given": "pawmi level=1 originaltrainertype=npc originaltrainer=Nemona",
+  "givenMarks": [
+    "cobblemon:ribbon_partner"
+  ],
+  "givenActiveMark": "cobblemon:ribbon_partner",
+  "wish": {
+    "species": "pawmot",
+    "levelBucket": 9,
+    "gender": "any",
+    "shiny": "any"
+  }
+}

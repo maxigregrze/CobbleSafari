@@ -17,7 +17,8 @@ import java.util.List;
  */
 public class DistortionFieldAttack implements CsBossAttack {
 
-    private static final int DURATION = 120;
+    private static final int DURATION = 240;       // ≈12 s
+    private static final int WAVE2_AT = 120;       // 2nd flower wave at 6 s
     private static final double PERLIN_SCALE = 0.2;
     // Perlin (normalized) peaks around ~0.85; lower threshold ⇒ more coverage (~30 %).
     private static final double COVERAGE_THRESHOLD = 0.6;
@@ -44,6 +45,23 @@ public class DistortionFieldAttack implements CsBossAttack {
     public void begin(ServerLevel level, BossBattleSession session, CsBossEntity boss) {
         this.tick = 0;
         this.done = false;
+        placeFlowers(level, session, boss);
+    }
+
+    @Override
+    public void tick(ServerLevel level, BossBattleSession session, CsBossEntity boss) {
+        if (done) {
+            return;
+        }
+        if (tick == WAVE2_AT) {
+            placeFlowers(level, session, boss);
+        }
+        if (++tick >= DURATION) {
+            done = true;
+        }
+    }
+
+    private void placeFlowers(ServerLevel level, BossBattleSession session, CsBossEntity boss) {
         List<BlockPos> surfaces = CsBossSurfaceScanner.scanSurface(level, session);
         PerlinNoise noise = new PerlinNoise(level.getRandom().nextLong());
         for (BlockPos surface : surfaces) {
@@ -57,16 +75,6 @@ public class DistortionFieldAttack implements CsBossAttack {
         boss.triggerAttackAnimation();
         CsBossAttackLib.sound(level, boss.getX(), boss.getY(), boss.getZ(),
                 "cobblemon:move.shadowball.actor", SoundSource.HOSTILE, 1.4F, 0.7F);
-    }
-
-    @Override
-    public void tick(ServerLevel level, BossBattleSession session, CsBossEntity boss) {
-        if (done) {
-            return;
-        }
-        if (++tick >= DURATION) {
-            done = true;
-        }
     }
 
     @Override

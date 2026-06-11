@@ -174,6 +174,8 @@ public class ModCreativeTabs {
                 output.accept(ModItems.REDCHAIN_RANDOM_LEVEL);
                 output.accept(ModItems.REDCHAIN_RANDOM_SHINY);
                 output.accept(ModItems.REDCHAIN_FRAGMENT);
+                output.accept(ModItems.RED_CHAIN_CORE);
+                output.accept(ModItems.RED_CHAIN);
                 output.accept(ModItems.BALM_DISTORTION);
                 output.accept(ModBlocks.BALM_DISPENSER_DISTORTION);
             })
@@ -280,6 +282,7 @@ public class ModCreativeTabs {
                 output.accept(ModBlocks.AUSPICIOUS_POKEBALL_SMALL);
                 output.accept(ModBlocks.AUSPICIOUS_POKEBALL_GOLD);
                 output.accept(ModBlocks.CSBOSS_TRIGGER);
+                output.accept(ModBlocks.CSBOSS_MIMIC_BLOCK);
                 output.accept(ModItems.ROTOM_PHONE);
                 output.accept(ModBlocks.EMPTYPHONE);
                 ModItems.WILD_EGGS.values().forEach(output::accept);

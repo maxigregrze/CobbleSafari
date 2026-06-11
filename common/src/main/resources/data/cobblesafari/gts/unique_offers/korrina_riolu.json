@@ -1,0 +1,17 @@
+{
+  "offerId": "korrina_riolu",
+  "tags": [
+    "trainerspokemon"
+  ],
+  "given": "riolu level=1 originaltrainertype=npc originaltrainer=Korrina",
+  "givenMarks": [
+    "cobblemon:ribbon_partner"
+  ],
+  "givenActiveMark": "cobblemon:ribbon_partner",
+  "wish": {
+    "species": "lucario",
+    "levelBucket": 9,
+    "gender": "any",
+    "shiny": "any"
+  }
+}

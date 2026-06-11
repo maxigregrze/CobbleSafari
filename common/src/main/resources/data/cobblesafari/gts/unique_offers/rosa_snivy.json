@@ -1,0 +1,17 @@
+{
+  "offerId": "rosa_snivy",
+  "tags": [
+    "trainerspokemon"
+  ],
+  "given": "snivy level=1 originaltrainertype=npc originaltrainer=Rosa",
+  "givenMarks": [
+    "cobblemon:ribbon_partner"
+  ],
+  "givenActiveMark": "cobblemon:ribbon_partner",
+  "wish": {
+    "species": "serperior",
+    "levelBucket": 9,
+    "gender": "any",
+    "shiny": "any"
+  }
+}

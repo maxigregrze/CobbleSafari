@@ -1,0 +1,17 @@
+{
+  "offerId": "gwynn_litwick",
+  "tags": [
+    "trainerspokemon"
+  ],
+  "given": "litwick level=1 originaltrainertype=npc originaltrainer=Gwynn",
+  "givenMarks": [
+    "cobblemon:ribbon_partner"
+  ],
+  "givenActiveMark": "cobblemon:ribbon_partner",
+  "wish": {
+    "species": "chandelure",
+    "levelBucket": 9,
+    "gender": "any",
+    "shiny": "any"
+  }
+}

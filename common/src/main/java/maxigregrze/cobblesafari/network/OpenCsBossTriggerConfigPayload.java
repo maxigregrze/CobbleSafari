@@ -12,7 +12,8 @@ public record OpenCsBossTriggerConfigPayload(
         String bossRef,
         String costItemId,
         int playerRadius,
-        int blockRadius
+        int blockRadius,
+        String variant
 ) implements CustomPacketPayload {
 
     public static final CustomPacketPayload.Type<OpenCsBossTriggerConfigPayload> TYPE =
@@ -27,13 +28,15 @@ public record OpenCsBossTriggerConfigPayload(
                 buf.writeUtf(p.costItemId, MAX_STR);
                 buf.writeInt(p.playerRadius);
                 buf.writeInt(p.blockRadius);
+                buf.writeUtf(p.variant, MAX_STR);
             },
             buf -> new OpenCsBossTriggerConfigPayload(
                     buf.readBlockPos(),
                     buf.readUtf(MAX_STR),
                     buf.readUtf(MAX_STR),
                     buf.readInt(),
-                    buf.readInt()
+                    buf.readInt(),
+                    buf.readUtf(MAX_STR)
             )
     );
 

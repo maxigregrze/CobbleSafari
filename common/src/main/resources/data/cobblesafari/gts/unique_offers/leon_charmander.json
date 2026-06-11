@@ -1,0 +1,17 @@
+{
+  "offerId": "leon_charmander",
+  "tags": [
+    "trainerspokemon"
+  ],
+  "given": "charmander level=1 originaltrainertype=npc originaltrainer=Leon",
+  "givenMarks": [
+    "cobblemon:ribbon_partner"
+  ],
+  "givenActiveMark": "cobblemon:ribbon_partner",
+  "wish": {
+    "species": "charizard",
+    "levelBucket": 9,
+    "gender": "any",
+    "shiny": "any"
+  }
+}

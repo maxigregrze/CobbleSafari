@@ -1,0 +1,17 @@
+{
+  "offerId": "palmer_regigigas",
+  "tags": [
+    "trainerspokemon"
+  ],
+  "given": "regigigas level=1 originaltrainertype=npc originaltrainer=Palmer",
+  "givenMarks": [
+    "cobblemon:ribbon_partner"
+  ],
+  "givenActiveMark": "cobblemon:ribbon_partner",
+  "wish": {
+    "species": "regigigas",
+    "levelBucket": 9,
+    "gender": "any",
+    "shiny": "any"
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "offerId": "jacinthe_cleffa",
+  "tags": [
+    "trainerspokemon"
+  ],
+  "given": "cleffa level=1 originaltrainertype=npc originaltrainer=Jacinthe",
+  "givenMarks": [
+    "cobblemon:ribbon_partner"
+  ],
+  "givenActiveMark": "cobblemon:ribbon_partner",
+  "wish": {
+    "species": "clefable",
+    "levelBucket": 9,
+    "gender": "any",
+    "shiny": "any"
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "offerId": "mai_munchlax",
+  "tags": [
+    "trainerspokemon"
+  ],
+  "given": "munchlax level=1 originaltrainertype=npc originaltrainer=Mai",
+  "givenMarks": [
+    "cobblemon:ribbon_partner"
+  ],
+  "givenActiveMark": "cobblemon:ribbon_partner",
+  "wish": {
+    "species": "munchlax",
+    "levelBucket": 9,
+    "gender": "any",
+    "shiny": "any"
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "offerId": "griselle_litleo",
+  "tags": [
+    "trainerspokemon"
+  ],
+  "given": "litleo level=1 originaltrainertype=npc originaltrainer=Griselle",
+  "givenMarks": [
+    "cobblemon:ribbon_partner"
+  ],
+  "givenActiveMark": "cobblemon:ribbon_partner",
+  "wish": {
+    "species": "pyroar",
+    "levelBucket": 9,
+    "gender": "any",
+    "shiny": "any"
+  }
+}

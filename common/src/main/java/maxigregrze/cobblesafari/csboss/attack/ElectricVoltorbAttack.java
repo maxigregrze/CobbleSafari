@@ -6,7 +6,6 @@ import maxigregrze.cobblesafari.entity.csboss.CsBossMinionEntity;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.util.RandomSource;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.ArrayList;
@@ -25,18 +24,17 @@ public class ElectricVoltorbAttack implements CsBossAttack {
     private static final double SPAWN_DISTANCE = 3.0;
     private static final double CHASE_SPEED = CsBossAttackLib.CHASE_SPEED * 0.5;
     private static final int WAVE_INTERVAL = 60;   // one wave every 3 s
-    private static final int NOMINAL_WAVES = 4;    // ±25% ⇒ 3–5
+    private static final int WAVES = 3;            // deterministic (2*60+112+8 = 240)
     // Single Electrode cycle (from spawn), −30% vs 160 t: 120→84 (pursuit), 40→28 (flash).
     private static final int CHASE_TICKS = 84;
     private static final int FLASH_TICKS = 28;
     private static final int DETONATE_AGE = CHASE_TICKS + FLASH_TICKS; // 112
     private static final int FLASH_SEGMENT = 7;
-    private static final int END_DELAY = 40;       // 2 s after last detonation
+    private static final int END_DELAY = 8;        // ≈240 t total
     private static final double EXPLOSION_RADIUS = 3.0;
-    private static final float EXPLOSION_DAMAGE = 12.0F;
+    private static final float EXPLOSION_DAMAGE = 14.0F; // slow, telegraphed flash = escapable AOE
 
     private final String id;
-    private final RandomSource rng = RandomSource.create();
     private final List<Electrode> electrodes = new ArrayList<>();
     private int waves;
     private int tick;
@@ -68,7 +66,7 @@ public class ElectricVoltorbAttack implements CsBossAttack {
         this.wavesSpawned = 0;
         this.done = false;
         this.electrodes.clear();
-        this.waves = CsBossAttackLib.varyOccurrences(NOMINAL_WAVES, rng);
+        this.waves = WAVES;
     }
 
     @Override

@@ -1,0 +1,17 @@
+{
+  "offerId": "selene_rowlet",
+  "tags": [
+    "trainerspokemon"
+  ],
+  "given": "rowlet level=1 originaltrainertype=npc originaltrainer=Selene",
+  "givenMarks": [
+    "cobblemon:ribbon_partner"
+  ],
+  "givenActiveMark": "cobblemon:ribbon_partner",
+  "wish": {
+    "species": "decidueye",
+    "levelBucket": 9,
+    "gender": "any",
+    "shiny": "any"
+  }
+}

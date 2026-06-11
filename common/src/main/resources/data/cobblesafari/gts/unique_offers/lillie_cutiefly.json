@@ -1,0 +1,17 @@
+{
+  "offerId": "lillie_cutiefly",
+  "tags": [
+    "trainerspokemon"
+  ],
+  "given": "cutiefly level=1 originaltrainertype=npc originaltrainer=Lillie",
+  "givenMarks": [
+    "cobblemon:ribbon_partner"
+  ],
+  "givenActiveMark": "cobblemon:ribbon_partner",
+  "wish": {
+    "species": "ribombee",
+    "levelBucket": 9,
+    "gender": "any",
+    "shiny": "any"
+  }
+}

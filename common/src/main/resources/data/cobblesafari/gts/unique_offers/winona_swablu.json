@@ -1,0 +1,17 @@
+{
+  "offerId": "winona_swablu",
+  "tags": [
+    "trainerspokemon"
+  ],
+  "given": "swablu level=1 originaltrainertype=npc originaltrainer=Winona",
+  "givenMarks": [
+    "cobblemon:ribbon_partner"
+  ],
+  "givenActiveMark": "cobblemon:ribbon_partner",
+  "wish": {
+    "species": "altaria",
+    "levelBucket": 9,
+    "gender": "any",
+    "shiny": "any"
+  }
+}

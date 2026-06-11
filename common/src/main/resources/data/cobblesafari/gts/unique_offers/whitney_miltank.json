@@ -1,0 +1,17 @@
+{
+  "offerId": "whitney_miltank",
+  "tags": [
+    "trainerspokemon"
+  ],
+  "given": "miltank level=1 originaltrainertype=npc originaltrainer=Whitney",
+  "givenMarks": [
+    "cobblemon:ribbon_partner"
+  ],
+  "givenActiveMark": "cobblemon:ribbon_partner",
+  "wish": {
+    "species": "miltank",
+    "levelBucket": 9,
+    "gender": "any",
+    "shiny": "any"
+  }
+}

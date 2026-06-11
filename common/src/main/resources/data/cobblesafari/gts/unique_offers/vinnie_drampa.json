@@ -1,0 +1,17 @@
+{
+  "offerId": "vinnie_drampa",
+  "tags": [
+    "trainerspokemon"
+  ],
+  "given": "drampa level=1 originaltrainertype=npc originaltrainer=Vinnie",
+  "givenMarks": [
+    "cobblemon:ribbon_partner"
+  ],
+  "givenActiveMark": "cobblemon:ribbon_partner",
+  "wish": {
+    "species": "drampa",
+    "levelBucket": 9,
+    "gender": "any",
+    "shiny": "any"
+  }
+}

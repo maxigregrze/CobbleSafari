@@ -1,0 +1,17 @@
+{
+  "offerId": "avery_slowpoke",
+  "tags": [
+    "trainerspokemon"
+  ],
+  "given": "slowpoke level=1 form=galar originaltrainertype=npc originaltrainer=Avery",
+  "givenMarks": [
+    "cobblemon:ribbon_partner"
+  ],
+  "givenActiveMark": "cobblemon:ribbon_partner",
+  "wish": {
+    "species": "slowking galar",
+    "levelBucket": 9,
+    "gender": "any",
+    "shiny": "any"
+  }
+}

@@ -62,7 +62,9 @@ import maxigregrze.cobblesafari.block.underground.UndergroundSecretBlock;
 import maxigregrze.cobblesafari.block.incubator.IncubatorBlock;
 import maxigregrze.cobblesafari.block.incubator.IncubatorBlockItem;
 import maxigregrze.cobblesafari.block.csboss.CsBossElectricityBlock;
+import maxigregrze.cobblesafari.block.csboss.CsBossMimicBlock;
 import maxigregrze.cobblesafari.block.csboss.CsBossTriggerBlock;
+import maxigregrze.cobblesafari.block.csboss.EphemeralPileBlock;
 import maxigregrze.cobblesafari.block.csboss.MeteoriteBlock;
 import maxigregrze.cobblesafari.block.balm.BalmDispenserBlock;
 import maxigregrze.cobblesafari.block.balm.BalmDispenserDistortionBlock;
@@ -111,6 +113,48 @@ public class ModBlocks {
                     .noCollission()
                     .noOcclusion()
                     .strength(0.0F)));
+
+    /** Display block (model only) for the scaled dirt-textured mound of {@code base_ground_2} (plan 126). */
+    public static final Block ATTACK_DIGDIRT_DIRT_DISPLAY = registerBlockWithoutItem("attack_digdirt_dirt_display",
+            new Block(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.DIRT)
+                    .noCollission()
+                    .noOcclusion()
+                    .strength(0.0F)));
+
+    /** Cube sludge en vol ({@code base_poison_2}, plan 126). Modèle seul, sans item. */
+    public static final Block ATTACK_SLUDGE_CUBE_DISPLAY = registerBlockWithoutItem("attack_sludge_cube_display",
+            new Block(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.COLOR_PURPLE)
+                    .noCollission()
+                    .noOcclusion()
+                    .strength(0.0F)));
+
+    /** Cube mud en vol ({@code base_ground_3}, plan 126). Modèle seul, sans item. */
+    public static final Block ATTACK_MUD_CUBE_DISPLAY = registerBlockWithoutItem("attack_mud_cube_display",
+            new Block(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.DIRT)
+                    .noCollission()
+                    .noOcclusion()
+                    .strength(0.0F)));
+
+    /** Tas sludge éphémère posé par {@code base_poison_2} (10 s, plan 126). */
+    public static final Block EPHEMERAL_SLUDGE_PILE = registerBlockWithoutItem("ephemeral_sludge_pile",
+            new EphemeralPileBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.COLOR_PURPLE)
+                    .sound(SoundType.SLIME_BLOCK)
+                    .strength(0.5F)
+                    .noOcclusion()
+                    .noCollission(), 200, true));
+
+    /** Tas mud éphémère posé par {@code base_ground_3} (20 s, plan 126). */
+    public static final Block EPHEMERAL_MUD_PILE = registerBlockWithoutItem("ephemeral_mud_pile",
+            new EphemeralPileBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.DIRT)
+                    .sound(SoundType.WET_GRASS)
+                    .strength(0.5F)
+                    .noOcclusion()
+                    .noCollission(), 400, false));
 
     /** Trap electric field placed by {@code base_electric_2} (plan 108). No creative item. */
     public static final Block CSBOSS_ELECTRICITY = registerBlockWithoutItem("csboss_electricity",
@@ -295,6 +339,16 @@ public class ModBlocks {
             ));
 
     public static final Block GIRATINA_CORE_MOVING = registerBlockWithoutItem("giratina_core_moving",
+            new Block(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.COLOR_PURPLE)
+                    .strength(3.0f, 9.0f)
+                    .sound(SoundType.STONE)
+                    .noOcclusion()
+                    .requiresCorrectToolForDrops()
+            ));
+
+    /** Modèle « moving » rendu seul pour le projectile d'invocation CSBoss (plan 122 § 8.1). */
+    public static final Block BOSSANCHOR_MOVING = registerBlockWithoutItem("bossanchor_moving",
             new Block(BlockBehaviour.Properties.of()
                     .mapColor(MapColor.COLOR_PURPLE)
                     .strength(3.0f, 9.0f)
@@ -659,6 +713,16 @@ public class ModBlocks {
                     .noOcclusion()
             ));
 
+    /** Temporary full-block fill for the door's empty cells in combat (plan 125 § 6). No item, no drop. */
+    public static final Block DISTORTION_STONEBRICKS_FILL = registerBlockWithoutItem("distortion_stonebricks_fill",
+            new Block(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.STONE)
+                    .strength(3.0f, 6.0f)
+                    .sound(SoundType.DEEPSLATE)
+                    .requiresCorrectToolForDrops()
+                    .noLootTable()
+            ));
+
     public static final Block LOST_NOTES = registerBlock("lost_notes",
             new LostNotesBlock(BlockBehaviour.Properties.of()
                     .mapColor(MapColor.PLANT)
@@ -692,7 +756,18 @@ public class ModBlocks {
                     .strength(2.0f, 6.0f)
                     .sound(SoundType.METAL)
                     .requiresCorrectToolForDrops()
+                    .noOcclusion()
                     .lightLevel(state -> state.getValue(CsBossTriggerBlock.ACTIVE) ? 10 : 3)
+            ));
+
+    /** CSBoss-reactive mimic block (plan 125 § 2): invisible/solid toggle, copies a target texture. */
+    public static final Block CSBOSS_MIMIC_BLOCK = registerBlock("csboss_mimic_block",
+            new CsBossMimicBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.STONE)
+                    .strength(2.0f, 6.0f)
+                    .sound(SoundType.DEEPSLATE)
+                    .requiresCorrectToolForDrops()
+                    .noOcclusion()
             ));
 
     public static final Block BALM_DISPENSER = registerBlock("balm_dispenser",

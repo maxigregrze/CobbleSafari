@@ -1,0 +1,17 @@
+{
+  "offerId": "crasher_wake_buizel",
+  "tags": [
+    "trainerspokemon"
+  ],
+  "given": "buizel level=1 originaltrainertype=npc originaltrainer=Crasher Wake",
+  "givenMarks": [
+    "cobblemon:ribbon_partner"
+  ],
+  "givenActiveMark": "cobblemon:ribbon_partner",
+  "wish": {
+    "species": "floatzel",
+    "levelBucket": 9,
+    "gender": "any",
+    "shiny": "any"
+  }
+}

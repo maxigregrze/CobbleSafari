@@ -1,0 +1,17 @@
+{
+  "offerId": "hilbert_oshawott",
+  "tags": [
+    "trainerspokemon"
+  ],
+  "given": "oshawott level=1 originaltrainertype=npc originaltrainer=Hilbert",
+  "givenMarks": [
+    "cobblemon:ribbon_partner"
+  ],
+  "givenActiveMark": "cobblemon:ribbon_partner",
+  "wish": {
+    "species": "samurott",
+    "levelBucket": 9,
+    "gender": "any",
+    "shiny": "any"
+  }
+}

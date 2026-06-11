@@ -26,8 +26,8 @@ public class RockHeadThrowAttack implements CsBossAttack {
     private static final int SPIN_TICKS = 60;     // 3 s spin-up in place
     private static final int THROW_TICKS = 30;    // arc toward player
     private static final int IMPACT_AT = SPIN_TICKS + THROW_TICKS; // 90
-    private static final int WAVE_INTERVAL = IMPACT_AT;
-    private static final int NOMINAL_WAVES = 4;   // ±25% ⇒ 3–5
+    private static final int WAVE_INTERVAL = 75;  // 2*75+90 = 240
+    private static final int WAVES = 3;           // deterministic
     private static final float MAX_SPIN = 25.0F;  // deg/tick at max
     private static final double SPAWN_HEIGHT = 3.0;  // above the trigger floor, over the arena center
     private static final double CENTER_OFFSET = 1.5; // slight off-center toward one world axis
@@ -86,7 +86,7 @@ public class RockHeadThrowAttack implements CsBossAttack {
         this.wavesSpawned = 0;
         this.done = false;
         this.rocks.clear();
-        this.waves = CsBossAttackLib.varyOccurrences(NOMINAL_WAVES, rng);
+        this.waves = WAVES;
     }
 
     @Override

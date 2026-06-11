@@ -25,6 +25,9 @@ public class CsBossEntityRenderer extends EntityRenderer<CsBossEntity> {
     private static final ResourceLocation FALLBACK_TEXTURE =
             ResourceLocation.withDefaultNamespace("textures/misc/white.png");
 
+    /** Échelle minimale atteinte en fin d'animation de départ (plan 122) : le boss devient très petit. */
+    private static final float DEATH_MIN_SCALE = 0.05f;
+
     private final Map<UUID, CsBossPosableState> states = new HashMap<>();
     private final Map<String, CsBossModelRenderer.SpeciesInfo> speciesCache = new HashMap<>();
     private final Map<UUID, Integer> lastAttackSeq = new HashMap<>();
@@ -84,7 +87,15 @@ public class CsBossEntityRenderer extends EntityRenderer<CsBossEntity> {
         float limbSwing = boss.walkAnimation.position(partialTicks);
         float limbSwingAmount = Math.min(1.0f, boss.walkAnimation.speed(partialTicks));
         float anim = boss.getAnim();
-        float scaleMul = phase == CsBossEntity.PHASE_ENTERING ? anim : 1.0f;
+        // Entrée : grandit de 0 à 1. Départ (plan 122) : rétrécit jusqu'à très petit pendant la mort.
+        float scaleMul;
+        if (phase == CsBossEntity.PHASE_ENTERING) {
+            scaleMul = anim;
+        } else if (phase == CsBossEntity.PHASE_DYING) {
+            scaleMul = Mth.lerp(anim, 1.0f, DEATH_MIN_SCALE);
+        } else {
+            scaleMul = 1.0f;
+        }
         float alpha = phase == CsBossEntity.PHASE_DYING ? Math.max(0.0f, 1.0f - anim) : 1.0f;
         if (scaleMul <= 0.001f) {
             return; // zero scale at the very start of entry: nothing to draw

@@ -1,0 +1,17 @@
+{
+  "offerId": "aaron_skorupi",
+  "tags": [
+    "trainerspokemon"
+  ],
+  "given": "skorupi level=1 originaltrainertype=npc originaltrainer=Aaron",
+  "givenMarks": [
+    "cobblemon:ribbon_partner"
+  ],
+  "givenActiveMark": "cobblemon:ribbon_partner",
+  "wish": {
+    "species": "drapion",
+    "levelBucket": 9,
+    "gender": "any",
+    "shiny": "any"
+  }
+}

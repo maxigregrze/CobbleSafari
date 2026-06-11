@@ -1,0 +1,17 @@
+{
+  "offerId": "marnie_morpeko",
+  "tags": [
+    "trainerspokemon"
+  ],
+  "given": "morpeko level=1 originaltrainertype=npc originaltrainer=Marnie",
+  "givenMarks": [
+    "cobblemon:ribbon_partner"
+  ],
+  "givenActiveMark": "cobblemon:ribbon_partner",
+  "wish": {
+    "species": "morpeko",
+    "levelBucket": 9,
+    "gender": "any",
+    "shiny": "any"
+  }
+}

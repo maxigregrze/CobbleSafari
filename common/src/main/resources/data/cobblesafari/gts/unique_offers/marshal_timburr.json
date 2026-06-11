@@ -1,0 +1,17 @@
+{
+  "offerId": "marshal_timburr",
+  "tags": [
+    "trainerspokemon"
+  ],
+  "given": "timburr level=1 originaltrainertype=npc originaltrainer=Marshal",
+  "givenMarks": [
+    "cobblemon:ribbon_partner"
+  ],
+  "givenActiveMark": "cobblemon:ribbon_partner",
+  "wish": {
+    "species": "conkeldurr",
+    "levelBucket": 9,
+    "gender": "any",
+    "shiny": "any"
+  }
+}

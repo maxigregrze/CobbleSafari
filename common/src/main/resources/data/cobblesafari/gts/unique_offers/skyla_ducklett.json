@@ -1,0 +1,17 @@
+{
+  "offerId": "skyla_ducklett",
+  "tags": [
+    "trainerspokemon"
+  ],
+  "given": "ducklett level=1 originaltrainertype=npc originaltrainer=Skyla",
+  "givenMarks": [
+    "cobblemon:ribbon_partner"
+  ],
+  "givenActiveMark": "cobblemon:ribbon_partner",
+  "wish": {
+    "species": "swanna",
+    "levelBucket": 9,
+    "gender": "any",
+    "shiny": "any"
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "offerId": "marlon_tirtouga",
+  "tags": [
+    "trainerspokemon"
+  ],
+  "given": "tirtouga level=1 originaltrainertype=npc originaltrainer=Marlon",
+  "givenMarks": [
+    "cobblemon:ribbon_partner"
+  ],
+  "givenActiveMark": "cobblemon:ribbon_partner",
+  "wish": {
+    "species": "carracosta",
+    "levelBucket": 9,
+    "gender": "any",
+    "shiny": "any"
+  }
+}

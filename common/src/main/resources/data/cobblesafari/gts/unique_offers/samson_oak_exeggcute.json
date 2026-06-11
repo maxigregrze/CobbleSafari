@@ -1,0 +1,17 @@
+{
+  "offerId": "samson_oak_exeggcute",
+  "tags": [
+    "trainerspokemon"
+  ],
+  "given": "exeggcute level=1 form=alola originaltrainertype=npc originaltrainer=Samson Oak",
+  "givenMarks": [
+    "cobblemon:ribbon_partner"
+  ],
+  "givenActiveMark": "cobblemon:ribbon_partner",
+  "wish": {
+    "species": "exeggutor alola",
+    "levelBucket": 9,
+    "gender": "any",
+    "shiny": "any"
+  }
+}

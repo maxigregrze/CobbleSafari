@@ -1,0 +1,17 @@
+{
+  "offerId": "victor_grookey",
+  "tags": [
+    "trainerspokemon"
+  ],
+  "given": "grookey level=1 originaltrainertype=npc originaltrainer=Victor",
+  "givenMarks": [
+    "cobblemon:ribbon_partner"
+  ],
+  "givenActiveMark": "cobblemon:ribbon_partner",
+  "wish": {
+    "species": "rillaboom",
+    "levelBucket": 9,
+    "gender": "any",
+    "shiny": "any"
+  }
+}
