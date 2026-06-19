@@ -9,7 +9,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.Level;
 
 /**
- * Invisible propagation node (plan 107 § 4.4, revised § 107.bis). Its position is expressed in
+ * Invisible propagation node. Its position is expressed in
  * polar coordinates <b>in the boss frame</b> ({@code angleDeg} relative to the boss
  * orientation, horizontal {@code radius}, vertical {@code localY}): recomputed each tick, it therefore
  * follows the boss rotation (all entities orbit around it). After 5 ticks, the core creates the

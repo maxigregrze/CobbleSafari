@@ -12,15 +12,15 @@ import net.minecraft.world.level.block.state.BlockState;
 import java.util.List;
 
 /**
- * {@code base_electric_2} (plan 108 § 4.2): two waves (6 s apart) of
+ * {@code base_electric_2}: two waves (6 s apart) of
  * {@code csboss_electricity} fields placed on ~50% of the arena surface via Perlin noise. Each
  * block manages its cycle (charge 3 s → active 3 s → disappear, lightning on contact). The attack
  * ends 8 s after the second wave.
  */
 public class ElectricFieldAttack implements CsBossAttack {
 
-    private static final int WAVE2_AT = 120;       // 2nd wave at 6 s
-    private static final int DONE = 240;           // ≈12 s total (waves at 0 s and 6 s)
+    private static final int WAVE2_AT = 120; // 2nd wave at 6 s
+    private static final int DONE = 240; // ≈12 s total (waves at 0 s and 6 s)
     private static final double PERLIN_SCALE = 0.2;
     private static final double COVERAGE_THRESHOLD = 0.5; // ~50 %
 

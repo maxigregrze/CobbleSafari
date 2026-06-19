@@ -9,30 +9,30 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.phys.Vec3;
 
 /**
- * {@code base_water_2} (plan 110): <b>projectile</b> attack (not per player). Every 2 s (4–5 times)
+ * {@code base_water_2}: <b>projectile</b> attack (not per player). Every 2 s (4–5 times)
  * the boss fires an <b>X</b>: the same arc trio of waves in 4 directions, 90° apart, oriented from a
  * random base angle. Each trio's center wave (3 blocks wide) faces its launch direction, the two side
  * waves are flush with its edges but tilted 25° to form an arc. 8 damage + strong knockback on contact.
  */
 public class WaterWaveAttack implements CsBossAttack {
 
-    private static final int WAVE_INTERVAL = 38;  // 5*38 + 50 = 240 t
+    private static final int WAVE_INTERVAL = 38; // 5*38 + 50 = 240 t
     private static final int WAVE_LIFESPAN = 50;
-    private static final int WAVES = 6;           // deterministic
-    private static final double SPEED = 0.375;     // 25 % slower
+    private static final int WAVES = 6; // deterministic
+    private static final double SPEED = 0.375; // 25 % slower
     private static final int CROSS_DIRECTIONS = 4; // X shape: 4 trios, 90° apart
     private static final double SIDE_ANGLE_DEG = 25.0;
-    private static final double HALF_WIDTH = 1.5;  // half wall width (3 blocks)
+    private static final double HALF_WIDTH = 1.5; // half wall width (3 blocks)
     private static final double SPAWN_Y_OFFSET = 1.0;
-    private static final double STEP_DEG = 10.0;   // each volley rotates 10° from the previous (wave)
+    private static final double STEP_DEG = 10.0; // each volley rotates 10° from the previous (wave)
 
     private final String id;
     private final RandomSource rng = RandomSource.create();
     private int waves;
     private int tick;
     private int wavesSpawned;
-    private double baseAngle;  // random heading of the first volley
-    private double stepRad;    // ±10° per volley (random clockwise / anti-clockwise)
+    private double baseAngle; // random heading of the first volley
+    private double stepRad; // ±10° per volley (random clockwise / anti-clockwise)
     private boolean done;
 
     public WaterWaveAttack(String id) {
@@ -49,7 +49,7 @@ public class WaterWaveAttack implements CsBossAttack {
         this.wavesSpawned = 0;
         this.done = false;
         this.waves = WAVES;
-        // Première volée dans une direction aléatoire, puis rotation de ±10° à chaque volée (vague).
+        // First volley in a random direction, then ±10° rotation per volley (wave).
         this.baseAngle = rng.nextDouble() * Math.PI * 2.0;
         this.stepRad = Math.toRadians(STEP_DEG) * (rng.nextBoolean() ? 1.0 : -1.0);
     }
@@ -108,6 +108,7 @@ public class WaterWaveAttack implements CsBossAttack {
     private void spawnWave(ServerLevel level, BossBattleSession session, Vec3 pos, Vec3 velocity, Vec3 facing) {
         float yaw = (float) Math.toDegrees(Math.atan2(facing.x, facing.z));
         AttackWaveEntity wave = AttackWaveEntity.spawn(level, pos.x, pos.y, pos.z, session.getId(), velocity, yaw);
+        wave.setMaxTravel(CsBossAttackLib.areaReach(session));
         session.trackAttackEntity(wave);
     }
 

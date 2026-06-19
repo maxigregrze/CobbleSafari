@@ -26,7 +26,7 @@ import java.util.Map;
 import java.util.UUID;
 
 /**
- * Trap electric field (plan 108 § 4.1) placed by {@code base_electric_2}. Cycle managed by the block
+ * Trap electric field placed by {@code base_electric_2}. Cycle managed by the block
  * itself (scheduled tick), independent of the attack: charge 3 s ({@code ACTIVE=false}, animated
  * texture) → active 3 s ({@code ACTIVE=true}) → removal. When active, strikes any player on
  * contact, with a 2 s cooldown per player.
@@ -36,7 +36,7 @@ public class CsBossElectricityBlock extends Block {
     public static final BooleanProperty ACTIVE = BooleanProperty.create("active");
 
     private static final int CHARGE_TICKS = 60; // 3 s
-    private static final int ACTIVE_TICKS = 60;  // 3 s
+    private static final int ACTIVE_TICKS = 60; // 3 s
     private static final int STRIKE_COOLDOWN = 40; // 2 s per player
     private static final VoxelShape SHAPE = Block.box(0.0, 0.0, 0.0, 16.0, 2.0, 16.0);
     private static final SoundEvent BUZZ =
@@ -65,7 +65,7 @@ public class CsBossElectricityBlock extends Block {
         if (!level.isClientSide()) {
             // No sound here: bulk placement (perlin) would play hundreds of sounds the same tick.
             // The "placement" buzz is played once by the attack; active ambience is
-            // emitted locally by animateTick (cf. plan 108 § 4.1).
+            // emitted locally by animateTick.
             level.scheduleTick(pos, this, CHARGE_TICKS);
         }
     }

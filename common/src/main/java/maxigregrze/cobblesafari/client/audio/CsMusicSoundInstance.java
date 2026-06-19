@@ -6,7 +6,7 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
 
 /**
- * Custom sound instance (plan 105 § 7.1): non-positional, optionally looped, with
+ * Custom sound instance: non-positional, optionally looped, with
  * volume ramp for fading. {@link SoundEvent#createVariableRangeEvent} allows playing
  * any resource-pack sound id without registering it.
  */

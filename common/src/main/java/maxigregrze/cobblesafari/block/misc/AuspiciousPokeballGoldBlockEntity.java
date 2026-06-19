@@ -157,7 +157,7 @@ public class AuspiciousPokeballGoldBlockEntity extends AuspiciousPokeballBlockEn
 
     /**
      * Appends a single earner name, switches the block to earnable mode and resyncs it
-     * (used by the dimensional-objectives auspicious redeem, plan 118 §8.4). No-op if the name is
+     * (used by the dimensional-objectives auspicious redeem.4). No-op if the name is
      * blank, too long, or the list is full.
      */
     public void addEarner(String name) {

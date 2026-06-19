@@ -10,9 +10,14 @@ import maxigregrze.cobblesafari.item.IncenseItem;
 import maxigregrze.cobblesafari.item.LuckyMiningHelmetItem;
 import maxigregrze.cobblesafari.item.MudBallItem;
 import maxigregrze.cobblesafari.item.RotomPhoneItem;
+import maxigregrze.cobblesafari.item.TinkhammerItem;
+import maxigregrze.cobblesafari.item.WonderTradeTicketItem;
 import com.cobblemon.mod.common.api.pokemon.stats.Stats;
+import maxigregrze.cobblesafari.item.donut.DonutFlavorComponent;
 import maxigregrze.cobblesafari.item.donut.DonutItem;
+import maxigregrze.cobblesafari.item.donut.DonutMainFlavor;
 import maxigregrze.cobblesafari.item.donut.DungeonDonutItem;
+import maxigregrze.cobblesafari.item.donut.SurpriseDonutItem;
 import maxigregrze.cobblesafari.item.hyperberries.HyperBerryEnigmaItem;
 import maxigregrze.cobblesafari.item.hyperberries.HyperBerryEVItem;
 import maxigregrze.cobblesafari.item.hyperberries.HyperBerryIVItem;
@@ -37,6 +42,8 @@ import net.minecraft.world.item.ArmorMaterial;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.food.FoodProperties;
+import net.minecraft.world.item.DiggerItem;
+import net.minecraft.world.item.Tiers;
 import net.minecraft.world.item.Rarity;
 import net.minecraft.world.item.crafting.Ingredient;
 
@@ -98,6 +105,7 @@ public class ModItems {
 
     public static final Item TICKET_SAFARI = new Item(new Item.Properties());
     public static final Item TICKET_DUNGEON = new Item(new Item.Properties());
+    public static final Item TICKET_WONDERTRADE = new WonderTradeTicketItem(new Item.Properties());
 
     public static final Item FLAG_REGULAR = new Item(new Item.Properties().stacksTo(1));
     public static final Item FLAG_BRONZE = new Item(new Item.Properties().stacksTo(1));
@@ -112,6 +120,8 @@ public class ModItems {
 
     public static final Item MUD_BALL = new MudBallItem(new Item.Properties().stacksTo(64));
     public static final Item TINKAGEAR = new Item(new Item.Properties());
+    public static final Item TINKHAMMER = new TinkhammerItem(
+            new Item.Properties().attributes(DiggerItem.createAttributes(Tiers.DIAMOND, 5.0F, -3.0F)));
     public static final Item BAIT = new BaitItem(new Item.Properties().stacksTo(64));
     public static final Item BALM = new BalmItem(new Item.Properties().stacksTo(16));
     public static final Item BALM_DISTORTION = new BalmItem(new Item.Properties().stacksTo(16));
@@ -154,6 +164,17 @@ public class ModItems {
             .build();
 
     public static final Item DONUT = new DonutItem(new Item.Properties().stacksTo(16).food(DONUT_FOOD_PROPERTIES));
+    public static final Item DONUT_RANDOM = new SurpriseDonutItem(new Item.Properties().stacksTo(16), null, 0);
+    public static final Map<String, Item> DONUT_RANDOMS = new LinkedHashMap<>();
+
+    static {
+        for (DonutMainFlavor flavor : DonutMainFlavor.values()) {
+            for (int t = 0; t <= DonutFlavorComponent.MAX_TIER; t++) {
+                DONUT_RANDOMS.put(t + "_" + flavor.getSerializedName(),
+                        new SurpriseDonutItem(new Item.Properties().stacksTo(16), flavor, t));
+            }
+        }
+    }
     public static final Item INGREDIENT_DUNGEON_PORTAL = new DungeonIngredientItem(new Item.Properties().stacksTo(1).rarity(Rarity.RARE));
     public static final Item INGREDIENT_DUNGEON_PARIS = new DungeonIngredientItem(new Item.Properties().stacksTo(1).rarity(Rarity.RARE));
     public static final Item INGREDIENT_DUNGEON_DISTORTION = new DungeonIngredientItem(new Item.Properties().stacksTo(1).rarity(Rarity.RARE));
@@ -246,6 +267,7 @@ public class ModItems {
 
         registerItem("ticket_safari", TICKET_SAFARI);
         registerItem("ticket_dungeon", TICKET_DUNGEON);
+        registerItem("ticket_wondertrade", TICKET_WONDERTRADE);
 
         registerItem("fossil_random", FOSSIL_RANDOM);
         registerItem("fossil_perfect", FOSSIL_PERFECT);
@@ -266,6 +288,7 @@ public class ModItems {
 
         registerItem("mud_ball", MUD_BALL);
         registerItem("tinkagear", TINKAGEAR);
+        registerItem("tinkhammer", TINKHAMMER);
         registerItem("bait", BAIT);
         registerItem("balm", BALM);
         registerItem("balm_distortion", BALM_DISTORTION);
@@ -302,6 +325,10 @@ public class ModItems {
         registerItem("butter_supreme", BUTTER_SUPREME);
         registerItem("butter_hyperspace", BUTTER_HYPERSPACE);
         registerItem("donut", DONUT);
+        registerItem("donut_random", DONUT_RANDOM);
+        for (Map.Entry<String, Item> entry : DONUT_RANDOMS.entrySet()) {
+            registerItem("donut_random_" + entry.getKey(), entry.getValue());
+        }
         registerItem("ingredient_dungeon_portal", INGREDIENT_DUNGEON_PORTAL);
         registerItem("ingredient_dungeon_paris", INGREDIENT_DUNGEON_PARIS);
         registerItem("ingredient_dungeon_distortion", INGREDIENT_DUNGEON_DISTORTION);
@@ -394,6 +421,8 @@ public class ModItems {
         BATCH_ITEMS.add(BUTTER_SUPREME);
         BATCH_ITEMS.add(BUTTER_HYPERSPACE);
         BATCH_ITEMS.add(DONUT);
+        BATCH_ITEMS.add(DONUT_RANDOM);
+        BATCH_ITEMS.addAll(DONUT_RANDOMS.values());
         BATCH_ITEMS.add(INGREDIENT_DUNGEON_PORTAL);
         BATCH_ITEMS.add(INGREDIENT_DUNGEON_PARIS);
         BATCH_ITEMS.add(INGREDIENT_DUNGEON_DISTORTION);

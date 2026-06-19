@@ -12,7 +12,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.Level;
 
 /**
- * Semi-transparent distortion stem (plan 107 § 4.3, revised). Position in polar coordinates
+ * Semi-transparent distortion stem. Position in polar coordinates
  * in the boss frame (cf. {@link DistortionFrame}): recomputed each tick, it rotates with the
  * boss. One tick after spawning, it stacks a stem above (same angle/radius, {@code localY+1})
  * until its {@code stacksRemaining} budget is exhausted. Vertical cap ≤ 5 stems/column.
@@ -23,7 +23,7 @@ public class AttackDistortionStemEntity extends AbstractAttackEntity {
     private static final EntityDataAccessor<Boolean> DATA_VERTICAL =
             SynchedEntityData.defineId(AttackDistortionStemEntity.class, EntityDataSerializers.BOOLEAN);
 
-    private static final int VERTICAL_TTL = 100;     // wall: disappears faster (5 s)
+    private static final int VERTICAL_TTL = 100; // wall: disappears faster (5 s)
     private static final float VERTICAL_DAMAGE = 8.0F;
 
     private static final String KEY_ANGLE = "Angle";

@@ -18,9 +18,9 @@ import net.minecraft.server.MinecraftServer;
 public interface PortalExpirationHandler {
 
     /**
-     * @param server       the minecraft server instance
+     * @param server the minecraft server instance
      * @param portalEntity the portal block entity being removed
-     * @param config       the dungeon configuration for this portal's dimension
+     * @param config the dungeon configuration for this portal's dimension
      */
     void onPortalExpired(MinecraftServer server,
                          DungeonPortalBlockEntity portalEntity,

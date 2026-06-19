@@ -96,6 +96,7 @@ public class CobbleSafariClientFabric implements ClientModInitializer {
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             maxigregrze.cobblesafari.client.screen.rotomphone.RotomPhonePcSession.tickCleanup(client);
             maxigregrze.cobblesafari.client.rotomphone.RotoGlideClient.tick(client);
+            maxigregrze.cobblesafari.client.teleporter.TeleportPadClient.tick(client);
             maxigregrze.cobblesafari.client.rotomphone.RotomPhoneKeybind.clientTick(client);
             maxigregrze.cobblesafari.client.objectives.ObjectivesKeybind.clientTick(client);
             maxigregrze.cobblesafari.client.objectives.ObjectivesHudController.clientTick(client);
@@ -151,7 +152,9 @@ public class CobbleSafariClientFabric implements ClientModInitializer {
     }
 
     private void registerBlockRenderLayers() {
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.TINKAGEAR_BLOCK, RenderType.translucent());
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.SAFARI_TELEPORTER, RenderType.translucent());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.TELEPORT_PAD, RenderType.translucent());
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.SAFARI_EGG_NEST, RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.HOOPA_RING_PORTAL, RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.DUNGEON_PORTAL, RenderType.cutout());
@@ -189,6 +192,7 @@ public class CobbleSafariClientFabric implements ClientModInitializer {
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.UNDERGROUND_PC, RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.SECRETBASE_PC, RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.INCUBATOR, RenderType.translucent());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.EMPTYPHONE, RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.DISTORTION_ROCK, RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.DISTORTION_ROCK_VERTICAL, RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.DISTORTION_ROCK_UPSIDEDOWN, RenderType.cutout());
@@ -268,11 +272,13 @@ public class CobbleSafariClientFabric implements ClientModInitializer {
         BlockEntityRenderers.register(ModBlockEntities.AUSPICIOUS_POKEBALL_GOLD, AuspiciousPokeballBlockEntityRenderer::new);
         BlockEntityRenderers.register(ModBlockEntities.UNION_ROOM_DECOR, maxigregrze.cobblesafari.client.renderer.UnionRoomDecorBlockEntityRenderer::new);
         BlockEntityRenderers.register(ModBlockEntities.WHIRLWIND, maxigregrze.cobblesafari.client.renderer.WhirlwindBlockEntityRenderer::new);
+        BlockEntityRenderers.register(ModBlockEntities.TRAP, maxigregrze.cobblesafari.client.renderer.TrapBlockEntityRenderer::new);
         BlockEntityRenderers.register(ModBlockEntities.UNION_ROOM_GLOBE_UPPER, maxigregrze.cobblesafari.client.renderer.UnionRoomGlobeUpperBlockEntityRenderer::new);
         BlockEntityRenderers.register(ModBlockEntities.UNION_ROOM_SPOTLIGHT, maxigregrze.cobblesafari.client.renderer.UnionRoomSpotlightBlockEntityRenderer::new);
         BlockEntityRenderers.register(ModBlockEntities.PUNCHINGBAG, maxigregrze.cobblesafari.client.renderer.PunchingBagBlockEntityRenderer::new);
         BlockEntityRenderers.register(ModBlockEntities.BALM_DISPENSER, maxigregrze.cobblesafari.client.renderer.BalmDispenserBlockEntityRenderer::new);
         BlockEntityRenderers.register(ModBlockEntities.CSBOSS_TRIGGER, maxigregrze.cobblesafari.client.renderer.CsBossTriggerBlockEntityRenderer::new);
+        BlockEntityRenderers.register(ModBlockEntities.TELEPORT_PAD, maxigregrze.cobblesafari.client.renderer.TeleportPadBlockEntityRenderer::new);
         BlockEntityRenderers.register(ModBlockEntities.CSBOSS_MIMIC, maxigregrze.cobblesafari.client.renderer.CsBossMimicBlockEntityRenderer::new);
         EntityRendererRegistry.register(ModEntities.HIKER, HikerEntityRenderer::new);
         EntityRendererRegistry.register(ModEntities.CSTRADER_NPC, CsTraderEntityRenderer::new);

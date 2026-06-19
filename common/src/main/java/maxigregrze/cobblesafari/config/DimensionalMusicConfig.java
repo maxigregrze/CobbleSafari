@@ -12,9 +12,9 @@ import java.nio.file.Path;
 import java.util.LinkedHashMap;
 
 /**
- * Server configuration for dimensional music ({@code dimensional_music.json}, plan 105 § 3).
+ * Server configuration for dimensional music ({@code dimensional_music.json}).
  * Defaults are written only on <b>first creation</b>; any manual edit/removal is
- * respected afterward (no re-merge of defaults — decision § 1b).
+ * respected afterward (no re-merge of defaults — decisionb).
  */
 public final class DimensionalMusicConfig {
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();

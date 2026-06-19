@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Arena util (plan 108 § 1): identifies "surface" blocks (exposed top, {@code y = triggerY ± tol})
+ * Arena util: identifies "surface" blocks (exposed top, {@code y = triggerY ± tol})
  * in the participant disk, and places blocks on that surface. Called occasionally
  * (not per tick) — a full disk scan is acceptable.
  */
@@ -21,10 +21,37 @@ public final class CsBossSurfaceScanner {
 
     private CsBossSurfaceScanner() {}
 
-    /** Surfaces of the arena disk, anchored to trigger block Y ± {@link #DEFAULT_Y_TOLERANCE}. */
+    /** Surfaces of the arena block-detection square, anchored to trigger block Y ± {@link #DEFAULT_Y_TOLERANCE}. */
     public static List<BlockPos> scanSurface(ServerLevel level, BossBattleSession session) {
-        return scanSurface(level, session.getArenaCenter(), session.getPlayerRadius(),
+        int half = (int) Math.ceil(session.getBlockRadius());
+        return scanSurfaceSquare(level, session.getArenaCenter(), half,
                 session.getTriggerPos().getY(), DEFAULT_Y_TOLERANCE);
+    }
+
+    /**
+     * For each column of the square ({@code |dx| ≤ radius, |dz| ≤ radius}), the first solid block
+     * (from the top) whose block above is replaceable, with {@code y ∈ [triggerY−tol, triggerY+tol]}.
+     */
+    public static List<BlockPos> scanSurfaceSquare(ServerLevel level, Vec3 center, int radius,
+                                                   int triggerY, int yTolerance) {
+        List<BlockPos> out = new ArrayList<>();
+        int cx = (int) Math.floor(center.x);
+        int cz = (int) Math.floor(center.z);
+        BlockPos.MutableBlockPos p = new BlockPos.MutableBlockPos();
+        for (int dx = -radius; dx <= radius; dx++) {
+            for (int dz = -radius; dz <= radius; dz++) {
+                int x = cx + dx;
+                int z = cz + dz;
+                for (int y = triggerY + yTolerance; y >= triggerY - yTolerance; y--) {
+                    p.set(x, y, z);
+                    if (isSurface(level, p)) {
+                        out.add(p.immutable());
+                        break;
+                    }
+                }
+            }
+        }
+        return out;
     }
 
     /**

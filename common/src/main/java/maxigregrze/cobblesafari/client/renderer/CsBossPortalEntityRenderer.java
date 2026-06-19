@@ -14,21 +14,19 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
 
 /**
- * Rend le portail d'invocation (plan 122 § 8.2) : 3 couches plates horizontales (5×5 blocs)
- * empilées, chacune avec sa texture {@code csboss_spawnportal_type{T}_layer{i}}. Mis à l'échelle
- * par {@link CsBossPortalEntity#getAnim()} (ouverture / fermeture) et en rotation Y continue
- * autour de son centre. Couches double‑face, translucides, émissives.
+ * Renders the summon portal: 3 stacked horizontal flat layers (5×5 blocks),
+ * each with its own {@code csboss_spawnportal_type{T}_layer{i}} texture. Scaled by
+ * {@link CsBossPortalEntity#getAnim()} (opening / closing) and continuously rotated around Y
+ * at its center. Double-sided, translucent, emissive layers.
  */
 public class CsBossPortalEntityRenderer extends EntityRenderer<CsBossPortalEntity> {
 
-    /** Demi-emprise de base : 5 blocs de côté → ±2,5. */
+    /** Base half-extent: 5 blocks per side → ±2.5. */
     private static final float HALF_SIZE = 2.5F;
-    /** Facteur de taille du portail (plan 122) : 2 ⇒ emprise rendue 10×10 blocs à pleine ouverture. */
-    private static final float PORTAL_SCALE = 2.0F;
-    /** Espacement vertical des couches : 2 px ≈ 0,125 bloc (plan 122, réduit de moitié). */
-    private static final float LAYER_GAP = 0.125F;
-    /** Vitesse de rotation permanente autour de Y. */
-    private static final float SPIN_PER_TICK = 1.5F; // degrés / tick
+    /** Vertical layer spacing: 2 px ≈ 0.125 block (halved). */
+    private static final float LAYER_GAP = 0.5F;
+    /** Permanent rotation speed around Y. */
+    private static final float SPIN_PER_TICK = 1.5F; // degrees / tick
     private static final int LAYERS = 3;
 
     public CsBossPortalEntityRenderer(EntityRendererProvider.Context context) {
@@ -50,14 +48,14 @@ public class CsBossPortalEntityRenderer extends EntityRenderer<CsBossPortalEntit
                        MultiBufferSource buffer, int packedLight) {
         float open = entity.getAnim();
         if (open <= 0.001F) {
-            return; // échelle nulle : rien à dessiner
+            return; // zero scale: nothing to draw
         }
         float spin = (entity.tickCount + partialTicks) * SPIN_PER_TICK;
         int portalType = entity.getPortalType();
-        float halfSize = HALF_SIZE * PORTAL_SCALE; // emprise 2× ; l'espacement des couches reste fixe
+        float halfSize = HALF_SIZE * entity.getPortalSize();
 
         ps.pushPose();
-        ps.scale(open, open, open); // animation d'ouverture / fermeture (uniforme)
+        ps.scale(open, open, open); // opening / closing animation (uniform)
         ps.mulPose(Axis.YP.rotationDegrees(spin));
         PoseStack.Pose pose = ps.last();
 
@@ -71,14 +69,14 @@ public class CsBossPortalEntityRenderer extends EntityRenderer<CsBossPortalEntit
         super.render(entity, yaw, partialTicks, ps, buffer, packedLight);
     }
 
-    /** Quad horizontal double‑face (visible du dessus et du dessous) centré sur l'entité. */
+    /** Double-sided horizontal quad (visible from above and below) centered on the entity. */
     private static void horizontalQuad(VertexConsumer vc, PoseStack.Pose pose, float hs, float y) {
-        // Face supérieure (normale +Y).
+        // Top face (normal +Y).
         v(vc, pose, -hs, y, -hs, 0, 0, 0, 1, 0);
         v(vc, pose, -hs, y, hs, 0, 1, 0, 1, 0);
         v(vc, pose, hs, y, hs, 1, 1, 0, 1, 0);
         v(vc, pose, hs, y, -hs, 1, 0, 0, 1, 0);
-        // Face inférieure (normale -Y, ordre inversé).
+        // Bottom face (normal -Y, reversed order).
         v(vc, pose, -hs, y, -hs, 0, 0, 0, -1, 0);
         v(vc, pose, hs, y, -hs, 1, 0, 0, -1, 0);
         v(vc, pose, hs, y, hs, 1, 1, 0, -1, 0);

@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Reward distribution on victory (plan 100 § 16).
+ * Reward distribution on victory.
  */
 public final class RewardService {
 

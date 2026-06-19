@@ -1,0 +1,7 @@
+{
+  "parent": "cobblesafari:block/trap_base",
+  "textures": {
+    "0": "cobblesafari:block/trap_fart",
+    "particle": "cobblesafari:block/trap_fart"
+  }
+}

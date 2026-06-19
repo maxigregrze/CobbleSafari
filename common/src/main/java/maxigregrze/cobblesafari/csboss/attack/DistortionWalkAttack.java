@@ -13,19 +13,19 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
- * {@code distortion_2} (plan 113, Type C / SPREAD): every couple of seconds the boss sends out a
+ * {@code distortion_2} (Type C / SPREAD): every couple of seconds the boss sends out a
  * shadow in a <b>random direction</b>. The shadow travels straight forward (with a small one-time
  * deviation a few degrees left or right around mid-course) while leaving a distortion-flower trail;
  * each flower later grows a vertical stem wall. 4–6 shadows over the attack.
  */
 public class DistortionWalkAttack implements CsBossAttack {
 
-    private static final int SEND_INTERVAL = 40;   // a new shadow every 2 s
-    private static final int SHADOW_LIFE = 100;    // 5 s of forward travel
-    private static final double WALK_SPEED = 0.2;  // shadow traces a path
+    private static final int SEND_INTERVAL = 40; // a new shadow every 2 s
+    private static final int SHADOW_LIFE = 100; // 5 s of forward travel
+    private static final double WALK_SPEED = 0.2; // shadow traces a path
     private static final double DEVIATION_DEG = 12.0; // max mid-course turn (left or right)
-    private static final int END_DELAY = 20;       // 3*40 + 100 + 20 = 240 t
-    private static final int COUNT = 4;            // deterministic
+    private static final int END_DELAY = 20; // 3*40 + 100 + 20 = 240 t
+    private static final int COUNT = 4; // deterministic
 
     private final String id;
     private final RandomSource rng = RandomSource.create();
@@ -110,6 +110,7 @@ public class DistortionWalkAttack implements CsBossAttack {
         double theta = rng.nextDouble() * Math.PI * 2.0;
         AttackShadowEntity shadow = AttackShadowEntity.spawn(level, boss.getX(),
                 session.getTriggerPos().getY(), boss.getZ(), session.getId());
+        shadow.setMaxTravel(CsBossAttackLib.areaReach(session));
         session.trackAttackEntity(shadow);
         walks.add(new Walk(shadow, tick, Math.cos(theta), Math.sin(theta)));
         boss.triggerAttackAnimation();

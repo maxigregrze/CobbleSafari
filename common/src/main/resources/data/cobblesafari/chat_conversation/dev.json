@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "id": "dev",
+  "displayName": "maxigregrze",
+  "displayPriority": 0,
+  "textureFile": "dev",
+  "unlockedFromStart": true,
+  "steps": [
+    {
+      "messagesBefore": [
+        "cobblesafari.test.dev.s1.b1",
+        "cobblesafari.test.dev.s1.b2",
+        "cobblesafari.test.dev.s1.b3",
+        "cobblesafari.test.dev.s1.b4",
+        "cobblesafari.test.dev.s1.b5",
+        "cobblesafari.test.dev.s1.b6",
+        "cobblesafari.test.dev.s1.b7",
+        "cobblesafari.test.dev.s1.b8",
+        "cobblesafari.test.dev.s1.b9",
+        "cobblesafari.test.dev.s1.b10",
+        "cobblesafari.test.dev.s1.b11",
+        "cobblesafari.test.dev.s1.b12",
+        "cobblesafari.test.dev.s1.b13",
+        "cobblesafari.test.dev.s1.b14",
+        "cobblesafari.test.dev.s1.b15",
+        "cobblesafari.test.dev.s1.b16",
+        "cobblesafari.test.dev.s1.b17"
+      ],
+      "advancement": "minecraft:story/mine_stone",
+      "rewardPersonalTrade": "dev_rotom",
+      "messagesAfter": [
+        "cobblesafari.test.dev.s1.a1",
+        "cobblesafari.test.dev.s1.a2",
+        "cobblesafari.test.dev.s1.a3"
+      ],
+      "waitNextDay": false
+    }
+  ]
+}

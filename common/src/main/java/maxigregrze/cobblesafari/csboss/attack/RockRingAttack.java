@@ -14,7 +14,7 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
- * {@code base_rock_2} (plan 109): around <b>each player</b>, a ring (radius 3) of static shadows;
+ * {@code base_rock_2}: around <b>each player</b>, a ring (radius 3) of static shadows;
  * 1 s later, a meteor falls on each (like {@code base_rock_1}) and places a
  * meteorite block. 1 s after impact, repeat. 3–5 waves total. The meteor damages (18)
  * a player it passes through.
@@ -22,12 +22,12 @@ import java.util.List;
 public class RockRingAttack implements CsBossAttack {
 
     private static final int RING_RADIUS = 3;
-    private static final int FALL_TICKS = 20;    // fall 2× slower (10→20), visible longer
-    private static final int IMPACT_AT = 30;     // impact unchanged
+    private static final int FALL_TICKS = 20; // fall 2× slower (10→20), visible longer
+    private static final int IMPACT_AT = 30; // impact unchanged
     private static final int METEOR_AT = IMPACT_AT - FALL_TICKS; // 10: meteor appears earlier
-    private static final int WAVE_INTERVAL = 48;  // ≈1 s after impact (5*48 = 240)
-    private static final int WAVES = 5;           // deterministic
-    private static final int RING_STAGGER = 4;   // fall stagger ticks per ring (center → outer)
+    private static final int WAVE_INTERVAL = 48; // ≈1 s after impact (5*48 = 240)
+    private static final int WAVES = 5; // deterministic
+    private static final int RING_STAGGER = 4; // fall stagger ticks per ring (center → outer)
     private static final double FALL_HEIGHT = 20.0;
     private static final float METEOR_DAMAGE = 18.0F;
     private static final List<BlockPos> RING = CsBossGridShapes.filledCircle(RING_RADIUS);

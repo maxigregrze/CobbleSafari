@@ -1,0 +1,16 @@
+{
+  "parent": "cobblesafari:craiglist_amateur",
+  "display": {
+    "icon": { "id": "minecraft:book" },
+    "title": { "translate": "advancement.cobblesafari.craiglist_professional.title" },
+    "description": { "translate": "advancement.cobblesafari.craiglist_professional.description" },
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "done": { "trigger": "cobblesafari:gts_trade_deposit_sold", "conditions": { "count": 10 } }
+  },
+  "requirements": [["done"]]
+}

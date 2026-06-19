@@ -14,16 +14,16 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
 
 /**
- * Rend la boule d'ombre ({@code base_ghost_4}) : un quad plat 2×2 toujours orienté face caméra
- * (comme une boue / un appât), qui tourne lentement sur son axe avant (roulis dans le plan écran).
+ * Renders the shadow ball ({@code base_ghost_4}): a flat 2×2 quad always camera-facing
+ * (like mud / bait), slowly spinning on its forward axis (roll in the screen plane).
  */
 public class AttackShadowballEntityRenderer extends EntityRenderer<AttackShadowballEntity> {
 
     private static final ResourceLocation TEXTURE =
             ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, "textures/entity/csboss/attack_shadowball.png");
-    private static final float HALF_SIZE = 1.0f;             // quad 2×2
-    private static final float CENTER_Y = 1.0f;              // centre le visuel sur la boîte 2 de haut
-    private static final float SPIN_DEGREES_PER_TICK = 4.0f; // rotation lente sur l'axe avant
+    private static final float HALF_SIZE = 1.0f; // quad 2×2
+    private static final float CENTER_Y = 1.0f; // center the visual on the 2-block-tall box
+    private static final float SPIN_DEGREES_PER_TICK = 4.0f; // slow rotation on the forward axis
 
     public AttackShadowballEntityRenderer(EntityRendererProvider.Context context) {
         super(context);
@@ -39,7 +39,7 @@ public class AttackShadowballEntityRenderer extends EntityRenderer<AttackShadowb
                        MultiBufferSource buffer, int packedLight) {
         ps.pushPose();
         ps.translate(0.0, CENTER_Y, 0.0);
-        // Face caméra (billboard), puis roulis autour de l'axe avant (Z après orientation caméra).
+        // Camera-facing (billboard), then roll around the forward axis (Z after camera orientation).
         ps.mulPose(this.entityRenderDispatcher.cameraOrientation());
         float spin = (entity.tickCount + partialTicks) * SPIN_DEGREES_PER_TICK;
         ps.mulPose(Axis.ZP.rotationDegrees(spin));
@@ -52,13 +52,13 @@ public class AttackShadowballEntityRenderer extends EntityRenderer<AttackShadowb
         super.render(entity, yaw, partialTicks, ps, buffer, packedLight);
     }
 
-    /** Quad double face dans le plan XY (z=0), centré sur l'origine. */
+    /** Double-sided quad in the XY plane (z=0), centered on the origin. */
     private static void quad(VertexConsumer vc, PoseStack.Pose pose, int light) {
         v(vc, pose, -HALF_SIZE, -HALF_SIZE, 0, 1, light);
         v(vc, pose, HALF_SIZE, -HALF_SIZE, 1, 1, light);
         v(vc, pose, HALF_SIZE, HALF_SIZE, 1, 0, light);
         v(vc, pose, -HALF_SIZE, HALF_SIZE, 0, 0, light);
-        // dos (winding inversé)
+        // back face (reversed winding)
         v(vc, pose, -HALF_SIZE, HALF_SIZE, 0, 0, light);
         v(vc, pose, HALF_SIZE, HALF_SIZE, 1, 0, light);
         v(vc, pose, HALF_SIZE, -HALF_SIZE, 1, 1, light);

@@ -1,0 +1,94 @@
+{
+  "variants": {
+    "mode=top,facing=north,connected=true": {
+      "model": "cobblesafari:block/survival_teleporter_pad_top"
+    },
+    "mode=top,facing=north,connected=false": {
+      "model": "cobblesafari:block/survival_teleporter_pad_top_disconnected"
+    },
+    "mode=top,facing=east,connected=true": {
+      "model": "cobblesafari:block/survival_teleporter_pad_top",
+      "y": 90
+    },
+    "mode=top,facing=east,connected=false": {
+      "model": "cobblesafari:block/survival_teleporter_pad_top_disconnected",
+      "y": 90
+    },
+    "mode=top,facing=south,connected=true": {
+      "model": "cobblesafari:block/survival_teleporter_pad_top",
+      "y": 180
+    },
+    "mode=top,facing=south,connected=false": {
+      "model": "cobblesafari:block/survival_teleporter_pad_top_disconnected",
+      "y": 180
+    },
+    "mode=top,facing=west,connected=true": {
+      "model": "cobblesafari:block/survival_teleporter_pad_top",
+      "y": 270
+    },
+    "mode=top,facing=west,connected=false": {
+      "model": "cobblesafari:block/survival_teleporter_pad_top_disconnected",
+      "y": 270
+    },
+    "mode=bottom,facing=north,connected=true": {
+      "model": "cobblesafari:block/survival_teleporter_pad_bottom"
+    },
+    "mode=bottom,facing=north,connected=false": {
+      "model": "cobblesafari:block/survival_teleporter_pad_bottom_disconnected"
+    },
+    "mode=bottom,facing=east,connected=true": {
+      "model": "cobblesafari:block/survival_teleporter_pad_bottom",
+      "y": 90
+    },
+    "mode=bottom,facing=east,connected=false": {
+      "model": "cobblesafari:block/survival_teleporter_pad_bottom_disconnected",
+      "y": 90
+    },
+    "mode=bottom,facing=south,connected=true": {
+      "model": "cobblesafari:block/survival_teleporter_pad_bottom",
+      "y": 180
+    },
+    "mode=bottom,facing=south,connected=false": {
+      "model": "cobblesafari:block/survival_teleporter_pad_bottom_disconnected",
+      "y": 180
+    },
+    "mode=bottom,facing=west,connected=true": {
+      "model": "cobblesafari:block/survival_teleporter_pad_bottom",
+      "y": 270
+    },
+    "mode=bottom,facing=west,connected=false": {
+      "model": "cobblesafari:block/survival_teleporter_pad_bottom_disconnected",
+      "y": 270
+    },
+    "mode=front,facing=north,connected=true": {
+      "model": "cobblesafari:block/survival_teleporter_pad_front"
+    },
+    "mode=front,facing=north,connected=false": {
+      "model": "cobblesafari:block/survival_teleporter_pad_front_disconnected"
+    },
+    "mode=front,facing=east,connected=true": {
+      "model": "cobblesafari:block/survival_teleporter_pad_front",
+      "y": 90
+    },
+    "mode=front,facing=east,connected=false": {
+      "model": "cobblesafari:block/survival_teleporter_pad_front_disconnected",
+      "y": 90
+    },
+    "mode=front,facing=south,connected=true": {
+      "model": "cobblesafari:block/survival_teleporter_pad_front",
+      "y": 180
+    },
+    "mode=front,facing=south,connected=false": {
+      "model": "cobblesafari:block/survival_teleporter_pad_front_disconnected",
+      "y": 180
+    },
+    "mode=front,facing=west,connected=true": {
+      "model": "cobblesafari:block/survival_teleporter_pad_front",
+      "y": 270
+    },
+    "mode=front,facing=west,connected=false": {
+      "model": "cobblesafari:block/survival_teleporter_pad_front_disconnected",
+      "y": 270
+    }
+  }
+}

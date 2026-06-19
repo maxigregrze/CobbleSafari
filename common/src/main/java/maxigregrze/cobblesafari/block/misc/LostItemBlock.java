@@ -4,6 +4,7 @@ import com.mojang.logging.LogUtils;
 import com.mojang.serialization.MapCodec;
 import maxigregrze.cobblesafari.network.LostItemConfigServerHandler;
 import maxigregrze.cobblesafari.platform.Services;
+import maxigregrze.cobblesafari.power.PowerItemRewardEffects;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -231,11 +232,14 @@ public class LostItemBlock extends BaseEntityBlock {
         ResourceKey<LootTable> key = ResourceKey.create(Registries.LOOT_TABLE, loc);
         LootTable lootTable = level.getServer().reloadableRegistries().getLootTable(key);
 
-        lootTable.getRandomItems(params).stream().findFirst().ifPresent(stack -> {
-            if (!stack.isEmpty()) {
-                giveStack(level, pos, player, stack);
-            }
-        });
+        int draws = 1 + PowerItemRewardEffects.bigHaulExtraItems(player);
+        for (int d = 0; d < draws; d++) {
+            lootTable.getRandomItems(params).stream().findFirst().ifPresent(stack -> {
+                if (!stack.isEmpty()) {
+                    giveStack(level, pos, player, stack);
+                }
+            });
+        }
     }
 
     private static void givePoolMode(ServerLevel level, BlockPos pos, ServerPlayer player, LootParams params, LostItemBlockEntity be) {
@@ -246,9 +250,17 @@ public class LostItemBlock extends BaseEntityBlock {
         if (hi > lo) {
             count = lo + level.random.nextInt(hi - lo + 1);
         }
+        count += PowerItemRewardEffects.bigHaulExtraItems(player);
+
+        int[] weights = {
+                CATEGORY_WEIGHTS[0] + PowerItemRewardEffects.itemWeightBonus(player, 0),
+                CATEGORY_WEIGHTS[1] + PowerItemRewardEffects.itemWeightBonus(player, 1),
+                CATEGORY_WEIGHTS[2] + PowerItemRewardEffects.itemWeightBonus(player, 2),
+                CATEGORY_WEIGHTS[3] + PowerItemRewardEffects.itemWeightBonus(player, 3)
+        };
 
         for (int i = 0; i < count; i++) {
-            int cat = pickWeightedCategory(level.random);
+            int cat = pickWeightedCategory(level.random, weights);
             String poolId = be.getPoolIdForCategory(cat).trim();
             if (poolId.isEmpty()) {
                 LostItemConfigServerHandler.logPoolRollFailure("empty pool id for category " + cat, "(empty)");
@@ -273,20 +285,23 @@ public class LostItemBlock extends BaseEntityBlock {
         }
     }
 
-    private static int pickWeightedCategory(RandomSource rng) {
+    private static int pickWeightedCategory(RandomSource rng, int[] weights) {
         int total = 0;
-        for (int w : CATEGORY_WEIGHTS) {
+        for (int w : weights) {
             total += w;
+        }
+        if (total <= 0) {
+            return 0;
         }
         int roll = rng.nextInt(total);
         int sum = 0;
-        for (int i = 0; i < CATEGORY_WEIGHTS.length; i++) {
-            sum += CATEGORY_WEIGHTS[i];
+        for (int i = 0; i < weights.length; i++) {
+            sum += weights[i];
             if (roll < sum) {
                 return i;
             }
         }
-        return CATEGORY_WEIGHTS.length - 1;
+        return weights.length - 1;
     }
 
     private static boolean lootTableExists(ServerLevel level, ResourceKey<LootTable> key) {

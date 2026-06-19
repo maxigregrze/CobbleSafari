@@ -1,0 +1,16 @@
+{
+  "parent": "cobblesafari:rookie_catcher",
+  "display": {
+    "icon": { "id": "cobblemon:safari_ball" },
+    "title": { "translate": "advancement.cobblesafari.seasoned_catcher.title" },
+    "description": { "translate": "advancement.cobblesafari.seasoned_catcher.description" },
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "done": { "trigger": "cobblesafari:pokemon_caught", "conditions": { "count": 50 } }
+  },
+  "requirements": [["done"]]
+}

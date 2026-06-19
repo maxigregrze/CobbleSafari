@@ -20,7 +20,7 @@ import java.util.Map;
 import java.util.regex.Pattern;
 
 /**
- * Loads CSBoss definitions from {@code data/<ns>/csboss/*.json} (plan 100 § 2.2).
+ * Loads CSBoss definitions from {@code data/<ns>/csboss/*.json}.
  * Modeled on {@code GtsDataLoader}: strict validation, never throws.
  */
 public final class CsBossDataLoader {
@@ -142,10 +142,15 @@ public final class CsBossDataLoader {
 
         int portalType = json.has("portalType")
                 ? Math.max(1, json.get("portalType").getAsInt()) : CsBossDefinition.DEFAULT_PORTAL_TYPE;
+        double portalSize = json.has("portalSize")
+                ? Math.max(0.0, json.get("portalSize").getAsDouble()) : CsBossDefinition.DEFAULT_PORTAL_SIZE;
+        double portalDistance = json.has("portalDistance")
+                ? Math.max(0.0, json.get("portalDistance").getAsDouble()) : CsBossDefinition.DEFAULT_PORTAL_DISTANCE;
 
         return new CsBossDefinition(bossId, displayName, tags, maximumDuration, minimumDuration, specie, minion,
                 size, moveSet, cdMin, cdMax, isStatic, uniqueReward, rewards, music, overlay, color,
-                secondPhase, giveRewardsBeforeSecondPhase, allowSimultaneousAttacks, portalType);
+                secondPhase, giveRewardsBeforeSecondPhase, allowSimultaneousAttacks, portalType,
+                portalSize, portalDistance);
     }
 
     /** Minion species (optional); validated as a PokemonProperties line, otherwise ignored. */

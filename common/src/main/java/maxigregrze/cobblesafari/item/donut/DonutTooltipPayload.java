@@ -2,6 +2,7 @@ package maxigregrze.cobblesafari.item.donut;
 
 import maxigregrze.cobblesafari.CobbleSafari;
 import maxigregrze.cobblesafari.init.ModComponents;
+import maxigregrze.cobblesafari.power.ItemCategoryVariantRegistry;
 import maxigregrze.cobblesafari.power.PowerVariantRegistry;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
@@ -49,11 +50,15 @@ public record DonutTooltipPayload(
         if (power == null || power.typeNbr() <= 1) {
             return powerId + "_" + level;
         }
-        int idx = typeIndex;
-        if (idx < 0 || idx >= PowerVariantRegistry.VARIANT_COUNT) {
-            idx = Math.floorMod(idx, PowerVariantRegistry.VARIANT_COUNT);
+        String suffix;
+        if ("item".equals(powerId)) {
+            int idx = Math.floorMod(typeIndex, ItemCategoryVariantRegistry.COUNT);
+            suffix = ItemCategoryVariantRegistry.suffix(idx);
+        } else {
+            int idx = Math.floorMod(typeIndex, PowerVariantRegistry.VARIANT_COUNT);
+            suffix = PowerVariantRegistry.suffix(idx);
         }
-        return powerId + "_" + PowerVariantRegistry.suffix(idx) + "_" + level;
+        return powerId + "_" + suffix + "_" + level;
     }
 
     public static Component bonusEffectDescription(DonutBonus bonus) {

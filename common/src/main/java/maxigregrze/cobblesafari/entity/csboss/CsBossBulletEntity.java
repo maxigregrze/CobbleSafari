@@ -18,7 +18,7 @@ import java.util.Set;
 import java.util.UUID;
 
 /**
- * Ultra-light "bullet-hell" projectile (plan 100 § 12.3): no AI or physics,
+ * Ultra-light "bullet-hell" projectile: no AI or physics,
  * passes through walls, fixed lifespan, detection limited to the participant Set.
  */
 public class CsBossBulletEntity extends Entity {

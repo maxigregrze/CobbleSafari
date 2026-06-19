@@ -45,7 +45,9 @@ public class RotomPhoneMenuScreen extends RotomPhoneBaseScreen {
                 if (a.name().equals(appId)) { appData = a; break; }
             }
             if (appData == null || !appData.enabled()) continue;
-            // Visibility here depends only on the app being enabled; unlock state is handled at click time.
+            // Locked apps (unlocking advancement not yet completed) stay hidden until earned
+            // through the Safari questline. The unlock flag is computed server-side per player.
+            if (!appData.unlockedForPlayer()) continue;
             visibleApps.add(appId);
         }
     }
@@ -101,6 +103,11 @@ public class RotomPhoneMenuScreen extends RotomPhoneBaseScreen {
         RotomPhoneConfigSyncPayload.AppData appData = null;
         for (RotomPhoneConfigSyncPayload.AppData a : RotomPhoneClientCache.getCachedApps()) {
             if (a.name().equals(appId)) { appData = a; break; }
+        }
+        // Defense in depth: a locked app should never be opened even if its slot was clicked
+        // (the menu already hides locked apps, but guard the action path regardless).
+        if (appData != null && !appData.unlockedForPlayer()) {
+            return;
         }
         if (appData != null && this.minecraft.player != null) {
             String dimKey = this.minecraft.player.level().dimension().location().toString();

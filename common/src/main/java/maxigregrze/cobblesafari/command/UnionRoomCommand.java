@@ -18,8 +18,6 @@ import java.util.Optional;
 
 public final class UnionRoomCommand {
 
-    private static final String MSG_PLAYER_ONLY = "This command must be run by a player";
-
     private static final SuggestionProvider<CommandSourceStack> INSTANCE_TYPE_SUGGESTIONS =
             (ctx, builder) -> {
                 builder.suggest("room");
@@ -73,7 +71,7 @@ public final class UnionRoomCommand {
     private static int executeCreate(CommandContext<CommandSourceStack> ctx, String instanceType) {
         ServerPlayer player = ctx.getSource().getPlayer();
         if (player == null) {
-            ctx.getSource().sendFailure(Component.literal(MSG_PLAYER_ONLY));
+            ctx.getSource().sendFailure(Component.translatable("cobblesafari.command.player_only"));
             return 0;
         }
         return UnionRoomManager.createSession(player, instanceType) == UnionRoomManager.CreateResult.OK ? 1 : 0;
@@ -82,7 +80,7 @@ public final class UnionRoomCommand {
     private static int executeJoin(CommandContext<CommandSourceStack> ctx) {
         ServerPlayer player = ctx.getSource().getPlayer();
         if (player == null) {
-            ctx.getSource().sendFailure(Component.literal(MSG_PLAYER_ONLY));
+            ctx.getSource().sendFailure(Component.translatable("cobblesafari.command.player_only"));
             return 0;
         }
         int[] code = {
@@ -145,7 +143,9 @@ public final class UnionRoomCommand {
         ctx.getSource().sendSuccess(() -> Component.translatable("cobblesafari.unionroom.instances.header", headerPage, headerTotal), false);
         for (int i = start; i < Math.min(start + pageSize, instances.size()); i++) {
             UnionRoomSavedData.InstanceData inst = instances.get(i);
-            String status = inst.occupied ? "OCCUPIED" : "EMPTY";
+            Component status = inst.occupied
+                    ? Component.translatable("cobblesafari.unionroom.instances.status.occupied")
+                    : Component.translatable("cobblesafari.unionroom.instances.status.empty");
             ctx.getSource().sendSuccess(
                     () -> Component.translatable("cobblesafari.unionroom.instances.entry", inst.id, inst.structurePos.getX(),
                             inst.structurePos.getY(), inst.structurePos.getZ(), status),
@@ -157,7 +157,7 @@ public final class UnionRoomCommand {
     private static int executeForceJoin(CommandContext<CommandSourceStack> ctx) {
         ServerPlayer player = ctx.getSource().getPlayer();
         if (player == null) {
-            ctx.getSource().sendFailure(Component.literal(MSG_PLAYER_ONLY));
+            ctx.getSource().sendFailure(Component.translatable("cobblesafari.command.player_only"));
             return 0;
         }
         int id = IntegerArgumentType.getInteger(ctx, "id");

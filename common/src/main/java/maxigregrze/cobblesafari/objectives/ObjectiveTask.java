@@ -9,14 +9,14 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 /**
- * A single rolled objective task and its live progress (plan 118 §4.2).
+ * A single rolled objective task and its live progress.
  */
 public final class ObjectiveTask {
 
     private final String taskId;
     private final int targetCount;
-    private final String speciesId;   // "" if unused
-    private final int typeIndex;       // -1 if unused, else 0..17
+    private final String speciesId; // "" if unused
+    private final int typeIndex; // -1 if unused, else 0..17
     private final String taskRewardTable; // "" if none
 
     private int progress;
@@ -24,7 +24,7 @@ public final class ObjectiveTask {
     private boolean taskRewardGiven;
     private final LinkedHashSet<String> seenSpecies = new LinkedHashSet<>(); // *_unique only
 
-    // task_catch_shiny guaranteed-shiny state (plan 118 §8.3)
+    // task_catch_shiny guaranteed-shiny state
     private boolean shinyGuaranteePending;
     private long shinyTriggerGameTime;
 

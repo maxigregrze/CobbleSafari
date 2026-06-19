@@ -9,7 +9,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.Level;
 
 /**
- * Flat ground decal (plan 107 § 4.1, extended plan 108): follows a player, driven by the attack.
+ * Flat ground decal: follows a player, driven by the attack.
  * {@code large} variant (3×3, texture {@code attack_shadow_large.png}) and adjustable
  * opacity ({@code alpha}) for the {@code base_ghost_1} fade.
  */

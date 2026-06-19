@@ -54,6 +54,14 @@ public class SpawnBoostConfigData {
         public int salvagePowerLevel2ExtraRolls = 2;
         public int salvagePowerLevel3ExtraRolls = 3;
 
+        public int bigHaulPowerLevel1ExtraItems = 2;
+        public int bigHaulPowerLevel2ExtraItems = 3;
+        public int bigHaulPowerLevel3ExtraItems = 5;
+
+        public int itemPowerLevel1WeightBonus = 1;
+        public int itemPowerLevel2WeightBonus = 2;
+        public int itemPowerLevel3WeightBonus = 1000;
+
         public float partyBattleStatPowerLevel1Multiplier = 1.10f;
         public float partyBattleStatPowerLevel2Multiplier = 1.25f;
         public float partyBattleStatPowerLevel3Multiplier = 1.50f;

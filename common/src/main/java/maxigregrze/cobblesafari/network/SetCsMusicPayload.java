@@ -9,7 +9,7 @@ import org.jetbrains.annotations.Nullable;
 
 /**
  * S2C: tells the client which csmusic track to play (or silence), and how to end the
- * currently playing track (plan 105 § 5). Client has no authority (no C2S).
+ * currently playing track. Client has no authority (no C2S).
  */
 public record SetCsMusicPayload(
         boolean hasTrack,

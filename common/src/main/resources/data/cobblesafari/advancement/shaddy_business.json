@@ -1,5 +1,5 @@
 {
-  "parent": "cobblesafari:root",
+  "parent": "cobblesafari:upside_down",
   "display": {
     "icon": {
       "id": "cobblesafari:redchain_fragment"

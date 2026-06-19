@@ -17,10 +17,10 @@ import java.util.Set;
 import java.util.UUID;
 
 /**
- * Projectile « chaîne rouge » ({@code distortion_5}) : un disque plat (texture
- * {@code attack_redchain.png}, rendu parallèle au sol et tournant comme le projectile de l'objet
- * Chaîne Rouge) qui glisse très lentement en ligne droite et applique l'effet <i>Enchaîné Rouge</i>
- * à chaque participant traversé (une seule fois par joueur, il continue sa course).
+ * "Red chain" projectile ({@code distortion_5}): a flat disc (texture
+ * {@code attack_redchain.png}, rendered parallel to the ground and spinning like the Red Chain
+ * item projectile) that glides very slowly in a straight line and applies the <i>Red Shackled</i>
+ * effect to each participant crossed (once per player; it continues on).
  */
 public class AttackRedChainEntity extends AbstractAttackEntity {
 

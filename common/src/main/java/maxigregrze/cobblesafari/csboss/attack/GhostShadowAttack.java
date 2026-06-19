@@ -15,21 +15,21 @@ import java.util.List;
 import java.util.UUID;
 
 /**
- * {@code base_ghost_1} (plan 107/108 § 3, revised plan 109): a large 3×3 shadow <b>per player</b>,
+ * {@code base_ghost_1} (108): a large 3×3 shadow <b>per player</b>,
  * which tracks its target (acceleration 0 → run) then freezes; a {@code csboss_minion} (boss
  * minion species) erupts from the ground to mid-shadow, damages on contact (8), then shadow + minion
  * dissipate. The cycle repeats 2–5 times without pause, with a delay only at the end.
  */
 public class GhostShadowAttack implements CsBossAttack {
 
-    private static final int FOLLOW_END = 70;    // 3.5 s of pursuit (compressed)
-    private static final int RAMP_TICKS = 40;    // acceleration 0 → run over 2 s
-    private static final int RISE_START = 80;    // 0.5 s after freeze
-    private static final int RISE_END = 90;      // minion rise (0.5 s)
-    private static final int FADE_END = 100;     // fade (0.5 s) + discard
+    private static final int FOLLOW_END = 70; // 3.5 s of pursuit (compressed)
+    private static final int RAMP_TICKS = 40; // acceleration 0 → run over 2 s
+    private static final int RISE_START = 80; // 0.5 s after freeze
+    private static final int RISE_END = 90; // minion rise (0.5 s)
+    private static final int FADE_END = 100; // fade (0.5 s) + discard
     private static final int CYCLE_LEN = 112;
-    private static final int END_DELAY = 16;     // ≈240 t total (2 cycles)
-    private static final int CYCLES = 2;         // deterministic (2*112+16 = 240)
+    private static final int END_DELAY = 16; // ≈240 t total (2 cycles)
+    private static final int CYCLES = 2; // deterministic (2*112+16 = 240)
     private static final double RUN_SPEED = 0.30;
     private static final double MINION_DROP = 2.0;
     private static final float MINION_DAMAGE = 8.0F;
@@ -107,14 +107,14 @@ public class GhostShadowAttack implements CsBossAttack {
             if (cycleTick < FOLLOW_END) {
                 double speed = RUN_SPEED * Math.min(1.0, cycleTick / (double) RAMP_TICKS);
                 if (level.getPlayerByUUID(g.target) instanceof ServerPlayer p && p.isAlive()) {
-                    CsBossAttackLib.chase(g.shadow, p.getX(), p.getY(), p.getZ(), speed);
+                    CsBossAttackLib.chase(g.shadow, p.getX(), p.getY(), p.getZ(),
+                            CsBossAttackLib.homingStep(g.shadow, p.getX(), p.getZ(), speed));
                 }
             } else if (cycleTick == RISE_START) {
                 g.shadowY = g.shadow.getY();
                 Vec3 pos = new Vec3(g.shadow.getX(), g.shadowY - MINION_DROP, g.shadow.getZ());
-                g.minion = session.spawnMinion(level, pos);
-                g.minion.resizeToHeight(2.5); // hitbox ~2.5 blocks regardless of species
-                g.minion.setAlpha(0.0F); // masqué 1 tick pour éviter le flash à l'échelle boss (plan 126 § 5)
+                g.minion = session.spawnMinion(level, pos, 2.5);
+                g.minion.setAlpha(0.0F);
                 // Face the player from the very first frame it starts emerging from the shadow.
                 if (level.getPlayerByUUID(g.target) instanceof ServerPlayer tp) {
                     g.minion.faceTargetInstant(tp.position());

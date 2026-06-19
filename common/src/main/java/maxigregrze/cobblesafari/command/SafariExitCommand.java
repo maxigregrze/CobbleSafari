@@ -36,7 +36,7 @@ public class SafariExitCommand {
     private static int executeSafariExit(CommandSourceStack source) {
         ServerPlayer player = source.getPlayer();
         if (player == null) {
-            source.sendFailure(Component.literal("This command must be run by a player"));
+            source.sendFailure(Component.translatable("cobblesafari.command.player_only"));
             return 0;
         }
 

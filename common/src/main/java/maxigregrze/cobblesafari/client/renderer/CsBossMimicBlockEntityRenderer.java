@@ -14,7 +14,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 
 /**
- * Mimic renderer (plan 125 § 4): when the block is "solid" (active == reverse), draws the model of
+ * Mimic renderer: when the block is "solid" (active == reverse), draws the model of
  * the configured target block (copying its texture). Falls back to {@code distortion_stone_bricks}
  * when the id is empty/invalid. Renders nothing when invisible — survival invisibility relies on
  * this, the creative outline coming from {@code getShape}.

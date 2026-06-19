@@ -1,0 +1,15 @@
+{
+  "display": {
+    "icon": { "id": "cobblemon:safari_ball" },
+    "title": { "translate": "advancement.cobblesafari.safari.title" },
+    "description": { "translate": "advancement.cobblesafari.safari.description" },
+    "background": "minecraft:textures/gui/advancements/backgrounds/husbandry.png",
+    "frame": "task",
+    "show_toast": false,
+    "announce_to_chat": false,
+    "hidden": false
+  },
+  "criteria": {
+    "tick": { "trigger": "minecraft:tick" }
+  }
+}

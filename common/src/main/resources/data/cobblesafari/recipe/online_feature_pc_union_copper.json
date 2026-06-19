@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    { "item": "cobblesafari:online_feature_pc" },
+    { "item": "minecraft:copper_ingot" }
+  ],
+  "result": {
+    "id": "cobblesafari:online_feature_pc_union",
+    "count": 1
+  }
+}

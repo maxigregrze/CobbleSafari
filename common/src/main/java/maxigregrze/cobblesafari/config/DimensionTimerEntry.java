@@ -3,7 +3,7 @@ package maxigregrze.cobblesafari.config;
 public class DimensionTimerEntry {
     private String dimensionId;
     private int timerDurationSeconds;
-    /** {@code null} ⇒ inherit the server-wide {@code dailySystemResetHour} (plan 118 §6.2). */
+    /** {@code null} ⇒ inherit the server-wide {@code dailySystemResetHour}. */
     private Integer resetHour;
     private boolean returnToSpawn;
     private Boolean allowReset;

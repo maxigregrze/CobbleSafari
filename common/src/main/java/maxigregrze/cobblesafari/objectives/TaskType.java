@@ -1,7 +1,7 @@
 package maxigregrze.cobblesafari.objectives;
 
 /**
- * The catalogue of dimensional-objective task types (plan 118 §3.1).
+ * The catalogue of dimensional-objective task types.
  *
  * <p>Each type declares which rolled variables it consumes ({@code count}, {@code species},
  * {@code type}, distinct-species {@code unique}) and whether it is {@code deferred} (reserved for

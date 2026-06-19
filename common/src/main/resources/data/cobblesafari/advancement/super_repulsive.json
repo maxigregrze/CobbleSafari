@@ -1,5 +1,5 @@
 {
-  "parent": "cobblesafari:root",
+  "parent": "cobblesafari:repulsive",
   "display": {
     "icon": {
       "id": "cobblesafari:mud_ball"

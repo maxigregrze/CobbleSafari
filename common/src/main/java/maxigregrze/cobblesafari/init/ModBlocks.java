@@ -55,6 +55,8 @@ import maxigregrze.cobblesafari.block.misc.UnionRoomPillarBlock;
 import maxigregrze.cobblesafari.block.misc.UnionRoomSpotlightBlock;
 import maxigregrze.cobblesafari.block.misc.UnionRoomSpotlightDisplayLightBlock;
 import maxigregrze.cobblesafari.block.teleporter.SafariTeleporterBlock;
+import maxigregrze.cobblesafari.block.teleporter.SurvivalTeleportPadBlock;
+import maxigregrze.cobblesafari.block.teleporter.TeleportPadBlock;
 import maxigregrze.cobblesafari.block.underground.UndergroundBoulderBlock;
 import maxigregrze.cobblesafari.block.underground.UndergroundDigsiteBlock;
 import maxigregrze.cobblesafari.block.underground.UndergroundPCBlock;
@@ -69,6 +71,16 @@ import maxigregrze.cobblesafari.block.csboss.MeteoriteBlock;
 import maxigregrze.cobblesafari.block.balm.BalmDispenserBlock;
 import maxigregrze.cobblesafari.block.balm.BalmDispenserDistortionBlock;
 import maxigregrze.cobblesafari.block.rotomphone.EmptyPhoneBlock;
+import maxigregrze.cobblesafari.block.trap.DarknessTrapBlock;
+import maxigregrze.cobblesafari.block.trap.ExplosionTrapBlock;
+import maxigregrze.cobblesafari.block.trap.FartTrapBlock;
+import maxigregrze.cobblesafari.block.trap.FireTrapBlock;
+import maxigregrze.cobblesafari.block.trap.GravityTrapBlock;
+import maxigregrze.cobblesafari.block.trap.MoveTrapBlock;
+import maxigregrze.cobblesafari.block.trap.RockTrapBlock;
+import maxigregrze.cobblesafari.block.trap.SlowTrapBlock;
+import maxigregrze.cobblesafari.block.trap.TeleportTrapBlock;
+import maxigregrze.cobblesafari.block.trap.WindTrapBlock;
 import maxigregrze.cobblesafari.block.underground.UndergroundTimberBlock;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -93,7 +105,7 @@ public class ModBlocks {
 
     private ModBlocks() {}
 
-    /** Ephemeral meteorite blocks placed by rock/dragon boss attacks (plan 107). No creative item. */
+    /** Ephemeral meteorite blocks placed by rock/dragon boss attacks. No creative item. */
     public static final Block METEORITE = registerBlockWithoutItem("meteorite",
             new MeteoriteBlock(BlockBehaviour.Properties.of()
                     .mapColor(MapColor.STONE)
@@ -106,7 +118,7 @@ public class ModBlocks {
                     .sound(SoundType.STONE)
                     .strength(1.5F), 400));
 
-    /** Display block (model only) for the dirt pile of {@code base_ground_1} (plan 113). */
+    /** Display block (model only) for the dirt pile of {@code base_ground_1}. */
     public static final Block ATTACK_DIGDIRT_DISPLAY = registerBlockWithoutItem("attack_digdirt_display",
             new Block(BlockBehaviour.Properties.of()
                     .mapColor(MapColor.DIRT)
@@ -114,7 +126,7 @@ public class ModBlocks {
                     .noOcclusion()
                     .strength(0.0F)));
 
-    /** Display block (model only) for the scaled dirt-textured mound of {@code base_ground_2} (plan 126). */
+    /** Display block (model only) for the scaled dirt-textured mound of {@code base_ground_2}. */
     public static final Block ATTACK_DIGDIRT_DIRT_DISPLAY = registerBlockWithoutItem("attack_digdirt_dirt_display",
             new Block(BlockBehaviour.Properties.of()
                     .mapColor(MapColor.DIRT)
@@ -122,7 +134,7 @@ public class ModBlocks {
                     .noOcclusion()
                     .strength(0.0F)));
 
-    /** Cube sludge en vol ({@code base_poison_2}, plan 126). Modèle seul, sans item. */
+    /** In-flight sludge cube ({@code base_poison_2}). Model only, no item. */
     public static final Block ATTACK_SLUDGE_CUBE_DISPLAY = registerBlockWithoutItem("attack_sludge_cube_display",
             new Block(BlockBehaviour.Properties.of()
                     .mapColor(MapColor.COLOR_PURPLE)
@@ -130,7 +142,7 @@ public class ModBlocks {
                     .noOcclusion()
                     .strength(0.0F)));
 
-    /** Cube mud en vol ({@code base_ground_3}, plan 126). Modèle seul, sans item. */
+    /** In-flight mud cube ({@code base_ground_3}). Model only, no item. */
     public static final Block ATTACK_MUD_CUBE_DISPLAY = registerBlockWithoutItem("attack_mud_cube_display",
             new Block(BlockBehaviour.Properties.of()
                     .mapColor(MapColor.DIRT)
@@ -138,7 +150,7 @@ public class ModBlocks {
                     .noOcclusion()
                     .strength(0.0F)));
 
-    /** Tas sludge éphémère posé par {@code base_poison_2} (10 s, plan 126). */
+    /** Ephemeral sludge pile placed by {@code base_poison_2} (10 s). */
     public static final Block EPHEMERAL_SLUDGE_PILE = registerBlockWithoutItem("ephemeral_sludge_pile",
             new EphemeralPileBlock(BlockBehaviour.Properties.of()
                     .mapColor(MapColor.COLOR_PURPLE)
@@ -147,7 +159,7 @@ public class ModBlocks {
                     .noOcclusion()
                     .noCollission(), 200, true));
 
-    /** Tas mud éphémère posé par {@code base_ground_3} (20 s, plan 126). */
+    /** Ephemeral mud pile placed by {@code base_ground_3} (20 s). */
     public static final Block EPHEMERAL_MUD_PILE = registerBlockWithoutItem("ephemeral_mud_pile",
             new EphemeralPileBlock(BlockBehaviour.Properties.of()
                     .mapColor(MapColor.DIRT)
@@ -156,7 +168,7 @@ public class ModBlocks {
                     .noOcclusion()
                     .noCollission(), 400, false));
 
-    /** Trap electric field placed by {@code base_electric_2} (plan 108). No creative item. */
+    /** Trap electric field placed by {@code base_electric_2}. No creative item. */
     public static final Block CSBOSS_ELECTRICITY = registerBlockWithoutItem("csboss_electricity",
             new CsBossElectricityBlock(BlockBehaviour.Properties.of()
                     .mapColor(MapColor.COLOR_YELLOW)
@@ -171,6 +183,22 @@ public class ModBlocks {
                     .lightLevel(state -> 5)
                     .noOcclusion()
                     .requiresCorrectToolForDrops()
+            ));
+
+    public static final Block TELEPORT_PAD = registerBlock("teleport_pad",
+            new TeleportPadBlock(BlockBehaviour.Properties.of()
+                    .strength(2.0f)
+                    .lightLevel(state -> 9)
+                    .noOcclusion()
+                    .pushReaction(PushReaction.DESTROY)
+            ));
+
+    public static final Block SURVIVAL_TELEPORT_PAD = registerBlock("survival_teleporter_pad",
+            new SurvivalTeleportPadBlock(BlockBehaviour.Properties.of()
+                    .strength(2.0f)
+                    .lightLevel(state -> 9)
+                    .noOcclusion()
+                    .pushReaction(PushReaction.DESTROY)
             ));
 
     public static final Block SAFARI_EGG_NEST = registerBlock("safari_egg_nest",
@@ -347,7 +375,7 @@ public class ModBlocks {
                     .requiresCorrectToolForDrops()
             ));
 
-    /** Modèle « moving » rendu seul pour le projectile d'invocation CSBoss (plan 122 § 8.1). */
+    /** "Moving" model rendered alone for the CSBoss summon projectile. */
     public static final Block BOSSANCHOR_MOVING = registerBlockWithoutItem("bossanchor_moving",
             new Block(BlockBehaviour.Properties.of()
                     .mapColor(MapColor.COLOR_PURPLE)
@@ -713,7 +741,7 @@ public class ModBlocks {
                     .noOcclusion()
             ));
 
-    /** Temporary full-block fill for the door's empty cells in combat (plan 125 § 6). No item, no drop. */
+    /** Temporary full-block fill for the door's empty cells in combat. No item, no drop. */
     public static final Block DISTORTION_STONEBRICKS_FILL = registerBlockWithoutItem("distortion_stonebricks_fill",
             new Block(BlockBehaviour.Properties.of()
                     .mapColor(MapColor.STONE)
@@ -760,7 +788,7 @@ public class ModBlocks {
                     .lightLevel(state -> state.getValue(CsBossTriggerBlock.ACTIVE) ? 10 : 3)
             ));
 
-    /** CSBoss-reactive mimic block (plan 125 § 2): invisible/solid toggle, copies a target texture. */
+    /** CSBoss-reactive mimic block: invisible/solid toggle, copies a target texture. */
     public static final Block CSBOSS_MIMIC_BLOCK = registerBlock("csboss_mimic_block",
             new CsBossMimicBlock(BlockBehaviour.Properties.of()
                     .mapColor(MapColor.STONE)
@@ -1259,6 +1287,47 @@ public class ModBlocks {
                     .requiresCorrectToolForDrops()
                     .noOcclusion()));
 
+    public static final Block TRAP_DARKNESS = registerBlock("trap_darkness",
+            new DarknessTrapBlock(trapProps(), false));
+    public static final Block TRAP_DARKNESS_HARD = registerBlock("trap_darkness_hard",
+            new DarknessTrapBlock(trapProps(), true));
+    public static final Block TRAP_EXPLOSION = registerBlock("trap_explosion",
+            new ExplosionTrapBlock(trapProps(), false));
+    public static final Block TRAP_EXPLOSION_HARD = registerBlock("trap_explosion_hard",
+            new ExplosionTrapBlock(trapProps(), true));
+    public static final Block TRAP_FART = registerBlock("trap_fart",
+            new FartTrapBlock(trapProps(), false));
+    public static final Block TRAP_FART_HARD = registerBlock("trap_fart_hard",
+            new FartTrapBlock(trapProps(), true));
+    public static final Block TRAP_FIRE = registerBlock("trap_fire",
+            new FireTrapBlock(trapProps(), false));
+    public static final Block TRAP_FIRE_HARD = registerBlock("trap_fire_hard",
+            new FireTrapBlock(trapProps(), true));
+    public static final Block TRAP_GRAVITY = registerBlock("trap_gravity",
+            new GravityTrapBlock(trapProps(), false));
+    public static final Block TRAP_GRAVITY_HARD = registerBlock("trap_gravity_hard",
+            new GravityTrapBlock(trapProps(), true));
+    public static final Block TRAP_MOVE = registerBlock("trap_move",
+            new MoveTrapBlock(trapProps(), false));
+    public static final Block TRAP_MOVE_HARD = registerBlock("trap_move_hard",
+            new MoveTrapBlock(trapProps(), true));
+    public static final Block TRAP_ROCK = registerBlock("trap_rock",
+            new RockTrapBlock(trapProps(), false));
+    public static final Block TRAP_ROCK_HARD = registerBlock("trap_rock_hard",
+            new RockTrapBlock(trapProps(), true));
+    public static final Block TRAP_SLOW = registerBlock("trap_slow",
+            new SlowTrapBlock(trapProps(), false));
+    public static final Block TRAP_SLOW_HARD = registerBlock("trap_slow_hard",
+            new SlowTrapBlock(trapProps(), true));
+    public static final Block TRAP_TELEPORT = registerBlock("trap_teleport",
+            new TeleportTrapBlock(trapProps(), false));
+    public static final Block TRAP_TELEPORT_HARD = registerBlock("trap_teleport_hard",
+            new TeleportTrapBlock(trapProps(), true));
+    public static final Block TRAP_WIND = registerBlock("trap_wind",
+            new WindTrapBlock(trapProps(), false));
+    public static final Block TRAP_WIND_HARD = registerBlock("trap_wind_hard",
+            new WindTrapBlock(trapProps(), true));
+
     public static final Block PUNCHINGBAG = registerBlock("punchingbag",
             new PunchingBagBlock(BlockBehaviour.Properties.of()
                     .mapColor(MapColor.METAL)
@@ -1308,6 +1377,9 @@ public class ModBlocks {
 
     public static final Block DISTORTION_ROCK_BLOCK_CRACKED = registerBlock("distortion_rock_block_cracked",
             new Block(BlockBehaviour.Properties.ofFullCopy(Blocks.DEEPSLATE)));
+
+    public static final Block TINKAGEAR_BLOCK = registerBlock("tinkagear_block",
+            new Block(BlockBehaviour.Properties.ofFullCopy(Blocks.NETHERITE_BLOCK).noOcclusion()));
 
     public static final Block UNION_ROOM_BRICKS_GREEN = registerBlock("union_room_bricks_green",
             unionRoomBricksBlock());
@@ -1387,6 +1459,18 @@ public class ModBlocks {
             case "prism_s", "prism_l" -> MapColor.DIAMOND;
             default -> MapColor.STONE;
         };
+    }
+
+    private static BlockBehaviour.Properties trapProps() {
+        return BlockBehaviour.Properties.of()
+                .mapColor(MapColor.NONE)
+                .strength(0.2f)
+                .sound(SoundType.GRASS)
+                .noOcclusion()
+                .noCollission()
+                .pushReaction(PushReaction.DESTROY)
+                .isViewBlocking((s, l, p) -> false)
+                .isSuffocating((s, l, p) -> false);
     }
 
     private static Block unionRoomBricksBlock() {

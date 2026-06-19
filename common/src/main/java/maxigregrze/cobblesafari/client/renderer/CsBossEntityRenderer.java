@@ -25,7 +25,7 @@ public class CsBossEntityRenderer extends EntityRenderer<CsBossEntity> {
     private static final ResourceLocation FALLBACK_TEXTURE =
             ResourceLocation.withDefaultNamespace("textures/misc/white.png");
 
-    /** Échelle minimale atteinte en fin d'animation de départ (plan 122) : le boss devient très petit. */
+    /** Minimum scale at the end of the departure animation: the boss becomes very small. */
     private static final float DEATH_MIN_SCALE = 0.05f;
 
     private final Map<UUID, CsBossPosableState> states = new HashMap<>();
@@ -87,7 +87,7 @@ public class CsBossEntityRenderer extends EntityRenderer<CsBossEntity> {
         float limbSwing = boss.walkAnimation.position(partialTicks);
         float limbSwingAmount = Math.min(1.0f, boss.walkAnimation.speed(partialTicks));
         float anim = boss.getAnim();
-        // Entrée : grandit de 0 à 1. Départ (plan 122) : rétrécit jusqu'à très petit pendant la mort.
+        // Entry: grows from 0 to 1. Departure: shrinks to very small during death.
         float scaleMul;
         if (phase == CsBossEntity.PHASE_ENTERING) {
             scaleMul = anim;

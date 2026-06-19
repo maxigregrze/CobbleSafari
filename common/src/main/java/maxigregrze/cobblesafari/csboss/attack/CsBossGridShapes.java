@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Shape rasterization on a block grid (plan 109): circles (outline/filled) on the horizontal
+ * Shape rasterization on a block grid: circles (outline/filled) on the horizontal
  * plane and spheres, expressed as relative <b>offsets</b> {@link BlockPos} to the center. Used by
  * ring attacks ({@code base_electric_3}, {@code base_rock_2}).
  */

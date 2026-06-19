@@ -13,7 +13,7 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
 
 /**
- * Renders the distortion stem (plan 107 § 4.3) as a cross of 4 vertical planes (see
+ * Renders the distortion stem as a cross of 4 vertical planes (see
  * {@code distortion_stem.json}), semi-transparent (alpha 0.5), double-sided.
  */
 public class AttackDistortionStemEntityRenderer extends EntityRenderer<AttackDistortionStemEntity> {

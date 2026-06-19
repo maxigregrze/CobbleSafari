@@ -29,8 +29,8 @@ public class PunchingBagBlockEntityRenderer implements BlockEntityRenderer<Punch
     private static final float BAG_Y_OFFSET = -1.0f;
 
     private static final float MAX_ANGLE_DEG = 22.0f;
-    private static final float OMEGA = 0.45f;     // rad/tick
-    private static final float TAU = 7.0f;        // damping (ticks)
+    private static final float OMEGA = 0.45f; // rad/tick
+    private static final float TAU = 7.0f; // damping (ticks)
     private static final float DURATION_TICKS = 50.0f;
 
     private final BlockRenderDispatcher blockRenderDispatcher;

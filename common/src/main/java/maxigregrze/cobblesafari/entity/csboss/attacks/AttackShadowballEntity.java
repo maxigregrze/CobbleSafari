@@ -15,16 +15,16 @@ import java.util.Set;
 import java.util.UUID;
 
 /**
- * Projectile « boule d'ombre » ({@code base_ghost_4}) : une boule plate 2×2 (texture
- * {@code attack_shadowball.png}, rendue face caméra et tournant lentement sur son axe avant) qui se
- * déplace en ligne droite et inflige 8 dégâts au contact (une seule fois par joueur, elle traverse).
+ * "Shadow ball" projectile ({@code base_ghost_4}): a flat 2×2 ball (texture
+ * {@code attack_shadowball.png}, camera-facing and slowly spinning on its forward axis) that moves
+ * in a straight line and deals 8 damage on contact (once per player; it passes through).
  */
 public class AttackShadowballEntity extends AbstractAttackEntity {
 
     private static final String KEY_VX = "Vx";
     private static final String KEY_VY = "Vy";
     private static final String KEY_VZ = "Vz";
-    private static final float DAMAGE = 14.0F; // boule lente, esquivable individuellement
+    private static final float DAMAGE = 14.0F; // slow ball, individually dodgeable
 
     private Vec3 velocity = Vec3.ZERO;
     private final Set<UUID> alreadyHit = new HashSet<>();

@@ -1,0 +1,8 @@
+﻿{
+  "variants": {
+    "facing=north": { "model": "cobblesafari:block/trap_move" },
+    "facing=south": { "model": "cobblesafari:block/trap_move", "y": 180 },
+    "facing=east": { "model": "cobblesafari:block/trap_move", "y": 90 },
+    "facing=west": { "model": "cobblesafari:block/trap_move", "y": 270 }
+  }
+}

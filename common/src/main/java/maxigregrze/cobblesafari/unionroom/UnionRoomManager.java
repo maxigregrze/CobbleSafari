@@ -620,7 +620,7 @@ public final class UnionRoomManager {
 
         // Jigsaw generation may complete on a later tick; queue a retry loop to
         // find the void_block once the structure is fully placed and swap it for
-        // the exit teleporter.  The array holds [attemptsRemaining].
+        // the exit teleporter. The array holds [attemptsRemaining].
         PENDING_EXIT_SETUPS.put(id, new int[]{40});
 
         UnionRoomSavedData.InstanceData instance = new UnionRoomSavedData.InstanceData();
@@ -677,7 +677,7 @@ public final class UnionRoomManager {
     /**
      * Called every server tick from {@link maxigregrze.cobblesafari.event.DimensionEvents#onServerTick}.
      * Retries finding the void_block marker (placed by jigsaw) and converting it to the exit
-     * teleporter for each pending instance.  Gives up after 40 attempts (~2 seconds).
+     * teleporter for each pending instance. Gives up after 40 attempts (~2 seconds).
      */
     public static void tickPendingExitSetups(MinecraftServer server) {
         if (PENDING_EXIT_SETUPS.isEmpty()) return;

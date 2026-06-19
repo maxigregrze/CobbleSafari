@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * S2C snapshot of the player's current dimensional objectives for the HUD (plan 118 §9.7).
+ * S2C snapshot of the player's current dimensional objectives for the HUD.
  * {@code visible == false} hides the HUD (player not in an objectives dimension/instance).
  */
 public record ObjectivesHudSyncPayload(boolean visible, List<ObjectiveView> objectives)

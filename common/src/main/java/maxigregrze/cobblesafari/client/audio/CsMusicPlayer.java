@@ -6,8 +6,8 @@ import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * Client csmusic player (plan 105 § 7): intro → loop → outro state machine, with fade,
- * pending track, and priority over vanilla background music (jukebox exception, § 7.3).
+ * Client csmusic player: intro → loop → outro state machine, with fade,
+ * pending track, and priority over vanilla background music (jukebox exception).
  * Replaces the old {@code DungeonMusicHandler}.
  */
 public final class CsMusicPlayer {

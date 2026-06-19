@@ -12,9 +12,9 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 
 /**
- * Burrowing dirt pile (plan 113, base_ground_1): ground-attack equivalent of the shadow, rendered
+ * Burrowing dirt pile (base_ground_1): ground-attack equivalent of the shadow, rendered
  * with the {@code attack_digdirt} model (meteorite texture). Driven by the attack (follows the player).
- * Plan 126 extends with optional scale, vibration, dirt particles and alpha (defaults neutral).
+ * Also supports optional scale, vibration, dirt particles and alpha (defaults neutral).
  */
 public class AttackDigdirtEntity extends AbstractAttackEntity {
 
@@ -24,7 +24,7 @@ public class AttackDigdirtEntity extends AbstractAttackEntity {
             SynchedEntityData.defineId(AttackDigdirtEntity.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Boolean> DATA_DIRT_PARTICLES =
             SynchedEntityData.defineId(AttackDigdirtEntity.class, EntityDataSerializers.BOOLEAN);
-    /** {@code true} ⇒ rendu avec la texture de terre (base_ground_2) au lieu de la texture météorite. */
+    /** {@code true} ⇒ rendered with dirt texture (base_ground_2) instead of meteorite texture. */
     private static final EntityDataAccessor<Boolean> DATA_DIRT_MODEL =
             SynchedEntityData.defineId(AttackDigdirtEntity.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Float> DATA_ALPHA =

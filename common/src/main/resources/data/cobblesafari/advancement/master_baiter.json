@@ -1,5 +1,5 @@
 {
-  "parent": "cobblesafari:root",
+  "parent": "cobblesafari:first_bait",
   "display": {
     "icon": {
       "id": "cobblesafari:bait"

@@ -17,7 +17,7 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * Per-player progress for the Rotom Phone chat questlines (cf. action plan 114 §3). Attached to the
+ * Per-player progress for the Rotom Phone chat questlines. Attached to the
  * Overworld storage like {@code StatProgressSavedData}; light and robust — entries whose conversation
  * id no longer exists are simply ignored (never purged destructively), and nothing here ever touches
  * the vanilla {@code player.dat} (so removing the mod cannot corrupt player data).
@@ -28,11 +28,11 @@ public class ChatProgressSavedData extends SavedData {
 
     /** Message-streaming / questline phase for one conversation. Int values used on the wire. */
     public enum Phase {
-        BEFORE,         // 0 — streaming messagesBefore
-        TASK,           // 1 — task bubble shown, awaiting claim
-        AFTER,          // 2 — streaming messagesAfter
-        WAIT_NEXT_DAY,  // 3 — step done, waiting for the next reset
-        DONE;           // 4 — conversation finished
+        BEFORE, // 0 — streaming messagesBefore
+        TASK, // 1 — task bubble shown, awaiting claim
+        AFTER, // 2 — streaming messagesAfter
+        WAIT_NEXT_DAY, // 3 — step done, waiting for the next reset
+        DONE; // 4 — conversation finished
 
         public static Phase fromInt(int i) {
             Phase[] v = values();

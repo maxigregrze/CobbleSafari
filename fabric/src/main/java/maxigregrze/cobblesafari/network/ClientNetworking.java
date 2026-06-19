@@ -103,6 +103,23 @@ public class ClientNetworking {
         );
 
         ClientPlayNetworking.registerGlobalReceiver(
+                maxigregrze.cobblesafari.network.OpenTeleportPadConfigPayload.TYPE,
+                (payload, context) -> context.client().execute(() ->
+                        Minecraft.getInstance().setScreen(
+                                new maxigregrze.cobblesafari.client.screen.TeleportPadConfigScreen(payload)))
+        );
+
+        ClientPlayNetworking.registerGlobalReceiver(
+                maxigregrze.cobblesafari.network.TeleportPadResultPayload.TYPE,
+                (payload, context) -> context.client().execute(() -> {
+                    if (Minecraft.getInstance().screen
+                            instanceof maxigregrze.cobblesafari.client.screen.TeleportPadConfigScreen screen) {
+                        screen.applyResult(payload);
+                    }
+                })
+        );
+
+        ClientPlayNetworking.registerGlobalReceiver(
                 OpenLostNoteBookPayload.TYPE,
                 (payload, context) -> {
                     context.client().execute(() -> {

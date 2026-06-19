@@ -9,4 +9,8 @@ public final class BalmDispenserSettings {
     public static int getRechargeSeconds() {
         return CsBossSettings.get().getBalmDispenserRechargeSeconds();
     }
+
+    public static int getBalmsPerDispense() {
+        return CsBossSettings.get().getBalmDispenserBalmsPerDispense();
+    }
 }

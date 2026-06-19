@@ -18,7 +18,7 @@ import net.minecraft.resources.ResourceLocation;
 import java.util.List;
 
 /**
- * Renders the dimensional objectives HUD (plan 118 §9.1). Texture layout: 256×50 area, three
+ * Renders the dimensional objectives HUD. Texture layout: 256×50 area, three
  * objective rows offset by +17 px each.
  */
 public final class ObjectivesHudOverlay {

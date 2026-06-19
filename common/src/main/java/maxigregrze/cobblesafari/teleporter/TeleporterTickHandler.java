@@ -216,7 +216,8 @@ public class TeleporterTickHandler {
 
         boolean chargeFeeEnabled = paymentEnabled || (outOfTime && SafariConfig.isAllowPaidReentry());
 
-        if (!timerData.hasPaidEntryFeeToday()) {
+        // Timer-bypass players (e.g. operators) enter for free regardless of payment settings.
+        if (!bypassed && !timerData.hasPaidEntryFeeToday()) {
             boolean charged = EntryFeeHelper.tryChargeFee(player,
                     chargeFeeEnabled,
                     SafariConfig.getEntryFeeItem(),

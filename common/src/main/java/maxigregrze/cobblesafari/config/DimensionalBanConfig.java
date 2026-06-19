@@ -18,7 +18,7 @@ import java.util.Map;
 
 /**
  * Server configuration for dimensional restrictions.
- * Manual edits are respected after first load (plan 119 V7 — no default re-merge on every reload).
+ * Manual edits are respected after first load.
  */
 public class DimensionalBanConfig {
     public static final int CONFIG_VERSION = 1;

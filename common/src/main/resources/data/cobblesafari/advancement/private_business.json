@@ -1,0 +1,16 @@
+{
+  "parent": "cobblesafari:deal_sniffer",
+  "display": {
+    "icon": { "id": "minecraft:name_tag" },
+    "title": { "translate": "advancement.cobblesafari.private_business.title" },
+    "description": { "translate": "advancement.cobblesafari.private_business.description" },
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "done": { "trigger": "cobblesafari:gts_personal_confirmed", "conditions": {} }
+  },
+  "requirements": [["done"]]
+}

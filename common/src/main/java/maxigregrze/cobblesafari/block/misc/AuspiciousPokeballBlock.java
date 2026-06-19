@@ -4,7 +4,9 @@ import com.mojang.logging.LogUtils;
 import com.mojang.serialization.MapCodec;
 import maxigregrze.cobblesafari.network.AuspiciousPokeballConfigServerHandler;
 import maxigregrze.cobblesafari.platform.Services;
+import maxigregrze.cobblesafari.power.PowerItemRewardEffects;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
@@ -141,9 +143,17 @@ public class AuspiciousPokeballBlock extends BaseEntityBlock {
         if (hi > lo) {
             count = lo + level.random.nextInt(hi - lo + 1);
         }
+        count += PowerItemRewardEffects.bigHaulExtraItems(player);
+
+        int[] weights = {
+                CATEGORY_WEIGHTS[0] + PowerItemRewardEffects.itemWeightBonus(player, 0),
+                CATEGORY_WEIGHTS[1] + PowerItemRewardEffects.itemWeightBonus(player, 1),
+                CATEGORY_WEIGHTS[2] + PowerItemRewardEffects.itemWeightBonus(player, 2),
+                CATEGORY_WEIGHTS[3] + PowerItemRewardEffects.itemWeightBonus(player, 3)
+        };
 
         for (int i = 0; i < count; i++) {
-            int cat = pickWeightedCategory(level.random);
+            int cat = pickWeightedCategory(level.random, weights);
             String poolId = be.getPoolIdForCategory(cat).trim();
             if (poolId.isEmpty()) {
                 AuspiciousPokeballConfigServerHandler.logPoolRollFailure("empty pool id for category " + cat, "(empty)");
@@ -168,20 +178,23 @@ public class AuspiciousPokeballBlock extends BaseEntityBlock {
         }
     }
 
-    private static int pickWeightedCategory(RandomSource rng) {
+    private static int pickWeightedCategory(RandomSource rng, int[] weights) {
         int total = 0;
-        for (int w : CATEGORY_WEIGHTS) {
+        for (int w : weights) {
             total += w;
+        }
+        if (total <= 0) {
+            return 0;
         }
         int roll = rng.nextInt(total);
         int sum = 0;
-        for (int i = 0; i < CATEGORY_WEIGHTS.length; i++) {
-            sum += CATEGORY_WEIGHTS[i];
+        for (int i = 0; i < weights.length; i++) {
+            sum += weights[i];
             if (roll < sum) {
                 return i;
             }
         }
-        return CATEGORY_WEIGHTS.length - 1;
+        return weights.length - 1;
     }
 
     private static boolean lootTableExists(ServerLevel level, ResourceKey<LootTable> key) {
@@ -193,6 +206,77 @@ public class AuspiciousPokeballBlock extends BaseEntityBlock {
         boolean added = player.getInventory().add(stack);
         if (!added) {
             Containers.dropItemStack(level, pos.getX() + 0.5, pos.getY() + 1.05, pos.getZ() + 0.5, stack);
+        }
+    }
+
+    @Override
+    public void animateTick(BlockState state, Level level, BlockPos pos, RandomSource random) {
+        double px = pos.getX();
+        double py = pos.getY();
+        double pz = pos.getZ();
+
+        // Auspicious shimmer: GLOW motes drifting through the orb plus digsite-style END_ROD
+        // sparkles emanating from block faces.
+        for (int i = 0; i < 6; i++) {
+            double x = px + random.nextDouble();
+            double y = py + random.nextDouble();
+            double z = pz + random.nextDouble();
+            level.addParticle(ParticleTypes.GLOW,
+                    x, y, z,
+                    (random.nextDouble() - 0.5) * 0.06,
+                    0.04 + random.nextDouble() * 0.08,
+                    (random.nextDouble() - 0.5) * 0.06);
+        }
+
+        for (int i = 0; i < 6; i++) {
+            int face = random.nextInt(6);
+            double x;
+            double y;
+            double z;
+            double vx = (random.nextDouble() - 0.5) * 0.02;
+            double vy = random.nextDouble() * 0.05;
+            double vz = (random.nextDouble() - 0.5) * 0.02;
+
+            switch (face) {
+                case 0 -> {
+                    x = px + random.nextDouble();
+                    y = py + 1.0;
+                    z = pz + random.nextDouble();
+                    vy = 0.02 + random.nextDouble() * 0.03;
+                }
+                case 1 -> {
+                    x = px + random.nextDouble();
+                    y = py;
+                    z = pz + random.nextDouble();
+                    vy = -(0.02 + random.nextDouble() * 0.03);
+                }
+                case 2 -> {
+                    x = px + random.nextDouble();
+                    y = py + random.nextDouble();
+                    z = pz;
+                    vz = -(0.02 + random.nextDouble() * 0.03);
+                }
+                case 3 -> {
+                    x = px + random.nextDouble();
+                    y = py + random.nextDouble();
+                    z = pz + 1.0;
+                    vz = 0.02 + random.nextDouble() * 0.03;
+                }
+                case 4 -> {
+                    x = px + 1.0;
+                    y = py + random.nextDouble();
+                    z = pz + random.nextDouble();
+                    vx = 0.02 + random.nextDouble() * 0.03;
+                }
+                default -> {
+                    x = px;
+                    y = py + random.nextDouble();
+                    z = pz + random.nextDouble();
+                    vx = -(0.02 + random.nextDouble() * 0.03);
+                }
+            }
+
+            level.addParticle(ParticleTypes.END_ROD, x, y, z, vx, vy, vz);
         }
     }
 

@@ -11,7 +11,7 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.state.BlockState;
 
-/** Cube sludge/mud en vol (plan 126 § 6.1). */
+/** Flying sludge/mud cube. */
 public class AttackPileProjectileEntityRenderer extends EntityRenderer<AttackPileProjectileEntity> {
 
     private static final ResourceLocation FALLBACK =

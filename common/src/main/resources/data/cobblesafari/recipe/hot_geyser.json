@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "PPP",
+    "PMP",
+    "PPP"
+  ],
+  "key": {
+    "P": { "item": "minecraft:prismarine" },
+    "M": { "item": "minecraft:magma_block" }
+  },
+  "result": {
+    "id": "cobblesafari:hot_geyser",
+    "count": 1
+  }
+}

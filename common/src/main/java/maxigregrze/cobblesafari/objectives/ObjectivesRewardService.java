@@ -23,13 +23,13 @@ import java.util.List;
 
 /**
  * Reward distribution for dimensional objectives: per-task loot, final completion loot, and the
- * Golden Auspicious Pokeball redeem scan (plan 118 §8).
+ * Golden Auspicious Pokeball redeem scan.
  */
 public final class ObjectivesRewardService {
 
     private ObjectivesRewardService() {}
 
-    /** Gives the per-task reward (plan 118 §8.1). No-op if the table id is empty. */
+    /** Gives the per-task reward. No-op if the table id is empty. */
     public static void giveTaskReward(ServerPlayer player, ObjectiveTask task) {
         if (task.isTaskRewardGiven() || task.taskRewardTable().isEmpty()) {
             return;
@@ -41,7 +41,7 @@ public final class ObjectivesRewardService {
         task.markTaskRewardGiven();
     }
 
-    /** Gives the all-objectives-complete rewards (plan 118 §8.2). */
+    /** Gives the all-objectives-complete rewards. */
     public static void giveFinalRewards(ServerPlayer player, DimensionalObjectivesDefinition def) {
         if (def.enableFinalCompletionReward() && def.finalCompletionReward() != null) {
             rollAndGive(player, def.finalCompletionReward());

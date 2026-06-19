@@ -1,5 +1,5 @@
 {
-  "parent": "cobblesafari:root",
+  "parent": "cobblesafari:welcome_to_safari",
   "display": {
     "icon": { "id": "minecraft:filled_map" },
     "title": { "translate": "advancement.cobblesafari.safari_geographer.title" },

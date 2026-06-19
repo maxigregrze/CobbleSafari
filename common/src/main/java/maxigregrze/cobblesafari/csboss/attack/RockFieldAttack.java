@@ -14,18 +14,18 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
- * {@code base_rock_4} (plan 113, Type B): selects ~30% of the surface via Perlin noise (same
+ * {@code base_rock_4} (Type B): selects ~30% of the surface via Perlin noise (same
  * method as {@code base_electric_2}) and drops meteors there (like {@code base_rock_2}). Two waves
  * (at 0 s and 6 s) over ~12 s, each fired simultaneously.
  */
 public class RockFieldAttack implements CsBossAttack {
 
     private static final int WAVES = 2;
-    private static final int WAVE_INTERVAL = 120;  // 2 waves at 0 s and 6 s
+    private static final int WAVE_INTERVAL = 120; // 2 waves at 0 s and 6 s
     private static final int METEOR_AT = 10;
     private static final int FALL_TICKS = 20;
     private static final int IMPACT_AT = METEOR_AT + FALL_TICKS; // 30
-    private static final int END_DELAY = 90;       // 120 + 30 + 90 = 240
+    private static final int END_DELAY = 90; // 120 + 30 + 90 = 240
     private static final double FALL_HEIGHT = 20.0;
     private static final float METEOR_DAMAGE = 18.0F;
     private static final double PERLIN_SCALE = 0.2;

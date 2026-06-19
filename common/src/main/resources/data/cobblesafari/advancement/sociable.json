@@ -1,5 +1,5 @@
 {
-  "parent": "cobblesafari:root",
+  "parent": "cobblesafari:ring_a_ding",
   "display": {
     "icon": { "id": "minecraft:bell" },
     "title": { "translate": "advancement.cobblesafari.sociable.title" },

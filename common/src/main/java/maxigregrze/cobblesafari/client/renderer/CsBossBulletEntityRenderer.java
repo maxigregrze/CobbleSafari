@@ -8,7 +8,7 @@ import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.resources.ResourceLocation;
 
 /**
- * The bullet has no model (plan 100 § 12.3): only its core particles (emitted
+ * The bullet has no model: only its core particles (emitted
  * client-side in its tick) materialize it. The renderer draws nothing.
  */
 public class CsBossBulletEntityRenderer extends EntityRenderer<CsBossBulletEntity> {

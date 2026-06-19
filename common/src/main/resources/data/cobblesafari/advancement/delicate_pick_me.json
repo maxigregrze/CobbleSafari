@@ -1,5 +1,5 @@
 {
-  "parent": "cobblesafari:root",
+  "parent": "cobblesafari:spheres_in_my_cube_game",
   "display": {
     "icon": {
       "id": "minecraft:diamond_pickaxe"

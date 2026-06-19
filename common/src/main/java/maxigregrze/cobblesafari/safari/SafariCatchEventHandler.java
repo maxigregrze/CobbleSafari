@@ -60,8 +60,9 @@ public class SafariCatchEventHandler {
         net.minecraft.server.level.ServerPlayer player = event.getPlayer();
         if (!maxigregrze.cobblesafari.manager.TimerManager.isInSafariDimension(player)) return;
 
-        maxigregrze.cobblesafari.init.ModStats.award(
+        int totalCaught = maxigregrze.cobblesafari.init.ModStats.awardAndGet(
                 player, maxigregrze.cobblesafari.init.ModStats.POKEMON_CAUGHT_SAFARI);
+        maxigregrze.cobblesafari.advancement.ModCriteria.POKEMON_CAUGHT.trigger(player, totalCaught);
 
         String speciesId = event.getPokemon().getSpecies().getResourceIdentifier().toString();
         maxigregrze.cobblesafari.data.StatProgressSavedData data =

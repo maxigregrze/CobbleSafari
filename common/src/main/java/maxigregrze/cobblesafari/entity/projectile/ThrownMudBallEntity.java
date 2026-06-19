@@ -70,8 +70,9 @@ public class ThrownMudBallEntity extends ThrowableItemProjectile {
         SafariStateManager.applyMudBall(pokemon);
 
         if (thrower != null) {
-            maxigregrze.cobblesafari.init.ModStats.award(
+            int mudBalls = maxigregrze.cobblesafari.init.ModStats.awardAndGet(
                     thrower, maxigregrze.cobblesafari.init.ModStats.MUD_BALLS_USED_SAFARI);
+            maxigregrze.cobblesafari.advancement.ModCriteria.MUD_BALL_USED.trigger(thrower, mudBalls);
         }
 
         level().playSound(null, pokemon.getX(), pokemon.getY(), pokemon.getZ(),

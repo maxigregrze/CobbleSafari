@@ -11,7 +11,7 @@ import java.util.List;
 
 /**
  * Server → client sync of chat conversation definitions (contact list only) plus the per-player
- * unlocked flag (cf. action plan 114 §12.3). Sent at join and after a datapack reload.
+ * unlocked flag. Sent at join and after a datapack reload.
  */
 public record ChatConversationSyncPayload(List<Entry> conversations) implements CustomPacketPayload {
 

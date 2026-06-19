@@ -73,16 +73,16 @@ public class RotomPhoneConfig {
     private static Map<String, PhoneAppConfig> createDefaultApps() {
         Map<String, PhoneAppConfig> apps = new LinkedHashMap<>();
         apps.put("chatApp", new PhoneAppConfig(true, true, ADV_STORY_ROOT, new ArrayList<>()));
-        apps.put(APP_GTS, new PhoneAppConfig(true, false, ADV_STORY_ROOT, List.of(
+        apps.put(APP_GTS, new PhoneAppConfig(true, true, ADV_STORY_ROOT, List.of(
                 DIM_DUNGEON_UNDERGROUND, DIM_DUNGEON_DISTORTION)));
-        apps.put(APP_UNION, new PhoneAppConfig(true, false, ADV_STORY_ROOT, List.of(
+        apps.put(APP_UNION, new PhoneAppConfig(true, true, ADV_STORY_ROOT, List.of(
                 DIM_DUNGEON_UNDERGROUND, DIM_DUNGEON_DISTORTION)));
-        apps.put(APP_WONDER, new PhoneAppConfig(true, false, ADV_STORY_ROOT, List.of(
+        apps.put(APP_WONDER, new PhoneAppConfig(true, true, ADV_STORY_ROOT, List.of(
                 DIM_DUNGEON_UNDERGROUND, DIM_DUNGEON_DISTORTION)));
-        apps.put("itemFinderApp", new PhoneAppConfig(true, false, ADV_STORY_ROOT, List.of(
+        apps.put("itemFinderApp", new PhoneAppConfig(false, false, ADV_STORY_ROOT, List.of(
                 DIM_DUNGEON_UNDERGROUND, DIM_DUNGEON_DISTORTION)));
-        apps.put("skinApp", new PhoneAppConfig(true, false, ADV_STORY_ROOT, new ArrayList<>()));
-        apps.put("settingsApp", new PhoneAppConfig(true, false, ADV_STORY_ROOT, new ArrayList<>()));
+        apps.put("skinApp", new PhoneAppConfig(true, true, ADV_STORY_ROOT, new ArrayList<>()));
+        apps.put("settingsApp", new PhoneAppConfig(true, true, ADV_STORY_ROOT, new ArrayList<>()));
         return apps;
     }
 

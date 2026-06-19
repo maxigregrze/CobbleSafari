@@ -2,6 +2,7 @@ package maxigregrze.cobblesafari.csboss;
 
 import com.cobblemon.mod.common.Cobblemon;
 import com.cobblemon.mod.common.api.pokemon.PokemonPropertyExtractor;
+import com.cobblemon.mod.common.entity.pokemon.PokemonEntity;
 import com.cobblemon.mod.common.pokemon.Pokemon;
 import maxigregrze.cobblesafari.advancement.ModCriteria;
 import maxigregrze.cobblesafari.block.csboss.CsBossTriggerBlock;
@@ -40,7 +41,7 @@ import java.util.Map;
 import java.util.UUID;
 
 /**
- * Orchestrates boss battles (plan 100 § 4/6). In-memory sessions, server tick,
+ * Orchestrates boss battles. In-memory sessions, server tick,
  * activation, resolution, and recovery after a crash.
  */
 public final class BossBattleManager {
@@ -49,13 +50,13 @@ public final class BossBattleManager {
 
     private static final Map<Integer, BossBattleSession> SESSIONS = new LinkedHashMap<>();
 
-    /** Knockback d'activation (plan 122 § 5) : rayon horizontal et force (≥ 8 blocs de recul). */
+    /** Activation knockback: horizontal radius and strength (≥ 8 blocks of pushback). */
     private static final double ACTIVATION_KNOCKBACK_RADIUS = 6.0;
     private static final double ACTIVATION_KNOCKBACK_STRENGTH = 2.0;
 
     private BossBattleManager() {}
 
-    /** Active session by id (used by self-replicating attack entities, plan 107). */
+    /** Active session by id (used by self-replicating attack entities). */
     @org.jetbrains.annotations.Nullable
     public static BossBattleSession getSession(int id) {
         return SESSIONS.get(id);
@@ -110,6 +111,19 @@ public final class BossBattleManager {
         // 6/7. scan + toggle reactive blocks
         List<BlockPos> reactive = ArenaBlockScanner.scan(level, pos, be.effectiveBlockRadius());
         ArenaBlockScanner.setBattleState(level, reactive, true);
+        // purge Cobblemon entities in the block-detection square
+        double blockHalf = be.effectiveBlockRadius() * 16.0;
+        int purgeMinY = Math.max(level.getMinBuildHeight(), pos.getY() - 8);
+        int purgeMaxY = Math.min(level.getMaxBuildHeight() - 1, pos.getY() + 24);
+        net.minecraft.world.phys.AABB purgeArea = new net.minecraft.world.phys.AABB(
+                pos.getX() - blockHalf, purgeMinY, pos.getZ() - blockHalf,
+                pos.getX() + blockHalf + 1, purgeMaxY, pos.getZ() + blockHalf + 1);
+        for (PokemonEntity mon : level.getEntitiesOfClass(PokemonEntity.class, purgeArea)) {
+            // Only clear wild Pokémon; never remove a player's (or NPC's) Pokémon from the arena.
+            if (mon.getPokemon().isWild()) {
+                mon.discard();
+            }
+        }
         // 8. session id + boss
         CsBossSavedData data = CsBossSavedData.get(level.getServer());
         int id = data.allocateSessionId();
@@ -121,14 +135,16 @@ public final class BossBattleManager {
         for (ServerPlayer p : participants) {
             uuids.add(p.getUUID());
         }
+        double blockRadiusBlocks = be.effectiveBlockRadius() * 16.0;
         BossBattleSession session = new BossBattleSession(id, level.dimension(), pos, def, boss.getUUID(),
-                new java.util.HashSet<>(uuids), reactive, radius, duration);
+                new java.util.HashSet<>(uuids), reactive, radius, duration,
+                def.portalDistance(), blockRadiusBlocks);
         SESSIONS.put(id, session);
         be.setActiveSessionId(id);
         if (state.hasProperty(CsBossTriggerBlock.ACTIVE)) {
             level.setBlock(pos, state.setValue(CsBossTriggerBlock.ACTIVE, true), Block.UPDATE_ALL);
         }
-        // Plan 122 : projectile d'invocation au-dessus de l'ancre + knockback des joueurs proches.
+        // Summon projectile above the anchor + knockback for nearby players.
         Vec3 center2 = session.getArenaCenter();
         CsBossSpawnProjectileEntity proj = CsBossSpawnProjectileEntity.spawn(
                 level, center2.x, pos.getY() + 1.0, center2.z, id);
@@ -190,7 +206,7 @@ public final class BossBattleManager {
                 }
                 case DYING -> {
                     switch (tickDying(level, s)) {
-                        case FINALIZE_WIN -> s.setPhase(BossBattleSession.Phase.PORTAL_CLOSING); // plan 122
+                        case FINALIZE_WIN -> s.setPhase(BossBattleSession.Phase.PORTAL_CLOSING);
                         case NEXT_PHASE -> toNextPhase.add(s.getId());
                         case CONTINUE -> { /* in progress */ }
                     }
@@ -218,12 +234,11 @@ public final class BossBattleManager {
 
     private enum DyingResult { CONTINUE, FINALIZE_WIN, NEXT_PHASE }
 
-    // --- Invocation : projectile + portail (plan 122) ------------------------
+    // --- Summon: projectile + portal -----------------------------
 
     /**
-     * Phase {@code SUMMON_RISE} : le projectile d'ancre monte rapidement jusqu'à la hauteur
-     * d'apparition du boss. En fin : explosion (sans dégâts), suppression du projectile, spawn du
-     * portail (échelle 0).
+     * Phase {@code SUMMON_RISE}: the anchor projectile rises quickly to the boss spawn height.
+     * At the end: damageless explosion, projectile removal, portal spawn (scale 0).
      */
     private static void tickSummonRise(MinecraftServer server, ServerLevel level, BossBattleSession s) {
         int t = s.tickPhase();
@@ -231,29 +246,29 @@ public final class BossBattleManager {
         s.getBossBar().setProgress(1.0f);
         Vec3 c = s.getArenaCenter();
         double startY = s.getTriggerPos().getY() + 1.0;
-        double targetY = s.getTriggerPos().getY() + CsBossEntity.STAND_Y_OFFSET + CsBossEntity.ENTRANCE_HEIGHT;
+        double targetY = s.getTriggerPos().getY() + CsBossEntity.STAND_Y_OFFSET + s.getEntranceHeight();
         float p = Math.min(1.0f, t / (float) BossBattleSession.SUMMON_RISE_TICKS);
         double y = startY + (targetY - startY) * p;
         if (level.getEntity(s.getSummonProjectileUuid()) instanceof CsBossSpawnProjectileEntity proj) {
             proj.setPos(c.x, y, c.z);
             proj.setDeltaMovement(Vec3.ZERO);
         }
-        parkBoss(level, s); // boss invisible (échelle 0) tant que le portail n'est pas ouvert
+        parkBoss(level, s); // boss invisible (scale 0) until the portal is open
         if (t >= BossBattleSession.SUMMON_RISE_TICKS) {
-            // Explosion sans dégâts (son + visuel).
+            // Damageless explosion (sound + visual).
             level.sendParticles(ParticleTypes.EXPLOSION_EMITTER, c.x, targetY, c.z, 1, 0, 0, 0, 0);
             level.playSound(null, c.x, targetY, c.z, SoundEvents.GENERIC_EXPLODE.value(),
                     SoundSource.HOSTILE, 1.0f, 1.0f);
             removeEntity(level, s.getSummonProjectileUuid());
             s.setSummonProjectileUuid(null);
             CsBossPortalEntity portal = CsBossPortalEntity.spawn(level, c.x, targetY, c.z,
-                    s.getId(), s.getDefinition().portalType());
+                    s.getId(), s.getDefinition().portalType(), (float) s.getDefinition().portalSize());
             s.setPortalUuid(portal.getUUID());
             s.setPhase(BossBattleSession.Phase.PORTAL_OPENING);
         }
     }
 
-    /** Phase {@code PORTAL_OPENING} : le portail passe de l'échelle 0 à 1 sur {@code PORTAL_OPEN_TICKS}. */
+    /** Phase {@code PORTAL_OPENING}: portal scales from 0 to 1 over {@code PORTAL_OPEN_TICKS}. */
     private static void tickPortalOpening(MinecraftServer server, ServerLevel level, BossBattleSession s) {
         int t = s.tickPhase();
         updateParticipants(server, level, s);
@@ -267,13 +282,13 @@ public final class BossBattleManager {
             if (level.getEntity(s.getPortalUuid()) instanceof CsBossPortalEntity portal) {
                 portal.setAnim(1.0f);
             }
-            s.setPhase(BossBattleSession.Phase.ENTRANCE); // déclenche l'entrée existante du boss
+            s.setPhase(BossBattleSession.Phase.ENTRANCE); // triggers the boss's existing entrance
         }
     }
 
     /**
-     * Phase {@code PORTAL_CLOSING} : après la mort finale du boss, le portail rétrécit jusqu'à 0
-     * sur {@code PORTAL_CLOSE_TICKS}. Renvoie {@code true} une fois terminé.
+     * Phase {@code PORTAL_CLOSING}: after the boss's final death, the portal shrinks to 0
+     * over {@code PORTAL_CLOSE_TICKS}. Returns {@code true} once finished.
      */
     private static boolean tickPortalClosing(ServerLevel level, BossBattleSession s) {
         int t = s.tickPhase();
@@ -284,7 +299,7 @@ public final class BossBattleManager {
         return t >= BossBattleSession.PORTAL_CLOSE_TICKS;
     }
 
-    /** Maintient le boss parqué et invisible (échelle 0, immobile) pendant les pré‑phases. */
+    /** Keeps the boss parked and invisible (scale 0, immobile) during pre-phases. */
     private static void parkBoss(ServerLevel level, BossBattleSession s) {
         if (level.getEntity(s.getBossUuid()) instanceof CsBossEntity boss) {
             boss.setAnim(0.0f);
@@ -301,7 +316,7 @@ public final class BossBattleManager {
         if (level.getEntity(s.getBossUuid()) instanceof CsBossEntity boss) {
             boss.setAnim(p);
             double standY = s.getTriggerPos().getY() + CsBossEntity.STAND_Y_OFFSET;
-            double y = standY + CsBossEntity.ENTRANCE_HEIGHT * (1.0 - p);
+            double y = standY + s.getEntranceHeight() * (1.0 - p);
             boss.setPos(s.getArenaCenter().x, y, s.getArenaCenter().z);
             boss.setDeltaMovement(Vec3.ZERO);
             boss.faceTarget(nearestParticipantPos(level, s, boss));
@@ -346,10 +361,10 @@ public final class BossBattleManager {
         return null;
     }
 
-    // --- Decorative fighting Pokémon (plan 112) ------------------------------
+    // --- Decorative fighting Pokémon ------------------------------
 
     private static final int FIGHTING_POKEMON_DELAY = 60; // 3 s after fight start
-    private static final int FIGHTING_POKEMON_LOOP = 30;  // re-trigger attack animation
+    private static final int FIGHTING_POKEMON_LOOP = 30; // re-trigger attack animation
     /** NE / SE / SW / NW diagonals (unit offsets × distance). */
     private static final double[][] FIGHTING_DIAGONALS = {{1, -1}, {1, 1}, {-1, 1}, {-1, -1}};
 
@@ -406,7 +421,7 @@ public final class BossBattleManager {
                     pokemonModelLine(first), 1, s.getId());
             m.faceTarget(boss.position());
             m.triggerAttackAnimation();
-            s.getActiveMinions().add(m.getUUID());   // cleaned up at fight end with other minions
+            s.getActiveMinions().add(m.getUUID()); // cleaned up at fight end with other minions
             s.getFightingPokemons().add(m.getUUID());
             idx++;
         }
@@ -453,7 +468,7 @@ public final class BossBattleManager {
         if (level.getEntity(s.getBossUuid()) instanceof CsBossEntity boss) {
             boss.setAnim(p);
             double riseFrac = Math.min(1.0, t / (double) half); // +5 rise, peak at mid-animation
-            boss.setPos(boss.getX(), s.getDeathOriginY() + CsBossEntity.ENTRANCE_HEIGHT * riseFrac, boss.getZ());
+            boss.setPos(boss.getX(), s.getDeathOriginY() + s.getEntranceHeight() * riseFrac, boss.getZ());
             boss.setDeltaMovement(Vec3.ZERO);
             spawnDeathParticles(level, boss);
         }
@@ -526,8 +541,8 @@ public final class BossBattleManager {
         if (level != null) {
             stopBossMusic(server, s);
             removeEntity(level, s.getBossUuid());
-            removeEntity(level, s.getSummonProjectileUuid()); // plan 122
-            removeEntity(level, s.getPortalUuid());           // plan 122 : coupure nette, sans fermeture
+            removeEntity(level, s.getSummonProjectileUuid());
+            removeEntity(level, s.getPortalUuid()); // hard cut, no closing animation
             for (UUID u : new ArrayList<>(s.getActiveBullets())) {
                 removeEntity(level, u);
             }
@@ -615,7 +630,7 @@ public final class BossBattleManager {
             boss.setPhase(CsBossEntity.PHASE_ENTERING);
             boss.setAnim(0.0f);
             double standY = s.getTriggerPos().getY() + CsBossEntity.STAND_Y_OFFSET;
-            boss.setPos(s.getArenaCenter().x, standY + CsBossEntity.ENTRANCE_HEIGHT, s.getArenaCenter().z);
+            boss.setPos(s.getArenaCenter().x, standY + s.getEntranceHeight(), s.getArenaCenter().z);
             boss.setDeltaMovement(Vec3.ZERO);
         }
         if (nextDef.music() != null && !nextDef.music().isBlank()) {
@@ -650,8 +665,8 @@ public final class BossBattleManager {
                         boss.getX(), boss.getY() + boss.getBbHeight() * 0.5, boss.getZ(), 1, 0, 0, 0, 0);
             }
             removeEntity(level, s.getBossUuid());
-            removeEntity(level, s.getSummonProjectileUuid()); // plan 122
-            removeEntity(level, s.getPortalUuid());           // plan 122 : portail fermé (échelle 0)
+            removeEntity(level, s.getSummonProjectileUuid());
+            removeEntity(level, s.getPortalUuid()); // portal closed (scale 0)
             for (UUID u : new ArrayList<>(s.getActiveBullets())) {
                 removeEntity(level, u);
             }
@@ -805,7 +820,7 @@ public final class BossBattleManager {
 
     // --- Helpers -------------------------------------------------------------
 
-    /** Repousse horizontalement vers l'extérieur tous les joueurs proches de l'ancre (plan 122 § 5). */
+    /** Horizontally pushes all players near the anchor outward. */
     private static void knockbackNearbyPlayers(ServerLevel level, BlockPos pos) {
         double cx = pos.getX() + 0.5;
         double cz = pos.getZ() + 0.5;
@@ -818,15 +833,15 @@ public final class BossBattleManager {
             double dz = pl.getZ() - cz;
             return dx * dx + dz * dz <= r2;
         })) {
-            // knockback(strength, x, z) repousse à l'opposé de (x, z) : on pousse loin de l'ancre.
+            // knockback(strength, x, z) pushes opposite to (x, z): push away from the anchor.
             double dirX = cx - p.getX();
             double dirZ = cz - p.getZ();
             if (dirX * dirX + dirZ * dirZ < 1.0e-4) {
-                dirX = 1.0; // joueur pile sur l'ancre : direction de secours
+                dirX = 1.0; // player exactly on anchor: fallback direction
                 dirZ = 0.0;
             }
             p.knockback(ACTIVATION_KNOCKBACK_STRENGTH, dirX, dirZ);
-            p.hurtMarked = true; // force la synchro de la vélocité au client
+            p.hurtMarked = true; // force velocity sync to the client
         }
     }
 
@@ -834,7 +849,7 @@ public final class BossBattleManager {
         double dx = pos.x - center.x;
         double dz = pos.z - center.z;
         double dy = Math.abs(pos.y - center.y);
-        return (dx * dx + dz * dz) <= (double) radius * radius && dy <= yTol;
+        return Math.abs(dx) <= radius && Math.abs(dz) <= radius && dy <= yTol;
     }
 
     private static boolean consumeOne(ServerPlayer sp, Item cost) {

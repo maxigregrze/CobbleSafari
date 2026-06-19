@@ -11,7 +11,7 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 
 /**
- * Creative "command-block-like" arena trigger GUI (plan 100 § 3.3).
+ * Creative "command-block-like" arena trigger GUI.
  */
 public class CsBossTriggerConfigScreen extends Screen {
 
@@ -42,8 +42,8 @@ public class CsBossTriggerConfigScreen extends Screen {
     protected void init() {
         int left = this.width / 2 - 154;
 
-        this.bossRefBox = makeBox(left, 256, this.initial.bossRef());
-        this.costItemBox = makeBox(left, 256, this.initial.costItemId());
+        this.bossRefBox = makeBox(left, 308, this.initial.bossRef());
+        this.costItemBox = makeBox(left, 308, this.initial.costItemId());
         this.playerRadiusBox = makeBox(left, 150, Integer.toString(this.initial.playerRadius()));
         this.blockRadiusBox = makeBox(left, 150, Integer.toString(this.initial.blockRadius()));
 
@@ -53,7 +53,7 @@ public class CsBossTriggerConfigScreen extends Screen {
         }).bounds(left, 0, 20, VARIANT_ROW_HEIGHT).build();
         this.variantNextButton = Button.builder(Component.literal(" >"), b -> {
             this.variant = this.variant.next();
-        }).bounds(left + 236, 0, 20, VARIANT_ROW_HEIGHT).build();
+        }).bounds(left + 288, 0, 20, VARIANT_ROW_HEIGHT).build();
         this.addRenderableWidget(this.variantPrevButton);
         this.addRenderableWidget(this.variantNextButton);
 
@@ -99,7 +99,7 @@ public class CsBossTriggerConfigScreen extends Screen {
         y += stride();
         this.variantRowY = y;
         this.variantPrevButton.setPosition(left, y);
-        this.variantNextButton.setPosition(left + 236, y);
+        this.variantNextButton.setPosition(left + 288, y);
     }
 
     private EditBox[] boxes() {
@@ -144,7 +144,7 @@ public class CsBossTriggerConfigScreen extends Screen {
         g.drawString(this.font, Component.translatable("gui.cobblesafari.csboss.variant"), left,
                 this.variantRowY - LABEL_TO_FIELD_GAP - this.font.lineHeight, 0xA0A0A0, false);
         g.drawCenteredString(this.font, Component.translatable("gui.cobblesafari.csboss.variant." + this.variant.getSerializedName()),
-                left + 128, this.variantRowY + (VARIANT_ROW_HEIGHT - this.font.lineHeight) / 2, 0xFFFFFF);
+                left + 154, this.variantRowY + (VARIANT_ROW_HEIGHT - this.font.lineHeight) / 2, 0xFFFFFF);
     }
 
     @Override

@@ -450,7 +450,7 @@ public class TimerManager {
 
     /**
      * @param unionGracefulDeparture when true and dimension is the Union Room, players see the friendly
-     *                                departure line instead of {@code cobblesafari.timer.expired} (session close / evac).
+     * departure line instead of {@code cobblesafari.timer.expired} (session close / evac).
      */
     public static void expireActiveTimerAndTeleport(ServerPlayer player, String timerDimensionId, PlayerTimerData data,
                                                     boolean notifyExpired, boolean unionGracefulDeparture) {

@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "BBB",
+    "BMB",
+    "BBB"
+  ],
+  "key": {
+    "B": { "item": "minecraft:basalt" },
+    "M": { "item": "minecraft:magma_block" }
+  },
+  "result": {
+    "id": "cobblesafari:draconic_crater",
+    "count": 1
+  }
+}

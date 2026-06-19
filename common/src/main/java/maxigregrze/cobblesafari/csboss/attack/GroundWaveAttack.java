@@ -8,12 +8,12 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.phys.Vec3;
 
 /**
- * Attaque « sauts → ondes de choc au sol » (plan 124) : à chaque atterrissage le boss pose une onde.
+ * "Jump → ground shockwave" attack: on each landing the boss spawns a shockwave.
  *
- * <p>Util générique paramétrable : la variante est décrite par les arguments du constructeur
- * (couleur, dégâts, intervalle de saut, poison, poussée), pas par un type figé — n'importe qui peut
- * brancher une nouvelle variante. Les fabriques {@link #water}/{@link #poison}/{@link #steel}/{@link #normal}
- * ne sont que des presets.
+ * <p>Parameterized generic utility: the variant is defined by constructor arguments
+ * (color, damage, jump interval, poison, knockback), not a fixed type — anyone can
+ * wire up a new variant. The {@link #water}/{@link #poison}/{@link #steel}/{@link #normal}
+ * factories are only presets.
  */
 public class GroundWaveAttack implements CsBossAttack {
 
@@ -34,12 +34,12 @@ public class GroundWaveAttack implements CsBossAttack {
     private double cz;
 
     /**
-     * @param colorRgb       couleur de l'anneau
-     * @param damage         dégâts au contact (échelle 8–18, skill § 1.2)
-     * @param jumpInterval   ticks entre deux sauts/ondes (50 = nominal ; 25 = deux fois plus rapide)
-     * @param applyPoison    applique Poison au contact
-     * @param applyKnockback applique une poussée radiale au contact
-     * @param landingSound   son joué à chaque atterrissage
+     * @param colorRgb ring color
+     * @param damage contact damage (scale 8–18, skill)
+     * @param jumpInterval ticks between jumps/waves (50 = nominal; 25 = twice as fast)
+     * @param applyPoison applies Poison on contact
+     * @param applyKnockback applies radial knockback on contact
+     * @param landingSound sound played on each landing
      */
     public GroundWaveAttack(String id, int colorRgb, float damage, int jumpInterval,
                             boolean applyPoison, boolean applyKnockback, String landingSound) {
@@ -61,7 +61,7 @@ public class GroundWaveAttack implements CsBossAttack {
     }
 
     public static GroundWaveAttack steel(String id) {
-        // Acier : deux fois plus rapide (intervalle 25 ⇒ 2× sauts et ondes).
+        // Steel: twice as fast (interval 25 ⇒ 2× jumps and waves).
         return new GroundWaveAttack(id, 0x929292, 10.0F, 25, false, false, "cobblemon:move.ironhead.actor");
     }
 
@@ -102,7 +102,7 @@ public class GroundWaveAttack implements CsBossAttack {
 
         if (++tick >= DURATION) {
             done = true;
-            // Remet le boss à sa position au sol (sinon il reste en l'air au sommet du dernier saut).
+            // Reset the boss to ground level (otherwise it stays airborne at the peak of the last jump).
             boss.setPos(cx, floorY, cz);
             boss.setDeltaMovement(Vec3.ZERO);
         }

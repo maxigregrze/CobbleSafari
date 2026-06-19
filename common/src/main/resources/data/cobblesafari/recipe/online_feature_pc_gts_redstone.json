@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    { "item": "cobblesafari:online_feature_pc" },
+    { "item": "minecraft:redstone" }
+  ],
+  "result": {
+    "id": "cobblesafari:online_feature_pc_gts",
+    "count": 1
+  }
+}

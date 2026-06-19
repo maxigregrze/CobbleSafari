@@ -9,7 +9,7 @@ import net.minecraft.client.gui.Font;
 import java.util.List;
 
 /**
- * Client-side state machine for the objectives HUD (plan 118 §9.2–9.6): holds the last synced
+ * Client-side state machine for the objectives HUD: holds the last synced
  * objectives, drives the open/closed slide animation, tracks activity/join timers and the
  * per-objective notification dots.
  */
@@ -21,9 +21,9 @@ public final class ObjectivesHudController {
     public static final int CLOSED_OFFSET = AREA_WIDTH - CLOSED_VISIBLE; // 227
     private static final long NOTIF_DURATION_MS = 10_000L;
     private static final int MAX_OBJECTIVES = 3;
-    /** X of the task-text component within the area (plan 118 §9.1). */
+    /** X of the task-text component within the area. */
     private static final int TASK_TEXT_X = 30;
-    /** Right padding added after the widest task string when sizing the open view (plan 118 §9.4). */
+    /** Right padding added after the widest task string when sizing the open view. */
     private static final int OPEN_TEXT_PADDING = 2;
 
     private static boolean visible = false;
@@ -124,7 +124,7 @@ public final class ObjectivesHudController {
     }
 
     /**
-     * Open-state slide offset so the visible section matches the content width (plan 118 §9.4):
+     * Open-state slide offset so the visible section matches the content width:
      * {@code openWidth = min(AREA_WIDTH, 30 + maxTaskTextWidth + 2)}, capped to the texture size.
      */
     private static float computeOpenOffset(Minecraft mc) {

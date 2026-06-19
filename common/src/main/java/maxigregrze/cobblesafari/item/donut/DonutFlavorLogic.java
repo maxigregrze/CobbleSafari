@@ -290,6 +290,99 @@ public final class DonutFlavorLogic {
         return stack;
     }
 
+    public static DonutFlavorComponent generateMixDonut(int tier) {
+        int t = Math.max(0, Math.min(tier, DonutFlavorComponent.MAX_TIER));
+        Random rng = RNG;
+
+        if (t == 0) {
+            List<DonutMainFlavor> pureFlavors = List.of(
+                    DonutMainFlavor.SPICY,
+                    DonutMainFlavor.DRY,
+                    DonutMainFlavor.SWEET,
+                    DonutMainFlavor.SOUR,
+                    DonutMainFlavor.BITTER);
+            List<DonutMainFlavor> shuffled = new ArrayList<>(pureFlavors);
+            Collections.shuffle(shuffled, rng);
+
+            List<DonutPower> pool1 = new ArrayList<>(DonutPowerRegistry.byFlavor(shuffled.get(0)));
+            List<DonutPower> pool2 = new ArrayList<>(DonutPowerRegistry.byFlavor(shuffled.get(1)));
+            DonutBonus bonus1 = pickRandomWithType(rng, pool1);
+            DonutBonus bonus2 = pickRandomWithType(rng, pool2);
+
+            List<DonutBonus> bonuses = new ArrayList<>();
+            if (bonus1 != null) {
+                bonuses.add(new DonutBonus(bonus1.powerId(), 1, bonus1.type()));
+            }
+            if (bonus2 != null) {
+                bonuses.add(new DonutBonus(bonus2.powerId(), 1, bonus2.type()));
+            }
+
+            int calories = rollCaloriesForTier(rng, t);
+            return new DonutFlavorComponent(DonutMainFlavor.MIX, 0, List.of(), calories, bonuses);
+        }
+
+        List<DonutMainFlavor> pureFlavors = List.of(
+                DonutMainFlavor.SPICY,
+                DonutMainFlavor.DRY,
+                DonutMainFlavor.SWEET,
+                DonutMainFlavor.SOUR,
+                DonutMainFlavor.BITTER);
+        List<DonutMainFlavor> shuffled = new ArrayList<>(pureFlavors);
+        Collections.shuffle(shuffled, rng);
+
+        int bonusCount = 2 + rng.nextInt(2);
+        DonutBonus[] picked = new DonutBonus[bonusCount];
+        for (int i = 0; i < bonusCount; i++) {
+            List<DonutPower> pool = new ArrayList<>(DonutPowerRegistry.byFlavor(shuffled.get(i)));
+            picked[i] = pickRandomWithType(rng, pool);
+        }
+
+        int[] r = GENERATION_RANGES[t];
+        int budgetMin = r[2];
+        int budgetMax = r[3];
+        int totalBudget = budgetMin == budgetMax ? budgetMin : budgetMin + rng.nextInt(budgetMax - budgetMin + 1);
+        boolean forceMax = totalBudget >= 9;
+
+        int[] levels = new int[bonusCount];
+        if (forceMax) {
+            for (int i = 0; i < bonusCount; i++) {
+                levels[i] = 3;
+            }
+        } else {
+            int budget = totalBudget;
+            for (int i = 0; i < bonusCount; i++) {
+                if (picked[i] == null || budget == 0) {
+                    continue;
+                }
+                levels[i] = rollLevel(rng, Math.min(3, budget));
+                budget -= levels[i];
+            }
+            if (budget > 0) {
+                int[] indices = new int[bonusCount];
+                for (int i = 0; i < bonusCount; i++) {
+                    indices[i] = i;
+                }
+                distributeRemainingBudget(rng, indices, levels, budget);
+            }
+        }
+
+        List<DonutBonus> bonuses = new ArrayList<>();
+        for (int i = 0; i < bonusCount; i++) {
+            if (picked[i] != null && levels[i] > 0) {
+                bonuses.add(new DonutBonus(picked[i].powerId(), levels[i], picked[i].type()));
+            }
+        }
+
+        int calories = rollCaloriesForTier(rng, t);
+        return new DonutFlavorComponent(DonutMainFlavor.MIX, t, List.of(), calories, bonuses);
+    }
+
+    public static ItemStack createGeneratedMixStack(int tier) {
+        ItemStack stack = new ItemStack(ModItems.DONUT);
+        stack.set(ModComponents.DONUT_FLAVOR, generateMixDonut(tier));
+        return stack;
+    }
+
     public static int computeTier(int sum) {
         if (sum < 150) return 0;
         if (sum < 210) return 1;

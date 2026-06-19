@@ -219,7 +219,7 @@ public final class DungeonInstanceCleanup {
             return;
         }
 
-        // Plan 118 §7 — purge objectives tied to this instance before the chunk clear.
+        
         maxigregrze.cobblesafari.objectives.ObjectivesManager.purgeInstance(
                 server, record.dimensionId(), record.instanceId());
 

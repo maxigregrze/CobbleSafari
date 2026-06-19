@@ -1,0 +1,8 @@
+{
+  "variants": {
+    "": [
+      { "model": "cobblesafari:block/tinkagearblock" },
+      { "model": "cobblesafari:block/tinkagearblock", "y": 90 }
+    ]
+  }
+}

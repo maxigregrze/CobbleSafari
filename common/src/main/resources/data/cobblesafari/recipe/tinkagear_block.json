@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    { "item": "cobblesafari:tinkagear" },
+    { "item": "cobblesafari:tinkagear" },
+    { "item": "cobblesafari:tinkagear" },
+    { "item": "cobblesafari:tinkagear" },
+    { "item": "cobblesafari:tinkagear" },
+    { "item": "cobblesafari:tinkagear" },
+    { "item": "cobblesafari:tinkagear" },
+    { "item": "cobblesafari:tinkagear" },
+    { "item": "cobblesafari:tinkagear" }
+  ],
+  "result": {
+    "id": "cobblesafari:tinkagear_block",
+    "count": 1
+  }
+}

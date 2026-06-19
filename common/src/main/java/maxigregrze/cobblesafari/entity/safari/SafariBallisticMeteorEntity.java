@@ -16,12 +16,13 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 
 /**
- * Draco meteor launched upward from a Safari crater block (plan 115); places {@code draco_meteorite} on impact.
+ * Draco meteor launched upward from a Safari crater block; places {@code draco_meteorite} on impact.
  */
 public class SafariBallisticMeteorEntity extends Entity {
 
@@ -44,6 +45,9 @@ public class SafariBallisticMeteorEntity extends Entity {
     private int age;
     private boolean launched;
     private boolean damaged;
+    private boolean damageOnly;
+    private boolean falling;
+    private int targetEntityId = -1;
 
     public SafariBallisticMeteorEntity(EntityType<? extends SafariBallisticMeteorEntity> type, Level level) {
         super(type, level);
@@ -51,18 +55,49 @@ public class SafariBallisticMeteorEntity extends Entity {
         this.setNoGravity(true);
     }
 
+    /** Crater behaviour: rising telegraph, then a ballistic rock thrown upward that places a block on impact. */
     public static void spawn(ServerLevel level, Vec3 spawn, RandomSource rng) {
+        configureAndSpawn(level, spawn, rng, false, null, true, false);
+    }
+
+    /** Rock trap (base): a rock thrown upward immediately, without the telegraph delay; places a block on impact. */
+    public static void spawnInstant(ServerLevel level, Vec3 spawn, RandomSource rng) {
+        configureAndSpawn(level, spawn, rng, false, null, false, false);
+    }
+
+    /** Rock trap (hard): a meteorite dropped straight from the sky onto the target, damage only (no block placed). */
+    public static void spawnFalling(ServerLevel level, Vec3 spawnAbove, LivingEntity target, RandomSource rng) {
+        configureAndSpawn(level, spawnAbove, rng, true, target, false, true);
+    }
+
+    private static void configureAndSpawn(ServerLevel level, Vec3 spawn, RandomSource rng,
+                                          boolean damageOnly, LivingEntity target,
+                                          boolean telegraph, boolean falling) {
         SafariBallisticMeteorEntity meteor = new SafariBallisticMeteorEntity(ModEntities.SAFARI_BALLISTIC_METEOR, level);
         meteor.spawnX = spawn.x;
         meteor.spawnY = spawn.y;
         meteor.spawnZ = spawn.z;
+        meteor.damageOnly = damageOnly;
+        meteor.falling = falling;
+        meteor.launched = !telegraph;
+        if (target != null) {
+            meteor.targetEntityId = target.getId();
+        }
         meteor.moveTo(spawn.x, spawn.y, spawn.z, 0.0F, 0.0F);
 
-        double pitchX = Math.toRadians((rng.nextDouble() * 2.0 - 1.0) * 5.0);
-        double pitchZ = Math.toRadians((rng.nextDouble() * 2.0 - 1.0) * 5.0);
-        meteor.velocityY = LAUNCH_SPEED;
-        meteor.velocityX = LAUNCH_SPEED * Math.tan(pitchX);
-        meteor.velocityZ = LAUNCH_SPEED * Math.tan(pitchZ);
+        if (falling) {
+            double driftX = Math.toRadians((rng.nextDouble() * 2.0 - 1.0) * 3.0);
+            double driftZ = Math.toRadians((rng.nextDouble() * 2.0 - 1.0) * 3.0);
+            meteor.velocityY = -LAUNCH_SPEED;
+            meteor.velocityX = LAUNCH_SPEED * Math.tan(driftX);
+            meteor.velocityZ = LAUNCH_SPEED * Math.tan(driftZ);
+        } else {
+            double pitchX = Math.toRadians((rng.nextDouble() * 2.0 - 1.0) * 5.0);
+            double pitchZ = Math.toRadians((rng.nextDouble() * 2.0 - 1.0) * 5.0);
+            meteor.velocityY = LAUNCH_SPEED;
+            meteor.velocityX = LAUNCH_SPEED * Math.tan(pitchX);
+            meteor.velocityZ = LAUNCH_SPEED * Math.tan(pitchZ);
+        }
 
         level.addFreshEntity(meteor);
         CsBossAttackLib.sound(level, spawn.x, spawn.y, spawn.z,
@@ -71,6 +106,14 @@ public class SafariBallisticMeteorEntity extends Entity {
 
     public float getSpin() {
         return this.entityData.get(DATA_SPIN);
+    }
+
+    public boolean hasTargetEntity() {
+        return targetEntityId >= 0;
+    }
+
+    public int getTargetEntityId() {
+        return targetEntityId;
     }
 
     @Override
@@ -135,16 +178,18 @@ public class SafariBallisticMeteorEntity extends Entity {
     }
 
     private void impact(ServerLevel level, BlockPos pos) {
-        BlockPos place = pos;
-        while (place.getY() < level.getMaxBuildHeight() && !level.getBlockState(place).canBeReplaced()) {
-            place = place.above();
+        if (!damageOnly) {
+            BlockPos place = pos;
+            while (place.getY() < level.getMaxBuildHeight() && !level.getBlockState(place).canBeReplaced()) {
+                place = place.above();
+            }
+            if (level.getBlockState(place).canBeReplaced()) {
+                level.setBlockAndUpdate(place, ModBlocks.DRACO_METEORITE.defaultBlockState());
+            }
         }
-        if (level.getBlockState(place).canBeReplaced()) {
-            level.setBlockAndUpdate(place, ModBlocks.DRACO_METEORITE.defaultBlockState());
-        }
-        CsBossAttackLib.sound(level, place.getX() + 0.5, place.getY() + 0.5, place.getZ() + 0.5,
+        CsBossAttackLib.sound(level, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5,
                 "cobblemon:impact.dragon", SoundSource.HOSTILE, 1.5F, 1.0F);
-        level.playSound(null, place.getX() + 0.5, place.getY() + 0.5, place.getZ() + 0.5,
+        level.playSound(null, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5,
                 SoundEvents.GENERIC_EXPLODE.value(), SoundSource.HOSTILE, 0.8F, 0.8F);
         this.discard();
     }

@@ -170,6 +170,12 @@ public class CobbleSafariNeoForge {
             registrar.playToClient(maxigregrze.cobblesafari.network.OpenCsBossMimicConfigPayload.TYPE,
                     maxigregrze.cobblesafari.network.OpenCsBossMimicConfigPayload.STREAM_CODEC,
                     CobbleSafariClientNeoForge::handleOpenCsBossMimicConfig);
+            registrar.playToClient(maxigregrze.cobblesafari.network.OpenTeleportPadConfigPayload.TYPE,
+                    maxigregrze.cobblesafari.network.OpenTeleportPadConfigPayload.STREAM_CODEC,
+                    CobbleSafariClientNeoForge::handleOpenTeleportPadConfig);
+            registrar.playToClient(maxigregrze.cobblesafari.network.TeleportPadResultPayload.TYPE,
+                    maxigregrze.cobblesafari.network.TeleportPadResultPayload.STREAM_CODEC,
+                    CobbleSafariClientNeoForge::handleTeleportPadResult);
             registrar.playToClient(maxigregrze.cobblesafari.network.SetCsMusicPayload.TYPE,
                     maxigregrze.cobblesafari.network.SetCsMusicPayload.STREAM_CODEC,
                     CobbleSafariClientNeoForge::handleSetCsMusic);
@@ -199,6 +205,12 @@ public class CobbleSafariNeoForge {
                     (payload, context) -> {});
             registrar.playToClient(maxigregrze.cobblesafari.network.OpenCsBossMimicConfigPayload.TYPE,
                     maxigregrze.cobblesafari.network.OpenCsBossMimicConfigPayload.STREAM_CODEC,
+                    (payload, context) -> {});
+            registrar.playToClient(maxigregrze.cobblesafari.network.OpenTeleportPadConfigPayload.TYPE,
+                    maxigregrze.cobblesafari.network.OpenTeleportPadConfigPayload.STREAM_CODEC,
+                    (payload, context) -> {});
+            registrar.playToClient(maxigregrze.cobblesafari.network.TeleportPadResultPayload.TYPE,
+                    maxigregrze.cobblesafari.network.TeleportPadResultPayload.STREAM_CODEC,
                     (payload, context) -> {});
             registrar.playToClient(maxigregrze.cobblesafari.network.SetCsMusicPayload.TYPE,
                     maxigregrze.cobblesafari.network.SetCsMusicPayload.STREAM_CODEC,
@@ -290,6 +302,36 @@ public class CobbleSafariNeoForge {
                     context.enqueueWork(() -> {
                         if (context.player() instanceof ServerPlayer sp) {
                             maxigregrze.cobblesafari.network.CsBossMimicConfigServerHandler.handleSave(sp, payload);
+                        }
+                    });
+                });
+
+        registrar.playToServer(maxigregrze.cobblesafari.network.SaveTeleportPadConfigPayload.TYPE,
+                maxigregrze.cobblesafari.network.SaveTeleportPadConfigPayload.STREAM_CODEC,
+                (payload, context) -> {
+                    context.enqueueWork(() -> {
+                        if (context.player() instanceof ServerPlayer sp) {
+                            maxigregrze.cobblesafari.network.TeleportPadConfigServerHandler.handleSave(sp, payload);
+                        }
+                    });
+                });
+
+        registrar.playToServer(maxigregrze.cobblesafari.network.TeleportPadActionPayload.TYPE,
+                maxigregrze.cobblesafari.network.TeleportPadActionPayload.STREAM_CODEC,
+                (payload, context) -> {
+                    context.enqueueWork(() -> {
+                        if (context.player() instanceof ServerPlayer sp) {
+                            maxigregrze.cobblesafari.network.TeleportPadConfigServerHandler.handleAction(sp, payload);
+                        }
+                    });
+                });
+
+        registrar.playToServer(maxigregrze.cobblesafari.network.TeleportPadJumpPayload.TYPE,
+                maxigregrze.cobblesafari.network.TeleportPadJumpPayload.STREAM_CODEC,
+                (payload, context) -> {
+                    context.enqueueWork(() -> {
+                        if (context.player() instanceof ServerPlayer sp) {
+                            maxigregrze.cobblesafari.teleporter.TeleportPadManager.tryTeleport(sp);
                         }
                     });
                 });

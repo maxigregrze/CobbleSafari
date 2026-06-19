@@ -435,6 +435,21 @@ public class DungeonTeleportHandler {
         return PORTALS_GENERATING.contains(portalId);
     }
 
+    /**
+     * Releases the per-portal generation lock and aborts any in-flight generation state for that
+     * portal. Idempotent and safe to call when the lock is not held. Must be invoked whenever the
+     * player who acquired the lock leaves the generation sequence without reaching
+     * {@link #completeFinalization} (moved, disconnected, portal removed, etc.); otherwise the lock
+     * leaks and the portal becomes permanently unusable until a server restart.
+     */
+    public static void releaseGenerationLock(UUID portalId) {
+        if (portalId == null) {
+            return;
+        }
+        PORTALS_GENERATING.remove(portalId);
+        GENERATION_STATES.remove(portalId);
+    }
+
     public static boolean loadChunks(ServerPlayer player, DungeonPortalBlockEntity portalEntity, DungeonValidationResult validation) {
         GenerationState state = GENERATION_STATES.get(portalEntity.getPortalId());
         if (state == null) {

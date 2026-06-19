@@ -1,0 +1,24 @@
+﻿{
+  "values": [
+    "cobblesafari:trap_darkness",
+    "cobblesafari:trap_darkness_hard",
+    "cobblesafari:trap_explosion",
+    "cobblesafari:trap_explosion_hard",
+    "cobblesafari:trap_fart",
+    "cobblesafari:trap_fart_hard",
+    "cobblesafari:trap_fire",
+    "cobblesafari:trap_fire_hard",
+    "cobblesafari:trap_gravity",
+    "cobblesafari:trap_gravity_hard",
+    "cobblesafari:trap_move",
+    "cobblesafari:trap_move_hard",
+    "cobblesafari:trap_rock",
+    "cobblesafari:trap_rock_hard",
+    "cobblesafari:trap_slow",
+    "cobblesafari:trap_slow_hard",
+    "cobblesafari:trap_teleport",
+    "cobblesafari:trap_teleport_hard",
+    "cobblesafari:trap_wind",
+    "cobblesafari:trap_wind_hard"
+  ]
+}

@@ -18,7 +18,7 @@ import net.minecraft.util.Mth;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * Arena trigger block entity (plan 100 § 3.1): persists creative-tuned config
+ * Arena trigger block entity: persists creative-tuned config
  * (boss, cost, radii) + active session id (0 = free).
  */
 public class CsBossTriggerBlockEntity extends BlockEntity {

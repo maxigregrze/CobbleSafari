@@ -9,23 +9,23 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.phys.Vec3;
 
 /**
- * {@code base_ghost_4} (Type C / SPREAD) : le boss vise une direction aléatoire et tire une boule
- * d'ombre 2×2, puis tourne de 18° (sens horaire ou anti-horaire, choisi au hasard au début et gardé
- * jusqu'à la fin) avant le tir suivant. Un tour complet (360°) = 20 tirs en 5 s ; le boss en fait
- * deux, soit 40 tirs sur 10 s (un balayage en spirale).
+ * {@code base_ghost_4} (Type C / SPREAD): the boss aims in a random direction and fires a 2×2 shadow
+ * ball, then rotates 18° (clockwise or counter-clockwise, chosen randomly at the start and held
+ * until the end) before the next shot. One full turn (360°) = 20 shots in 5 s; the boss does
+ * two, i.e. 40 shots over 10 s (a spiral sweep).
  */
 public class GhostShadowballAttack implements CsBossAttack {
 
-    private static final int THROWS = 40;            // 2 tours de 20 tirs
-    private static final int INTERVAL = 6;           // un tir toutes les 6 ticks (40*6 = 240 t)
-    private static final double STEP_DEG = 18.0;     // 360° / 20 tirs
-    private static final double SPEED = 0.4;         // vitesse de la boule
-    private static final double SPAWN_Y_OFFSET = 0.5; // pieds de la boule au-dessus du sol
+    private static final int THROWS = 40; // 2 rounds of 20 shots
+    private static final int INTERVAL = 6; // one shot every 6 ticks (40*6 = 240 t)
+    private static final double STEP_DEG = 18.0; // 360° / 20 shots
+    private static final double SPEED = 0.4; // ball speed
+    private static final double SPAWN_Y_OFFSET = 0.5; // ball base above ground
 
     private final String id;
     private final RandomSource rng = RandomSource.create();
-    private double baseAngle;  // direction du premier tir (aléatoire)
-    private double stepRad;    // ±18° par tir (sens horaire / anti-horaire aléatoire)
+    private double baseAngle; // first-shot direction (random)
+    private double stepRad; // ±18° per shot (random clockwise / counter-clockwise)
     private int tick;
     private int thrown;
     private boolean done;
@@ -62,7 +62,7 @@ public class GhostShadowballAttack implements CsBossAttack {
             thrown++;
         }
         if (tick >= THROWS * INTERVAL) {
-            done = true; // les boules déjà tirées finissent leur course d'elles-mêmes
+            done = true; // balls already fired finish on their own
         }
         tick++;
     }
@@ -73,6 +73,7 @@ public class GhostShadowballAttack implements CsBossAttack {
         double y = session.getTriggerPos().getY() + SPAWN_Y_OFFSET;
         AttackShadowballEntity ball = AttackShadowballEntity.spawn(level,
                 boss.getX(), y, boss.getZ(), session.getId(), velocity);
+        ball.setMaxTravel(CsBossAttackLib.areaReach(session));
         session.trackAttackEntity(ball);
         boss.triggerAttackAnimation();
         CsBossAttackLib.sound(level, boss.getX(), y, boss.getZ(),

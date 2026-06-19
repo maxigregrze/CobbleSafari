@@ -53,7 +53,7 @@ public final class DungeonRegistrationAPI {
      * Registers a portal interceptor for a dungeon dimension. When a player interacts with a portal
      * leading to this dimension, the interceptor is called instead of CobbleSafari's default flow.
      *
-     * @param dungeonId   the dungeon id (e.g. "cobblemonraiddens:raid_dimension")
+     * @param dungeonId the dungeon id (e.g. "cobblemonraiddens:raid_dimension")
      * @param interceptor the interceptor to register
      */
     public static void registerPortalInterceptor(String dungeonId, PortalInterceptor interceptor) {
@@ -73,7 +73,7 @@ public final class DungeonRegistrationAPI {
      * of CobbleSafari's default cleanup.
      *
      * @param dungeonId the dungeon id
-     * @param handler   the expiration handler to register
+     * @param handler the expiration handler to register
      */
     public static void registerPortalExpirationHandler(String dungeonId, PortalExpirationHandler handler) {
         expirationHandlers.put(dungeonId, handler);
@@ -92,7 +92,7 @@ public final class DungeonRegistrationAPI {
      * species and tier) instead of the default translation key.
      *
      * @param dungeonId the dungeon id (e.g. "cobblemonraiddens:raid_dimension")
-     * @param provider  the provider to register; may return null for default behaviour
+     * @param provider the provider to register; may return null for default behaviour
      */
     public static void registerPortalTooltipProvider(String dungeonId, PortalTooltipProvider provider) {
         tooltipProviders.put(dungeonId, provider);
@@ -111,7 +111,7 @@ public final class DungeonRegistrationAPI {
      * interaction work immediately.
      *
      * @param dungeonId the dungeon id (e.g. "cobblemonraiddens:raid_dimension")
-     * @param callback  the callback to register
+     * @param callback the callback to register
      */
     public static void registerPortalSpawnCallback(String dungeonId, PortalSpawnCallback callback) {
         spawnCallbacks.put(dungeonId, callback);
@@ -128,10 +128,10 @@ public final class DungeonRegistrationAPI {
      * Registers dimensional restrictions (block breaking/placing ban, battle toggle) for a dimension.
      * Creates a new entry in the dimensional restrictions config if one does not already exist.
      *
-     * @param dimensionId       the full dimension id (e.g. "cobblemonraiddens:raid_dimension")
+     * @param dimensionId the full dimension id (e.g. "cobblemonraiddens:raid_dimension")
      * @param allowBlockBreaking whether block breaking is allowed
-     * @param allowBlockPlacing  whether block placing is allowed
-     * @param allowBattle        whether battles are allowed
+     * @param allowBlockPlacing whether block placing is allowed
+     * @param allowBattle whether battles are allowed
      */
     public static void registerDimensionalRestrictions(String dimensionId,
                                                        boolean allowBlockBreaking,

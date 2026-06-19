@@ -12,7 +12,7 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
 
 /**
- * Renders the attack shadow (plan 107 § 4.1) as a textured horizontal quad, parallel to the
+ * Renders the attack shadow as a textured horizontal quad, parallel to the
  * ground, ~½ pixel above the ground, visible from both sides.
  */
 public class AttackShadowEntityRenderer extends EntityRenderer<AttackShadowEntity> {
@@ -37,7 +37,7 @@ public class AttackShadowEntityRenderer extends EntityRenderer<AttackShadowEntit
     public void render(AttackShadowEntity entity, float yaw, float partialTicks, PoseStack ps,
                        MultiBufferSource buffer, int packedLight) {
         ResourceLocation tex = entity.isLarge() ? TEXTURE_LARGE : TEXTURE;
-        float half = entity.isLarge() ? 1.5f : 0.5f; // 3×3 or 1×1
+        float half = entity.isLarge() ? 1.5f: 0.5f; // 3×3 or 1×1
         float a = entity.getAlpha();
         if (a > 0.001f) {
             VertexConsumer vc = buffer.getBuffer(RenderType.entityTranslucent(tex));

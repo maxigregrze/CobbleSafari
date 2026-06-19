@@ -116,7 +116,9 @@ public class CobbleSafariClientNeoForge {
     @SubscribeEvent
     public static void onClientSetup(FMLClientSetupEvent event) {
         event.enqueueWork(() -> {
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.TINKAGEAR_BLOCK, RenderType.translucent());
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.SAFARI_TELEPORTER, RenderType.translucent());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.TELEPORT_PAD, RenderType.translucent());
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.SAFARI_EGG_NEST, RenderType.cutout());
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.HOOPA_RING_PORTAL, RenderType.cutout());
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.DUNGEON_PORTAL, RenderType.cutout());
@@ -154,6 +156,7 @@ public class CobbleSafariClientNeoForge {
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.UNDERGROUND_PC, RenderType.cutout());
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.SECRETBASE_PC, RenderType.cutout());
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.INCUBATOR, RenderType.translucent());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.EMPTYPHONE, RenderType.cutout());
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.DISTORTION_ROCK, RenderType.cutout());
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.DISTORTION_ROCK_VERTICAL, RenderType.cutout());
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.DISTORTION_ROCK_UPSIDEDOWN, RenderType.cutout());
@@ -231,11 +234,13 @@ public class CobbleSafariClientNeoForge {
             BlockEntityRenderers.register(ModBlockEntities.AUSPICIOUS_POKEBALL_GOLD, AuspiciousPokeballBlockEntityRenderer::new);
             BlockEntityRenderers.register(ModBlockEntities.UNION_ROOM_DECOR, maxigregrze.cobblesafari.client.renderer.UnionRoomDecorBlockEntityRenderer::new);
             BlockEntityRenderers.register(ModBlockEntities.WHIRLWIND, maxigregrze.cobblesafari.client.renderer.WhirlwindBlockEntityRenderer::new);
+            BlockEntityRenderers.register(ModBlockEntities.TRAP, maxigregrze.cobblesafari.client.renderer.TrapBlockEntityRenderer::new);
             BlockEntityRenderers.register(ModBlockEntities.UNION_ROOM_GLOBE_UPPER, maxigregrze.cobblesafari.client.renderer.UnionRoomGlobeUpperBlockEntityRenderer::new);
             BlockEntityRenderers.register(ModBlockEntities.UNION_ROOM_SPOTLIGHT, maxigregrze.cobblesafari.client.renderer.UnionRoomSpotlightBlockEntityRenderer::new);
             BlockEntityRenderers.register(ModBlockEntities.PUNCHINGBAG, maxigregrze.cobblesafari.client.renderer.PunchingBagBlockEntityRenderer::new);
             BlockEntityRenderers.register(ModBlockEntities.BALM_DISPENSER, maxigregrze.cobblesafari.client.renderer.BalmDispenserBlockEntityRenderer::new);
             BlockEntityRenderers.register(ModBlockEntities.CSBOSS_TRIGGER, maxigregrze.cobblesafari.client.renderer.CsBossTriggerBlockEntityRenderer::new);
+            BlockEntityRenderers.register(ModBlockEntities.TELEPORT_PAD, maxigregrze.cobblesafari.client.renderer.TeleportPadBlockEntityRenderer::new);
             BlockEntityRenderers.register(ModBlockEntities.CSBOSS_MIMIC, maxigregrze.cobblesafari.client.renderer.CsBossMimicBlockEntityRenderer::new);
         });
 
@@ -292,6 +297,7 @@ public class CobbleSafariClientNeoForge {
         CsMusicPlayer.onClientTick(mc);
         maxigregrze.cobblesafari.client.screen.rotomphone.RotomPhonePcSession.tickCleanup(mc);
         maxigregrze.cobblesafari.client.rotomphone.RotoGlideClient.tick(mc);
+        maxigregrze.cobblesafari.client.teleporter.TeleportPadClient.tick(mc);
         maxigregrze.cobblesafari.client.rotomphone.RotomPhoneKeybind.clientTick(mc);
         maxigregrze.cobblesafari.client.objectives.ObjectivesKeybind.clientTick(mc);
         maxigregrze.cobblesafari.client.objectives.ObjectivesHudController.clientTick(mc);
@@ -390,6 +396,23 @@ public class CobbleSafariClientNeoForge {
         context.enqueueWork(() ->
                 Minecraft.getInstance().setScreen(
                         new maxigregrze.cobblesafari.client.screen.CsBossMimicConfigScreen(payload)));
+    }
+
+    public static void handleOpenTeleportPadConfig(
+            maxigregrze.cobblesafari.network.OpenTeleportPadConfigPayload payload, IPayloadContext context) {
+        context.enqueueWork(() ->
+                Minecraft.getInstance().setScreen(
+                        new maxigregrze.cobblesafari.client.screen.TeleportPadConfigScreen(payload)));
+    }
+
+    public static void handleTeleportPadResult(
+            maxigregrze.cobblesafari.network.TeleportPadResultPayload payload, IPayloadContext context) {
+        context.enqueueWork(() -> {
+            if (Minecraft.getInstance().screen
+                    instanceof maxigregrze.cobblesafari.client.screen.TeleportPadConfigScreen screen) {
+                screen.applyResult(payload);
+            }
+        });
     }
 
     public static void handleSetCsMusic(

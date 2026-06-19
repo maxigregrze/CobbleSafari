@@ -4,7 +4,7 @@
     "icon": { "id": "cobblesafari:redchain_fragment" },
     "title": { "translate": "advancement.cobblesafari.fadded_shadow.title" },
     "description": { "translate": "advancement.cobblesafari.fadded_shadow.description" },
-    "frame": "goal",
+    "frame": "challenge",
     "show_toast": true,
     "announce_to_chat": true,
     "hidden": false

@@ -12,6 +12,7 @@ import maxigregrze.cobblesafari.block.misc.AuspiciousPokeballGoldBlockEntity;
 import maxigregrze.cobblesafari.block.misc.LostItemBlockEntity;
 import maxigregrze.cobblesafari.block.misc.SafariEggNestBlockEntity;
 import maxigregrze.cobblesafari.block.misc.WhirlwindBlockEntity;
+import maxigregrze.cobblesafari.block.trap.TrapBlockEntity;
 import maxigregrze.cobblesafari.block.misc.PunchingBagBlockEntity;
 import maxigregrze.cobblesafari.block.misc.UnionRoomDecorBlockEntity;
 import maxigregrze.cobblesafari.block.misc.UnionRoomGlobeUpperBlockEntity;
@@ -23,6 +24,7 @@ import maxigregrze.cobblesafari.block.incubator.IncubatorBlockEntity;
 import maxigregrze.cobblesafari.block.csboss.CsBossTriggerBlockEntity;
 import maxigregrze.cobblesafari.block.csboss.CsBossMimicBlockEntity;
 import maxigregrze.cobblesafari.block.balm.BalmDispenserBlockEntity;
+import maxigregrze.cobblesafari.block.teleporter.TeleportPadBlockEntity;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
@@ -54,6 +56,8 @@ public class ModBlockEntities {
     public static BlockEntityType<CsBossTriggerBlockEntity> CSBOSS_TRIGGER;
     public static BlockEntityType<CsBossMimicBlockEntity> CSBOSS_MIMIC;
     public static BlockEntityType<BalmDispenserBlockEntity> BALM_DISPENSER;
+    public static BlockEntityType<TrapBlockEntity> TRAP;
+    public static BlockEntityType<TeleportPadBlockEntity> TELEPORT_PAD;
 
     public static void register() {
         CobbleSafari.LOGGER.info("Registering block entities for " + CobbleSafari.MOD_ID);
@@ -201,6 +205,28 @@ public class ModBlockEntities {
                 ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, "balm_dispenser"),
                 BlockEntityType.Builder.of(BalmDispenserBlockEntity::new,
                         ModBlocks.BALM_DISPENSER, ModBlocks.BALM_DISPENSER_DISTORTION).build(null)
+        );
+
+        TRAP = Registry.register(
+                BuiltInRegistries.BLOCK_ENTITY_TYPE,
+                ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, "trap"),
+                BlockEntityType.Builder.of(TrapBlockEntity::new,
+                        ModBlocks.TRAP_DARKNESS, ModBlocks.TRAP_DARKNESS_HARD,
+                        ModBlocks.TRAP_EXPLOSION, ModBlocks.TRAP_EXPLOSION_HARD,
+                        ModBlocks.TRAP_FART, ModBlocks.TRAP_FART_HARD,
+                        ModBlocks.TRAP_FIRE, ModBlocks.TRAP_FIRE_HARD,
+                        ModBlocks.TRAP_GRAVITY, ModBlocks.TRAP_GRAVITY_HARD,
+                        ModBlocks.TRAP_MOVE, ModBlocks.TRAP_MOVE_HARD,
+                        ModBlocks.TRAP_ROCK, ModBlocks.TRAP_ROCK_HARD,
+                        ModBlocks.TRAP_SLOW, ModBlocks.TRAP_SLOW_HARD,
+                        ModBlocks.TRAP_TELEPORT, ModBlocks.TRAP_TELEPORT_HARD,
+                        ModBlocks.TRAP_WIND, ModBlocks.TRAP_WIND_HARD).build(null)
+        );
+
+        TELEPORT_PAD = Registry.register(
+                BuiltInRegistries.BLOCK_ENTITY_TYPE,
+                ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, "teleport_pad"),
+                BlockEntityType.Builder.of(TeleportPadBlockEntity::new, ModBlocks.TELEPORT_PAD, ModBlocks.SURVIVAL_TELEPORT_PAD).build(null)
         );
     }
 }

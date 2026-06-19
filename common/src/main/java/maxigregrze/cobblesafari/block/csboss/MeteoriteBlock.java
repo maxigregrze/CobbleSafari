@@ -11,7 +11,7 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
 /**
- * Ephemeral meteorite block (plan 107 § 5.1) placed by rock/dragon attacks. Schedules its own
+ * Ephemeral meteorite block placed by rock/dragon attacks. Schedules its own
  * destruction {@code ttlTicks} ticks after placement ({@code onPlace} → {@code scheduleTick}),
  * independent of the attack that created it. On expiry: {@code block_destruct} particles +
  * break sound via {@code levelEvent(2001)}.

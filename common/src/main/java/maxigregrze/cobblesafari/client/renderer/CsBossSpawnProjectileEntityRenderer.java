@@ -13,14 +13,14 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
 
 /**
- * Rend le projectile d'invocation (plan 122 § 8.1) via le modèle de bloc {@code bossanchor_moving},
- * centré sur l'entité, en rotation continue (effet toupie) pendant la montée.
+ * Renders the summon projectile via the {@code bossanchor_moving} block model,
+ * centered on the entity, spinning continuously (top effect) during ascent.
  */
 public class CsBossSpawnProjectileEntityRenderer extends EntityRenderer<CsBossSpawnProjectileEntity> {
 
     private static final ResourceLocation FALLBACK =
             ResourceLocation.withDefaultNamespace("textures/misc/white.png");
-    private static final float SPIN_PER_TICK = 18.0F; // degrés / tick autour de Y
+    private static final float SPIN_PER_TICK = 18.0F; // degrees / tick around Y
 
     private final BlockRenderDispatcher blockRenderer;
 
@@ -39,9 +39,9 @@ public class CsBossSpawnProjectileEntityRenderer extends EntityRenderer<CsBossSp
                        MultiBufferSource buffer, int packedLight) {
         float spin = (entity.tickCount + partialTicks) * SPIN_PER_TICK;
         ps.pushPose();
-        ps.translate(0.0, 0.5, 0.0); // pivot autour du centre du bloc
+        ps.translate(0.0, 0.5, 0.0); // pivot around block center
         ps.mulPose(Axis.YP.rotationDegrees(spin));
-        ps.translate(-0.5, -0.5, -0.5); // recentre le modèle [0,1]³
+        ps.translate(-0.5, -0.5, -0.5); // recenter the [0,1]³ model
         blockRenderer.renderSingleBlock(ModBlocks.BOSSANCHOR_MOVING.defaultBlockState(),
                 ps, buffer, LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY);
         ps.popPose();

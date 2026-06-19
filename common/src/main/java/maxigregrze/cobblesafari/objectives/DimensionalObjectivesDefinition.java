@@ -6,7 +6,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 /**
- * Parsed datapack definition of the objective pool for one dimension (plan 118 §2).
+ * Parsed datapack definition of the objective pool for one dimension.
  * Immutable; produced by {@link DimensionalObjectivesDataLoader}.
  */
 public final class DimensionalObjectivesDefinition {
@@ -77,15 +77,15 @@ public final class DimensionalObjectivesDefinition {
 
     /**
      * One rollable entry in the pool: a task type with its weight and the bounds used to roll
-     * its variables (plan 118 §2.2).
+     * its variables.
      */
     public static final class TaskPoolEntry {
         private final TaskType type;
         private final int weight;
         private final int countMin;
         private final int countMax;
-        private final List<String> allowedSpecies;   // may contain the "random" sentinel
-        private final List<Integer> allowedTypes;     // variant indices 0..17
+        private final List<String> allowedSpecies; // may contain the "random" sentinel
+        private final List<Integer> allowedTypes; // variant indices 0..17
         @Nullable
         private final ResourceLocation taskReward;
 

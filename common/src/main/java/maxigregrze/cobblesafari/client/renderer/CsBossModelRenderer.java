@@ -93,7 +93,7 @@ public final class CsBossModelRenderer {
                 scale, alpha, bodyYaw, limbSwing, limbSwingAmount, ageInTicks, partialTicks, afterPose);
     }
 
-    /** Variant with explicit overlay (minion white flash, plan 107 § 5.3). */
+    /** Variant with explicit overlay (minion white flash.3). */
     public static void render(
             PoseStack ps, MultiBufferSource buffer, int packedLight, int packedOverlay,
             @Nullable Entity entity, SpeciesInfo info, PosableState state,
@@ -144,8 +144,8 @@ public final class CsBossModelRenderer {
         ps.pushPose();
         try {
             ps.mulPose(Axis.YP.rotationDegrees(180.0f - bodyYaw));
-            ps.scale(-scale, -scale, scale);     // vanilla flip combined with form scale
-            ps.translate(0.0, -0.001, 0.0);      // net of -1.501 (vanilla) + 1.5 (Cobblemon)
+            ps.scale(-scale, -scale, scale); // vanilla flip combined with form scale
+            ps.translate(0.0, -0.001, 0.0); // net of -1.501 (vanilla) + 1.5 (Cobblemon)
 
             model.applyAnimations(entity, state, limbSwing, limbSwingAmount, ageInTicks, 0f, 0f);
 

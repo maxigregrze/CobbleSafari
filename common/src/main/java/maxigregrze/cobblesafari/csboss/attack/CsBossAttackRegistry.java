@@ -9,7 +9,7 @@ import java.util.TreeMap;
 import java.util.function.Supplier;
 
 /**
- * Registry of attack patterns (plan 100 § 12). For now only {@code test} is implemented;
+ * Registry of attack patterns. For now only {@code test} is implemented;
  * the 18 typed {@code base_<type>_1} attacks inherit from it (same class).
  */
 public final class CsBossAttackRegistry {
@@ -38,7 +38,7 @@ public final class CsBossAttackRegistry {
             TYPE_POOLS.put(type, List.of(id));
         }
 
-        // Real patterns (plan 107) — re-registered after the loop (last register wins).
+        // Real patterns — re-registered after the loop (last register wins).
         register("base_electric_1", () -> new ElectricVoltorbAttack("base_electric_1"));
         register("base_fire_1", () -> new FireShadowAttack("base_fire_1"));
         register("base_rock_1", () -> MeteorShowerAttack.rock("base_rock_1"));
@@ -46,19 +46,19 @@ public final class CsBossAttackRegistry {
         // New attack (not in a TYPE_POOL: rollable via explicit moveSet or ALLMOVES).
         register("distortion_1", () -> new DistortionStemAttack("distortion_1"));
 
-        // Patterns from batch 2 (plan 108).
+        // Patterns from batch 2.
         register("base_ghost_1", () -> new GhostShadowAttack("base_ghost_1"));
         register("base_electric_2", () -> new ElectricFieldAttack("base_electric_2"));
 
-        // Patterns from batch 3 (plan 109) — ring attacks.
+        // Patterns from batch 3 — ring attacks.
         register("base_rock_2", () -> new RockRingAttack("base_rock_2"));
         register("base_electric_3", () -> new ElectricRingAttack("base_electric_3"));
 
-        // Patterns from batch 4 (plan 110) — water.
+        // Patterns from batch 4 — water.
         register("base_water_1", () -> new WaterShadowAttack("base_water_1"));
         register("base_water_2", () -> new WaterWaveAttack("base_water_2"));
 
-        // Patterns from batch 5 (plan 113) — distortion, rock, ground.
+        // Patterns from batch 5 — distortion, rock, ground.
         register("distortion_2", () -> new DistortionWalkAttack("distortion_2"));
         register("distortion_3", () -> new DistortionFieldAttack("distortion_3"));
         register("distortion_4", () -> new DistortionOrbAttack("distortion_4"));
@@ -76,13 +76,13 @@ public final class CsBossAttackRegistry {
         // Distortion red-chain volley (not in a TYPE_POOL: explicit moveSet or ALLMOVES).
         register("distortion_5", () -> new DistortionRedChainAttack("distortion_5"));
 
-        // Ground shockwave rings (plan 124).
+        // Ground shockwave rings.
         register("base_water_3", () -> GroundWaveAttack.water("base_water_3"));
         register("base_poison_1", () -> GroundWaveAttack.poison("base_poison_1"));
         register("base_steel_1", () -> GroundWaveAttack.steel("base_steel_1"));
         register("base_normal_1", () -> GroundWaveAttack.normal("base_normal_1"));
 
-        // Ground eruption + pile barrages (plan 126).
+        // Ground eruption + pile barrages.
         register("base_ground_2", () -> new GroundEruptionAttack("base_ground_2"));
         register("base_poison_2", () -> new PoisonPileBarrageAttack("base_poison_2"));
         register("base_ground_3", () -> new MudPileFieldAttack("base_ground_3"));

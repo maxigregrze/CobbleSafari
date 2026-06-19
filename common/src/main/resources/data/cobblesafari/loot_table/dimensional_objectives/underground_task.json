@@ -1,0 +1,50 @@
+{
+  "type": "minecraft:chest",
+  "pools": [
+    {
+      "rolls": { "min": 1, "max": 3 },
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "cobblesafari:sphere_red_s",
+          "weight": 20,
+          "functions": [
+            { "function": "minecraft:set_count", "count": { "min": 1, "max": 4 } }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "name": "cobblesafari:sphere_green_s",
+          "weight": 20,
+          "functions": [
+            { "function": "minecraft:set_count", "count": { "min": 1, "max": 4 } }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "name": "cobblesafari:sphere_blue_s",
+          "weight": 20,
+          "functions": [
+            { "function": "minecraft:set_count", "count": { "min": 1, "max": 4 } }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "name": "cobblesafari:sphere_pale_s",
+          "weight": 10,
+          "functions": [
+            { "function": "minecraft:set_count", "count": { "min": 1, "max": 4 } }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "name": "cobblesafari:sphere_prism_s",
+          "weight": 10,
+          "functions": [
+            { "function": "minecraft:set_count", "count": { "min": 1, "max": 4 } }
+          ]
+        }
+      ]
+    }
+  ]
+}

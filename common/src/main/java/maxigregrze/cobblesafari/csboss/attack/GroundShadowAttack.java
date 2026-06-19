@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.UUID;
 
 /**
- * {@code base_ground_1} (plan 113, Type A): identical to {@code base_fire_1}, but the tracking entity
+ * {@code base_ground_1} (Type A): identical to {@code base_fire_1}, but the tracking entity
  * is a dirt mound (model {@code attack_digdirt}, meteorite texture) instead of the flat shadow.
  */
 public class GroundShadowAttack implements CsBossAttack {
@@ -21,8 +21,8 @@ public class GroundShadowAttack implements CsBossAttack {
     private static final int COLUMN_END = 110;
     private static final int DISCARD_AT = 110;
     private static final int CYCLE_LEN = 112;
-    private static final int END_DELAY = 16;      // ≈240 t total (2 cycles)
-    private static final int CYCLES = 2;          // deterministic (2*112+16 = 240)
+    private static final int END_DELAY = 16; // ≈240 t total (2 cycles)
+    private static final int CYCLES = 2; // deterministic (2*112+16 = 240)
     private static final double COLUMN_RADIUS = 1.0;
     private static final double COLUMN_HEIGHT = 4.0;
     private static final float FIRE_DAMAGE = 1.0F;
@@ -102,7 +102,8 @@ public class GroundShadowAttack implements CsBossAttack {
             for (Mound m : mounds) {
                 if (m.entity.isAlive()
                         && level.getPlayerByUUID(m.target) instanceof ServerPlayer p && p.isAlive()) {
-                    CsBossAttackLib.chase(m.entity, p.getX(), p.getY(), p.getZ(), CsBossAttackLib.CHASE_SPEED);
+                    CsBossAttackLib.chase(m.entity, p.getX(), p.getY(), p.getZ(),
+                            CsBossAttackLib.homingStep(m.entity, p.getX(), p.getZ(), CsBossAttackLib.CHASE_SPEED));
                 }
             }
         } else if (cycleTick == FREEZE_AT) {

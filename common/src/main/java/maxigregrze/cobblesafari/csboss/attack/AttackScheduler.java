@@ -16,7 +16,7 @@ import java.util.Locale;
 import java.util.Set;
 
 /**
- * Attack scheduler for a session (plan 100 § 12.1): between two patterns, waits a random delay
+ * Attack scheduler for a session: between two patterns, waits a random delay
  * ∈ [moveCooldownMin, moveCooldownMax] seconds, then launches a pattern from the effective pool.
  */
 public class AttackScheduler {

@@ -18,7 +18,7 @@ import java.util.Map;
 
 /**
  * Loads dimensional-objective definitions from {@code data/<ns>/dimensional_objectives/*.json}
- * (plan 118 §2). Modeled on {@code CsBossDataLoader}: strict validation, never throws; an invalid
+ *. Modeled on {@code CsBossDataLoader}: strict validation, never throws; an invalid
  * file is skipped, an invalid task entry inside an otherwise-valid file is ignored.
  */
 public final class DimensionalObjectivesDataLoader {

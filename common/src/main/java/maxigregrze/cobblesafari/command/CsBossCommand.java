@@ -19,7 +19,7 @@ import java.util.Map;
 import java.util.UUID;
 
 /**
- * Commandes admin du Boss Battle System (plan 100 § 13). Permission niveau 2.
+ * Commandes admin du Boss Battle System. Permission niveau 2.
  */
 public final class CsBossCommand {
 
@@ -70,41 +70,67 @@ public final class CsBossCommand {
             ctx.getSource().sendSuccess(() -> Component.translatable("cobblesafari.command.csboss.list_empty"), false);
             return 0;
         }
-        ctx.getSource().sendSuccess(() -> Component.literal("== CSBoss sessions (page " + page + ") =="), false);
+        ctx.getSource().sendSuccess(
+                () -> Component.translatable("cobblesafari.command.csboss.sessions.header", page), false);
         for (int i = from; i < to; i++) {
             BossBattleSession s = all.get(i);
             long alive = s.getParticipants().values().stream().filter(p -> !p.discarded).count();
-            ctx.getSource().sendSuccess(() -> Component.literal(String.format(
-                    "#%d  %s  players=%d  remaining=%ds  dim=%s",
-                    s.getId(), s.getDefinition().bossId(), alive,
-                    s.getRemaining() / 20, s.getDimension().location())), false);
+            final int sessionId = s.getId();
+            final String bossId = s.getDefinition().bossId();
+            final long aliveCount = alive;
+            final int remainingSeconds = s.getRemaining() / 20;
+            final String dimension = s.getDimension().location().toString();
+            ctx.getSource().sendSuccess(
+                    () -> Component.translatable(
+                            "cobblesafari.command.csboss.sessions.entry",
+                            sessionId,
+                            bossId,
+                            aliveCount,
+                            remainingSeconds,
+                            dimension),
+                    false);
         }
         return 1;
     }
 
     private static int forceWin(CommandContext<CommandSourceStack> ctx, int id) {
         boolean ok = BossBattleManager.forceWin(ctx.getSource().getServer(), id);
-        ctx.getSource().sendSuccess(() -> Component.literal(ok
-                ? "Session #" + id + " forced to WIN." : "No session #" + id + "."), true);
+        ctx.getSource().sendSuccess(
+                () -> Component.translatable(
+                        ok
+                                ? "cobblesafari.command.csboss.forcewin.success"
+                                : "cobblesafari.command.csboss.session.not_found",
+                        id),
+                true);
         return ok ? 1 : 0;
     }
 
     private static int stop(CommandContext<CommandSourceStack> ctx, int id) {
         boolean ok = BossBattleManager.forceStop(ctx.getSource().getServer(), id);
-        ctx.getSource().sendSuccess(() -> Component.literal(ok
-                ? "Session #" + id + " stopped (loss, no reward)." : "No session #" + id + "."), true);
+        ctx.getSource().sendSuccess(
+                () -> Component.translatable(
+                        ok
+                                ? "cobblesafari.command.csboss.stop.success"
+                                : "cobblesafari.command.csboss.session.not_found",
+                        id),
+                true);
         return ok ? 1 : 0;
     }
 
     private static int status(CommandContext<CommandSourceStack> ctx, int id) {
         BossBattleSession s = BossBattleManager.session(id);
         if (s == null) {
-            ctx.getSource().sendSuccess(() -> Component.literal("No session #" + id + "."), false);
+            ctx.getSource().sendSuccess(
+                    () -> Component.translatable("cobblesafari.command.csboss.session.not_found", id), false);
             return 0;
         }
-        ctx.getSource().sendSuccess(() -> Component.literal(String.format(
-                "== Session #%d  boss=%s  remaining=%ds ==",
-                s.getId(), s.getDefinition().bossId(), s.getRemaining() / 20)), false);
+        final int sessionId = s.getId();
+        final String bossId = s.getDefinition().bossId();
+        final int remainingSeconds = s.getRemaining() / 20;
+        ctx.getSource().sendSuccess(
+                () -> Component.translatable(
+                        "cobblesafari.command.csboss.status.header", sessionId, bossId, remainingSeconds),
+                false);
         long alive = 0;
         for (Map.Entry<UUID, ParticipantState> e : s.getParticipants().entrySet()) {
             ParticipantState st = e.getValue();
@@ -113,30 +139,47 @@ public final class CsBossCommand {
             }
             ServerPlayer p = ctx.getSource().getServer().getPlayerList().getPlayer(e.getKey());
             String name = p != null ? p.getGameProfile().getName() : e.getKey().toString();
-            String state = st.discarded ? "OUT" : (st.inRadius ? "in-arena" : "out-of-range");
-            ctx.getSource().sendSuccess(() -> Component.literal(" - " + name + " : " + state), false);
+            Component state = participantStateLabel(st);
+            ctx.getSource().sendSuccess(
+                    () -> Component.translatable("cobblesafari.command.csboss.status.participant", name, state),
+                    false);
         }
         final long aliveCount = alive;
-        ctx.getSource().sendSuccess(() -> Component.literal("Alive: " + aliveCount), false);
+        ctx.getSource().sendSuccess(
+                () -> Component.translatable("cobblesafari.command.csboss.status.alive", aliveCount), false);
         return 1;
+    }
+
+    private static Component participantStateLabel(ParticipantState st) {
+        if (st.discarded) {
+            return Component.translatable("cobblesafari.command.csboss.status.participant.out");
+        }
+        if (st.inRadius) {
+            return Component.translatable("cobblesafari.command.csboss.status.participant.in_arena");
+        }
+        return Component.translatable("cobblesafari.command.csboss.status.participant.out_of_range");
     }
 
     private static int listBosses(CommandContext<CommandSourceStack> ctx, int page) {
         List<String> ids = CsBossRegistry.allIds();
         if (ids.isEmpty()) {
-            ctx.getSource().sendSuccess(() -> Component.literal("No CSBoss loaded."), false);
+            ctx.getSource().sendSuccess(
+                    () -> Component.translatable("cobblesafari.command.csboss.bosses.none_loaded"), false);
             return 0;
         }
         int from = (page - 1) * BOSSES_PER_PAGE;
         int to = Math.min(from + BOSSES_PER_PAGE, ids.size());
         if (from >= ids.size()) {
-            ctx.getSource().sendSuccess(() -> Component.literal("No CSBoss on page " + page + "."), false);
+            ctx.getSource().sendSuccess(
+                    () -> Component.translatable("cobblesafari.command.csboss.bosses.page_empty", page), false);
             return 0;
         }
-        ctx.getSource().sendSuccess(() -> Component.literal("== CSBosses (page " + page + ") =="), false);
+        ctx.getSource().sendSuccess(
+                () -> Component.translatable("cobblesafari.command.csboss.bosses.header", page), false);
         for (int i = from; i < to; i++) {
             String id = ids.get(i);
-            ctx.getSource().sendSuccess(() -> Component.literal(" - " + id), false);
+            ctx.getSource().sendSuccess(
+                    () -> Component.translatable("cobblesafari.command.csboss.bosses.entry", id), false);
         }
         return 1;
     }
@@ -144,29 +187,64 @@ public final class CsBossCommand {
     private static int bossInfo(CommandContext<CommandSourceStack> ctx, String id) {
         CsBossDefinition def = CsBossRegistry.get(id).orElse(null);
         if (def == null) {
-            ctx.getSource().sendSuccess(() -> Component.literal("No CSBoss '" + id + "'."), false);
+            ctx.getSource().sendSuccess(
+                    () -> Component.translatable("cobblesafari.command.csboss.bosses.not_found", id), false);
             return 0;
         }
-        ctx.getSource().sendSuccess(() -> Component.literal("== CSBoss " + def.bossId() + " =="), false);
-        ctx.getSource().sendSuccess(() -> Component.literal("displayName: " + def.effectiveDisplayName()), false);
-        ctx.getSource().sendSuccess(() -> Component.literal("species: " + def.specie()), false);
-        ctx.getSource().sendSuccess(() -> Component.literal("minion: " + def.effectiveMinionSpecie()), false);
-        ctx.getSource().sendSuccess(() -> Component.literal("tags: " + def.tags()), false);
-        ctx.getSource().sendSuccess(() -> Component.literal("duration: " + def.minimumDuration()
-                + ".." + def.maximumDuration() + " s"), false);
-        ctx.getSource().sendSuccess(() -> Component.literal("size: " + def.size()
-                + "  isStatic: " + def.isStatic()), false);
-        ctx.getSource().sendSuccess(() -> Component.literal("cooldown: " + def.moveCooldownMin()
-                + ".." + def.moveCooldownMax() + "s"), false);
-        ctx.getSource().sendSuccess(() -> Component.literal("moveSet: "
-                + (def.moveSet().isEmpty() ? "(type defaults)" : def.moveSet())), false);
-        ctx.getSource().sendSuccess(() -> Component.literal("rewards: " + def.rewards()
-                + (def.uniqueReward() != null ? "  unique: " + def.uniqueReward() : "")), false);
-        ctx.getSource().sendSuccess(() -> Component.literal("bar: " + def.healthStyle()
-                + " / " + def.healthColor()), false);
+        ctx.getSource().sendSuccess(
+                () -> Component.translatable("cobblesafari.command.csboss.bosses.info.header", def.bossId()), false);
+        ctx.getSource().sendSuccess(
+                () -> Component.translatable(
+                        "cobblesafari.command.csboss.bosses.info.display_name", def.effectiveDisplayName()),
+                false);
+        ctx.getSource().sendSuccess(
+                () -> Component.translatable("cobblesafari.command.csboss.bosses.info.species", def.specie()), false);
+        ctx.getSource().sendSuccess(
+                () -> Component.translatable(
+                        "cobblesafari.command.csboss.bosses.info.minion", def.effectiveMinionSpecie()),
+                false);
+        ctx.getSource().sendSuccess(
+                () -> Component.translatable("cobblesafari.command.csboss.bosses.info.tags", def.tags()), false);
+        ctx.getSource().sendSuccess(
+                () -> Component.translatable(
+                        "cobblesafari.command.csboss.bosses.info.duration",
+                        def.minimumDuration(),
+                        def.maximumDuration()),
+                false);
+        ctx.getSource().sendSuccess(
+                () -> Component.translatable(
+                        "cobblesafari.command.csboss.bosses.info.size", def.size(), def.isStatic()),
+                false);
+        ctx.getSource().sendSuccess(
+                () -> Component.translatable(
+                        "cobblesafari.command.csboss.bosses.info.cooldown",
+                        def.moveCooldownMin(),
+                        def.moveCooldownMax()),
+                false);
+        Component moveSet = def.moveSet().isEmpty()
+                ? Component.translatable("cobblesafari.command.csboss.bosses.info.move_set_defaults")
+                : Component.literal(def.moveSet().toString());
+        ctx.getSource().sendSuccess(
+                () -> Component.translatable("cobblesafari.command.csboss.bosses.info.move_set", moveSet), false);
+        ctx.getSource().sendSuccess(
+                () -> Component.translatable("cobblesafari.command.csboss.bosses.info.rewards", def.rewards()), false);
+        if (def.uniqueReward() != null) {
+            ctx.getSource().sendSuccess(
+                    () -> Component.translatable(
+                            "cobblesafari.command.csboss.bosses.info.rewards_unique", def.uniqueReward()),
+                    false);
+        }
+        ctx.getSource().sendSuccess(
+                () -> Component.translatable(
+                        "cobblesafari.command.csboss.bosses.info.bar", def.healthStyle(), def.healthColor()),
+                false);
         if (def.hasSecondPhase()) {
-            ctx.getSource().sendSuccess(() -> Component.literal("secondPhase: " + def.secondPhase()
-                    + " (rewards before: " + def.giveRewardsBeforeSecondPhase() + ")"), false);
+            ctx.getSource().sendSuccess(
+                    () -> Component.translatable(
+                            "cobblesafari.command.csboss.bosses.info.second_phase",
+                            def.secondPhase(),
+                            def.giveRewardsBeforeSecondPhase()),
+                    false);
         }
         return 1;
     }

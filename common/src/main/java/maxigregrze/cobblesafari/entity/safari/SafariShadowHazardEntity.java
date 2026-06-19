@@ -15,7 +15,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 
 /**
- * Invisible driver for a single fire/water column cycle at a fixed position (plan 115).
+ * Invisible driver for a single fire/water column cycle at a fixed position.
  * Particles only — no shadow entity.
  */
 public class SafariShadowHazardEntity extends Entity {

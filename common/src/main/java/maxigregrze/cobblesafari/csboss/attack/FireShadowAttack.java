@@ -11,20 +11,20 @@ import java.util.List;
 import java.util.UUID;
 
 /**
- * {@code base_fire_1} (plan 107 § 6.2, revised plan 109): a flat shadow <b>per player</b> that
+ * {@code base_fire_1}: a flat shadow <b>per player</b> that
  * tracks then freezes; 1 s later a flame column erupts (damage + fire). Pursuit and column
  * durations <b>halved</b>. The cycle repeats 3–5 times without pause, with a
  * delay only at the end.
  */
 public class FireShadowAttack implements CsBossAttack {
 
-    private static final int FREEZE_AT = 60;      // 3 s pursuit (halved)
-    private static final int COLUMN_START = 80;   // +1 s after freeze
-    private static final int COLUMN_END = 110;    // column 1.5 s (halved)
+    private static final int FREEZE_AT = 60; // 3 s pursuit (halved)
+    private static final int COLUMN_START = 80; // +1 s after freeze
+    private static final int COLUMN_END = 110; // column 1.5 s (halved)
     private static final int DISCARD_AT = 110;
     private static final int CYCLE_LEN = 112;
-    private static final int END_DELAY = 16;      // ≈240 t total (2 cycles)
-    private static final int CYCLES = 2;          // deterministic (2*112+16 = 240)
+    private static final int END_DELAY = 16; // ≈240 t total (2 cycles)
+    private static final int CYCLES = 2; // deterministic (2*112+16 = 240)
     private static final double COLUMN_RADIUS = 1.0;
     private static final double COLUMN_HEIGHT = 4.0;
     private static final float FIRE_DAMAGE = 1.0F;
@@ -100,7 +100,8 @@ public class FireShadowAttack implements CsBossAttack {
             for (Shadow s : shadows) {
                 if (s.entity.isAlive()
                         && level.getPlayerByUUID(s.target) instanceof ServerPlayer p && p.isAlive()) {
-                    CsBossAttackLib.chase(s.entity, p.getX(), p.getY(), p.getZ(), CsBossAttackLib.CHASE_SPEED);
+                    CsBossAttackLib.chase(s.entity, p.getX(), p.getY(), p.getZ(),
+                            CsBossAttackLib.homingStep(s.entity, p.getX(), p.getZ(), CsBossAttackLib.CHASE_SPEED));
                 }
             }
         } else if (cycleTick == FREEZE_AT) {

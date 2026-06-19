@@ -12,7 +12,7 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * Computes survival duration (plan 100 § 9) from participant party levels.
+ * Computes survival duration from participant party levels.
  * Score 0 → maximumDuration ; 100 → minimumDuration ; linear interpolation ; config clamp.
  */
 public final class DifficultyScaling {

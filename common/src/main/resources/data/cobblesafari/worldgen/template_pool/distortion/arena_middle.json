@@ -2,19 +2,19 @@
   "fallback": "minecraft:empty",
   "elements": [
     {
-      "weight": 1,
+      "weight": 90,
       "element": {
         "element_type": "minecraft:single_pool_element",
-        "location": "cobblesafari:distortion/arena/middle_1",
+        "location": "cobblesafari:distortion/arena/boss_1",
         "processors": "cobblesafari:distortion_lostitem_scatter",
         "projection": "rigid"
       }
     },
     {
-      "weight": 1,
+      "weight": 10,
       "element": {
         "element_type": "minecraft:single_pool_element",
-        "location": "cobblesafari:distortion/arena/middle_2",
+        "location": "cobblesafari:distortion/arena/boss_2",
         "processors": "cobblesafari:distortion_lostitem_scatter",
         "projection": "rigid"
       }

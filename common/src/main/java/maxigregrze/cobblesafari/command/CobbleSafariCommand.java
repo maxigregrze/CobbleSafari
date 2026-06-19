@@ -54,6 +54,7 @@ public class CobbleSafariCommand {
                 Commands.literal("cobblesafari")
                         .requires(source -> source.hasPermission(2))
                         .then(CsBossCommand.build())
+                        .then(CsMusicCommand.build())
                         .then(Commands.literal("reset")
                                 .requires(source -> source.hasPermission(4))
                                 .then(Commands.literal("safari")
@@ -166,7 +167,7 @@ public class CobbleSafariCommand {
         String variant = StringArgumentType.getString(context, ARG_VARIANT);
         ServerPlayer player = context.getSource().getPlayer();
         if (player == null) {
-            context.getSource().sendFailure(Component.literal("This command must be run by a player"));
+            context.getSource().sendFailure(Component.translatable("cobblesafari.command.player_only"));
             return 0;
         }
         ServerLevel level = player.serverLevel();
@@ -195,7 +196,7 @@ public class CobbleSafariCommand {
         String variant = StringArgumentType.getString(context, ARG_VARIANT);
         ServerPlayer player = context.getSource().getPlayer();
         if (player == null) {
-            context.getSource().sendFailure(Component.literal("This command must be run by a player"));
+            context.getSource().sendFailure(Component.translatable("cobblesafari.command.player_only"));
             return 0;
         }
         ServerLevel level = player.serverLevel();

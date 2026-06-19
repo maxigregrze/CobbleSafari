@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * {@code base_electric_1} (plan 107 § 6.1, revised plan 109): Voltorb Electrodes spawn
+ * {@code base_electric_1}: Voltorb Electrodes spawn
  * <b>one per player every 3 s</b> (3–5 waves), chase the nearest player at reduced speed,
  * flash (TNT fuse played <b>once only</b> at flash start), then
  * explode (player damage, no blocks). Time before detonation reduced by 30%. The attack
@@ -23,14 +23,14 @@ public class ElectricVoltorbAttack implements CsBossAttack {
     private static final String VOLTORB = "voltorb";
     private static final double SPAWN_DISTANCE = 3.0;
     private static final double CHASE_SPEED = CsBossAttackLib.CHASE_SPEED * 0.5;
-    private static final int WAVE_INTERVAL = 60;   // one wave every 3 s
-    private static final int WAVES = 3;            // deterministic (2*60+112+8 = 240)
+    private static final int WAVE_INTERVAL = 60; // one wave every 3 s
+    private static final int WAVES = 3; // deterministic (2*60+112+8 = 240)
     // Single Electrode cycle (from spawn), −30% vs 160 t: 120→84 (pursuit), 40→28 (flash).
     private static final int CHASE_TICKS = 84;
     private static final int FLASH_TICKS = 28;
     private static final int DETONATE_AGE = CHASE_TICKS + FLASH_TICKS; // 112
     private static final int FLASH_SEGMENT = 7;
-    private static final int END_DELAY = 8;        // ≈240 t total
+    private static final int END_DELAY = 8; // ≈240 t total
     private static final double EXPLOSION_RADIUS = 3.0;
     private static final float EXPLOSION_DAMAGE = 14.0F; // slow, telegraphed flash = escapable AOE
 
@@ -115,7 +115,8 @@ public class ElectricVoltorbAttack implements CsBossAttack {
         if (age < CHASE_TICKS) {
             ServerPlayer target = CsBossAttackLib.nearestAlive(session, level, e.minion.position());
             if (target != null) {
-                CsBossAttackLib.chase(e.minion, target.getX(), target.getY(), target.getZ(), CHASE_SPEED);
+                CsBossAttackLib.chase(e.minion, target.getX(), target.getY(), target.getZ(),
+                        CsBossAttackLib.homingStep(e.minion, target.getX(), target.getZ(), CHASE_SPEED));
                 e.minion.faceTarget(target.position());
             }
         } else if (age < DETONATE_AGE) {

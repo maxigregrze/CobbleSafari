@@ -1,0 +1,15 @@
+{
+  "display": {
+    "icon": { "id": "cobblesafari:rotomphone" },
+    "title": { "translate": "advancement.cobblesafari.rotomphone.title" },
+    "description": { "translate": "advancement.cobblesafari.rotomphone.description" },
+    "background": "minecraft:textures/gui/advancements/backgrounds/adventure.png",
+    "frame": "task",
+    "show_toast": false,
+    "announce_to_chat": false,
+    "hidden": false
+  },
+  "criteria": {
+    "tick": { "trigger": "minecraft:tick" }
+  }
+}

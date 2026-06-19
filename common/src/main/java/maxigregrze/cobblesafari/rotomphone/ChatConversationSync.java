@@ -12,7 +12,7 @@ import java.util.List;
 
 /**
  * Builds and sends {@link ChatConversationSyncPayload} (contact list + per-player unlock flag) to a
- * player at join and after a datapack reload (cf. action plan 114 §13.2). Mirrors
+ * player at join and after a datapack reload. Mirrors
  * {@code RotomPhoneConfigSync}.
  */
 public final class ChatConversationSync {

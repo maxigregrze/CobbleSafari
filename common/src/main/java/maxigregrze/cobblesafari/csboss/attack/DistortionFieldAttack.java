@@ -11,14 +11,14 @@ import net.minecraft.sounds.SoundSource;
 import java.util.List;
 
 /**
- * {@code distortion_3} (plan 113, Type B): selects ~10% of the arena surface via Perlin noise
+ * {@code distortion_3} (Type B): selects ~10% of the arena surface via Perlin noise
  * (same method as {@code base_electric_2}) and spawns distortion flowers there,
  * which grow into stem walls (mechanic of {@code distortion_2}).
  */
 public class DistortionFieldAttack implements CsBossAttack {
 
-    private static final int DURATION = 240;       // ≈12 s
-    private static final int WAVE2_AT = 120;       // 2nd flower wave at 6 s
+    private static final int DURATION = 240; // ≈12 s
+    private static final int WAVE2_AT = 120; // 2nd flower wave at 6 s
     private static final double PERLIN_SCALE = 0.2;
     // Perlin (normalized) peaks around ~0.85; lower threshold ⇒ more coverage (~30 %).
     private static final double COVERAGE_THRESHOLD = 0.6;

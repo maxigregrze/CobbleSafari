@@ -9,7 +9,7 @@ import net.minecraft.stats.StatFormatter;
 import net.minecraft.stats.Stats;
 
 /**
- * Custom statistics shown under the vanilla Statistics → Custom tab (cf. action plan 94 §2.1 / §4).
+ * Custom statistics shown under the vanilla Statistics → Custom tab.
  * Registered from {@link CobbleSafari#initRegistries()} before the registry freeze.
  */
 public final class ModStats {
@@ -39,6 +39,7 @@ public final class ModStats {
     public static final ResourceLocation CSTRADER_TRADES = id("cstrader_trades");
     public static final ResourceLocation CSBOSS_BATTLES_ATTEMPTED = id("csboss_battles_attempted");
     public static final ResourceLocation CSBOSS_BATTLES_WON = id("csboss_battles_won");
+    public static final ResourceLocation DISTORTION_POKEMON_DEFEATED = id("distortion_pokemon_defeated");
 
     public static void register() {
         timeStat(TIME_IN_SAFARI);
@@ -64,6 +65,7 @@ public final class ModStats {
         countStat(CSTRADER_TRADES);
         countStat(CSBOSS_BATTLES_ATTEMPTED);
         countStat(CSBOSS_BATTLES_WON);
+        countStat(DISTORTION_POKEMON_DEFEATED);
 
         CobbleSafari.LOGGER.info("CobbleSafari >> Custom statistics registered!");
     }
@@ -76,6 +78,12 @@ public final class ModStats {
     /** Increment the stat by 1 and return the new total. */
     public static int awardAndGet(ServerPlayer player, ResourceLocation statId) {
         award(player, statId);
+        return value(player, statId);
+    }
+
+    /** Increment the stat by {@code amount} and return the new total. */
+    public static int addAndGet(ServerPlayer player, ResourceLocation statId, int amount) {
+        player.awardStat(Stats.CUSTOM.get(statId), amount);
         return value(player, statId);
     }
 

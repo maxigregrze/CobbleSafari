@@ -1,0 +1,209 @@
+{
+  "schemaVersion": 1,
+  "name": "ansha",
+  "displayName": "Donut Baker",
+  "textureFile": "ansha",
+  "isKilleable": false,
+  "variants": [
+    {
+      "id": "donut_baker",
+      "minTrades": 6,
+      "maxTrades": 9,
+      "trades": [
+        {
+          "sourceItem1": "cobblesafari:sphere_green_s",
+          "sourceQty1": 20,
+          "resultItems": [
+            "cobblesafari:butter_luminosian"
+          ],
+          "resultQty": 1,
+          "maxUses": 8
+        },
+        {
+          "sourceItem1": "cobblesafari:sphere_green_s",
+          "sourceQty1": 20,
+          "sourceItem2": "cobblesafari:sphere_red_s",
+          "sourceQty2": 30,
+          "resultItems": [
+            "cobblesafari:butter_great"
+          ],
+          "resultQty": 1,
+          "priceShiftMax": 2,
+          "maxUses": 6
+        },
+        {
+          "sourceItem1": "cobblesafari:sphere_red_s",
+          "sourceQty1": 12,
+          "sourceItem2": "cobblesafari:sphere_blue_s",
+          "sourceQty2": 12,
+          "resultItems": [
+            "cobblesafari:donut_mix"
+          ],
+          "resultQty": 1,
+          "priceShiftMax": 2,
+          "maxUses": 8
+        },
+        {
+          "sourceItem1": "cobblesafari:sphere_pale_l",
+          "sourceQty1": 5,
+          "sourceItem2": "cobblesafari:sphere_prism_l",
+          "sourceQty2": 4,
+          "resultItems": [
+            "cobblesafari:donut_random_0_spicy",
+            "cobblesafari:donut_random_0_dry",
+            "cobblesafari:donut_random_0_sweet",
+            "cobblesafari:donut_random_0_sour",
+            "cobblesafari:donut_random_0_bitter",
+            "cobblesafari:donut_random_0_mix"
+          ],
+          "resultQty": 1,
+          "priceShiftMax": 2,
+          "maxUses": 6
+        },
+        {
+          "sourceItem1": "cobblesafari:sphere_pale_l",
+          "sourceQty1": 8,
+          "sourceItem2": "cobblesafari:sphere_prism_l",
+          "sourceQty2": 7,
+          "resultItems": [
+            "cobblesafari:donut_random_1_spicy",
+            "cobblesafari:donut_random_1_dry",
+            "cobblesafari:donut_random_1_sweet",
+            "cobblesafari:donut_random_1_sour",
+            "cobblesafari:donut_random_1_bitter",
+            "cobblesafari:donut_random_1_mix"
+          ],
+          "resultQty": 1,
+          "priceShiftMax": 2,
+          "maxUses": 4
+        },
+        {
+          "sourceItem1": "cobblesafari:sphere_pale_l",
+          "sourceQty1": 11,
+          "sourceItem2": "cobblesafari:sphere_prism_l",
+          "sourceQty2": 11,
+          "resultItems": [
+            "cobblesafari:donut_random_2_spicy",
+            "cobblesafari:donut_random_2_dry",
+            "cobblesafari:donut_random_2_sweet",
+            "cobblesafari:donut_random_2_sour",
+            "cobblesafari:donut_random_2_bitter",
+            "cobblesafari:donut_random_2_mix"
+          ],
+          "resultQty": 1,
+          "priceShiftMax": 2,
+          "maxUses": 3
+        },
+        {
+          "sourceItem1": "cobblesafari:sphere_red_s",
+          "sourceQty1": 12,
+          "resultItems": [
+            "cobblemon:oran_berry",
+            "cobblemon:sitrus_berry",
+            "cobblemon:pecha_berry",
+            "cobblemon:cheri_berry",
+            "cobblemon:chesto_berry",
+            "cobblemon:rawst_berry",
+            "cobblemon:aspear_berry",
+            "cobblemon:persim_berry",
+            "cobblemon:lum_berry",
+            "cobblemon:leppa_berry"
+          ],
+          "resultQty": 3,
+          "maxUses": 12
+        },
+        {
+          "sourceItem1": "cobblesafari:sphere_green_s",
+          "sourceQty1": 8,
+          "resultItems": [
+            "cobblemon:figy_berry",
+            "cobblemon:wiki_berry",
+            "cobblemon:mago_berry",
+            "cobblemon:aguav_berry",
+            "cobblemon:iapapa_berry",
+            "cobblemon:razz_berry",
+            "cobblemon:nanab_berry",
+            "cobblemon:pinap_berry",
+            "cobblemon:bluk_berry",
+            "cobblemon:wepear_berry",
+            "cobblemon:belue_berry",
+            "cobblemon:cornn_berry",
+            "cobblemon:durin_berry",
+            "cobblemon:magost_berry",
+            "cobblemon:nomel_berry",
+            "cobblemon:pamtre_berry",
+            "cobblemon:rabuta_berry",
+            "cobblemon:spelon_berry",
+            "cobblemon:watmel_berry",
+            "cobblemon:hopo_berry",
+            "cobblemon:touga_berry"
+          ],
+          "resultQty": 3,
+          "maxUses": 12
+        },
+        {
+          "sourceItem1": "cobblesafari:sphere_blue_s",
+          "sourceQty1": 18,
+          "resultItems": [
+            "cobblemon:pomeg_berry",
+            "cobblemon:kelpsy_berry",
+            "cobblemon:qualot_berry",
+            "cobblemon:hondew_berry",
+            "cobblemon:grepa_berry",
+            "cobblemon:tamato_berry"
+          ],
+          "resultQty": 2,
+          "maxUses": 10
+        },
+        {
+          "sourceItem1": "cobblesafari:sphere_pale_s",
+          "sourceQty1": 15,
+          "resultItems": [
+            "cobblemon:occa_berry",
+            "cobblemon:passho_berry",
+            "cobblemon:wacan_berry",
+            "cobblemon:rindo_berry",
+            "cobblemon:yache_berry",
+            "cobblemon:chople_berry",
+            "cobblemon:kebia_berry",
+            "cobblemon:shuca_berry",
+            "cobblemon:coba_berry",
+            "cobblemon:payapa_berry",
+            "cobblemon:tanga_berry",
+            "cobblemon:charti_berry",
+            "cobblemon:kasib_berry",
+            "cobblemon:haban_berry",
+            "cobblemon:colbur_berry",
+            "cobblemon:babiri_berry",
+            "cobblemon:chilan_berry",
+            "cobblemon:roseli_berry"
+          ],
+          "resultQty": 1,
+          "maxUses": 8
+        },
+        {
+          "sourceItem1": "cobblesafari:sphere_prism_s",
+          "sourceQty1": 15,
+          "resultItems": [
+            "cobblemon:liechi_berry",
+            "cobblemon:ganlon_berry",
+            "cobblemon:salac_berry",
+            "cobblemon:petaya_berry",
+            "cobblemon:apicot_berry",
+            "cobblemon:lansat_berry",
+            "cobblemon:starf_berry",
+            "cobblemon:micle_berry",
+            "cobblemon:custap_berry",
+            "cobblemon:jaboca_berry",
+            "cobblemon:rowap_berry",
+            "cobblemon:kee_berry",
+            "cobblemon:maranga_berry",
+            "cobblemon:enigma_berry"
+          ],
+          "resultQty": 1,
+          "maxUses": 8
+        }
+      ]
+    }
+  ]
+}

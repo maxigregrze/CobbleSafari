@@ -1,5 +1,5 @@
 {
-  "parent": "cobblesafari:root",
+  "parent": "cobblesafari:dungeons",
   "display": {
     "icon": { "id": "minecraft:iron_pickaxe" },
     "title": { "translate": "advancement.cobblesafari.dig_deeper.title" },

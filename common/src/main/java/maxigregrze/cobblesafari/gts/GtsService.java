@@ -451,7 +451,7 @@ public final class GtsService {
      * Builds and publishes a unique offer from a template definition.
      *
      * @param personalTargetUuid when non-null, the offer is bound to that player (personal offer): visible only to
-     *     them, never expires; otherwise it is a global unique offer.
+     * them, never expires; otherwise it is a global unique offer.
      */
     private static AddUniqueOfferOutcome publishUniqueOffer(
             MinecraftServer server, String templateOfferId, UUID personalTargetUuid) {
@@ -967,6 +967,11 @@ public final class GtsService {
             int gtsTrades = maxigregrze.cobblesafari.init.ModStats.awardAndGet(
                     player, maxigregrze.cobblesafari.init.ModStats.GTS_TRADES);
             maxigregrze.cobblesafari.advancement.ModCriteria.GTS_TRADE_CONFIRMED.trigger(player, gtsTrades);
+            if (offer.isPersonalOffer()) {
+                maxigregrze.cobblesafari.advancement.ModCriteria.GTS_PERSONAL_CONFIRMED.trigger(player);
+            } else if (uniqueOffer) {
+                maxigregrze.cobblesafari.advancement.ModCriteria.GTS_UNIQUE_CONFIRMED.trigger(player);
+            }
             if (uniqueOffer) {
                 CobbleSafari.LOGGER.info(
                         "[GTS] Unique offer #{} template={} personalTarget={} completed; received pokemon discarded",

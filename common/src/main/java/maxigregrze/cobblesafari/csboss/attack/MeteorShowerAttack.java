@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.UUID;
 
 /**
- * Shared base for meteor showers (plan 107 § 6.3/6.4). In waves, shadows track a
+ * Shared base for meteor showers. In waves, shadows track a
  * player for 3 s, freeze for 1 s, then a meteor falls (20 blocks) and, on impact (0.5 s), places an
  * ephemeral block where the shadow was. {@code base_rock_1} and {@code base_dragon_1} differ only
  * in their parameters (cadence, count, variant, block, final cooldown).
@@ -25,10 +25,10 @@ import java.util.UUID;
 public class MeteorShowerAttack implements CsBossAttack {
 
     // Shadow lifecycle (offsets from spawn).
-    private static final int FOLLOW_TICKS = 60;   // 3 s of pursuit
-    private static final int FREEZE_TICKS = 20;   // 1 s immobile
-    private static final int FALL_TICKS = 20;     // fall 2× slower (10→20), visible longer
-    private static final int IMPACT_AT = 90;      // impact unchanged (block placement)
+    private static final int FOLLOW_TICKS = 60; // 3 s of pursuit
+    private static final int FREEZE_TICKS = 20; // 1 s immobile
+    private static final int FALL_TICKS = 20; // fall 2× slower (10→20), visible longer
+    private static final int IMPACT_AT = 90; // impact unchanged (block placement)
     private static final int SPAWN_AT = IMPACT_AT - FALL_TICKS; // 70: meteor appears earlier
     private static final double FALL_HEIGHT = 20.0;
 
@@ -167,7 +167,8 @@ public class MeteorShowerAttack implements CsBossAttack {
         }
         if (age < FOLLOW_TICKS) {
             if (level.getPlayerByUUID(s.target) instanceof ServerPlayer p && p.isAlive()) {
-                CsBossAttackLib.chase(s.entity, p.getX(), p.getY(), p.getZ(), CsBossAttackLib.CHASE_SPEED);
+                CsBossAttackLib.chase(s.entity, p.getX(), p.getY(), p.getZ(),
+                        CsBossAttackLib.homingStep(s.entity, p.getX(), p.getZ(), CsBossAttackLib.CHASE_SPEED));
             }
         } else if (age == SPAWN_AT) {
             AttackMeteoriteEntity meteor = AttackMeteoriteEntity.spawn(level,

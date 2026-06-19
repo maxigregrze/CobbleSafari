@@ -10,7 +10,7 @@ import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
 
-/** Renders the dirt pile via the {@code attack_digdirt} block model (plan 126 : scale + vibration). */
+/** Renders the dirt pile via the {@code attack_digdirt} block model. */
 public class AttackDigdirtEntityRenderer extends EntityRenderer<AttackDigdirtEntity> {
 
     private static final ResourceLocation FALLBACK =
@@ -39,7 +39,7 @@ public class AttackDigdirtEntityRenderer extends EntityRenderer<AttackDigdirtEnt
 
         float scale = entity.getRenderScale();
         ps.pushPose();
-        ps.translate(0.0, 0.5, 0.0);
+        ps.translate(0.0, 0.5 * scale, 0.0);
         if (entity.isVibrating()) {
             double t = entity.tickCount + partialTicks;
             ps.translate(Math.sin(t * 1.7) * 0.05, 0.0, Math.cos(t * 2.1) * 0.05);

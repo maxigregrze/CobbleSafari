@@ -9,8 +9,10 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.HorizontalDirectionalBlock;
 import net.minecraft.world.level.block.Mirror;
 import net.minecraft.world.level.block.RenderShape;
@@ -27,7 +29,7 @@ import java.util.Map;
 import java.util.UUID;
 
 /**
- * Orientable Safari crater / geyser block (plan 115): placeable on solid ground, triggers a hazard
+ * Orientable Safari crater / geyser block: placeable on solid ground, triggers a hazard
  * when a player steps inside the selection box.
  */
 public abstract class SafariCraterBlock extends HorizontalDirectionalBlock {
@@ -46,7 +48,7 @@ public abstract class SafariCraterBlock extends HorizontalDirectionalBlock {
     protected abstract void onPlayerTouch(ServerLevel level, BlockPos pos, ServerPlayer player);
 
     protected static Vec3 spawnPosition(BlockPos pos) {
-        return new Vec3(pos.getX() + 0.5, pos.getY() + 1.0, pos.getZ() + 0.5);
+        return new Vec3(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5);
     }
 
     private static long triggerKey(BlockPos pos, UUID playerId) {
@@ -77,6 +79,16 @@ public abstract class SafariCraterBlock extends HorizontalDirectionalBlock {
     public boolean canSurvive(BlockState state, LevelReader level, BlockPos pos) {
         BlockPos below = pos.below();
         return level.getBlockState(below).isFaceSturdy(level, below, Direction.UP);
+    }
+
+    @Override
+    protected BlockState updateShape(BlockState state, Direction direction, BlockState neighborState,
+                                     LevelAccessor level, BlockPos pos, BlockPos neighborPos) {
+        // Break (dropping the regular non-silk-touch loot) when the supporting block is removed.
+        if (!this.canSurvive(state, level, pos)) {
+            return Blocks.AIR.defaultBlockState();
+        }
+        return super.updateShape(state, direction, neighborState, level, pos, neighborPos);
     }
 
     @Override

@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    { "item": "cobblemon:pc" },
+    { "item": "cobblesafari:tinkagear" }
+  ],
+  "result": {
+    "id": "cobblesafari:online_feature_pc",
+    "count": 1
+  }
+}

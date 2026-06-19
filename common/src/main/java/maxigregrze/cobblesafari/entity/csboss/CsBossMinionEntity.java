@@ -2,6 +2,7 @@ package maxigregrze.cobblesafari.entity.csboss;
 
 import com.cobblemon.mod.common.api.pokemon.PokemonProperties;
 import com.cobblemon.mod.common.pokemon.Pokemon;
+import maxigregrze.cobblesafari.csboss.BossBattleManager;
 import maxigregrze.cobblesafari.csboss.CsBossDefinition;
 import maxigregrze.cobblesafari.init.ModEffects;
 import maxigregrze.cobblesafari.init.ModEntities;
@@ -25,7 +26,7 @@ import org.jetbrains.annotations.Nullable;
 
 /**
  * Boss minion: lightweight entity that <b>borrows the model of a Cobblemon species</b> (like
- * {@link CsBossEntity}), meant to be driven by an attack pattern (plan 104).
+ * {@link CsBossEntity}), meant to be driven by an attack pattern.
  * No vanilla AI, no gravity, immune — movement and removal are decided by
  * attack code. Hitbox derived from species × size.
  */
@@ -38,13 +39,13 @@ public class CsBossMinionEntity extends Mob {
     /** Incremented server-side to trigger a client attack animation. */
     private static final EntityDataAccessor<Integer> DATA_ATTACK_SEQ =
             SynchedEntityData.defineId(CsBossMinionEntity.class, EntityDataSerializers.INT);
-    /** White flash (overlay) driven by an attack pattern (plan 107 § 5.3). */
+    /** White flash (overlay) driven by an attack pattern. */
     private static final EntityDataAccessor<Boolean> DATA_FLASH =
             SynchedEntityData.defineId(CsBossMinionEntity.class, EntityDataSerializers.BOOLEAN);
-    /** Render opacity (fade of {@code base_ghost_1}, plan 108). */
+    /** Render opacity (fade of {@code base_ghost_1}). */
     private static final EntityDataAccessor<Float> DATA_ALPHA =
             SynchedEntityData.defineId(CsBossMinionEntity.class, EntityDataSerializers.FLOAT);
-    /** Floating scale (≤ 0 ⇒ uses integer {@code size}). Enables precise resizing (plan 111). */
+    /** Floating scale (≤ 0 ⇒ uses integer {@code size}). Enables precise resizing. */
     private static final EntityDataAccessor<Float> DATA_SCALE =
             SynchedEntityData.defineId(CsBossMinionEntity.class, EntityDataSerializers.FLOAT);
 
@@ -100,10 +101,10 @@ public class CsBossMinionEntity extends Mob {
     }
 
     /**
-     * Resizes the minion so its hitbox height targets {@code targetBlocks} blocks, accounting for
-     * the species' natural hitbox × baseScale (plan 111, {@code base_ghost_1}).
+     * Sets render scale so the hitbox height targets {@code targetBlocks} blocks. Safe to call
+     * before {@code addFreshEntity} so the initial spawn packet carries the correct scale.
      */
-    public void resizeToHeight(double targetBlocks) {
+    public void applyTargetHeight(double targetBlocks) {
         String specie = getSpecie();
         if (specie == null || specie.isBlank()) {
             return;
@@ -118,6 +119,14 @@ public class CsBossMinionEntity extends Mob {
         } catch (Exception ignored) {
             // unresolved species: keep current scale
         }
+    }
+
+    /**
+     * Resizes the minion so its hitbox height targets {@code targetBlocks} blocks, accounting for
+     * the species' natural hitbox × baseScale ({@code base_ghost_1}).
+     */
+    public void resizeToHeight(double targetBlocks) {
+        applyTargetHeight(targetBlocks);
     }
 
     public boolean isFlashing() {
@@ -229,6 +238,16 @@ public class CsBossMinionEntity extends Mob {
         this.yBodyRotO = this.yBodyRot;
     }
 
+    @Override
+    public void tick() {
+        super.tick();
+        if (!this.level().isClientSide
+                && this.sessionId != 0
+                && BossBattleManager.getSession(this.sessionId) == null) {
+            this.discard();
+        }
+    }
+
     // --- Immunity / inertia ------------------------------------------------------
 
     @Override
@@ -248,7 +267,7 @@ public class CsBossMinionEntity extends Mob {
 
     @Override
     public boolean canBeAffected(MobEffectInstance effect) {
-        // Les minions ne peuvent pas être enchaînés (red_shackled, plan 122 § 6).
+        // Minions cannot be shackled (red_shackled).
         if (effect.getEffect().equals(ModEffects.RED_SHACKLED.holder)) {
             return false;
         }

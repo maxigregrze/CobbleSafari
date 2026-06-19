@@ -16,7 +16,6 @@ import java.util.List;
 public class DungeonCommand {
 
     public static final String ARG_DUNGEON_ID = "dungeon_id";
-    private static final String MSG_PLAYER_ONLY = "This command must be run by a player";
 
     private DungeonCommand() {}
 
@@ -43,14 +42,15 @@ public class DungeonCommand {
             ServerPlayer target = EntityArgument.getPlayer(context, "player");
             return spawnPortalForPlayer(context.getSource(), target, force, dungeonId);
         } catch (CommandSyntaxException e) {
-            context.getSource().sendFailure(Component.literal("Failed to spawn portal: " + e.getMessage()));
+            context.getSource().sendFailure(
+                    Component.translatable("cobblesafari.command.dungeon.spawn.syntax_error", e.getMessage()));
             return 0;
         }
     }
 
     static int executeSpawnSelf(CommandContext<CommandSourceStack> context) {
         if (context.getSource().getPlayer() == null) {
-            context.getSource().sendFailure(Component.literal(MSG_PLAYER_ONLY));
+            context.getSource().sendFailure(Component.translatable("cobblesafari.command.player_only"));
             return 0;
         }
         return spawnPortalForPlayer(context.getSource(), context.getSource().getPlayer(), false, null);
@@ -58,7 +58,7 @@ public class DungeonCommand {
 
     static int executeSpawnForceSelf(CommandContext<CommandSourceStack> context) {
         if (context.getSource().getPlayer() == null) {
-            context.getSource().sendFailure(Component.literal(MSG_PLAYER_ONLY));
+            context.getSource().sendFailure(Component.translatable("cobblesafari.command.player_only"));
             return 0;
         }
         return spawnPortalForPlayer(context.getSource(), context.getSource().getPlayer(), true, null);
@@ -66,7 +66,7 @@ public class DungeonCommand {
 
     static int executeSpawnForceSelfWithDungeon(CommandContext<CommandSourceStack> context) {
         if (context.getSource().getPlayer() == null) {
-            context.getSource().sendFailure(Component.literal(MSG_PLAYER_ONLY));
+            context.getSource().sendFailure(Component.translatable("cobblesafari.command.player_only"));
             return 0;
         }
         String dungeonId = StringArgumentType.getString(context, ARG_DUNGEON_ID);
@@ -115,14 +115,15 @@ public class DungeonCommand {
                 portals.size()), false);
 
         for (PortalSpawnManager.ActivePortal portal : portals) {
-            context.getSource().sendSuccess(() -> Component.literal(
-                    String.format("  - %s at [%d, %d, %d] (%s)",
+            context.getSource().sendSuccess(
+                    () -> Component.translatable(
+                            "cobblesafari.command.dungeon.list.entry",
                             portal.dungeonId(),
                             portal.pos().getX(),
                             portal.pos().getY(),
                             portal.pos().getZ(),
-                            portal.dimension().location().toString())
-            ), false);
+                            portal.dimension().location().toString()),
+                    false);
         }
 
         return 1;
@@ -131,8 +132,8 @@ public class DungeonCommand {
     static int executeForceList(CommandContext<CommandSourceStack> context) {
         int found = PortalSpawnManager.forceScanWorldForPortals(context.getSource().getServer());
         if (found > 0) {
-            context.getSource().sendSuccess(() -> Component.literal(
-                    String.format("Force scan found %d additional portals", found)), false);
+            context.getSource().sendSuccess(
+                    () -> Component.translatable("cobblesafari.command.dungeon.list.force_scan", found), false);
         }
 
         return executeList(context);
@@ -142,19 +143,22 @@ public class DungeonCommand {
         List<DungeonConfig> dungeons = DungeonDimensions.getAllDungeons();
 
         if (dungeons.isEmpty()) {
-            context.getSource().sendSuccess(() -> Component.literal("No dungeon dimensions registered"), false);
+            context.getSource().sendSuccess(
+                    () -> Component.translatable("cobblesafari.command.dungeon.dimensions.empty"), false);
             return 1;
         }
 
-        context.getSource().sendSuccess(() -> Component.literal("Registered dungeon dimensions:"), false);
+        context.getSource().sendSuccess(
+                () -> Component.translatable("cobblesafari.command.dungeon.dimensions.header"), false);
 
         for (DungeonConfig dungeon : dungeons) {
-            context.getSource().sendSuccess(() -> Component.literal(
-                    String.format("  - %s (%s) - Timer: %ds",
+            context.getSource().sendSuccess(
+                    () -> Component.translatable(
+                            "cobblesafari.command.dungeon.dimensions.entry",
                             dungeon.getId(),
                             dungeon.getDimensionId(),
-                            dungeon.getTimerDurationSeconds())
-            ), false);
+                            dungeon.getTimerDurationSeconds()),
+                    false);
         }
 
         return 1;

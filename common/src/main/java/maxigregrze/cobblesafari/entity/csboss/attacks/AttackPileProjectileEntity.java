@@ -23,8 +23,8 @@ import java.util.Set;
 import java.util.UUID;
 
 /**
- * Projectile cube en cloche (plan 126 § 6.1) : vol parabolique, collision joueur unique,
- * pose de blocs éphémères à l'impact.
+ * Arcing cube projectile: parabolic flight, single-player collision,
+ * places ephemeral blocks on impact.
  */
 public class AttackPileProjectileEntity extends AbstractAttackEntity {
 

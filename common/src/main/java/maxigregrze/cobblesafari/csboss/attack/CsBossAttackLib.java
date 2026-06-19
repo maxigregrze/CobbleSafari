@@ -19,26 +19,29 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Shared library for CSBoss attack patterns (plan 107 § 3). Groups common helpers
+ * Shared library for CSBoss attack patterns. Groups common helpers
  * (directions, targeting, pursuit, area damage limited to participants, particles) to
  * avoid copy-paste between attacks. All collision detection remains limited to the
  * set of living participants — never a world scan.
  */
 public final class CsBossAttackLib {
 
-    /** Chase speed for attack entities (> player sprint ≈ 0.28 b/t : uncatchable while running). */
+    /** Chase speed for attack entities (> player sprint ≈ 0.28 b/t: uncatchable while running). */
     public static final double CHASE_SPEED = 0.45;
+
+    public static final double HOMING_FAR_THRESHOLD = 5.0;
+    public static final double HOMING_FAR_MULTIPLIER = 10.0;
 
     /** 8 compass directions (unit vectors), order N, NE, E, SE, S, SW, W, NW. */
     public static final Vec3[] EIGHT_DIRS = buildEightDirs();
 
-    /** Variation rate for attack occurrence counts (plan 109). */
+    /** Variation rate for attack occurrence counts. */
     public static final double OCCURRENCE_VARIATION = 0.25;
 
     private CsBossAttackLib() {}
 
     /**
-     * Parabole 0 → {@code height} → 0 sur [0, {@code period}] ; util pour un boss qui « saute ».
+     * Parabola 0 → {@code height} → 0 over [0, {@code period}]; useful for a "jumping" boss.
      */
     public static double hopOffset(int t, int period, double height) {
         double x = Mth.clamp(t / (double) period, 0.0, 1.0);
@@ -46,8 +49,8 @@ public final class CsBossAttackLib {
     }
 
     /**
-     * Échantillonne {@code count} points au sol dans un disque, écart minimal {@code minDist}
-     * (rejet, essais bornés — plan 126 § 4).
+     * Samples {@code count} ground points in a disk with minimum spacing {@code minDist}
+     * (rejection sampling, bounded attempts).
      */
     public static List<Vec3> scatterPoints(Vec3 center, double radius, int count, double minDist,
                                            RandomSource rng) {
@@ -121,6 +124,19 @@ public final class CsBossAttackLib {
     }
 
     // --- Pursuit -----------------------------------------------------------
+
+    /** Pas de poursuite : ×10 si la cible est à plus de 5 blocs (horizontal), sinon nominal. */
+    public static double homingStep(Entity e, double tx, double tz, double nominalStep) {
+        double dx = tx - e.getX();
+        double dz = tz - e.getZ();
+        double dist = Math.sqrt(dx * dx + dz * dz);
+        return dist > HOMING_FAR_THRESHOLD ? nominalStep * HOMING_FAR_MULTIPLIER : nominalStep;
+    }
+
+    /** Portée d'une attaque de zone : demi-diagonale du carré blocs (blockRadius·√2) + 1. */
+    public static double areaReach(BossBattleSession session) {
+        return session.getBlockRadius() * Math.sqrt(2.0) + 1.0;
+    }
 
     /**
      * Moves {@code e} toward ({@code tx},{@code tz}) while bounding horizontal step to {@code maxStep},
@@ -283,7 +299,7 @@ public final class CsBossAttackLib {
     // --- Status effects ----------------------------------------------------
 
     /**
-     * Applies an effect to all living participants (plan 113). Re-apply each tick with a
+     * Applies an effect to all living participants. Re-apply each tick with a
      * short duration so it "lasts for the attack", or once with the desired duration.
      */
     public static void applyEffectToAll(ServerLevel level, BossBattleSession session,

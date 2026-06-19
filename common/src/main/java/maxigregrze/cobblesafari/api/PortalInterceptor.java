@@ -15,11 +15,11 @@ import net.minecraft.server.level.ServerPlayer;
 public interface PortalInterceptor {
 
     /**
-     * @param player       the server player interacting with the portal
+     * @param player the server player interacting with the portal
      * @param portalEntity the portal block entity
-     * @param config       the dungeon configuration for this portal's dimension
+     * @param config the dungeon configuration for this portal's dimension
      * @return {@code true} if the interaction was fully handled (CobbleSafari skips its
-     *         entire default flow), {@code false} to let CobbleSafari proceed normally
+     * entire default flow), {@code false} to let CobbleSafari proceed normally
      */
     boolean handlePortalInteraction(ServerPlayer player,
                                     DungeonPortalBlockEntity portalEntity,

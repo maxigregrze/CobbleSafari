@@ -1,5 +1,5 @@
 {
-  "parent": "cobblesafari:root",
+  "parent": "cobblesafari:fresh_explorer",
   "display": {
     "icon": {
       "id": "minecraft:totem_of_undying"

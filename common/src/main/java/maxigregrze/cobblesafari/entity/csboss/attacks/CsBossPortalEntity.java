@@ -1,5 +1,6 @@
 package maxigregrze.cobblesafari.entity.csboss.attacks;
 
+import maxigregrze.cobblesafari.csboss.CsBossDefinition;
 import maxigregrze.cobblesafari.init.ModEntities;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -10,19 +11,21 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.Level;
 
 /**
- * Portail d'invocation (plan 122 § 3.2) : disque plat 5×5 de 3 couches texturées
- * ({@code csboss_spawnportal_type{T}_layer{1..3}}). Apparaît au-dessus du centre d'arène, à la
- * hauteur d'apparition du boss, et y reste <b>tout le combat</b>. Son échelle ({@link #getAnim()})
- * est pilotée serveur par {@link maxigregrze.cobblesafari.csboss.BossBattleManager} :
- * 0 → 1 (ouverture), 1 (combat), 1 → 0 (fermeture). Durée de vie gérée par la session, pas par le
- * TTL d'{@link AbstractAttackEntity}.
+ * Summon portal: flat 5×5 disc of 3 textured layers
+ * ({@code csboss_spawnportal_type{T}_layer{1..3}}). Appears above the arena center at the boss
+ * spawn height and stays there <b>for the entire fight</b>. Its scale ({@link #getAnim()})
+ * is server-driven by {@link maxigregrze.cobblesafari.csboss.BossBattleManager}:
+ * 0 → 1 (opening), 1 (combat), 1 → 0 (closing). Lifetime managed by the session, not by
+ * {@link AbstractAttackEntity}'s TTL.
  */
 public class CsBossPortalEntity extends AbstractAttackEntity {
 
     private static final EntityDataAccessor<Integer> DATA_PORTAL_TYPE =
             SynchedEntityData.defineId(CsBossPortalEntity.class, EntityDataSerializers.INT);
-    /** Échelle 0..1 pilotée serveur (ouverture / combat / fermeture) → rendu client. */
+    /** Server-driven scale 0..1 (opening / combat / closing) → client rendering. */
     private static final EntityDataAccessor<Float> DATA_ANIM =
+            SynchedEntityData.defineId(CsBossPortalEntity.class, EntityDataSerializers.FLOAT);
+    private static final EntityDataAccessor<Float> DATA_PORTAL_SIZE =
             SynchedEntityData.defineId(CsBossPortalEntity.class, EntityDataSerializers.FLOAT);
 
     public CsBossPortalEntity(EntityType<? extends CsBossPortalEntity> type, Level level) {
@@ -30,10 +33,11 @@ public class CsBossPortalEntity extends AbstractAttackEntity {
     }
 
     public static CsBossPortalEntity spawn(ServerLevel level, double x, double y, double z,
-                                           int sessionId, int portalType) {
+                                           int sessionId, int portalType, float portalSize) {
         CsBossPortalEntity e = new CsBossPortalEntity(ModEntities.CSBOSS_PORTAL, level);
         e.setSessionId(sessionId);
         e.setPortalType(portalType);
+        e.setPortalSize(portalSize);
         e.setAnim(0.0F);
         e.moveTo(x, y, z, 0.0F, 0.0F);
         level.addFreshEntity(e);
@@ -45,6 +49,15 @@ public class CsBossPortalEntity extends AbstractAttackEntity {
         super.defineSynchedData(builder);
         builder.define(DATA_PORTAL_TYPE, 1);
         builder.define(DATA_ANIM, 0.0F);
+        builder.define(DATA_PORTAL_SIZE, (float) CsBossDefinition.DEFAULT_PORTAL_SIZE);
+    }
+
+    public float getPortalSize() {
+        return this.entityData.get(DATA_PORTAL_SIZE);
+    }
+
+    public void setPortalSize(float portalSize) {
+        this.entityData.set(DATA_PORTAL_SIZE, Math.max(0.0F, portalSize));
     }
 
     public int getPortalType() {
@@ -65,6 +78,6 @@ public class CsBossPortalEntity extends AbstractAttackEntity {
 
     @Override
     protected int maxLifespan() {
-        return Integer.MAX_VALUE; // durée de vie gérée par la session (close / loss / finalize)
+        return Integer.MAX_VALUE; // lifetime managed by the session (close / loss / finalize)
     }
 }

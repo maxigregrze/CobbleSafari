@@ -1,0 +1,16 @@
+{
+  "parent": "cobblesafari:welcome_to_safari",
+  "display": {
+    "icon": { "id": "cobblesafari:mud_ball" },
+    "title": { "translate": "advancement.cobblesafari.repulsive.title" },
+    "description": { "translate": "advancement.cobblesafari.repulsive.description" },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "done": { "trigger": "cobblesafari:mud_ball_used", "conditions": { "count": 1 } }
+  },
+  "requirements": [["done"]]
+}

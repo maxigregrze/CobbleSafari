@@ -1,5 +1,5 @@
 {
-  "parent": "cobblesafari:root",
+  "parent": "cobblesafari:dungeons",
   "display": {
     "icon": { "id": "cobblesafari:redchain_fragment" },
     "title": { "translate": "advancement.cobblesafari.upside_down.title" },

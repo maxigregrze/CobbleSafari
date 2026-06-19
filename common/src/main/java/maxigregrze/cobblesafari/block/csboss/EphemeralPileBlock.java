@@ -15,14 +15,14 @@ import net.minecraft.world.level.block.HorizontalDirectionalBlock;
 import net.minecraft.world.level.block.state.BlockState;
 
 /**
- * Tas sludge/mud éphémère posé par les attaques boss (plan 126 § 6.2). Hérite de {@link PileBlock} :
- * traversable (collision vide), ralentit fortement les entités qui le traversent ({@code makeStuckInBlock}),
- * et applique du poison pour la variante sludge ({@code poison = true}). S'auto-détruit après
- * {@code ttlTicks} via {@code scheduleTick} (même pattern que {@link MeteoriteBlock}).
+ * Ephemeral sludge/mud pile placed by boss attacks. Extends {@link PileBlock}:
+ * passable (empty collision), heavily slows entities that pass through ({@code makeStuckInBlock}),
+ * and applies poison for the sludge variant ({@code poison = true}). Self-destructs after
+ * {@code ttlTicks} via {@code scheduleTick} (same pattern as {@link MeteoriteBlock}).
  */
 public class EphemeralPileBlock extends PileBlock {
 
-    private static final int POISON_DURATION_TICKS = 40; // 2 s (identique à SludgePileBlock)
+    private static final int POISON_DURATION_TICKS = 40; // 2 s (same as SludgePileBlock)
 
     private final int ttlTicks;
     private final boolean poison;
@@ -40,7 +40,7 @@ public class EphemeralPileBlock extends PileBlock {
 
     @Override
     protected void entityInside(BlockState state, Level level, BlockPos pos, Entity entity) {
-        super.entityInside(state, level, pos, entity); // ralentissement (makeStuckInBlock)
+        super.entityInside(state, level, pos, entity); // slowdown (makeStuckInBlock)
         if (this.poison && !level.isClientSide() && entity instanceof LivingEntity living) {
             living.addEffect(new MobEffectInstance(MobEffects.POISON, POISON_DURATION_TICKS, 0));
         }
@@ -56,7 +56,7 @@ public class EphemeralPileBlock extends PileBlock {
 
     @Override
     public void tick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
-        level.levelEvent(2001, pos, Block.getId(state)); // particules + son de casse
+        level.levelEvent(2001, pos, Block.getId(state)); // break particles + sound
         level.removeBlock(pos, false);
     }
 }

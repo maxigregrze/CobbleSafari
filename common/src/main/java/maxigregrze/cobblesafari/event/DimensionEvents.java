@@ -60,6 +60,7 @@ public class DimensionEvents {
         maxigregrze.cobblesafari.csboss.CsBossDataLoader.load(server);
         maxigregrze.cobblesafari.csboss.BossBattleManager.recoverAll(server);
         maxigregrze.cobblesafari.csmusic.CsMusicDataLoader.load(server);
+        maxigregrze.cobblesafari.csmusic.CsMusicAreaStore.loadAll(server);
         maxigregrze.cobblesafari.objectives.DimensionalObjectivesDataLoader.load(server);
     }
 
@@ -92,8 +93,8 @@ public class DimensionEvents {
     }
 
     /**
-     * Per-tick play-time accounting for the four mod dimensions (cf. plan 94 §3.1) and front-edge
-     * Safari-entry day tracking (§3.16). Counts presence regardless of timer/bypass state.
+     * Per-tick play-time accounting for the four mod dimensions and front-edge
+     * Safari-entry day tracking (). Counts presence regardless of timer/bypass state.
      */
     private static void tickPlaytimeStats(MinecraftServer server) {
         for (ServerPlayer player : server.getPlayerList().getPlayers()) {
@@ -106,7 +107,11 @@ public class DimensionEvents {
             } else if (dim.equals(UNDERGROUND_DIM)) {
                 ModStats.award(player, ModStats.TIME_IN_UNDERGROUND);
             } else if (dim.equals(UNION_DIM)) {
-                ModStats.award(player, ModStats.TIME_IN_UNION_ROOM);
+                int unionTicks = ModStats.awardAndGet(player, ModStats.TIME_IN_UNION_ROOM);
+                // Throttle to once per second; "Hyper-social" unlocks at 60 min (72000 ticks).
+                if (unionTicks % 20 == 0) {
+                    ModCriteria.HYPER_SOCIAL.trigger(player, unionTicks);
+                }
             }
 
             ResourceLocation last = LAST_DIMENSION.put(player.getUUID(), dim);

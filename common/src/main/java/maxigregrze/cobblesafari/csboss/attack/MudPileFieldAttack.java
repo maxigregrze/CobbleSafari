@@ -15,8 +15,8 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
- * {@code base_ground_3} (plan 126 § 4) : 10 points au sol par vague, ombre large, cube mud en cloche ;
- * impact = 3×3 de tas éphémères.
+ * {@code base_ground_3}: 10 ground points per wave, wide shadow, arcing mud cube;
+ * impact = 3×3 ephemeral piles.
  */
 public class MudPileFieldAttack implements CsBossAttack {
 
@@ -104,7 +104,7 @@ public class MudPileFieldAttack implements CsBossAttack {
         FieldWave w = new FieldWave(tick);
         double floorY = session.getTriggerPos().getY();
         Vec3 center = new Vec3(session.getArenaCenter().x, floorY, session.getArenaCenter().z);
-        List<Vec3> points = CsBossAttackLib.scatterPoints(center, session.getPlayerRadius(),
+        List<Vec3> points = CsBossAttackLib.scatterPoints(center, session.getBlockRadius(),
                 POINTS, MIN_DIST, rng);
         for (Vec3 point : points) {
             AttackShadowEntity shadow = AttackShadowEntity.spawn(level,

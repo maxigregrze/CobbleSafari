@@ -32,12 +32,12 @@ public class MiscConfig {
 
     /**
      * Hour (0–23) at which the "daily systems" reset (Wonder Trade, GTS, chat conversations,
-     * dimensional objectives). Moved here from {@code wondertrade_settings.json} (plan 118 §6).
+     * dimensional objectives). Moved here from {@code wondertrade_settings.json}.
      * {@code null} until explicitly set or migrated from the legacy Wonder Trade value.
      */
     private Integer dailySystemResetHour;
 
-    /** Chunk radius scanned for a Golden Auspicious Pokeball on objectives completion (plan 118 §8.4). */
+    /** Chunk radius scanned for a Golden Auspicious Pokeball on objectives completion. */
     private int dimensionalObjectivesGoldScanRadius = 8;
 
     /** Cooldown between Giratina Core trades, in ticks (20 ticks = 1 s). */
@@ -224,7 +224,7 @@ public class MiscConfig {
         return INSTANCE.balloonEnabled;
     }
 
-    /** Hour (0–23) at which all daily systems reset (plan 118 §6). Defaults to 0 until set/migrated. */
+    /** Hour (0–23) at which all daily systems reset. Defaults to 0 until set/migrated. */
     public static int getDailySystemResetHour() {
         if (INSTANCE == null || INSTANCE.dailySystemResetHour == null) {
             return 0;

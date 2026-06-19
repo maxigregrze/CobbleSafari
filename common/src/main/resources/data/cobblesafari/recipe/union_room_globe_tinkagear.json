@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    { "item": "cobblesafari:tinkagear" },
+    { "item": "minecraft:cartography_table" }
+  ],
+  "result": {
+    "id": "cobblesafari:union_room_globe",
+    "count": 1
+  }
+}

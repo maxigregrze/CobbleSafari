@@ -1,0 +1,16 @@
+{
+  "parent": "cobblesafari:delicate_pick_me",
+  "display": {
+    "icon": { "id": "minecraft:diamond_pickaxe" },
+    "title": { "translate": "advancement.cobblesafari.silk_touch.title" },
+    "description": { "translate": "advancement.cobblesafari.silk_touch.description" },
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "done": { "trigger": "cobblesafari:excavation_perfect", "conditions": { "count": 50 } }
+  },
+  "requirements": [["done"]]
+}

@@ -22,13 +22,12 @@ import org.joml.Vector3f;
 public class DragonBeamAttack implements CsBossAttack {
 
     private static final int BEAMS = 8;
-    private static final int BEAM_LENGTH = 30;
     private static final double BEAM_HALF_WIDTH = 1.0;
-    private static final float BEAM_DAMAGE = 8.0F;        // sweeping beams fill space (i-frame gated)
+    private static final float BEAM_DAMAGE = 8.0F; // sweeping beams fill space (i-frame gated)
     private static final double SWING_DEG = 45.0;
-    private static final int SWING_PERIOD = 100;          // ticks for a full up→down→up cycle
-    private static final int DURATION = 240;              // ≈12 s
-    private static final float SPIN_DEG_PER_TICK = 0.5F;  // reduced spin speed
+    private static final int SWING_PERIOD = 100; // ticks for a full up→down→up cycle
+    private static final int DURATION = 240; // ≈12 s
+    private static final float SPIN_DEG_PER_TICK = 0.5F; // reduced spin speed
     private static final double PARTICLE_STEP = 1.0;
     private static final int BEAM_COLOR = 0xFFCC55BA;
     /** #cc55ba. */
@@ -40,6 +39,7 @@ public class DragonBeamAttack implements CsBossAttack {
     private double originX;
     private double originY;
     private double originZ;
+    private int beamLength;
     private int tick;
     private boolean done;
 
@@ -64,9 +64,10 @@ public class DragonBeamAttack implements CsBossAttack {
         this.originX = boss.getX();
         this.originY = session.getTriggerPos().getY() + 1.0;
         this.originZ = boss.getZ();
+        this.beamLength = (int) Math.ceil(CsBossAttackLib.areaReach(session));
         for (int i = 0; i < BEAMS; i++) {
             AttackBeamEntity beam = AttackBeamEntity.spawn(level, originX, originY, originZ,
-                    session.getId(), BEAM_LENGTH, BEAM_COLOR);
+                    session.getId(), beamLength, BEAM_COLOR);
             beam.setDirection(beamDir(i));
             session.trackAttackEntity(beam);
             beams[i] = beam;
@@ -113,7 +114,7 @@ public class DragonBeamAttack implements CsBossAttack {
      */
     private Vec3 beamDir(int i) {
         double yawDeg = i * 45.0 + tick * SPIN_DEG_PER_TICK;
-        double sign = (i % 2 == 0) ? 1.0 : -1.0; // cardinals start at +45°, diagonals at −45°
+        double sign = (i % 2 == 0) ? 1.0: -1.0; // cardinals start at +45°, diagonals at −45°
         double pitchDeg = sign * SWING_DEG * Math.cos(2.0 * Math.PI * tick / SWING_PERIOD);
         double a = Math.toRadians(yawDeg);
         double p = Math.toRadians(pitchDeg);
@@ -121,7 +122,7 @@ public class DragonBeamAttack implements CsBossAttack {
     }
 
     private void drawBeam(ServerLevel level, Vec3 dir) {
-        for (double d = 1.0; d <= BEAM_LENGTH; d += PARTICLE_STEP) {
+        for (double d = 1.0; d <= beamLength; d += PARTICLE_STEP) {
             level.sendParticles(BEAM_DUST, originX + dir.x * d, originY + dir.y * d, originZ + dir.z * d,
                     1, 0.05, 0.05, 0.05, 0.0);
         }
@@ -133,7 +134,7 @@ public class DragonBeamAttack implements CsBossAttack {
             double wy = (p.getY() + p.getBbHeight() * 0.5) - originY;
             double wz = p.getZ() - originZ;
             double t = wx * dir.x + wy * dir.y + wz * dir.z; // projection along the beam
-            if (t < 0.0 || t > BEAM_LENGTH) {
+            if (t < 0.0 || t > beamLength) {
                 continue;
             }
             double dx = wx - dir.x * t;

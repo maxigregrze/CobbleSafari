@@ -4,7 +4,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
- * DTO for {@code dimensional_music.json} (plan 105 § 3).
+ * DTO for {@code dimensional_music.json}.
  * {@code enabled}: global csmusic toggle. {@code dimensions}: dimensionId → csmusicId.
  */
 public class DimensionalMusicData {

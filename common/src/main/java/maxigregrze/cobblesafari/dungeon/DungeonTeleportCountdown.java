@@ -79,7 +79,8 @@ public class DungeonTeleportCountdown {
     }
 
     public static void cancelTeleport(UUID playerId) {
-        pendingTeleports.remove(playerId);
+        TeleportState removed = pendingTeleports.remove(playerId);
+        releaseGenerationLockIfHeld(removed);
     }
 
     public static void onServerTick(MinecraftServer server) {
@@ -152,6 +153,9 @@ public class DungeonTeleportCountdown {
                             }
                         } else {
                             state.generationPhase = 1;
+                            // This player now owns the per-portal generation lock; remember it so we
+                            // release the lock if the player leaves before completeFinalization.
+                            state.heldGenerationPortalId = portalEntity.getPortalId();
                             CobbleSafari.LOGGER.debug("Phase 1 (95-90s): Position calculated for player {}", player.getName().getString());
                         }
                     }
@@ -262,7 +266,19 @@ public class DungeonTeleportCountdown {
         }
 
         for (UUID id : toRemove) {
-            pendingTeleports.remove(id);
+            TeleportState removed = pendingTeleports.remove(id);
+            releaseGenerationLockIfHeld(removed);
+        }
+    }
+
+    /**
+     * Releases the per-portal generation lock if {@code state} owned it and generation never
+     * completed. Without this, a player who moves/disconnects mid-generation (the common
+     * cancel-on-move case) leaks the lock and soft-locks the portal until server restart.
+     */
+    private static void releaseGenerationLockIfHeld(TeleportState state) {
+        if (state != null && state.heldGenerationPortalId != null && !state.generationDone) {
+            DungeonTeleportHandler.releaseGenerationLock(state.heldGenerationPortalId);
         }
     }
 
@@ -276,6 +292,8 @@ public class DungeonTeleportCountdown {
         boolean generationDone;
         int generationPhase;
         boolean waitingForOtherGeneration;
+        /** Portal id whose generation lock this player acquired (null until calculatePosition succeeds). */
+        UUID heldGenerationPortalId;
 
         TeleportState(BlockPos portalPos, ResourceKey<Level> portalDimension, Vec3 startPos,
                       int ticksRemaining, DungeonTeleportHandler.DungeonValidationResult validation,
@@ -289,6 +307,7 @@ public class DungeonTeleportCountdown {
             this.generationDone = generationDone;
             this.generationPhase = 0;
             this.waitingForOtherGeneration = false;
+            this.heldGenerationPortalId = null;
         }
     }
 }

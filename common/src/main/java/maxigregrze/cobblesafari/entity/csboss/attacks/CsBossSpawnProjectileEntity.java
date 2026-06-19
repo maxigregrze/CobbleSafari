@@ -6,10 +6,10 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.Level;
 
 /**
- * Projectile d'invocation (plan 122 § 3.1) : modèle de bloc {@code bossanchor_moving} qui jaillit
- * du dessus de l'ancre et monte rapidement jusqu'à la hauteur d'apparition du boss. Piloté
- * <b>serveur</b> par {@link maxigregrze.cobblesafari.csboss.BossBattleManager} (pas de physique
- * vanilla) ; supprimé à l'arrivée (explosion + spawn du portail).
+ * Summon projectile: {@code bossanchor_moving} block model that bursts from above the anchor
+ * and rises quickly to the boss spawn height. <b>Server</b>-driven by
+ * {@link maxigregrze.cobblesafari.csboss.BossBattleManager} (no vanilla physics);
+ * removed on arrival (explosion + portal spawn).
  */
 public class CsBossSpawnProjectileEntity extends AbstractAttackEntity {
 
@@ -27,6 +27,6 @@ public class CsBossSpawnProjectileEntity extends AbstractAttackEntity {
 
     @Override
     protected int maxLifespan() {
-        return 40; // filet anti-fuite ; la montée dure SUMMON_RISE_TICKS
+        return 40; // leak safety net; ascent lasts SUMMON_RISE_TICKS
     }
 }

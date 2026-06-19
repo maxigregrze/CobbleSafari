@@ -7,7 +7,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 
 /**
- * Registers all custom advancement criterion triggers (cf. action plan 94 §2.2).
+ * Registers all custom advancement criterion triggers.
  * Called from {@link CobbleSafari#initRegistries()} before the registry freeze.
  */
 public final class ModCriteria {
@@ -31,6 +31,10 @@ public final class ModCriteria {
     public static CountTrigger GTS_TRADE_CONFIRMED;
     public static CountTrigger GTS_TRADE_DEPOSIT_SOLD;
     public static CountTrigger UNION_CREATED;
+    public static CountTrigger POKEMON_CAUGHT;
+    public static CountTrigger MUD_BALL_USED;
+    public static CountTrigger HYPER_SOCIAL;
+    public static CountTrigger DISTORTION_DEFEAT;
 
     // Boss battle
     public static CsBossWinTrigger CSBOSS_WIN;
@@ -40,6 +44,8 @@ public final class ModCriteria {
     public static SimpleEventTrigger ROTOM_PHONE_SHINY;
     public static SimpleEventTrigger ROTOM_SKIN_CHANGED;
     public static SimpleEventTrigger UNION_PARTY_POPPER;
+    public static SimpleEventTrigger GTS_PERSONAL_CONFIRMED;
+    public static SimpleEventTrigger GTS_UNIQUE_CONFIRMED;
 
     public static void register() {
         SAFARI_DAY = reg("safari_day", new CountTrigger());
@@ -58,6 +64,10 @@ public final class ModCriteria {
         GTS_TRADE_CONFIRMED = reg("gts_trade_confirmed", new CountTrigger());
         GTS_TRADE_DEPOSIT_SOLD = reg("gts_trade_deposit_sold", new CountTrigger());
         UNION_CREATED = reg("union_created", new CountTrigger());
+        POKEMON_CAUGHT = reg("pokemon_caught", new CountTrigger());
+        MUD_BALL_USED = reg("mud_ball_used", new CountTrigger());
+        HYPER_SOCIAL = reg("hyper_social", new CountTrigger());
+        DISTORTION_DEFEAT = reg("distortion_defeat", new CountTrigger());
 
         CSBOSS_WIN = reg("csboss_win", new CsBossWinTrigger());
 
@@ -65,6 +75,8 @@ public final class ModCriteria {
         ROTOM_PHONE_SHINY = reg("rotom_phone_shiny", new SimpleEventTrigger());
         ROTOM_SKIN_CHANGED = reg("rotom_skin_changed", new SimpleEventTrigger());
         UNION_PARTY_POPPER = reg("union_party_popper", new SimpleEventTrigger());
+        GTS_PERSONAL_CONFIRMED = reg("gts_personal_confirmed", new SimpleEventTrigger());
+        GTS_UNIQUE_CONFIRMED = reg("gts_unique_confirmed", new SimpleEventTrigger());
 
         CobbleSafari.LOGGER.info("CobbleSafari >> Advancement criteria registered!");
     }

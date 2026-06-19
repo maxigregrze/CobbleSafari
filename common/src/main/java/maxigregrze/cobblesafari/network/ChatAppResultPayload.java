@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Server → client chat app result (cf. action plan 114 §12.2). Polymorphic by {@code kind}:
+ * Server → client chat app result. Polymorphic by {@code kind}:
  * a full per-player transcript snapshot for one conversation, or an error key.
  *
  * <p>The snapshot carries <em>every</em> step from 0 up to the current step (so the whole history
@@ -28,7 +28,7 @@ public record ChatAppResultPayload(int kind, StateData state, String errorKey) i
      * One step's render data. For steps before the current one everything is fully shown and done.
      * For the current step, {@code beforeShown}/{@code afterShown}/{@code taskVisible} reflect the
      * persisted position and {@code progressNum/Den/done} the live task progress.
-     * {@code progressDen == 0} = binary bar, no counter text (mono-criterion advancement, §11.1).
+     * {@code progressDen == 0} = binary bar, no counter text (mono-criterion advancement).
      */
     public record StepView(List<String> before, List<String> after, String taskTitleKey,
                            int progressNum, int progressDen, boolean done,

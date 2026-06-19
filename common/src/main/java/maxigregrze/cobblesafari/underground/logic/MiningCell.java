@@ -45,9 +45,9 @@ public class MiningCell {
     
     /** Content types for the second (hidden) layer */
     public enum SecondLayerContent {
-        EMPTY,      // Nothing underneath
-        TREASURE,   // Part of a treasure
-        IRON_BLOCK  // Iron block obstacle
+        EMPTY, // Nothing underneath
+        TREASURE, // Part of a treasure
+        IRON_BLOCK // Iron block obstacle
     }
     
     private WallTier currentTier;

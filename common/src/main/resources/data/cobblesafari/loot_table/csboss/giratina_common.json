@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:chest",
+  "pools": [
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "cobblesafari:redchain_fragment",
+          "functions": [
+            { "function": "minecraft:set_count", "count": 8 }
+          ]
+        }
+      ]
+    }
+  ]
+}

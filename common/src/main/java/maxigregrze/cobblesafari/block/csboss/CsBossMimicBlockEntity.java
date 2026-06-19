@@ -16,7 +16,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * Mimic block entity (plan 125 § 2.2): persists the id of the block whose texture is copied
+ * Mimic block entity: persists the id of the block whose texture is copied
  * by the renderer. The {@code reverse} flag lives on the blockstate, not here.
  */
 public class CsBossMimicBlockEntity extends BlockEntity {

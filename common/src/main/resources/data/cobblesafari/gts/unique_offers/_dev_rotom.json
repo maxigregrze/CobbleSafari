@@ -1,0 +1,21 @@
+{
+  "offerId": "dev_rotom",
+  "tags": [
+    "dev"
+  ],
+  "given": "rotom level=1 originaltrainertype=npc originaltrainer=maxigregrze",
+  "givenMarks": [
+    "cobblemon:ribbon_partner",
+    "cobblesafari:ribbon_dungeon_distortion",
+    "cobblesafari:ribbon_dungeon_paris",
+    "cobblesafari:ribbon_dungeon_underground",
+    "cobblesafari:ribbon_safari"
+  ],
+  "givenActiveMark": "cobblemon:ribbon_partner",
+  "wish": {
+    "species": "rotom",
+    "levelBucket": 0,
+    "gender": "any",
+    "shiny": "any"
+  }
+}

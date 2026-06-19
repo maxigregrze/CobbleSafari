@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "TT",
+    "TI",
+    " I"
+  ],
+  "key": {
+    "T": { "item": "cobblesafari:tinkagear" },
+    "I": { "item": "minecraft:iron_ingot" }
+  },
+  "result": {
+    "id": "cobblesafari:tinkhammer",
+    "count": 1
+  }
+}

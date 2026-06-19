@@ -28,7 +28,7 @@ public class UndergroundCommand {
 
         ServerPlayer player = context.getSource().getPlayer();
         if (player == null) {
-            context.getSource().sendFailure(Component.literal("This command must be run by a player"));
+            context.getSource().sendFailure(Component.translatable("cobblesafari.command.player_only"));
             return 0;
         }
 

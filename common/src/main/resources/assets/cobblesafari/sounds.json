@@ -8,6 +8,27 @@
         ],
         "subtitle": "subtitles.entity.generic.incense_spray"
     },
+    "entity.generic.fart": {
+        "sounds": [
+            {
+                "name": "cobblesafari:entity/generic/fart",
+                "stream": false
+            }
+        ],
+        "subtitle": "subtitles.entity.generic.fart"
+    },
+    "entity.generic.fart_reverb": {
+        "sounds": [
+            {
+                "name": "cobblesafari:entity/generic/fart_reverb",
+                "stream": false
+            }
+        ],
+        "subtitle": "subtitles.entity.generic.fart"
+    },
+    "entity.generic.silent": {
+        "sounds": []
+    },
     "safari.flee": {
         "sounds": [
             {
@@ -83,10 +104,26 @@
             }
         ]
     },
-    "music.giratina1.outro": {
+    "music.giratina2.intro": {
         "sounds": [
             {
-                "name": "cobblesafari:music/bgm_giratina_1_outro",
+                "name": "cobblesafari:music/bgm_giratina_2_intro",
+                "stream": true
+            }
+        ]
+    },
+    "music.giratina2.loop": {
+        "sounds": [
+            {
+                "name": "cobblesafari:music/bgm_giratina_2_loop",
+                "stream": true
+            }
+        ]
+    },
+    "music.giratina2.outro": {
+        "sounds": [
+            {
+                "name": "cobblesafari:music/bgm_giratina_2_outro",
                 "stream": true
             }
         ]

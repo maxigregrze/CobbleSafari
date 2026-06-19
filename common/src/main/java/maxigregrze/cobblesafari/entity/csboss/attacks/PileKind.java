@@ -6,8 +6,8 @@ import net.minecraft.world.level.block.Block;
 import org.joml.Vector3f;
 
 /**
- * Variante sludge/mud pour {@link AttackPileProjectileEntity} (plan 126 § 6.3) :
- * cube d'affichage, bloc éphémère posé à l'impact, traînée particules.
+ * Sludge/mud variant for {@link AttackPileProjectileEntity}:
+ * display cube, ephemeral block placed on impact, particle trail.
  */
 public enum PileKind {
     SLUDGE(

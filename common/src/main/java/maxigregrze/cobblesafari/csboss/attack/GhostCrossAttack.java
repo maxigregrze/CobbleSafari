@@ -28,18 +28,18 @@ import java.util.UUID;
 public class GhostCrossAttack implements CsBossAttack {
 
     private static final int VOLLEYS = 10;
-    private static final int INTERVAL = 20;        // one volley per second over 10 s
-    private static final int FORMATION_LIFE = 60;  // 3 s of travel each
+    private static final int INTERVAL = 20; // one volley per second over 10 s
+    private static final int FORMATION_LIFE = 60; // 3 s of travel each
     private static final double SPEED = 0.35;
-    private static final double RADIUS = 2.0;      // satellite distance ⇒ ~5-block span
+    private static final double RADIUS = 2.0; // satellite distance ⇒ ~5-block span
     private static final double ROT_DEG_PER_TICK = 8.0;
     private static final double CENTER_HEIGHT = 2.5; // above the trigger floor
     private static final double MINION_HEIGHT = 1.2;
-    private static final double HALF_THICK = 0.5;  // 1 block thin along the travel axis
+    private static final double HALF_THICK = 0.5; // 1 block thin along the travel axis
     private static final double HIT_RADIUS = 2.5;
     private static final float DAMAGE = 8.0F;
     private static final int PARTICLES_PER_TICK = 14;
-    private static final double STEP_DEG = 10.0;   // each volley rotates 10° from the previous (wave)
+    private static final double STEP_DEG = 10.0; // each volley rotates 10° from the previous (wave)
     /** Purple. */
     private static final DustParticleOptions PURPLE_DUST =
             new DustParticleOptions(new Vector3f(0.60f, 0.18f, 0.82f), 1.3f);
@@ -49,8 +49,9 @@ public class GhostCrossAttack implements CsBossAttack {
     private final List<Formation> formations = new ArrayList<>();
     private int tick;
     private int sent;
-    private double baseAngle;  // random heading of the first volley
-    private double stepRad;    // ±10° per volley (random clockwise / anti-clockwise)
+    private double baseAngle; // random heading of the first volley
+    private double stepRad; // ±10° per volley (random clockwise / anti-clockwise)
+    private double maxReach;
     private boolean done;
 
     private static final class Formation {
@@ -94,9 +95,10 @@ public class GhostCrossAttack implements CsBossAttack {
         this.sent = 0;
         this.done = false;
         this.formations.clear();
-        // Première volée dans une direction aléatoire, puis rotation de ±10° à chaque volée (vague).
+        // First volley in a random direction, then ±10° rotation per volley (wave).
         this.baseAngle = rng.nextDouble() * Math.PI * 2.0;
         this.stepRad = Math.toRadians(STEP_DEG) * (rng.nextBoolean() ? 1.0 : -1.0);
+        this.maxReach = CsBossAttackLib.areaReach(session);
     }
 
     @Override
@@ -128,7 +130,7 @@ public class GhostCrossAttack implements CsBossAttack {
     }
 
     private void spawnFormation(ServerLevel level, BossBattleSession session, CsBossEntity boss) {
-        // La direction part d'un angle aléatoire et tourne de ±10° à chaque volée (effet de vague).
+        // Direction starts from a random angle and rotates ±10° per volley (wave effect).
         double theta = baseAngle + stepRad * sent;
         double dirX = Math.cos(theta);
         double dirZ = Math.sin(theta);
@@ -150,13 +152,17 @@ public class GhostCrossAttack implements CsBossAttack {
     private void driveFormation(ServerLevel level, BossBattleSession session, Formation f, int age) {
         double cx = f.spawnX + f.dirX * SPEED * age;
         double cz = f.spawnZ + f.dirZ * SPEED * age;
+        double traveled = Math.sqrt((cx - f.spawnX) * (cx - f.spawnX) + (cz - f.spawnZ) * (cz - f.spawnZ));
+        if (traveled >= maxReach) {
+            return;
+        }
         double cy = f.baseY;
         // Forward axis and the two axes of the perpendicular plane (up = world Y, right = horizontal).
         Vec3 up = new Vec3(0, 1, 0);
         Vec3 right = new Vec3(f.dirZ, 0, -f.dirX);
         Vec3 face = new Vec3(f.dirX, 0, f.dirZ);
 
-        // Centre minion.
+        // Center minion.
         placeMinion(f.minions[0], cx, cy, cz, face);
         // 4 satellites spinning around the forward axis.
         double rot = Math.toRadians(age * ROT_DEG_PER_TICK);
@@ -183,8 +189,8 @@ public class GhostCrossAttack implements CsBossAttack {
     private void spawnParticles(ServerLevel level, double cx, double cy, double cz,
                                 Vec3 up, Vec3 right, Vec3 face) {
         for (int n = 0; n < PARTICLES_PER_TICK; n++) {
-            double u = (rng.nextDouble() * 2.0 - 1.0) * RADIUS;   // vertical spread
-            double v = (rng.nextDouble() * 2.0 - 1.0) * RADIUS;   // lateral spread
+            double u = (rng.nextDouble() * 2.0 - 1.0) * RADIUS; // vertical spread
+            double v = (rng.nextDouble() * 2.0 - 1.0) * RADIUS; // lateral spread
             double w = (rng.nextDouble() * 2.0 - 1.0) * HALF_THICK; // thin along travel
             double x = cx + up.x * u + right.x * v + face.x * w;
             double y = cy + up.y * u + right.y * v + face.y * w;

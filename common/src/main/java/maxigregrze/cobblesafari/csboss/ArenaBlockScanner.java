@@ -10,8 +10,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Scan + toggle reactive blocks around a trigger (plan 100 § 10).
- * Radius in chunks (X/Z) + bounded fixed Y range.
+ * Scan + toggle reactive blocks around a trigger.
+ * Square of side {@code 2·blockRadiusChunks·16 + 1} (demi-côté = chunks × 16) + bounded Y range.
  */
 public final class ArenaBlockScanner {
 

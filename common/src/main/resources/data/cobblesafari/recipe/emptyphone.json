@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "IGI",
+    "IDI",
+    "COC"
+  ],
+  "key": {
+    "I": { "item": "minecraft:iron_ingot" },
+    "G": { "item": "minecraft:glass" },
+    "D": { "item": "minecraft:diamond" },
+    "C": { "item": "minecraft:copper_ingot" },
+    "O": { "item": "minecraft:gold_ingot" }
+  },
+  "result": {
+    "id": "cobblesafari:emptyphone",
+    "count": 1
+  }
+}

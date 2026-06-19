@@ -10,7 +10,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.Level;
 
 /**
- * Falling rock (plan 107 § 4.2): driven by the attack (fast descent). Variant
+ * Falling rock: driven by the attack (fast descent). Variant
  * {@code METEORITE} (rock texture, flame trail) or {@code DRACO} (draco-meteor texture,
  * soul flame trail). Rendered via the corresponding block model.
  */
@@ -18,7 +18,7 @@ public class AttackMeteoriteEntity extends AbstractAttackEntity {
 
     private static final EntityDataAccessor<Boolean> DATA_DRACO =
             SynchedEntityData.defineId(AttackMeteoriteEntity.class, EntityDataSerializers.BOOLEAN);
-    /** Render scale (1 = normal). Enables 0→1 growth (plan 113, base_rock_3). */
+    /** Render scale (1 = normal). Enables 0→1 growth (base_rock_3). */
     private static final EntityDataAccessor<Float> DATA_SCALE =
             SynchedEntityData.defineId(AttackMeteoriteEntity.class, EntityDataSerializers.FLOAT);
     /** Tumble angle (degrees) applied on all 3 axes at render time. */

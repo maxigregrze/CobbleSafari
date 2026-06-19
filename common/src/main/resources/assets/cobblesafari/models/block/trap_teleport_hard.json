@@ -1,0 +1,7 @@
+{
+  "parent": "cobblesafari:block/trap_base",
+  "textures": {
+    "0": "cobblesafari:block/trap_teleport_hard",
+    "particle": "cobblesafari:block/trap_teleport_hard"
+  }
+}

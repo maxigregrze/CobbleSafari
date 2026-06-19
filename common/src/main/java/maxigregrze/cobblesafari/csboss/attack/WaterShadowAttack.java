@@ -14,20 +14,20 @@ import java.util.List;
 import java.util.UUID;
 
 /**
- * {@code base_water_1} (plan 110): aquatic variant of {@code base_fire_1}. A shadow <b>per
+ * {@code base_water_1}: aquatic variant of {@code base_fire_1}. A shadow <b>per
  * player</b> that tracks then freezes; 1 s later a bubble column erupts (8 damage,
  * <b>no fire</b>). The next wave appears as soon as the previous one <b>stops moving</b> (on freeze),
  * so cycles overlap. +20% occurrences vs fire.
  */
 public class WaterShadowAttack implements CsBossAttack {
 
-    private static final int FREEZE_AT = 60;      // shadow freezes (and triggers next wave)
-    private static final int COLUMN_START = 80;   // +1 s after freeze
-    private static final int COLUMN_END = 110;    // column 1.5 s
+    private static final int FREEZE_AT = 60; // shadow freezes (and triggers next wave)
+    private static final int COLUMN_START = 80; // +1 s after freeze
+    private static final int COLUMN_END = 110; // column 1.5 s
     private static final int DISCARD_AT = 110;
     private static final int SPAWN_INTERVAL = FREEZE_AT; // wave as soon as previous freezes
-    private static final int END_DELAY = 10;      // ≈240 t total
-    private static final int WAVES = 3;           // deterministic (2*60+110+10 = 240)
+    private static final int END_DELAY = 10; // ≈240 t total
+    private static final int WAVES = 3; // deterministic (2*60+110+10 = 240)
     private static final double COLUMN_RADIUS = 1.0;
     private static final double COLUMN_HEIGHT = 4.0;
     private static final float WATER_DAMAGE = 8.0F;
@@ -113,7 +113,8 @@ public class WaterShadowAttack implements CsBossAttack {
         }
         if (age < FREEZE_AT) {
             if (level.getPlayerByUUID(s.target) instanceof ServerPlayer p && p.isAlive()) {
-                CsBossAttackLib.chase(s.entity, p.getX(), p.getY(), p.getZ(), CsBossAttackLib.CHASE_SPEED);
+                CsBossAttackLib.chase(s.entity, p.getX(), p.getY(), p.getZ(),
+                        CsBossAttackLib.homingStep(s.entity, p.getX(), p.getZ(), CsBossAttackLib.CHASE_SPEED));
             }
         } else if (age == FREEZE_AT) {
             boss.triggerAttackAnimation();

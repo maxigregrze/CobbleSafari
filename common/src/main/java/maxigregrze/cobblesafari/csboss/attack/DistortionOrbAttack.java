@@ -14,19 +14,19 @@ import java.util.List;
 import java.util.UUID;
 
 /**
- * {@code distortion_4} (plan 113, Type A): one Giratina orb (red glow, floats 1 block above the
+ * {@code distortion_4} (Type A): one Giratina orb (red glow, floats 1 block above the
  * ground) spawns per player at the very start and follows it at walking speed while always facing it,
  * until it despawns ({@link #ORB_LIFETIME}). Darkness lasts 1 s longer than that despawn time. On
  * contact with the player it follows the orb deals 18 damage and vanishes (it is hard to avoid).
  */
 public class DistortionOrbAttack implements CsBossAttack {
 
-    private static final int ORB_LIFETIME = 240;                // ≈12 s before the orbs despawn
+    private static final int ORB_LIFETIME = 240; // ≈12 s before the orbs despawn
     private static final int DARKNESS_TICKS = ORB_LIFETIME + 20; // 1 s longer than the orbs
-    private static final double WALK_SPEED = 0.16;              // slightly slower follow
+    private static final double WALK_SPEED = 0.16; // slightly slower follow
     private static final double FLOAT_HEIGHT = 1.0;
-    private static final double HIT_RADIUS = 1.2;              // horizontal contact with the followed player
-    private static final float HIT_DAMAGE = 18.0F;            // hard to avoid ⇒ high damage
+    private static final double HIT_RADIUS = 1.2; // horizontal contact with the followed player
+    private static final float HIT_DAMAGE = 18.0F; // hard to avoid ⇒ high damage
 
     private final String id;
     private final List<Orb> orbs = new ArrayList<>();
@@ -84,7 +84,8 @@ public class DistortionOrbAttack implements CsBossAttack {
                 continue;
             }
             if (level.getPlayerByUUID(o.target) instanceof ServerPlayer p && p.isAlive()) {
-                CsBossAttackLib.chase(o.entity, p.getX(), p.getY() + FLOAT_HEIGHT, p.getZ(), WALK_SPEED);
+                CsBossAttackLib.chase(o.entity, p.getX(), p.getY() + FLOAT_HEIGHT, p.getZ(),
+                        CsBossAttackLib.homingStep(o.entity, p.getX(), p.getZ(), WALK_SPEED));
                 o.entity.facePlayer(p.getX(), p.getZ()); // always look at the player it follows
                 // Collision with the followed player: heavy hit, then the orb vanishes.
                 double dx = o.entity.getX() - p.getX();

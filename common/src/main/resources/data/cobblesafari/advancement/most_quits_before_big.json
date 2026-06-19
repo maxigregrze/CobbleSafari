@@ -1,5 +1,5 @@
 {
-  "parent": "cobblesafari:root",
+  "parent": "cobblesafari:gambling_addiction",
   "display": {
     "icon": {
       "id": "minecraft:gold_ingot"

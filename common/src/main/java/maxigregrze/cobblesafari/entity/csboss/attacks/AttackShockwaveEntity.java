@@ -2,6 +2,7 @@ package maxigregrze.cobblesafari.entity.csboss.attacks;
 
 import maxigregrze.cobblesafari.csboss.BossBattleSession;
 import maxigregrze.cobblesafari.csboss.CsBossDamage;
+import maxigregrze.cobblesafari.csboss.attack.CsBossAttackLib;
 import maxigregrze.cobblesafari.init.ModEntities;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -20,11 +21,11 @@ import java.util.Set;
 import java.util.UUID;
 
 /**
- * Anneau de choc propagatif au sol (plan 124) : rayon croissant, bande radiale de ½ bloc,
- * collision limitée aux participants (esquive par saut).
+ * Propagating ground shockwave ring: growing radius, ½-block radial band,
+ * collision limited to participants (dodge by jumping).
  *
- * <p>Util générique : l'appelant fournit directement la couleur, les dégâts et les effets
- * (poison / poussée) — aucun « type » figé, n'importe qui peut créer une variante.
+ * <p>Generic utility: the caller supplies color, damage, and effects
+ * (poison / knockback) directly — no fixed "type"; anyone can create a variant.
  */
 public class AttackShockwaveEntity extends AbstractAttackEntity {
 
@@ -32,22 +33,22 @@ public class AttackShockwaveEntity extends AbstractAttackEntity {
 
     public static final double WAVE_SPEED = 0.5;
     public static final double THICKNESS = 0.5;
-    /** Écart vertical max entre le joueur et le sol de l'onde pour être touché (exclut les blocs surélevés). */
+    /** Max vertical gap between the player and the wave floor to count as hit (excludes raised blocks). */
     public static final double GROUND_Y_TOLERANCE = 0.5;
-    /** Force de poussée appliquée quand {@code applyKnockback} est vrai. */
+    /** Knockback strength applied when {@code applyKnockback} is true. */
     public static final double KNOCKBACK_STRENGTH = 1.0;
 
     private static final int POISON_DURATION = 100; // 5 s
     private static final int POISON_AMPLIFIER = 1;
     private static final int DEFAULT_COLOR = 0xFFFFFF;
 
-    /** Couleur synchronisée (rendu côté client). */
+    /** Synced color (client-side rendering). */
     private static final EntityDataAccessor<Integer> DATA_COLOR =
             SynchedEntityData.defineId(AttackShockwaveEntity.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Float> DATA_RADIUS =
             SynchedEntityData.defineId(AttackShockwaveEntity.class, EntityDataSerializers.FLOAT);
 
-    // Paramètres de collision (serveur uniquement, fixés au spawn).
+    // Collision parameters (server only, set at spawn).
     private float damage;
     private boolean applyPoison;
     private boolean applyKnockback;
@@ -61,13 +62,13 @@ public class AttackShockwaveEntity extends AbstractAttackEntity {
     }
 
     /**
-     * Crée une onde de choc. Les variantes (eau / poison / acier / normal / personnalisée) sont
-     * définies par les paramètres transmis ici, pas par un enum.
+     * Creates a shockwave. Variants (water / poison / steel / normal / custom) are
+     * defined by the parameters passed here, not by an enum.
      *
-     * @param colorRgb       couleur de l'anneau (rendu)
-     * @param damage         dégâts au contact
-     * @param applyPoison    applique l'effet Poison au contact
-     * @param applyKnockback applique une poussée radiale vers l'extérieur au contact
+     * @param colorRgb ring color (rendering)
+     * @param damage contact damage
+     * @param applyPoison applies Poison on contact
+     * @param applyKnockback applies outward radial knockback on contact
      */
     public static AttackShockwaveEntity spawn(ServerLevel level, double x, double floorY, double z,
                                               int sessionId, int colorRgb, float damage,
@@ -131,7 +132,7 @@ public class AttackShockwaveEntity extends AbstractAttackEntity {
             return;
         }
 
-        if (this.radius >= session.getPlayerRadius()) {
+        if (this.radius >= CsBossAttackLib.areaReach(session)) {
             this.discard();
             return;
         }
@@ -141,7 +142,7 @@ public class AttackShockwaveEntity extends AbstractAttackEntity {
         double inner = this.radius - THICKNESS;
 
         for (ServerPlayer p : session.aliveParticipants(level)) {
-            // Touché seulement si le joueur est au sol ET au même niveau que l'onde (pas sur un bloc surélevé).
+            // Hit only if the player is on the ground AND at the same level as the wave (not on a raised block).
             if (alreadyHit.contains(p.getUUID()) || !p.onGround()
                     || Math.abs(p.getY() - getY()) > GROUND_Y_TOLERANCE) {
                 continue;

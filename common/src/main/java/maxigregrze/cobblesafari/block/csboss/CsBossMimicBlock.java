@@ -3,10 +3,16 @@ package maxigregrze.cobblesafari.block.csboss;
 import com.mojang.serialization.MapCodec;
 import maxigregrze.cobblesafari.platform.Services;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BaseEntityBlock;
@@ -24,7 +30,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * CSBoss-reactive "mimic" block (plan 125 § 2). Toggles between invisible/no-hitbox and a full
+ * CSBoss-reactive "mimic" block. Toggles between invisible/no-hitbox and a full
  * solid block whose texture is copied from a configurable target block (rendered by the BER).
  *
  * <p>{@code active} is posted by the battle scan ({@link BattleReactiveBlock}); {@code reverse} is a
@@ -98,6 +104,23 @@ public class CsBossMimicBlock extends BaseEntityBlock implements BattleReactiveB
     @Override
     public VoxelShape getCollisionShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
         return isSolid(state) ? FULL : Shapes.empty();
+    }
+
+    @Override
+    protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos,
+                                              Player player, InteractionHand hand, BlockHitResult hit) {
+        if (level.isClientSide()) {
+            return ItemInteractionResult.SUCCESS;
+        }
+        if (player instanceof ServerPlayer sp && sp.isCreative()
+                && stack.getItem() instanceof BlockItem blockItem
+                && level.getBlockEntity(pos) instanceof CsBossMimicBlockEntity be) {
+            ResourceLocation id = BuiltInRegistries.BLOCK.getKey(blockItem.getBlock());
+            be.setMimicBlockId(id.toString());
+            be.syncToClients();
+            return ItemInteractionResult.CONSUME;
+        }
+        return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
     }
 
     @Override

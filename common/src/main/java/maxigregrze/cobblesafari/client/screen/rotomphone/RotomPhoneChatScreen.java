@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Rotom Phone "Chat" app — data-driven questline messenger (cf. action plan 114 §8-12).
+ * Rotom Phone "Chat" app — data-driven questline messenger.
  * Client-driven message streaming; server-persisted position; server-authoritative progress.
  * The whole transcript (all steps up to the current one) stays on screen and is scrollable.
  */
@@ -29,7 +29,7 @@ public class RotomPhoneChatScreen extends RotomPhoneBaseScreen {
     private static final int CONTACTS_X1 = 98;
     private static final int CONTACTS_Y0 = 16;
     private static final int CONTACTS_Y1 = 168;
-    private static final int CONTACT_BTN_X = 59; // 32px button in the 58..98 area (§8.4a)
+    private static final int CONTACT_BTN_X = 59; // 32px button in the 58..98 area (a)
     private static final int CONTACT_BTN_SIZE = 32;
     private static final int CONTACT_GAP = 8;
     private static final int CONTACTS_SLIDER_X0 = 48;
@@ -54,7 +54,7 @@ public class RotomPhoneChatScreen extends RotomPhoneBaseScreen {
     private static final ResourceLocation TEX_TYPING = loc("chat/rotomphone_gui_typing.png");
 
     private static final int COL_WHITE = 0xFFFFFFFF;
-    private static final int COL_BLACK = 0xFF000000;
+    private static final int COL_BUBBLE_TEXT = 0xFF2C2C2C;
 
     private static final long STREAM_STEP_MS = 3000L;
     private static final long POLL_MS = 1000L;
@@ -312,7 +312,7 @@ public class RotomPhoneChatScreen extends RotomPhoneBaseScreen {
         }
         g.disableScissor();
 
-        // Hide the contacts scrollbar entirely when there are 4 contacts or fewer (§ requirement).
+        // Hide the contacts scrollbar entirely when there are 4 contacts or fewer.
         contactsSliderShown = contacts.size() > 4;
         if (contactsSliderShown) {
             float f = lastContactsOverflow > 0 ? (float) scrollContacts / lastContactsOverflow : 0f;
@@ -430,7 +430,7 @@ public class RotomPhoneChatScreen extends RotomPhoneBaseScreen {
             switch (type) {
                 case 0 -> {
                     fillRoundedRect(g, x, y, BUBBLE_W, height, CORNER_R, COL_WHITE, true, true, false, true);
-                    drawLines(g, lines, x + BUBBLE_PAD, y, COL_BLACK);
+                    drawLines(g, lines, x + BUBBLE_PAD, y, COL_BUBBLE_TEXT);
                 }
                 case 1 -> renderTask(g, x, y, theme, mouseX, mouseY);
                 case 2 -> {
@@ -449,7 +449,7 @@ public class RotomPhoneChatScreen extends RotomPhoneBaseScreen {
 
         private void renderTask(GuiGraphics g, int x, int y, int theme, int mouseX, int mouseY) {
             fillRoundedRect(g, x, y, BUBBLE_W, height, CORNER_R, theme, true, true, true, false);
-            drawLines(g, lines, x + BUBBLE_PAD, y, COL_BLACK);
+            drawLines(g, lines, x + BUBBLE_PAD, y, COL_BUBBLE_TEXT);
 
             int n = taskLineCount == null ? 1 : taskLineCount;
             int yb = n * 8 + (n + 1) * 2 + 2;
@@ -493,7 +493,7 @@ public class RotomPhoneChatScreen extends RotomPhoneBaseScreen {
 
         private void drawLines(GuiGraphics g, List<FormattedCharSequence> ls, int x, int top, int color) {
             for (int i = 0; i < ls.size(); i++) {
-                g.drawString(font, ls.get(i), x, top + BUBBLE_PAD_V + i * 10, color, true);
+                g.drawString(font, ls.get(i), x, top + BUBBLE_PAD_V + i * 10, color, false);
             }
         }
     }
@@ -691,7 +691,7 @@ public class RotomPhoneChatScreen extends RotomPhoneBaseScreen {
     }
 
     /**
-     * Slider with a 1px outline and a proportional knob (cf. §8.2). {@code fraction} is the content
+     * Slider with a 1px outline and a proportional knob. {@code fraction} is the content
      * position: 0 ⇒ knob at the top (top of content shown), 1 ⇒ knob at the bottom.
      */
     private void drawSlider(GuiGraphics g, int sliderId, int sx0, int sx1, int totalH, int areaH, float fraction) {

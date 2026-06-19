@@ -13,6 +13,11 @@
       "conditions": [
         {
           "condition": "minecraft:survives_explosion"
+        },
+        {
+          "condition": "minecraft:block_state_property",
+          "block": "cobblesafari:union_room_globe",
+          "properties": { "half": "lower" }
         }
       ]
     }

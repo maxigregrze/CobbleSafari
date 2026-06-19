@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Server-side registry of loaded chat conversations (cf. action plan 114 §2.3). Mirrors
+ * Server-side registry of loaded chat conversations. Mirrors
  * {@code RotomPhoneSkinRegistry}: cleared and refilled on (re)load.
  */
 public final class ChatConversationRegistry {
@@ -37,7 +37,7 @@ public final class ChatConversationRegistry {
         return Collections.unmodifiableList(new ArrayList<>(CONVERSATIONS.values()));
     }
 
-    /** Conversations sorted by {@code displayPriority} asc, then id alphabetically (cf. §9). */
+    /** Conversations sorted by {@code displayPriority} asc, then id alphabetically. */
     public static List<ChatConversationDefinition> getAllSorted() {
         List<ChatConversationDefinition> list = new ArrayList<>(CONVERSATIONS.values());
         list.sort(Comparator
@@ -48,7 +48,7 @@ public final class ChatConversationRegistry {
 
     /**
      * Same gating logic as {@code RotomPhoneSkinRegistry.isUnlockedByPlayer}: unlocked from start, or
-     * the configured advancement is done. Note: per §2.4 the advancement only matters when
+     * the configured advancement is done. Note: per the advancement only matters when
      * {@code unlockedFromStart == false}.
      */
     public static boolean isUnlockedByPlayer(ServerPlayer player, ChatConversationDefinition c) {

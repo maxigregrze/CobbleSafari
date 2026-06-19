@@ -7,24 +7,89 @@
   "unlockedFromStart": true,
   "steps": [
     {
-      "messagesBefore": ["chat.test.hayley.s1.b1", "chat.test.hayley.s1.b2"],
-      "advancement": "cobblesafari:up_and_downs",
-      "rewardItems": "cobblesafari:gifts/test_basic",
-      "messagesAfter": ["chat.test.hayley.s1.a1"],
+      "messagesBefore": [
+        "cobblesafari.chat.hayley.s1.b1",
+        "cobblesafari.chat.hayley.s1.b2",
+        "cobblesafari.chat.hayley.s1.b3",
+        "cobblesafari.chat.hayley.s1.b4"
+      ],
+      "advancement": "cobblesafari:welcome_to_safari",
+      "rewardItems": "cobblesafari:gifts/hayley_safari_balls",
+      "messagesAfter": [
+        "cobblesafari.chat.hayley.s1.a1",
+        "cobblesafari.chat.hayley.s1.a2",
+        "cobblesafari.chat.hayley.s1.a3",
+        "cobblesafari.chat.hayley.s1.a4"
+      ],
       "waitNextDay": false
     },
     {
-      "messagesBefore": ["chat.test.hayley.s2.b1"],
-      "advancement": "cobblesafari:safari_geographer",
-      "rewardPersonalTrade": "sample_shiny_eevee_for_pikachu",
-      "messagesAfter": ["chat.test.hayley.s2.a1"],
+      "messagesBefore": [
+        "cobblesafari.chat.hayley.s2.b1",
+        "cobblesafari.chat.hayley.s2.b2"
+      ],
+      "advancement": "cobblesafari:rookie_catcher",
+      "rewardItems": "cobblesafari:gifts/hayley_mud_balls",
+      "messagesAfter": [
+        "cobblesafari.chat.hayley.s2.a1",
+        "cobblesafari.chat.hayley.s2.a2"
+      ],
+      "waitNextDay": false
+    },
+    {
+      "messagesBefore": [
+        "cobblesafari.chat.hayley.s3.b1",
+        "cobblesafari.chat.hayley.s3.b2",
+        "cobblesafari.chat.hayley.s3.b3",
+        "cobblesafari.chat.hayley.s3.b4",
+        "cobblesafari.chat.hayley.s3.b5"
+      ],
+      "advancement": "cobblesafari:repulsive",
+      "rewardItems": "cobblesafari:gifts/hayley_bait",
+      "messagesAfter": [
+        "cobblesafari.chat.hayley.s3.a1",
+        "cobblesafari.chat.hayley.s3.a2"
+      ],
+      "waitNextDay": false
+    },
+    {
+      "messagesBefore": [
+        "cobblesafari.chat.hayley.s4.b1",
+        "cobblesafari.chat.hayley.s4.b2",
+        "cobblesafari.chat.hayley.s4.b3",
+        "cobblesafari.chat.hayley.s4.b4",
+        "cobblesafari.chat.hayley.s4.b5"
+      ],
+      "advancement": "cobblesafari:first_bait",
+      "rewardItems": "cobblesafari:gifts/hayley_safarikit",
+      "messagesAfter": [
+        "cobblesafari.chat.hayley.s4.a1",
+        "cobblesafari.chat.hayley.s4.a2",
+        "cobblesafari.chat.hayley.s4.a3",
+        "cobblesafari.chat.hayley.s4.a4",
+        "cobblesafari.chat.hayley.s4.a5",
+        "cobblesafari.chat.hayley.s4.a6",
+        "cobblesafari.chat.hayley.s4.a7"
+      ],
       "waitNextDay": true
     },
     {
-      "messagesBefore": ["chat.test.hayley.s3.b1"],
-      "advancement": "cobblesafari:dig_deeper",
-      "rewardItems": "cobblesafari:gifts/test_basic",
-      "messagesAfter": ["chat.test.hayley.s3.a1"],
+      "messagesBefore": [
+        "cobblesafari.chat.hayley.s5.b1",
+        "cobblesafari.chat.hayley.s5.b2",
+        "cobblesafari.chat.hayley.s5.b3",
+        "cobblesafari.chat.hayley.s5.b4",
+        "cobblesafari.chat.hayley.s5.b5",
+        "cobblesafari.chat.hayley.s5.b6"
+      ],
+      "advancement": "cobblesafari:safari_geographer",
+      "rewardItems": "cobblesafari:gifts/hayley_safarikit",
+      "messagesAfter": [
+        "cobblesafari.chat.hayley.s5.a1",
+        "cobblesafari.chat.hayley.s5.a2",
+        "cobblesafari.chat.hayley.s5.a3",
+        "cobblesafari.chat.hayley.s5.a4"
+      ],
       "waitNextDay": false
     }
   ]

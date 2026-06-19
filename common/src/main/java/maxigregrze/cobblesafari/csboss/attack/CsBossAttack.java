@@ -5,7 +5,7 @@ import maxigregrze.cobblesafari.entity.csboss.CsBossEntity;
 import net.minecraft.server.level.ServerLevel;
 
 /**
- * Small ticked automaton representing an attack pattern (plan 100 § 12).
+ * Small ticked automaton representing an attack pattern.
  */
 public interface CsBossAttack {
 
@@ -29,7 +29,7 @@ public interface CsBossAttack {
     }
 
     /**
-     * Effect category (plan 111) — used to allow two simultaneous attacks of different
+     * Effect category — used to allow two simultaneous attacks of different
      * categories. By default {@link AttackCategory#SPREAD} ({@code test} case / bullet volleys).
      */
     default AttackCategory category() {

@@ -31,7 +31,7 @@ import java.util.Map;
 import java.util.UUID;
 
 /**
- * Server-side logic for the Rotom Phone chat questlines (cf. action plan 114 §5-7, §11).
+ * Server-side logic for the Rotom Phone chat questlines.
  */
 public final class ChatConversationService {
 
@@ -41,7 +41,7 @@ public final class ChatConversationService {
 
     public enum ClaimResult { SUCCESS, NOT_FOUND, NOT_IN_TASK, NOT_COMPLETE }
 
-    /** Resolved task progress for the bubble. {@code den == 0} = binary bar, no counter (§11.1). */
+    /** Resolved task progress for the bubble. {@code den == 0} = binary bar, no counter (). */
     public record ProgressInfo(int num, int den, boolean done) {}
 
     // ---------------------------------------------------------------- state read
@@ -131,7 +131,7 @@ public final class ChatConversationService {
             return new ProgressInfo(num, amount, cur >= amount);
         }
 
-        // Non-repeatable: advancement criteria ratio, binary if mono-criterion (§11.1).
+        // Non-repeatable: advancement criteria ratio, binary if mono-criterion ().
         ResourceLocation advId = ResourceLocation.tryParse(step.advancement());
         if (advId == null) {
             return new ProgressInfo(0, 0, false);
@@ -239,7 +239,7 @@ public final class ChatConversationService {
         data.setDirty();
     }
 
-    /** BEFORE → next step / repeat / DONE (cf. §5.3). */
+    /** BEFORE → next step / repeat / DONE. */
     private static void advanceAfterStep(ChatConversationDefinition conv, ProgressEntry e) {
         int idx = e.stepIndex;
         ChatStepDefinition cur = conv.step(Math.min(idx, conv.steps().size() - 1));
@@ -259,7 +259,7 @@ public final class ChatConversationService {
         e.phase = Phase.BEFORE;
         e.messageIndex = 0;
         e.claimed = false;
-        e.statBaseline = step.repeatable() ? Long.MIN_VALUE : 0L; // lazy re-snapshot for repeatable
+        e.statBaseline = step.repeatable() ? Long.MIN_VALUE: 0L; // lazy re-snapshot for repeatable
     }
 
     private static void giveRewards(ServerPlayer player, ChatStepDefinition step) {

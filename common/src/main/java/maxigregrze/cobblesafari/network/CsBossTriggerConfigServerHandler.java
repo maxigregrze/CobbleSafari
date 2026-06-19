@@ -11,7 +11,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 
 /**
- * Server validation for the trigger GUI (plan 100 § 3.3): creative + proximity,
+ * Server validation for the trigger GUI: creative + proximity,
  * never trust the client.
  */
 public final class CsBossTriggerConfigServerHandler {

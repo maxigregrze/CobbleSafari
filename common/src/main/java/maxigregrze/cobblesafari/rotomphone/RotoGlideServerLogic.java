@@ -148,7 +148,11 @@ public final class RotoGlideServerLogic {
         if (player.isSpectator()) {
             return true;
         }
-        if (player.getAbilities().flying) {
+        // In creative mode double-tapping jump toggles flight, which would otherwise
+        // get interpreted as a roto-glide second jump a few ticks after flight is
+        // disabled. Block the feature entirely in creative rather than checking for
+        // the (already cleared) flying state.
+        if (player.getAbilities().instabuild) {
             return true;
         }
         return player.isFallFlying();

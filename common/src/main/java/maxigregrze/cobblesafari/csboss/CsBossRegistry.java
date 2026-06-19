@@ -11,7 +11,7 @@ import java.util.Optional;
 import java.util.TreeMap;
 
 /**
- * In-memory registry of CSBosses loaded from datapacks (plan 100 § 2.1).
+ * In-memory registry of CSBosses loaded from datapacks.
  * Indexed by direct id and by tag (uniform random selection).
  */
 public final class CsBossRegistry {

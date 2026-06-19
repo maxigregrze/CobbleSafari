@@ -1,0 +1,68 @@
+{
+  "fallback": "minecraft:empty",
+  "elements": [
+    {
+      "weight": 20,
+      "element": {
+        "location": "cobblesafari:underground/sellers/underground_seller_1a",
+        "processors": "cobblesafari:underground_digsite_scatter",
+        "projection": "rigid",
+        "element_type": "minecraft:single_pool_element"
+      }
+    },
+    {
+      "weight": 40,
+      "element": {
+        "location": "cobblesafari:underground/sellers/underground_seller_1b",
+        "processors": "cobblesafari:underground_digsite_scatter",
+        "projection": "rigid",
+        "element_type": "minecraft:single_pool_element"
+      }
+    },
+    {
+      "weight": 40,
+      "element": {
+        "location": "cobblesafari:underground/sellers/underground_seller_1c",
+        "processors": "cobblesafari:underground_digsite_scatter",
+        "projection": "rigid",
+        "element_type": "minecraft:single_pool_element"
+      }
+    },
+    {
+      "weight": 19,
+      "element": {
+        "location": "cobblesafari:underground/sellers/underground_seller_1d",
+        "processors": "cobblesafari:underground_digsite_scatter",
+        "projection": "rigid",
+        "element_type": "minecraft:single_pool_element"
+      }
+    },
+    {
+      "weight": 5,
+      "element": {
+        "location": "cobblesafari:underground/sellers/underground_seller_2a",
+        "processors": "cobblesafari:underground_digsite_scatter",
+        "projection": "rigid",
+        "element_type": "minecraft:single_pool_element"
+      }
+    },
+    {
+      "weight": 5,
+      "element": {
+        "location": "cobblesafari:underground/sellers/underground_seller_2b",
+        "processors": "cobblesafari:underground_digsite_scatter",
+        "projection": "rigid",
+        "element_type": "minecraft:single_pool_element"
+      }
+    },
+    {
+      "weight": 1,
+      "element": {
+        "location": "cobblesafari:underground/sellers/underground_seller_3a",
+        "processors": "cobblesafari:underground_digsite_scatter",
+        "projection": "rigid",
+        "element_type": "minecraft:single_pool_element"
+      }
+    }
+  ]
+}

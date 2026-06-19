@@ -37,7 +37,7 @@ public class SafariTimerConfig {
     private List<DimensionTimerEntry> dimensions = new ArrayList<>();
 
     public SafariTimerConfig() {
-        // resetHour left unset ⇒ inherits dailySystemResetHour (plan 118 §6.2).
+        // resetHour left unset ⇒ inherits dailySystemResetHour.
         dimensions.add(new DimensionTimerEntry(SAFARI_DIMENSION_ID, 900));
         dimensions.add(new DimensionTimerEntry(DUNGEON_JUMP_DIMENSION_ID, 900));
         dimensions.add(new DimensionTimerEntry(DUNGEON_UNDERGROUND_DIMENSION_ID, 900));
@@ -145,7 +145,7 @@ public class SafariTimerConfig {
                 .filter(entry -> entry.getDimensionId().equals(dimensionId))
                 .findFirst();
         if (existing.isEmpty()) {
-            // resetHour left unset ⇒ inherits dailySystemResetHour (plan 118 §6.2).
+            // resetHour left unset ⇒ inherits dailySystemResetHour.
             inst.dimensions.add(new DimensionTimerEntry(dimensionId, defaultDurationSeconds));
             CobbleSafari.LOGGER.info("Added missing dimension config: {} ({} min)", dimensionId, defaultDurationSeconds / 60);
             return true;

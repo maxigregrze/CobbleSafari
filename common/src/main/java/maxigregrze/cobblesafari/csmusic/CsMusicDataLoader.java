@@ -14,7 +14,7 @@ import java.util.Map;
 import java.util.regex.Pattern;
 
 /**
- * Loads csmusic definitions from {@code data/<ns>/csmusic/*.json} (plan 105 § 2.2).
+ * Loads csmusic definitions from {@code data/<ns>/csmusic/*.json}.
  * Modeled on {@code CsBossDataLoader}: strict validation, never throws.
  * Sound ids are not validated here (they live in the client resource pack).
  */
@@ -89,7 +89,7 @@ public final class CsMusicDataLoader {
         return rl;
     }
 
-    /** {@code .../csmusic/<name>.json} → {@code name}. */
+    /** {@code.../csmusic/<name>.json} → {@code name}. */
     private static String nameFromFile(ResourceLocation file) {
         String path = file.getPath();
         int slash = path.lastIndexOf('/');

@@ -9,7 +9,7 @@ import net.minecraft.world.scores.PlayerTeam;
 import net.minecraft.world.scores.Scoreboard;
 
 /**
- * Giratina orb (plan 113, distortion_4): rendered with the block model/texture
+ * Giratina orb (distortion_4): rendered with the block model/texture
  * {@code giratina_core_moving}. Carries the <b>vanilla luminous outline ("glow")</b> colored red
  * via a scoreboard team. Driven by the attack (follows a player, floats 1 block above the ground).
  */

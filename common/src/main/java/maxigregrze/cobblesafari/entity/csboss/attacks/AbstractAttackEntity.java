@@ -12,7 +12,7 @@ import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * Base for CSBoss attack entities (plan 107): ultra-light entities with no physics or AI,
+ * Base for CSBoss attack entities: ultra-light entities with no physics or AI,
  * immune, no-gravity, passing through blocks, driven by attack code or by
  * internal self-replication. A safety TTL ({@link #maxLifespan()}) prevents leaks if the
  * session disappears before normal cleanup.
@@ -24,6 +24,9 @@ public abstract class AbstractAttackEntity extends Entity {
 
     protected int sessionId;
     protected int age;
+    private double originX;
+    private double originZ;
+    private double maxTravel = -1.0;
 
     protected AbstractAttackEntity(EntityType<? extends AbstractAttackEntity> type, Level level) {
         super(type, level);
@@ -40,6 +43,13 @@ public abstract class AbstractAttackEntity extends Entity {
 
     public void setSessionId(int sessionId) {
         this.sessionId = sessionId;
+    }
+
+    /** Caps horizontal travel from the position at call time; {@code discard()} when exceeded. */
+    public void setMaxTravel(double maxTravel) {
+        this.originX = getX();
+        this.originZ = getZ();
+        this.maxTravel = maxTravel;
     }
 
     /** Current session (or {@code null} if ended) — for self-replication. */
@@ -65,6 +75,14 @@ public abstract class AbstractAttackEntity extends Entity {
         if (++this.age >= maxLifespan()) {
             this.discard();
             return;
+        }
+        if (this.maxTravel > 0.0) {
+            double dx = getX() - this.originX;
+            double dz = getZ() - this.originZ;
+            if (dx * dx + dz * dz > this.maxTravel * this.maxTravel) {
+                this.discard();
+                return;
+            }
         }
         serverTick((ServerLevel) this.level());
     }

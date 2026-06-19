@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.UUID;
 
 /**
- * Snapshots of in-progress boss fights (plan 100 § 7), to cancel any fight on reboot.
+ * Snapshots of in-progress boss fights, to cancel any fight on reboot.
  * Only the minimum needed for cleanup is persisted.
  */
 public class CsBossSavedData extends SavedData {

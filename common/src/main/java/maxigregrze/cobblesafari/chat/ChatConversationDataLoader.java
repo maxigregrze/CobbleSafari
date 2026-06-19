@@ -18,7 +18,7 @@ import java.util.regex.Pattern;
 
 /**
  * Loads {@code data/<ns>/chat_conversation/*.json} into {@link ChatConversationRegistry}
- * (cf. action plan 114 §2.3 / §2.3.1).
+ *.
  *
  * <p><b>Strict validation:</b> any structural error logs an explicit reason to the server log and
  * <em>aborts the loading of that specific JSON</em> (the file is skipped, others keep loading). No

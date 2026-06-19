@@ -1,0 +1,15 @@
+{
+  "display": {
+    "icon": { "id": "cobblesafari:redchain_fragment" },
+    "title": { "translate": "advancement.cobblesafari.dungeons.title" },
+    "description": { "translate": "advancement.cobblesafari.dungeons.description" },
+    "background": "minecraft:textures/gui/advancements/backgrounds/stone.png",
+    "frame": "task",
+    "show_toast": false,
+    "announce_to_chat": false,
+    "hidden": false
+  },
+  "criteria": {
+    "tick": { "trigger": "minecraft:tick" }
+  }
+}

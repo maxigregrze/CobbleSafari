@@ -7,16 +7,16 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
 
 /**
- * Client → server actions for the Rotom Phone chat app (cf. action plan 114 §12.1).
+ * Client → server actions for the Rotom Phone chat app.
  */
 public record ChatAppPayload(int actionType, String convId, int intArg) implements CustomPacketPayload {
 
     public static final int ACTION_REQUEST_CONTACTS = 0; // convId="", intArg=0
-    public static final int ACTION_OPEN             = 1; // convId
-    public static final int ACTION_ADVANCE_MESSAGE  = 2; // convId, intArg=newIndex
-    public static final int ACTION_POLL_TASK        = 3; // convId
-    public static final int ACTION_CLAIM            = 4; // convId
-    public static final int ACTION_AFTER_DONE       = 5; // convId
+    public static final int ACTION_OPEN = 1; // convId
+    public static final int ACTION_ADVANCE_MESSAGE = 2; // convId, intArg=newIndex
+    public static final int ACTION_POLL_TASK = 3; // convId
+    public static final int ACTION_CLAIM = 4; // convId
+    public static final int ACTION_AFTER_DONE = 5; // convId
 
     public static final CustomPacketPayload.Type<ChatAppPayload> TYPE =
             new CustomPacketPayload.Type<>(ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, "chat_app"));

@@ -19,7 +19,7 @@ import java.util.Map;
 import java.util.UUID;
 
 /**
- * Persistent store of player → assignment-key → {@link ObjectiveAssignment} (plan 118 §1),
+ * Persistent store of player → assignment-key → {@link ObjectiveAssignment},
  * plus the last daily-reset epoch day for the non-instanced reroll scheduler.
  */
 public class ObjectivesSavedData extends SavedData {
@@ -114,7 +114,7 @@ public class ObjectivesSavedData extends SavedData {
         }
     }
 
-    /** Removes the assignment for {@code key} from every player (instance purge, plan 118 §7). */
+    /** Removes the assignment for {@code key} from every player (instance purge). */
     public void removeKeyForAll(String key) {
         boolean changed = false;
         for (Map<String, ObjectiveAssignment> byKey : byPlayer.values()) {

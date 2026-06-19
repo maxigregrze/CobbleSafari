@@ -3,7 +3,7 @@ package maxigregrze.cobblesafari.entity.csboss.attacks;
 import maxigregrze.cobblesafari.entity.csboss.CsBossEntity;
 
 /**
- * Polar → world transform in the boss's rotating frame (plan 107 § 6.5 revised):
+ * Polar → world transform in the boss's rotating frame:
  * a relative position ({@code angleDeg} relative to the boss orientation, horizontal {@code radius},
  * vertical {@code localY}) is converted to world coordinates using the boss's current yaw.
  * Thus the entire distortion structure rotates with the boss.

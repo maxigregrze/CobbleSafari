@@ -15,8 +15,8 @@ import java.util.List;
 import java.util.UUID;
 
 /**
- * {@code base_ground_2} (plan 126 § 2) : comme {@code base_ghost_1}, mais la grande ombre est
- * remplacée par un tas digdirt ×3 vibrant avec particules terre, puis éruption minion.
+ * {@code base_ground_2}: like {@code base_ghost_1}, but the large shadow is
+ * replaced by a ×3 vibrating digdirt mound with dirt particles, then a minion eruption.
  */
 public class GroundEruptionAttack implements CsBossAttack {
 
@@ -96,7 +96,7 @@ public class GroundEruptionAttack implements CsBossAttack {
                     boss.getX(), floorY, boss.getZ(), session.getId());
             digdirt.setRenderScale(DIGDIRT_SCALE);
             digdirt.setDirtParticles(true);
-            digdirt.setDirtModel(true); // texture de terre (base_ground_2) au lieu de la météorite
+            digdirt.setDirtModel(true); // dirt texture (base_ground_2) instead of meteorite
             session.trackAttackEntity(digdirt);
             mounds.add(new Mound(digdirt, p.getUUID()));
             CsBossAttackLib.sound(level, boss.getX(), floorY, boss.getZ(),
@@ -112,7 +112,8 @@ public class GroundEruptionAttack implements CsBossAttack {
             if (cycleTick < FOLLOW_END) {
                 double speed = RUN_SPEED * Math.min(1.0, cycleTick / (double) RAMP_TICKS);
                 if (level.getPlayerByUUID(m.target) instanceof ServerPlayer p && p.isAlive()) {
-                    CsBossAttackLib.chase(m.digdirt, p.getX(), p.getY(), p.getZ(), speed);
+                    CsBossAttackLib.chase(m.digdirt, p.getX(), p.getY(), p.getZ(),
+                            CsBossAttackLib.homingStep(m.digdirt, p.getX(), p.getZ(), speed));
                 }
             } else if (cycleTick == FOLLOW_END) {
                 m.digdirt.setVibrating(true);

@@ -3,7 +3,7 @@ package maxigregrze.cobblesafari.chat;
 import java.util.List;
 
 /**
- * A chat questline loaded from {@code data/<ns>/chat_conversation/*.json} (cf. action plan 114 §2).
+ * A chat questline loaded from {@code data/<ns>/chat_conversation/*.json}.
  * Immutable; validated and built by {@link ChatConversationDataLoader}.
  */
 public record ChatConversationDefinition(
@@ -13,7 +13,7 @@ public record ChatConversationDefinition(
         int displayPriority,
         String textureFile,
         boolean unlockedFromStart,
-        String unlockingAdvancement,   // nullable when unlockedFromStart
+        String unlockingAdvancement, // nullable when unlockedFromStart
         List<ChatStepDefinition> steps) {
 
     public ChatStepDefinition step(int index) {

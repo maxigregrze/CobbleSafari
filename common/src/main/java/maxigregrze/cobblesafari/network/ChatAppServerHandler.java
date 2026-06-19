@@ -11,9 +11,9 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * Routes {@link ChatAppPayload} (C2S) to {@link ChatConversationService} (cf. action plan 114 §12.5).
+ * Routes {@link ChatAppPayload} (C2S) to {@link ChatConversationService}.
  * All conversation ids are validated against the registry and the per-player unlock state; the claim
- * action is debounced against double-fire (§15).
+ * action is debounced against double-fire ().
  */
 public final class ChatAppServerHandler {
 

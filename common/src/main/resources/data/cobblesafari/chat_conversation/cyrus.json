@@ -10,7 +10,7 @@
     {
       "messagesBefore": ["cobblesafari.chat.cyrus.s1.b1", "cobblesafari.chat.cyrus.s1.b2", "cobblesafari.chat.cyrus.s1.b3"],
       "advancement": "cobblesafari:fadded_shadow",
-      "rewardItems": "cobblesafari:gifts/test_basic",
+      "rewardItems": "cobblesafari:gifts/cyrus_fragment",
       "messagesAfter": ["cobblesafari.chat.cyrus.s1.a1", "cobblesafari.chat.cyrus.s1.a2", "cobblesafari.chat.cyrus.s1.a3"],
       "waitNextDay": false
     }

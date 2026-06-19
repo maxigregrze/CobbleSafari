@@ -15,7 +15,7 @@ import java.util.Set;
 import java.util.UUID;
 
 /**
- * Projectile water wave (plan 110 § base_water_2): moves in a straight line (model
+ * Projectile water wave: moves in a straight line (model
  * {@code vertical_wave}), deals 8 damage and strongly knocks back participants on contact
  * ("the wave does not pass through the player"). Three waves form an arc sent by the boss.
  */
@@ -24,7 +24,7 @@ public class AttackWaveEntity extends AbstractAttackEntity {
     private static final String KEY_VX = "Vx";
     private static final String KEY_VY = "Vy";
     private static final String KEY_VZ = "Vz";
-    private static final float DAMAGE = 12.0F; // vague lente et télégraphiée, esquivable
+    private static final float DAMAGE = 12.0F; // slow, telegraphed wave; dodgeable
     private static final double KNOCKBACK = 1.2;
 
     private Vec3 velocity = Vec3.ZERO;

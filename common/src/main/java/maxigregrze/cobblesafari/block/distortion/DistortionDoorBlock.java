@@ -30,7 +30,7 @@ public class DistortionDoorBlock extends HorizontalDirectionalBlock implements B
     public static final MapCodec<DistortionDoorBlock> CODEC = simpleCodec(DistortionDoorBlock::new);
     public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
     public static final IntegerProperty PART = IntegerProperty.create("part", 1, 7);
-    /** Combat state (plan 125 § 5): when true every part renders as a full distortion stonebricks cube. */
+    /** Combat state: when true every part renders as a full distortion stonebricks cube. */
     public static final BooleanProperty ACTIVE = BooleanProperty.create("active");
 
     /** Anchor part = part 7 (placed position). Empty grid cells filled in combat: (1,1) and (1,0). */
@@ -136,7 +136,7 @@ public class DistortionDoorBlock extends HorizontalDirectionalBlock implements B
                 level.setBlock(targetPos, Blocks.AIR.defaultBlockState(), 35);
             }
         }
-        // Remove any leftover combat-fill blocks in the two empty cells (plan 125 § 5.3).
+        // Remove any leftover combat-fill blocks in the two empty cells.
         for (int[] gc : FILL_GRID) {
             BlockPos fillPos = posFromAnchorGrid(anchorPos, facing, gc[0], gc[1]);
             if (level.getBlockState(fillPos).is(ModBlocks.DISTORTION_STONEBRICKS_FILL)) {
@@ -164,7 +164,7 @@ public class DistortionDoorBlock extends HorizontalDirectionalBlock implements B
     }
 
     /**
-     * Fills/clears the two empty cells (plan 125 § 5.2) with a "no-grief" rule: on activation only
+     * Fills/clears the two empty cells with a "no-grief" rule: on activation only
      * air/replaceable cells are filled; on deactivation only our own fill block is removed — a block
      * placed by a player is never overwritten nor removed.
      */

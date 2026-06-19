@@ -22,12 +22,12 @@ import java.util.UUID;
  */
 public class GhostJumpscareAttack implements CsBossAttack {
 
-    private static final int DURATION = 30;        // 1.5 s sweep
-    private static final int NAUSEA_TICKS = 200;   // 10 s
+    private static final int DURATION = 30; // 1.5 s sweep
+    private static final int NAUSEA_TICKS = 200; // 10 s
     private static final double FACE_DISTANCE = 3.0;
     private static final double MINION_HEIGHT = 3.5;
     private static final double START_ANGLE = -90.0; // below the camera centre
-    private static final double END_ANGLE = 90.0;    // above the camera centre
+    private static final double END_ANGLE = 90.0; // above the camera centre
 
     private final String id;
     private final List<Jump> jumps = new ArrayList<>();

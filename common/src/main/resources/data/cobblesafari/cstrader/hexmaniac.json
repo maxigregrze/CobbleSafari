@@ -2,57 +2,849 @@
   "schemaVersion": 1,
   "name": "hexmaniac",
   "displayName": "Hex Maniac",
-  "textureFile": "hiker",
+  "textureFile": "hex",
   "isKilleable": false,
   "variants": [
     {
-      "id": "ghost_relics",
-      "minTrades": 4,
-      "maxTrades": 6,
+      "id": "mystic_wares",
+      "aliases": [
+        "sell",
+        "wares",
+        "mystic_sell"
+      ],
+      "minTrades": 6,
+      "maxTrades": 9,
       "trades": [
         {
           "sourceItem1": "cobblesafari:sphere_pale_s",
-          "sourceQty1": 8,
-          "sourceItem2": "cobblesafari:sphere_prism_s",
-          "sourceQty2": 8,
-          "resultItems": ["cobblemon:spell_tag"],
-          "resultQty": 1,
-          "maxUses": 8
-        },
-        {
-          "sourceItem1": "cobblesafari:sphere_blue_s",
-          "sourceQty1": 12,
-          "resultItems": ["cobblemon:dusk_stone"],
+          "sourceQty1": 25,
+          "resultItems": [
+            "cobblemon:dubious_disc"
+          ],
           "resultQty": 1,
           "maxUses": 6
         },
         {
-          "sourceItem1": "cobblesafari:sphere_red_s",
+          "sourceItem1": "cobblesafari:sphere_prism_s",
+          "sourceQty1": 25,
+          "resultItems": [
+            "cobblemon:reaper_cloth"
+          ],
+          "resultQty": 1,
+          "maxUses": 6
+        },
+        {
+          "sourceItem1": "cobblesafari:sphere_pale_s",
+          "sourceQty1": 24,
+          "resultItems": [
+            "cobblemon:sachet"
+          ],
+          "resultQty": 1,
+          "maxUses": 6
+        },
+        {
+          "sourceItem1": "cobblesafari:sphere_prism_s",
+          "sourceQty1": 24,
+          "resultItems": [
+            "cobblemon:whipped_dream"
+          ],
+          "resultQty": 1,
+          "maxUses": 6
+        },
+        {
+          "sourceItem1": "cobblesafari:sphere_green_s",
           "sourceQty1": 12,
-          "resultItems": ["cobblemon:reaper_cloth"],
+          "sourceItem2": "cobblesafari:sphere_prism_s",
+          "sourceQty2": 7,
+          "resultItems": [
+            "cobblemon:cracked_pot"
+          ],
+          "resultQty": 1,
+          "priceShiftMax": 2,
+          "maxUses": 8
+        },
+        {
+          "sourceItem1": "cobblesafari:sphere_red_s",
+          "sourceQty1": 30,
+          "sourceItem2": "cobblesafari:sphere_green_s",
+          "sourceQty2": 20,
+          "resultItems": [
+            "cobblemon:chipped_pot"
+          ],
+          "resultQty": 1,
+          "priceShiftMax": 2,
+          "maxUses": 6
+        },
+        {
+          "sourceItem1": "cobblesafari:sphere_green_s",
+          "sourceQty1": 8,
+          "sourceItem2": "cobblesafari:sphere_pale_s",
+          "sourceQty2": 10,
+          "resultItems": [
+            "cobblemon:unremarkable_teacup"
+          ],
+          "resultQty": 1,
+          "priceShiftMax": 2,
+          "maxUses": 8
+        },
+        {
+          "sourceItem1": "cobblesafari:sphere_pale_s",
+          "sourceQty1": 40,
+          "sourceItem2": "cobblesafari:sphere_prism_s",
+          "sourceQty2": 35,
+          "resultItems": [
+            "cobblemon:masterpiece_teacup"
+          ],
+          "resultQty": 1,
+          "priceShiftMax": 2,
+          "maxUses": 4
+        },
+        {
+          "sourceItem1": "cobblesafari:sphere_red_l",
+          "sourceQty1": 8,
+          "sourceItem2": "cobblesafari:sphere_green_l",
+          "sourceQty2": 12,
+          "resultItems": [
+            "cobblemon:auspicious_armor"
+          ],
+          "resultQty": 1,
+          "priceShiftMax": 2,
+          "maxUses": 2
+        },
+        {
+          "sourceItem1": "cobblesafari:sphere_green_l",
+          "sourceQty1": 12,
+          "sourceItem2": "cobblesafari:sphere_blue_l",
+          "sourceQty2": 8,
+          "resultItems": [
+            "cobblemon:malicious_armor"
+          ],
+          "resultQty": 1,
+          "priceShiftMax": 2,
+          "maxUses": 2
+        },
+        {
+          "sourceItem1": "cobblesafari:sphere_prism_s",
+          "sourceQty1": 20,
+          "resultItems": [
+            "cobblemon:black_belt"
+          ],
+          "resultQty": 1,
+          "maxUses": 8
+        },
+        {
+          "sourceItem1": "cobblesafari:sphere_pale_s",
+          "sourceQty1": 20,
+          "resultItems": [
+            "cobblemon:spell_tag"
+          ],
+          "resultQty": 1,
+          "maxUses": 8
+        },
+        {
+          "sourceItem1": "cobblesafari:sphere_prism_s",
+          "sourceQty1": 20,
+          "resultItems": [
+            "cobblemon:twisted_spoon"
+          ],
+          "resultQty": 1,
+          "maxUses": 8
+        },
+        {
+          "sourceItem1": "cobblesafari:sphere_pale_s",
+          "sourceQty1": 20,
+          "resultItems": [
+            "cobblemon:fairy_feather"
+          ],
+          "resultQty": 1,
+          "maxUses": 8
+        },
+        {
+          "sourceItem1": "cobblesafari:sphere_pale_s",
+          "sourceQty1": 30,
+          "sourceItem2": "cobblesafari:sphere_prism_s",
+          "sourceQty2": 30,
+          "resultItems": [
+            "cobblemon:eviolite"
+          ],
+          "resultQty": 1,
+          "priceShiftMax": 2,
+          "maxUses": 4
+        },
+        {
+          "sourceItem1": "cobblesafari:sphere_green_s",
+          "sourceQty1": 20,
+          "resultItems": [
+            "cobblemon:luminous_moss"
+          ],
+          "resultQty": 1,
+          "maxUses": 8
+        },
+        {
+          "sourceItem1": "cobblesafari:sphere_pale_s",
+          "sourceQty1": 20,
+          "sourceItem2": "cobblesafari:sphere_prism_s",
+          "sourceQty2": 20,
+          "resultItems": [
+            "cobblemon:loaded_dice"
+          ],
+          "resultQty": 1,
+          "priceShiftMax": 2,
+          "maxUses": 6
+        },
+        {
+          "sourceItem1": "cobblesafari:sphere_prism_s",
+          "sourceQty1": 32,
+          "resultItems": [
+            "cobblemon:metronome"
+          ],
+          "resultQty": 1,
+          "maxUses": 6
+        },
+        {
+          "sourceItem1": "cobblesafari:sphere_pale_s",
+          "sourceQty1": 20,
+          "sourceItem2": "cobblesafari:sphere_prism_s",
+          "sourceQty2": 20,
+          "resultItems": [
+            "cobblemon:weakness_policy"
+          ],
+          "resultQty": 1,
+          "priceShiftMax": 2,
+          "maxUses": 6
+        },
+        {
+          "sourceItem1": "cobblesafari:sphere_pale_s",
+          "sourceQty1": 40,
+          "resultItems": [
+            "cobblemon:clear_amulet"
+          ],
+          "resultQty": 1,
+          "maxUses": 6
+        },
+        {
+          "sourceItem1": "cobblesafari:sphere_prism_s",
+          "sourceQty1": 40,
+          "resultItems": [
+            "cobblemon:covert_cloak"
+          ],
+          "resultQty": 1,
+          "maxUses": 6
+        },
+        {
+          "sourceItem1": "cobblesafari:sphere_pale_s",
+          "sourceQty1": 12,
+          "sourceItem2": "cobblesafari:sphere_prism_s",
+          "sourceQty2": 12,
+          "resultItems": [
+            "cobblemon:mental_herb"
+          ],
+          "resultQty": 1,
+          "priceShiftMax": 2,
+          "maxUses": 6
+        },
+        {
+          "sourceItem1": "cobblesafari:sphere_prism_s",
+          "sourceQty1": 25,
+          "resultItems": [
+            "cobblemon:black_sludge"
+          ],
           "resultQty": 1,
           "maxUses": 6
         },
         {
           "sourceItem1": "cobblesafari:sphere_green_s",
           "sourceQty1": 16,
-          "resultItems": ["cobblemon:twisted_spoon"],
+          "sourceItem2": "cobblesafari:sphere_red_s",
+          "sourceQty2": 16,
+          "resultItems": [
+            "cobblemon:toxic_orb"
+          ],
           "resultQty": 1,
-          "maxUses": 6
+          "priceShiftMax": 2,
+          "maxUses": 8
         },
         {
-          "sourceItem1": "cobblesafari:sphere_pale_l",
-          "sourceQty1": 2,
-          "resultItems": ["cobblemon:ability_capsule"],
+          "sourceItem1": "cobblesafari:sphere_pale_s",
+          "sourceQty1": 25,
+          "sourceItem2": "cobblesafari:sphere_prism_s",
+          "sourceQty2": 25,
+          "resultItems": [
+            "cobblemon:life_orb"
+          ],
           "resultQty": 1,
-          "maxUses": 2
+          "priceShiftMax": 2,
+          "maxUses": 4
         },
         {
-          "sourceItem1": "cobblesafari:sphere_prism_l",
-          "sourceQty1": 2,
-          "resultItems": ["cobblemon:ability_patch"],
+          "sourceItem1": "cobblesafari:sphere_green_s",
+          "sourceQty1": 20,
+          "resultItems": [
+            "cobblemon:smoke_ball"
+          ],
           "resultQty": 1,
-          "maxUses": 2
+          "maxUses": 8
+        },
+        {
+          "sourceItem1": "cobblesafari:sphere_pale_s",
+          "sourceQty1": 15,
+          "resultItems": [
+            "cobblemon:cleanse_tag"
+          ],
+          "resultQty": 1,
+          "maxUses": 8
+        }
+      ]
+    },
+    {
+      "id": "mystic_buyback",
+      "aliases": [
+        "buy",
+        "buyback",
+        "mystic_buy"
+      ],
+      "minTrades": 6,
+      "maxTrades": 9,
+      "trades": [
+        {
+          "sourceItem1": "cobblemon:dubious_disc",
+          "sourceQty1": 1,
+          "resultOptions": [
+            {
+              "itemId": "cobblesafari:sphere_pale_s",
+              "qty": 12
+            },
+            {
+              "itemId": "cobblesafari:sphere_prism_s",
+              "qty": 12
+            }
+          ],
+          "maxUses": 8
+        },
+        {
+          "sourceItem1": "cobblemon:reaper_cloth",
+          "sourceQty1": 1,
+          "resultOptions": [
+            {
+              "itemId": "cobblesafari:sphere_pale_s",
+              "qty": 12
+            },
+            {
+              "itemId": "cobblesafari:sphere_prism_s",
+              "qty": 12
+            }
+          ],
+          "maxUses": 8
+        },
+        {
+          "sourceItem1": "cobblemon:sachet",
+          "sourceQty1": 1,
+          "resultOptions": [
+            {
+              "itemId": "cobblesafari:sphere_pale_s",
+              "qty": 12
+            },
+            {
+              "itemId": "cobblesafari:sphere_prism_s",
+              "qty": 12
+            }
+          ],
+          "maxUses": 8
+        },
+        {
+          "sourceItem1": "cobblemon:whipped_dream",
+          "sourceQty1": 1,
+          "resultOptions": [
+            {
+              "itemId": "cobblesafari:sphere_pale_s",
+              "qty": 12
+            },
+            {
+              "itemId": "cobblesafari:sphere_prism_s",
+              "qty": 12
+            }
+          ],
+          "maxUses": 8
+        },
+        {
+          "sourceItem1": "cobblemon:cracked_pot",
+          "sourceQty1": 1,
+          "resultOptions": [
+            {
+              "itemId": "cobblesafari:sphere_pale_s",
+              "qty": 8
+            },
+            {
+              "itemId": "cobblesafari:sphere_prism_s",
+              "qty": 8
+            }
+          ],
+          "maxUses": 8
+        },
+        {
+          "sourceItem1": "cobblemon:chipped_pot",
+          "sourceQty1": 1,
+          "resultOptions": [
+            {
+              "itemId": "cobblesafari:sphere_pale_s",
+              "qty": 14
+            },
+            {
+              "itemId": "cobblesafari:sphere_prism_s",
+              "qty": 14
+            }
+          ],
+          "maxUses": 8
+        },
+        {
+          "sourceItem1": "cobblemon:unremarkable_teacup",
+          "sourceQty1": 1,
+          "resultOptions": [
+            {
+              "itemId": "cobblesafari:sphere_pale_s",
+              "qty": 8
+            },
+            {
+              "itemId": "cobblesafari:sphere_prism_s",
+              "qty": 8
+            }
+          ],
+          "maxUses": 8
+        },
+        {
+          "sourceItem1": "cobblemon:masterpiece_teacup",
+          "sourceQty1": 1,
+          "resultOptions": [
+            {
+              "itemId": "cobblesafari:sphere_pale_s",
+              "qty": 36
+            },
+            {
+              "itemId": "cobblesafari:sphere_prism_s",
+              "qty": 36
+            }
+          ],
+          "maxUses": 8
+        },
+        {
+          "sourceItem1": "cobblemon:auspicious_armor",
+          "sourceQty1": 1,
+          "resultOptions": [
+            {
+              "itemId": "cobblesafari:sphere_pale_l",
+              "qty": 6
+            },
+            {
+              "itemId": "cobblesafari:sphere_prism_l",
+              "qty": 6
+            }
+          ],
+          "maxUses": 8
+        },
+        {
+          "sourceItem1": "cobblemon:malicious_armor",
+          "sourceQty1": 1,
+          "resultOptions": [
+            {
+              "itemId": "cobblesafari:sphere_pale_l",
+              "qty": 6
+            },
+            {
+              "itemId": "cobblesafari:sphere_prism_l",
+              "qty": 6
+            }
+          ],
+          "maxUses": 8
+        },
+        {
+          "sourceItem1": "cobblemon:black_belt",
+          "sourceQty1": 1,
+          "resultOptions": [
+            {
+              "itemId": "cobblesafari:sphere_pale_s",
+              "qty": 10
+            },
+            {
+              "itemId": "cobblesafari:sphere_prism_s",
+              "qty": 10
+            }
+          ],
+          "maxUses": 8
+        },
+        {
+          "sourceItem1": "cobblemon:spell_tag",
+          "sourceQty1": 1,
+          "resultOptions": [
+            {
+              "itemId": "cobblesafari:sphere_pale_s",
+              "qty": 10
+            },
+            {
+              "itemId": "cobblesafari:sphere_prism_s",
+              "qty": 10
+            }
+          ],
+          "maxUses": 8
+        },
+        {
+          "sourceItem1": "cobblemon:twisted_spoon",
+          "sourceQty1": 1,
+          "resultOptions": [
+            {
+              "itemId": "cobblesafari:sphere_pale_s",
+              "qty": 10
+            },
+            {
+              "itemId": "cobblesafari:sphere_prism_s",
+              "qty": 10
+            }
+          ],
+          "maxUses": 8
+        },
+        {
+          "sourceItem1": "cobblemon:fairy_feather",
+          "sourceQty1": 1,
+          "resultOptions": [
+            {
+              "itemId": "cobblesafari:sphere_pale_s",
+              "qty": 10
+            },
+            {
+              "itemId": "cobblesafari:sphere_prism_s",
+              "qty": 10
+            }
+          ],
+          "maxUses": 8
+        },
+        {
+          "sourceItem1": "cobblemon:eviolite",
+          "sourceQty1": 1,
+          "resultOptions": [
+            {
+              "itemId": "cobblesafari:sphere_pale_s",
+              "qty": 30
+            },
+            {
+              "itemId": "cobblesafari:sphere_prism_s",
+              "qty": 30
+            }
+          ],
+          "maxUses": 8
+        },
+        {
+          "sourceItem1": "cobblemon:luminous_moss",
+          "sourceQty1": 1,
+          "resultOptions": [
+            {
+              "itemId": "cobblesafari:sphere_pale_s",
+              "qty": 7
+            },
+            {
+              "itemId": "cobblesafari:sphere_prism_s",
+              "qty": 7
+            }
+          ],
+          "maxUses": 8
+        },
+        {
+          "sourceItem1": "cobblemon:loaded_dice",
+          "sourceQty1": 1,
+          "resultOptions": [
+            {
+              "itemId": "cobblesafari:sphere_pale_s",
+              "qty": 20
+            },
+            {
+              "itemId": "cobblesafari:sphere_prism_s",
+              "qty": 20
+            }
+          ],
+          "maxUses": 8
+        },
+        {
+          "sourceItem1": "cobblemon:metronome",
+          "sourceQty1": 1,
+          "resultOptions": [
+            {
+              "itemId": "cobblesafari:sphere_pale_s",
+              "qty": 16
+            },
+            {
+              "itemId": "cobblesafari:sphere_prism_s",
+              "qty": 16
+            }
+          ],
+          "maxUses": 8
+        },
+        {
+          "sourceItem1": "cobblemon:weakness_policy",
+          "sourceQty1": 1,
+          "resultOptions": [
+            {
+              "itemId": "cobblesafari:sphere_pale_s",
+              "qty": 20
+            },
+            {
+              "itemId": "cobblesafari:sphere_prism_s",
+              "qty": 20
+            }
+          ],
+          "maxUses": 8
+        },
+        {
+          "sourceItem1": "cobblemon:clear_amulet",
+          "sourceQty1": 1,
+          "resultOptions": [
+            {
+              "itemId": "cobblesafari:sphere_pale_s",
+              "qty": 20
+            },
+            {
+              "itemId": "cobblesafari:sphere_prism_s",
+              "qty": 20
+            }
+          ],
+          "maxUses": 8
+        },
+        {
+          "sourceItem1": "cobblemon:covert_cloak",
+          "sourceQty1": 1,
+          "resultOptions": [
+            {
+              "itemId": "cobblesafari:sphere_pale_s",
+              "qty": 20
+            },
+            {
+              "itemId": "cobblesafari:sphere_prism_s",
+              "qty": 20
+            }
+          ],
+          "maxUses": 8
+        },
+        {
+          "sourceItem1": "cobblemon:mental_herb",
+          "sourceQty1": 1,
+          "resultOptions": [
+            {
+              "itemId": "cobblesafari:sphere_pale_s",
+              "qty": 12
+            },
+            {
+              "itemId": "cobblesafari:sphere_prism_s",
+              "qty": 12
+            }
+          ],
+          "maxUses": 8
+        },
+        {
+          "sourceItem1": "cobblemon:black_sludge",
+          "sourceQty1": 1,
+          "resultOptions": [
+            {
+              "itemId": "cobblesafari:sphere_pale_s",
+              "qty": 12
+            },
+            {
+              "itemId": "cobblesafari:sphere_prism_s",
+              "qty": 12
+            }
+          ],
+          "maxUses": 8
+        },
+        {
+          "sourceItem1": "cobblemon:toxic_orb",
+          "sourceQty1": 1,
+          "resultOptions": [
+            {
+              "itemId": "cobblesafari:sphere_pale_s",
+              "qty": 10
+            },
+            {
+              "itemId": "cobblesafari:sphere_prism_s",
+              "qty": 10
+            }
+          ],
+          "maxUses": 8
+        },
+        {
+          "sourceItem1": "cobblemon:life_orb",
+          "sourceQty1": 1,
+          "resultOptions": [
+            {
+              "itemId": "cobblesafari:sphere_pale_s",
+              "qty": 24
+            },
+            {
+              "itemId": "cobblesafari:sphere_prism_s",
+              "qty": 24
+            }
+          ],
+          "maxUses": 8
+        },
+        {
+          "sourceItem1": "cobblemon:smoke_ball",
+          "sourceQty1": 1,
+          "resultOptions": [
+            {
+              "itemId": "cobblesafari:sphere_pale_s",
+              "qty": 7
+            },
+            {
+              "itemId": "cobblesafari:sphere_prism_s",
+              "qty": 7
+            }
+          ],
+          "maxUses": 8
+        },
+        {
+          "sourceItem1": "cobblemon:cleanse_tag",
+          "sourceQty1": 1,
+          "resultOptions": [
+            {
+              "itemId": "cobblesafari:sphere_pale_s",
+              "qty": 7
+            },
+            {
+              "itemId": "cobblesafari:sphere_prism_s",
+              "qty": 7
+            }
+          ],
+          "maxUses": 8
+        },
+        {
+          "sourceItem1": "cobblesafari:redchain_fragment",
+          "sourceQty1": 1,
+          "resultOptions": [
+            {
+              "itemId": "cobblesafari:sphere_pale_s",
+              "qty": 5
+            },
+            {
+              "itemId": "cobblesafari:sphere_prism_s",
+              "qty": 5
+            }
+          ],
+          "maxUses": 8
+        },
+        {
+          "sourceItem1": "cobblesafari:redchain_random_ball",
+          "sourceQty1": 1,
+          "resultOptions": [
+            {
+              "itemId": "cobblesafari:sphere_pale_s",
+              "qty": 15
+            },
+            {
+              "itemId": "cobblesafari:sphere_prism_s",
+              "qty": 15
+            }
+          ],
+          "maxUses": 8
+        },
+        {
+          "sourceItem1": "cobblesafari:redchain_random_ev",
+          "sourceQty1": 1,
+          "resultOptions": [
+            {
+              "itemId": "cobblesafari:sphere_pale_s",
+              "qty": 15
+            },
+            {
+              "itemId": "cobblesafari:sphere_prism_s",
+              "qty": 15
+            }
+          ],
+          "maxUses": 8
+        },
+        {
+          "sourceItem1": "cobblesafari:redchain_random_gender",
+          "sourceQty1": 1,
+          "resultOptions": [
+            {
+              "itemId": "cobblesafari:sphere_pale_s",
+              "qty": 15
+            },
+            {
+              "itemId": "cobblesafari:sphere_prism_s",
+              "qty": 15
+            }
+          ],
+          "maxUses": 8
+        },
+        {
+          "sourceItem1": "cobblesafari:redchain_random_iv",
+          "sourceQty1": 1,
+          "resultOptions": [
+            {
+              "itemId": "cobblesafari:sphere_pale_s",
+              "qty": 15
+            },
+            {
+              "itemId": "cobblesafari:sphere_prism_s",
+              "qty": 15
+            }
+          ],
+          "maxUses": 8
+        },
+        {
+          "sourceItem1": "cobblesafari:redchain_random_level",
+          "sourceQty1": 1,
+          "resultOptions": [
+            {
+              "itemId": "cobblesafari:sphere_pale_s",
+              "qty": 15
+            },
+            {
+              "itemId": "cobblesafari:sphere_prism_s",
+              "qty": 15
+            }
+          ],
+          "maxUses": 8
+        },
+        {
+          "sourceItem1": "cobblesafari:redchain_random_shiny",
+          "sourceQty1": 1,
+          "resultOptions": [
+            {
+              "itemId": "cobblesafari:sphere_pale_s",
+              "qty": 15
+            },
+            {
+              "itemId": "cobblesafari:sphere_prism_s",
+              "qty": 15
+            }
+          ],
+          "maxUses": 8
+        },
+        {
+          "sourceItem1": "cobblesafari:red_chain_core",
+          "sourceQty1": 1,
+          "resultOptions": [
+            {
+              "itemId": "cobblesafari:sphere_pale_s",
+              "qty": 30
+            },
+            {
+              "itemId": "cobblesafari:sphere_prism_s",
+              "qty": 30
+            }
+          ],
+          "maxUses": 8
+        },
+        {
+          "sourceItem1": "cobblesafari:red_chain",
+          "sourceQty1": 1,
+          "resultOptions": [
+            {
+              "itemId": "cobblesafari:sphere_pale_l",
+              "qty": 15
+            },
+            {
+              "itemId": "cobblesafari:sphere_prism_l",
+              "qty": 15
+            }
+          ],
+          "maxUses": 8
         }
       ]
     }

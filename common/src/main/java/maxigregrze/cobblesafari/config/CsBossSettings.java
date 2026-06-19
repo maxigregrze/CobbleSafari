@@ -25,16 +25,17 @@ public class CsBossSettings {
 
     private boolean uniqueLootCommunism = false;
     private int maximumConcurrentFights = 5;
-    private int maximumFightDuration = 900;   // seconds — hard global cap (no floor)
-    private int defaultPlayerRadius = 24;     // blocks
-    private int defaultBlockRadius = 2;       // chunks
+    private int maximumFightDuration = 900; // seconds — hard global cap (no floor)
+    private int defaultPlayerRadius = 24; // blocks
+    private int defaultBlockRadius = 2; // chunks
     private int maxConcurrentBulletsPerSession = 256;
-    private int maxPlayerRadius = 64;         // hard cap (blocks)
-    private int maxBlockRadius = 8;           // hard cap (chunks)
-    private int arenaYTolerance = 16;         // blocks (participant capture + bar)
+    private int maxPlayerRadius = 64; // hard cap (blocks)
+    private int maxBlockRadius = 8; // hard cap (chunks)
+    private int arenaYTolerance = 16; // blocks (participant capture + bar)
     private String deathReasonCowardice = DEFAULT_COWARDICE_KEY;
     private int balmDispenserRechargeSeconds = 30;
-    private int balmBossDamagePercent = 5;    // % of boss bar/timer removed per balm hit
+    private int balmDispenserBalmsPerDispense = 1; // balms granted each time the dispenser is used
+    private int balmBossDamagePercent = 5; // % of boss bar/timer removed per balm hit
     private boolean showFightingPokemons = true; // show players' Pokémon around the boss (cosmetic)
 
     public static void load() {
@@ -80,6 +81,7 @@ public class CsBossSettings {
             deathReasonCowardice = DEFAULT_COWARDICE_KEY;
         }
         balmDispenserRechargeSeconds = Math.max(1, balmDispenserRechargeSeconds);
+        balmDispenserBalmsPerDispense = Math.max(1, balmDispenserBalmsPerDispense);
         balmBossDamagePercent = Math.max(0, Math.min(100, balmBossDamagePercent));
     }
 
@@ -146,6 +148,10 @@ public class CsBossSettings {
 
     public int getBalmDispenserRechargeSeconds() {
         return balmDispenserRechargeSeconds;
+    }
+
+    public int getBalmDispenserBalmsPerDispense() {
+        return balmDispenserBalmsPerDispense;
     }
 
     public int getBalmBossDamagePercent() {

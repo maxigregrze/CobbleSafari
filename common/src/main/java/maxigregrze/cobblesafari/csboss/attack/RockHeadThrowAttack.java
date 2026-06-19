@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.UUID;
 
 /**
- * {@code base_rock_3} (plan 113, Type A): for each player, a meteor spawns near the middle of the
+ * {@code base_rock_3} (Type A): for each player, a meteor spawns near the middle of the
  * arena (slightly off-centered toward a world axis), grows (scale 0 → 1), spins on all 3 axes
  * (speed 0 → fast over 3 s), then is thrown in an arc toward the player; it places a meteorite block
  * on ground impact. Repeated 3–5 times.
@@ -23,13 +23,13 @@ import java.util.UUID;
 public class RockHeadThrowAttack implements CsBossAttack {
 
     private static final int GROW_TICKS = 10;
-    private static final int SPIN_TICKS = 60;     // 3 s spin-up in place
-    private static final int THROW_TICKS = 30;    // arc toward player
+    private static final int SPIN_TICKS = 60; // 3 s spin-up in place
+    private static final int THROW_TICKS = 30; // arc toward player
     private static final int IMPACT_AT = SPIN_TICKS + THROW_TICKS; // 90
-    private static final int WAVE_INTERVAL = 75;  // 2*75+90 = 240
-    private static final int WAVES = 3;           // deterministic
-    private static final float MAX_SPIN = 25.0F;  // deg/tick at max
-    private static final double SPAWN_HEIGHT = 3.0;  // above the trigger floor, over the arena center
+    private static final int WAVE_INTERVAL = 75; // 2*75+90 = 240
+    private static final int WAVES = 3; // deterministic
+    private static final float MAX_SPIN = 25.0F; // deg/tick at max
+    private static final double SPAWN_HEIGHT = 3.0; // above the trigger floor, over the arena center
     private static final double CENTER_OFFSET = 1.5; // slight off-center toward one world axis
     private static final double ARC = 2.5;
     private static final float METEOR_DAMAGE = 18.0F;

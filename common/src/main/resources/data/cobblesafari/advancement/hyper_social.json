@@ -1,0 +1,16 @@
+{
+  "parent": "cobblesafari:sociable",
+  "display": {
+    "icon": { "id": "minecraft:cake" },
+    "title": { "translate": "advancement.cobblesafari.hyper_social.title" },
+    "description": { "translate": "advancement.cobblesafari.hyper_social.description" },
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "done": { "trigger": "cobblesafari:hyper_social", "conditions": { "count": 72000 } }
+  },
+  "requirements": [["done"]]
+}

@@ -8,6 +8,8 @@
           "type": "minecraft:group",
           "weight": 39,
           "children": [
+            { "type": "minecraft:item", "name": "cobblemon:relic_coin", "weight": 1 },
+            { "type": "minecraft:item", "name": "cobblemon:relic_coin", "weight": 1 },
             { "type": "minecraft:item", "name": "cobblemon:upgrade", "weight": 1 },
             { "type": "minecraft:item", "name": "cobblemon:dubious_disc", "weight": 1 },
             { "type": "minecraft:item", "name": "cobblemon:relic_coin", "weight": 1 }
@@ -17,6 +19,8 @@
           "type": "minecraft:group",
           "weight": 30,
           "children": [
+            { "type": "minecraft:item", "name": "cobblemon:relic_coin", "weight": 1 },
+            { "type": "minecraft:item", "name": "cobblemon:relic_coin", "weight": 1 },
             { "type": "minecraft:item", "name": "cobblemon:upgrade", "weight": 1 },
             { "type": "minecraft:item", "name": "cobblemon:dubious_disc", "weight": 1 },
             { "type": "minecraft:item", "name": "cobblemon:galarica_wreath", "weight": 1 },
@@ -28,6 +32,8 @@
           "type": "minecraft:group",
           "weight": 20,
           "children": [
+            { "type": "minecraft:item", "name": "cobblemon:relic_coin", "weight": 1 },
+            { "type": "minecraft:item", "name": "cobblemon:relic_coin", "weight": 1 },
             { "type": "minecraft:item", "name": "cobblemon:upgrade", "weight": 1 },
             { "type": "minecraft:item", "name": "cobblemon:dubious_disc", "weight": 1 },
             { "type": "minecraft:item", "name": "cobblemon:galarica_wreath", "weight": 1 },
@@ -39,6 +45,10 @@
           "type": "minecraft:group",
           "weight": 10,
           "children": [
+            { "type": "minecraft:item", "name": "cobblemon:relic_coin", "weight": 1 },
+            { "type": "minecraft:item", "name": "cobblemon:relic_coin", "weight": 1 },
+            { "type": "minecraft:item", "name": "cobblemon:relic_coin", "weight": 1 },
+            { "type": "minecraft:item", "name": "cobblemon:relic_coin", "weight": 1 },
             { "type": "minecraft:item", "name": "cobblemon:upgrade", "weight": 1 },
             { "type": "minecraft:item", "name": "cobblemon:dubious_disc", "weight": 1 },
             { "type": "minecraft:item", "name": "cobblemon:galarica_wreath", "weight": 1 },
@@ -52,6 +62,10 @@
           "type": "minecraft:group",
           "weight": 1,
           "children": [
+            { "type": "minecraft:item", "name": "cobblemon:relic_coin", "weight": 1 },
+            { "type": "minecraft:item", "name": "cobblemon:relic_coin", "weight": 1 },
+            { "type": "minecraft:item", "name": "cobblemon:relic_coin", "weight": 1 },
+            { "type": "minecraft:item", "name": "cobblemon:relic_coin", "weight": 1 },
             { "type": "minecraft:item", "name": "cobblemon:upgrade", "weight": 1 },
             { "type": "minecraft:item", "name": "cobblemon:dubious_disc", "weight": 1 },
             { "type": "minecraft:item", "name": "cobblemon:galarica_wreath", "weight": 1 },

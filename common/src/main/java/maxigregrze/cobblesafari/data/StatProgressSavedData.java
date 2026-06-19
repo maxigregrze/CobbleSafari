@@ -19,8 +19,8 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * Per-player "set" progress backing the achievements that count <em>distinct</em> elements
- * (cf. action plan 94 §5): unique Pokémon species captured in the Safari, and distinct days
+ * Per-player "set" progress backing the achievements that count <em>distinct</em> elements:
+ * unique Pokémon species captured in the Safari, and distinct days
  * the player first entered the Safari. Vanilla advancement state does not retain this history,
  * so this {@link SavedData} (attached to the Overworld storage) is the source of truth.
  */

@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    { "item": "cobblesafari:tinkagear" },
+    { "item": "minecraft:glowstone_dust" },
+    { "item": "minecraft:green_dye" }
+  ],
+  "result": {
+    "id": "cobblesafari:union_room_spotlight_green",
+    "count": 4
+  }
+}

@@ -31,7 +31,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * Arena Trigger block (plan 100 § 3). Two states: {@code active} false/true (distinct models).
+ * Arena Trigger block. Two states: {@code active} false/true (distinct models).
  */
 public class CsBossTriggerBlock extends BaseEntityBlock {
 

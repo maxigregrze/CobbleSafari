@@ -8,11 +8,12 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
 /**
- * Safari biome hazard helpers (plan 115): reuses boss attack visuals/effects outside
+ * Safari biome hazard helpers: reuses boss attack visuals/effects outside
  * boss sessions; damages any player in the hazard area.
  */
 public final class SafariHazardLib {
@@ -70,6 +71,14 @@ public final class SafariHazardLib {
             }
             if (p.getBoundingBox().intersects(swept)) {
                 p.hurt(CsBossDamage.bullet(level), damage);
+                return true;
+            }
+        }
+        if (meteor instanceof SafariBallisticMeteorEntity ballistic && ballistic.hasTargetEntity()) {
+            Entity target = level.getEntity(ballistic.getTargetEntityId());
+            if (target instanceof LivingEntity living && living.isAlive()
+                    && living.getBoundingBox().intersects(swept)) {
+                living.hurt(CsBossDamage.bullet(level), damage);
                 return true;
             }
         }

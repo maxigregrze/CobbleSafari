@@ -1,5 +1,5 @@
 {
-  "parent": "cobblesafari:root",
+  "parent": "cobblesafari:ring_a_ding",
   "display": {
     "icon": { "id": "cobblesafari:rotomphone" },
     "title": { "translate": "advancement.cobblesafari.raihan_would_be_proud.title" },

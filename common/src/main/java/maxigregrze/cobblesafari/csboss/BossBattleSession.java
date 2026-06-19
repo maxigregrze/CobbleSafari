@@ -26,23 +26,23 @@ import java.util.Set;
 import java.util.UUID;
 
 /**
- * Runtime instance of a boss battle (plan 100 § 6.1).
+ * Runtime instance of a boss battle.
  */
 public class BossBattleSession {
 
     /**
-     * Session phases (plan 122) : montée du projectile d'ancre, ouverture du portail, entrée,
-     * combat, mort, fermeture du portail.
+     * Session phases: anchor projectile rise, portal opening, entrance,
+     * combat, death, portal closing.
      */
     public enum Phase { SUMMON_RISE, PORTAL_OPENING, ENTRANCE, ACTIVE, DYING, PORTAL_CLOSING }
 
     /** Entrance (2 s) and dying duration. */
     public static final int ENTRANCE_TICKS = 40;
     public static final int DEATH_TICKS = 60;
-    /** Pré‑phases / post‑phase d'invocation (plan 122). */
-    public static final int SUMMON_RISE_TICKS = 12;   // ~0,6 s : montée rapide du projectile
-    public static final int PORTAL_OPEN_TICKS = 40;   // 2 s : échelle 0 → 1
-    public static final int PORTAL_CLOSE_TICKS = 20;  // 1 s : échelle 1 → 0
+    /** Pre-phases / post-summon phase. */
+    public static final int SUMMON_RISE_TICKS = 12; // ~0.6 s: fast projectile rise
+    public static final int PORTAL_OPEN_TICKS = 40; // 2 s: scale 0 → 1
+    public static final int PORTAL_CLOSE_TICKS = 20; // 1 s: scale 1 → 0
 
     private Phase phase = Phase.SUMMON_RISE;
     private int phaseTimer = 0;
@@ -54,6 +54,10 @@ public class BossBattleSession {
     private final BlockPos triggerPos;
     private final Vec3 arenaCenter;
     private final int playerRadius;
+    /** Rayon de détection des blocs en blocs (demi-côté du carré V6). */
+    private final double blockRadius;
+    /** Hauteur d'entrée / portail pour ce combat (surcharge JSON {@code portalDistance}). */
+    private double entranceHeight;
     private final UUID bossUuid;
 
     private final ServerBossEvent bossBar;
@@ -62,7 +66,7 @@ public class BossBattleSession {
     private final Set<UUID> activeBullets = new java.util.HashSet<>();
     private final Set<UUID> activeMinions = new java.util.HashSet<>();
     private final Set<UUID> activeAttackEntities = new java.util.HashSet<>();
-    /** Decorative "fighting Pokémon" minions around the boss (plan 112). */
+    /** Decorative "fighting Pokémon" minions around the boss. */
     private final Set<UUID> fightingPokemons = new java.util.HashSet<>();
     private boolean fightingPokemonsSpawned = false;
     private int activeTicks = 0;
@@ -80,22 +84,25 @@ public class BossBattleSession {
     @Nullable
     private CsBossDefinition pendingNextDef;
 
-    /** Projectile d'invocation (plan 122) ; transitoire, nettoyé après l'explosion. */
+    /** Summon projectile; transient, cleaned up after the explosion. */
     @Nullable
     private UUID summonProjectileUuid;
-    /** Portail d'invocation (plan 122) ; vit tout le combat, fermé après la mort. */
+    /** Summon portal; persists for the entire fight, closed after death. */
     @Nullable
     private UUID portalUuid;
 
     public BossBattleSession(int id, ResourceKey<Level> dimension, BlockPos triggerPos,
                              CsBossDefinition def, UUID bossUuid, Set<UUID> participantUuids,
-                             List<BlockPos> changedBlocks, int playerRadius, int totalDuration) {
+                             List<BlockPos> changedBlocks, int playerRadius, int totalDuration,
+                             double entranceHeight, double blockRadius) {
         this.id = id;
         this.rootBossId = def.bossId();
         this.dimension = dimension;
         this.triggerPos = triggerPos;
         this.arenaCenter = Vec3.atCenterOf(triggerPos);
         this.playerRadius = playerRadius;
+        this.entranceHeight = entranceHeight;
+        this.blockRadius = blockRadius;
         this.def = def;
         this.bossUuid = bossUuid;
         this.changedBlocks = new ArrayList<>(changedBlocks);
@@ -172,6 +179,7 @@ public class BossBattleSession {
      */
     public void startPhase(CsBossDefinition newDef, int newDuration) {
         this.def = newDef;
+        this.entranceHeight = newDef.portalDistance();
         this.scheduler = new AttackScheduler(newDef);
         this.totalDuration = Math.max(1, newDuration);
         this.remaining = this.totalDuration;
@@ -210,6 +218,14 @@ public class BossBattleSession {
 
     public int getPlayerRadius() {
         return playerRadius;
+    }
+
+    public double getBlockRadius() {
+        return blockRadius;
+    }
+
+    public double getEntranceHeight() {
+        return entranceHeight;
     }
 
     public CsBossDefinition getDefinition() {
@@ -276,12 +292,12 @@ public class BossBattleSession {
         double dx = pos.x - arenaCenter.x;
         double dz = pos.z - arenaCenter.z;
         double dy = Math.abs(pos.y - arenaCenter.y);
-        return (dx * dx + dz * dz) <= (double) playerRadius * playerRadius && dy <= yTolerance;
+        return Math.abs(dx) <= playerRadius && Math.abs(dz) <= playerRadius && dy <= yTolerance;
     }
 
     // --- Bullets -------------------------------------------------------------
 
-    /** Spawns a bullet if the cap is not reached (plan 100 § 12.3). */
+    /** Spawns a bullet if the cap is not reached. */
     public boolean trySpawnBullet(ServerLevel level, Vec3 origin, Vec3 velocity) {
         if (activeBullets.size() >= maxBullets) {
             return false;
@@ -316,6 +332,21 @@ public class BossBattleSession {
         return minion;
     }
 
+    /**
+     * Spawns a minion pre-scaled to {@code targetHeight} blocks tall (applied before entity sync).
+     */
+    public CsBossMinionEntity spawnMinion(ServerLevel level, Vec3 pos, double targetHeight) {
+        CsBossMinionEntity minion = new CsBossMinionEntity(ModEntities.CSBOSS_MINION, level);
+        minion.setSpecie(def.effectiveMinionSpecie());
+        minion.setSize(def.size());
+        minion.applyTargetHeight(targetHeight);
+        minion.setSessionId(id);
+        minion.moveTo(pos.x, pos.y, pos.z, 0.0F, 0.0F);
+        level.addFreshEntity(minion);
+        activeMinions.add(minion.getUUID());
+        return minion;
+    }
+
     public CsBossMinionEntity spawnMinion(ServerLevel level, Vec3 pos) {
         return spawnMinion(level, pos, def.size());
     }
@@ -326,7 +357,7 @@ public class BossBattleSession {
 
     // --- Custom attack entities (shadows, meteorites, stems) -------------------
 
-    /** Generic attack-entity tracking (plan 107) for cleanup at fight end. */
+    /** Generic attack-entity tracking for cleanup at fight end. */
     public Set<UUID> getActiveAttackEntities() {
         return activeAttackEntities;
     }
@@ -341,7 +372,7 @@ public class BossBattleSession {
         activeAttackEntities.removeIf(uuid -> level.getEntity(uuid) == null);
     }
 
-    // --- Decorative fighting Pokémon (plan 112) ------------------------------
+    // --- Decorative fighting Pokémon ------------------------------
 
     public Set<UUID> getFightingPokemons() {
         return fightingPokemons;

@@ -1,5 +1,5 @@
 {
-  "parent": "cobblesafari:root",
+  "parent": "cobblesafari:sociable",
   "display": {
     "icon": { "id": "minecraft:firework_rocket" },
     "title": { "translate": "advancement.cobblesafari.party_popper.title" },

@@ -6,6 +6,7 @@ import com.cobblemon.mod.common.api.pokemon.stats.Stat;
 import com.cobblemon.mod.common.api.pokemon.stats.Stats;
 import com.cobblemon.mod.common.pokemon.EVs;
 import com.cobblemon.mod.common.pokemon.IVs;
+import com.cobblemon.mod.common.pokemon.Gender;
 import com.cobblemon.mod.common.pokemon.Pokemon;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
@@ -14,6 +15,7 @@ import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
 import maxigregrze.cobblesafari.data.GtsSavedData;
+import maxigregrze.cobblesafari.gts.GenderFilter;
 import maxigregrze.cobblesafari.gts.GenderFilter;
 import maxigregrze.cobblesafari.gts.GtsOffer;
 import maxigregrze.cobblesafari.gts.GtsService;
@@ -48,7 +50,8 @@ public final class GtsCommand {
     private static final String ARG_SHINY = "shiny";
     private static final String ARG_ID = "id";
     private static final String MSG_GTS_ERROR = "cobblesafari.command.gts.error";
-    private static final String KEY_SUCCESS = "success";
+    private static final String KEY_DETAILS_SUCCESS = "cobblesafari.command.gts.details_header.success";
+    private static final String KEY_DETAILS_OFFER = "cobblesafari.command.gts.details_header.offer";
     private static final String ARG_PICK = "pickIndex";
     private static final String ARG_PAGE = "page";
     private static final String ARG_OFFER_ID = "offerId";
@@ -77,7 +80,7 @@ public final class GtsCommand {
                                 .executes(ctx -> listOffers(ctx, 1))
                                 .then(Commands.argument(ARG_PAGE, IntegerArgumentType.integer(1))
                                         .executes(ctx -> listOffers(ctx, IntegerArgumentType.getInteger(ctx, ARG_PAGE)))))
-                        .then(Commands.literal(KEY_SUCCESS)
+                        .then(Commands.literal("success")
                                 .executes(ctx -> listSuccess(ctx, 1))
                                 .then(Commands.argument(ARG_PAGE, IntegerArgumentType.integer(1))
                                         .executes(ctx -> listSuccess(ctx, IntegerArgumentType.getInteger(ctx, ARG_PAGE))))))
@@ -86,7 +89,7 @@ public final class GtsCommand {
                         .then(Commands.literal("offer")
                                 .then(Commands.argument(ARG_ID, IntegerArgumentType.integer(1))
                                         .executes(GtsCommand::detailsOffer)))
-                        .then(Commands.literal(KEY_SUCCESS)
+                        .then(Commands.literal("success")
                                 .then(Commands.argument(ARG_ID, IntegerArgumentType.integer(1))
                                         .executes(GtsCommand::detailsSuccess))))
                 .then(Commands.literal("remove")
@@ -209,14 +212,14 @@ public final class GtsCommand {
         int to = Math.min(from + pageSize, all.size());
         for (int i = from; i < to; i++) {
             GtsOffer o = all.get(i);
-            String dep = speciesNameFromOffer(server, o);
+            Component dep = speciesNameFromOffer(server, o);
             String wish = o.getWishSpecies();
-            String lvl = levelLabel(o.getWishLevelBucket());
-            String gen = o.getWishGender().name().toLowerCase(Locale.ROOT);
-            final String fd = dep;
+            Component flv = levelLabelComponent(o.getWishLevelBucket());
+            Component fg = genderFilterLabel(o.getWishGender());
+            final Component fd = dep;
             final String fw = wish;
-            final String flv = lvl;
-            final String fg = gen;
+            final Component fflv = flv;
+            final Component ffg = fg;
             final int fid = o.getId();
             if (o.isPersonalOffer()) {
                 final String templateId = o.getUniqueOfferTemplateId();
@@ -232,8 +235,8 @@ public final class GtsCommand {
                                         templateId,
                                         fd,
                                         fw,
-                                        flv,
-                                        fg),
+                                        fflv,
+                                        ffg),
                                 false);
             } else if (o.isUniqueOffer()) {
                 final String templateId = o.getUniqueOfferTemplateId();
@@ -245,8 +248,8 @@ public final class GtsCommand {
                                         templateId,
                                         fd,
                                         fw,
-                                        flv,
-                                        fg),
+                                        fflv,
+                                        ffg),
                                 false);
             } else {
                 String user =
@@ -256,7 +259,7 @@ public final class GtsCommand {
                 ctx.getSource()
                         .sendSuccess(
                                 () -> Component.translatable(
-                                        "cobblesafari.command.gts.list_offers_line", fid, fu, fd, fw, flv, fg),
+                                        "cobblesafari.command.gts.list_offers_line", fid, fu, fd, fw, fflv, ffg),
                                 false);
             }
         }
@@ -278,10 +281,10 @@ public final class GtsCommand {
         for (int i = from; i < to; i++) {
             GtsSuccess s = all.get(i);
             String user = GtsService.lookupUsername(server, s.getRecipientUuid()).orElse(s.getRecipientUuid().toString());
-            String sp = speciesNameFromNbt(server, s.getPokemonData());
+            Component sp = speciesNameComponentFromNbt(server, s.getPokemonData());
             final int sid = s.getId();
             final String u = user;
-            final String spf = sp;
+            final Component spf = sp;
             ctx.getSource().sendSuccess(() -> Component.translatable("cobblesafari.command.gts.list_success_line", sid, u, spf), false);
         }
         return 1;
@@ -295,7 +298,7 @@ public final class GtsCommand {
             return 0;
         }
         GtsOffer o = opt.get();
-        ctx.getSource().sendSuccess(() -> Component.translatable("cobblesafari.command.gts.details_header", "offer", id), false);
+        ctx.getSource().sendSuccess(() -> Component.translatable(KEY_DETAILS_OFFER, id), false);
 
         ctx.getSource().sendSuccess(() -> Component.translatable("cobblesafari.command.gts.details_section_requested"), false);
         sendRequestedWishSummary(ctx, o);
@@ -312,7 +315,7 @@ public final class GtsCommand {
             ctx.getSource().sendFailure(Component.translatable("cobblesafari.command.gts.details_not_found"));
             return 0;
         }
-        sendPokemonDetails(ctx, opt.get().getPokemonData(), KEY_SUCCESS, id);
+        sendPokemonDetails(ctx, opt.get().getPokemonData(), KEY_DETAILS_SUCCESS, id);
         return 1;
     }
 
@@ -333,8 +336,8 @@ public final class GtsCommand {
             }
             Pokemon wishMon = wishProps.create(null);
             String speciesName = wishMon.getSpecies().getName();
-            String lvl = levelLabel(o.getWishLevelBucket());
-            String gen = o.getWishGender().name().toLowerCase(Locale.ROOT);
+            Component lvl = levelLabelComponent(o.getWishLevelBucket());
+            Component gen = genderFilterLabel(o.getWishGender());
             ctx.getSource()
                     .sendSuccess(
                             () -> Component.translatable(
@@ -349,16 +352,16 @@ public final class GtsCommand {
     }
 
     /**
-     * @param kindHeader {@code KEY_SUCCESS} to print the GTS header, or {@code null} when the header was already printed
-     *     (e.g. offer details after the wishlist section).
+     * @param headerKey lang key for the details header, or {@code null} when the header was already printed
+     * (e.g. offer details after the wishlist section).
      */
     private static void sendPokemonDetails(
-            CommandContext<CommandSourceStack> ctx, net.minecraft.nbt.CompoundTag nbt, String kindHeader, int id) {
+            CommandContext<CommandSourceStack> ctx, net.minecraft.nbt.CompoundTag nbt, String headerKey, int id) {
         try {
             Pokemon p = Pokemon.Companion.loadFromNBT(ctx.getSource().getServer().registryAccess(), nbt.copy());
-            if (kindHeader != null) {
+            if (headerKey != null) {
                 ctx.getSource()
-                        .sendSuccess(() -> Component.translatable("cobblesafari.command.gts.details_header", kindHeader, id), false);
+                        .sendSuccess(() -> Component.translatable(headerKey, id), false);
             }
             ctx.getSource()
                     .sendSuccess(
@@ -367,7 +370,7 @@ public final class GtsCommand {
                                     p.getSpecies().getName(),
                                     p.getLevel(),
                                     Boolean.TRUE.equals(p.getShiny()),
-                                    p.getGender().name(),
+                                    cobblemonGenderLabel(p.getGender()),
                                     p.getOriginalTrainerName() != null ? p.getOriginalTrainerName() : "",
                                     p.heldItem().getHoverName().getString()),
                             false);
@@ -378,7 +381,7 @@ public final class GtsCommand {
 
             EVs evs = p.getEvs();
             int evSum = evs.total();
-            String evSpread = formatEvSpread(evs);
+            Component evSpread = formatEvSpreadComponent(evs);
             ctx.getSource()
                     .sendSuccess(() -> Component.translatable("cobblesafari.command.gts.details_evs", evSum, evSpread), false);
 
@@ -402,7 +405,7 @@ public final class GtsCommand {
         return sb.toString();
     }
 
-    private static String formatEvSpread(EVs evs) {
+    private static Component formatEvSpreadComponent(EVs evs) {
         List<String> chunks = new ArrayList<>();
         for (Stat s : PERMANENT_STATS) {
             int v = evs.getOrDefault(s);
@@ -411,9 +414,9 @@ public final class GtsCommand {
             }
         }
         if (chunks.isEmpty()) {
-            return "—";
+            return Component.translatable("cobblesafari.command.gts.details_evs.none");
         }
-        return String.join(" ", chunks);
+        return Component.literal(String.join(" ", chunks));
     }
 
     private static void sendMarksLines(CommandContext<CommandSourceStack> ctx, Pokemon p) {
@@ -429,7 +432,7 @@ public final class GtsCommand {
         boolean first = true;
         for (Mark m : sorted) {
             if (!first) {
-                line.append(Component.literal(", "));
+                line.append(Component.translatable("cobblesafari.command.gts.details_marks.separator"));
             }
             first = false;
             line.append(Component.literal(m.getIdentifier().toString()));
@@ -527,17 +530,17 @@ public final class GtsCommand {
             String ot = otPreviewFromGivenLine(def);
             int markCount = def.getGivenMarkIds().size();
             String wishSpecies = wishSpeciesNameFromLine(def.getWishSpeciesLine());
-            String lvl = levelLabel(def.getWishLevelBucket());
-            String gen = def.getWishGender().name().toLowerCase(Locale.ROOT);
-            String shiny = def.getWishShiny().name().toLowerCase(Locale.ROOT);
+            Component lvl = levelLabelComponent(def.getWishLevelBucket());
+            Component gen = genderFilterLabel(def.getWishGender());
+            Component shiny = shinyWishLabel(def.getWishShiny());
             final String lineId = def.getOfferId();
             final String gs = givenSpecies;
             final String otName = ot;
             final int mc = markCount;
             final String ws = wishSpecies;
-            final String lv = lvl;
-            final String g = gen;
-            final String sh = shiny;
+            final Component lv = lvl;
+            final Component g = gen;
+            final Component sh = shiny;
             ctx.getSource()
                     .sendSuccess(
                             () -> Component.translatable(
@@ -704,17 +707,17 @@ public final class GtsCommand {
             String targetName =
                     GtsService.lookupUsername(server, o.getPersonalTargetUuid())
                             .orElse(o.getPersonalTargetUuid().toString());
-            String given = speciesNameFromOffer(server, o);
+            Component given = speciesNameFromOffer(server, o);
             String wish = o.getWishSpecies();
-            String lvl = levelLabel(o.getWishLevelBucket());
-            String gen = o.getWishGender().name().toLowerCase(Locale.ROOT);
+            Component lvl = levelLabelComponent(o.getWishLevelBucket());
+            Component gen = genderFilterLabel(o.getWishGender());
             final int fid = o.getId();
             final String fTarget = targetName;
             final String fTemplate = o.getUniqueOfferTemplateId();
-            final String fGiven = given;
+            final Component fGiven = given;
             final String fWish = wish;
-            final String fLvl = lvl;
-            final String fGen = gen;
+            final Component fLvl = lvl;
+            final Component fGen = gen;
             ctx.getSource()
                     .sendSuccess(
                             () -> Component.translatable(
@@ -888,11 +891,13 @@ public final class GtsCommand {
                     if (p == null) {
                         continue;
                     }
-                    final String src = c.source() == GtsTradeCandidate.CandidateSource.PARTY ? "party" : "pc";
+                    final Component src = c.source() == GtsTradeCandidate.CandidateSource.PARTY
+                            ? Component.translatable("cobblesafari.command.gts.source.party")
+                            : Component.translatable("cobblesafari.command.gts.source.pc");
                     final int fs = c.source() == GtsTradeCandidate.CandidateSource.PARTY ? c.partySlot() : c.pcBox() * 100 + c.pcSlot();
                     final String name = p.getSpecies().getName();
                     final int lvl = p.getLevel();
-                    final String gen = p.getGender().name();
+                    final Component gen = cobblemonGenderLabel(p.getGender());
                     ctx.getSource()
                             .sendSuccess(
                                     () -> Component.translatable(
@@ -1023,25 +1028,41 @@ public final class GtsCommand {
         };
     }
 
-    private static String speciesNameFromOffer(MinecraftServer server, GtsOffer o) {
-        return speciesNameFromNbt(server, o.getPokemonData());
+    private static Component speciesNameFromOffer(MinecraftServer server, GtsOffer o) {
+        return speciesNameComponentFromNbt(server, o.getPokemonData());
     }
 
-    private static String speciesNameFromNbt(MinecraftServer server, net.minecraft.nbt.CompoundTag nbt) {
+    private static Component speciesNameComponentFromNbt(MinecraftServer server, net.minecraft.nbt.CompoundTag nbt) {
         try {
             Pokemon p = Pokemon.Companion.loadFromNBT(server.registryAccess(), nbt.copy());
-            return p.getSpecies().getName();
+            return Component.literal(p.getSpecies().getName());
         } catch (Exception e) {
-            return "?";
+            return Component.translatable("cobblesafari.command.gts.species_unknown");
         }
     }
 
-    private static String levelLabel(int bucket) {
+    private static Component levelLabelComponent(int bucket) {
         if (bucket < 0) {
-            return "any";
+            return Component.translatable("cobblesafari.command.gts.level.any");
         }
         int lo = bucket * 10 + 1;
         int hi = Math.min(100, (bucket + 1) * 10);
-        return lo + "-" + hi;
+        return Component.translatable("cobblesafari.command.gts.level.range", lo, hi);
+    }
+
+    private static Component genderFilterLabel(GenderFilter filter) {
+        return Component.translatable("cobblesafari.command.gts.gender." + filter.name().toLowerCase(Locale.ROOT));
+    }
+
+    private static Component cobblemonGenderLabel(Gender gender) {
+        return Component.translatable("cobblesafari.command.gts.gender." + gender.name().toLowerCase(Locale.ROOT));
+    }
+
+    private static Component shinyWishLabel(GtsOffer.ShinyWish wish) {
+        return switch (wish) {
+            case ANY -> Component.translatable("cobblesafari.command.gts.shiny.any");
+            case SHINY -> Component.translatable("cobblesafari.command.gts.shiny.yes");
+            case NOT_SHINY -> Component.translatable("cobblesafari.command.gts.shiny.no");
+        };
     }
 }

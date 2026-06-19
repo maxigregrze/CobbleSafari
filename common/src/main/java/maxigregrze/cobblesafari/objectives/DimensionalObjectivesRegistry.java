@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Runtime registry of dimension → objective definition, rebuilt on datapack (re)load (plan 118 §2.3).
+ * Runtime registry of dimension → objective definition, rebuilt on datapack (re)load.
  */
 public final class DimensionalObjectivesRegistry {
 

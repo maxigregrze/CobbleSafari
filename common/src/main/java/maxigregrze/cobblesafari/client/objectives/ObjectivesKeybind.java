@@ -6,7 +6,7 @@ import net.minecraft.client.Minecraft;
 import org.lwjgl.glfw.GLFW;
 
 /**
- * "Objectives HUD toggler" keybind (default {@code O}, plan 118 §10). Toggles the client-local
+ * "Objectives HUD toggler" keybind (default {@code O}). Toggles the client-local
  * session force-open flag (initialized from {@code hud_config.json}, not written back); purely
  * client-side, no networking.
  */

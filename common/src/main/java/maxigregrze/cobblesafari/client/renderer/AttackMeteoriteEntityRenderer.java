@@ -12,7 +12,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.state.BlockState;
 
 /**
- * Renders the falling meteorite (plan 107 § 4.2) via the {@code meteorite} or
+ * Renders the falling meteorite via the {@code meteorite} or
  * {@code draco_meteorite} block model depending on variant, centered on the entity.
  */
 public class AttackMeteoriteEntityRenderer extends EntityRenderer<AttackMeteoriteEntity> {

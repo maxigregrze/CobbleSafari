@@ -13,7 +13,7 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
 
 /**
- * Renders the wave (plan 110) from {@code vertical_wave.json}: a 3-block-wide vertical wall
+ * Renders the wave from {@code vertical_wave.json}: a 3-block-wide vertical wall
  * (main face + folded crest) oriented along the entity's heading (its movement direction).
  */
 public class AttackWaveEntityRenderer extends EntityRenderer<AttackWaveEntity> {

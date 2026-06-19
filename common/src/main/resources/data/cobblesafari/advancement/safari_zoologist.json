@@ -1,5 +1,5 @@
 {
-  "parent": "cobblesafari:root",
+  "parent": "cobblesafari:welcome_to_safari",
   "display": {
     "icon": {
       "id": "cobblemon:safari_ball"

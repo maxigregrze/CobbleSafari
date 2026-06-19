@@ -10,7 +10,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 
 /**
- * Server validation for the mimic GUI (plan 125 § 3.3): creative + proximity, never trust the
+ * Server validation for the mimic GUI: creative + proximity, never trust the
  * client. Validates the mimic block id and stores the {@code reverse} option on the blockstate.
  */
 public final class CsBossMimicConfigServerHandler {

@@ -21,14 +21,14 @@ import java.util.List;
 public class DracoMeteorFieldAttack implements CsBossAttack {
 
     private static final int WAVES = 2;
-    private static final int WAVE_INTERVAL = 120;  // 2 waves at 0 s and 6 s
+    private static final int WAVE_INTERVAL = 120; // 2 waves at 0 s and 6 s
     private static final int METEOR_AT = 10;
     private static final int FALL_TICKS = 20;
     private static final int IMPACT_AT = METEOR_AT + FALL_TICKS; // 30
-    private static final int END_DELAY = 90;       // 120 + 30 + 90 = 240
+    private static final int END_DELAY = 90; // 120 + 30 + 90 = 240
     private static final double FALL_HEIGHT = 20.0;
     private static final float METEOR_DAMAGE = 18.0F;
-    private static final double COVERAGE = 0.10;   // ~10 % of the surface, picked at random
+    private static final double COVERAGE = 0.10; // ~10 % of the surface, picked at random
 
     private final String id;
     private final RandomSource rng = RandomSource.create();

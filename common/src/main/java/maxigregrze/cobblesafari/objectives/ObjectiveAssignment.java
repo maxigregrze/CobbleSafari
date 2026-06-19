@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.UUID;
 
 /**
- * A player's set of (always 3) rolled tasks for one dimension or dungeon instance (plan 118 §4.2).
+ * A player's set of (always 3) rolled tasks for one dimension or dungeon instance.
  * The assignment key is {@code dimensionId} (non-instanced) or {@code dimensionId@instanceId}.
  */
 public final class ObjectiveAssignment {

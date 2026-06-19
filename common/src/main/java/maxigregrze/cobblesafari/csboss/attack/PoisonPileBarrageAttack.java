@@ -15,8 +15,8 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
- * {@code base_poison_2} (plan 126 § 3) : ombre figée aux pieds de chaque joueur, puis cube sludge
- * en cloche depuis le boss ; impact = tas éphémère 1×1.
+ * {@code base_poison_2}: frozen shadow at each player's feet, then an arcing sludge cube
+ * from the boss; impact = 1×1 ephemeral pile.
  */
 public class PoisonPileBarrageAttack implements CsBossAttack {
 
@@ -119,6 +119,7 @@ public class PoisonPileBarrageAttack implements CsBossAttack {
             AttackPileProjectileEntity projectile = AttackPileProjectileEntity.spawn(
                     level, origin, target, session.getId(),
                     PileKind.SLUDGE, FLIGHT_TICKS, ARC_HEIGHT, 1, PROJECTILE_DAMAGE);
+            projectile.setMaxTravel(CsBossAttackLib.areaReach(session));
             session.trackAttackEntity(projectile);
             if (i == 0) {
                 CsBossAttackLib.sound(level, origin.x, origin.y, origin.z,

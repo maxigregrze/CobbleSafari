@@ -62,5 +62,9 @@ public final class DonutPowerRegistry {
         register(new DonutPower("resistance", DonutMainFlavor.BITTER, 2, 19, 10, 20, 30));
         register(new DonutPower("self_attack", DonutMainFlavor.SPICY, 2, 19, 10, 20, 30));
         register(new DonutPower("self_defense", DonutMainFlavor.BITTER, 1, 19, 10, 20, 30));
+        // Sour, category 1, non-typed : +2 / +3 / +5 extra items from item-reward blocks
+        register(new DonutPower("big_haul", DonutMainFlavor.SOUR, 1, 1, 2, 3, 5));
+        // Sour, category 2, typed by item category (4 variants) : +1 / +2 / +1000 pool weight
+        register(new DonutPower("item", DonutMainFlavor.SOUR, 2, 4, 1, 2, 1000));
     }
 }

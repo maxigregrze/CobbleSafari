@@ -7,6 +7,7 @@ import maxigregrze.cobblesafari.effect.LuckPowerEffect;
 import maxigregrze.cobblesafari.item.donut.DonutBonus;
 import maxigregrze.cobblesafari.item.donut.DonutPower;
 import maxigregrze.cobblesafari.item.donut.DonutPowerRegistry;
+import maxigregrze.cobblesafari.power.ItemCategoryVariantRegistry;
 import maxigregrze.cobblesafari.power.PowerVariantRegistry;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
@@ -44,6 +45,8 @@ public final class ModPowerEffects {
     private static final Holder<MobEffect>[][] RESISTANCE = createTypedMatrix();
     private static final Holder<MobEffect>[][] SELF_ATTACK = createTypedMatrix();
     private static final Holder<MobEffect>[][] SELF_DEFENSE = createTypedMatrix();
+    private static final Holder<MobEffect>[] BIG_HAUL = createHolderArray(3);
+    private static final Holder<MobEffect>[][] ITEM = createItemMatrix();
 
     private static List<Holder<MobEffect>> donutPowerEffectBuffer;
     private static Set<Holder<MobEffect>> donutPowerEffects = Set.of();
@@ -59,6 +62,15 @@ public final class ModPowerEffects {
     private static Holder<MobEffect>[][] createTypedMatrix() {
         Holder<MobEffect>[][] m = (Holder<MobEffect>[][]) new Holder<?>[PowerVariantRegistry.VARIANT_COUNT][];
         for (int i = 0; i < PowerVariantRegistry.VARIANT_COUNT; i++) {
+            m[i] = (Holder<MobEffect>[]) new Holder<?>[3];
+        }
+        return m;
+    }
+
+    @SuppressWarnings("unchecked")
+    private static Holder<MobEffect>[][] createItemMatrix() {
+        Holder<MobEffect>[][] m = (Holder<MobEffect>[][]) new Holder<?>[ItemCategoryVariantRegistry.COUNT][];
+        for (int i = 0; i < ItemCategoryVariantRegistry.COUNT; i++) {
             m[i] = (Holder<MobEffect>[]) new Holder<?>[3];
         }
         return m;
@@ -86,6 +98,14 @@ public final class ModPowerEffects {
             SP_ATK[lv - 1] = registerOne("sp_atk_" + lv, 0xE06633);
             SP_DEF[lv - 1] = registerOne("sp_def_" + lv, 0x6644AA);
             SPEED[lv - 1] = registerOne("speed_" + lv, 0x44AA66);
+            BIG_HAUL[lv - 1] = registerOne("big_haul_" + lv, 0xC9A227);
+        }
+
+        for (int ci = 0; ci < ItemCategoryVariantRegistry.COUNT; ci++) {
+            String suf = ItemCategoryVariantRegistry.suffix(ci);
+            for (int lv = 1; lv <= 3; lv++) {
+                ITEM[ci][lv - 1] = registerOne("item_" + suf + "_" + lv, 0x66BB6A);
+            }
         }
 
         registerTypedFamily("move", 0xFFAA44, MOVE);
@@ -227,6 +247,14 @@ public final class ModPowerEffects {
         return SELF_DEFENSE[variantIndex][level - 1];
     }
 
+    public static Holder<MobEffect> bigHaul(int level) {
+        return BIG_HAUL[level - 1];
+    }
+
+    public static Holder<MobEffect> item(int categoryIndex, int level) {
+        return ITEM[categoryIndex][level - 1];
+    }
+
     public static Holder<MobEffect> resolveBonus(DonutBonus bonus) {
         if (bonus == null) {
             return null;
@@ -243,10 +271,8 @@ public final class ModPowerEffects {
         int typeIdx = bonus.type();
         if (typeNbr <= 1) {
             typeIdx = 0;
-        } else {
-            if (typeIdx < 0 || typeIdx >= PowerVariantRegistry.VARIANT_COUNT) {
-                return null;
-            }
+        } else if (typeIdx < 0 || typeIdx >= typeNbr) {
+            return null;
         }
         return switch (bonus.powerId()) {
             case "alpha" -> alpha(lv);
@@ -269,6 +295,8 @@ public final class ModPowerEffects {
             case "resistance" -> resistance(typeIdx, lv);
             case "self_attack" -> selfAttack(typeIdx, lv);
             case "self_defense" -> selfDefense(typeIdx, lv);
+            case "big_haul" -> bigHaul(lv);
+            case "item" -> item(typeIdx, lv);
             default -> null;
         };
     }

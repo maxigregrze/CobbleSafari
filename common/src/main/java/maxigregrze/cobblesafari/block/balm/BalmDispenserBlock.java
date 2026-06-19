@@ -122,7 +122,7 @@ public class BalmDispenserBlock extends BaseEntityBlock implements BattleReactiv
             return InteractionResult.PASS;
         }
 
-        ItemStack grant = new ItemStack(getDispensedItem(), 16);
+        ItemStack grant = new ItemStack(getDispensedItem(), BalmDispenserSettings.getBalmsPerDispense());
         if (!sp.getInventory().add(grant)) {
             sp.drop(grant, false);
         }

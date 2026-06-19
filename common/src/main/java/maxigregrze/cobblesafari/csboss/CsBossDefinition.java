@@ -1,5 +1,6 @@
 package maxigregrze.cobblesafari.csboss;
 
+import maxigregrze.cobblesafari.entity.csboss.CsBossEntity;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.BossEvent;
 import org.jetbrains.annotations.Nullable;
@@ -8,7 +9,7 @@ import java.util.List;
 
 /**
  * Immutable CSBoss definition, loaded from {@code data/cobblesafari/csboss/<bossId>.json}.
- * See action plan 100 § 2.
+ *
  */
 public record CsBossDefinition(
         String bossId,
@@ -34,16 +35,22 @@ public record CsBossDefinition(
         boolean giveRewardsBeforeSecondPhase,
         /**
          * If {@code true}, the boss tries to play two attacks of different categories at once
-         * (plan 111). If no distinct categories are available, only one is played.
+         *. If no distinct categories are available, only one is played.
          */
         boolean allowSimultaneousAttacks,
-        /** Visual variant of the summon portal (plan 122): selects csboss_spawnportal_type{N}_layer{1..3}. */
-        int portalType
+        /** Visual variant of the summon portal: selects csboss_spawnportal_type{N}_layer{1..3}. */
+        int portalType,
+        /** Multiplicateur de taille du portail (défaut = échelle de rendu actuelle). */
+        double portalSize,
+        /** Hauteur d'apparition du portail au-dessus de l'ancre, en blocs (défaut = ENTRANCE_HEIGHT). */
+        double portalDistance
 ) {
     public static final int DEFAULT_SIZE = 5;
     public static final int DEFAULT_COOLDOWN_MIN = 4;
     public static final int DEFAULT_COOLDOWN_MAX = 8;
     public static final int DEFAULT_PORTAL_TYPE = 1;
+    public static final double DEFAULT_PORTAL_SIZE = 2.0;
+    public static final double DEFAULT_PORTAL_DISTANCE = CsBossEntity.ENTRANCE_HEIGHT;
 
     /** moveSet keyword granting all registered attacks. */
     public static final String ALL_MOVES = "ALLMOVES";

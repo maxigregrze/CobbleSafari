@@ -36,6 +36,24 @@
         "projection": "rigid",
         "element_type": "minecraft:single_pool_element"
       }
+    },
+    {
+      "weight": 1,
+      "element": {
+        "location": "cobblesafari:underground/ends/underground_end_5",
+        "processors": "cobblesafari:underground_digsite_scatter",
+        "projection": "rigid",
+        "element_type": "minecraft:single_pool_element"
+      }
+    },
+    {
+      "weight": 1,
+      "element": {
+        "location": "cobblesafari:underground/ends/underground_end_6",
+        "processors": "cobblesafari:underground_digsite_scatter",
+        "projection": "rigid",
+        "element_type": "minecraft:single_pool_element"
+      }
     }
   ]
 }

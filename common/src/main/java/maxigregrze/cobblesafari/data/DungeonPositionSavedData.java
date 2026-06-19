@@ -209,7 +209,7 @@ public class DungeonPositionSavedData extends SavedData {
 
     /**
      * Resolves the live dungeon instance occupying the slot at {@code pos} in {@code dimensionId}
-     * (plan 118 §5.2). Returns {@code null} if the dimension is not a dungeon or no live instance
+     *. Returns {@code null} if the dimension is not a dungeon or no live instance
      * (non-pending) matches the slot.
      */
     public DungeonInstanceRecord findInstanceByPosition(String dimensionId, BlockPos pos) {

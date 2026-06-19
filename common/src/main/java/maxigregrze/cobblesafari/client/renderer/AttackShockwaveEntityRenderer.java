@@ -12,7 +12,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 
 /**
- * Rendu procédural de l'anneau de choc (plan 124) : bande translucide + bordure opaque, sans texture dédiée.
+ * Procedural shockwave ring rendering: translucent band + opaque border, no dedicated texture.
  */
 public class AttackShockwaveEntityRenderer extends EntityRenderer<AttackShockwaveEntity> {
 
@@ -20,10 +20,10 @@ public class AttackShockwaveEntityRenderer extends EntityRenderer<AttackShockwav
             ResourceLocation.withDefaultNamespace("textures/misc/white.png");
 
     private static final int SEGMENTS = 64;
-    // Décollé du sol pour éviter le z-fighting (« clignote dans le sol ») ; la bordure est posée
-    // encore au-dessus de la bande pour ne pas se battre avec elle (deux plans coplanaires).
-    private static final float FILL_Y = 1.0F / 16.0F;     // 2/32 au-dessus du sol
-    private static final float BORDER_Y = 3.0F / 32.0F;   // au-dessus de la bande
+    // Raised off the ground to avoid z-fighting ("flickers in the ground"); the border sits
+    // above the band so they do not fight (two coplanar planes).
+    private static final float FILL_Y = 1.0F / 16.0F; // 2/32 above ground
+    private static final float BORDER_Y = 3.0F / 32.0F; // above the band
     private static final float FILL_ALPHA = 0.35F;
     private static final float BORDER_WIDTH = 0.12F;
 
@@ -62,7 +62,7 @@ public class AttackShockwaveEntityRenderer extends EntityRenderer<AttackShockwav
         ps.pushPose();
         PoseStack.Pose pose = ps.last();
 
-        // Sans backface-cull (comme l'ombre) pour rester visible depuis le dessus comme le dessous.
+        // No backface cull (like the shadow) so it stays visible from above and below.
         VertexConsumer fill = buffer.getBuffer(RenderType.entityTranslucent(WHITE));
         drawAnnulus(fill, pose, packedLight, FILL_Y, inner, outer, r, g, b, FILL_ALPHA);
 
@@ -74,9 +74,9 @@ public class AttackShockwaveEntityRenderer extends EntityRenderer<AttackShockwav
     }
 
     /**
-     * Bande radiale (anneau) entre {@code inner} et {@code outer}, dessinée en <b>quads</b>
-     * (un quad complet par segment angulaire — l'ordre triangle-strip produisait un quad sur deux,
-     * d'où les « rectangles » manquants).
+     * Radial band (ring) between {@code inner} and {@code outer}, drawn as <b>quads</b>
+     * (one full quad per angular segment — triangle-strip order produced every other quad,
+     * hence the missing "rectangles").
      */
     private static void drawAnnulus(VertexConsumer vc, PoseStack.Pose pose, int light, float y,
                                     float inner, float outer,

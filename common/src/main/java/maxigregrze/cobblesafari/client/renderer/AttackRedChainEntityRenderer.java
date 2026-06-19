@@ -11,9 +11,9 @@ import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.resources.ResourceLocation;
 
 /**
- * Rend le projectile « chaîne rouge » ({@code distortion_5}) comme le projectile de l'objet Chaîne
- * Rouge : un disque horizontal (parallèle au sol) qui tourne lentement, texture
- * {@code attack_redchain.png}. Réutilise {@link RedChainBillboardHelper}.
+ * Renders the "red chain" projectile ({@code distortion_5}) like the Red Chain item projectile:
+ * a horizontal disc (parallel to the ground) that spins slowly, texture
+ * {@code attack_redchain.png}. Reuses {@link RedChainBillboardHelper}.
  */
 public class AttackRedChainEntityRenderer extends EntityRenderer<AttackRedChainEntity> {
 

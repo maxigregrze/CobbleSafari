@@ -7,7 +7,7 @@ import java.util.List;
 
 /**
  * Client cache of chat conversation definitions (contact list) synced from the server
- * (cf. action plan 114 §13.2). Mirrors {@code RotomPhoneClientCache}.
+ *. Mirrors {@code RotomPhoneClientCache}.
  */
 public final class ChatConversationClientCache {
 

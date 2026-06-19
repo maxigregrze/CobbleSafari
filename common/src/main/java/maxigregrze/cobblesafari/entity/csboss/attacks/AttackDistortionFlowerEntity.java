@@ -7,14 +7,14 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.Level;
 
 /**
- * Distortion flower (plan 113, distortion_2/3): rendered with the block model
+ * Distortion flower (distortion_2/3): rendered with the block model
  * {@code distortion_flower_carpet}. 2 s after spawning, it is replaced by a column of
  * vertical stems (6-block-high wall) that stays active for 10 s.
  */
 public class AttackDistortionFlowerEntity extends AbstractAttackEntity {
 
-    private static final int BLOOM_AT = 40;       // 2 s before growing the wall
-    private static final int STEM_STACKS = 5;     // 5 + base = 6 stems high
+    private static final int BLOOM_AT = 40; // 2 s before growing the wall
+    private static final int STEM_STACKS = 5; // 5 + base = 6 stems high
     private boolean bloomed;
 
     public AttackDistortionFlowerEntity(EntityType<? extends AttackDistortionFlowerEntity> type, Level level) {

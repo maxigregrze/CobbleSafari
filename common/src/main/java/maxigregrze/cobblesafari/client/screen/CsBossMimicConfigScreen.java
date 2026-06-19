@@ -11,7 +11,7 @@ import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 
 /**
- * Creative "command-block-like" mimic GUI (plan 125 § 3.1): one block-id field + a "reverse state"
+ * Creative "command-block-like" mimic GUI: one block-id field + a "reverse state"
  * toggle button.
  */
 public class CsBossMimicConfigScreen extends Screen {

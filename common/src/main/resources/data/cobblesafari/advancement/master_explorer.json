@@ -1,0 +1,16 @@
+{
+  "parent": "cobblesafari:veteran_explorer",
+  "display": {
+    "icon": { "id": "minecraft:nether_star" },
+    "title": { "translate": "advancement.cobblesafari.master_explorer.title" },
+    "description": { "translate": "advancement.cobblesafari.master_explorer.description" },
+    "frame": "challenge",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "done": { "trigger": "cobblesafari:portal_used", "conditions": { "count": 100 } }
+  },
+  "requirements": [["done"]]
+}

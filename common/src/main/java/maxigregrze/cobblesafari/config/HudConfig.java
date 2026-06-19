@@ -12,7 +12,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 /**
- * Client-local HUD preferences ({@code hud_config.json}, plan 118 §11). Read and written on the
+ * Client-local HUD preferences ({@code hud_config.json}). Read and written on the
  * player's own machine so HUD preferences follow them across worlds and servers.
  * {@code objectivesForceOpen} is the default force-open state applied on client start and after
  * {@code /cobblesafari refresh}; the in-game keybind toggles a separate session flag (see
@@ -30,7 +30,7 @@ public class HudConfig {
     private boolean objectivesForceOpen = false;
     private int objectivesAutoHide = 15;
     private int objectivesInactivityShows = 15;
-    /** Open↔closed slide duration, expressed in **ticks** (plan 118 §9.2). */
+    /** Open↔closed slide duration, expressed in **ticks**. */
     private int objectivesAnimationTime = 10;
     private boolean objectivesUsePercentage = false;
     private float objectivesPlacementPercentage = 0.5f;
