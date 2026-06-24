@@ -5,10 +5,10 @@
       "id": "minecraft:anvil"
     },
     "title": {
-      "translate": "advancement.cobblesafari.hammer_head.title"
+      "translate": "advancements.cobblesafari.hammer_head.title"
     },
     "description": {
-      "translate": "advancement.cobblesafari.hammer_head.description"
+      "translate": "advancements.cobblesafari.hammer_head.description"
     },
     "frame": "task",
     "show_toast": true,

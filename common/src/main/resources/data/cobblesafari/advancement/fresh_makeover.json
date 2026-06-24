@@ -2,8 +2,8 @@
   "parent": "cobblesafari:ring_a_ding",
   "display": {
     "icon": { "id": "minecraft:painting" },
-    "title": { "translate": "advancement.cobblesafari.fresh_makeover.title" },
-    "description": { "translate": "advancement.cobblesafari.fresh_makeover.description" },
+    "title": { "translate": "advancements.cobblesafari.fresh_makeover.title" },
+    "description": { "translate": "advancements.cobblesafari.fresh_makeover.description" },
     "frame": "task",
     "show_toast": true,
     "announce_to_chat": true,

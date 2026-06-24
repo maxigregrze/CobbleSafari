@@ -25,6 +25,7 @@ import maxigregrze.cobblesafari.block.csboss.CsBossTriggerBlockEntity;
 import maxigregrze.cobblesafari.block.csboss.CsBossMimicBlockEntity;
 import maxigregrze.cobblesafari.block.balm.BalmDispenserBlockEntity;
 import maxigregrze.cobblesafari.block.teleporter.TeleportPadBlockEntity;
+import maxigregrze.cobblesafari.block.hyperspace.HyperspaceTrashcanBlockEntity;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
@@ -58,6 +59,7 @@ public class ModBlockEntities {
     public static BlockEntityType<BalmDispenserBlockEntity> BALM_DISPENSER;
     public static BlockEntityType<TrapBlockEntity> TRAP;
     public static BlockEntityType<TeleportPadBlockEntity> TELEPORT_PAD;
+    public static BlockEntityType<HyperspaceTrashcanBlockEntity> HYPERSPACE_TRASHCAN;
 
     public static void register() {
         CobbleSafari.LOGGER.info("Registering block entities for " + CobbleSafari.MOD_ID);
@@ -227,6 +229,12 @@ public class ModBlockEntities {
                 BuiltInRegistries.BLOCK_ENTITY_TYPE,
                 ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, "teleport_pad"),
                 BlockEntityType.Builder.of(TeleportPadBlockEntity::new, ModBlocks.TELEPORT_PAD, ModBlocks.SURVIVAL_TELEPORT_PAD).build(null)
+        );
+
+        HYPERSPACE_TRASHCAN = Registry.register(
+                BuiltInRegistries.BLOCK_ENTITY_TYPE,
+                ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, "hyperspace_trashcan"),
+                BlockEntityType.Builder.of(HyperspaceTrashcanBlockEntity::new, ModBlocks.HYPERSPACE_TRASHCAN).build(null)
         );
     }
 }

@@ -1,0 +1,8 @@
+{
+  "variants": {
+    "facing=north": { "model": "cobblesafari:block/hyperspace_ironrails", "y": 180 },
+    "facing=east":  { "model": "cobblesafari:block/hyperspace_ironrails", "y": 270 },
+    "facing=south": { "model": "cobblesafari:block/hyperspace_ironrails" },
+    "facing=west":  { "model": "cobblesafari:block/hyperspace_ironrails", "y": 90 }
+  }
+}

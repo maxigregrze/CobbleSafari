@@ -2,8 +2,8 @@
   "parent": "cobblesafari:veteran_explorer",
   "display": {
     "icon": { "id": "minecraft:nether_star" },
-    "title": { "translate": "advancement.cobblesafari.master_explorer.title" },
-    "description": { "translate": "advancement.cobblesafari.master_explorer.description" },
+    "title": { "translate": "advancements.cobblesafari.master_explorer.title" },
+    "description": { "translate": "advancements.cobblesafari.master_explorer.description" },
     "frame": "challenge",
     "show_toast": true,
     "announce_to_chat": true,

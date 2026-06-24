@@ -1,6 +1,10 @@
 {
 	"replace": false,
 	"values": [
-		"cobblesafari:karate_mannequin"
+    "cobblesafari:hyperspace_door",
+    "cobblesafari:hyperspace_flowerpot",
+    "cobblesafari:hyperspace_chair",
+    "cobblesafari:hyperspace_table",
+    "cobblesafari:karate_mannequin"
 	]
 }

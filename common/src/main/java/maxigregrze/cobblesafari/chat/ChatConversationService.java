@@ -166,7 +166,12 @@ public final class ChatConversationService {
             return statId == null ? "" : "stat." + statId.getNamespace() + "." + statId.getPath();
         }
         ResourceLocation advId = ResourceLocation.tryParse(step.advancement());
-        return advId == null ? "" : "advancement." + advId.getNamespace() + "." + advId.getPath() + ".title";
+        if (advId == null) {
+            return "";
+        }
+        String path = advId.getPath().replace('/', '.');
+        String base = advId.getNamespace().equals("minecraft") ? path : advId.getNamespace() + "." + path;
+        return "advancements." + base + ".title";
     }
 
     // ---------------------------------------------------------------- mutations

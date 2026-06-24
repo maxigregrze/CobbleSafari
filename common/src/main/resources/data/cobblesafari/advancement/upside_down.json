@@ -2,8 +2,8 @@
   "parent": "cobblesafari:dungeons",
   "display": {
     "icon": { "id": "cobblesafari:redchain_fragment" },
-    "title": { "translate": "advancement.cobblesafari.upside_down.title" },
-    "description": { "translate": "advancement.cobblesafari.upside_down.description" },
+    "title": { "translate": "advancements.cobblesafari.upside_down.title" },
+    "description": { "translate": "advancements.cobblesafari.upside_down.description" },
     "frame": "task",
     "show_toast": true,
     "announce_to_chat": true,

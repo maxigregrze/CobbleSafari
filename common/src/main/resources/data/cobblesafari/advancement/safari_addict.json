@@ -5,10 +5,10 @@
       "id": "minecraft:clock"
     },
     "title": {
-      "translate": "advancement.cobblesafari.safari_addict.title"
+      "translate": "advancements.cobblesafari.safari_addict.title"
     },
     "description": {
-      "translate": "advancement.cobblesafari.safari_addict.description"
+      "translate": "advancements.cobblesafari.safari_addict.description"
     },
     "frame": "goal",
     "show_toast": true,

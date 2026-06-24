@@ -2,8 +2,8 @@
   "parent": "cobblesafari:rookie_catcher",
   "display": {
     "icon": { "id": "cobblemon:safari_ball" },
-    "title": { "translate": "advancement.cobblesafari.seasoned_catcher.title" },
-    "description": { "translate": "advancement.cobblesafari.seasoned_catcher.description" },
+    "title": { "translate": "advancements.cobblesafari.seasoned_catcher.title" },
+    "description": { "translate": "advancements.cobblesafari.seasoned_catcher.description" },
     "frame": "goal",
     "show_toast": true,
     "announce_to_chat": true,

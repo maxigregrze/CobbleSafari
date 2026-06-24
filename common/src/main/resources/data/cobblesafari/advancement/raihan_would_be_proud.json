@@ -2,8 +2,8 @@
   "parent": "cobblesafari:ring_a_ding",
   "display": {
     "icon": { "id": "cobblesafari:rotomphone" },
-    "title": { "translate": "advancement.cobblesafari.raihan_would_be_proud.title" },
-    "description": { "translate": "advancement.cobblesafari.raihan_would_be_proud.description" },
+    "title": { "translate": "advancements.cobblesafari.raihan_would_be_proud.title" },
+    "description": { "translate": "advancements.cobblesafari.raihan_would_be_proud.description" },
     "frame": "goal",
     "show_toast": true,
     "announce_to_chat": true,

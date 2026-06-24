@@ -1,0 +1,6 @@
+{
+  "variants": {
+    "half=lower": { "model": "cobblesafari:block/hyperspace_door_bottom" },
+    "half=upper": { "model": "cobblesafari:block/hyperspace_door_top" }
+  }
+}

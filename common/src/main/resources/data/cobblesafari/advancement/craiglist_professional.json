@@ -2,8 +2,8 @@
   "parent": "cobblesafari:craiglist_amateur",
   "display": {
     "icon": { "id": "minecraft:book" },
-    "title": { "translate": "advancement.cobblesafari.craiglist_professional.title" },
-    "description": { "translate": "advancement.cobblesafari.craiglist_professional.description" },
+    "title": { "translate": "advancements.cobblesafari.craiglist_professional.title" },
+    "description": { "translate": "advancements.cobblesafari.craiglist_professional.description" },
     "frame": "goal",
     "show_toast": true,
     "announce_to_chat": true,

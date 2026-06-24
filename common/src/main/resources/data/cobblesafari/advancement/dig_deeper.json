@@ -2,8 +2,8 @@
   "parent": "cobblesafari:dungeons",
   "display": {
     "icon": { "id": "minecraft:iron_pickaxe" },
-    "title": { "translate": "advancement.cobblesafari.dig_deeper.title" },
-    "description": { "translate": "advancement.cobblesafari.dig_deeper.description" },
+    "title": { "translate": "advancements.cobblesafari.dig_deeper.title" },
+    "description": { "translate": "advancements.cobblesafari.dig_deeper.description" },
     "frame": "task",
     "show_toast": true,
     "announce_to_chat": true,

@@ -18,9 +18,8 @@ import maxigregrze.cobblesafari.block.distortion.DistortionPortalBlock;
 import maxigregrze.cobblesafari.block.distortion.DistortionWeedBlock;
 import maxigregrze.cobblesafari.block.misc.IcicleBlock;
 import maxigregrze.cobblesafari.block.distortion.DistortionBoulderBlock;
+import maxigregrze.cobblesafari.block.base.HorizontalModelBlock;
 import maxigregrze.cobblesafari.block.distortion.DistortionRockBlock;
-import maxigregrze.cobblesafari.block.distortion.DistortionRockDirectionalBlock;
-import maxigregrze.cobblesafari.block.distortion.DistortionRockVerticalBlock;
 import maxigregrze.cobblesafari.block.distortion.DistortionStoneBricksRuneBlock;
 import maxigregrze.cobblesafari.block.distortion.DistortionStonebricksRubbleBlock;
 import maxigregrze.cobblesafari.block.distortion.GiratinaCoreBlock;
@@ -34,7 +33,6 @@ import maxigregrze.cobblesafari.block.misc.LostItemVisualBlock;
 import maxigregrze.cobblesafari.block.misc.MagneticClusterBlock;
 import maxigregrze.cobblesafari.block.misc.MagneticCrystalBlock;
 import maxigregrze.cobblesafari.block.misc.LiquidBarrierBlock;
-import maxigregrze.cobblesafari.block.misc.KarateMannequinBlock;
 import maxigregrze.cobblesafari.block.misc.DraconicCraterBlock;
 import maxigregrze.cobblesafari.block.misc.HotGeyserBlock;
 import maxigregrze.cobblesafari.block.misc.MudPileBlock;
@@ -82,7 +80,19 @@ import maxigregrze.cobblesafari.block.trap.SlowTrapBlock;
 import maxigregrze.cobblesafari.block.trap.TeleportTrapBlock;
 import maxigregrze.cobblesafari.block.trap.WindTrapBlock;
 import maxigregrze.cobblesafari.block.underground.UndergroundTimberBlock;
+import maxigregrze.cobblesafari.block.hyperspace.HyperspaceDirectionalBlock;
+import maxigregrze.cobblesafari.block.hyperspace.HyperspaceDoubleBlock;
+import maxigregrze.cobblesafari.block.hyperspace.HyperspaceLadderBlock;
+import maxigregrze.cobblesafari.block.hyperspace.HyperspaceQuadBlock;
+import maxigregrze.cobblesafari.block.hyperspace.HyperspaceQuadPart;
+import maxigregrze.cobblesafari.block.hyperspace.HyperspaceRampBlock;
+import maxigregrze.cobblesafari.block.hyperspace.HyperspaceScaffoldStairsBlock;
+import maxigregrze.cobblesafari.block.hyperspace.HyperspaceShapedBlock;
+import maxigregrze.cobblesafari.block.hyperspace.HyperspaceTriBlock;
+import maxigregrze.cobblesafari.block.hyperspace.HyperspaceTriPart;
+import maxigregrze.cobblesafari.block.hyperspace.HyperspaceTrashcanBlock;
 import net.minecraft.core.Registry;
+import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.BlockItem;
@@ -90,12 +100,14 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Rarity;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.GlazedTerracottaBlock;
 import net.minecraft.world.level.block.SlabBlock;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.StairBlock;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.level.material.PushReaction;
+import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
 import java.util.LinkedHashMap;
@@ -914,12 +926,13 @@ public class ModBlocks {
             ));
 
     public static final Block DISTORTION_ROCK_VERTICAL = registerBlock("distortion_rock_vertical",
-            new DistortionRockVerticalBlock(BlockBehaviour.Properties.of()
+            new HorizontalModelBlock(BlockBehaviour.Properties.of()
                     .mapColor(MapColor.SAND)
                     .strength(3.0f, 9.0f)
                     .sound(SoundType.STONE)
-                    .requiresCorrectToolForDrops()
-            ));
+                    .requiresCorrectToolForDrops(),
+                    HorizontalModelBlock.Settings.builder()
+                            .descriptionId("block.cobblesafari.distortion_rock").build()));
 
     public static final Block DISTORTION_ROCK_UPSIDEDOWN = registerBlock("distortion_rock_upsidedown",
             new DistortionRockBlock(BlockBehaviour.Properties.of()
@@ -938,12 +951,13 @@ public class ModBlocks {
             ));
 
     public static final Block DISTORTION_ROCK_DEEP_VERTICAL = registerBlock("distortion_rock_deep_vertical",
-            new DistortionRockDirectionalBlock(BlockBehaviour.Properties.of()
+            new HorizontalModelBlock(BlockBehaviour.Properties.of()
                     .mapColor(MapColor.SAND)
                     .strength(3.0f, 9.0f)
                     .sound(SoundType.STONE)
-                    .requiresCorrectToolForDrops()
-            ));
+                    .requiresCorrectToolForDrops(),
+                    HorizontalModelBlock.Settings.builder()
+                            .descriptionId("block.cobblesafari.distortion_rock").build()));
 
     public static final Block DISTORTION_ROCK_DEEP_UPSIDEDOWN = registerBlock("distortion_rock_deep_upsidedown",
             new DistortionRockBlock(BlockBehaviour.Properties.of()
@@ -963,13 +977,14 @@ public class ModBlocks {
             ));
 
     public static final Block DISTORTION_ROCK_FLAT_VERTICAL = registerBlock("distortion_rock_flat_vertical",
-            new DistortionRockDirectionalBlock(BlockBehaviour.Properties.of()
+            new HorizontalModelBlock(BlockBehaviour.Properties.of()
                     .mapColor(MapColor.SAND)
                     .strength(3.0f, 9.0f)
                     .sound(SoundType.STONE)
                     .requiresCorrectToolForDrops()
-                    .noOcclusion()
-            ));
+                    .noOcclusion(),
+                    HorizontalModelBlock.Settings.builder()
+                            .descriptionId("block.cobblesafari.distortion_rock").build()));
 
     public static final Block DISTORTION_ROCK_FLAT_UPSIDEDOWN = registerBlock("distortion_rock_flat_upsidedown",
             new DistortionRockBlock(BlockBehaviour.Properties.of()
@@ -1040,12 +1055,13 @@ public class ModBlocks {
             ));
 
     public static final Block DISTORTION_ROCK_FLOATING = registerBlock("distortion_rock_floating",
-            new DistortionRockDirectionalBlock(BlockBehaviour.Properties.of()
+            new HorizontalModelBlock(BlockBehaviour.Properties.of()
                     .mapColor(MapColor.SAND)
                     .strength(3.0f, 9.0f)
                     .sound(SoundType.STONE)
-                    .requiresCorrectToolForDrops()
-            ));
+                    .requiresCorrectToolForDrops(),
+                    HorizontalModelBlock.Settings.builder()
+                            .descriptionId("block.cobblesafari.distortion_rock").build()));
 
     public static final Block BELLTOWER_TRELLIS = registerBlock("belltower_trellis",
             new BelltowerTrellisBlock(BlockBehaviour.Properties.of()
@@ -1241,11 +1257,16 @@ public class ModBlocks {
     public static final Block SQUIRTLE_STATUE = registerBlock("squirtle_statue",
             new PokemonStatueBlock.Squirtle(BlockBehaviour.Properties.ofFullCopy(Blocks.WHITE_WOOL)));
     public static final Block KARATE_MANNEQUIN = registerBlock("karate_mannequin",
-            new KarateMannequinBlock(BlockBehaviour.Properties.of()
+            new HorizontalModelBlock(BlockBehaviour.Properties.of()
                     .mapColor(MapColor.WOOD)
                     .strength(2.0f)
                     .sound(SoundType.WOOD)
-                    .noOcclusion()));
+                    .noOcclusion(),
+                    HorizontalModelBlock.Settings.builder()
+                            .shape(Block.box(4, 0, 4, 12, 16, 16))
+                            .rotateShape()
+                            .support(HorizontalModelBlock.Support.GROUND)
+                            .emptyOcclusion().build()));
 
     public static final Block MUD_PILE = registerBlock("mud_pile",
             new MudPileBlock(BlockBehaviour.Properties.of()
@@ -1459,6 +1480,177 @@ public class ModBlocks {
             case "prism_s", "prism_l" -> MapColor.DIAMOND;
             default -> MapColor.STONE;
         };
+    }
+
+    private static final VoxelShape HS_ROAD_SHAPE = Block.box(0, 0, 0, 16, 15, 16);
+    private static final VoxelShape HS_CONE_SHAPE = Block.box(3, 0, 2, 15, 12, 14);
+    private static final VoxelShape HS_BARRIER_SHAPE = Block.box(0, 0, 7, 16, 16, 9);
+    private static final VoxelShape HS_FLAG_SMALL_SHAPE = Block.box(6, 12, 0, 10, 16, 2);
+    private static final VoxelShape HS_IRONRAILS_SHAPE = Block.box(0, 0, 0, 16, 8, 1);
+    private static final VoxelShape HS_SHUTTERS_SHAPE = Block.box(0, 0, 0, 16, 16, 2);
+    private static final VoxelShape HS_PLATFORM_FLOATING_SHAPE = Block.box(0, 13, 0, 16, 16, 16);
+    private static final VoxelShape HS_SLAB_SHAPE = Block.box(0, 12, 0, 16, 16, 16);
+    private static final VoxelShape HS_FULL_SHAPE = Block.box(0, 0, 0, 16, 16, 16);
+    private static final VoxelShape HS_LAMP_SHAPE = Block.box(6, 0, 6, 10, 16, 10);
+    private static final VoxelShape HS_NEON_TRI_SHAPE = Block.box(6, 0, 6, 10, 16, 10);
+
+    public static final Block HYPERSPACE_PILLAR = registerBlock("hyperspace_pillar", new Block(hsStone()));
+    public static final Block HYPERSPACE_PILLAR_TOP = registerBlock("hyperspace_pillar_top", new Block(hsStone()));
+    public static final Block HYPERSPACE_PILLAR_ALT = registerBlock("hyperspace_pillar_alt", new Block(hsStone()));
+    public static final Block HYPERSPACE_PILLAR_TOP_ALT = registerBlock("hyperspace_pillar_top_alt", new Block(hsStone()));
+    public static final Block HYPERSPACE_PILLAR_BOTTOM = registerBlock("hyperspace_pillar_bottom", new Block(hsStone()));
+    public static final Block HYPERSPACE_FLOOR = registerBlock("hyperspace_floor", new Block(hsStone()));
+    public static final Block HYPERSPACE_FLOOR_PLAIN = registerBlock("hyperspace_floor_plain", new Block(hsStone()));
+    public static final Block HYPERSPACE_ROAD = registerBlock("hyperspace_road",
+            new HyperspaceShapedBlock(hsStone().noOcclusion(), HS_ROAD_SHAPE));
+    public static final Block HYPERSPACE_ROAD_PLAIN = registerBlock("hyperspace_road_plain",
+            new HyperspaceShapedBlock(hsStone().noOcclusion(), HS_ROAD_SHAPE));
+    public static final Block HYPERSPACE_MANHOLE = registerBlock("hyperspace_manhole", new Block(hsIronBlock()));
+    public static final Block HYPERSPACE_WALL = registerBlock("hyperspace_wall", new Block(hsStone()));
+    public static final Block HYPERSPACE_WALL_PLAIN = registerBlock("hyperspace_wall_plain", new Block(hsStone()));
+    public static final Block HYPERSPACE_WALL_BOTTOM = registerBlock("hyperspace_wall_bottom", new Block(hsStone()));
+    public static final Block HYPERSPACE_WALL_BOTTOM_GRATE = registerBlock("hyperspace_wall_bottom_grate", new Block(hsStone()));
+    public static final Block HYPERSPACE_WALL_BRICKS = registerBlock("hyperspace_wall_bricks", new Block(hsStone()));
+    public static final Block HYPERSPACE_CHAMFER = registerBlock("hyperspace_champfer", new Block(hsStone()));
+    // Orientable full cube (front shows the window texture, every other face is brick). Uses the
+    // vanilla GlazedTerracottaBlock: a plain HorizontalDirectionalBlock with no extra behaviour.
+    public static final Block HYPERSPACE_WINDOW_CEILING = registerBlock("hyperspace_window_ceiling", new GlazedTerracottaBlock(hsStone().noOcclusion()));
+    public static final Block HYPERSPACE_WINDOW_SMALL = registerBlock("hyperspace_window_small", new Block(hsGlass()));
+    public static final Block HYPERSPACE_WINDOW_TOPPER = registerBlock("hyperspace_window_topper", new Block(hsGlass()));
+    public static final Block HYPERSPACE_CANOPY_STAIRS = registerBlock("hyperspace_canopy_stairs",
+            new StairBlock(HYPERSPACE_WALL.defaultBlockState(), hsGlass()));
+    public static final Block HYPERSPACE_CANOPY_SLAB = registerBlock("hyperspace_canopy_slab", new SlabBlock(hsGlass()));
+    public static final Block HYPERSPACE_BRICK_STAIRS = registerBlock("hyperspace_brick_stairs",
+            new StairBlock(HYPERSPACE_WALL_BRICKS.defaultBlockState(), hsStone()));
+
+    // Floor stairs/slabs: full-height vanilla shapes (the floor is a full cube).
+    public static final Block HYPERSPACE_FLOOR_STAIRS = registerBlock("hyperspace_floor_stairs",
+            new StairBlock(HYPERSPACE_FLOOR.defaultBlockState(), hsStone()));
+    public static final Block HYPERSPACE_FLOOR_SLAB = registerBlock("hyperspace_floor_slab", new SlabBlock(hsStone()));
+    public static final Block HYPERSPACE_FLOOR_PLAIN_STAIRS = registerBlock("hyperspace_floor_plain_stairs",
+            new StairBlock(HYPERSPACE_FLOOR_PLAIN.defaultBlockState(), hsStone()));
+    public static final Block HYPERSPACE_FLOOR_PLAIN_SLAB = registerBlock("hyperspace_floor_plain_slab", new SlabBlock(hsStone()));
+
+    // Road stairs/slabs: vanilla collision, but their models are authored 1px lower on Y so the
+    // visible surface lines up with the HYPERSPACE_ROAD block (top at y=15). noOcclusion to avoid
+    // neighbours culling against the lowered geometry.
+    public static final Block HYPERSPACE_ROAD_STAIRS = registerBlock("hyperspace_road_stairs",
+            new StairBlock(HYPERSPACE_ROAD.defaultBlockState(), hsStone().noOcclusion()));
+    public static final Block HYPERSPACE_ROAD_SLAB = registerBlock("hyperspace_road_slab", new SlabBlock(hsStone().noOcclusion()));
+    public static final Block HYPERSPACE_ROAD_PLAIN_STAIRS = registerBlock("hyperspace_road_plain_stairs",
+            new StairBlock(HYPERSPACE_ROAD_PLAIN.defaultBlockState(), hsStone().noOcclusion()));
+    public static final Block HYPERSPACE_ROAD_PLAIN_SLAB = registerBlock("hyperspace_road_plain_slab", new SlabBlock(hsStone().noOcclusion()));
+
+    public static final Block HYPERSPACE_BARRIER = registerBlock("hyperspace_barrier",
+            new HyperspaceDirectionalBlock(hsIronHand(), HS_BARRIER_SHAPE, false, true));
+    public static final Block HYPERSPACE_CONE = registerBlock("hyperspace_cone",
+            new HyperspaceShapedBlock(BlockBehaviour.Properties.of().mapColor(MapColor.STONE).instabreak().sound(SoundType.STONE).noOcclusion(), HS_CONE_SHAPE));
+    public static final Block HYPERSPACE_FLAG_SMALL = registerBlock("hyperspace_flag_small",
+            new HyperspaceDirectionalBlock(hsPaneLight(), HS_FLAG_SMALL_SHAPE, true, false));
+    public static final Block HYPERSPACE_IRONRAILS = registerBlock("hyperspace_ironrails",
+            new HyperspaceDirectionalBlock(hsIronHand(), HS_IRONRAILS_SHAPE, true, true));
+    public static final Block HYPERSPACE_SCAFFOLDING_PLATFORM = registerBlock("hyperspace_scaffolding_platform",
+            new HyperspaceShapedBlock(hsIronPick(), HS_FULL_SHAPE));
+    public static final Block HYPERSPACE_SCAFFOLDING = registerBlock("hyperspace_scaffolding",
+            new HyperspaceShapedBlock(hsIronPick(), HS_FULL_SHAPE));
+    public static final Block HYPERSPACE_PLATFORM = registerBlock("hyperspace_platform",
+            new HyperspaceShapedBlock(hsIronPick(), HS_PLATFORM_FLOATING_SHAPE));
+    public static final Block HYPERSPACE_SHUTTERS = registerBlock("hyperspace_shutters",
+            new HyperspaceDirectionalBlock(hsTrapdoor(), HS_SHUTTERS_SHAPE, true, true));
+    public static final Block HYPERSPACE_SLAB = registerBlock("hyperspace_slab",
+            new HyperspaceShapedBlock(hsIronPick(), HS_SLAB_SHAPE));
+
+    public static final Block HYPERSPACE_WINDOW_LARGE = registerBlock("hyperspace_window_large",
+            new HyperspaceDoubleBlock(hsGlass()));
+    public static final Block HYPERSPACE_WINDOW_PLAIN_LARGE = registerBlock("hyperspace_window_plain_large",
+            new HyperspaceDoubleBlock(hsGlass()));
+    public static final Block HYPERSPACE_WINDOW_BRICK_LARGE = registerBlock("hyperspace_window_brick_large",
+            new HyperspaceDoubleBlock(hsGlass()));
+    public static final Block HYPERSPACE_WINDOW_BRICK_LARGE2 = registerBlock("hyperspace_window_brick_large2",
+            new HyperspaceDoubleBlock(hsGlass()));
+    public static final Block HYPERSPACE_DOOR = registerBlock("hyperspace_door",
+            new HyperspaceDoubleBlock(hsWood()));
+    public static final Block HYPERSPACE_FLAG_LARGE = registerBlock("hyperspace_flag_large",
+            new HyperspaceTriBlock(hsPaneLight(), true, false, HS_NEON_TRI_SHAPE));
+    public static final Block HYPERSPACE_LAMPPOST = registerBlock("hyperspace_lamppost",
+            new HyperspaceQuadBlock(hsIronBlock().noOcclusion()
+                    .lightLevel(s -> s.getValue(HyperspaceQuadBlock.PART) == HyperspaceQuadPart.CENTERTOP ? 15 : 0),
+                    false, true, HS_LAMP_SHAPE));
+    public static final Block HYPERSPACE_FLOWERPOT = registerBlock("hyperspace_flowerpot",
+            new HyperspaceShapedBlock(hsPlanks().noOcclusion(), HS_FULL_SHAPE));
+    public static final Block HYPERSPACE_LADDER = registerBlock("hyperspace_ladder",
+            new HyperspaceLadderBlock(hsIronHand()));
+    public static final Block HYPERSPACE_RAMP = registerBlock("hyperspace_ramp",
+            new HyperspaceRampBlock(hsIronHand()));
+    public static final Block HYPERSPACE_SCAFFOLDING_STAIRS = registerBlock("hyperspace_scaffolding_stairs",
+            new HyperspaceScaffoldStairsBlock(hsIronHand()));
+    public static final Block HYPERSPACE_TRASHCAN = registerBlock("hyperspace_trashcan",
+            new HyperspaceTrashcanBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.METAL).strength(1.0f).sound(SoundType.METAL)
+                    .noOcclusion().requiresCorrectToolForDrops()));
+    public static final Block HYPERSPACE_TRASHCAN_LID_DISPLAY = registerBlockWithoutItem("hyperspace_trashcan_lid_display",
+            new Block(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.METAL).strength(1.0f).noOcclusion().noLootTable().noCollission()));
+    // Orientable chair (custom model + hitbox that follows it, sits on the ground).
+    public static final Block HYPERSPACE_CHAIR = registerBlock("hyperspace_chair",
+            new HorizontalModelBlock(hsPlanks().noOcclusion(),
+                    HorizontalModelBlock.Settings.builder()
+                            .shape(Shapes.or(
+                                    Block.box(1, 0, 1, 15, 8, 15),
+                                    Block.box(0, 6, 0, 16, 25, 4)))
+                            .authoredFacing(Direction.NORTH)
+                            .rotateShape()
+                            .support(HorizontalModelBlock.Support.GROUND)
+                            .emptyOcclusion()
+                            .build()));
+    // Table: custom model, but counts as a full block for collision while letting light pass through.
+    public static final Block HYPERSPACE_TABLE = registerBlock("hyperspace_table",
+            new HorizontalModelBlock(hsPlanks().noOcclusion(),
+                    HorizontalModelBlock.Settings.builder()
+                            .collision(HorizontalModelBlock.Collision.FULL)
+                            .emptyOcclusion()
+                            .build()));
+
+    private static BlockBehaviour.Properties hsStone() {
+        return BlockBehaviour.Properties.of().mapColor(MapColor.STONE).strength(1.5f, 6.0f)
+                .sound(SoundType.STONE).requiresCorrectToolForDrops();
+    }
+
+    private static BlockBehaviour.Properties hsGlass() {
+        return BlockBehaviour.Properties.of().mapColor(MapColor.NONE).strength(0.3f)
+                .sound(SoundType.GLASS).noOcclusion().requiresCorrectToolForDrops();
+    }
+
+    private static BlockBehaviour.Properties hsIronHand() {
+        return BlockBehaviour.Properties.of().mapColor(MapColor.METAL).strength(5.0f, 6.0f)
+                .sound(SoundType.METAL).noOcclusion();
+    }
+
+    private static BlockBehaviour.Properties hsIronPick() {
+        return hsIronHand().requiresCorrectToolForDrops();
+    }
+
+    private static BlockBehaviour.Properties hsIronBlock() {
+        return BlockBehaviour.Properties.of().mapColor(MapColor.METAL).strength(5.0f, 6.0f)
+                .sound(SoundType.METAL).requiresCorrectToolForDrops();
+    }
+
+    private static BlockBehaviour.Properties hsPaneLight() {
+        return BlockBehaviour.Properties.of().mapColor(MapColor.NONE).strength(0.3f)
+                .sound(SoundType.GLASS).noOcclusion().lightLevel(s -> 15);
+    }
+
+    private static BlockBehaviour.Properties hsTrapdoor() {
+        return BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).strength(3.0f)
+                .sound(SoundType.WOOD).noOcclusion();
+    }
+
+    private static BlockBehaviour.Properties hsWood() {
+        return BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).strength(2.0f, 3.0f).sound(SoundType.WOOD);
+    }
+
+    private static BlockBehaviour.Properties hsPlanks() {
+        return BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).strength(2.0f, 3.0f).sound(SoundType.WOOD);
     }
 
     private static BlockBehaviour.Properties trapProps() {

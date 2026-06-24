@@ -1,0 +1,4 @@
+{
+  "parent": "minecraft:block/cube_column",
+  "textures": { "end": "cobblesafari:block/hyperspace_wall_bricks", "side": "cobblesafari:block/hyperspace_window_brick_large_top" }
+}

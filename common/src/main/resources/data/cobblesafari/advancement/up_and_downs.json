@@ -2,8 +2,8 @@
   "parent": "cobblesafari:ring_a_ding",
   "display": {
     "icon": { "id": "minecraft:feather" },
-    "title": { "translate": "advancement.cobblesafari.up_and_downs.title" },
-    "description": { "translate": "advancement.cobblesafari.up_and_downs.description" },
+    "title": { "translate": "advancements.cobblesafari.up_and_downs.title" },
+    "description": { "translate": "advancements.cobblesafari.up_and_downs.description" },
     "frame": "task",
     "show_toast": true,
     "announce_to_chat": true,

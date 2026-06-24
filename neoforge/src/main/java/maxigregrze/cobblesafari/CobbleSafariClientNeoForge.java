@@ -223,6 +223,37 @@ public class CobbleSafariClientNeoForge {
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.UNION_ROOM_SPOTLIGHT_DISPLAY_LIGHT_YELLOW, RenderType.translucent());
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.UNION_ROOM_SPOTLIGHT_DISPLAY_LIGHT_BLUE, RenderType.translucent());
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.UNION_ROOM_SPOTLIGHT_DISPLAY_LIGHT_RED, RenderType.translucent());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.HYPERSPACE_ROAD, RenderType.cutoutMipped());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.HYPERSPACE_ROAD_PLAIN, RenderType.cutoutMipped());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.HYPERSPACE_BARRIER, RenderType.cutout());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.HYPERSPACE_CONE, RenderType.cutout());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.HYPERSPACE_IRONRAILS, RenderType.cutout());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.HYPERSPACE_SCAFFOLDING_PLATFORM, RenderType.cutout());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.HYPERSPACE_SCAFFOLDING, RenderType.cutout());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.HYPERSPACE_PLATFORM, RenderType.cutout());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.HYPERSPACE_SHUTTERS, RenderType.cutout());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.HYPERSPACE_SLAB, RenderType.cutout());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.HYPERSPACE_FLOWERPOT, RenderType.cutout());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.HYPERSPACE_CHAIR, RenderType.cutout());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.HYPERSPACE_TABLE, RenderType.cutout());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.HYPERSPACE_LADDER, RenderType.cutout());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.HYPERSPACE_RAMP, RenderType.cutout());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.HYPERSPACE_SCAFFOLDING_STAIRS, RenderType.cutout());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.HYPERSPACE_TRASHCAN, RenderType.cutout());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.HYPERSPACE_TRASHCAN_LID_DISPLAY, RenderType.cutout());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.HYPERSPACE_LAMPPOST, RenderType.cutoutMipped());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.HYPERSPACE_DOOR, RenderType.cutoutMipped());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.HYPERSPACE_WINDOW_CEILING, RenderType.translucent());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.HYPERSPACE_WINDOW_SMALL, RenderType.translucent());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.HYPERSPACE_WINDOW_TOPPER, RenderType.translucent());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.HYPERSPACE_CANOPY_STAIRS, RenderType.translucent());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.HYPERSPACE_CANOPY_SLAB, RenderType.translucent());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.HYPERSPACE_WINDOW_LARGE, RenderType.translucent());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.HYPERSPACE_WINDOW_PLAIN_LARGE, RenderType.translucent());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.HYPERSPACE_WINDOW_BRICK_LARGE, RenderType.translucent());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.HYPERSPACE_WINDOW_BRICK_LARGE2, RenderType.translucent());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.HYPERSPACE_FLAG_SMALL, RenderType.translucent());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.HYPERSPACE_FLAG_LARGE, RenderType.translucent());
 
             BlockEntityRenderers.register(ModBlockEntities.HOOPA_RING_PORTAL, HoopaRingPortalBlockEntityRenderer::new);
             BlockEntityRenderers.register(ModBlockEntities.DUNGEON_PORTAL, DungeonPortalBlockEntityRenderer::new);
@@ -242,6 +273,7 @@ public class CobbleSafariClientNeoForge {
             BlockEntityRenderers.register(ModBlockEntities.CSBOSS_TRIGGER, maxigregrze.cobblesafari.client.renderer.CsBossTriggerBlockEntityRenderer::new);
             BlockEntityRenderers.register(ModBlockEntities.TELEPORT_PAD, maxigregrze.cobblesafari.client.renderer.TeleportPadBlockEntityRenderer::new);
             BlockEntityRenderers.register(ModBlockEntities.CSBOSS_MIMIC, maxigregrze.cobblesafari.client.renderer.CsBossMimicBlockEntityRenderer::new);
+            BlockEntityRenderers.register(ModBlockEntities.HYPERSPACE_TRASHCAN, maxigregrze.cobblesafari.client.renderer.HyperspaceTrashcanBlockEntityRenderer::new);
         });
 
         event.enqueueWork(DonutItemClientSetup::registerItemProperties);
@@ -253,6 +285,22 @@ public class CobbleSafariClientNeoForge {
         if (net.neoforged.fml.ModList.get().isLoaded("accessories")) {
             maxigregrze.cobblesafari.compat.accessories.AccessoriesClientCompat.init();
         }
+    }
+
+    @SubscribeEvent
+    public static void onRegisterBlockColors(net.neoforged.neoforge.client.event.RegisterColorHandlersEvent.Block event) {
+        event.register(
+                (state, level, pos, tintIndex) -> (level != null && pos != null)
+                        ? net.minecraft.client.renderer.BiomeColors.getAverageGrassColor(level, pos)
+                        : net.minecraft.world.level.GrassColor.getDefaultColor(),
+                ModBlocks.HYPERSPACE_FLOWERPOT);
+    }
+
+    @SubscribeEvent
+    public static void onRegisterItemColors(net.neoforged.neoforge.client.event.RegisterColorHandlersEvent.Item event) {
+        event.register(
+                (stack, tintIndex) -> net.minecraft.world.level.GrassColor.get(0.5D, 1.0D),
+                ModBlocks.HYPERSPACE_FLOWERPOT);
     }
 
     @SubscribeEvent

@@ -1,0 +1,20 @@
+{
+  "variants": {
+    "part=bottom,facing=north": { "model": "cobblesafari:block/hyperspace_lamppost_bottom" },
+    "part=bottom,facing=east":  { "model": "cobblesafari:block/hyperspace_lamppost_bottom", "y": 90 },
+    "part=bottom,facing=south": { "model": "cobblesafari:block/hyperspace_lamppost_bottom", "y": 180 },
+    "part=bottom,facing=west":  { "model": "cobblesafari:block/hyperspace_lamppost_bottom", "y": 270 },
+    "part=center,facing=north": { "model": "cobblesafari:block/hyperspace_lamppost_center" },
+    "part=center,facing=east":  { "model": "cobblesafari:block/hyperspace_lamppost_center", "y": 90 },
+    "part=center,facing=south": { "model": "cobblesafari:block/hyperspace_lamppost_center", "y": 180 },
+    "part=center,facing=west":  { "model": "cobblesafari:block/hyperspace_lamppost_center", "y": 270 },
+    "part=centertop,facing=north": { "model": "cobblesafari:block/hyperspace_lamppost_centertop" },
+    "part=centertop,facing=east":  { "model": "cobblesafari:block/hyperspace_lamppost_centertop", "y": 90 },
+    "part=centertop,facing=south": { "model": "cobblesafari:block/hyperspace_lamppost_centertop", "y": 180 },
+    "part=centertop,facing=west":  { "model": "cobblesafari:block/hyperspace_lamppost_centertop", "y": 270 },
+    "part=top,facing=north":    { "model": "cobblesafari:block/hyperspace_lamppost_top" },
+    "part=top,facing=east":     { "model": "cobblesafari:block/hyperspace_lamppost_top", "y": 90 },
+    "part=top,facing=south":    { "model": "cobblesafari:block/hyperspace_lamppost_top", "y": 180 },
+    "part=top,facing=west":     { "model": "cobblesafari:block/hyperspace_lamppost_top", "y": 270 }
+  }
+}

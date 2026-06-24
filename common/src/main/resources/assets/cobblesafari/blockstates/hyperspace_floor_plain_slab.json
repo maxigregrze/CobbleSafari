@@ -1,0 +1,37 @@
+{
+  "variants": {
+    "type=bottom": [
+      {
+        "model": "cobblesafari:block/hyperspace_floor_plain_slab_1"
+      },
+      {
+        "model": "cobblesafari:block/hyperspace_floor_plain_slab_2"
+      },
+      {
+        "model": "cobblesafari:block/hyperspace_floor_plain_slab_3"
+      }
+    ],
+    "type=top": [
+      {
+        "model": "cobblesafari:block/hyperspace_floor_plain_slab_top_1"
+      },
+      {
+        "model": "cobblesafari:block/hyperspace_floor_plain_slab_top_2"
+      },
+      {
+        "model": "cobblesafari:block/hyperspace_floor_plain_slab_top_3"
+      }
+    ],
+    "type=double": [
+      {
+        "model": "cobblesafari:block/hyperspace_floor_plain_slab_double_1"
+      },
+      {
+        "model": "cobblesafari:block/hyperspace_floor_plain_slab_double_2"
+      },
+      {
+        "model": "cobblesafari:block/hyperspace_floor_plain_slab_double_3"
+      }
+    ]
+  }
+}

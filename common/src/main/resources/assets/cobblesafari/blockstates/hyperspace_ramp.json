@@ -1,0 +1,12 @@
+{
+  "variants": {
+    "half=lower,facing=north": { "model": "cobblesafari:block/hyperspace_ramp", "y": 180 },
+    "half=lower,facing=east":  { "model": "cobblesafari:block/hyperspace_ramp", "y": 270 },
+    "half=lower,facing=south": { "model": "cobblesafari:block/hyperspace_ramp" },
+    "half=lower,facing=west":  { "model": "cobblesafari:block/hyperspace_ramp", "y": 90 },
+    "half=upper,facing=north": { "model": "cobblesafari:block/hyperspace_ramp", "y": 180 },
+    "half=upper,facing=east":  { "model": "cobblesafari:block/hyperspace_ramp", "y": 270 },
+    "half=upper,facing=south": { "model": "cobblesafari:block/hyperspace_ramp" },
+    "half=upper,facing=west":  { "model": "cobblesafari:block/hyperspace_ramp", "y": 90 }
+  }
+}

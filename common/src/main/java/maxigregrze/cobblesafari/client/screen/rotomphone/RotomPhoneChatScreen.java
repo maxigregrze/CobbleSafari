@@ -304,8 +304,9 @@ public class RotomPhoneChatScreen extends RotomPhoneBaseScreen {
             boolean hovered = inArea && isInBounds(mouseX, mouseY, bx, y, CONTACT_BTN_SIZE, CONTACT_BTN_SIZE);
             boolean selected = e.id().equals(activeConvId);
             if (hovered || selected) {
-                // White square the size of the icon, drawn behind the texture.
-                g.fill(bx, y, bx + CONTACT_BTN_SIZE, y + CONTACT_BTN_SIZE, COL_WHITE);
+                // White square the size of the icon, drawn behind the texture, with rounded corners.
+                fillRoundedRect(g, bx, y, CONTACT_BTN_SIZE, CONTACT_BTN_SIZE, CORNER_R, COL_WHITE,
+                        true, true, true, true);
             }
             drawTinted(g, tex, bx, y, CONTACT_BTN_SIZE, CONTACT_BTN_SIZE, COL_WHITE);
             y += CONTACT_BTN_SIZE + CONTACT_GAP;
@@ -634,7 +635,19 @@ public class RotomPhoneChatScreen extends RotomPhoneBaseScreen {
         g.fill(x1 - 1, y0, x1, y1, argb);
     }
 
-    /** Filled rectangle with beveled (approx. rounded) corners selected by the four flags. */
+    /**
+     * Per-row horizontal inset for a rounded corner, indexed by distance (in pixels) from the
+     * corner edge (0 = the outermost row/column of the corner). Mirrored on every axis to round
+     * each of the four corners. Tuned to give a soft, fully-opaque rounded look rather than a
+     * straight diagonal bevel. Length matches {@link #CORNER_R}.
+     */
+    private static final int[] CORNER_INSET = {4, 2, 1, 1, 0};
+
+    private static int cornerInset(int dist) {
+        return dist >= 0 && dist < CORNER_INSET.length ? CORNER_INSET[dist] : 0;
+    }
+
+    /** Filled rectangle with rounded corners selected by the four flags. */
     private void fillRoundedRect(GuiGraphics g, int x, int y, int w, int h, int r, int argb,
                                  boolean tl, boolean tr, boolean bl, boolean br) {
         for (int row = 0; row < h; row++) {
@@ -643,16 +656,16 @@ public class RotomPhoneChatScreen extends RotomPhoneBaseScreen {
             int topDist = row;
             int botDist = h - 1 - row;
             if (tl && topDist < r) {
-                leftInset = Math.max(leftInset, r - 1 - topDist);
+                leftInset = Math.max(leftInset, cornerInset(topDist));
             }
             if (bl && botDist < r) {
-                leftInset = Math.max(leftInset, r - 1 - botDist);
+                leftInset = Math.max(leftInset, cornerInset(botDist));
             }
             if (tr && topDist < r) {
-                rightInset = Math.max(rightInset, r - 1 - topDist);
+                rightInset = Math.max(rightInset, cornerInset(topDist));
             }
             if (br && botDist < r) {
-                rightInset = Math.max(rightInset, r - 1 - botDist);
+                rightInset = Math.max(rightInset, cornerInset(botDist));
             }
             g.fill(x + leftInset, y + row, x + w - rightInset, y + row + 1, argb);
         }

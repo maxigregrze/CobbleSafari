@@ -2,8 +2,8 @@
   "parent": "cobblesafari:welcome_to_safari",
   "display": {
     "icon": { "id": "cobblesafari:bait" },
-    "title": { "translate": "advancement.cobblesafari.first_bait.title" },
-    "description": { "translate": "advancement.cobblesafari.first_bait.description" },
+    "title": { "translate": "advancements.cobblesafari.first_bait.title" },
+    "description": { "translate": "advancements.cobblesafari.first_bait.description" },
     "frame": "task",
     "show_toast": true,
     "announce_to_chat": true,

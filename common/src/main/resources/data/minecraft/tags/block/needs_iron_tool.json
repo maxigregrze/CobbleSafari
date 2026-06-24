@@ -1,6 +1,8 @@
 {
 	"replace": false,
 	"values": [
+		"cobblesafari:hyperspace_lamppost",
+		"cobblesafari:hyperspace_manhole",
 		"cobblesafari:magnetic_crystal",
 		"cobblesafari:magnetic_cluster",
 		"cobblesafari:safari_teleporter",

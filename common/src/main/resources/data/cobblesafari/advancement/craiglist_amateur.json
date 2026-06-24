@@ -2,8 +2,8 @@
   "parent": "cobblesafari:ring_a_ding",
   "display": {
     "icon": { "id": "minecraft:paper" },
-    "title": { "translate": "advancement.cobblesafari.craiglist_amateur.title" },
-    "description": { "translate": "advancement.cobblesafari.craiglist_amateur.description" },
+    "title": { "translate": "advancements.cobblesafari.craiglist_amateur.title" },
+    "description": { "translate": "advancements.cobblesafari.craiglist_amateur.description" },
     "frame": "task",
     "show_toast": true,
     "announce_to_chat": true,

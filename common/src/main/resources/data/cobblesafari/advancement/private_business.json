@@ -2,8 +2,8 @@
   "parent": "cobblesafari:deal_sniffer",
   "display": {
     "icon": { "id": "minecraft:name_tag" },
-    "title": { "translate": "advancement.cobblesafari.private_business.title" },
-    "description": { "translate": "advancement.cobblesafari.private_business.description" },
+    "title": { "translate": "advancements.cobblesafari.private_business.title" },
+    "description": { "translate": "advancements.cobblesafari.private_business.description" },
     "frame": "goal",
     "show_toast": true,
     "announce_to_chat": true,

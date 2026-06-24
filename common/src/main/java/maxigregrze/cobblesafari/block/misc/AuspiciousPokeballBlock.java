@@ -3,6 +3,8 @@ package maxigregrze.cobblesafari.block.misc;
 import com.mojang.logging.LogUtils;
 import com.mojang.serialization.MapCodec;
 import maxigregrze.cobblesafari.network.AuspiciousPokeballConfigServerHandler;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.player.LocalPlayer;
 import maxigregrze.cobblesafari.platform.Services;
 import maxigregrze.cobblesafari.power.PowerItemRewardEffects;
 import net.minecraft.core.BlockPos;
@@ -211,6 +213,17 @@ public class AuspiciousPokeballBlock extends BaseEntityBlock {
 
     @Override
     public void animateTick(BlockState state, Level level, BlockPos pos, RandomSource random) {
+        // Particles are emitted per-player: only render them for a client whose
+        // local player can actually see the orb (mirrors the BER world-model gate).
+        LocalPlayer localPlayer = Minecraft.getInstance().player;
+        if (localPlayer == null) {
+            return;
+        }
+        if (level.getBlockEntity(pos) instanceof AuspiciousPokeballBlockEntity be
+                && be.shouldHideWorldModelForLocalPlayer(localPlayer)) {
+            return;
+        }
+
         double px = pos.getX();
         double py = pos.getY();
         double pz = pos.getZ();

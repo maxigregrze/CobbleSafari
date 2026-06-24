@@ -1,0 +1,8 @@
+{
+  "variants": {
+    "facing=north": { "model": "cobblesafari:block/hyperspace_scaffolding_stairs" },
+    "facing=east":  { "model": "cobblesafari:block/hyperspace_scaffolding_stairs", "y": 90 },
+    "facing=south": { "model": "cobblesafari:block/hyperspace_scaffolding_stairs", "y": 180 },
+    "facing=west":  { "model": "cobblesafari:block/hyperspace_scaffolding_stairs", "y": 270 }
+  }
+}

@@ -2,8 +2,8 @@
   "parent": "cobblesafari:dungeons",
   "display": {
     "icon": { "id": "minecraft:ender_pearl" },
-    "title": { "translate": "advancement.cobblesafari.fresh_explorer.title" },
-    "description": { "translate": "advancement.cobblesafari.fresh_explorer.description" },
+    "title": { "translate": "advancements.cobblesafari.fresh_explorer.title" },
+    "description": { "translate": "advancements.cobblesafari.fresh_explorer.description" },
     "frame": "task",
     "show_toast": true,
     "announce_to_chat": true,

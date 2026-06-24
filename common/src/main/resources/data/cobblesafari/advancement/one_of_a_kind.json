@@ -2,8 +2,8 @@
   "parent": "cobblesafari:deal_sniffer",
   "display": {
     "icon": { "id": "minecraft:nether_star" },
-    "title": { "translate": "advancement.cobblesafari.one_of_a_kind.title" },
-    "description": { "translate": "advancement.cobblesafari.one_of_a_kind.description" },
+    "title": { "translate": "advancements.cobblesafari.one_of_a_kind.title" },
+    "description": { "translate": "advancements.cobblesafari.one_of_a_kind.description" },
     "frame": "goal",
     "show_toast": true,
     "announce_to_chat": true,

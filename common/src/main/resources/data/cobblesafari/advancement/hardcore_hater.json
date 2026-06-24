@@ -5,10 +5,10 @@
       "id": "minecraft:totem_of_undying"
     },
     "title": {
-      "translate": "advancement.cobblesafari.hardcore_hater.title"
+      "translate": "advancements.cobblesafari.hardcore_hater.title"
     },
     "description": {
-      "translate": "advancement.cobblesafari.hardcore_hater.description"
+      "translate": "advancements.cobblesafari.hardcore_hater.description"
     },
     "frame": "challenge",
     "show_toast": true,

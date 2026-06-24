@@ -5,10 +5,10 @@
       "id": "cobblesafari:redchain_fragment"
     },
     "title": {
-      "translate": "advancement.cobblesafari.shaddy_business.title"
+      "translate": "advancements.cobblesafari.shaddy_business.title"
     },
     "description": {
-      "translate": "advancement.cobblesafari.shaddy_business.description"
+      "translate": "advancements.cobblesafari.shaddy_business.description"
     },
     "frame": "goal",
     "show_toast": true,

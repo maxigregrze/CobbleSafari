@@ -2,8 +2,8 @@
   "parent": "cobblesafari:deal_sniffer",
   "display": {
     "icon": { "id": "minecraft:emerald" },
-    "title": { "translate": "advancement.cobblesafari.deal_master.title" },
-    "description": { "translate": "advancement.cobblesafari.deal_master.description" },
+    "title": { "translate": "advancements.cobblesafari.deal_master.title" },
+    "description": { "translate": "advancements.cobblesafari.deal_master.description" },
     "frame": "goal",
     "show_toast": true,
     "announce_to_chat": true,

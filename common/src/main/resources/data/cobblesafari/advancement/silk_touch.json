@@ -2,8 +2,8 @@
   "parent": "cobblesafari:delicate_pick_me",
   "display": {
     "icon": { "id": "minecraft:diamond_pickaxe" },
-    "title": { "translate": "advancement.cobblesafari.silk_touch.title" },
-    "description": { "translate": "advancement.cobblesafari.silk_touch.description" },
+    "title": { "translate": "advancements.cobblesafari.silk_touch.title" },
+    "description": { "translate": "advancements.cobblesafari.silk_touch.description" },
     "frame": "goal",
     "show_toast": true,
     "announce_to_chat": true,

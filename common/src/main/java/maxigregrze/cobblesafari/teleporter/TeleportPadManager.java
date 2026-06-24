@@ -3,6 +3,7 @@ package maxigregrze.cobblesafari.teleporter;
 import maxigregrze.cobblesafari.block.teleporter.TeleportPadBlock;
 import maxigregrze.cobblesafari.block.teleporter.TeleportPadBlockEntity;
 import maxigregrze.cobblesafari.block.teleporter.TeleportPadMode;
+import maxigregrze.cobblesafari.config.MiscConfig;
 import maxigregrze.cobblesafari.network.TeleportPadResultPayload;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -25,7 +26,8 @@ import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Server-side teleport-pad logic: facing-relative offset maths, geometric pairing scan
- * (L-shape for TOP/BOTTOM, straight line ±1 for FRONT), link bookkeeping, and the
+ * (L-shape for TOP/BOTTOM, straight line with a configurable ±leeway window for FRONT — see
+ * {@link MiscConfig#getTeleportpadForwardLeeway()}), link bookkeeping, and the
  * jump-triggered teleport with a per-player cooldown.
  */
 public final class TeleportPadManager {
@@ -150,10 +152,21 @@ public final class TeleportPadManager {
         return null;
     }
 
+    /** Perpendicular probe offsets {@code 0, +1, -1, +2, -2, …, +leeway, -leeway} (centre tried first). */
+    private static int[] symmetricOffsets(int leeway) {
+        int[] offsets = new int[2 * leeway + 1];
+        offsets[0] = 0;
+        for (int i = 1; i <= leeway; i++) {
+            offsets[2 * i - 1] = i;
+            offsets[2 * i] = -i;
+        }
+        return offsets;
+    }
+
     @Nullable
     private static BlockPos checkFrontWindow(Level level, BlockPos pos, BlockPos center, Direction facing, Direction rightDir) {
-        // probe 0, +1, -1 on each perpendicular axis so the exact centre cell is preferred
-        int[] offsets = {0, 1, -1};
+        // probe outward on each perpendicular axis (centre first) within the configured ±leeway window
+        int[] offsets = symmetricOffsets(MiscConfig.getTeleportpadForwardLeeway());
         for (int upIdx : offsets) {
             for (int sideIdx : offsets) {
                 BlockPos candidate = center.relative(Direction.UP, upIdx).relative(rightDir, sideIdx);
@@ -172,10 +185,11 @@ public final class TeleportPadManager {
     // ------------------------------------------------------------------ path validation (manual offset)
 
     private static boolean shapeLegal(TeleportPadMode mode, int forward, int up, int right) {
+        int leeway = MiscConfig.getTeleportpadForwardLeeway();
         return switch (mode) {
             case TOP -> forward == 1 && right == 0 && up >= 1 && up <= MAX_RANGE;
             case BOTTOM -> forward == 1 && right == 0 && up <= -1 && -up <= MAX_RANGE;
-            case FRONT -> forward >= 1 && forward <= MAX_RANGE && Math.abs(up) <= 1 && Math.abs(right) <= 1;
+            case FRONT -> forward >= 1 && forward <= MAX_RANGE && Math.abs(up) <= leeway && Math.abs(right) <= leeway;
         };
     }
 

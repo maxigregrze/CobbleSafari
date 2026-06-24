@@ -9,17 +9,12 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
-import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 
-public class LostItemConfigScreen extends Screen {
+public class LostItemConfigScreen extends CobbleSafariConfigScreen {
 
     private static final int OUT_OF_VIEW = -4096;
-    private static final int EDIT_HEIGHT = 20;
-    /** Gap between the bottom of the label and the top of the input field */
-    private static final int LABEL_TO_FIELD_GAP = 4;
-    /** Vertical gap below a field row before the next label */
-    private static final int AFTER_FIELD_GAP = 10;
+    private static final int MODE_BUTTON_Y = 52;
 
     private final OpenLostItemConfigPayload initial;
 
@@ -43,96 +38,49 @@ public class LostItemConfigScreen extends Screen {
         this.displayMode = (m >= 0 && m <= 2) ? m : 0;
     }
 
-    private int modeButtonY() {
-        return 52;
+    @Override
+    protected int contentTopY() {
+        return MODE_BUTTON_Y + BUTTON_HEIGHT + 14;
     }
 
-    private int contentTopY() {
-        return this.modeButtonY() + 20 + 14;
-    }
-
-    private int bottomDuoRowY() {
-        return this.height - 28;
-    }
-
-    private int bottomPlayerListRowY() {
-        return this.bottomDuoRowY() - 24;
-    }
-
-    private int fieldStride() {
-        return this.font.lineHeight + LABEL_TO_FIELD_GAP + EDIT_HEIGHT + AFTER_FIELD_GAP;
-    }
-
-    private int labelBaselineY(EditBox box) {
-        return box.getY() - LABEL_TO_FIELD_GAP - this.font.lineHeight;
+    @Override
+    protected boolean hasSecondaryFooterRow() {
+        return true;
     }
 
     @Override
     protected void init() {
-        int cx = this.width / 2;
-        int left = cx - 154;
+        int left = this.panelLeft();
 
-        this.modeButton = Button.builder(modeLabel(), b -> {
+        this.modeButton = addScroll(Button.builder(modeLabel(), b -> {
             this.displayMode = (this.displayMode + 1) % 3;
             this.modeButton.setMessage(modeLabel());
             this.relayoutEditBoxes();
             this.focusFirstFieldForMode();
-        }).bounds(left, this.modeButtonY(), 308, 20).build();
-        this.addRenderableWidget(this.modeButton);
+        }).bounds(left, MODE_BUTTON_Y, PANEL_WIDTH, BUTTON_HEIGHT).build());
 
-        this.poolBerryBox = new EditBox(this.font, left, 0, 308, 20, Component.empty());
-        this.poolBerryBox.setMaxLength(512);
-        this.poolBerryBox.setValue(this.initial.poolBerryId());
-        this.addRenderableWidget(this.poolBerryBox);
+        this.poolBerryBox = makeEditBox(left, 0, PANEL_WIDTH, 512, this.initial.poolBerryId());
+        this.poolCandyBox = makeEditBox(left, 0, PANEL_WIDTH, 512, this.initial.poolCandyId());
+        this.poolBallsBox = makeEditBox(left, 0, PANEL_WIDTH, 512, this.initial.poolBallsId());
+        this.poolTreasuresBox = makeEditBox(left, 0, PANEL_WIDTH, 512, this.initial.poolTreasuresId());
+        this.minRollBox = makeEditBox(left, 0, COLUMN_WIDTH, 11, Integer.toString(this.initial.minRoll()));
+        this.maxRollBox = makeEditBox(left, 0, COLUMN_WIDTH, 11, Integer.toString(this.initial.maxRoll()));
+        this.lostLootTableBox = makeEditBox(left, 0, PANEL_WIDTH, 512, this.initial.lostItemLootTableId());
+        this.lootItemBox = makeEditBox(left, 0, PANEL_WIDTH, 512, this.initial.lootItemId());
 
-        this.poolCandyBox = new EditBox(this.font, left, 0, 308, 20, Component.empty());
-        this.poolCandyBox.setMaxLength(512);
-        this.poolCandyBox.setValue(this.initial.poolCandyId());
-        this.addRenderableWidget(this.poolCandyBox);
-
-        this.poolBallsBox = new EditBox(this.font, left, 0, 308, 20, Component.empty());
-        this.poolBallsBox.setMaxLength(512);
-        this.poolBallsBox.setValue(this.initial.poolBallsId());
-        this.addRenderableWidget(this.poolBallsBox);
-
-        this.poolTreasuresBox = new EditBox(this.font, left, 0, 308, 20, Component.empty());
-        this.poolTreasuresBox.setMaxLength(512);
-        this.poolTreasuresBox.setValue(this.initial.poolTreasuresId());
-        this.addRenderableWidget(this.poolTreasuresBox);
-
-        this.minRollBox = new EditBox(this.font, left, 0, 150, 20, Component.empty());
-        this.minRollBox.setMaxLength(11);
-        this.minRollBox.setValue(Integer.toString(this.initial.minRoll()));
-        this.addRenderableWidget(this.minRollBox);
-
-        this.maxRollBox = new EditBox(this.font, left, 0, 150, 20, Component.empty());
-        this.maxRollBox.setMaxLength(11);
-        this.maxRollBox.setValue(Integer.toString(this.initial.maxRoll()));
-        this.addRenderableWidget(this.maxRollBox);
-
-        this.lostLootTableBox = new EditBox(this.font, left, 0, 308, 20, Component.empty());
-        this.lostLootTableBox.setMaxLength(512);
-        this.lostLootTableBox.setValue(this.initial.lostItemLootTableId());
-        this.addRenderableWidget(this.lostLootTableBox);
-
-        this.lootItemBox = new EditBox(this.font, left, 0, 308, 20, Component.empty());
-        this.lootItemBox.setMaxLength(512);
-        this.lootItemBox.setValue(this.initial.lootItemId());
-        this.addRenderableWidget(this.lootItemBox);
-
-        int playerListY = this.bottomPlayerListRowY();
+        int playerListY = this.secondaryRowY();
         this.addRenderableWidget(Button.builder(
                 Component.translatable("gui.cobblesafari.lost_item.reset_player_list").withStyle(ChatFormatting.RED),
                 b -> Services.PLATFORM.sendPayloadToServer(new LostItemResetClaimsPayload(this.initial.pos()))
-        ).bounds(left, playerListY, 308, 20).build());
+        ).bounds(left, playerListY, PANEL_WIDTH, BUTTON_HEIGHT).build());
 
-        int duoY = this.bottomDuoRowY();
+        int duoY = this.bottomRowY();
         this.addRenderableWidget(Button.builder(Component.translatable("gui.cobblesafari.lost_item.reset"), b -> {
             this.applyFieldsFromMiscConfig();
             this.modeButton.setMessage(modeLabel());
             this.relayoutEditBoxes();
             this.focusFirstFieldForMode();
-        }).bounds(left, duoY, 150, 20).build());
+        }).bounds(left, duoY, COLUMN_WIDTH, BUTTON_HEIGHT).build());
 
         this.addRenderableWidget(Button.builder(Component.translatable("gui.cobblesafari.lost_item.save"), b -> {
             Services.PLATFORM.sendPayloadToServer(new SaveLostItemConfigPayload(
@@ -148,7 +96,7 @@ public class LostItemConfigScreen extends Screen {
                     this.lootItemBox.getValue()
             ));
             this.onClose();
-        }).bounds(left + 158, duoY, 150, 20).build());
+        }).bounds(left + COLUMN_OFFSET, duoY, COLUMN_WIDTH, BUTTON_HEIGHT).build());
 
         this.relayoutEditBoxes();
         this.focusFirstFieldForMode();
@@ -156,9 +104,9 @@ public class LostItemConfigScreen extends Screen {
 
     private void focusFirstFieldForMode() {
         switch (this.displayMode) {
-            case 1 -> this.setInitialFocus(this.lostLootTableBox);
-            case 2 -> this.setInitialFocus(this.lootItemBox);
-            default -> this.setInitialFocus(this.poolBerryBox);
+            case 1 -> this.focusScroll(this.lostLootTableBox);
+            case 2 -> this.focusScroll(this.lootItemBox);
+            default -> this.focusScroll(this.poolBerryBox);
         }
     }
 
@@ -190,7 +138,7 @@ public class LostItemConfigScreen extends Screen {
     }
 
     private void relayoutEditBoxes() {
-        int left = this.width / 2 - 154;
+        int left = this.panelLeft();
         int y = this.contentTopY();
         int stride = this.fieldStride();
 
@@ -213,7 +161,7 @@ public class LostItemConfigScreen extends Screen {
             showField(this.poolTreasuresBox, left, y);
             y += stride;
             showField(this.minRollBox, left, y);
-            showField(this.maxRollBox, left + 158, y);
+            showField(this.maxRollBox, left + COLUMN_OFFSET, y);
         } else if (this.displayMode == 1) {
             showField(this.lostLootTableBox, left, y);
         } else {
@@ -222,16 +170,7 @@ public class LostItemConfigScreen extends Screen {
     }
 
     @Override
-    public boolean charTyped(char codePoint, int modifiers) {
-        for (EditBox box : allEditBoxes()) {
-            if (box != null && box.isVisible() && box.charTyped(codePoint, modifiers)) {
-                return true;
-            }
-        }
-        return super.charTyped(codePoint, modifiers);
-    }
-
-    private EditBox[] allEditBoxes() {
+    protected EditBox[] editBoxes() {
         return new EditBox[]{
                 this.poolBerryBox, this.poolCandyBox, this.poolBallsBox, this.poolTreasuresBox,
                 this.minRollBox, this.maxRollBox, this.lostLootTableBox, this.lootItemBox
@@ -239,28 +178,7 @@ public class LostItemConfigScreen extends Screen {
     }
 
     @Override
-    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-        for (EditBox box : allEditBoxes()) {
-            if (box != null && box.isVisible() && box.keyPressed(keyCode, scanCode, modifiers)) {
-                return true;
-            }
-        }
-        return super.keyPressed(keyCode, scanCode, modifiers);
-    }
-
-    private void drawFieldLabel(GuiGraphics g, EditBox box, String hintKey) {
-        if (!box.isVisible()) {
-            return;
-        }
-        g.drawString(this.font, Component.translatable(hintKey), box.getX(), this.labelBaselineY(box), 0xA0A0A0, false);
-    }
-
-    @Override
-    public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-        this.renderBackground(guiGraphics, mouseX, mouseY, partialTick);
-        super.render(guiGraphics, mouseX, mouseY, partialTick);
-        guiGraphics.drawCenteredString(this.font, this.title, this.width / 2, 16, 0xFFFFFF);
-
+    protected void renderScrollContent(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
         drawFieldLabel(guiGraphics, this.poolBerryBox, "gui.cobblesafari.lost_item.hint.pool_berry");
         drawFieldLabel(guiGraphics, this.poolCandyBox, "gui.cobblesafari.lost_item.hint.pool_candy");
         drawFieldLabel(guiGraphics, this.poolBallsBox, "gui.cobblesafari.lost_item.hint.pool_balls");
@@ -269,10 +187,5 @@ public class LostItemConfigScreen extends Screen {
         drawFieldLabel(guiGraphics, this.maxRollBox, "gui.cobblesafari.lost_item.hint.max_roll");
         drawFieldLabel(guiGraphics, this.lostLootTableBox, "gui.cobblesafari.lost_item.hint.lost_item_loot_table");
         drawFieldLabel(guiGraphics, this.lootItemBox, "gui.cobblesafari.lost_item.hint.loot_item");
-    }
-
-    @Override
-    public boolean isPauseScreen() {
-        return false;
     }
 }

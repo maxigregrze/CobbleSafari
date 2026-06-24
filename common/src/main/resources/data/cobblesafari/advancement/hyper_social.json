@@ -2,8 +2,8 @@
   "parent": "cobblesafari:sociable",
   "display": {
     "icon": { "id": "minecraft:cake" },
-    "title": { "translate": "advancement.cobblesafari.hyper_social.title" },
-    "description": { "translate": "advancement.cobblesafari.hyper_social.description" },
+    "title": { "translate": "advancements.cobblesafari.hyper_social.title" },
+    "description": { "translate": "advancements.cobblesafari.hyper_social.description" },
     "frame": "goal",
     "show_toast": true,
     "announce_to_chat": true,

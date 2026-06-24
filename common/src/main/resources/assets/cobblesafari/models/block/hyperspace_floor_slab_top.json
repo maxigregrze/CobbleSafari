@@ -1,0 +1,4 @@
+{
+  "parent": "minecraft:block/slab_top",
+  "textures": { "bottom": "cobblesafari:block/hyperspace_floor", "top": "cobblesafari:block/hyperspace_floor", "side": "cobblesafari:block/hyperspace_floor" }
+}

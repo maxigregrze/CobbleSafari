@@ -45,7 +45,6 @@ public class ModCreativeTabs {
                 output.accept(ModBlocks.AUSPICIOUS_POKEBALL_SMALL);
                 output.accept(ModBlocks.AUSPICIOUS_POKEBALL_GOLD);
                 output.accept(ModBlocks.TELEPORT_PAD);
-                output.accept(ModBlocks.SURVIVAL_TELEPORT_PAD);
                 output.accept(ModItems.TINKHAMMER);
                 output.accept(ModBlocks.CSBOSS_TRIGGER);
                 output.accept(ModBlocks.CSBOSS_MIMIC_BLOCK);
@@ -156,15 +155,24 @@ public class ModCreativeTabs {
             .icon(() -> new ItemStack(ModBlocks.SAFARI_EGG_NEST))
             .displayItems((params, output) -> {
                 output.accept(ModBlocks.SAFARI_TELEPORTER);
-                output.accept(ModBlocks.SAFARI_EGG_NEST);
                 output.accept(ModBlocks.EMPTYPHONE);
+                output.accept(ModBlocks.ONLINE_FEATURE_PC_UNION);
+                output.accept(ModBlocks.ONLINE_FEATURE_PC_GTS);
+                output.accept(ModBlocks.ONLINE_FEATURE_PC_WONDER);
                 output.accept(ModBlocks.INCUBATOR);
+                output.accept(ModBlocks.SECRETBASE_PC);
+                output.accept(ModBlocks.SURVIVAL_TELEPORT_PAD);
+                output.accept(ModBlocks.SAFARI_EGG_NEST);
                 output.accept(ModBlocks.WHIRLWIND);
                 output.accept(ModBlocks.MUD_PILE);
                 output.accept(ModBlocks.SLUDGE_PILE);
                 output.accept(ModBlocks.VOLCANIC_CRATER);
                 output.accept(ModBlocks.HOT_GEYSER);
                 output.accept(ModBlocks.DRACONIC_CRATER);
+                output.accept(ModBlocks.PUNCHINGBAG);
+                output.accept(ModBlocks.KARATE_MANNEQUIN);
+                output.accept(ModBlocks.TOMBSTONE);
+                output.accept(ModBlocks.TOMBSTONE_SMALL);
                 output.accept(ModBlocks.TRAP_DARKNESS);
                 output.accept(ModBlocks.TRAP_DARKNESS_HARD);
                 output.accept(ModBlocks.TRAP_EXPLOSION);
@@ -185,14 +193,6 @@ public class ModCreativeTabs {
                 output.accept(ModBlocks.TRAP_TELEPORT_HARD);
                 output.accept(ModBlocks.TRAP_WIND);
                 output.accept(ModBlocks.TRAP_WIND_HARD);
-                output.accept(ModBlocks.PUNCHINGBAG);
-                output.accept(ModBlocks.KARATE_MANNEQUIN);
-                output.accept(ModBlocks.TOMBSTONE);
-                output.accept(ModBlocks.TOMBSTONE_SMALL);
-                output.accept(ModBlocks.SECRETBASE_PC);
-                output.accept(ModBlocks.ONLINE_FEATURE_PC_UNION);
-                output.accept(ModBlocks.ONLINE_FEATURE_PC_GTS);
-                output.accept(ModBlocks.ONLINE_FEATURE_PC_WONDER);
             })
             .build();
 
@@ -299,6 +299,60 @@ public class ModCreativeTabs {
                 output.accept(ModBlocks.UNION_ROOM_SPOTLIGHT_YELLOW);
                 output.accept(ModBlocks.UNION_ROOM_SPOTLIGHT_BLUE);
                 output.accept(ModBlocks.UNION_ROOM_SPOTLIGHT_RED);
+                // Hyperspace Lumiose
+                output.accept(ModBlocks.HYPERSPACE_PILLAR);
+                output.accept(ModBlocks.HYPERSPACE_PILLAR_TOP);
+                output.accept(ModBlocks.HYPERSPACE_PILLAR_ALT);
+                output.accept(ModBlocks.HYPERSPACE_PILLAR_TOP_ALT);
+                output.accept(ModBlocks.HYPERSPACE_PILLAR_BOTTOM);
+                output.accept(ModBlocks.HYPERSPACE_FLOOR);
+                output.accept(ModBlocks.HYPERSPACE_FLOOR_STAIRS);
+                output.accept(ModBlocks.HYPERSPACE_FLOOR_SLAB);
+                output.accept(ModBlocks.HYPERSPACE_FLOOR_PLAIN);
+                output.accept(ModBlocks.HYPERSPACE_FLOOR_PLAIN_STAIRS);
+                output.accept(ModBlocks.HYPERSPACE_FLOOR_PLAIN_SLAB);
+                output.accept(ModBlocks.HYPERSPACE_ROAD);
+                output.accept(ModBlocks.HYPERSPACE_ROAD_STAIRS);
+                output.accept(ModBlocks.HYPERSPACE_ROAD_SLAB);
+                output.accept(ModBlocks.HYPERSPACE_ROAD_PLAIN);
+                output.accept(ModBlocks.HYPERSPACE_ROAD_PLAIN_STAIRS);
+                output.accept(ModBlocks.HYPERSPACE_ROAD_PLAIN_SLAB);
+                output.accept(ModBlocks.HYPERSPACE_MANHOLE);
+                output.accept(ModBlocks.HYPERSPACE_WALL);
+                output.accept(ModBlocks.HYPERSPACE_WALL_PLAIN);
+                output.accept(ModBlocks.HYPERSPACE_WALL_BOTTOM);
+                output.accept(ModBlocks.HYPERSPACE_WALL_BOTTOM_GRATE);
+                output.accept(ModBlocks.HYPERSPACE_WALL_BRICKS);
+                output.accept(ModBlocks.HYPERSPACE_CHAMFER);
+                output.accept(ModBlocks.HYPERSPACE_WINDOW_CEILING);
+                output.accept(ModBlocks.HYPERSPACE_WINDOW_SMALL);
+                output.accept(ModBlocks.HYPERSPACE_WINDOW_TOPPER);
+                output.accept(ModBlocks.HYPERSPACE_CANOPY_STAIRS);
+                output.accept(ModBlocks.HYPERSPACE_CANOPY_SLAB);
+                output.accept(ModBlocks.HYPERSPACE_BRICK_STAIRS);
+                output.accept(ModBlocks.HYPERSPACE_BARRIER);
+                output.accept(ModBlocks.HYPERSPACE_CONE);
+                output.accept(ModBlocks.HYPERSPACE_FLAG_SMALL);
+                output.accept(ModBlocks.HYPERSPACE_IRONRAILS);
+                output.accept(ModBlocks.HYPERSPACE_SCAFFOLDING_PLATFORM);
+                output.accept(ModBlocks.HYPERSPACE_SCAFFOLDING);
+                output.accept(ModBlocks.HYPERSPACE_PLATFORM);
+                output.accept(ModBlocks.HYPERSPACE_SHUTTERS);
+                output.accept(ModBlocks.HYPERSPACE_SLAB);
+                output.accept(ModBlocks.HYPERSPACE_WINDOW_LARGE);
+                output.accept(ModBlocks.HYPERSPACE_WINDOW_PLAIN_LARGE);
+                output.accept(ModBlocks.HYPERSPACE_WINDOW_BRICK_LARGE);
+                output.accept(ModBlocks.HYPERSPACE_WINDOW_BRICK_LARGE2);
+                output.accept(ModBlocks.HYPERSPACE_DOOR);
+                output.accept(ModBlocks.HYPERSPACE_FLAG_LARGE);
+                output.accept(ModBlocks.HYPERSPACE_LAMPPOST);
+                output.accept(ModBlocks.HYPERSPACE_FLOWERPOT);
+                output.accept(ModBlocks.HYPERSPACE_LADDER);
+                output.accept(ModBlocks.HYPERSPACE_RAMP);
+                output.accept(ModBlocks.HYPERSPACE_SCAFFOLDING_STAIRS);
+                output.accept(ModBlocks.HYPERSPACE_TRASHCAN);
+                output.accept(ModBlocks.HYPERSPACE_CHAIR);
+                output.accept(ModBlocks.HYPERSPACE_TABLE);
             })
             .build();
 

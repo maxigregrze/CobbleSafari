@@ -2,8 +2,8 @@
   "parent": "cobblesafari:upside_down",
   "display": {
     "icon": { "id": "minecraft:netherite_sword" },
-    "title": { "translate": "advancement.cobblesafari.shadow_hunter.title" },
-    "description": { "translate": "advancement.cobblesafari.shadow_hunter.description" },
+    "title": { "translate": "advancements.cobblesafari.shadow_hunter.title" },
+    "description": { "translate": "advancements.cobblesafari.shadow_hunter.description" },
     "frame": "goal",
     "show_toast": true,
     "announce_to_chat": true,

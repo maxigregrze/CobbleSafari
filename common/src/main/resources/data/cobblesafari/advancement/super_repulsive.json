@@ -5,10 +5,10 @@
       "id": "cobblesafari:mud_ball"
     },
     "title": {
-      "translate": "advancement.cobblesafari.super_repulsive.title"
+      "translate": "advancements.cobblesafari.super_repulsive.title"
     },
     "description": {
-      "translate": "advancement.cobblesafari.super_repulsive.description"
+      "translate": "advancements.cobblesafari.super_repulsive.description"
     },
     "frame": "task",
     "show_toast": true,

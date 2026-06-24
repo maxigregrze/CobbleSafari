@@ -10,14 +10,9 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
-import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 
-public class AuspiciousPokeballConfigScreen extends Screen {
-
-    private static final int LABEL_TO_FIELD_GAP = 4;
-    private static final int AFTER_FIELD_GAP = 10;
-    private static final int EDIT_HEIGHT = 20;
+public class AuspiciousPokeballConfigScreen extends CobbleSafariConfigScreen {
 
     private final OpenAuspiciousPokeballConfigPayload initial;
 
@@ -33,71 +28,34 @@ public class AuspiciousPokeballConfigScreen extends Screen {
         this.initial = initial;
     }
 
-    private static final int CONTENT_TOP_Y = 52;
-
-    private int bottomDuoRowY() {
-        return this.height - 28;
-    }
-
-    private int bottomPlayerListRowY() {
-        return this.bottomDuoRowY() - 24;
-    }
-
-    private int fieldStride() {
-        return this.font.lineHeight + LABEL_TO_FIELD_GAP + EDIT_HEIGHT + AFTER_FIELD_GAP;
-    }
-
-    private int labelBaselineY(EditBox box) {
-        return box.getY() - LABEL_TO_FIELD_GAP - this.font.lineHeight;
+    @Override
+    protected boolean hasSecondaryFooterRow() {
+        return true;
     }
 
     @Override
     protected void init() {
-        int cx = this.width / 2;
-        int left = cx - 154;
+        int left = this.panelLeft();
 
-        this.poolBerryBox = new EditBox(this.font, left, 0, 308, 20, Component.empty());
-        this.poolBerryBox.setMaxLength(512);
-        this.poolBerryBox.setValue(this.initial.poolBerryId());
-        this.addRenderableWidget(this.poolBerryBox);
+        this.poolBerryBox = makeEditBox(left, 0, PANEL_WIDTH, 512, this.initial.poolBerryId());
+        this.poolCandyBox = makeEditBox(left, 0, PANEL_WIDTH, 512, this.initial.poolCandyId());
+        this.poolBallsBox = makeEditBox(left, 0, PANEL_WIDTH, 512, this.initial.poolBallsId());
+        this.poolTreasuresBox = makeEditBox(left, 0, PANEL_WIDTH, 512, this.initial.poolTreasuresId());
+        this.minRollBox = makeEditBox(left, 0, COLUMN_WIDTH, 11, Integer.toString(this.initial.minRoll()));
+        this.maxRollBox = makeEditBox(left, 0, COLUMN_WIDTH, 11, Integer.toString(this.initial.maxRoll()));
 
-        this.poolCandyBox = new EditBox(this.font, left, 0, 308, 20, Component.empty());
-        this.poolCandyBox.setMaxLength(512);
-        this.poolCandyBox.setValue(this.initial.poolCandyId());
-        this.addRenderableWidget(this.poolCandyBox);
-
-        this.poolBallsBox = new EditBox(this.font, left, 0, 308, 20, Component.empty());
-        this.poolBallsBox.setMaxLength(512);
-        this.poolBallsBox.setValue(this.initial.poolBallsId());
-        this.addRenderableWidget(this.poolBallsBox);
-
-        this.poolTreasuresBox = new EditBox(this.font, left, 0, 308, 20, Component.empty());
-        this.poolTreasuresBox.setMaxLength(512);
-        this.poolTreasuresBox.setValue(this.initial.poolTreasuresId());
-        this.addRenderableWidget(this.poolTreasuresBox);
-
-        this.minRollBox = new EditBox(this.font, left, 0, 150, 20, Component.empty());
-        this.minRollBox.setMaxLength(11);
-        this.minRollBox.setValue(Integer.toString(this.initial.minRoll()));
-        this.addRenderableWidget(this.minRollBox);
-
-        this.maxRollBox = new EditBox(this.font, left, 0, 150, 20, Component.empty());
-        this.maxRollBox.setMaxLength(11);
-        this.maxRollBox.setValue(Integer.toString(this.initial.maxRoll()));
-        this.addRenderableWidget(this.maxRollBox);
-
-        int playerListY = this.bottomPlayerListRowY();
+        int playerListY = this.secondaryRowY();
         this.addRenderableWidget(Button.builder(
                 Component.translatable("gui.cobblesafari.auspicious_pokeball.reset_player_list").withStyle(ChatFormatting.RED),
                 b -> Services.PLATFORM.sendPayloadToServer(new AuspiciousPokeballResetClaimsPayload(this.initial.pos()))
-        ).bounds(left, playerListY, 308, 20).build());
+        ).bounds(left, playerListY, PANEL_WIDTH, BUTTON_HEIGHT).build());
 
-        int duoY = this.bottomDuoRowY();
+        int duoY = this.bottomRowY();
         this.addRenderableWidget(Button.builder(Component.translatable("gui.cobblesafari.auspicious_pokeball.reset"), b -> {
             this.applyFieldsFromMiscConfig();
             this.relayoutEditBoxes();
-            this.setInitialFocus(this.poolBerryBox);
-        }).bounds(left, duoY, 150, 20).build());
+            this.focusScroll(this.poolBerryBox);
+        }).bounds(left, duoY, COLUMN_WIDTH, BUTTON_HEIGHT).build());
 
         this.addRenderableWidget(Button.builder(Component.translatable("gui.cobblesafari.auspicious_pokeball.save"), b -> {
             Services.PLATFORM.sendPayloadToServer(new SaveAuspiciousPokeballConfigPayload(
@@ -110,10 +68,10 @@ public class AuspiciousPokeballConfigScreen extends Screen {
                     this.maxRollBox.getValue()
             ));
             this.onClose();
-        }).bounds(left + 158, duoY, 150, 20).build());
+        }).bounds(left + COLUMN_OFFSET, duoY, COLUMN_WIDTH, BUTTON_HEIGHT).build());
 
         this.relayoutEditBoxes();
-        this.setInitialFocus(this.poolBerryBox);
+        this.focusScroll(this.poolBerryBox);
     }
 
     private void applyFieldsFromMiscConfig() {
@@ -138,8 +96,8 @@ public class AuspiciousPokeballConfigScreen extends Screen {
     }
 
     private void relayoutEditBoxes() {
-        int left = this.width / 2 - 154;
-        int y = CONTENT_TOP_Y;
+        int left = this.panelLeft();
+        int y = this.contentTopY();
         int stride = this.fieldStride();
 
         this.poolBerryBox.setPosition(left, y);
@@ -151,20 +109,11 @@ public class AuspiciousPokeballConfigScreen extends Screen {
         this.poolTreasuresBox.setPosition(left, y);
         y += stride;
         this.minRollBox.setPosition(left, y);
-        this.maxRollBox.setPosition(left + 158, y);
+        this.maxRollBox.setPosition(left + COLUMN_OFFSET, y);
     }
 
     @Override
-    public boolean charTyped(char codePoint, int modifiers) {
-        for (EditBox box : allEditBoxes()) {
-            if (box.charTyped(codePoint, modifiers)) {
-                return true;
-            }
-        }
-        return super.charTyped(codePoint, modifiers);
-    }
-
-    private EditBox[] allEditBoxes() {
+    protected EditBox[] editBoxes() {
         return new EditBox[]{
                 this.poolBerryBox, this.poolCandyBox, this.poolBallsBox, this.poolTreasuresBox,
                 this.minRollBox, this.maxRollBox
@@ -172,35 +121,12 @@ public class AuspiciousPokeballConfigScreen extends Screen {
     }
 
     @Override
-    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-        for (EditBox box : allEditBoxes()) {
-            if (box.keyPressed(keyCode, scanCode, modifiers)) {
-                return true;
-            }
-        }
-        return super.keyPressed(keyCode, scanCode, modifiers);
-    }
-
-    private void drawFieldLabel(GuiGraphics g, EditBox box, String hintKey) {
-        g.drawString(this.font, Component.translatable(hintKey), box.getX(), this.labelBaselineY(box), 0xA0A0A0, false);
-    }
-
-    @Override
-    public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-        this.renderBackground(guiGraphics, mouseX, mouseY, partialTick);
-        super.render(guiGraphics, mouseX, mouseY, partialTick);
-        guiGraphics.drawCenteredString(this.font, this.title, this.width / 2, 16, 0xFFFFFF);
-
+    protected void renderScrollContent(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
         drawFieldLabel(guiGraphics, this.poolBerryBox, "gui.cobblesafari.auspicious_pokeball.hint.pool_berry");
         drawFieldLabel(guiGraphics, this.poolCandyBox, "gui.cobblesafari.auspicious_pokeball.hint.pool_candy");
         drawFieldLabel(guiGraphics, this.poolBallsBox, "gui.cobblesafari.auspicious_pokeball.hint.pool_balls");
         drawFieldLabel(guiGraphics, this.poolTreasuresBox, "gui.cobblesafari.auspicious_pokeball.hint.pool_treasures");
         drawFieldLabel(guiGraphics, this.minRollBox, "gui.cobblesafari.auspicious_pokeball.hint.min_roll");
         drawFieldLabel(guiGraphics, this.maxRollBox, "gui.cobblesafari.auspicious_pokeball.hint.max_roll");
-    }
-
-    @Override
-    public boolean isPauseScreen() {
-        return false;
     }
 }

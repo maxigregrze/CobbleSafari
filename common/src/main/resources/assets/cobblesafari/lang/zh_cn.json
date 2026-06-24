@@ -104,7 +104,7 @@
 	"block.cobblesafari.lost_notes": "迷失笔记",
 	"block.cobblesafari.lost_item": "迷失物品",
 	"block.cobblesafari.distortion_portal": "扭曲传送门",
-	
+
 	"item.cobblesafari.auspiciouspokeball": "幸运精灵球",
 	"item.cobblesafari.wildegg": "野生宝可蛋",
 	"item.cobblesafari.wildegg_bug": "虫系野生宝可蛋",
@@ -199,8 +199,8 @@
 	"item.cobblesafari.hyperberry_petaya": "异次元龙火果",
 	"item.cobblesafari.hyperberry_ganlon": "异次元龙晴果",
 	"item.cobblesafari.hyperberry_liechi": "异次元枝荔果",
-	"item.cobblesafari.hyperberry_starf": "异次元星桃果",	
-	"item.cobblesafari.hyperberry_lansat": "异次元兰萨果",	
+	"item.cobblesafari.hyperberry_starf": "异次元星桃果",
+	"item.cobblesafari.hyperberry_lansat": "异次元兰萨果",
 	"item.cobblesafari.donut": "朴实甜甜圈",
 	"item.cobblesafari.donut.spicy.0": "咖喱甜甜圈",
 	"item.cobblesafari.donut.spicy.1": "咖喱甜甜圈1★",
@@ -258,7 +258,7 @@
 	"tooltip.cobblesafari.portal.remaining": "剩余时间: %s",
 	"tooltip.cobblesafari.portal.dungeon_underground": "神奥地下通道",
 	"tooltip.cobblesafari.portal.dungeon_distortion": "扭曲世界",
-	"tooltip.cobblesafari.portal.dungeon_jump": "铃铛塔",	
+	"tooltip.cobblesafari.portal.dungeon_jump": "铃铛塔",
 	"tooltip.cobblesafari.portal.dungeon_paris": "异次元密阿雷",
 	"tooltip.cobblesafari.portal.dungeon_portal": "某个随机地区",
 	"tooltip.cobblesafari.portal.exit": "你的世界",
@@ -1073,9 +1073,11 @@
 	"cobblesafari.command.safariexit.not_in_safari": "您必须处于狩猎穹顶才能使用此命令。",
 	"cobblesafari.command.safariexit.no_origin": "未找到入口。您无法使用此命令。",
 	"cobblesafari.command.safariexit.invalid_origin": "我们的入口维度已不复存在。",
+
 	"cobblesafari.timer.expired": "时间到了！你被踢出去了。",
 	"cobblesafari.timer.reset": "您的狩猎时间已重置！",
 	"cobblesafari.timer.death_drained": "你差点死了！您在此维度上的剩余时间已被消耗。",
+
     "cobblesafari.teleporter.no_time": "您今天没有剩余的狩猎时间了。请在 %s 后再来",
 	"cobblesafari.teleporter.countdown.title": "传送至：",
 	"cobblesafari.teleporter.safari_balls_received": "您收到了 %s 个狩猎球（今日首次访问）。",
@@ -1084,6 +1086,7 @@
 	"cobblesafari.teleporter.cancelled": "传送失败。您离开了传送器。",
 	"cobblesafari.teleporter.fee.insufficient": "你交不起入场费！",
 	"cobblesafari.teleporter.overworld_only": "狩猎穹顶传送器仅在主世界中有效。",
+
 	"cobblesafari.dungeon.error.no_config": "没有可用的地下通道配置。",
 	"cobblesafari.dungeon.error.no_dimension": "未找到地下通道维度。",
 	"cobblesafari.dungeon.error.structure_failed": "放置地下通道结构失败。",
@@ -1097,41 +1100,53 @@
 	"cobblesafari.dungeon.error.portal_gone": "传送门消失了！",
 	"cobblesafari.dungeon.teleport.exit.failsafe": "野生宝可梦摧毁了传送门，你已被传送到出生点。",
 	"cobblesafari.dungeon.evacuated": "次元正在自行崩塌！你已被疏散。",
+
 	"cobblesafari.ban.item_banned": "此物品无法在此维度中使用。",
 	"cobblesafari.ban.block_banned": "此方块不能被放置在这个维度中。",
 	"cobblesafari.ban.block_breaking_banned": "此维度的方块无法被破坏。",
 	"cobblesafari.ban.block_placing_banned": "此维度中无法放置方块。",
 	"cobblesafari.ban.battle_banned": "此维度不允许战斗。",
 	"cobblesafari.ban.fishing_banned": "我怀疑我在这里什么都钓不到。。。",
+
 	"cobblesafari.portal.mode.random": "传送门目的地：随机",
 	"cobblesafari.portal.mode.fixed": "传送门目的地：%s",
+
 	"cobblesafari.reset.grace.started": "狩猎穹顶正在重置！您将在 %s 内被疏散。请完成您正在进行的操作。",
 	"cobblesafari.reset.grace.warning": "%s 中的狩猎穹顶已重置。请准备离开！",
 	"cobblesafari.reset.entry_denied": "狩猎穹顶正在重置中。请 %s 后再试。",
 	"cobblesafari.reset.evacuated": "你已经从狩猎穹顶撤离，准备迎接新的一天。",
 	"cobblesafari.reset.daily_kick": "当你在狩猎穹顶时，狩猎穹顶传送门被重置了。因此你被传送回来了。",
 	"cobblesafari.reset.completed": "狩猎穹顶已重置！",
+
 	"cobblesafari.incubator.cobbreeding_not_loaded": "未安装“Cobbreeding”。此蛋无法孵化。",
 	"cobblesafari.incubator.strange_egg": "可疑 %s 宝可蛋",
+
 	"cobblesafari.waila.incubator.ready": "孵化状态: 已完成!",
 	"cobblesafari.waila.incubator.time_remaining": "孵化状态:剩余时间 %s ",
 	"cobblesafari.waila.incubator.contains": "内含: %s",
 	"cobblesafari.waila.basepc.battery": "%s%% 树果",
 	"cobblesafari.waila.basepc.status_active": "已激活 (%s)",
 	"cobblesafari.waila.basepc.status_inactive": "未激活",
+
 	"cobblesafari.safari.flee_warning": "%s 要逃跑了！",
 	"cobblesafari.safari.pokemon_fled": "%s 逃跑了！",
 	"cobblesafari.safari.item_outside_safari": " %s 在身上携带的宝可梦不能使用，别傻了！",
+
 	"cobblesafari.distortion_rune.saved": "符文文本已保存。",
+
 	"cobblesafari.lost_notes.stored": "从“迷失笔记”方块中抄录的书籍。",
 	"cobblesafari.lost_notes.removed": "已将存储的书籍从“迷失笔记”方块中移除。",
+
 	"cobblesafari.randomizer.not_owner": "这不是你的宝可梦。",
 	"cobblesafari.randomizer.no_effect": "这不会产生任何效果。",
 	"cobblesafari.randomizer.gender_unavailable": "这只宝可梦无法改变性别。",
 	"cobblesafari.randomizer.no_pokeballs_configured": "此物品未配置有效的精灵球。",
+
 	"cobblesafari.distortion_portal.mode.top": "扭曲世界传送门模式：顶部",
-	"cobblesafari.distortion_portal.mode.bottom": "扭曲世界传送门模式：底部",	
+	"cobblesafari.distortion_portal.mode.bottom": "扭曲世界传送门模式：底部",
+
 	"cobblesafari.donut.no_flavor_on_pokemon": "此甜甜圈对此宝可梦不足以吸引，在甜甜圈上多添加对应喜欢的浆果，也许因此你的宝可梦会回心转意",
+
 	"cobblesafari.dungeon_donut.not_hoopa": "你的宝可梦似乎对这个甜甜圈不感兴趣。。。也许你应该试着把它给胡帕尝尝？",
 	"cobblesafari.dungeon_donut.portal_error": "胡帕礼貌地拒绝了你甜甜圈;它似乎无法在这里创建传送门。",
 
@@ -1165,6 +1180,7 @@
 	"biome.cobblesafari.fighting": "格斗系区域",
 
 	"subtitles.entity.generic.incense_spray": "香薰喷雾",
+
 	"subtitles.cobblesafari.safari.flee": "宝可梦逃走了。。。",
 	"subtitles.cobblesafari.safari.spray": "喷雾嘶嘶作响",
 	"subtitles.cobblesafari.giratina.trade": "骑拉帝纳咆哮"

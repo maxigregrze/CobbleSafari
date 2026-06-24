@@ -2,8 +2,8 @@
   "parent": "cobblesafari:welcome_to_safari",
   "display": {
     "icon": { "id": "minecraft:filled_map" },
-    "title": { "translate": "advancement.cobblesafari.safari_geographer.title" },
-    "description": { "translate": "advancement.cobblesafari.safari_geographer.description" },
+    "title": { "translate": "advancements.cobblesafari.safari_geographer.title" },
+    "description": { "translate": "advancements.cobblesafari.safari_geographer.description" },
     "frame": "challenge",
     "show_toast": true,
     "announce_to_chat": true,

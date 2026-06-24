@@ -1,0 +1,4 @@
+{
+  "type": "minecraft:block",
+  "pools": [ { "rolls": 1, "bonus_rolls": 0, "entries": [ { "type": "minecraft:item", "name": "cobblesafari:hyperspace_ramp" } ], "conditions": [ { "condition": "minecraft:survives_explosion" }, { "condition": "minecraft:block_state_property", "block": "cobblesafari:hyperspace_ramp", "properties": { "half": "lower" } } ] } ]
+}

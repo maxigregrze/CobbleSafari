@@ -5,10 +5,10 @@
       "id": "cobblemon:safari_ball"
     },
     "title": {
-      "translate": "advancement.cobblesafari.safari_zoologist.title"
+      "translate": "advancements.cobblesafari.safari_zoologist.title"
     },
     "description": {
-      "translate": "advancement.cobblesafari.safari_zoologist.description"
+      "translate": "advancements.cobblesafari.safari_zoologist.description"
     },
     "frame": "goal",
     "show_toast": true,

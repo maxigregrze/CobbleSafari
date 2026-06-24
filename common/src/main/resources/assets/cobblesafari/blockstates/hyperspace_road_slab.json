@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "type=bottom": { "model": "cobblesafari:block/hyperspace_road_slab" },
+    "type=top":    { "model": "cobblesafari:block/hyperspace_road_slab_top" },
+    "type=double": { "model": "cobblesafari:block/hyperspace_road_slab_double" }
+  }
+}

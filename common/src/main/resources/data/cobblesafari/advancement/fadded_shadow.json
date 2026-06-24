@@ -2,8 +2,8 @@
   "parent": "cobblesafari:upside_down",
   "display": {
     "icon": { "id": "cobblesafari:redchain_fragment" },
-    "title": { "translate": "advancement.cobblesafari.fadded_shadow.title" },
-    "description": { "translate": "advancement.cobblesafari.fadded_shadow.description" },
+    "title": { "translate": "advancements.cobblesafari.fadded_shadow.title" },
+    "description": { "translate": "advancements.cobblesafari.fadded_shadow.description" },
     "frame": "challenge",
     "show_toast": true,
     "announce_to_chat": true,

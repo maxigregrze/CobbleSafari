@@ -1,0 +1,9 @@
+{
+  "variants": {
+    "": [
+      { "model": "cobblesafari:block/hyperspace_floor_plain_1" },
+      { "model": "cobblesafari:block/hyperspace_floor_plain_2" },
+      { "model": "cobblesafari:block/hyperspace_floor_plain_3" }
+    ]
+  }
+}

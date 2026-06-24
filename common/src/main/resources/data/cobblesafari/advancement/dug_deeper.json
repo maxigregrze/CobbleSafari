@@ -2,8 +2,8 @@
   "parent": "cobblesafari:spheres_in_my_cube_game",
   "display": {
     "icon": { "id": "minecraft:netherite_pickaxe" },
-    "title": { "translate": "advancement.cobblesafari.dug_deeper.title" },
-    "description": { "translate": "advancement.cobblesafari.dug_deeper.description" },
+    "title": { "translate": "advancements.cobblesafari.dug_deeper.title" },
+    "description": { "translate": "advancements.cobblesafari.dug_deeper.description" },
     "frame": "challenge",
     "show_toast": true,
     "announce_to_chat": true,

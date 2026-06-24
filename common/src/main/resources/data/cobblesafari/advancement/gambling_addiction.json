@@ -5,10 +5,10 @@
       "id": "minecraft:emerald"
     },
     "title": {
-      "translate": "advancement.cobblesafari.gambling_addiction.title"
+      "translate": "advancements.cobblesafari.gambling_addiction.title"
     },
     "description": {
-      "translate": "advancement.cobblesafari.gambling_addiction.description"
+      "translate": "advancements.cobblesafari.gambling_addiction.description"
     },
     "frame": "task",
     "show_toast": true,

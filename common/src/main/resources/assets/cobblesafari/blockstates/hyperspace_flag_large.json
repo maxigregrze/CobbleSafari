@@ -1,0 +1,16 @@
+{
+  "variants": {
+    "part=bottom,facing=north": { "model": "cobblesafari:block/hyperspace_flag_large_bottom", "y": 180 },
+    "part=bottom,facing=east":  { "model": "cobblesafari:block/hyperspace_flag_large_bottom", "y": 270 },
+    "part=bottom,facing=south": { "model": "cobblesafari:block/hyperspace_flag_large_bottom" },
+    "part=bottom,facing=west":  { "model": "cobblesafari:block/hyperspace_flag_large_bottom", "y": 90 },
+    "part=center,facing=north": { "model": "cobblesafari:block/hyperspace_flag_large_center", "y": 180 },
+    "part=center,facing=east":  { "model": "cobblesafari:block/hyperspace_flag_large_center", "y": 270 },
+    "part=center,facing=south": { "model": "cobblesafari:block/hyperspace_flag_large_center" },
+    "part=center,facing=west":  { "model": "cobblesafari:block/hyperspace_flag_large_center", "y": 90 },
+    "part=top,facing=north":    { "model": "cobblesafari:block/hyperspace_flag_large_top", "y": 180 },
+    "part=top,facing=east":     { "model": "cobblesafari:block/hyperspace_flag_large_top", "y": 270 },
+    "part=top,facing=south":    { "model": "cobblesafari:block/hyperspace_flag_large_top" },
+    "part=top,facing=west":     { "model": "cobblesafari:block/hyperspace_flag_large_top", "y": 90 }
+  }
+}

@@ -2,8 +2,8 @@
   "parent": "cobblesafari:hammer_head",
   "display": {
     "icon": { "id": "minecraft:tnt" },
-    "title": { "translate": "advancement.cobblesafari.demolition_man.title" },
-    "description": { "translate": "advancement.cobblesafari.demolition_man.description" },
+    "title": { "translate": "advancements.cobblesafari.demolition_man.title" },
+    "description": { "translate": "advancements.cobblesafari.demolition_man.description" },
     "frame": "goal",
     "show_toast": true,
     "announce_to_chat": true,

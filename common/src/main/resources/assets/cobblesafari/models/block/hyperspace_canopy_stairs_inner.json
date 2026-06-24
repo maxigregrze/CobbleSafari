@@ -1,0 +1,4 @@
+{
+  "parent": "minecraft:block/inner_stairs",
+  "textures": { "bottom": "cobblesafari:block/hyperspace_window_stairs", "top": "cobblesafari:block/hyperspace_window_stairs", "side": "cobblesafari:block/hyperspace_window_stairs" }
+}

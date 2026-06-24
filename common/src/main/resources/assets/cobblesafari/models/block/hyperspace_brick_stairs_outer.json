@@ -1,0 +1,4 @@
+{
+  "parent": "minecraft:block/outer_stairs",
+  "textures": { "bottom": "cobblesafari:block/hyperspace_wall_bricks", "top": "cobblesafari:block/hyperspace_wall_bricks", "side": "cobblesafari:block/hyperspace_wall_bricks" }
+}

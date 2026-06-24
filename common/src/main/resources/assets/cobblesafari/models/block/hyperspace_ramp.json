@@ -1,0 +1,24 @@
+{
+	"format_version": "1.9.0",
+	"credit": "Made with Blockbench",
+	"texture_size": [16, 32],
+	"textures": {
+		"0": "cobblesafari:block/hyperspace_jump",
+		"particle": "cobblesafari:block/hyperspace_jump"
+	},
+	"elements": [
+		{
+			"from": [0, 0, 13],
+			"to": [16, 32, 15],
+			"rotation": {"angle": -22.5, "axis": "x", "origin": [0, 0, 13]},
+			"faces": {
+				"north": {"uv": [0, 0, 16, 16], "texture": "#0"},
+				"east": {"uv": [16, 0, 14, 16], "texture": "#0"},
+				"south": {"uv": [0, 0, 16, 16], "texture": "#0"},
+				"west": {"uv": [2, 0, 0, 16], "texture": "#0"},
+				"up": {"uv": [0, 1, 16, 0], "texture": "#0"},
+				"down": {"uv": [0, 16, 16, 15], "texture": "#0"}
+			}
+		}
+	]
+}

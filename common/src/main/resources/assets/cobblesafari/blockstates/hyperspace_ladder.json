@@ -1,0 +1,8 @@
+{
+  "variants": {
+    "facing=north": { "model": "cobblesafari:block/hyperspace_ladder", "y": 180 },
+    "facing=east":  { "model": "cobblesafari:block/hyperspace_ladder", "y": 270 },
+    "facing=south": { "model": "cobblesafari:block/hyperspace_ladder" },
+    "facing=west":  { "model": "cobblesafari:block/hyperspace_ladder", "y": 90 }
+  }
+}

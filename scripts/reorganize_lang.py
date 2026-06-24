@@ -16,8 +16,9 @@ FIRST appears in the current file. This means:
     order those new categories first appear.
 
 Every key/value line is kept byte-for-byte identical. Only the line order and
-the trailing comma (required to keep the JSON valid) are adjusted. Blank lines
-are dropped. The opening "{" and closing "}" lines are preserved as-is.
+the trailing comma (required to keep the JSON valid) are adjusted. A blank line
+is inserted between each category block. The opening "{" and closing "}" lines
+are preserved as-is.
 
 Usage:
   python reorganize_lang.py [files...] [--depth N] [--check]
@@ -67,12 +68,17 @@ def reorganize(text: str, depth: int) -> str:
             core = core[:-1]
         groups.setdefault(category_of(m.group(1), depth), []).append(core)
 
-    ordered = [core for cores in groups.values() for core in cores]
+    all_cores = [core for cores in groups.values() for core in cores]
 
     out = list(preamble)
-    last = len(ordered) - 1
-    for i, core in enumerate(ordered):
-        out.append(core + ("" if i == last else ",") + eol)
+    last = len(all_cores) - 1
+    idx = 0
+    for cat_idx, cores in enumerate(groups.values()):
+        if cat_idx > 0:
+            out.append(eol)
+        for core in cores:
+            out.append(core + ("" if idx == last else ",") + eol)
+            idx += 1
     out.extend(postamble)
     return "".join(out)
 

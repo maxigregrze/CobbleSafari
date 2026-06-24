@@ -9,7 +9,6 @@ import maxigregrze.cobblesafari.platform.Services;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
-import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 
@@ -18,11 +17,11 @@ import net.minecraft.network.chat.Component;
  * offset (world axes), Check / Auto-detect (server-authoritative search), status line, Save / Exit.
  * The survival variant additionally exposes a hex colour field.
  */
-public class TeleportPadConfigScreen extends Screen {
+public class TeleportPadConfigScreen extends CobbleSafariConfigScreen {
 
-    private static final int FIELD_WIDTH = 58;
-    private static final int FIELD_HEIGHT = 20;
-    private static final int BUTTON_WIDTH = 95;
+    private static final int ARROW_WIDTH = 20;
+    private static final int OFFSET_FIELD_WIDTH = 96;
+    private static final int OFFSET_FIELD_GAP = 10;
     private static final int COLOR_WHITE = 0xE0E0E0;
     private static final int COLOR_GREEN = 0x55FF55;
     private static final int MIN_OFFSET = -100;
@@ -43,7 +42,6 @@ public class TeleportPadConfigScreen extends Screen {
     private EditBox zBox;
     private EditBox colorBox;
     private int modeRowY;
-    private int colorRowY;
     private int statusRowY;
 
     public TeleportPadConfigScreen(OpenTeleportPadConfigPayload initial) {
@@ -60,54 +58,47 @@ public class TeleportPadConfigScreen extends Screen {
 
     @Override
     protected void init() {
-        int left = this.width / 2 - 100;
-        int y = 40;
+        int left = this.panelLeft();
+        int y = this.contentTopY();
 
         this.modeRowY = y;
-        this.addRenderableWidget(Button.builder(Component.literal("<"), b -> this.mode = this.mode.prev())
-                .bounds(left, y, 20, FIELD_HEIGHT).build());
-        this.addRenderableWidget(Button.builder(Component.literal(">"), b -> this.mode = this.mode.next())
-                .bounds(left + 180, y, 20, FIELD_HEIGHT).build());
-        y += 44;
+        addScroll(Button.builder(Component.literal("<"), b -> this.mode = this.mode.prev())
+                .bounds(left, y, ARROW_WIDTH, BUTTON_HEIGHT).build());
+        addScroll(Button.builder(Component.literal(">"), b -> this.mode = this.mode.next())
+                .bounds(left + PANEL_WIDTH - ARROW_WIDTH, y, ARROW_WIDTH, BUTTON_HEIGHT).build());
+        y += 40;
 
         if (this.allowColor) {
-            this.colorRowY = y;
-            this.colorBox = new EditBox(this.font, left, y, 200, FIELD_HEIGHT, Component.empty());
-            this.colorBox.setMaxLength(7);
+            this.colorBox = makeEditBox(left, y, PANEL_WIDTH, 7, formatColor(this.initialColor));
             this.colorBox.setFilter(s -> s.isEmpty() || s.matches("#?[0-9a-fA-F]{0,6}"));
-            this.colorBox.setValue(formatColor(this.initialColor));
-            this.addRenderableWidget(this.colorBox);
-            y += 32;
+            y += this.fieldStride();
         }
 
         this.xBox = makeOffsetBox(left, y, this.initialX);
-        this.yBox = makeOffsetBox(left + 71, y, this.initialY);
-        this.zBox = makeOffsetBox(left + 142, y, this.initialZ);
+        this.yBox = makeOffsetBox(left + OFFSET_FIELD_WIDTH + OFFSET_FIELD_GAP, y, this.initialY);
+        this.zBox = makeOffsetBox(left + 2 * (OFFSET_FIELD_WIDTH + OFFSET_FIELD_GAP), y, this.initialZ);
         applyConnectedColor();
-        y += 32;
+        y += this.fieldStride();
 
-        this.addRenderableWidget(Button.builder(Component.translatable("gui.cobblesafari.teleport_pad.check"),
-                b -> sendAction(TeleportPadActionPayload.Action.CHECK)).bounds(left, y, BUTTON_WIDTH, FIELD_HEIGHT).build());
-        this.addRenderableWidget(Button.builder(Component.translatable("gui.cobblesafari.teleport_pad.autodetect"),
-                b -> sendAction(TeleportPadActionPayload.Action.AUTODETECT)).bounds(left + 105, y, BUTTON_WIDTH, FIELD_HEIGHT).build());
-        y += 28;
+        addScroll(Button.builder(Component.translatable("gui.cobblesafari.teleport_pad.check"),
+                b -> sendAction(TeleportPadActionPayload.Action.CHECK)).bounds(left, y, COLUMN_WIDTH, BUTTON_HEIGHT).build());
+        addScroll(Button.builder(Component.translatable("gui.cobblesafari.teleport_pad.autodetect"),
+                b -> sendAction(TeleportPadActionPayload.Action.AUTODETECT)).bounds(left + COLUMN_OFFSET, y, COLUMN_WIDTH, BUTTON_HEIGHT).build());
+        y += BUTTON_HEIGHT + 8;
 
         this.statusRowY = y;
-        y += 24;
 
+        int duoY = this.bottomRowY();
         this.addRenderableWidget(Button.builder(Component.translatable("gui.cobblesafari.teleport_pad.save"),
-                b -> save()).bounds(left, y, BUTTON_WIDTH, FIELD_HEIGHT).build());
+                b -> save()).bounds(left, duoY, COLUMN_WIDTH, BUTTON_HEIGHT).build());
         this.addRenderableWidget(Button.builder(Component.translatable("gui.cobblesafari.teleport_pad.exit"),
-                b -> this.onClose()).bounds(left + 105, y, BUTTON_WIDTH, FIELD_HEIGHT).build());
+                b -> this.onClose()).bounds(left + COLUMN_OFFSET, duoY, COLUMN_WIDTH, BUTTON_HEIGHT).build());
     }
 
     private EditBox makeOffsetBox(int x, int y, int value) {
-        EditBox box = new EditBox(this.font, x, y, FIELD_WIDTH, FIELD_HEIGHT, Component.empty());
-        box.setMaxLength(4);
+        EditBox box = makeEditBox(x, y, OFFSET_FIELD_WIDTH, 4, Integer.toString(value));
         box.setFilter(s -> s.isEmpty() || s.matches("-?\\d{0,3}"));
-        box.setValue(Integer.toString(value));
         box.setResponder(s -> markEdited());
-        this.addRenderableWidget(box);
         return box;
     }
 
@@ -199,28 +190,30 @@ public class TeleportPadConfigScreen extends Screen {
     }
 
     @Override
-    public void render(GuiGraphics g, int mouseX, int mouseY, float partialTick) {
-        this.renderBackground(g, mouseX, mouseY, partialTick);
-        super.render(g, mouseX, mouseY, partialTick);
-        int left = this.width / 2 - 100;
-        g.drawCenteredString(this.font, this.title, this.width / 2, 16, 0xFFFFFF);
-        g.drawCenteredString(this.font,
-                Component.translatable("gui.cobblesafari.teleport_pad.mode." + this.mode.getSerializedName()),
-                this.width / 2, this.modeRowY + (FIELD_HEIGHT - this.font.lineHeight) / 2, 0xFFFFFF);
-        if (this.allowColor && this.colorBox != null) {
-            g.drawString(this.font, Component.translatable("gui.cobblesafari.teleport_pad.color"),
-                    left, this.colorRowY - 10, 0xA0A0A0, false);
-        }
-        g.drawString(this.font, "X", left, this.xBox.getY() - 10, 0xA0A0A0, false);
-        g.drawString(this.font, "Y", left + 71, this.yBox.getY() - 10, 0xA0A0A0, false);
-        g.drawString(this.font, "Z", left + 142, this.zBox.getY() - 10, 0xA0A0A0, false);
-        if (!this.status.getString().isEmpty()) {
-            g.drawCenteredString(this.font, this.status, this.width / 2, this.statusRowY, 0xFFFFFF);
-        }
+    protected EditBox[] editBoxes() {
+        return new EditBox[]{this.colorBox, this.xBox, this.yBox, this.zBox};
     }
 
     @Override
-    public boolean isPauseScreen() {
-        return false;
+    protected int scrollContentBottom() {
+        return Math.max(super.scrollContentBottom(), this.statusRowY + this.font.lineHeight + 2);
+    }
+
+    @Override
+    protected void renderScrollContent(GuiGraphics g, int mouseX, int mouseY, float partialTick) {
+        int left = this.panelLeft();
+        g.drawCenteredString(this.font,
+                Component.translatable("gui.cobblesafari.teleport_pad.mode." + this.mode.getSerializedName()),
+                this.width / 2, this.modeRowY + (BUTTON_HEIGHT - this.font.lineHeight) / 2, TITLE_COLOR);
+        if (this.allowColor && this.colorBox != null) {
+            g.drawString(this.font, Component.translatable("gui.cobblesafari.teleport_pad.color"),
+                    left, labelBaselineY(this.colorBox), LABEL_COLOR, false);
+        }
+        g.drawString(this.font, "X", this.xBox.getX(), labelBaselineY(this.xBox), LABEL_COLOR, false);
+        g.drawString(this.font, "Y", this.yBox.getX(), labelBaselineY(this.yBox), LABEL_COLOR, false);
+        g.drawString(this.font, "Z", this.zBox.getX(), labelBaselineY(this.zBox), LABEL_COLOR, false);
+        if (!this.status.getString().isEmpty()) {
+            g.drawCenteredString(this.font, this.status, this.width / 2, this.statusRowY, TITLE_COLOR);
+        }
     }
 }

@@ -81,6 +81,7 @@ public class CobbleSafariClientFabric implements ClientModInitializer {
         registerHud();
         registerBlockRenderLayers();
         registerRenderers();
+        registerColors();
         registerScreens();
         registerDungeonMusic();
         maxigregrze.cobblesafari.client.RotomPhoneModelLoadingPlugin.register();
@@ -259,6 +260,48 @@ public class CobbleSafariClientFabric implements ClientModInitializer {
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.UNION_ROOM_SPOTLIGHT_DISPLAY_LIGHT_YELLOW, RenderType.translucent());
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.UNION_ROOM_SPOTLIGHT_DISPLAY_LIGHT_BLUE, RenderType.translucent());
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.UNION_ROOM_SPOTLIGHT_DISPLAY_LIGHT_RED, RenderType.translucent());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.HYPERSPACE_ROAD, RenderType.cutoutMipped());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.HYPERSPACE_ROAD_PLAIN, RenderType.cutoutMipped());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.HYPERSPACE_BARRIER, RenderType.cutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.HYPERSPACE_CONE, RenderType.cutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.HYPERSPACE_IRONRAILS, RenderType.cutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.HYPERSPACE_SCAFFOLDING_PLATFORM, RenderType.cutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.HYPERSPACE_SCAFFOLDING, RenderType.cutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.HYPERSPACE_PLATFORM, RenderType.cutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.HYPERSPACE_SHUTTERS, RenderType.cutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.HYPERSPACE_SLAB, RenderType.cutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.HYPERSPACE_FLOWERPOT, RenderType.cutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.HYPERSPACE_CHAIR, RenderType.cutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.HYPERSPACE_TABLE, RenderType.cutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.HYPERSPACE_LADDER, RenderType.cutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.HYPERSPACE_RAMP, RenderType.cutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.HYPERSPACE_SCAFFOLDING_STAIRS, RenderType.cutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.HYPERSPACE_TRASHCAN, RenderType.cutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.HYPERSPACE_TRASHCAN_LID_DISPLAY, RenderType.cutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.HYPERSPACE_LAMPPOST, RenderType.cutoutMipped());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.HYPERSPACE_DOOR, RenderType.cutoutMipped());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.HYPERSPACE_WINDOW_CEILING, RenderType.translucent());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.HYPERSPACE_WINDOW_SMALL, RenderType.translucent());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.HYPERSPACE_WINDOW_TOPPER, RenderType.translucent());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.HYPERSPACE_CANOPY_STAIRS, RenderType.translucent());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.HYPERSPACE_CANOPY_SLAB, RenderType.translucent());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.HYPERSPACE_WINDOW_LARGE, RenderType.translucent());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.HYPERSPACE_WINDOW_PLAIN_LARGE, RenderType.translucent());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.HYPERSPACE_WINDOW_BRICK_LARGE, RenderType.translucent());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.HYPERSPACE_WINDOW_BRICK_LARGE2, RenderType.translucent());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.HYPERSPACE_FLAG_SMALL, RenderType.translucent());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.HYPERSPACE_FLAG_LARGE, RenderType.translucent());
+    }
+
+    private void registerColors() {
+        net.fabricmc.fabric.api.client.rendering.v1.ColorProviderRegistry.BLOCK.register(
+                (state, level, pos, tintIndex) -> (level != null && pos != null)
+                        ? net.minecraft.client.renderer.BiomeColors.getAverageGrassColor(level, pos)
+                        : net.minecraft.world.level.GrassColor.getDefaultColor(),
+                ModBlocks.HYPERSPACE_FLOWERPOT);
+        net.fabricmc.fabric.api.client.rendering.v1.ColorProviderRegistry.ITEM.register(
+                (stack, tintIndex) -> net.minecraft.world.level.GrassColor.get(0.5D, 1.0D),
+                ModBlocks.HYPERSPACE_FLOWERPOT);
     }
 
     private void registerRenderers() {
@@ -276,6 +319,7 @@ public class CobbleSafariClientFabric implements ClientModInitializer {
         BlockEntityRenderers.register(ModBlockEntities.UNION_ROOM_GLOBE_UPPER, maxigregrze.cobblesafari.client.renderer.UnionRoomGlobeUpperBlockEntityRenderer::new);
         BlockEntityRenderers.register(ModBlockEntities.UNION_ROOM_SPOTLIGHT, maxigregrze.cobblesafari.client.renderer.UnionRoomSpotlightBlockEntityRenderer::new);
         BlockEntityRenderers.register(ModBlockEntities.PUNCHINGBAG, maxigregrze.cobblesafari.client.renderer.PunchingBagBlockEntityRenderer::new);
+        BlockEntityRenderers.register(ModBlockEntities.HYPERSPACE_TRASHCAN, maxigregrze.cobblesafari.client.renderer.HyperspaceTrashcanBlockEntityRenderer::new);
         BlockEntityRenderers.register(ModBlockEntities.BALM_DISPENSER, maxigregrze.cobblesafari.client.renderer.BalmDispenserBlockEntityRenderer::new);
         BlockEntityRenderers.register(ModBlockEntities.CSBOSS_TRIGGER, maxigregrze.cobblesafari.client.renderer.CsBossTriggerBlockEntityRenderer::new);
         BlockEntityRenderers.register(ModBlockEntities.TELEPORT_PAD, maxigregrze.cobblesafari.client.renderer.TeleportPadBlockEntityRenderer::new);

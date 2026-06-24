@@ -2,8 +2,8 @@
   "parent": "cobblesafari:seasoned_catcher",
   "display": {
     "icon": { "id": "cobblemon:safari_ball" },
-    "title": { "translate": "advancement.cobblesafari.safari_legend.title" },
-    "description": { "translate": "advancement.cobblesafari.safari_legend.description" },
+    "title": { "translate": "advancements.cobblesafari.safari_legend.title" },
+    "description": { "translate": "advancements.cobblesafari.safari_legend.description" },
     "frame": "challenge",
     "show_toast": true,
     "announce_to_chat": true,

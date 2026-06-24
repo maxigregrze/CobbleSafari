@@ -5,10 +5,10 @@
       "id": "minecraft:emerald"
     },
     "title": {
-      "translate": "advancement.cobblesafari.underground_market.title"
+      "translate": "advancements.cobblesafari.underground_market.title"
     },
     "description": {
-      "translate": "advancement.cobblesafari.underground_market.description"
+      "translate": "advancements.cobblesafari.underground_market.description"
     },
     "frame": "task",
     "show_toast": true,

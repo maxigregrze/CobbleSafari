@@ -5,10 +5,10 @@
       "id": "cobblesafari:bait"
     },
     "title": {
-      "translate": "advancement.cobblesafari.master_baiter.title"
+      "translate": "advancements.cobblesafari.master_baiter.title"
     },
     "description": {
-      "translate": "advancement.cobblesafari.master_baiter.description"
+      "translate": "advancements.cobblesafari.master_baiter.description"
     },
     "frame": "task",
     "show_toast": true,

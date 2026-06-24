@@ -2,8 +2,8 @@
   "parent": "cobblesafari:rotomphone",
   "display": {
     "icon": { "id": "cobblesafari:rotomphone" },
-    "title": { "translate": "advancement.cobblesafari.ring_a_ding.title" },
-    "description": { "translate": "advancement.cobblesafari.ring_a_ding.description" },
+    "title": { "translate": "advancements.cobblesafari.ring_a_ding.title" },
+    "description": { "translate": "advancements.cobblesafari.ring_a_ding.description" },
     "frame": "task",
     "show_toast": true,
     "announce_to_chat": true,

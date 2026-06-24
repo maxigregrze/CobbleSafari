@@ -5,10 +5,10 @@
       "id": "minecraft:diamond_pickaxe"
     },
     "title": {
-      "translate": "advancement.cobblesafari.delicate_pick_me.title"
+      "translate": "advancements.cobblesafari.delicate_pick_me.title"
     },
     "description": {
-      "translate": "advancement.cobblesafari.delicate_pick_me.description"
+      "translate": "advancements.cobblesafari.delicate_pick_me.description"
     },
     "frame": "goal",
     "show_toast": true,

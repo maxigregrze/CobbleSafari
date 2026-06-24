@@ -43,6 +43,9 @@ public class MiscConfig {
     /** Cooldown between Giratina Core trades, in ticks (20 ticks = 1 s). */
     private int giratinaCoreCooldown = 40;
 
+    /** Front-mode teleport-pad pairing window: ±N blocks on the vertical and horizontal axes. Min 5. */
+    private int teleportpadForwardLeeway = 5;
+
     /**
      * Default values for a newly placed "lost item" block (see {@code misc_config.json}, key {@code lostItem}).
      */
@@ -258,6 +261,14 @@ public class MiscConfig {
             return 40;
         }
         return Math.max(0, INSTANCE.giratinaCoreCooldown);
+    }
+
+    /** Front-mode teleport-pad pairing window (±N on the vertical and horizontal axes). Clamped to a minimum of 5. */
+    public static int getTeleportpadForwardLeeway() {
+        if (INSTANCE == null) {
+            return 5;
+        }
+        return Math.max(5, INSTANCE.teleportpadForwardLeeway);
     }
 
     public void ensureLostItemDefaults() {

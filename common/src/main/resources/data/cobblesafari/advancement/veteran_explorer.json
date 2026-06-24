@@ -5,10 +5,10 @@
       "id": "minecraft:ender_eye"
     },
     "title": {
-      "translate": "advancement.cobblesafari.veteran_explorer.title"
+      "translate": "advancements.cobblesafari.veteran_explorer.title"
     },
     "description": {
-      "translate": "advancement.cobblesafari.veteran_explorer.description"
+      "translate": "advancements.cobblesafari.veteran_explorer.description"
     },
     "frame": "goal",
     "show_toast": true,

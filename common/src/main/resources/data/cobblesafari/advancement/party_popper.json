@@ -2,8 +2,8 @@
   "parent": "cobblesafari:sociable",
   "display": {
     "icon": { "id": "minecraft:firework_rocket" },
-    "title": { "translate": "advancement.cobblesafari.party_popper.title" },
-    "description": { "translate": "advancement.cobblesafari.party_popper.description" },
+    "title": { "translate": "advancements.cobblesafari.party_popper.title" },
+    "description": { "translate": "advancements.cobblesafari.party_popper.description" },
     "frame": "goal",
     "show_toast": true,
     "announce_to_chat": true,

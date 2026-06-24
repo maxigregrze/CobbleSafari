@@ -1,8 +1,8 @@
 {
   "display": {
     "icon": { "id": "cobblesafari:rotomphone" },
-    "title": { "translate": "advancement.cobblesafari.rotomphone.title" },
-    "description": { "translate": "advancement.cobblesafari.rotomphone.description" },
+    "title": { "translate": "advancements.cobblesafari.rotomphone.title" },
+    "description": { "translate": "advancements.cobblesafari.rotomphone.description" },
     "background": "minecraft:textures/gui/advancements/backgrounds/adventure.png",
     "frame": "task",
     "show_toast": false,
