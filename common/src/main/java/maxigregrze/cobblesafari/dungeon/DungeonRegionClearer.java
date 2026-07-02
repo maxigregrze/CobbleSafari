@@ -27,7 +27,6 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Queue;
-import java.util.concurrent.CompletableFuture;
 
 public class DungeonRegionClearer {
 
@@ -36,8 +35,11 @@ public class DungeonRegionClearer {
     private static final TicketType<ChunkPos> DUNGEON_CLEAR = TicketType.create(
             "cobblesafari_clear", Comparator.comparingLong(ChunkPos::toLong), 600);
 
-    private static final int CHUNK_LOAD_SUBMISSIONS_PER_TICK = 12;
     private static final int CHUNK_CLEAR_PER_TICK = 32;
+    private static final int CHUNK_CLEAR_PER_TICK_DRAIN = 256;
+
+    /** Ticks a job may wait for its chunks before yielding its queue slot to the next pending job (~10 s). */
+    private static final int AWAIT_YIELD_TICKS = 200;
 
     private static final Queue<RegionClearJob> PENDING_JOBS = new ArrayDeque<>();
 
@@ -85,13 +87,19 @@ public class DungeonRegionClearer {
 
         switch (job.phase()) {
             case ADD_TICKETS -> addAllDungeonClearTickets(job);
-            case SUBMIT_LOAD_FUTURES -> submitLoadFuturesBatch(server, job);
-            case WAIT_LOAD_RESULT -> {
-                return;
-            }
-            case CLEAR_CHUNKS -> clearChunkBatch(job);
+            case AWAIT_LOADED -> awaitChunksLoaded(job);
+            case CLEAR_CHUNKS -> clearChunkBatch(server, job);
             case FINALIZE -> finalizeJob(job);
         }
+    }
+
+    /**
+     * Per-tick clear budget. When no player is connected (notably the startup drain, where pending
+     * clears are resumed before players join) we can afford to clear far more aggressively; under
+     * player load we stay discreet so the clear never weighs on a tick.
+     */
+    private static int clearBudgetPerTick(MinecraftServer server) {
+        return server.getPlayerCount() == 0 ? CHUNK_CLEAR_PER_TICK_DRAIN : CHUNK_CLEAR_PER_TICK;
     }
 
     private static void addAllDungeonClearTickets(RegionClearJob job) {
@@ -108,29 +116,37 @@ public class DungeonRegionClearer {
         for (ChunkPos cp : job.positions()) {
             level.getChunkSource().addRegionTicket(DUNGEON_CLEAR, cp, CHUNK_LOAD_TICKET_LEVEL, cp);
         }
-        job.setPhase(RegionClearJob.Phase.SUBMIT_LOAD_FUTURES);
+        job.setPhase(RegionClearJob.Phase.AWAIT_LOADED);
     }
 
-    private static void submitLoadFuturesBatch(MinecraftServer server, RegionClearJob job) {
+    /**
+     * Non-blocking wait. The DUNGEON_CLEAR tickets posted in {@link #addAllDungeonClearTickets} drive
+     * the chunks to FULL asynchronously over the following ticks; here we only poll their readiness with
+     * {@link net.minecraft.server.level.ServerChunkCache#getChunkNow} — which never blocks nor generates.
+     * As long as a chunk isn't ready we simply return and retry next tick, so the main thread is never
+     * parked (this is the fix for the ServerHangWatchdog crash caused by the old blocking getChunkFuture).
+     */
+    private static void awaitChunksLoaded(RegionClearJob job) {
         ServerLevel level = job.level();
-        int submitted = 0;
-        while (job.loadSubmitted() < job.positions().size() && submitted < CHUNK_LOAD_SUBMISSIONS_PER_TICK) {
-            ChunkPos cp = job.positions().get(job.loadSubmitted());
-            job.loadFutures().add(level.getChunkSource().getChunkFuture(cp.x, cp.z, ChunkStatus.FULL, true));
-            job.incrementLoadSubmitted();
-            submitted++;
-        }
-
-        if (job.loadSubmitted() >= job.positions().size()) {
-            job.setPhase(RegionClearJob.Phase.WAIT_LOAD_RESULT);
-            CompletableFuture<?>[] arr = job.loadFutures().toArray(new CompletableFuture[0]);
-            CompletableFuture.allOf(arr).whenComplete((unused, throwable) -> server.execute(() -> {
-                if (throwable != null) {
-                    CobbleSafari.LOGGER.error("Dungeon region chunk loading completed with errors", throwable);
+        for (ChunkPos cp : job.positions()) {
+            if (level.getChunkSource().getChunkNow(cp.x, cp.z) == null) {
+                // Not ready yet — the tickets keep loading it in the background. If we have waited a
+                // long time and other jobs are queued behind us, rotate this one to the back so a single
+                // slow region can't stall the whole queue. The job is never abandoned: it keeps its
+                // tickets and the instance stays pendingDeletion, so it is retried (eventually, or via the
+                // startup drain). On a healthy server the level-2 tickets resolve well before this fires.
+                if (job.incrementAwaitTicks() >= AWAIT_YIELD_TICKS && PENDING_JOBS.size() > 1) {
+                    CobbleSafari.LOGGER.warn(
+                            "DungeonRegionClearer: region [{},{}]..[{},{}] still loading after {} ticks; yielding to next pending job",
+                            job.chunkMinX(), job.chunkMinZ(), job.chunkMaxX(), job.chunkMaxZ(), AWAIT_YIELD_TICKS);
+                    job.resetAwaitTicks();
+                    PENDING_JOBS.poll();
+                    PENDING_JOBS.add(job);
                 }
-                beginClearPhase(job);
-            }));
+                return;
+            }
         }
+        beginClearPhase(job);
     }
 
     private static void beginClearPhase(RegionClearJob job) {
@@ -138,7 +154,7 @@ public class DungeonRegionClearer {
         if (peek != job) {
             return;
         }
-        if (job.phase() != RegionClearJob.Phase.WAIT_LOAD_RESULT) {
+        if (job.phase() != RegionClearJob.Phase.AWAIT_LOADED) {
             return;
         }
 
@@ -170,13 +186,13 @@ public class DungeonRegionClearer {
         job.setPhase(RegionClearJob.Phase.CLEAR_CHUNKS);
     }
 
-    private static void clearChunkBatch(RegionClearJob job) {
+    private static void clearChunkBatch(MinecraftServer server, RegionClearJob job) {
         ServerLevel level = job.level();
         Registry<Biome> biomeRegistry = level.registryAccess().registryOrThrow(Registries.BIOME);
         int minY = job.minClearY();
         int maxY = job.maxClearY();
 
-        int end = Math.min(job.clearCursor() + CHUNK_CLEAR_PER_TICK, job.positions().size());
+        int end = Math.min(job.clearCursor() + clearBudgetPerTick(server), job.positions().size());
         for (int i = job.clearCursor(); i < end; i++) {
             ChunkPos cp = job.positions().get(i);
             ChunkAccess access = level.getChunkSource().getChunk(cp.x, cp.z, ChunkStatus.FULL, false);
@@ -207,6 +223,11 @@ public class DungeonRegionClearer {
                 level.dimension().location(),
                 job.chunkMinX(), job.chunkMinZ(), job.chunkMaxX(), job.chunkMaxZ(),
                 job.minClearY(), job.maxClearY());
+
+        // V2.3: persist the cleared chunks BEFORE freeing the instance/slot. The clear marked them
+        // unsaved; without a flush here, a crash between freeing the instance record and the next
+        // autosave would leave the old structure on disk with no instance tracking it (ghost geometry).
+        level.getChunkSource().save(false);
 
         Runnable done = job.onFullyCleared();
         PENDING_JOBS.poll();
@@ -432,8 +453,7 @@ public class DungeonRegionClearer {
     private static final class RegionClearJob {
         enum Phase {
             ADD_TICKETS,
-            SUBMIT_LOAD_FUTURES,
-            WAIT_LOAD_RESULT,
+            AWAIT_LOADED,
             CLEAR_CHUNKS,
             FINALIZE
         }
@@ -447,11 +467,10 @@ public class DungeonRegionClearer {
         private final int sectionsBelow;
         private final int sectionsAbove;
         private final List<ChunkPos> positions;
-        private final List<CompletableFuture<?>> loadFutures = new ArrayList<>();
         private final Runnable onFullyCleared;
 
         private Phase phase = Phase.ADD_TICKETS;
-        private int loadSubmitted;
+        private int awaitTicks;
         private int minClearY;
         private int maxClearY;
         private int clearCursor;
@@ -489,16 +508,12 @@ public class DungeonRegionClearer {
             this.phase = phase;
         }
 
-        List<CompletableFuture<?>> loadFutures() {
-            return loadFutures;
+        int incrementAwaitTicks() {
+            return ++awaitTicks;
         }
 
-        int loadSubmitted() {
-            return loadSubmitted;
-        }
-
-        void incrementLoadSubmitted() {
-            loadSubmitted++;
+        void resetAwaitTicks() {
+            this.awaitTicks = 0;
         }
 
         int structureY() {

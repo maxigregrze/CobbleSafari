@@ -1,5 +1,6 @@
 package maxigregrze.cobblesafari.rotomphone;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -10,6 +11,8 @@ import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
 
 import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
@@ -19,6 +22,7 @@ public final class RotomPhoneSkinDataLoader {
     private static final String DATA_DIR = "rotomphone_skins";
     private static final int CURRENT_VERSION = 1;
     private static final Pattern HEX_COLOR = Pattern.compile("^[0-9a-fA-F]{6}$");
+    private static final Pattern SAFE_TAG = Pattern.compile("^[a-z0-9_]+$");
 
     public static void load(MinecraftServer server) {
         RotomPhoneSkinRegistry.clear();
@@ -84,7 +88,25 @@ public final class RotomPhoneSkinDataLoader {
         boolean unlockedFromStart = json.has("unlockedFromStart") && json.get("unlockedFromStart").getAsBoolean();
         String unlockingAdvancement = json.has("unlockingAdvancement") ? json.get("unlockingAdvancement").getAsString() : "";
         boolean hasShinyVariant = json.has("hasShinyVariant") && json.get("hasShinyVariant").getAsBoolean();
+        boolean addUnlockItem = json.has("addUnlockItem") && json.get("addUnlockItem").getAsBoolean();
 
-        return new RotomPhoneSkinDefinition(id, displayName, color, hasCustomScreen, unlockedFromStart, unlockingAdvancement, hasShinyVariant);
+        List<String> tags = new ArrayList<>();
+        if (json.has("tags") && json.get("tags").isJsonArray()) {
+            JsonArray tagArray = json.getAsJsonArray("tags");
+            for (JsonElement el : tagArray) {
+                if (!el.isJsonPrimitive() || !el.getAsJsonPrimitive().isString()) {
+                    continue;
+                }
+                String tag = el.getAsString();
+                if (SAFE_TAG.matcher(tag).matches()) {
+                    tags.add(tag);
+                } else {
+                    CobbleSafari.LOGGER.warn("[RotomPhone] {} has invalid tag '{}', ignored", fileId, tag);
+                }
+            }
+        }
+
+        return new RotomPhoneSkinDefinition(id, displayName, color, hasCustomScreen, unlockedFromStart,
+                unlockingAdvancement, hasShinyVariant, tags, addUnlockItem);
     }
 }

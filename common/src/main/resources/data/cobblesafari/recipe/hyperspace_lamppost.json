@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " L ",
+    "FIF",
+    " I "
+  ],
+  "key": {
+    "L": { "item": "minecraft:lantern" },
+    "F": { "item": "cobblesafari:hyperspace_flowers" },
+    "I": { "item": "minecraft:iron_ingot" }
+  },
+  "result": {
+    "id": "cobblesafari:hyperspace_lamppost",
+    "count": 1
+  }
+}

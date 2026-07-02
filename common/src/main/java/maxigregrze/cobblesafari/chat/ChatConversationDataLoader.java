@@ -12,8 +12,10 @@ import net.minecraft.server.packs.resources.ResourceManager;
 
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 /**
@@ -133,48 +135,120 @@ public final class ChatConversationDataLoader {
             if (!stepsArr.get(i).isJsonObject()) {
                 return reject(fileId, "step " + i + ": not a JSON object");
             }
-            ChatStepDefinition step = parseStep(fileId, stepsArr.get(i).getAsJsonObject(), i,
-                    i == stepsArr.size() - 1);
+            ChatStepDefinition step = parseStep(fileId, stepsArr.get(i).getAsJsonObject(), i, false);
             if (step == null) {
                 return null; // reason already logged
             }
             steps.add(step);
         }
 
+        // 10. repeatableStepsLists (optional)
+        List<RepeatableSeriesDefinition> repeatables = new ArrayList<>();
+        if (json.has("repeatableStepsLists")) {
+            if (!json.get("repeatableStepsLists").isJsonArray()) {
+                return reject(fileId, "repeatableStepsLists must be an array");
+            }
+            JsonArray repArr = json.getAsJsonArray("repeatableStepsLists");
+            Set<String> seriesIds = new HashSet<>();
+            for (int i = 0; i < repArr.size(); i++) {
+                if (!repArr.get(i).isJsonObject()) {
+                    return reject(fileId, "repeatableStepsLists[" + i + "] is not a JSON object");
+                }
+                RepeatableSeriesDefinition s = parseRepeatableSeries(fileId, repArr.get(i).getAsJsonObject(), i);
+                if (s == null) {
+                    return null; // reason already logged
+                }
+                if (!seriesIds.add(s.id())) {
+                    return reject(fileId, "duplicate repeatable series id '" + s.id() + "'");
+                }
+                repeatables.add(s);
+            }
+        }
+
         return new ChatConversationDefinition(schemaVersion, id, displayName, displayPriority,
-                textureFile, unlockedFromStart, unlockingAdvancement, steps);
+                textureFile, unlockedFromStart, unlockingAdvancement, steps, repeatables);
+    }
+
+    private static RepeatableSeriesDefinition parseRepeatableSeries(ResourceLocation fileId, JsonObject obj, int index) {
+        if (!obj.has("id")) {
+            return rejectSeries(fileId, index, "missing id");
+        }
+        String id = obj.get("id").getAsString();
+        if (!SAFE_ID.matcher(id).matches()) {
+            return rejectSeries(fileId, index, "invalid id '" + id + "' (expected ^[a-z0-9_]+$)");
+        }
+        if (!obj.has("weight") || !obj.get("weight").getAsJsonPrimitive().isNumber()) {
+            return rejectSeries(fileId, index, "missing/invalid weight");
+        }
+        int weight = obj.get("weight").getAsInt();
+        if (weight <= 0) {
+            return rejectSeries(fileId, index, "weight must be > 0");
+        }
+        boolean isUnique = obj.has("isUnique") && obj.get("isUnique").getAsBoolean();
+        boolean isTimed = obj.has("isTimed") && obj.get("isTimed").getAsBoolean();
+        boolean doDisapear = obj.has("doDisapear") && obj.get("doDisapear").getAsBoolean();
+        String failMessage = obj.has("failMessage") ? obj.get("failMessage").getAsString() : null;
+        if (failMessage != null && failMessage.isEmpty()) {
+            return rejectSeries(fileId, index, "empty failMessage");
+        }
+
+        if (!obj.has("steps") || !obj.get("steps").isJsonArray()) {
+            return rejectSeries(fileId, index, "missing/invalid steps array");
+        }
+        JsonArray stepsArr = obj.getAsJsonArray("steps");
+        if (stepsArr.isEmpty()) {
+            return rejectSeries(fileId, index, "empty steps");
+        }
+        List<ChatStepDefinition> steps = new ArrayList<>();
+        for (int i = 0; i < stepsArr.size(); i++) {
+            if (!stepsArr.get(i).isJsonObject()) {
+                return rejectSeries(fileId, index, "step " + i + ": not a JSON object");
+            }
+            // Timed series forbid waitNextDay (it would contradict the one-reset deadline).
+            ChatStepDefinition step = parseStep(fileId, stepsArr.get(i).getAsJsonObject(), i, isTimed);
+            if (step == null) {
+                return null;
+            }
+            steps.add(step);
+        }
+        // Guardrail: advancements complete only once, so an advancement-gated step in a non-unique
+        // (rerunnable) series auto-completes on every rerun. Allowed (valid for one-shot/unique series),
+        // but warn so authors use a 'statistic' task for repeatable missions.
+        if (!isUnique) {
+            for (ChatStepDefinition st : steps) {
+                if (!st.isStatGated()) {
+                    CobbleSafari.LOGGER.warn("[Chat] {} : repeatable series '{}' is not unique but has an "
+                            + "advancement-gated step; advancements complete only once, so it will auto-complete on "
+                            + "every rerun — use a 'statistic' task instead", fileId, id);
+                    break;
+                }
+            }
+        }
+        return new RepeatableSeriesDefinition(id, weight, isUnique, isTimed, failMessage, doDisapear, steps);
     }
 
     private static ChatStepDefinition parseStep(ResourceLocation fileId, JsonObject obj, int index,
-                                                boolean isLast) {
-        // 10. message arrays (may be empty, must be present arrays of strings)
+                                                boolean forbidWaitNextDay) {
+        // message arrays (may be empty, must be present arrays of strings)
         List<String> before = readStringArray(obj, "messagesBefore");
         List<String> after = readStringArray(obj, "messagesAfter");
         if (before == null || after == null) {
             return rejectStep(fileId, index, "missing messagesBefore/messagesAfter (must be string arrays)");
         }
 
-        boolean repeatable = obj.has("repeatable") && obj.get("repeatable").getAsBoolean();
-
-        // 13. repeatable only on last step
-        if (repeatable && !isLast) {
-            return rejectStep(fileId, index, "repeatable flag only allowed on the last step");
-        }
-
         String advancement = obj.has("advancement") ? obj.get("advancement").getAsString() : null;
         String statistic = obj.has("statistic") ? obj.get("statistic").getAsString() : null;
         int statisticAmount = obj.has("statisticAmount") ? obj.get("statisticAmount").getAsInt() : 0;
 
-        if (repeatable) {
-            // 12. repeatable requires a valid statistic + amount > 0
-            if (statistic == null || ResourceLocation.tryParse(statistic) == null) {
-                return rejectStep(fileId, index, "repeatable step requires a valid 'statistic' id");
+        // Gating: statistic-gated if 'statistic' present (valid + amount > 0), else advancement required.
+        if (statistic != null && !statistic.isEmpty()) {
+            if (ResourceLocation.tryParse(statistic) == null) {
+                return rejectStep(fileId, index, "invalid 'statistic' id '" + statistic + "'");
             }
             if (statisticAmount <= 0) {
-                return rejectStep(fileId, index, "repeatable step requires 'statisticAmount' > 0");
+                return rejectStep(fileId, index, "statistic-gated step requires 'statisticAmount' > 0");
             }
         } else {
-            // 11. non-repeatable requires a valid advancement
             if (advancement == null || ResourceLocation.tryParse(advancement) == null) {
                 return rejectStep(fileId, index, "missing/invalid 'advancement'");
             }
@@ -191,11 +265,46 @@ public final class ChatConversationDataLoader {
         if (rewardTrade != null && rewardTrade.isEmpty()) {
             return rejectStep(fileId, index, "empty rewardPersonalTrade id");
         }
+        String rewardTradeTag = obj.has("rewardPersonalTradeTag") ? obj.get("rewardPersonalTradeTag").getAsString() : null;
+        if (rewardTradeTag != null && rewardTradeTag.isEmpty()) {
+            return rejectStep(fileId, index, "empty rewardPersonalTradeTag");
+        }
+        if (rewardTrade != null && rewardTradeTag != null) {
+            return rejectStep(fileId, index, "rewardPersonalTrade and rewardPersonalTradeTag are mutually exclusive");
+        }
+
+        // unlockApp / rewardSkin / rewardSkinTag are free ids resolved at runtime; only reject
+        // explicitly-empty values, and rewardSkin/rewardSkinTag are mutually exclusive.
+        String unlockApp = obj.has("unlockApp") ? obj.get("unlockApp").getAsString() : null;
+        if (unlockApp != null && unlockApp.isEmpty()) {
+            return rejectStep(fileId, index, "empty unlockApp id");
+        }
+        String rewardSkin = obj.has("rewardSkin") ? obj.get("rewardSkin").getAsString() : null;
+        if (rewardSkin != null && rewardSkin.isEmpty()) {
+            return rejectStep(fileId, index, "empty rewardSkin id");
+        }
+        String rewardSkinTag = obj.has("rewardSkinTag") ? obj.get("rewardSkinTag").getAsString() : null;
+        if (rewardSkinTag != null && rewardSkinTag.isEmpty()) {
+            return rejectStep(fileId, index, "empty rewardSkinTag");
+        }
+        if (rewardSkin != null && rewardSkinTag != null) {
+            return rejectStep(fileId, index, "rewardSkin and rewardSkinTag are mutually exclusive");
+        }
+
+        // fallbackReward, if present, must be a parseable loot-table id.
+        String fallbackReward = obj.has("fallbackReward") ? obj.get("fallbackReward").getAsString() : null;
+        if (fallbackReward != null && (fallbackReward.isEmpty() || ResourceLocation.tryParse(fallbackReward) == null)) {
+            return rejectStep(fileId, index, "invalid fallbackReward id '" + fallbackReward + "'");
+        }
 
         boolean waitNextDay = obj.has("waitNextDay") && obj.get("waitNextDay").getAsBoolean();
+        if (waitNextDay && forbidWaitNextDay) {
+            return rejectStep(fileId, index, "waitNextDay is not allowed inside a timed repeatable series");
+        }
 
         return new ChatStepDefinition(before, after, advancement, statistic, statisticAmount,
-                rewardItems, rewardTrade, waitNextDay, repeatable);
+                rewardItems, rewardTrade, rewardTradeTag, unlockApp, rewardSkin, rewardSkinTag,
+                fallbackReward, waitNextDay);
     }
 
     /** Returns null if the field is missing or not an array of strings. */
@@ -220,6 +329,11 @@ public final class ChatConversationDataLoader {
 
     private static ChatStepDefinition rejectStep(ResourceLocation fileId, int index, String reason) {
         CobbleSafari.LOGGER.error("[Chat] {} : step {}: {}, skipped", fileId, index, reason);
+        return null;
+    }
+
+    private static RepeatableSeriesDefinition rejectSeries(ResourceLocation fileId, int index, String reason) {
+        CobbleSafari.LOGGER.error("[Chat] {} : repeatableStepsLists[{}]: {}, skipped", fileId, index, reason);
         return null;
     }
 }

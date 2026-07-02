@@ -53,7 +53,8 @@ public class EmptyPhoneBlock extends HorizontalDirectionalBlock {
     @Override
     protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hitResult) {
         if (!level.isClientSide() && player instanceof ServerPlayer serverPlayer) {
-            maxigregrze.cobblesafari.rotomphone.EmptyPhoneServerHandler.attemptFill(serverPlayer, true, pos, -1);
+            maxigregrze.cobblesafari.rotomphone.EmptyPhoneServerHandler.attemptFill(serverPlayer, true, pos, -1,
+                    maxigregrze.cobblesafari.rotomphone.EmptyPhoneServerHandler.FillTarget.PHONE);
             return InteractionResult.SUCCESS;
         }
         return InteractionResult.sidedSuccess(level.isClientSide());

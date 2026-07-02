@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "PPP"
+  ],
+  "key": {
+    "P": { "item": "cobblesafari:hyperspace_planks" }
+  },
+  "result": {
+    "id": "cobblesafari:hyperspace_wood_slab",
+    "count": 6
+  }
+}

@@ -1,16 +1,472 @@
 {
   "parent": "cobblesafari:rookie_catcher",
   "display": {
-    "icon": { "id": "cobblemon:safari_ball" },
-    "title": { "translate": "advancements.cobblesafari.seasoned_catcher.title" },
-    "description": { "translate": "advancements.cobblesafari.seasoned_catcher.description" },
+    "icon": {
+      "id": "cobblemon:safari_ball"
+    },
+    "title": {
+      "translate": "advancements.cobblesafari.seasoned_catcher.title"
+    },
+    "description": {
+      "translate": "advancements.cobblesafari.seasoned_catcher.description"
+    },
     "frame": "goal",
     "show_toast": true,
     "announce_to_chat": true,
     "hidden": false
   },
   "criteria": {
-    "done": { "trigger": "cobblesafari:pokemon_caught", "conditions": { "count": 50 } }
+    "c1": {
+      "trigger": "cobblesafari:pokemon_caught",
+      "conditions": {
+        "count": 1
+      }
+    },
+    "c2": {
+      "trigger": "cobblesafari:pokemon_caught",
+      "conditions": {
+        "count": 2
+      }
+    },
+    "c3": {
+      "trigger": "cobblesafari:pokemon_caught",
+      "conditions": {
+        "count": 3
+      }
+    },
+    "c4": {
+      "trigger": "cobblesafari:pokemon_caught",
+      "conditions": {
+        "count": 4
+      }
+    },
+    "c5": {
+      "trigger": "cobblesafari:pokemon_caught",
+      "conditions": {
+        "count": 5
+      }
+    },
+    "c6": {
+      "trigger": "cobblesafari:pokemon_caught",
+      "conditions": {
+        "count": 6
+      }
+    },
+    "c7": {
+      "trigger": "cobblesafari:pokemon_caught",
+      "conditions": {
+        "count": 7
+      }
+    },
+    "c8": {
+      "trigger": "cobblesafari:pokemon_caught",
+      "conditions": {
+        "count": 8
+      }
+    },
+    "c9": {
+      "trigger": "cobblesafari:pokemon_caught",
+      "conditions": {
+        "count": 9
+      }
+    },
+    "c10": {
+      "trigger": "cobblesafari:pokemon_caught",
+      "conditions": {
+        "count": 10
+      }
+    },
+    "c11": {
+      "trigger": "cobblesafari:pokemon_caught",
+      "conditions": {
+        "count": 11
+      }
+    },
+    "c12": {
+      "trigger": "cobblesafari:pokemon_caught",
+      "conditions": {
+        "count": 12
+      }
+    },
+    "c13": {
+      "trigger": "cobblesafari:pokemon_caught",
+      "conditions": {
+        "count": 13
+      }
+    },
+    "c14": {
+      "trigger": "cobblesafari:pokemon_caught",
+      "conditions": {
+        "count": 14
+      }
+    },
+    "c15": {
+      "trigger": "cobblesafari:pokemon_caught",
+      "conditions": {
+        "count": 15
+      }
+    },
+    "c16": {
+      "trigger": "cobblesafari:pokemon_caught",
+      "conditions": {
+        "count": 16
+      }
+    },
+    "c17": {
+      "trigger": "cobblesafari:pokemon_caught",
+      "conditions": {
+        "count": 17
+      }
+    },
+    "c18": {
+      "trigger": "cobblesafari:pokemon_caught",
+      "conditions": {
+        "count": 18
+      }
+    },
+    "c19": {
+      "trigger": "cobblesafari:pokemon_caught",
+      "conditions": {
+        "count": 19
+      }
+    },
+    "c20": {
+      "trigger": "cobblesafari:pokemon_caught",
+      "conditions": {
+        "count": 20
+      }
+    },
+    "c21": {
+      "trigger": "cobblesafari:pokemon_caught",
+      "conditions": {
+        "count": 21
+      }
+    },
+    "c22": {
+      "trigger": "cobblesafari:pokemon_caught",
+      "conditions": {
+        "count": 22
+      }
+    },
+    "c23": {
+      "trigger": "cobblesafari:pokemon_caught",
+      "conditions": {
+        "count": 23
+      }
+    },
+    "c24": {
+      "trigger": "cobblesafari:pokemon_caught",
+      "conditions": {
+        "count": 24
+      }
+    },
+    "c25": {
+      "trigger": "cobblesafari:pokemon_caught",
+      "conditions": {
+        "count": 25
+      }
+    },
+    "c26": {
+      "trigger": "cobblesafari:pokemon_caught",
+      "conditions": {
+        "count": 26
+      }
+    },
+    "c27": {
+      "trigger": "cobblesafari:pokemon_caught",
+      "conditions": {
+        "count": 27
+      }
+    },
+    "c28": {
+      "trigger": "cobblesafari:pokemon_caught",
+      "conditions": {
+        "count": 28
+      }
+    },
+    "c29": {
+      "trigger": "cobblesafari:pokemon_caught",
+      "conditions": {
+        "count": 29
+      }
+    },
+    "c30": {
+      "trigger": "cobblesafari:pokemon_caught",
+      "conditions": {
+        "count": 30
+      }
+    },
+    "c31": {
+      "trigger": "cobblesafari:pokemon_caught",
+      "conditions": {
+        "count": 31
+      }
+    },
+    "c32": {
+      "trigger": "cobblesafari:pokemon_caught",
+      "conditions": {
+        "count": 32
+      }
+    },
+    "c33": {
+      "trigger": "cobblesafari:pokemon_caught",
+      "conditions": {
+        "count": 33
+      }
+    },
+    "c34": {
+      "trigger": "cobblesafari:pokemon_caught",
+      "conditions": {
+        "count": 34
+      }
+    },
+    "c35": {
+      "trigger": "cobblesafari:pokemon_caught",
+      "conditions": {
+        "count": 35
+      }
+    },
+    "c36": {
+      "trigger": "cobblesafari:pokemon_caught",
+      "conditions": {
+        "count": 36
+      }
+    },
+    "c37": {
+      "trigger": "cobblesafari:pokemon_caught",
+      "conditions": {
+        "count": 37
+      }
+    },
+    "c38": {
+      "trigger": "cobblesafari:pokemon_caught",
+      "conditions": {
+        "count": 38
+      }
+    },
+    "c39": {
+      "trigger": "cobblesafari:pokemon_caught",
+      "conditions": {
+        "count": 39
+      }
+    },
+    "c40": {
+      "trigger": "cobblesafari:pokemon_caught",
+      "conditions": {
+        "count": 40
+      }
+    },
+    "c41": {
+      "trigger": "cobblesafari:pokemon_caught",
+      "conditions": {
+        "count": 41
+      }
+    },
+    "c42": {
+      "trigger": "cobblesafari:pokemon_caught",
+      "conditions": {
+        "count": 42
+      }
+    },
+    "c43": {
+      "trigger": "cobblesafari:pokemon_caught",
+      "conditions": {
+        "count": 43
+      }
+    },
+    "c44": {
+      "trigger": "cobblesafari:pokemon_caught",
+      "conditions": {
+        "count": 44
+      }
+    },
+    "c45": {
+      "trigger": "cobblesafari:pokemon_caught",
+      "conditions": {
+        "count": 45
+      }
+    },
+    "c46": {
+      "trigger": "cobblesafari:pokemon_caught",
+      "conditions": {
+        "count": 46
+      }
+    },
+    "c47": {
+      "trigger": "cobblesafari:pokemon_caught",
+      "conditions": {
+        "count": 47
+      }
+    },
+    "c48": {
+      "trigger": "cobblesafari:pokemon_caught",
+      "conditions": {
+        "count": 48
+      }
+    },
+    "c49": {
+      "trigger": "cobblesafari:pokemon_caught",
+      "conditions": {
+        "count": 49
+      }
+    },
+    "c50": {
+      "trigger": "cobblesafari:pokemon_caught",
+      "conditions": {
+        "count": 50
+      }
+    }
   },
-  "requirements": [["done"]]
+  "requirements": [
+    [
+      "c1"
+    ],
+    [
+      "c2"
+    ],
+    [
+      "c3"
+    ],
+    [
+      "c4"
+    ],
+    [
+      "c5"
+    ],
+    [
+      "c6"
+    ],
+    [
+      "c7"
+    ],
+    [
+      "c8"
+    ],
+    [
+      "c9"
+    ],
+    [
+      "c10"
+    ],
+    [
+      "c11"
+    ],
+    [
+      "c12"
+    ],
+    [
+      "c13"
+    ],
+    [
+      "c14"
+    ],
+    [
+      "c15"
+    ],
+    [
+      "c16"
+    ],
+    [
+      "c17"
+    ],
+    [
+      "c18"
+    ],
+    [
+      "c19"
+    ],
+    [
+      "c20"
+    ],
+    [
+      "c21"
+    ],
+    [
+      "c22"
+    ],
+    [
+      "c23"
+    ],
+    [
+      "c24"
+    ],
+    [
+      "c25"
+    ],
+    [
+      "c26"
+    ],
+    [
+      "c27"
+    ],
+    [
+      "c28"
+    ],
+    [
+      "c29"
+    ],
+    [
+      "c30"
+    ],
+    [
+      "c31"
+    ],
+    [
+      "c32"
+    ],
+    [
+      "c33"
+    ],
+    [
+      "c34"
+    ],
+    [
+      "c35"
+    ],
+    [
+      "c36"
+    ],
+    [
+      "c37"
+    ],
+    [
+      "c38"
+    ],
+    [
+      "c39"
+    ],
+    [
+      "c40"
+    ],
+    [
+      "c41"
+    ],
+    [
+      "c42"
+    ],
+    [
+      "c43"
+    ],
+    [
+      "c44"
+    ],
+    [
+      "c45"
+    ],
+    [
+      "c46"
+    ],
+    [
+      "c47"
+    ],
+    [
+      "c48"
+    ],
+    [
+      "c49"
+    ],
+    [
+      "c50"
+    ]
+  ]
 }

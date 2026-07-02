@@ -3,8 +3,6 @@ package maxigregrze.cobblesafari.block.misc;
 import com.mojang.logging.LogUtils;
 import com.mojang.serialization.MapCodec;
 import maxigregrze.cobblesafari.network.AuspiciousPokeballConfigServerHandler;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.player.LocalPlayer;
 import maxigregrze.cobblesafari.platform.Services;
 import maxigregrze.cobblesafari.power.PowerItemRewardEffects;
 import net.minecraft.core.BlockPos;
@@ -40,6 +38,7 @@ import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 
 import java.util.UUID;
+import java.util.function.BiPredicate;
 
 public class AuspiciousPokeballBlock extends BaseEntityBlock {
     private static final Logger LOGGER = LogUtils.getLogger();
@@ -47,6 +46,15 @@ public class AuspiciousPokeballBlock extends BaseEntityBlock {
     private static final int[] CATEGORY_WEIGHTS = {1, 1, 1, 1};
 
     public static final MapCodec<AuspiciousPokeballBlock> CODEC = simpleCodec(AuspiciousPokeballBlock::new);
+
+    /**
+     * Client-only gate deciding whether the local player should see this orb's ambient particles.
+     * Injected by the client at init (see {@code ClientBlockHooks}); {@code null} on a dedicated
+     * server. Kept as a plain JDK functional type so this common class carries no client-class
+     * references — a direct {@code Minecraft}/{@code LocalPlayer} reference here would fail class
+     * verification and crash a dedicated server when {@code ModBlocks} constructs this block.
+     */
+    public static BiPredicate<Level, BlockPos> particleGate;
 
     private static final VoxelShape SHAPE = Block.box(0, 0, 0, 16, 16, 16);
 
@@ -213,14 +221,10 @@ public class AuspiciousPokeballBlock extends BaseEntityBlock {
 
     @Override
     public void animateTick(BlockState state, Level level, BlockPos pos, RandomSource random) {
-        // Particles are emitted per-player: only render them for a client whose
-        // local player can actually see the orb (mirrors the BER world-model gate).
-        LocalPlayer localPlayer = Minecraft.getInstance().player;
-        if (localPlayer == null) {
-            return;
-        }
-        if (level.getBlockEntity(pos) instanceof AuspiciousPokeballBlockEntity be
-                && be.shouldHideWorldModelForLocalPlayer(localPlayer)) {
+        // Particles are emitted per-player: only render them for a client whose local player can
+        // actually see the orb (mirrors the BER world-model gate). The gate is client-only and is
+        // injected via ClientBlockHooks so this common class stays free of client-class references.
+        if (particleGate != null && !particleGate.test(level, pos)) {
             return;
         }
 

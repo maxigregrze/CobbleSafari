@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:gift",
+  "pools": [
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "cobblesafari:ticket_wondertrade",
+          "functions": [
+            { "function": "minecraft:set_count", "count": 3 }
+          ]
+        }
+      ]
+    }
+  ]
+}

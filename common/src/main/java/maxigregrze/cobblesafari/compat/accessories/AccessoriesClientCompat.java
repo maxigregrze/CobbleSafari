@@ -9,6 +9,7 @@ public class AccessoriesClientCompat {
 
     public static void init() {
         AccessoriesRendererRegistry.registerRenderer(ModItems.ROTOM_PHONE, RotomPhoneAccessoryRenderer::new);
-        CobbleSafari.LOGGER.info("Registered Rotom Phone accessory renderer");
+        AccessoriesRendererRegistry.registerRenderer(ModItems.ROTOM_EARPIECE, RotomEarpieceAccessoryRenderer::new);
+        CobbleSafari.LOGGER.info("Registered Rotom Phone + Rotie Earpiece accessory renderers");
     }
 }

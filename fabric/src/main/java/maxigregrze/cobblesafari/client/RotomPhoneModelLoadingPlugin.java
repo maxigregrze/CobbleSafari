@@ -13,6 +13,8 @@ public final class RotomPhoneModelLoadingPlugin {
 
     private static final ModelResourceLocation ROTOM_PHONE_INVENTORY = ModelResourceLocation.inventory(
             ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, "rotomphone"));
+    private static final ModelResourceLocation ROTOM_EARPIECE_INVENTORY = ModelResourceLocation.inventory(
+            ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, "rotom_earpiece"));
 
     private RotomPhoneModelLoadingPlugin() {}
 
@@ -22,11 +24,20 @@ public final class RotomPhoneModelLoadingPlugin {
                     Minecraft.getInstance().getResourceManager())) {
                 ctx.addModels(rl);
             }
+            for (ResourceLocation rl : RotomPhoneTextureResolver.allEarpieceVariantModels(
+                    Minecraft.getInstance().getResourceManager())) {
+                ctx.addModels(rl);
+            }
 
             ctx.modifyModelAfterBake().register((original, context) -> {
+                if (original == null) return original;
                 if (ROTOM_PHONE_INVENTORY.equals(context.topLevelId())) {
-                    if (original == null) return original;
-                    return new RotomPhoneDynamicBakedModel(original, RotomPhoneModelLoadingPlugin::lookup);
+                    return new RotomPhoneDynamicBakedModel(original, RotomPhoneModelLoadingPlugin::lookup,
+                            RotomPhoneTextureResolver::modelForStack);
+                }
+                if (ROTOM_EARPIECE_INVENTORY.equals(context.topLevelId())) {
+                    return new RotomPhoneDynamicBakedModel(original, RotomPhoneModelLoadingPlugin::lookup,
+                            RotomPhoneTextureResolver::earpieceModelForStack);
                 }
                 return original;
             });

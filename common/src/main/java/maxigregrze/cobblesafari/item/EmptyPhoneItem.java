@@ -22,7 +22,8 @@ public class EmptyPhoneItem extends BlockItem {
             int slot = hand == InteractionHand.MAIN_HAND
                     ? player.getInventory().selected
                     : 40;
-            maxigregrze.cobblesafari.rotomphone.EmptyPhoneServerHandler.attemptFill(serverPlayer, false, null, slot);
+            maxigregrze.cobblesafari.rotomphone.EmptyPhoneServerHandler.attemptFill(serverPlayer, false, null, slot,
+                    maxigregrze.cobblesafari.rotomphone.EmptyPhoneServerHandler.FillTarget.PHONE);
             return InteractionResultHolder.success(stack);
         }
         return InteractionResultHolder.pass(stack);

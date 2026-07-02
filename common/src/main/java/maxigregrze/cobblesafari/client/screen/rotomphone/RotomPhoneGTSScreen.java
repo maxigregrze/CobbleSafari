@@ -528,9 +528,9 @@ public class RotomPhoneGTSScreen extends RotomPhoneBaseScreen {
                 }
             }
         }
-        if (state == SubScreen.CHECK && checkOffer != null) {
+        if (state == SubScreen.CHECK && checkOffer != null && !(checkLaunched && checkNoMatch)) {
             Pokemon offered = getSeekPokemon(checkOffer);
-            if (offered != null && isInBounds(mouseX, mouseY, originX + 178, originY + 56, 32, 32)) {
+            if (offered != null && isInBounds(mouseX, mouseY, checkOfferedSlotX(), originY + 56, 32, 32)) {
                 if (hasShiftDown()) {
                     graphics.renderComponentTooltip(this.font, buildPokemonTooltip(offered), mouseX, mouseY);
                 } else {
@@ -1155,13 +1155,31 @@ public class RotomPhoneGTSScreen extends RotomPhoneBaseScreen {
         }
     }
 
+    /** Offered-pokemon slot X; nudged 40px right in the initial (pre-"Find match") state. */
+    private int checkOfferedSlotX() {
+        return originX + (checkLaunched ? 178 : 218);
+    }
+
     private void renderCheck(GuiGraphics g, int mx, int my, float partialTick) {
         int theme = getTintColor();
+
+        if (checkLaunched && checkNoMatch) {
+            // "Sorry!" headline (×2) with the no-match explanation beneath it (×1).
+            drawScaledCentered(g, Component.translatable("gui.cobblesafari.rotomphone.gts.sorry"),
+                    originX + 174, originY + 92, 0xFFFFFFFF);
+            drawCenteredStatusLine(g, Component.translatable("gui.cobblesafari.rotomphone.gts.error.no_matching_pokemon"),
+                    originX + 174, originY + 112, theme);
+            boolean retHov = isInBounds(mx, my, originX + 138, originY + 136, 72, 32);
+            drawButton(g, originX + 138, originY + 136, retHov, theme,
+                    Component.translatable("gui.cobblesafari.rotomphone.gts.return"));
+            return;
+        }
+
         g.drawCenteredString(this.font, Component.translatable("gui.cobblesafari.rotomphone.gts.offeredpkmn"),
                 originX + 174, originY + 72, theme);
 
         Pokemon offered = checkOffer == null ? null : getSeekPokemon(checkOffer);
-        int ox = originX + 178;
+        int ox = checkOfferedSlotX();
         int oy = originY + 56;
         drawTinted(g, TEX_EMPTY, ox, oy, 32, 32, theme);
         if (offered != null) {
@@ -1169,18 +1187,10 @@ public class RotomPhoneGTSScreen extends RotomPhoneBaseScreen {
                     PARTY_SLOT_BASE_SCALE, PARTY_SLOT_MODEL_SCALE, PARTY_SLOT_MODEL_Y_OFFSET);
         }
 
-        boolean noMatch = checkLaunched && checkNoMatch;
-
         if (!checkLaunched) {
             boolean ch = isInBounds(mx, my, originX + 138, originY + 96, 72, 32);
             drawButton(g, originX + 138, originY + 96, ch, theme,
                     Component.translatable("gui.cobblesafari.rotomphone.gts.checkpkmn"));
-        } else if (noMatch) {
-            drawCenteredStatusLine(g, Component.translatable("gui.cobblesafari.rotomphone.gts.nomatch"),
-                    originX + 174, originY + 112, theme);
-            boolean retHov = isInBounds(mx, my, originX + 138, originY + 136, 72, 32);
-            drawButton(g, originX + 138, originY + 136, retHov, theme,
-                    Component.translatable("gui.cobblesafari.rotomphone.gts.return"));
         } else {
             if (checkCandidates.size() > 1) {
                 boolean ph = isInBounds(mx, my, originX + 98, originY + 96, 32, 32);

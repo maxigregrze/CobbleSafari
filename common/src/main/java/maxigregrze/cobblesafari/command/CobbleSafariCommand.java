@@ -60,7 +60,11 @@ public class CobbleSafariCommand {
                                 .then(Commands.literal("safari")
                                         .executes(CobbleSafariCommand::executeResetSafari))
                                 .then(Commands.literal("dungeon")
-                                        .executes(CobbleSafariCommand::executeResetDungeon)))
+                                        .executes(CobbleSafariCommand::executeResetDungeon))
+                                .then(Commands.literal("system")
+                                        .executes(CobbleSafariCommand::executeResetSystem)
+                                        .then(Commands.literal("hard")
+                                                .executes(CobbleSafariCommand::executeResetSystemHard))))
                         .then(Commands.literal("summon")
                                 .then(Commands.argument(ARG_NAME, StringArgumentType.word())
                                         .suggests(SUMMON_NAME_SUGGESTIONS)
@@ -125,6 +129,7 @@ public class CobbleSafariCommand {
                         .then(WonderTradeCommand.build())
                         .then(GtsCommand.build())
                         .then(UnionRoomCommand.build())
+                        .then(RotomPhoneCommand.build())
                         .then(DonutCobbleCommand.donutLiteral())
                         .then(Commands.literal("dungeon")
                         .then(Commands.literal("spawn")
@@ -160,6 +165,14 @@ public class CobbleSafariCommand {
 
     private static int executeRefresh(CommandContext<CommandSourceStack> context) {
         return ResetCommand.executeRefresh(context);
+    }
+
+    private static int executeResetSystem(CommandContext<CommandSourceStack> context) {
+        return ResetCommand.executeSystemReset(context);
+    }
+
+    private static int executeResetSystemHard(CommandContext<CommandSourceStack> context) {
+        return ResetCommand.executeSystemHardReset(context);
     }
 
     private static int executeSummon(CommandContext<CommandSourceStack> context) {

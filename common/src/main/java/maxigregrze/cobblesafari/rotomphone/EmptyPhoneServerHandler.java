@@ -20,9 +20,13 @@ public class EmptyPhoneServerHandler {
 
     private EmptyPhoneServerHandler() {}
 
+    /** Which filled device a pending confirmation should produce (and which empty item it consumes). */
+    public enum FillTarget { PHONE, EARPIECE }
+
     private static final Map<UUID, PendingFill> PENDING_FILLS = new ConcurrentHashMap<>();
 
-    public static void attemptFill(ServerPlayer player, boolean isFromBlock, BlockPos blockPos, int inventorySlot) {
+    public static void attemptFill(ServerPlayer player, boolean isFromBlock, BlockPos blockPos,
+                                   int inventorySlot, FillTarget target) {
         PlayerPartyStore party = Cobblemon.INSTANCE.getStorage().getParty(player);
         Pokemon firstRotom = findFirstRotom(party);
         if (firstRotom == null) {
@@ -33,7 +37,7 @@ public class EmptyPhoneServerHandler {
         int rotomLevel = firstRotom.getLevel();
         boolean rotomShiny = firstRotom.getShiny();
 
-        PENDING_FILLS.put(player.getUUID(), new PendingFill(firstRotom, isFromBlock, blockPos, inventorySlot));
+        PENDING_FILLS.put(player.getUUID(), new PendingFill(firstRotom, isFromBlock, blockPos, inventorySlot, target));
 
         maxigregrze.cobblesafari.platform.Services.PLATFORM.sendPayloadToPlayer(player,
                 new maxigregrze.cobblesafari.network.OpenEmptyPhoneConfirmPayload(
@@ -65,11 +69,12 @@ public class EmptyPhoneServerHandler {
             maxigregrze.cobblesafari.advancement.ModCriteria.ROTOM_PHONE_SHINY.trigger(player);
         }
 
-        ItemStack phoneStack = new ItemStack(ModItems.ROTOM_PHONE);
-        RotomPhoneItem.setRotomName(phoneStack, rotom.getSpecies().getName());
-        RotomPhoneItem.setShiny(phoneStack, rotom.getShiny());
-        RotomPhoneItem.setCurrentSkin(phoneStack, "");
-        RotomPhoneItem.setSafetyMode(phoneStack, false);
+        boolean earpiece = pending.target() == FillTarget.EARPIECE;
+        ItemStack resultStack = new ItemStack(earpiece ? ModItems.ROTOM_EARPIECE : ModItems.ROTOM_PHONE);
+        RotomPhoneItem.setRotomName(resultStack, rotom.getSpecies().getName());
+        RotomPhoneItem.setShiny(resultStack, rotom.getShiny());
+        RotomPhoneItem.setCurrentSkin(resultStack, "");
+        RotomPhoneItem.setSafetyMode(resultStack, false);
 
         if (pending.isFromBlock()) {
             BlockPos pos = pending.blockPos();
@@ -77,16 +82,19 @@ public class EmptyPhoneServerHandler {
                 player.level().setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
             }
             net.minecraft.world.entity.item.ItemEntity itemEntity = new net.minecraft.world.entity.item.ItemEntity(
-                    player.level(), player.getX(), player.getY() + 0.5, player.getZ(), phoneStack);
+                    player.level(), player.getX(), player.getY() + 0.5, player.getZ(), resultStack);
             player.level().addFreshEntity(itemEntity);
         } else {
             int slot = pending.inventorySlot();
             ItemStack inSlot = player.getInventory().getItem(slot);
-            if (inSlot.is(maxigregrze.cobblesafari.init.ModBlocks.EMPTYPHONE.asItem())) {
+            net.minecraft.world.item.Item expectedEmpty = earpiece
+                    ? ModItems.EMPTY_EARPIECE
+                    : maxigregrze.cobblesafari.init.ModBlocks.EMPTYPHONE.asItem();
+            if (inSlot.is(expectedEmpty)) {
                 inSlot.shrink(1);
             }
-            if (!player.getInventory().add(phoneStack)) {
-                player.drop(phoneStack, false);
+            if (!player.getInventory().add(resultStack)) {
+                player.drop(resultStack, false);
             }
         }
 
@@ -104,5 +112,5 @@ public class EmptyPhoneServerHandler {
         return null;
     }
 
-    private record PendingFill(Pokemon rotom, boolean isFromBlock, BlockPos blockPos, int inventorySlot) {}
+    private record PendingFill(Pokemon rotom, boolean isFromBlock, BlockPos blockPos, int inventorySlot, FillTarget target) {}
 }

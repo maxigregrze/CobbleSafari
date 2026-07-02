@@ -1,0 +1,7 @@
+{
+  "parent": "cobblesafari:item/earpiece_item",
+  "textures": {
+    "0": "cobblesafari:item/rotomphone/rotomphone_item",
+    "particle": "cobblesafari:item/rotomphone/rotomphone_item"
+  }
+}

@@ -17,6 +17,8 @@ public final class RotomPhoneModelEvents {
 
     private static final ModelResourceLocation ROTOM_PHONE_INVENTORY = ModelResourceLocation.inventory(
             ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, "rotomphone"));
+    private static final ModelResourceLocation ROTOM_EARPIECE_INVENTORY = ModelResourceLocation.inventory(
+            ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, "rotom_earpiece"));
 
     private RotomPhoneModelEvents() {}
 
@@ -26,13 +28,24 @@ public final class RotomPhoneModelEvents {
                 Minecraft.getInstance().getResourceManager())) {
             event.register(ModelResourceLocation.standalone(rl));
         }
+        for (ResourceLocation rl : RotomPhoneTextureResolver.allEarpieceVariantModels(
+                Minecraft.getInstance().getResourceManager())) {
+            event.register(ModelResourceLocation.standalone(rl));
+        }
     }
 
     @SubscribeEvent
     public static void onModifyBakingResult(ModelEvent.ModifyBakingResult event) {
-        BakedModel original = event.getModels().get(ROTOM_PHONE_INVENTORY);
-        if (original == null) return;
-        event.getModels().put(ROTOM_PHONE_INVENTORY, new RotomPhoneDynamicBakedModel(original, RotomPhoneModelEvents::lookup));
+        BakedModel phone = event.getModels().get(ROTOM_PHONE_INVENTORY);
+        if (phone != null) {
+            event.getModels().put(ROTOM_PHONE_INVENTORY, new RotomPhoneDynamicBakedModel(
+                    phone, RotomPhoneModelEvents::lookup, RotomPhoneTextureResolver::modelForStack));
+        }
+        BakedModel earpiece = event.getModels().get(ROTOM_EARPIECE_INVENTORY);
+        if (earpiece != null) {
+            event.getModels().put(ROTOM_EARPIECE_INVENTORY, new RotomPhoneDynamicBakedModel(
+                    earpiece, RotomPhoneModelEvents::lookup, RotomPhoneTextureResolver::earpieceModelForStack));
+        }
     }
 
     private static BakedModel lookup(ResourceLocation rl) {

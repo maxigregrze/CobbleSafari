@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "facing=up":    { "model": "cobblesafari:block/hyperspace_log_stripped" },
+    "facing=down":  { "model": "cobblesafari:block/hyperspace_log_stripped", "x": 180 },
+    "facing=north": { "model": "cobblesafari:block/hyperspace_log_stripped", "x": 90 },
+    "facing=south": { "model": "cobblesafari:block/hyperspace_log_stripped", "x": 90, "y": 180 },
+    "facing=east":  { "model": "cobblesafari:block/hyperspace_log_stripped", "x": 90, "y": 90 },
+    "facing=west":  { "model": "cobblesafari:block/hyperspace_log_stripped", "x": 90, "y": 270 }
+  }
+}

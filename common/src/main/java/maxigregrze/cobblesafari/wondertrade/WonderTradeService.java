@@ -232,6 +232,14 @@ public final class WonderTradeService {
         data.setDirty();
     }
 
+    /**
+     * Soft reset: refills the daily trade-ticket allowance only — no pool aging, no Pokémon expiry,
+     * no event-day decrement. Used by the {@code /cobblesafari reset system} (soft) admin command.
+     */
+    public static void resetDailyCreditsOnly(MinecraftServer server) {
+        WonderTradeSavedData.get(server).clearTradeCredits();
+    }
+
     public static void tickDailyScheduler(MinecraftServer server) {
         WonderTradeSavedData data = WonderTradeSavedData.get(server);
         LocalDate today = LocalDate.now(ZONE);

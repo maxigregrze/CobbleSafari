@@ -1,16 +1,112 @@
 {
   "parent": "cobblesafari:welcome_to_safari",
   "display": {
-    "icon": { "id": "cobblemon:safari_ball" },
-    "title": { "translate": "advancements.cobblesafari.rookie_catcher.title" },
-    "description": { "translate": "advancements.cobblesafari.rookie_catcher.description" },
+    "icon": {
+      "id": "cobblemon:safari_ball"
+    },
+    "title": {
+      "translate": "advancements.cobblesafari.rookie_catcher.title"
+    },
+    "description": {
+      "translate": "advancements.cobblesafari.rookie_catcher.description"
+    },
     "frame": "task",
     "show_toast": true,
     "announce_to_chat": true,
     "hidden": false
   },
   "criteria": {
-    "done": { "trigger": "cobblesafari:pokemon_caught", "conditions": { "count": 10 } }
+    "c1": {
+      "trigger": "cobblesafari:pokemon_caught",
+      "conditions": {
+        "count": 1
+      }
+    },
+    "c2": {
+      "trigger": "cobblesafari:pokemon_caught",
+      "conditions": {
+        "count": 2
+      }
+    },
+    "c3": {
+      "trigger": "cobblesafari:pokemon_caught",
+      "conditions": {
+        "count": 3
+      }
+    },
+    "c4": {
+      "trigger": "cobblesafari:pokemon_caught",
+      "conditions": {
+        "count": 4
+      }
+    },
+    "c5": {
+      "trigger": "cobblesafari:pokemon_caught",
+      "conditions": {
+        "count": 5
+      }
+    },
+    "c6": {
+      "trigger": "cobblesafari:pokemon_caught",
+      "conditions": {
+        "count": 6
+      }
+    },
+    "c7": {
+      "trigger": "cobblesafari:pokemon_caught",
+      "conditions": {
+        "count": 7
+      }
+    },
+    "c8": {
+      "trigger": "cobblesafari:pokemon_caught",
+      "conditions": {
+        "count": 8
+      }
+    },
+    "c9": {
+      "trigger": "cobblesafari:pokemon_caught",
+      "conditions": {
+        "count": 9
+      }
+    },
+    "c10": {
+      "trigger": "cobblesafari:pokemon_caught",
+      "conditions": {
+        "count": 10
+      }
+    }
   },
-  "requirements": [["done"]]
+  "requirements": [
+    [
+      "c1"
+    ],
+    [
+      "c2"
+    ],
+    [
+      "c3"
+    ],
+    [
+      "c4"
+    ],
+    [
+      "c5"
+    ],
+    [
+      "c6"
+    ],
+    [
+      "c7"
+    ],
+    [
+      "c8"
+    ],
+    [
+      "c9"
+    ],
+    [
+      "c10"
+    ]
+  ]
 }

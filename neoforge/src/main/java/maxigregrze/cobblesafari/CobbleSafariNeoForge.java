@@ -98,6 +98,10 @@ public class CobbleSafariNeoForge {
 
     private void onCommonSetup(FMLCommonSetupEvent event) {
         event.enqueueWork(CobbleSafari::initLogic);
+        // Register the Hyperspace wood type so the sign model layers / renderers / atlas materials
+        // are built for it (vanilla iterates WoodType.values()). register() is public on NeoForge.
+        event.enqueueWork(() -> net.minecraft.world.level.block.state.properties.WoodType.register(
+                maxigregrze.cobblesafari.init.ModWoodTypes.HYPERSPACE));
         if (net.neoforged.fml.ModList.get().isLoaded("accessories")) {
             event.enqueueWork(maxigregrze.cobblesafari.compat.accessories.AccessoriesCompat::registerAccessoryItem);
         }
@@ -577,7 +581,15 @@ public class CobbleSafariNeoForge {
             event.setCancellationResult(cauldronResult);
             return;
         }
-        
+
+        var stripResult = maxigregrze.cobblesafari.block.hyperspace.HyperspaceLogStripping.tryStrip(
+                event.getEntity(), event.getLevel(), event.getHand(), event.getPos());
+        if (stripResult != InteractionResult.PASS) {
+            event.setCanceled(true);
+            event.setCancellationResult(stripResult);
+            return;
+        }
+
         var result = DimensionalBanEventHandler.onUseBlock(event.getEntity(), event.getLevel(), event.getHand(), event.getHitVec());
         if (result != InteractionResult.PASS) {
             event.setCanceled(true);

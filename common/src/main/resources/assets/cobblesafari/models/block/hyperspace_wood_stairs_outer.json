@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/outer_stairs",
+  "textures": {
+    "bottom": "cobblesafari:block/hyperspace_planks",
+    "top": "cobblesafari:block/hyperspace_planks",
+    "side": "cobblesafari:block/hyperspace_planks"
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "In",
+    "TG"
+  ],
+  "key": {
+    "I": { "item": "minecraft:iron_ingot" },
+    "n": { "item": "minecraft:iron_nugget" },
+    "T": { "item": "cobblesafari:tinkagear" },
+    "G": { "item": "minecraft:glowstone_dust" }
+  },
+  "result": {
+    "id": "cobblesafari:hyperspace_flag_small",
+    "count": 1
+  }
+}

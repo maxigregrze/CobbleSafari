@@ -3,7 +3,8 @@ package maxigregrze.cobblesafari.item.redchainrandom;
 import com.cobblemon.mod.common.entity.pokemon.PokemonEntity;
 import com.cobblemon.mod.common.pokemon.Pokemon;
 import maxigregrze.cobblesafari.config.RandomizerItemsConfig;
-import net.minecraft.network.chat.Component;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.player.Player;
 
 import java.util.concurrent.ThreadLocalRandom;
@@ -29,7 +30,13 @@ public class RedChainRandomShinyItem extends PokemonModifierItem {
             pokemon.setShiny(true);
             return true;
         }
-        player.sendSystemMessage(Component.translatable("cobblesafari.randomizer.no_effect"));
+        if (player.level() instanceof ServerLevel serverLevel) {
+            serverLevel.sendParticles(ParticleTypes.SMOKE,
+                    pokemonEntity.getX(), pokemonEntity.getY() + pokemonEntity.getBbHeight() * 0.5, pokemonEntity.getZ(),
+                    7,
+                    pokemonEntity.getBbWidth() / 4.0, pokemonEntity.getBbHeight() / 4.0, pokemonEntity.getBbWidth() / 4.0,
+                    0.0);
+        }
         return true;
     }
 }

@@ -332,13 +332,23 @@ public final class GtsAppServerHandler {
         GtsService.StartTradeCandidateBundle bundle = GtsService.tryStartTradeWithViews(player, offerId);
         if (bundle.kind() != GtsService.StartTradeKind.OK) {
             clearMutationAttempt(LAST_START_TRADE_MS, player.getUUID());
-            sendBegin(player, startTradeErrorKey(bundle.kind()));
+            if (bundle.kind() == GtsService.StartTradeKind.NO_MATCHING_POKEMON) {
+                // Keep the player on the Match Offer screen with its dedicated "no match"
+                // message (empty candidate list) instead of bouncing to the GTS error screen.
+                sendStartTradeResult(player, List.of());
+            } else {
+                sendBegin(player, startTradeErrorKey(bundle.kind()));
+            }
             return;
         }
         List<CompoundTag> nbts = new ArrayList<>();
         for (GtsService.CandidateView v : bundle.views()) {
             nbts.add(v.nbt().copy());
         }
+        sendStartTradeResult(player, nbts);
+    }
+
+    private static void sendStartTradeResult(ServerPlayer player, List<CompoundTag> candidateNbts) {
         send(
                 player,
                 new GtsAppResultPayload(
@@ -353,7 +363,7 @@ public final class GtsAppServerHandler {
                         1,
                         List.of(),
                         "OK",
-                        nbts,
+                        candidateNbts,
                         new CompoundTag(),
                         new CompoundTag(),
                         ""));

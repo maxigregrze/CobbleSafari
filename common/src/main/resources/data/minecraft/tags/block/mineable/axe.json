@@ -5,6 +5,22 @@
     "cobblesafari:hyperspace_flowerpot",
     "cobblesafari:hyperspace_chair",
     "cobblesafari:hyperspace_table",
-    "cobblesafari:karate_mannequin"
+    "cobblesafari:hyperspace_log",
+    "cobblesafari:hyperspace_crate",
+    "cobblesafari:karate_mannequin",
+    "cobblesafari:hyperspace_log_stripped",
+    "cobblesafari:hyperspace_planks",
+    "cobblesafari:hyperspace_wood_stairs",
+    "cobblesafari:hyperspace_wood_slab",
+    "cobblesafari:hyperspace_wood_fence",
+    "cobblesafari:hyperspace_wood_fence_gate",
+    "cobblesafari:hyperspace_wood_door",
+    "cobblesafari:hyperspace_wood_trapdoor",
+    "cobblesafari:hyperspace_wood_button",
+    "cobblesafari:hyperspace_wood_pressure_plate",
+    "cobblesafari:hyperspace_sign",
+    "cobblesafari:hyperspace_wall_sign",
+    "cobblesafari:hyperspace_hanging_sign",
+    "cobblesafari:hyperspace_wall_hanging_sign"
 	]
 }

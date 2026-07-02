@@ -11,8 +11,12 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.saveddata.SavedData;
 import net.minecraft.world.level.storage.DimensionDataStorage;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -40,15 +44,43 @@ public class ChatProgressSavedData extends SavedData {
         }
     }
 
-    /** Mutable progress record for a single (player, conversation) pair. */
+    /**
+     * Mutable progress record for a single (player, conversation) pair.
+     *
+     * <p>The {@code stepIndex/messageIndex/phase/claimed/statBaseline} fields track the <em>active
+     * section</em>: the base conversation steps while {@code !baseComplete}, otherwise the active
+     * repeatable series identified by {@code activeSeriesId} ({@code ""} = idle, no active series).
+     */
     public static final class ProgressEntry {
         public int stepIndex;
         public int messageIndex;
         public Phase phase = Phase.BEFORE;
         public boolean claimed;
-        /** {@code Long.MIN_VALUE} = unset; lazily snapshotted on first progress read of a repeatable step. */
+        /** {@code Long.MIN_VALUE} = unset; lazily snapshotted on first progress read of a stat-gated step. */
         public long statBaseline = Long.MIN_VALUE;
         public long lastResetEpochDay = Long.MIN_VALUE;
+
+        /** True once the base {@code steps} are finished (the conversation entered the repeatable phase). */
+        public boolean baseComplete;
+        /** Active repeatable series id, or {@code ""} for the base section / idle. */
+        public String activeSeriesId = "";
+        /** Epoch-day the active series started (for {@code isTimed}); {@code MIN_VALUE} = unset. */
+        public long seriesStartEpochDay = Long.MIN_VALUE;
+        /** Chronological log of resolved repeatable series (for the transcript + doDisapear). */
+        public final List<ResolvedSeries> history = new ArrayList<>();
+        /** Ids of {@code isUnique} series already completed (excluded from future rolls). */
+        public final Set<String> completedUnique = new HashSet<>();
+    }
+
+    /** A resolved (completed or failed) repeatable series instance, for rendering the transcript. */
+    public static final class ResolvedSeries {
+        public String seriesId = "";
+        public boolean completed;
+        /** Step index reached at resolution (the failed step for a failure). */
+        public int stepReached;
+        public long resolvedEpochDay = Long.MIN_VALUE;
+        /** Frozen {@code doDisapear} flag of the series at resolution time. */
+        public boolean doDisapear;
     }
 
     private final Map<UUID, Map<String, ProgressEntry>> byPlayer = new ConcurrentHashMap<>();
@@ -109,6 +141,36 @@ public class ChatProgressSavedData extends SavedData {
                     entry.claimed = e.getBoolean("Claimed");
                     entry.statBaseline = e.getLong("Baseline");
                     entry.lastResetEpochDay = e.contains("StepReset") ? e.getLong("StepReset") : Long.MIN_VALUE;
+                    // v2 fields (absent in pre-142 saves → defaults; the service repairs the rest).
+                    entry.baseComplete = e.getBoolean("BaseDone");
+                    entry.activeSeriesId = e.contains("Series") ? e.getString("Series") : "";
+                    entry.seriesStartEpochDay = e.contains("SeriesStart") ? e.getLong("SeriesStart") : Long.MIN_VALUE;
+                    if (e.contains("History", Tag.TAG_LIST)) {
+                        ListTag hist = e.getList("History", Tag.TAG_COMPOUND);
+                        for (int h = 0; h < hist.size(); h++) {
+                            CompoundTag hc = hist.getCompound(h);
+                            String sid = hc.getString("Id");
+                            if (sid.isEmpty()) {
+                                continue;
+                            }
+                            ResolvedSeries rs = new ResolvedSeries();
+                            rs.seriesId = sid;
+                            rs.completed = hc.getBoolean("Done");
+                            rs.stepReached = hc.getInt("Step");
+                            rs.resolvedEpochDay = hc.getLong("Day");
+                            rs.doDisapear = hc.getBoolean("Hide");
+                            entry.history.add(rs);
+                        }
+                    }
+                    if (e.contains("Unique", Tag.TAG_LIST)) {
+                        ListTag uniq = e.getList("Unique", Tag.TAG_STRING);
+                        for (int u = 0; u < uniq.size(); u++) {
+                            String sid = uniq.getString(u);
+                            if (!sid.isEmpty()) {
+                                entry.completedUnique.add(sid);
+                            }
+                        }
+                    }
                     map.put(convId, entry);
                 }
                 if (!map.isEmpty()) {
@@ -135,6 +197,29 @@ public class ChatProgressSavedData extends SavedData {
                 e.putBoolean("Claimed", entry.claimed);
                 e.putLong("Baseline", entry.statBaseline);
                 e.putLong("StepReset", entry.lastResetEpochDay);
+                e.putBoolean("BaseDone", entry.baseComplete);
+                e.putString("Series", entry.activeSeriesId == null ? "" : entry.activeSeriesId);
+                e.putLong("SeriesStart", entry.seriesStartEpochDay);
+                if (!entry.history.isEmpty()) {
+                    ListTag hist = new ListTag();
+                    for (ResolvedSeries rs : entry.history) {
+                        CompoundTag hc = new CompoundTag();
+                        hc.putString("Id", rs.seriesId);
+                        hc.putBoolean("Done", rs.completed);
+                        hc.putInt("Step", rs.stepReached);
+                        hc.putLong("Day", rs.resolvedEpochDay);
+                        hc.putBoolean("Hide", rs.doDisapear);
+                        hist.add(hc);
+                    }
+                    e.put("History", hist);
+                }
+                if (!entry.completedUnique.isEmpty()) {
+                    ListTag uniq = new ListTag();
+                    for (String sid : entry.completedUnique) {
+                        uniq.add(net.minecraft.nbt.StringTag.valueOf(sid));
+                    }
+                    e.put("Unique", uniq);
+                }
                 list.add(e);
             }
             if (!list.isEmpty()) {

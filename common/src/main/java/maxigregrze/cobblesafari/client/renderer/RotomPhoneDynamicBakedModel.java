@@ -20,15 +20,18 @@ public class RotomPhoneDynamicBakedModel implements BakedModel {
 
     private final BakedModel fallback;
     private final Function<ResourceLocation, BakedModel> lookup;
+    private final Function<ItemStack, ResourceLocation> variantResolver;
     private final ItemOverrides overrides;
 
-    public RotomPhoneDynamicBakedModel(BakedModel fallback, Function<ResourceLocation, BakedModel> lookup) {
+    public RotomPhoneDynamicBakedModel(BakedModel fallback, Function<ResourceLocation, BakedModel> lookup,
+                                       Function<ItemStack, ResourceLocation> variantResolver) {
         this.fallback = fallback;
         this.lookup = lookup;
+        this.variantResolver = variantResolver;
         this.overrides = new ItemOverrides() {
             @Override
             public BakedModel resolve(BakedModel model, ItemStack stack, @Nullable net.minecraft.client.multiplayer.ClientLevel level, @Nullable LivingEntity entity, int seed) {
-                ResourceLocation variant = RotomPhoneTextureResolver.modelForStack(stack);
+                ResourceLocation variant = RotomPhoneDynamicBakedModel.this.variantResolver.apply(stack);
                 BakedModel resolved = RotomPhoneDynamicBakedModel.this.lookup.apply(variant);
                 if (resolved == null || resolved == net.minecraft.client.Minecraft.getInstance().getModelManager().getMissingModel()) {
                     return RotomPhoneDynamicBakedModel.this.fallback;

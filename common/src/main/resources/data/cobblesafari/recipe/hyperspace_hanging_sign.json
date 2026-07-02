@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [ "X X", "###", "###" ],
+  "key": {
+    "#": { "item": "cobblesafari:hyperspace_log_stripped" },
+    "X": { "item": "minecraft:chain" }
+  },
+  "result": { "id": "cobblesafari:hyperspace_hanging_sign", "count": 6 }
+}

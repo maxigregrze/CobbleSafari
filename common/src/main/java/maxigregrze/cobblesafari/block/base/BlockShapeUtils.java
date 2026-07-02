@@ -65,6 +65,26 @@ public final class BlockShapeUtils {
         return map;
     }
 
+    /**
+     * Orients a "vertical" shape (authored for a pillar standing along the Y axis) onto the given
+     * axis. Intended for axis‑symmetric, centred pillar shapes (e.g. a log): {@code Y} returns the
+     * shape unchanged, {@code Z} lays it along north/south, {@code X} along east/west.
+     */
+    public static VoxelShape rotatePillar(VoxelShape yShape, Direction.Axis axis) {
+        if (axis == Direction.Axis.Y) {
+            return yShape;
+        }
+        VoxelShape[] acc = {Shapes.empty()};
+        if (axis == Direction.Axis.Z) {
+            yShape.forAllBoxes((minX, minY, minZ, maxX, maxY, maxZ) ->
+                    acc[0] = Shapes.or(acc[0], Shapes.box(minX, minZ, minY, maxX, maxZ, maxY)));
+        } else {
+            yShape.forAllBoxes((minX, minY, minZ, maxX, maxY, maxZ) ->
+                    acc[0] = Shapes.or(acc[0], Shapes.box(minY, minX, minZ, maxY, maxX, maxZ)));
+        }
+        return acc[0];
+    }
+
     /** Vertical mirror (floor → ceiling): {@code box(x0, 16-y1, z0, x1, 16-y0, z1)}. */
     public static VoxelShape flipVertical(VoxelShape shape) {
         VoxelShape[] acc = {Shapes.empty()};

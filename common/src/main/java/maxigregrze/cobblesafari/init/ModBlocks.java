@@ -80,13 +80,21 @@ import maxigregrze.cobblesafari.block.trap.SlowTrapBlock;
 import maxigregrze.cobblesafari.block.trap.TeleportTrapBlock;
 import maxigregrze.cobblesafari.block.trap.WindTrapBlock;
 import maxigregrze.cobblesafari.block.underground.UndergroundTimberBlock;
+import maxigregrze.cobblesafari.block.hyperspace.HyperspaceBushBlock;
 import maxigregrze.cobblesafari.block.hyperspace.HyperspaceDirectionalBlock;
 import maxigregrze.cobblesafari.block.hyperspace.HyperspaceDoubleBlock;
 import maxigregrze.cobblesafari.block.hyperspace.HyperspaceLadderBlock;
+import maxigregrze.cobblesafari.block.hyperspace.HyperspaceLogBlock;
 import maxigregrze.cobblesafari.block.hyperspace.HyperspaceQuadBlock;
 import maxigregrze.cobblesafari.block.hyperspace.HyperspaceQuadPart;
 import maxigregrze.cobblesafari.block.hyperspace.HyperspaceRampBlock;
+import maxigregrze.cobblesafari.block.hyperspace.HyperspaceSaplingBlock;
+import maxigregrze.cobblesafari.block.hyperspace.HyperspaceStandingSignBlock;
+import maxigregrze.cobblesafari.block.hyperspace.HyperspaceWallSignBlock;
+import maxigregrze.cobblesafari.block.hyperspace.HyperspaceCeilingHangingSignBlock;
+import maxigregrze.cobblesafari.block.hyperspace.HyperspaceWallHangingSignBlock;
 import maxigregrze.cobblesafari.block.hyperspace.HyperspaceScaffoldStairsBlock;
+import maxigregrze.cobblesafari.block.hyperspace.HyperspaceScaffoldTubeBlock;
 import maxigregrze.cobblesafari.block.hyperspace.HyperspaceShapedBlock;
 import maxigregrze.cobblesafari.block.hyperspace.HyperspaceTriBlock;
 import maxigregrze.cobblesafari.block.hyperspace.HyperspaceTriPart;
@@ -94,21 +102,38 @@ import maxigregrze.cobblesafari.block.hyperspace.HyperspaceTrashcanBlock;
 import net.minecraft.core.Registry;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Rarity;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import maxigregrze.cobblesafari.block.misc.HyperspaceWoodDoorBlock;
+import maxigregrze.cobblesafari.block.misc.HyperspaceWoodTrapdoorBlock;
+import maxigregrze.cobblesafari.block.misc.HyperspaceWoodButtonBlock;
+import maxigregrze.cobblesafari.block.misc.HyperspaceWoodPressurePlateBlock;
+import net.minecraft.world.level.block.FenceBlock;
+import net.minecraft.world.level.block.FenceGateBlock;
+import net.minecraft.world.level.block.FlowerBlock;
 import net.minecraft.world.level.block.GlazedTerracottaBlock;
+import net.minecraft.world.level.block.LeavesBlock;
 import net.minecraft.world.level.block.SlabBlock;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.StairBlock;
+import net.minecraft.world.level.block.state.properties.BlockSetType;
+import net.minecraft.world.level.block.state.properties.WoodType;
+import net.minecraft.world.level.block.grower.TreeGrower;
 import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
 import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.level.material.PushReaction;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+
+import java.util.Optional;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -1493,6 +1518,14 @@ public class ModBlocks {
     private static final VoxelShape HS_FULL_SHAPE = Block.box(0, 0, 0, 16, 16, 16);
     private static final VoxelShape HS_LAMP_SHAPE = Block.box(6, 0, 6, 10, 16, 10);
     private static final VoxelShape HS_NEON_TRI_SHAPE = Block.box(6, 0, 6, 10, 16, 10);
+    private static final VoxelShape HS_BUSH_SHAPE = Block.box(2, 0, 2, 14, 14, 14);
+
+    // Hyperspace tree (grown from a sapling, never generated naturally). Both saplings share it.
+    public static final ResourceKey<ConfiguredFeature<?, ?>> HYPERSPACE_TREE =
+            ResourceKey.create(Registries.CONFIGURED_FEATURE,
+                    ResourceLocation.fromNamespaceAndPath("cobblesafari", "hyperspace_tree"));
+    private static final TreeGrower HYPERSPACE_GROWER = new TreeGrower(
+            "cobblesafari:hyperspace", Optional.empty(), Optional.of(HYPERSPACE_TREE), Optional.empty());
 
     public static final Block HYPERSPACE_PILLAR = registerBlock("hyperspace_pillar", new Block(hsStone()));
     public static final Block HYPERSPACE_PILLAR_TOP = registerBlock("hyperspace_pillar_top", new Block(hsStone()));
@@ -1611,9 +1644,95 @@ public class ModBlocks {
                             .emptyOcclusion()
                             .build()));
 
+    // --- Nature blocks (plan 140) ---
+    // Dandelion-like flower: two-layer cross model, the colored layer tinted by the biome foliage
+    // color (tintindex 0, color handler client-side). The suspicious-stew effect is inert (the block
+    // is not tagged #small_flowers). Crafts into one purple dye.
+    public static final Block HYPERSPACE_FLOWERS = registerBlock("hyperspace_flowers",
+            new FlowerBlock(MobEffects.NIGHT_VISION, 5.0F, BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.PLANT).noCollission().instabreak().sound(SoundType.GRASS)
+                    .offsetType(BlockBehaviour.OffsetType.XZ).pushReaction(PushReaction.DESTROY)));
+    // Six-way oriented log; placement restricted to a solid block or a same-orientation log.
+    public static final Block HYPERSPACE_LOG = registerBlock("hyperspace_log",
+            new HyperspaceLogBlock(hsLog().noOcclusion()));
+    // Foliage-tinted bushes (tintindex 0 on the bush faces); plant-like (need dirt/grass below,
+    // break if unsupported, like flowers/saplings); shears-only drop via loot table.
+    public static final Block HYPERSPACE_BUSH = registerBlock("hyperspace_bush",
+            new HyperspaceBushBlock(hsLeafy(), HS_BUSH_SHAPE));
+    public static final Block HYPERSPACE_BUSH_FLOWERED = registerBlock("hyperspace_bush_flowered",
+            new HyperspaceBushBlock(hsLeafy(), HS_BUSH_SHAPE));
+    // Hollow "tube" scaffolding variant (iron, pickaxe): full-cube selection, hollow collision.
+    public static final Block HYPERSPACE_SCAFFOLDING_TUBE = registerBlock("hyperspace_scaffolding_tube",
+            new HyperspaceScaffoldTubeBlock(hsIronPick()));
+    // Crate: full cube, planks material, axe; reuses the flowerpot texture by design (distinct model).
+    public static final Block HYPERSPACE_CRATE = registerBlock("hyperspace_crate",
+            new Block(hsPlanks().noOcclusion()));
+    // Untinted leaves (azalea-like); shears/silk loot; decay relative to #minecraft:logs.
+    public static final Block HYPERSPACE_LEAVES = registerBlock("hyperspace_leaves",
+            new LeavesBlock(hsLeafy().randomTicks().pushReaction(PushReaction.DESTROY)
+                    .isSuffocating((s, l, p) -> false).isViewBlocking((s, l, p) -> false)));
+    // Saplings: never grow naturally, only rarely via bonemeal; both grow the Hyperspace tree.
+    public static final Block HYPERSPACE_SAPLING = registerBlock("hyperspace_sapling",
+            new HyperspaceSaplingBlock(HYPERSPACE_GROWER, BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.PLANT).noCollission().instabreak().sound(SoundType.GRASS)
+                    .pushReaction(PushReaction.DESTROY)));
+    public static final Block HYPERSPACE_SAPLING_FLOWERED = registerBlock("hyperspace_sapling_flowered",
+            new HyperspaceSaplingBlock(HYPERSPACE_GROWER, BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.PLANT).noCollission().instabreak().sound(SoundType.GRASS)
+                    .pushReaction(PushReaction.DESTROY)));
+
+    // --- Wood blocks (plan 140 § 15) ---
+    // Stripped log: same orientable logic as HYPERSPACE_LOG, different texture.
+    public static final Block HYPERSPACE_LOG_STRIPPED = registerBlock("hyperspace_log_stripped",
+            new HyperspaceLogBlock(hsLog().noOcclusion()));
+    // Planks: plain cube, wood properties.  Tagged #minecraft:planks.
+    public static final Block HYPERSPACE_PLANKS = registerBlock("hyperspace_planks",
+            new Block(hsPlanks()));
+    // Vanilla wood derivatives — no new class needed.
+    public static final Block HYPERSPACE_WOOD_STAIRS = registerBlock("hyperspace_wood_stairs",
+            new StairBlock(HYPERSPACE_PLANKS.defaultBlockState(), hsPlanks()));
+    public static final Block HYPERSPACE_WOOD_SLAB = registerBlock("hyperspace_wood_slab",
+            new SlabBlock(hsPlanks()));
+    public static final Block HYPERSPACE_WOOD_FENCE = registerBlock("hyperspace_wood_fence",
+            new FenceBlock(hsPlanks()));
+    public static final Block HYPERSPACE_WOOD_FENCE_GATE = registerBlock("hyperspace_wood_fence_gate",
+            new FenceGateBlock(WoodType.OAK, hsPlanks()));
+    // Door: reuses the multiblock-door textures (top/bottom), interactable by player + redstone.
+    public static final Block HYPERSPACE_WOOD_DOOR = registerBlock("hyperspace_wood_door",
+            new HyperspaceWoodDoorBlock(BlockSetType.OAK, hsPlanks().noOcclusion().strength(3.0F)));
+    // Trapdoor: vanilla wooden trapdoor, hyperspace_trapdoor.png texture.
+    public static final Block HYPERSPACE_WOOD_TRAPDOOR = registerBlock("hyperspace_wood_trapdoor",
+            new HyperspaceWoodTrapdoorBlock(BlockSetType.OAK, hsPlanks().noOcclusion().strength(3.0F)));
+    // Button & pressure plate: vanilla wood redstone behaviour (BlockSetType.OAK), planks texture.
+    public static final Block HYPERSPACE_WOOD_BUTTON = registerBlock("hyperspace_wood_button",
+            new HyperspaceWoodButtonBlock(BlockSetType.OAK, 30, BlockBehaviour.Properties.of()
+                    .noCollission().strength(0.5F).pushReaction(PushReaction.DESTROY).sound(SoundType.WOOD)));
+    public static final Block HYPERSPACE_WOOD_PRESSURE_PLATE = registerBlock("hyperspace_wood_pressure_plate",
+            new HyperspaceWoodPressurePlateBlock(BlockSetType.OAK, BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.WOOD).forceSolidOn().noCollission().strength(0.5F)
+                    .pushReaction(PushReaction.DESTROY).sound(SoundType.WOOD)));
+    // Signs & hanging signs: vanilla behaviour bound to the Hyperspace WoodType. Items are
+    // registered manually in register() (a SignItem/HangingSignItem spans the standing+wall pair).
+    public static final Block HYPERSPACE_SIGN = registerBlockWithoutItem("hyperspace_sign",
+            new HyperspaceStandingSignBlock(ModWoodTypes.HYPERSPACE, hsSign()));
+    public static final Block HYPERSPACE_WALL_SIGN = registerBlockWithoutItem("hyperspace_wall_sign",
+            new HyperspaceWallSignBlock(ModWoodTypes.HYPERSPACE, hsSign()));
+    public static final Block HYPERSPACE_HANGING_SIGN = registerBlockWithoutItem("hyperspace_hanging_sign",
+            new HyperspaceCeilingHangingSignBlock(ModWoodTypes.HYPERSPACE, hsSign()));
+    public static final Block HYPERSPACE_WALL_HANGING_SIGN = registerBlockWithoutItem("hyperspace_wall_hanging_sign",
+            new HyperspaceWallHangingSignBlock(ModWoodTypes.HYPERSPACE, hsSign()));
+    // Sign items (one item spans the standing+wall pair); assigned in register().
+    public static Item HYPERSPACE_SIGN_ITEM;
+    public static Item HYPERSPACE_HANGING_SIGN_ITEM;
+
     private static BlockBehaviour.Properties hsStone() {
         return BlockBehaviour.Properties.of().mapColor(MapColor.STONE).strength(1.5f, 6.0f)
                 .sound(SoundType.STONE).requiresCorrectToolForDrops();
+    }
+
+    private static BlockBehaviour.Properties hsSign() {
+        return BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).forceSolidOn()
+                .noCollission().strength(1.0f).sound(SoundType.WOOD);
     }
 
     private static BlockBehaviour.Properties hsGlass() {
@@ -1651,6 +1770,15 @@ public class ModBlocks {
 
     private static BlockBehaviour.Properties hsPlanks() {
         return BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).strength(2.0f, 3.0f).sound(SoundType.WOOD);
+    }
+
+    private static BlockBehaviour.Properties hsLog() {
+        return BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).strength(2.0f).sound(SoundType.WOOD);
+    }
+
+    private static BlockBehaviour.Properties hsLeafy() {
+        return BlockBehaviour.Properties.of().mapColor(MapColor.PLANT).strength(0.2f)
+                .sound(SoundType.GRASS).noOcclusion();
     }
 
     private static BlockBehaviour.Properties trapProps() {
@@ -1706,6 +1834,17 @@ public class ModBlocks {
 
     public static void register() {
         CobbleSafari.LOGGER.info("Registering blocks for " + CobbleSafari.MOD_ID);
+        ModWoodTypes.register();
+
+        HYPERSPACE_SIGN_ITEM = Registry.register(BuiltInRegistries.ITEM,
+                ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, "hyperspace_sign"),
+                new net.minecraft.world.item.SignItem(new Item.Properties().stacksTo(16),
+                        HYPERSPACE_SIGN, HYPERSPACE_WALL_SIGN));
+        HYPERSPACE_HANGING_SIGN_ITEM = Registry.register(BuiltInRegistries.ITEM,
+                ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, "hyperspace_hanging_sign"),
+                new net.minecraft.world.item.HangingSignItem(HYPERSPACE_HANGING_SIGN, HYPERSPACE_WALL_HANGING_SIGN,
+                        new Item.Properties().stacksTo(16)));
+
         Registry.register(BuiltInRegistries.ITEM,
                 ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, "secretbase_pc"),
                 new BasePCBlockItem(SECRETBASE_PC, new Item.Properties().rarity(Rarity.RARE)));

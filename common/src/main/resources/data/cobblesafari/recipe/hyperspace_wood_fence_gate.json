@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "SPS",
+    "SPS"
+  ],
+  "key": {
+    "P": { "item": "cobblesafari:hyperspace_planks" },
+    "S": { "item": "minecraft:stick" }
+  },
+  "result": {
+    "id": "cobblesafari:hyperspace_wood_fence_gate",
+    "count": 1
+  }
+}

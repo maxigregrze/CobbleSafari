@@ -139,14 +139,14 @@ public final class TeleportPadManager {
     @Nullable
     private static BlockPos scanFront(Level level, BlockPos pos, Direction facing) {
         Direction rightDir = facing.getClockWise();
+        // Walk the full forward range without stopping at the first solid cell in our own row:
+        // corridor clearance is validated per-candidate at the higher of the two pad levels
+        // (see frontCorridorClear), so a partner raised on a structure is still found — and the
+        // result is symmetric, i.e. either pad auto-pairs to the other.
         for (int d = 1; d <= MAX_RANGE; d++) {
-            BlockPos center = pos.relative(facing, d);
-            BlockPos found = checkFrontWindow(level, pos, center, facing, rightDir);
+            BlockPos found = checkFrontWindow(level, pos, d, facing, rightDir);
             if (found != null) {
                 return found;
-            }
-            if (!isClear(level, center)) {
-                break;
             }
         }
         return null;
@@ -164,8 +164,9 @@ public final class TeleportPadManager {
     }
 
     @Nullable
-    private static BlockPos checkFrontWindow(Level level, BlockPos pos, BlockPos center, Direction facing, Direction rightDir) {
+    private static BlockPos checkFrontWindow(Level level, BlockPos pos, int forward, Direction facing, Direction rightDir) {
         // probe outward on each perpendicular axis (centre first) within the configured ±leeway window
+        BlockPos center = pos.relative(facing, forward);
         int[] offsets = symmetricOffsets(MiscConfig.getTeleportpadForwardLeeway());
         for (int upIdx : offsets) {
             for (int sideIdx : offsets) {
@@ -174,12 +175,31 @@ public final class TeleportPadManager {
                     continue;
                 }
                 if (isCompatiblePad(level, pos, candidate, TeleportPadMode.FRONT, facing)
-                        && partnerFreeForMe(level, pos, candidate)) {
+                        && partnerFreeForMe(level, pos, candidate)
+                        && frontCorridorClear(level, pos, facing, forward, upIdx)) {
                     return candidate;
                 }
             }
         }
         return null;
+    }
+
+    /**
+     * FRONT corridor clearance, evaluated at the <b>higher</b> of the two pad levels
+     * ({@code lift = max(0, up)}). Because the higher level is the same physical row whichever
+     * pad runs the test, the result is symmetric: it no longer depends on whether the caller is
+     * the lower pad (whose own row is blocked by the structure the higher pad stands on) or the
+     * higher pad (whose row is open air). The higher row also clears the partner's support block,
+     * which sits one block below it.
+     */
+    private static boolean frontCorridorClear(Level level, BlockPos pos, Direction facing, int forward, int up) {
+        int lift = Math.max(0, up);
+        for (int d = 1; d < forward; d++) {
+            if (!isClear(level, pos.relative(facing, d).above(lift))) {
+                return false;
+            }
+        }
+        return true;
     }
 
     // ------------------------------------------------------------------ path validation (manual offset)
@@ -218,12 +238,7 @@ public final class TeleportPadManager {
                 return true;
             }
             case FRONT -> {
-                for (int d = 1; d < forward; d++) {
-                    if (!isClear(level, pos.relative(facing, d))) {
-                        return false;
-                    }
-                }
-                return true;
+                return frontCorridorClear(level, pos, facing, forward, up);
             }
             default -> {
                 return false;

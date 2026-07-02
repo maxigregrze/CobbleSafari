@@ -1,0 +1,8 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    { "item": "minecraft:chest" },
+    { "item": "cobblesafari:hyperspace_boat" }
+  ],
+  "result": { "id": "cobblesafari:hyperspace_chest_boat", "count": 1 }
+}

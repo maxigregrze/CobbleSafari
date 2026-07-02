@@ -1,10 +1,9 @@
 package maxigregrze.cobblesafari.rotomphone;
 
 import maxigregrze.cobblesafari.config.RotomPhoneConfig;
+import maxigregrze.cobblesafari.data.RotomPhoneUnlockSavedData;
 import maxigregrze.cobblesafari.network.RotomPhoneConfigSyncPayload;
 import maxigregrze.cobblesafari.platform.Services;
-import net.minecraft.advancements.AdvancementHolder;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 
 import java.util.ArrayList;
@@ -16,13 +15,14 @@ public class RotomPhoneConfigSync {
     private RotomPhoneConfigSync() {}
 
     public static void syncToPlayer(ServerPlayer player) {
+        RotomPhoneUnlockSavedData store = RotomPhoneUnlockSavedData.get(player.server);
+
         List<RotomPhoneConfigSyncPayload.AppData> apps = new ArrayList<>();
         for (Map.Entry<String, RotomPhoneConfig.PhoneAppConfig> entry : RotomPhoneConfig.getPhoneApps().entrySet()) {
             RotomPhoneConfig.PhoneAppConfig cfg = entry.getValue();
-            boolean unlocked = isAppUnlockedByPlayer(player, cfg);
+            boolean unlocked = isAppUnlockedByPlayer(player, entry.getKey(), cfg, store);
             apps.add(new RotomPhoneConfigSyncPayload.AppData(
-                    entry.getKey(), cfg.isEnabled(), cfg.isUnlockedByDefault(),
-                    cfg.getUnlockingAdvancement(), cfg.getBannedDimensions(), unlocked));
+                    entry.getKey(), cfg.getBannedDimensions(), unlocked));
         }
 
         List<RotomPhoneConfigSyncPayload.SkinData> skins = new ArrayList<>();
@@ -31,7 +31,7 @@ public class RotomPhoneConfigSync {
             skins.add(new RotomPhoneConfigSyncPayload.SkinData(
                     skin.getId(), skin.getDisplayName(), skin.getColor(),
                     skin.hasCustomScreen(), skin.isUnlockedFromStart(),
-                    skin.getUnlockingAdvancement(), skin.hasShinyVariant(), unlocked));
+                    skin.hasShinyVariant(), unlocked));
         }
 
         Services.PLATFORM.sendPayloadToPlayer(player,
@@ -39,26 +39,19 @@ public class RotomPhoneConfigSync {
     }
 
     /**
-     * Whether {@code player} has unlocked an app. Mirrors
-     * {@link RotomPhoneSkinRegistry#isUnlockedByPlayer}: unlocked if flagged as default, otherwise
-     * gated by completion of the configured advancement.
+     * Whether {@code player} can see an app: visible by default ({@code enabledByDefault}) or unlocked
+     * for this player through a consumable item / chat questline step / admin command (persisted in
+     * {@link RotomPhoneUnlockSavedData}).
      */
-    public static boolean isAppUnlockedByPlayer(ServerPlayer player, RotomPhoneConfig.PhoneAppConfig cfg) {
+    public static boolean isAppUnlockedByPlayer(ServerPlayer player, String appId,
+                                                RotomPhoneConfig.PhoneAppConfig cfg,
+                                                RotomPhoneUnlockSavedData store) {
         if (cfg == null) {
             return false;
         }
-        if (cfg.isUnlockedByDefault()) {
+        if (cfg.isEnabledByDefault()) {
             return true;
         }
-        String advancementPath = cfg.getUnlockingAdvancement();
-        if (advancementPath == null || advancementPath.isEmpty()) {
-            return false;
-        }
-        ResourceLocation advId = ResourceLocation.tryParse(advancementPath);
-        if (advId == null) {
-            return false;
-        }
-        AdvancementHolder holder = player.server.getAdvancements().get(advId);
-        return holder != null && player.getAdvancements().getOrStartProgress(holder).isDone();
+        return store != null && store.isAppUnlocked(player.getUUID(), appId);
     }
 }

@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "neoforge:conditions": [
+    { "type": "neoforge:mod_loaded", "modid": "accessories" }
+  ],
+  "fabric:load_conditions": [
+    { "condition": "fabric:all_mods_loaded", "values": [ "accessories" ] }
+  ],
+  "pattern": [
+    " C ",
+    "ITI",
+    " O "
+  ],
+  "key": {
+    "I": { "item": "minecraft:iron_ingot" },
+    "T": { "item": "cobblesafari:tinkagear" },
+    "C": { "item": "minecraft:copper_ingot" },
+    "O": { "item": "minecraft:gold_ingot" }
+  },
+  "result": {
+    "id": "cobblesafari:emptyearpiece",
+    "count": 1
+  }
+}

@@ -3,12 +3,12 @@
   "temperature": 0.5,
   "downfall": 0.5,
   "effects": {
-    "foliage_color": 704170,
-    "grass_color": 704170,
+    "foliage_color": 11180982,
+    "grass_color": 11180982,
     "sky_color": 3156016,
-    "fog_color": 704170,
-    "water_color": 704170,
-    "water_fog_color": 704170
+    "fog_color": 11180982,
+    "water_color": 11180982,
+    "water_fog_color": 11180982
   },
   "spawners": {
     "monster": [],
@@ -35,7 +35,13 @@
     [],
     [],
     [],
-    [],
+    [
+      "cobblesafari:hyperspace_tree",
+      "cobblesafari:hyperspace_bush_patch",
+      "cobblesafari:hyperspace_bush_flowered_patch",
+      "cobblesafari:hyperspace_flowers_patch",
+      "cobblesafari:hyperspace_decoration"
+    ],
     []
   ]
 }

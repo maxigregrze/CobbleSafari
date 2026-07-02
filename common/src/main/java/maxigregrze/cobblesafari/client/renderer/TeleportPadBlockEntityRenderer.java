@@ -2,6 +2,7 @@ package maxigregrze.cobblesafari.client.renderer;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.math.Axis;
 import maxigregrze.cobblesafari.block.teleporter.TeleportPadBlockEntity;
 import maxigregrze.cobblesafari.init.ModBlocks;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -52,6 +53,20 @@ public class TeleportPadBlockEntityRenderer implements BlockEntityRenderer<Telep
 
         RandomSource random = RandomSource.create();
         random.setSeed(42L);
+
+        // FRONT pad linked to a laterally off-axis partner (±leeway window): yaw the model
+        // around its vertical centre axis so the arrow points exactly at the partner pad.
+        // TOP/BOTTOM and perfectly-aligned/unlinked pads keep right == 0 ⇒ no rotation.
+        boolean rotate = blockEntity.isLinked() && blockEntity.getLinkRight() != 0;
+        if (rotate) {
+            float deg = (float) -Math.toDegrees(
+                    Math.atan2(blockEntity.getLinkRight(), blockEntity.getLinkForward()));
+            poseStack.pushPose();
+            poseStack.translate(0.5, 0.0, 0.5);
+            poseStack.mulPose(Axis.YP.rotationDegrees(deg));
+            poseStack.translate(-0.5, 0.0, -0.5);
+        }
+
         var pose = poseStack.last();
         for (Direction dir : QUAD_DIRECTIONS) {
             for (BakedQuad quad : model.getQuads(state, dir, random)) {
@@ -61,6 +76,10 @@ public class TeleportPadBlockEntityRenderer implements BlockEntityRenderer<Telep
                     consumer.putBulkData(pose, quad, 1f, 1f, 1f, 1f, packedLight, OverlayTexture.NO_OVERLAY);
                 }
             }
+        }
+
+        if (rotate) {
+            poseStack.popPose();
         }
     }
 

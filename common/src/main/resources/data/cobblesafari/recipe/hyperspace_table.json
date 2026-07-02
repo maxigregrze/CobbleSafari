@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "SSS",
+    " T ",
+    " I "
+  ],
+  "key": {
+    "S": { "item": "cobblesafari:hyperspace_wood_slab" },
+    "T": { "item": "minecraft:stick" },
+    "I": { "item": "minecraft:iron_ingot" }
+  },
+  "result": {
+    "id": "cobblesafari:hyperspace_table",
+    "count": 1
+  }
+}

@@ -74,11 +74,15 @@ public class AuspiciousPokeballConfigScreen extends CobbleSafariConfigScreen {
         this.focusScroll(this.poolBerryBox);
     }
 
-    private void applyFieldsFromMiscConfig() {
-        boolean small = this.minecraft != null
+    /** True when this screen is editing the small variant ({@code cobblesafari:auspiciouspokeball_small}). */
+    private boolean isSmallVariant() {
+        return this.minecraft != null
                 && this.minecraft.level != null
                 && this.minecraft.level.getBlockState(this.initial.pos()).getBlock() == ModBlocks.AUSPICIOUS_POKEBALL_SMALL;
-        if (small) {
+    }
+
+    private void applyFieldsFromMiscConfig() {
+        if (isSmallVariant()) {
             this.poolBerryBox.setValue(MiscConfig.getAuspiciousPokeballSmallPoolBerryId());
             this.poolCandyBox.setValue(MiscConfig.getAuspiciousPokeballSmallPoolCandyId());
             this.poolBallsBox.setValue(MiscConfig.getAuspiciousPokeballSmallPoolBallsId());
@@ -122,10 +126,13 @@ public class AuspiciousPokeballConfigScreen extends CobbleSafariConfigScreen {
 
     @Override
     protected void renderScrollContent(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-        drawFieldLabel(guiGraphics, this.poolBerryBox, "gui.cobblesafari.auspicious_pokeball.hint.pool_berry");
-        drawFieldLabel(guiGraphics, this.poolCandyBox, "gui.cobblesafari.auspicious_pokeball.hint.pool_candy");
-        drawFieldLabel(guiGraphics, this.poolBallsBox, "gui.cobblesafari.auspicious_pokeball.hint.pool_balls");
-        drawFieldLabel(guiGraphics, this.poolTreasuresBox, "gui.cobblesafari.auspicious_pokeball.hint.pool_treasures");
+        String poolPrefix = isSmallVariant()
+                ? "gui.cobblesafari.auspiciouspokeball_small.hint."
+                : "gui.cobblesafari.auspicious_pokeball.hint.";
+        drawFieldLabel(guiGraphics, this.poolBerryBox, poolPrefix + "pool_berry");
+        drawFieldLabel(guiGraphics, this.poolCandyBox, poolPrefix + "pool_candy");
+        drawFieldLabel(guiGraphics, this.poolBallsBox, poolPrefix + "pool_balls");
+        drawFieldLabel(guiGraphics, this.poolTreasuresBox, poolPrefix + "pool_treasures");
         drawFieldLabel(guiGraphics, this.minRollBox, "gui.cobblesafari.auspicious_pokeball.hint.min_roll");
         drawFieldLabel(guiGraphics, this.maxRollBox, "gui.cobblesafari.auspicious_pokeball.hint.max_roll");
     }

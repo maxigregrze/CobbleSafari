@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "cobblesafari:item/hyperspace_chest_boat"
+  }
+}

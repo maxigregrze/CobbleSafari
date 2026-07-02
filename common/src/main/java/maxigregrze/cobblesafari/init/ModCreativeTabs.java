@@ -144,6 +144,18 @@ public class ModCreativeTabs {
                 output.accept(ModItems.PERFUME_RARE);
                 output.accept(ModItems.PERFUME_ULTRARARE);
                 output.accept(ModItems.ROTOM_PHONE);
+                // Rotie Earpiece variant only makes sense (and is only craftable) with Accessories.
+                if (maxigregrze.cobblesafari.platform.Services.PLATFORM.isModLoaded("accessories")) {
+                    output.accept(ModItems.EMPTY_EARPIECE);
+                    output.accept(ModItems.ROTOM_EARPIECE);
+                }
+                output.accept(ModItems.ROTOM_APP_UNLOCK_GTS);
+                output.accept(ModItems.ROTOM_APP_UNLOCK_WONDER);
+                output.accept(ModItems.ROTOM_APP_UNLOCK_UNION);
+                output.accept(ModItems.ROTOM_APP_UNLOCK_SKIN);
+                output.accept(ModItems.ROTOM_APP_UNLOCK_ALL);
+                output.accept(ModItems.ROTOM_SKIN_UNLOCK);
+                output.accept(ModItems.ROTOM_SKIN_UNLOCK_ALL);
                 output.accept(ModItems.TICKET_WONDERTRADE);
                 output.accept(ModItems.WILD_EGG_BASE);
                 ModItems.WILD_EGGS.values().forEach(output::accept);
@@ -353,6 +365,32 @@ public class ModCreativeTabs {
                 output.accept(ModBlocks.HYPERSPACE_TRASHCAN);
                 output.accept(ModBlocks.HYPERSPACE_CHAIR);
                 output.accept(ModBlocks.HYPERSPACE_TABLE);
+                // Nature blocks (plan 140)
+                output.accept(ModBlocks.HYPERSPACE_LOG);
+                output.accept(ModBlocks.HYPERSPACE_LEAVES);
+                output.accept(ModBlocks.HYPERSPACE_SAPLING);
+                output.accept(ModBlocks.HYPERSPACE_SAPLING_FLOWERED);
+                output.accept(ModBlocks.HYPERSPACE_BUSH);
+                output.accept(ModBlocks.HYPERSPACE_BUSH_FLOWERED);
+                output.accept(ModBlocks.HYPERSPACE_FLOWERS);
+                output.accept(ModBlocks.HYPERSPACE_SCAFFOLDING_TUBE);
+                output.accept(ModBlocks.HYPERSPACE_CRATE);
+                // Wood blocks (plan 140 § 15)
+                output.accept(ModBlocks.HYPERSPACE_LOG_STRIPPED);
+                output.accept(ModBlocks.HYPERSPACE_PLANKS);
+                output.accept(ModBlocks.HYPERSPACE_WOOD_STAIRS);
+                output.accept(ModBlocks.HYPERSPACE_WOOD_SLAB);
+                output.accept(ModBlocks.HYPERSPACE_WOOD_FENCE);
+                output.accept(ModBlocks.HYPERSPACE_WOOD_FENCE_GATE);
+                output.accept(ModBlocks.HYPERSPACE_WOOD_DOOR);
+                output.accept(ModBlocks.HYPERSPACE_WOOD_TRAPDOOR);
+                // Wood variants (plan 140 § 16)
+                output.accept(ModBlocks.HYPERSPACE_WOOD_BUTTON);
+                output.accept(ModBlocks.HYPERSPACE_WOOD_PRESSURE_PLATE);
+                output.accept(ModBlocks.HYPERSPACE_SIGN_ITEM);
+                output.accept(ModBlocks.HYPERSPACE_HANGING_SIGN_ITEM);
+                output.accept(ModItems.HYPERSPACE_BOAT);
+                output.accept(ModItems.HYPERSPACE_CHEST_BOAT);
             })
             .build();
 

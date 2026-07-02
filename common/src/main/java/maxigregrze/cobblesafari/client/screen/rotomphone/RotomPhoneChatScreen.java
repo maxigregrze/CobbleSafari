@@ -43,9 +43,9 @@ public class RotomPhoneChatScreen extends RotomPhoneBaseScreen {
     private static final int CHAT_SLIDER_X1 = 300;
 
     private static final int BUBBLE_W = 192;
-    private static final int BUBBLE_TEXT_W = BUBBLE_W - 4;
-    private static final int BUBBLE_PAD = 2;
+    private static final int BUBBLE_PAD = 4;
     private static final int BUBBLE_PAD_V = 4;
+    private static final int BUBBLE_TEXT_W = BUBBLE_W - BUBBLE_PAD * 2;
     private static final int CORNER_R = 5;
 
     private static final int TYPING_W = 40;
@@ -55,6 +55,7 @@ public class RotomPhoneChatScreen extends RotomPhoneBaseScreen {
 
     private static final int COL_WHITE = 0xFFFFFFFF;
     private static final int COL_BUBBLE_TEXT = 0xFF2C2C2C;
+    private static final int COL_FAILED = 0xFFD64545;
 
     private static final long STREAM_STEP_MS = 3000L;
     private static final long POLL_MS = 1000L;
@@ -327,7 +328,7 @@ public class RotomPhoneChatScreen extends RotomPhoneBaseScreen {
         List<ChatElem> elems = buildChatElements();
         int areaH = CHAT_Y1 - CHAT_Y0;
         int totalH = totalHeight(elems);
-        lastChatOverflow = Math.max(0, totalH - areaH);
+        lastChatOverflow = chatOverflow(totalH, areaH);
         scrollChat = clamp(scrollChat, 0, lastChatOverflow);
 
         g.enableScissor(originX + CHAT_X0, originY + CHAT_Y0, originX + CHAT_X1, originY + CHAT_Y1);
@@ -342,7 +343,17 @@ public class RotomPhoneChatScreen extends RotomPhoneBaseScreen {
         // Chat anchors to the bottom: scrollChat == 0 ⇒ viewing the bottom ⇒ knob at the bottom.
         chatSliderShown = true;
         float f = lastChatOverflow > 0 ? (float) (lastChatOverflow - scrollChat) / lastChatOverflow : 1f;
-        drawSlider(g, 2, CHAT_SLIDER_X0, CHAT_SLIDER_X1, totalH, areaH, f);
+        drawSlider(g, 2, CHAT_SLIDER_X0, CHAT_SLIDER_X1, areaH + lastChatOverflow, areaH, f);
+    }
+
+    /**
+     * Scrollable height minus the visible area. When the transcript overflows we extend the range
+     * by one {@link #CONTACT_GAP} so the bottom-anchored last element keeps that gap below it
+     * (matching the spacing between bubbles) instead of butting against the chat's bottom edge.
+     */
+    private int chatOverflow(int totalH, int areaH) {
+        int raw = Math.max(0, totalH - areaH);
+        return raw > 0 ? raw + CONTACT_GAP : 0;
     }
 
     private int totalHeight(List<ChatElem> elems) {
@@ -397,12 +408,7 @@ public class RotomPhoneChatScreen extends RotomPhoneBaseScreen {
         if (taskKey != null && taskKey.endsWith(".title")) {
             taskKey = taskKey.substring(0, taskKey.length() - ".title".length()) + ".description";
         }
-        List<FormattedCharSequence> lines =
-                new ArrayList<>(this.font.split(Component.translatable(taskKey), BUBBLE_TEXT_W));
-        if (sv.progressDen() > 0) {
-            lines.addAll(this.font.split(
-                    Component.literal(sv.progressNum() + "/" + sv.progressDen()), BUBBLE_TEXT_W));
-        }
+        List<FormattedCharSequence> lines = this.font.split(Component.translatable(taskKey), BUBBLE_TEXT_W);
         int n = Math.max(1, lines.size());
         int h = n * 8 + (n + 1) * 2 + 20 + 4;
         ChatElem elem = new ChatElem(1, lines, h, Integer.valueOf(n), isCur);
@@ -482,13 +488,23 @@ public class RotomPhoneChatScreen extends RotomPhoneBaseScreen {
             if (fillW > 0) {
                 g.fill(innerL, innerT, innerL + fillW, innerB, barBg);
             }
-            if (done) {
+            int ty = innerT + (innerB - innerT - font.lineHeight) / 2;
+            if (taskStep != null && taskStep.failed()) {
+                // Failed timed mission: no fill, red "Failed" label instead of the count.
+                g.drawCenteredString(font, Component.translatable("gui.cobblesafari.rotomphone.chat.failed"),
+                        (innerL + innerR) / 2, ty, COL_FAILED);
+            } else if (done) {
                 String key = clickable
                         ? "gui.cobblesafari.rotomphone.chat.complete"
                         : "gui.cobblesafari.rotomphone.chat.completed";
                 int textColor = hovered ? COL_WHITE : theme;
-                int ty = innerT + (innerB - innerT - font.lineHeight) / 2;
                 g.drawCenteredString(font, Component.translatable(key), (innerL + innerR) / 2, ty, textColor);
+            } else if (taskStep != null && taskStep.progressDen() > 0) {
+                // Progress count centered on top of the bar (e.g. "5/10"), no drop shadow.
+                Component label = Component.literal(taskStep.progressNum() + "/" + taskStep.progressDen());
+                int textColor = hovered ? COL_WHITE : COL_BUBBLE_TEXT;
+                int lx = (innerL + innerR) / 2 - font.width(label) / 2;
+                g.drawString(font, label, lx, ty + 2, textColor, false);
             }
         }
 
@@ -539,7 +555,7 @@ public class RotomPhoneChatScreen extends RotomPhoneBaseScreen {
         }
         List<ChatElem> elems = buildChatElements();
         int areaH = CHAT_Y1 - CHAT_Y0;
-        int overflow = Math.max(0, totalHeight(elems) - areaH);
+        int overflow = chatOverflow(totalHeight(elems), areaH);
         int sc = clamp(scrollChat, 0, overflow);
         int x = originX + CHAT_X0;
         int y = originY + CHAT_Y0 - (overflow - sc);

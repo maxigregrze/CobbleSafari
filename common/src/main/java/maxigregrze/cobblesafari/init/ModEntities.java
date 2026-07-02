@@ -5,6 +5,8 @@ import maxigregrze.cobblesafari.entity.BalloonEntity;
 import maxigregrze.cobblesafari.entity.BalloonSafariEntity;
 import maxigregrze.cobblesafari.entity.CsTraderEntity;
 import maxigregrze.cobblesafari.entity.HikerEntity;
+import maxigregrze.cobblesafari.entity.HyperspaceBoatEntity;
+import maxigregrze.cobblesafari.entity.HyperspaceChestBoatEntity;
 import maxigregrze.cobblesafari.entity.csboss.CsBossBulletEntity;
 import maxigregrze.cobblesafari.entity.csboss.CsBossEntity;
 import maxigregrze.cobblesafari.entity.csboss.CsBossMinionEntity;
@@ -78,6 +80,26 @@ public class ModEntities {
                     .updateInterval(3)
                     .fireImmune()
                     .build(CobbleSafari.MOD_ID + ":balloon_safari")
+    );
+
+    public static final EntityType<HyperspaceBoatEntity> HYPERSPACE_BOAT = Registry.register(
+            BuiltInRegistries.ENTITY_TYPE,
+            ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, "hyperspace_boat"),
+            EntityType.Builder.<HyperspaceBoatEntity>of(HyperspaceBoatEntity::new, MobCategory.MISC)
+                    .sized(1.375f, 0.5625f)
+                    .eyeHeight(0.5625f)
+                    .clientTrackingRange(10)
+                    .build(CobbleSafari.MOD_ID + ":hyperspace_boat")
+    );
+
+    public static final EntityType<HyperspaceChestBoatEntity> HYPERSPACE_CHEST_BOAT = Registry.register(
+            BuiltInRegistries.ENTITY_TYPE,
+            ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, "hyperspace_chest_boat"),
+            EntityType.Builder.<HyperspaceChestBoatEntity>of(HyperspaceChestBoatEntity::new, MobCategory.MISC)
+                    .sized(1.375f, 0.5625f)
+                    .eyeHeight(0.5625f)
+                    .clientTrackingRange(10)
+                    .build(CobbleSafari.MOD_ID + ":hyperspace_chest_boat")
     );
 
     public static AttributeSupplier.Builder getHikerAttributes() {

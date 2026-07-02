@@ -254,6 +254,16 @@ public class CobbleSafariClientNeoForge {
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.HYPERSPACE_WINDOW_BRICK_LARGE2, RenderType.translucent());
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.HYPERSPACE_FLAG_SMALL, RenderType.translucent());
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.HYPERSPACE_FLAG_LARGE, RenderType.translucent());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.HYPERSPACE_FLOWERS, RenderType.cutout());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.HYPERSPACE_BUSH, RenderType.cutout());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.HYPERSPACE_BUSH_FLOWERED, RenderType.cutout());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.HYPERSPACE_SCAFFOLDING_TUBE, RenderType.cutout());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.HYPERSPACE_CRATE, RenderType.cutout());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.HYPERSPACE_LEAVES, RenderType.cutoutMipped());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.HYPERSPACE_SAPLING, RenderType.cutout());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.HYPERSPACE_SAPLING_FLOWERED, RenderType.cutout());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.HYPERSPACE_WOOD_DOOR, RenderType.cutout());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.HYPERSPACE_WOOD_TRAPDOOR, RenderType.cutout());
 
             BlockEntityRenderers.register(ModBlockEntities.HOOPA_RING_PORTAL, HoopaRingPortalBlockEntityRenderer::new);
             BlockEntityRenderers.register(ModBlockEntities.DUNGEON_PORTAL, DungeonPortalBlockEntityRenderer::new);
@@ -274,9 +284,12 @@ public class CobbleSafariClientNeoForge {
             BlockEntityRenderers.register(ModBlockEntities.TELEPORT_PAD, maxigregrze.cobblesafari.client.renderer.TeleportPadBlockEntityRenderer::new);
             BlockEntityRenderers.register(ModBlockEntities.CSBOSS_MIMIC, maxigregrze.cobblesafari.client.renderer.CsBossMimicBlockEntityRenderer::new);
             BlockEntityRenderers.register(ModBlockEntities.HYPERSPACE_TRASHCAN, maxigregrze.cobblesafari.client.renderer.HyperspaceTrashcanBlockEntityRenderer::new);
+            BlockEntityRenderers.register(ModBlockEntities.HYPERSPACE_SIGN, net.minecraft.client.renderer.blockentity.SignRenderer::new);
+            BlockEntityRenderers.register(ModBlockEntities.HYPERSPACE_HANGING_SIGN, net.minecraft.client.renderer.blockentity.HangingSignRenderer::new);
         });
 
         event.enqueueWork(DonutItemClientSetup::registerItemProperties);
+        event.enqueueWork(maxigregrze.cobblesafari.client.ClientBlockHooks::init);
 
         NeoForge.EVENT_BUS.addListener(CobbleSafariClientNeoForge::onRenderGuiLayer);
         NeoForge.EVENT_BUS.addListener(CobbleSafariClientNeoForge::onItemTooltip);
@@ -294,6 +307,14 @@ public class CobbleSafariClientNeoForge {
                         ? net.minecraft.client.renderer.BiomeColors.getAverageGrassColor(level, pos)
                         : net.minecraft.world.level.GrassColor.getDefaultColor(),
                 ModBlocks.HYPERSPACE_FLOWERPOT);
+        // Foliage-tinted nature blocks (tintindex 0 only): flowers (colored layer) and bushes.
+        // The flower's untinted petal layer is tintindex 1, so leave any non-zero index untinted.
+        event.register(
+                (state, level, pos, tintIndex) -> tintIndex != 0 ? -1
+                        : (level != null && pos != null)
+                                ? net.minecraft.client.renderer.BiomeColors.getAverageFoliageColor(level, pos)
+                                : net.minecraft.world.level.FoliageColor.getDefaultColor(),
+                ModBlocks.HYPERSPACE_FLOWERS, ModBlocks.HYPERSPACE_BUSH, ModBlocks.HYPERSPACE_BUSH_FLOWERED);
     }
 
     @SubscribeEvent
@@ -301,10 +322,21 @@ public class CobbleSafariClientNeoForge {
         event.register(
                 (stack, tintIndex) -> net.minecraft.world.level.GrassColor.get(0.5D, 1.0D),
                 ModBlocks.HYPERSPACE_FLOWERPOT);
+        event.register(
+                (stack, tintIndex) -> tintIndex != 0 ? -1 : net.minecraft.world.level.FoliageColor.getDefaultColor(),
+                ModBlocks.HYPERSPACE_FLOWERS, ModBlocks.HYPERSPACE_BUSH, ModBlocks.HYPERSPACE_BUSH_FLOWERED);
+        // Dynamic skin-unlock disc: layer0 tinted to the target skin's color.
+        event.register(
+                (stack, tintIndex) -> maxigregrze.cobblesafari.item.RotomSkinUnlockItem.computeTint(stack, tintIndex),
+                maxigregrze.cobblesafari.init.ModItems.ROTOM_SKIN_UNLOCK);
     }
 
     @SubscribeEvent
     public static void onRegisterEntityRenderers(EntityRenderersEvent.RegisterRenderers event) {
+        event.registerEntityRenderer(ModEntities.HYPERSPACE_BOAT,
+                ctx -> new maxigregrze.cobblesafari.client.renderer.HyperspaceBoatRenderer(ctx, false));
+        event.registerEntityRenderer(ModEntities.HYPERSPACE_CHEST_BOAT,
+                ctx -> new maxigregrze.cobblesafari.client.renderer.HyperspaceBoatRenderer(ctx, true));
         event.registerEntityRenderer(ModEntities.HIKER, HikerEntityRenderer::new);
         event.registerEntityRenderer(ModEntities.CSTRADER_NPC, CsTraderEntityRenderer::new);
         event.registerEntityRenderer(ModEntities.BALLOON, BalloonEntityRenderer::new);

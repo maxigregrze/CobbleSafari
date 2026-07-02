@@ -1,1 +1,10 @@
-{ "parent": "cobblesafari:block/hyperspace_road_plain_stairs" }
+{
+	"parent": "cobblesafari:block/hyperspace_road_plain_stairs",
+	"display": {
+		"gui": {
+			"rotation": [30, 315, 0],
+			"translation": [0, 0, 0],
+			"scale": [0.625, 0.625, 0.625]
+		}
+	}
+}

@@ -21,6 +21,10 @@ import maxigregrze.cobblesafari.dungeon.DungeonInstanceCleanup;
 import maxigregrze.cobblesafari.dungeon.PortalSpawnConfig;
 import maxigregrze.cobblesafari.dungeon.PortalSpawnManager;
 import maxigregrze.cobblesafari.manager.SafariResetManager;
+import maxigregrze.cobblesafari.chat.ChatConversationService;
+import maxigregrze.cobblesafari.gts.GtsService;
+import maxigregrze.cobblesafari.objectives.ObjectivesManager;
+import maxigregrze.cobblesafari.wondertrade.WonderTradeService;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
@@ -109,6 +113,43 @@ public class ResetCommand {
         source.sendSuccess(() -> Component.translatable("cobblesafari.command.refresh.success"), true);
         CobbleSafari.LOGGER.info("All configs refreshed by {}", source.getTextName());
 
+        return 1;
+    }
+
+    /**
+     * Soft system reset: rerolls per-dimension objectives, advances chat conversations (without forcing
+     * timed-quest expiry), and refills Wonder Trade tickets. GTS and pool aging are left untouched.
+     */
+    static int executeSystemReset(CommandContext<CommandSourceStack> context) {
+        CommandSourceStack source = context.getSource();
+        MinecraftServer server = source.getServer();
+
+        ObjectivesManager.forceDailyReset(server);
+        ChatConversationService.onDailyReset(server, false);
+        WonderTradeService.resetDailyCreditsOnly(server);
+
+        source.sendSuccess(() -> Component.translatable("cobblesafari.command.reset.system_success"), true);
+        CobbleSafari.LOGGER.info("Soft system reset by {} (objectives + chat advance/reroll + WT tickets)",
+                source.getTextName());
+        return 1;
+    }
+
+    /**
+     * Hard system reset: full daily rollover of all four daily-reset systems, as if the day had rolled
+     * over (objectives, chat with forced timed-quest expiry, Wonder Trade, GTS).
+     */
+    static int executeSystemHardReset(CommandContext<CommandSourceStack> context) {
+        CommandSourceStack source = context.getSource();
+        MinecraftServer server = source.getServer();
+
+        ObjectivesManager.forceDailyReset(server);
+        ChatConversationService.onDailyReset(server, true);
+        WonderTradeService.runDailyReset(server);
+        GtsService.runDailyReset(server);
+
+        source.sendSuccess(() -> Component.translatable("cobblesafari.command.reset.system_hard_success"), true);
+        CobbleSafari.LOGGER.info("Hard system reset by {} (full daily rollover of all 4 systems)",
+                source.getTextName());
         return 1;
     }
 

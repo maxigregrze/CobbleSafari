@@ -3,6 +3,7 @@ package maxigregrze.cobblesafari.init;
 import maxigregrze.cobblesafari.CobbleSafari;
 import maxigregrze.cobblesafari.worldgen.PunchingBagFeature;
 import maxigregrze.cobblesafari.worldgen.DistortionStumpFeature;
+import maxigregrze.cobblesafari.worldgen.HyperspaceDecorationFeature;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
@@ -15,6 +16,7 @@ public class ModFeatures {
 
     public static Feature<NoneFeatureConfiguration> PUNCHINGBAG;
     public static Feature<NoneFeatureConfiguration> DISTORTION_STUMP;
+    public static Feature<NoneFeatureConfiguration> HYPERSPACE_DECORATION;
 
     public static void register() {
         CobbleSafari.LOGGER.info("Registering features for " + CobbleSafari.MOD_ID);
@@ -26,5 +28,9 @@ public class ModFeatures {
                 BuiltInRegistries.FEATURE,
                 ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, "distortion_stump"),
                 new DistortionStumpFeature(NoneFeatureConfiguration.CODEC));
+        HYPERSPACE_DECORATION = Registry.register(
+                BuiltInRegistries.FEATURE,
+                ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, "hyperspace_decoration"),
+                new HyperspaceDecorationFeature(NoneFeatureConfiguration.CODEC));
     }
 }

@@ -1,0 +1,6 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [ "PP" ],
+  "key": { "P": { "item": "cobblesafari:hyperspace_planks" } },
+  "result": { "id": "cobblesafari:hyperspace_wood_pressure_plate", "count": 1 }
+}

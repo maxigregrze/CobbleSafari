@@ -1,0 +1,17 @@
+{
+  "offerId": "rotom_eevee",
+  "tags": [
+    "rotom_eevee"
+  ],
+  "given": "eevee level=5 originaltrainertype=npc originaltrainer=Rotom",
+  "givenMarks": [
+    "cobblemon:ribbon_partner"
+  ],
+  "givenActiveMark": "cobblemon:ribbon_partner",
+  "wish": {
+    "species": "pikachu",
+    "levelBucket": 1,
+    "gender": "any",
+    "shiny": "any"
+  }
+}

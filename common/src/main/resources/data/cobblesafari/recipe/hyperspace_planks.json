@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "tag": "cobblesafari:hyperspace_logs"
+    }
+  ],
+  "result": {
+    "id": "cobblesafari:hyperspace_planks",
+    "count": 2
+  }
+}

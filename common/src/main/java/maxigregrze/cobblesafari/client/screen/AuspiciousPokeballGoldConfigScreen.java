@@ -174,10 +174,10 @@ public class AuspiciousPokeballGoldConfigScreen extends CobbleSafariConfigScreen
 
         drawEarnersPreview(guiGraphics);
 
-        drawFieldLabel(guiGraphics, this.poolBerryBox, "gui.cobblesafari.auspicious_pokeball.hint.pool_berry");
-        drawFieldLabel(guiGraphics, this.poolCandyBox, "gui.cobblesafari.auspicious_pokeball.hint.pool_candy");
-        drawFieldLabel(guiGraphics, this.poolBallsBox, "gui.cobblesafari.auspicious_pokeball.hint.pool_balls");
-        drawFieldLabel(guiGraphics, this.poolTreasuresBox, "gui.cobblesafari.auspicious_pokeball.hint.pool_treasures");
+        drawFieldLabel(guiGraphics, this.poolBerryBox, "gui.cobblesafari.auspiciouspokeball_gold.hint.pool_berry");
+        drawFieldLabel(guiGraphics, this.poolCandyBox, "gui.cobblesafari.auspiciouspokeball_gold.hint.pool_candy");
+        drawFieldLabel(guiGraphics, this.poolBallsBox, "gui.cobblesafari.auspiciouspokeball_gold.hint.pool_balls");
+        drawFieldLabel(guiGraphics, this.poolTreasuresBox, "gui.cobblesafari.auspiciouspokeball_gold.hint.pool_treasures");
         drawFieldLabel(guiGraphics, this.minRollBox, "gui.cobblesafari.auspicious_pokeball.hint.min_roll");
         drawFieldLabel(guiGraphics, this.maxRollBox, "gui.cobblesafari.auspicious_pokeball.hint.max_roll");
     }

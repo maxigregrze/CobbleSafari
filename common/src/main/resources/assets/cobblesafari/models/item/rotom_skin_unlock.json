@@ -1,0 +1,7 @@
+{
+	"parent": "minecraft:item/generated",
+	"textures": {
+		"layer0": "cobblesafari:item/rotom_skin_unlock",
+		"layer1": "cobblesafari:item/rotom_skin_unlock_overlay"
+	}
+}

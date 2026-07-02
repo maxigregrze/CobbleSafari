@@ -64,6 +64,12 @@ public class CobbleSafariFabric implements ModInitializer {
     public void onInitialize() {
         CobbleSafari.init();
 
+        // Register the Hyperspace wood type into WoodType.TYPES (access-widened on Fabric) so the
+        // sign model layers, renderers and atlas materials are built for it. Vanilla iterates
+        // WoodType.values() to wire all three; NeoForge does this in its own setup.
+        net.minecraft.world.level.block.state.properties.WoodType.register(
+                maxigregrze.cobblesafari.init.ModWoodTypes.HYPERSPACE);
+
         registerMenuType();
         registerEntityAttributes();
         registerNetworking();
@@ -479,6 +485,11 @@ public class CobbleSafariFabric implements ModInitializer {
             InteractionResult cauldronResult = maxigregrze.cobblesafari.safari.MudBallCauldronHandler.onUseBlock(player, world, hand, hitResult);
             if (cauldronResult != InteractionResult.PASS) {
                 return cauldronResult;
+            }
+            InteractionResult stripResult = maxigregrze.cobblesafari.block.hyperspace.HyperspaceLogStripping.tryStrip(
+                    player, world, hand, hitResult.getBlockPos());
+            if (stripResult != InteractionResult.PASS) {
+                return stripResult;
             }
             return DimensionalBanEventHandler.onUseBlock(player, world, hand, hitResult);
         });

@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/door_bottom_left",
+  "textures": {
+    "bottom": "cobblesafari:block/hyperspace_door_bottom",
+    "top": "cobblesafari:block/hyperspace_door_top"
+  }
+}

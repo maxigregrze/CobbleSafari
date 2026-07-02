@@ -1,0 +1,4 @@
+{
+  "parent": "minecraft:block/pressure_plate_up",
+  "textures": { "texture": "cobblesafari:block/hyperspace_planks" }
+}

@@ -26,10 +26,13 @@ import maxigregrze.cobblesafari.block.csboss.CsBossMimicBlockEntity;
 import maxigregrze.cobblesafari.block.balm.BalmDispenserBlockEntity;
 import maxigregrze.cobblesafari.block.teleporter.TeleportPadBlockEntity;
 import maxigregrze.cobblesafari.block.hyperspace.HyperspaceTrashcanBlockEntity;
+import maxigregrze.cobblesafari.block.hyperspace.HyperspaceHangingSignBlockEntity;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.entity.HangingSignBlockEntity;
+import net.minecraft.world.level.block.entity.SignBlockEntity;
 
 public class ModBlockEntities {
 
@@ -60,6 +63,8 @@ public class ModBlockEntities {
     public static BlockEntityType<TrapBlockEntity> TRAP;
     public static BlockEntityType<TeleportPadBlockEntity> TELEPORT_PAD;
     public static BlockEntityType<HyperspaceTrashcanBlockEntity> HYPERSPACE_TRASHCAN;
+    public static BlockEntityType<SignBlockEntity> HYPERSPACE_SIGN;
+    public static BlockEntityType<HangingSignBlockEntity> HYPERSPACE_HANGING_SIGN;
 
     public static void register() {
         CobbleSafari.LOGGER.info("Registering block entities for " + CobbleSafari.MOD_ID);
@@ -235,6 +240,22 @@ public class ModBlockEntities {
                 BuiltInRegistries.BLOCK_ENTITY_TYPE,
                 ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, "hyperspace_trashcan"),
                 BlockEntityType.Builder.of(HyperspaceTrashcanBlockEntity::new, ModBlocks.HYPERSPACE_TRASHCAN).build(null)
+        );
+
+        HYPERSPACE_SIGN = Registry.register(
+                BuiltInRegistries.BLOCK_ENTITY_TYPE,
+                ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, "hyperspace_sign"),
+                BlockEntityType.Builder.<SignBlockEntity>of(
+                        (pos, state) -> new SignBlockEntity(HYPERSPACE_SIGN, pos, state),
+                        ModBlocks.HYPERSPACE_SIGN, ModBlocks.HYPERSPACE_WALL_SIGN).build(null)
+        );
+
+        HYPERSPACE_HANGING_SIGN = Registry.register(
+                BuiltInRegistries.BLOCK_ENTITY_TYPE,
+                ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, "hyperspace_hanging_sign"),
+                BlockEntityType.Builder.<HangingSignBlockEntity>of(
+                        HyperspaceHangingSignBlockEntity::new,
+                        ModBlocks.HYPERSPACE_HANGING_SIGN, ModBlocks.HYPERSPACE_WALL_HANGING_SIGN).build(null)
         );
     }
 }

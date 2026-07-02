@@ -285,7 +285,8 @@ public class RotomPhoneUnionScreen extends RotomPhoneBaseScreen {
         long elapsed = System.currentTimeMillis() - openedAt;
         long cycleTicks = (elapsed / 50) % 20;
         if (cycleTicks < 10) {
-            g.blit(TEX_ERROR, originX + 228, originY + 64, 0, 0, 120, 120, 120, 120);
+            // Centered in the phone's main area ((348-120)/2, (184-120)/2), matching RotomPhoneErrorScreen.
+            g.blit(TEX_ERROR, originX + 114, originY + 32, 0, 0, 120, 120, 120, 120);
         }
     }
 

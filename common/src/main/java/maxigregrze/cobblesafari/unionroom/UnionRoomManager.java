@@ -43,6 +43,13 @@ public final class UnionRoomManager {
 
     private static final String ERR_DIMENSION_NOT_FOUND = "cobblesafari.unionroom.error.dimension_not_found";
     private static final String CODE_DIGIT_PREFIX = "cobblesafari.unionroom.code.";
+    private static final ResourceLocation UNOWN_FONT =
+            ResourceLocation.fromNamespaceAndPath("cobblesafari", "unown");
+
+    private static Component codeDigit(int digit) {
+        return Component.translatable(CODE_DIGIT_PREFIX + digit)
+                .withStyle(s -> s.withFont(UNOWN_FONT));
+    }
 
     public enum CreateResult {
         OK,
@@ -413,10 +420,10 @@ public final class UnionRoomManager {
         data.getSessionByInstanceId(instanceId).ifPresentOrElse(session -> {
             player.sendSystemMessage(Component.translatable("cobblesafari.unionroom.code.header"));
             player.sendSystemMessage(Component.translatable("cobblesafari.unionroom.code.display",
-                    Component.translatable(CODE_DIGIT_PREFIX + session.code[0]),
-                    Component.translatable(CODE_DIGIT_PREFIX + session.code[1]),
-                    Component.translatable(CODE_DIGIT_PREFIX + session.code[2]),
-                    Component.translatable(CODE_DIGIT_PREFIX + session.code[3])));
+                    codeDigit(session.code[0]),
+                    codeDigit(session.code[1]),
+                    codeDigit(session.code[2]),
+                    codeDigit(session.code[3])));
             player.sendSystemMessage(Component.translatable("cobblesafari.unionroom.code.exit_hint"));
         }, () -> player.sendSystemMessage(Component.translatable("cobblesafari.unionroom.error.invalid_code")));
     }
@@ -805,9 +812,9 @@ public final class UnionRoomManager {
         player.sendSystemMessage(Component.translatable("cobblesafari.unionroom.created"));
         player.sendSystemMessage(Component.translatable("cobblesafari.unionroom.code.header"));
         player.sendSystemMessage(Component.translatable("cobblesafari.unionroom.code.display",
-                Component.translatable(CODE_DIGIT_PREFIX + code[0]),
-                Component.translatable(CODE_DIGIT_PREFIX + code[1]),
-                Component.translatable(CODE_DIGIT_PREFIX + code[2]),
-                Component.translatable(CODE_DIGIT_PREFIX + code[3])));
+                codeDigit(code[0]),
+                codeDigit(code[1]),
+                codeDigit(code[2]),
+                codeDigit(code[3])));
     }
 }

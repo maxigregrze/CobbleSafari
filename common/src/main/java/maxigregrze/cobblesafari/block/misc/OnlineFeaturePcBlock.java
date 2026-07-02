@@ -1,10 +1,6 @@
 package maxigregrze.cobblesafari.block.misc;
 
 import com.mojang.serialization.MapCodec;
-import maxigregrze.cobblesafari.client.screen.rotomphone.RotomPhoneGTSScreen;
-import maxigregrze.cobblesafari.client.screen.rotomphone.RotomPhoneUnionScreen;
-import maxigregrze.cobblesafari.client.screen.rotomphone.RotomPhoneWonderScreen;
-import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionResult;
@@ -39,6 +35,14 @@ public class OnlineFeaturePcBlock extends HorizontalDirectionalBlock {
     }
 
     public static final MapCodec<OnlineFeaturePcBlock> CODEC = simpleCodec(OnlineFeaturePcBlock::new);
+
+    /**
+     * Client-only screen opener for the online-feature PC apps. Injected by the client at init
+     * (see {@code ClientBlockHooks}); {@code null} on a dedicated server. Kept as a plain JDK
+     * functional type so this common class carries no client-class references (a direct
+     * {@code Minecraft}/screen reference would fail verification and crash a dedicated server).
+     */
+    public static java.util.function.Consumer<Kind> screenOpener;
 
     private static final VoxelShape LOWER_SHAPE = Block.box(0, 0, 0, 16, 16, 16);
     /** Upper-half model in default north orientation (non-negative model Y), union of main cuboids from online_feature_pc_top. */
@@ -188,20 +192,12 @@ public class OnlineFeaturePcBlock extends HorizontalDirectionalBlock {
             return InteractionResult.PASS;
         }
         if (level.isClientSide()) {
-            openAppScreen(kind);
+            if (screenOpener != null) {
+                screenOpener.accept(kind);
+            }
             return InteractionResult.SUCCESS;
         }
         return InteractionResult.CONSUME;
-    }
-
-    private static void openAppScreen(Kind kind) {
-        Minecraft mc = Minecraft.getInstance();
-        switch (kind) {
-            case UNION -> mc.setScreen(RotomPhoneUnionScreen.forOnlinePc());
-            case GTS -> mc.setScreen(RotomPhoneGTSScreen.forOnlinePc());
-            case WONDER -> mc.setScreen(RotomPhoneWonderScreen.forOnlinePc());
-            default -> { /* no screen for other kinds */ }
-        }
     }
 
     public static boolean isOnlineFeaturePc(Block block) {

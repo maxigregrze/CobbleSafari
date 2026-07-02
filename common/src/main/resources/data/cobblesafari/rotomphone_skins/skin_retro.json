@@ -5,5 +5,6 @@
   "color": "ceff44",
   "unlockedFromStart": false,
   "hasShinyVariant": false,
-  "unlockingAdvancement": "story/mine_stone"
+  "unlockingAdvancement": "",
+  "addUnlockItem": true
 }

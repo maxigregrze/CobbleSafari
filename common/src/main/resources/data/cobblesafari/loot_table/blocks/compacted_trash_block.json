@@ -43,7 +43,7 @@
         },
         {
           "type": "minecraft:item",
-          "name": "minecraft:iron_ingot",
+          "name": "minecraft:iron_nugget",
           "weight": 40,
           "conditions": [
             {
@@ -63,7 +63,7 @@
         },
         {
           "type": "minecraft:item",
-          "name": "minecraft:gold_ingot",
+          "name": "minecraft:gold_nugget",
           "weight": 30,
           "conditions": [
             {

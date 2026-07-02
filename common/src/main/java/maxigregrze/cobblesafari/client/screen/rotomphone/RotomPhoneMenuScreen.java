@@ -23,8 +23,8 @@ public class RotomPhoneMenuScreen extends RotomPhoneBaseScreen {
     };
 
     private static final String[] APP_IDS = {
-            "chatApp", "gtsApp", "unionApp", "wonderApp",
-            "itemFinderApp", "skinApp", "settingsApp"
+            "chatApp", "gtsApp", "wonderApp", "unionApp",
+            "skinApp", "settingsApp"
     };
 
     private final List<String> visibleApps = new ArrayList<>();
@@ -44,10 +44,9 @@ public class RotomPhoneMenuScreen extends RotomPhoneBaseScreen {
             for (RotomPhoneConfigSyncPayload.AppData a : cachedApps) {
                 if (a.name().equals(appId)) { appData = a; break; }
             }
-            if (appData == null || !appData.enabled()) continue;
-            // Locked apps (unlocking advancement not yet completed) stay hidden until earned
-            // through the Safari questline. The unlock flag is computed server-side per player.
-            if (!appData.unlockedForPlayer()) continue;
+            // An app is visible when it is enabled by default or has been unlocked for this player
+            // (consumable item / chat questline step / admin command). Computed server-side.
+            if (appData == null || !appData.unlockedForPlayer()) continue;
             visibleApps.add(appId);
         }
     }
@@ -123,7 +122,6 @@ public class RotomPhoneMenuScreen extends RotomPhoneBaseScreen {
                     new RotomPhoneGTSScreen(rotomName, shinyStatus, currentSkin, safetyMode, rotoGlide));
             case "unionApp" -> this.minecraft.setScreen(new RotomPhoneUnionScreen(rotomName, shinyStatus, currentSkin, safetyMode, rotoGlide));
             case "wonderApp" -> this.minecraft.setScreen(new RotomPhoneWonderScreen(rotomName, shinyStatus, currentSkin, safetyMode, rotoGlide));
-            case "itemFinderApp" -> this.minecraft.setScreen(new RotomPhoneItemFinderScreen(rotomName, shinyStatus, currentSkin, safetyMode, rotoGlide));
             case "skinApp" -> this.minecraft.setScreen(new RotomPhoneSkinScreen(rotomName, shinyStatus, currentSkin, safetyMode, rotoGlide));
             case "settingsApp" -> this.minecraft.setScreen(new RotomPhoneSettingsScreen(rotomName, shinyStatus, currentSkin, safetyMode, rotoGlide));
             default -> { /* unknown app id: do nothing */ }

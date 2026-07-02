@@ -3,7 +3,10 @@
   "displayName": "Brown",
   "hasCustomScreen": false,
   "color": "7affff",
-  "unlockedFromStart": true,
+  "unlockedFromStart": false,
   "hasShinyVariant": false,
-  "unlockingAdvancement": ""
+  "unlockingAdvancement": "",
+  "tags": [
+    "color"
+  ]
 }

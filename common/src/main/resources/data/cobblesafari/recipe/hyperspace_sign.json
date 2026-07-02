@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [ "###", "###", " X " ],
+  "key": {
+    "#": { "item": "cobblesafari:hyperspace_planks" },
+    "X": { "item": "minecraft:stick" }
+  },
+  "result": { "id": "cobblesafari:hyperspace_sign", "count": 3 }
+}

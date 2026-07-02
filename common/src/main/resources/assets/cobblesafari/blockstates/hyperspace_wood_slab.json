@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "type=bottom": { "model": "cobblesafari:block/hyperspace_wood_slab" },
+    "type=double": { "model": "cobblesafari:block/hyperspace_planks" },
+    "type=top":    { "model": "cobblesafari:block/hyperspace_wood_slab_top" }
+  }
+}

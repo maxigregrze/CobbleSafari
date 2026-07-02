@@ -9,7 +9,9 @@ import maxigregrze.cobblesafari.item.CreativeFlagItem;
 import maxigregrze.cobblesafari.item.IncenseItem;
 import maxigregrze.cobblesafari.item.LuckyMiningHelmetItem;
 import maxigregrze.cobblesafari.item.MudBallItem;
+import maxigregrze.cobblesafari.item.RotomAppUnlockItem;
 import maxigregrze.cobblesafari.item.RotomPhoneItem;
+import maxigregrze.cobblesafari.item.RotomSkinUnlockItem;
 import maxigregrze.cobblesafari.item.TinkhammerItem;
 import maxigregrze.cobblesafari.item.WonderTradeTicketItem;
 import com.cobblemon.mod.common.api.pokemon.stats.Stats;
@@ -67,6 +69,12 @@ public class ModItems {
     public static final Item WILD_EGG_BASE = new Item(new Item.Properties());
     public static final Map<String, Item> WILD_EGGS = new LinkedHashMap<>();
 
+    // Hyperspace boats (plan 140 § 16). stacksTo(1), like vanilla boats.
+    public static final Item HYPERSPACE_BOAT = new maxigregrze.cobblesafari.item.HyperspaceBoatItem(
+            maxigregrze.cobblesafari.entity.HyperspaceBoatEntity::new, new Item.Properties().stacksTo(1));
+    public static final Item HYPERSPACE_CHEST_BOAT = new maxigregrze.cobblesafari.item.HyperspaceBoatItem(
+            maxigregrze.cobblesafari.entity.HyperspaceChestBoatEntity::new, new Item.Properties().stacksTo(1));
+
     public static final Item AURORA_DIAL = new Item(new Item.Properties());
     public static final Item BLOOD_DIAL = new Item(new Item.Properties());
     public static final Item BLUE_DIAL = new Item(new Item.Properties());
@@ -118,6 +126,25 @@ public class ModItems {
 
     public static final Item ROTOM_PHONE = new RotomPhoneItem(new Item.Properties().stacksTo(1).rarity(Rarity.EPIC));
 
+    // Rotie Earpiece — accessory variant of the Rotom Phone (worn in the Accessories "hat" slot).
+    // Both items are always registered; recipe + creative-tab visibility are gated on Accessories.
+    public static final Item EMPTY_EARPIECE = new maxigregrze.cobblesafari.item.EmptyEarpieceItem(
+            new Item.Properties().stacksTo(16));
+    public static final Item ROTOM_EARPIECE = new maxigregrze.cobblesafari.item.RotomEarpieceItem(
+            new Item.Properties().stacksTo(1).rarity(Rarity.EPIC));
+
+    // Rotom Phone app-unlock consumables (target app set at registration; "*" = every non-default app).
+    public static final Item ROTOM_APP_UNLOCK_GTS = new RotomAppUnlockItem(new Item.Properties().stacksTo(16), "gtsApp");
+    public static final Item ROTOM_APP_UNLOCK_WONDER = new RotomAppUnlockItem(new Item.Properties().stacksTo(16), "wonderApp");
+    public static final Item ROTOM_APP_UNLOCK_UNION = new RotomAppUnlockItem(new Item.Properties().stacksTo(16), "unionApp");
+    public static final Item ROTOM_APP_UNLOCK_SKIN = new RotomAppUnlockItem(new Item.Properties().stacksTo(16), "skinApp");
+    public static final Item ROTOM_APP_UNLOCK_ALL = new RotomAppUnlockItem(
+            new Item.Properties().stacksTo(16).rarity(Rarity.RARE), RotomAppUnlockItem.ALL);
+    // Dynamic skin-unlock disc: target skin id carried per-stack in the SKIN_UNLOCK_TARGET component.
+    public static final Item ROTOM_SKIN_UNLOCK = new RotomSkinUnlockItem(new Item.Properties().stacksTo(16), null);
+    public static final Item ROTOM_SKIN_UNLOCK_ALL = new RotomSkinUnlockItem(
+            new Item.Properties().stacksTo(16).rarity(Rarity.RARE), RotomSkinUnlockItem.ALL);
+
     public static final Item MUD_BALL = new MudBallItem(new Item.Properties().stacksTo(64));
     public static final Item TINKAGEAR = new Item(new Item.Properties());
     public static final Item TINKHAMMER = new TinkhammerItem(
@@ -126,12 +153,12 @@ public class ModItems {
     public static final Item BALM = new BalmItem(new Item.Properties().stacksTo(16));
     public static final Item BALM_DISTORTION = new BalmItem(new Item.Properties().stacksTo(16));
 
-    public static final Item REDCHAIN_RANDOM_BALL = new RedChainRandomBallItem(new Item.Properties().stacksTo(1), "redchain_random_ball");
-    public static final Item REDCHAIN_RANDOM_EV = new RedChainRandomEVItem(new Item.Properties().stacksTo(1), "redchain_random_ev");
-    public static final Item REDCHAIN_RANDOM_GENDER = new RedChainRandomGenderItem(new Item.Properties().stacksTo(1), "redchain_random_gender");
-    public static final Item REDCHAIN_RANDOM_IV = new RedChainRandomIVItem(new Item.Properties().stacksTo(1), "redchain_random_iv");
-    public static final Item REDCHAIN_RANDOM_LEVEL = new RedChainRandomLevelItem(new Item.Properties().stacksTo(1), "redchain_random_level");
-    public static final Item REDCHAIN_RANDOM_SHINY = new RedChainRandomShinyItem(new Item.Properties().stacksTo(1), "redchain_random_shiny");
+    public static final Item REDCHAIN_RANDOM_BALL = new RedChainRandomBallItem(new Item.Properties().stacksTo(16), "redchain_random_ball");
+    public static final Item REDCHAIN_RANDOM_EV = new RedChainRandomEVItem(new Item.Properties().stacksTo(16), "redchain_random_ev");
+    public static final Item REDCHAIN_RANDOM_GENDER = new RedChainRandomGenderItem(new Item.Properties().stacksTo(16), "redchain_random_gender");
+    public static final Item REDCHAIN_RANDOM_IV = new RedChainRandomIVItem(new Item.Properties().stacksTo(16), "redchain_random_iv");
+    public static final Item REDCHAIN_RANDOM_LEVEL = new RedChainRandomLevelItem(new Item.Properties().stacksTo(16), "redchain_random_level");
+    public static final Item REDCHAIN_RANDOM_SHINY = new RedChainRandomShinyItem(new Item.Properties().stacksTo(16), "redchain_random_shiny");
     public static final Item REDCHAIN_FRAGMENT = new RedChainFragmentItem(new Item.Properties().stacksTo(64));
     public static final Item RED_CHAIN_CORE = new RedChainCoreItem(new Item.Properties().stacksTo(64));
     public static final Item RED_CHAIN = new RedChainItem(new Item.Properties().stacksTo(16));
@@ -227,6 +254,9 @@ public class ModItems {
         PERFUME_ULTRARARE = new IncenseItem(new Item.Properties().stacksTo(16),
                 ModEffects.ULTRA_RARE_BOOST.holder, SpawnBoostConfig.data.durationSettings.ultraRareBoostDuration);
 
+        registerItem("hyperspace_boat", HYPERSPACE_BOAT);
+        registerItem("hyperspace_chest_boat", HYPERSPACE_CHEST_BOAT);
+
         registerItem("wildegg", WILD_EGG_BASE);
 
         for (Map.Entry<String, Item> entry : WILD_EGGS.entrySet()) {
@@ -285,6 +315,15 @@ public class ModItems {
         registerItem("egg_creative", EGG_CREATIVE);
 
         registerItem("rotomphone", ROTOM_PHONE);
+        registerItem("emptyearpiece", EMPTY_EARPIECE);
+        registerItem("rotom_earpiece", ROTOM_EARPIECE);
+        registerItem("rotom_app_unlock_gts", ROTOM_APP_UNLOCK_GTS);
+        registerItem("rotom_app_unlock_wonder", ROTOM_APP_UNLOCK_WONDER);
+        registerItem("rotom_app_unlock_union", ROTOM_APP_UNLOCK_UNION);
+        registerItem("rotom_app_unlock_skin", ROTOM_APP_UNLOCK_SKIN);
+        registerItem("rotom_app_unlock_all", ROTOM_APP_UNLOCK_ALL);
+        registerItem("rotom_skin_unlock", ROTOM_SKIN_UNLOCK);
+        registerItem("rotom_skin_unlock_all", ROTOM_SKIN_UNLOCK_ALL);
 
         registerItem("mud_ball", MUD_BALL);
         registerItem("tinkagear", TINKAGEAR);

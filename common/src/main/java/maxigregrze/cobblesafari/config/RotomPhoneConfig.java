@@ -24,7 +24,6 @@ public class RotomPhoneConfig {
 
     private static RotomPhoneConfig INSTANCE;
 
-    private static final String ADV_STORY_ROOT = "story/root";
     private static final String DIM_DUNGEON_UNDERGROUND = "cobblesafari:dungeon_underground";
     private static final String DIM_DUNGEON_DISTORTION = "cobblesafari:dungeon_distortion";
     private static final String APP_UNION = "unionApp";
@@ -32,7 +31,7 @@ public class RotomPhoneConfig {
     private static final String APP_GTS = "gtsApp";
 
     @SerializedName("CONFIG_VERSION")
-    private int configVersion = 1;
+    private int configVersion = 2;
     private Map<String, PhoneAppConfig> phoneApps = createDefaultApps();
     private boolean allowsShinyPhone = true;
 
@@ -70,19 +69,26 @@ public class RotomPhoneConfig {
         }
     }
 
+    /** The Item Finder app was removed; drop any leftover entry from an older config. */
+    private void migrateRemoveItemFinder() {
+        if (phoneApps != null) {
+            phoneApps.remove("itemFinderApp");
+        }
+    }
+
     private static Map<String, PhoneAppConfig> createDefaultApps() {
+        // Only the Chat app is visible by default; the others are unlocked through the "rotom" chat
+        // questline (or a consumable disc / admin command). See chat_conversation/rotom.json.
         Map<String, PhoneAppConfig> apps = new LinkedHashMap<>();
-        apps.put("chatApp", new PhoneAppConfig(true, true, ADV_STORY_ROOT, new ArrayList<>()));
-        apps.put(APP_GTS, new PhoneAppConfig(true, true, ADV_STORY_ROOT, List.of(
+        apps.put("chatApp", new PhoneAppConfig(true, new ArrayList<>()));
+        apps.put(APP_GTS, new PhoneAppConfig(true, List.of(
                 DIM_DUNGEON_UNDERGROUND, DIM_DUNGEON_DISTORTION)));
-        apps.put(APP_UNION, new PhoneAppConfig(true, true, ADV_STORY_ROOT, List.of(
+        apps.put(APP_WONDER, new PhoneAppConfig(true, List.of(
                 DIM_DUNGEON_UNDERGROUND, DIM_DUNGEON_DISTORTION)));
-        apps.put(APP_WONDER, new PhoneAppConfig(true, true, ADV_STORY_ROOT, List.of(
+        apps.put(APP_UNION, new PhoneAppConfig(true, List.of(
                 DIM_DUNGEON_UNDERGROUND, DIM_DUNGEON_DISTORTION)));
-        apps.put("itemFinderApp", new PhoneAppConfig(false, false, ADV_STORY_ROOT, List.of(
-                DIM_DUNGEON_UNDERGROUND, DIM_DUNGEON_DISTORTION)));
-        apps.put("skinApp", new PhoneAppConfig(true, true, ADV_STORY_ROOT, new ArrayList<>()));
-        apps.put("settingsApp", new PhoneAppConfig(true, true, ADV_STORY_ROOT, new ArrayList<>()));
+        apps.put("skinApp", new PhoneAppConfig(true, new ArrayList<>()));
+        apps.put("settingsApp", new PhoneAppConfig(true, new ArrayList<>()));
         return apps;
     }
 
@@ -96,6 +102,8 @@ public class RotomPhoneConfig {
                 INSTANCE.migrateHealToUnion();
                 INSTANCE.migratePortalToWonder();
                 INSTANCE.migratePcToGts();
+                INSTANCE.migrateRemoveItemFinder();
+                INSTANCE.configVersion = 2;
                 CobbleSafari.LOGGER.info("Rotom phone config loaded from {}", CONFIG_PATH);
                 save();
             } catch (IOException e) {
@@ -131,7 +139,7 @@ public class RotomPhoneConfig {
 
     public static PhoneAppConfig getAppConfig(String appName) {
         Map<String, PhoneAppConfig> apps = getPhoneApps();
-        return apps.getOrDefault(appName, new PhoneAppConfig(false, false, "", new ArrayList<>()));
+        return apps.getOrDefault(appName, new PhoneAppConfig(false, new ArrayList<>()));
     }
 
     public static boolean isAllowsShinyPhone() {
@@ -140,34 +148,30 @@ public class RotomPhoneConfig {
     }
 
     public static int getConfigVersion() {
-        if (INSTANCE == null) return 1;
+        if (INSTANCE == null) return 2;
         return INSTANCE.configVersion;
     }
 
+    /**
+     * Per-app config. {@code enabledByDefault} is the single visibility switch: {@code true} means the
+     * app is shown to every player immediately; {@code false} means it stays hidden until the player
+     * unlocks it (consumable item, chat questline step, or admin command).
+     */
     public static class PhoneAppConfig {
-        boolean enabled;
-        boolean unlockedByDefault;
-        String unlockingAdvancement;
+        boolean enabledByDefault;
         List<String> bannedDimensions;
 
         public PhoneAppConfig() {
-            this.enabled = true;
-            this.unlockedByDefault = false;
-            this.unlockingAdvancement = ADV_STORY_ROOT;
+            this.enabledByDefault = true;
             this.bannedDimensions = new ArrayList<>();
         }
 
-        public PhoneAppConfig(boolean enabled, boolean unlockedByDefault,
-                              String unlockingAdvancement, List<String> bannedDimensions) {
-            this.enabled = enabled;
-            this.unlockedByDefault = unlockedByDefault;
-            this.unlockingAdvancement = unlockingAdvancement;
+        public PhoneAppConfig(boolean enabledByDefault, List<String> bannedDimensions) {
+            this.enabledByDefault = enabledByDefault;
             this.bannedDimensions = bannedDimensions;
         }
 
-        public boolean isEnabled() { return enabled; }
-        public boolean isUnlockedByDefault() { return unlockedByDefault; }
-        public String getUnlockingAdvancement() { return unlockingAdvancement; }
+        public boolean isEnabledByDefault() { return enabledByDefault; }
         public List<String> getBannedDimensions() {
             return bannedDimensions != null ? bannedDimensions : new ArrayList<>();
         }

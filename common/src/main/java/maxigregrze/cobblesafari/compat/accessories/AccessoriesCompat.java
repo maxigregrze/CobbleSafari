@@ -20,7 +20,13 @@ public class AccessoriesCompat {
 
     public static void registerAccessoryItem() {
         AccessoriesAPI.registerAccessory(ModItems.ROTOM_PHONE, new RotomPhoneAccessory());
-        CobbleSafari.LOGGER.info("Registered Rotom Phone accessory");
+        AccessoriesAPI.registerAccessory(ModItems.ROTOM_EARPIECE, new RotomEarpieceAccessory());
+        CobbleSafari.LOGGER.info("Registered Rotom Phone + Rotie Earpiece accessories");
+    }
+
+    /** True for either wearable Rotom device (phone in {@code rotomphone_slot} or earpiece in {@code hat}). */
+    private static boolean isPhoneOrEarpiece(ItemStack stack) {
+        return stack.is(ModItems.ROTOM_PHONE) || stack.is(ModItems.ROTOM_EARPIECE);
     }
 
     public static boolean hasPhoneInSlot(Player player) {
@@ -82,7 +88,7 @@ public class AccessoriesCompat {
         var stacks = container.getAccessories();
         for (int i = 0; i < stacks.getContainerSize(); i++) {
             ItemStack stack = stacks.getItem(i);
-            if (stack.is(ModItems.ROTOM_PHONE)) {
+            if (isPhoneOrEarpiece(stack)) {
                 return stack;
             }
         }

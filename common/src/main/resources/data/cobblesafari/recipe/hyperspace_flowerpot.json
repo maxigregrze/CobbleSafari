@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "S S",
+    "SGS",
+    "SSS"
+  ],
+  "key": {
+    "S": { "item": "cobblesafari:hyperspace_wood_slab" },
+    "G": { "item": "minecraft:grass_block" }
+  },
+  "result": {
+    "id": "cobblesafari:hyperspace_flowerpot",
+    "count": 1
+  }
+}

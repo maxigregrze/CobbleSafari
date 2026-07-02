@@ -2,9 +2,9 @@
 	"parent": "cobblesafari:block/hyperspace_ladder",
 	"display": {
 		"gui": {
-			"rotation": [0, 180, 0],
+			"rotation": [0, 0, 0],
 			"translation": [0, 0, 0],
-			"scale": [0.625, 0.625, 0.625]
+			"scale": [0.875, 0.875, 0.875]
 		},
 		"ground": {
 			"rotation": [0, 0, 0],

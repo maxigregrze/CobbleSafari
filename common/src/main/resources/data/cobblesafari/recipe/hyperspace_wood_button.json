@@ -1,0 +1,5 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [ { "item": "cobblesafari:hyperspace_planks" } ],
+  "result": { "id": "cobblesafari:hyperspace_wood_button", "count": 1 }
+}

@@ -1,0 +1,7 @@
+{
+    "type": "minecraft:crafting_shaped",
+    "category": "building",
+    "pattern": [ "#  ", "## ", "###" ],
+    "key": { "#": { "item": "cobblesafari:underground_hardstone" } },
+    "result": { "id": "cobblesafari:underground_hardstone_stairs", "count": 4 }
+}

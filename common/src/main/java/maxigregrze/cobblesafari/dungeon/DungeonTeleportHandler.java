@@ -21,6 +21,7 @@ import net.minecraft.server.level.TicketType;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.levelgen.structure.BoundingBox;
 import net.minecraft.world.level.portal.DimensionTransition;
 import net.minecraft.world.phys.Vec3;
 
@@ -389,6 +390,8 @@ public class DungeonTeleportHandler {
         boolean isFirstPortalUse;
         DungeonConfig config;
         ServerLevel dungeonLevel;
+        /** Real footprint of the placed structure (V3); null falls back to the zoneSize radius. */
+        BoundingBox structureBounds;
 
         GenerationState(DungeonConfig config, ServerLevel dungeonLevel, boolean isFirstPortalUse) {
             this.config = config;
@@ -476,11 +479,26 @@ public class DungeonTeleportHandler {
 
         boolean placed;
         if (state.config.isJigsaw()) {
-            placed = StructurePlacer.placeJigsawStructure(state.dungeonLevel, state.structurePos, 
+            placed = StructurePlacer.placeJigsawStructure(state.dungeonLevel, state.structurePos,
                     state.config.getStructureId(), state.config.getJigsawDepth());
+            if (placed) {
+                // V3: real assembled extent, captured by JigsawPlacementMixin during /place jigsaw.
+                state.structureBounds = DungeonStructureBounds.consume(state.structurePos);
+            }
         } else {
-            placed = StructurePlacer.placeStructure(state.dungeonLevel, state.structurePos, 
+            placed = StructurePlacer.placeStructure(state.dungeonLevel, state.structurePos,
                     state.config.getStructureId());
+            if (placed) {
+                // V3: template placed with no rotation/mirror -> exact extent [pos, pos+size).
+                BlockPos size = StructurePlacer.getStructureSize(state.dungeonLevel, state.config.getStructureId());
+                if (size != null && !size.equals(BlockPos.ZERO)) {
+                    state.structureBounds = new BoundingBox(
+                            state.structurePos.getX(), state.structurePos.getY(), state.structurePos.getZ(),
+                            state.structurePos.getX() + size.getX() - 1,
+                            state.structurePos.getY() + size.getY() - 1,
+                            state.structurePos.getZ() + size.getZ() - 1);
+                }
+            }
         }
 
         if (!placed) {
@@ -557,11 +575,27 @@ public class DungeonTeleportHandler {
             portalEntity.setDungeonStructurePos(state.structurePos);
             portalEntity.setDungeonExitPortalPos(state.exitPortalPos);
 
-            int regionRadius = state.config.getZoneSize() / 2 - 1;
-            int chunkMinX = (state.structurePos.getX() - regionRadius) >> 4;
-            int chunkMinZ = (state.structurePos.getZ() - regionRadius) >> 4;
-            int chunkMaxX = (state.structurePos.getX() + regionRadius) >> 4;
-            int chunkMaxZ = (state.structurePos.getZ() + regionRadius) >> 4;
+            int chunkMinX;
+            int chunkMinZ;
+            int chunkMaxX;
+            int chunkMaxZ;
+            BoundingBox bounds = state.structureBounds;
+            if (bounds != null) {
+                // V3: clear exactly the structure's footprint (+1 chunk margin). This both avoids
+                // generating ~1024 empty chunks for a small dungeon AND covers a large jigsaw that can
+                // sprawl beyond the old ±255 window (maxGenDistance is raised to 512 by JigsawPlacementMixin).
+                chunkMinX = (bounds.minX() >> 4) - 1;
+                chunkMinZ = (bounds.minZ() >> 4) - 1;
+                chunkMaxX = (bounds.maxX() >> 4) + 1;
+                chunkMaxZ = (bounds.maxZ() >> 4) + 1;
+            } else {
+                // Fallback (extent unavailable: template size missing, jigsaw capture skipped, legacy record).
+                int regionRadius = state.config.getZoneSize() / 2 - 1;
+                chunkMinX = (state.structurePos.getX() - regionRadius) >> 4;
+                chunkMinZ = (state.structurePos.getZ() - regionRadius) >> 4;
+                chunkMaxX = (state.structurePos.getX() + regionRadius) >> 4;
+                chunkMaxZ = (state.structurePos.getZ() + regionRadius) >> 4;
+            }
             portalEntity.setDungeonChunkBounds(chunkMinX, chunkMinZ, chunkMaxX, chunkMaxZ);
 
             PortalSpawnManager.updatePortalChunkBounds(

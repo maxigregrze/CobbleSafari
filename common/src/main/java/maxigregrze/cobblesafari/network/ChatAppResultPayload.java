@@ -33,7 +33,8 @@ public record ChatAppResultPayload(int kind, StateData state, String errorKey) i
     public record StepView(List<String> before, List<String> after, String taskTitleKey,
                            int progressNum, int progressDen, boolean done,
                            boolean rewardItems, boolean rewardTrade,
-                           int beforeShown, int afterShown, boolean taskVisible, boolean current) {}
+                           int beforeShown, int afterShown, boolean taskVisible, boolean current,
+                           boolean failed) {}
 
     public static final CustomPacketPayload.Type<ChatAppResultPayload> TYPE =
             new CustomPacketPayload.Type<>(ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, "chat_app_result"));
@@ -71,6 +72,7 @@ public record ChatAppResultPayload(int kind, StateData state, String errorKey) i
                 buf.writeVarInt(v.afterShown());
                 buf.writeBoolean(v.taskVisible());
                 buf.writeBoolean(v.current());
+                buf.writeBoolean(v.failed());
             }
         } else {
             buf.writeUtf(p.errorKey == null ? "" : p.errorKey);
@@ -99,8 +101,9 @@ public record ChatAppResultPayload(int kind, StateData state, String errorKey) i
                 int afterShown = buf.readVarInt();
                 boolean taskVisible = buf.readBoolean();
                 boolean current = buf.readBoolean();
+                boolean failed = buf.readBoolean();
                 steps.add(new StepView(before, after, title, num, den, done, rItems, rTrade,
-                        beforeShown, afterShown, taskVisible, current));
+                        beforeShown, afterShown, taskVisible, current, failed));
             }
             return state(new StateData(convId, currentStep, phase, claimed, steps));
         }
