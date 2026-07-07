@@ -10,6 +10,7 @@ import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.StringTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 
@@ -31,6 +32,23 @@ public class AuspiciousPokeballGoldBlockEntity extends AuspiciousPokeballBlockEn
 
     public AuspiciousPokeballGoldBlockEntity(BlockPos pos, BlockState state) {
         super(ModBlockEntities.AUSPICIOUS_POKEBALL_GOLD, pos, state);
+    }
+
+    @Override
+    public void setLevel(Level level) {
+        super.setLevel(level);
+        // Register into the live per-dimension index so the objectives redeem avoids a chunk scan (B5).
+        if (level != null && !level.isClientSide()) {
+            AuspiciousPokeballGoldIndex.register(level.dimension().location(), this.getBlockPos());
+        }
+    }
+
+    @Override
+    public void setRemoved() {
+        if (this.level != null && !this.level.isClientSide()) {
+            AuspiciousPokeballGoldIndex.unregister(this.level.dimension().location(), this.getBlockPos());
+        }
+        super.setRemoved();
     }
 
     @Override

@@ -33,8 +33,7 @@ public class DistortionDoorBlock extends HorizontalDirectionalBlock implements B
     /** Combat state: when true every part renders as a full distortion stonebricks cube. */
     public static final BooleanProperty ACTIVE = BooleanProperty.create("active");
 
-    /** Anchor part = part 7 (placed position). Empty grid cells filled in combat: (1,1) and (1,0). */
-    private static final int ANCHOR_PART = 7;
+    /** Empty grid cells filled in combat: (1,1) and (1,0), relative to the anchor part. */
     private static final int[][] FILL_GRID = {{1, 1}, {1, 0}};
 
     private static final int[][] PART_COORDS = {
@@ -157,10 +156,12 @@ public class DistortionDoorBlock extends HorizontalDirectionalBlock implements B
         if (state.getValue(ACTIVE) != battle) {
             level.setBlock(pos, state.setValue(ACTIVE, battle), Block.UPDATE_ALL);
         }
-        // Only the anchor part drives the two empty cells, to stay idempotent across the 7 parts.
-        if (state.getValue(PART) == ANCHOR_PART) {
-            applyFillSpots(level, pos, state.getValue(FACING), battle);
-        }
+        // Every part drives the two empty cells via the resolved anchor. applyFillSpots is idempotent
+        // (only fills air/replaceable, only removes our own fill), so it is safe to run from any of the 7
+        // parts — and this ensures the fills are cleared on recovery as long as ANY part is recaptured, not
+        // just the anchor part (whose chunk may be unloaded). See action plan 145 (C9).
+        BlockPos anchor = getAnchorFromPart(pos, state);
+        applyFillSpots(level, anchor, state.getValue(FACING), battle);
     }
 
     /**

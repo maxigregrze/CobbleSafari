@@ -29,7 +29,10 @@ public final class CsBossAttackLib {
     /** Chase speed for attack entities (> player sprint ≈ 0.28 b/t: uncatchable while running). */
     public static final double CHASE_SPEED = 0.45;
 
-    public static final double HOMING_FAR_THRESHOLD = 5.0;
+    /** En deçà de ce rayon la poursuite reste à vitesse nominale (le joueur peut distancer l'entité). */
+    public static final double HOMING_NEAR_THRESHOLD = 6.0;
+    /** Au-delà de ce rayon la poursuite atteint son multiplicateur maximal. */
+    public static final double HOMING_FAR_THRESHOLD = 12.0;
     public static final double HOMING_FAR_MULTIPLIER = 10.0;
 
     /** 8 compass directions (unit vectors), order N, NE, E, SE, S, SW, W, NW. */
@@ -125,17 +128,31 @@ public final class CsBossAttackLib {
 
     // --- Pursuit -----------------------------------------------------------
 
-    /** Pas de poursuite : ×10 si la cible est à plus de 5 blocs (horizontal), sinon nominal. */
+    /**
+     * Pas de poursuite <b>progressif</b> : vitesse nominale sous {@link #HOMING_NEAR_THRESHOLD},
+     * jusqu'à ×{@link #HOMING_FAR_MULTIPLIER} à partir de {@link #HOMING_FAR_THRESHOLD}, interpolé
+     * linéairement entre les deux. La transition est douce (plus de saut brutal rapide→lent qui
+     * rendait la fuite trop difficile près du seuil).
+     */
     public static double homingStep(Entity e, double tx, double tz, double nominalStep) {
         double dx = tx - e.getX();
         double dz = tz - e.getZ();
         double dist = Math.sqrt(dx * dx + dz * dz);
-        return dist > HOMING_FAR_THRESHOLD ? nominalStep * HOMING_FAR_MULTIPLIER : nominalStep;
+        double t = Mth.clamp((dist - HOMING_NEAR_THRESHOLD) / (HOMING_FAR_THRESHOLD - HOMING_NEAR_THRESHOLD),
+                0.0, 1.0);
+        return nominalStep * Mth.lerp(t, 1.0, HOMING_FAR_MULTIPLIER);
     }
 
-    /** Portée d'une attaque de zone : demi-diagonale du carré blocs (blockRadius·√2) + 1. */
+    /**
+     * Plafond dur (en blocs) de la portée d'une attaque de zone. {@link BossBattleSession#getBlockRadius()}
+     * est exprimé en <em>chunks × 16</em> : sans ce plafond, un rayon d'arène élevé configuré par un admin
+     * ferait exploser les scans de surface des attaques de champ (coût par tick). Voir plan 145 (B2).
+     */
+    public static final double MAX_AREA_REACH = 64.0;
+
+    /** Portée d'une attaque de zone : demi-diagonale du carré blocs (blockRadius·√2) + 1, plafonnée (B2). */
     public static double areaReach(BossBattleSession session) {
-        return session.getBlockRadius() * Math.sqrt(2.0) + 1.0;
+        return Math.min(MAX_AREA_REACH, session.getBlockRadius() * Math.sqrt(2.0) + 1.0);
     }
 
     /**

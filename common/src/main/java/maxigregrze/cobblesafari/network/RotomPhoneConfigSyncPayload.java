@@ -37,6 +37,7 @@ public record RotomPhoneConfigSyncPayload(
             buf.writeUtf(skin.id);
             buf.writeUtf(skin.displayName);
             buf.writeUtf(skin.color);
+            buf.writeUtf(skin.itemTint);
             buf.writeBoolean(skin.hasCustomScreen);
             buf.writeBoolean(skin.unlockedFromStart);
             buf.writeBoolean(skin.hasShinyVariant);
@@ -63,11 +64,12 @@ public record RotomPhoneConfigSyncPayload(
             String id = buf.readUtf();
             String display = buf.readUtf();
             String color = buf.readUtf();
+            String itemTint = buf.readUtf();
             boolean hasCustomScreen = buf.readBoolean();
             boolean unlockedFromStart = buf.readBoolean();
             boolean hasShiny = buf.readBoolean();
             boolean unlockedForPlayer = buf.readBoolean();
-            skins.add(new SkinData(id, display, color, hasCustomScreen, unlockedFromStart, hasShiny, unlockedForPlayer));
+            skins.add(new SkinData(id, display, color, itemTint, hasCustomScreen, unlockedFromStart, hasShiny, unlockedForPlayer));
         }
         return new RotomPhoneConfigSyncPayload(apps, skins);
     }
@@ -79,7 +81,7 @@ public record RotomPhoneConfigSyncPayload(
 
     public record AppData(String name, List<String> bannedDimensions, boolean unlockedForPlayer) {}
 
-    public record SkinData(String id, String displayName, String color,
+    public record SkinData(String id, String displayName, String color, String itemTint,
                            boolean hasCustomScreen, boolean unlockedFromStart,
                            boolean hasShinyVariant, boolean unlockedForPlayer) {}
 }

@@ -117,11 +117,12 @@ public class RotomSkinUnlockItem extends Item {
     }
 
     /**
-     * Item tint for the dynamic disc. Two layers: layer 0 is the untinted base, layer 1 is an overlay
-     * recolored to the target skin's hex color. Any other index is left untinted. {@code -1} = no tint.
+     * Item tint for the dynamic disc. Two layers: layer 0 is the base, recolored to the skin's optional
+     * {@code itemTint} (untinted when absent); layer 1 is an overlay recolored to the skin's theme
+     * {@code color}. Any other index is left untinted. {@code -1} = no tint.
      */
     public static int computeTint(ItemStack stack, int tintIndex) {
-        if (tintIndex != 1) {
+        if (tintIndex != 0 && tintIndex != 1) {
             return -1;
         }
         String id = stack.get(ModComponents.SKIN_UNLOCK_TARGET);
@@ -130,8 +131,12 @@ public class RotomSkinUnlockItem extends Item {
         }
         for (RotomPhoneConfigSyncPayload.SkinData sd : RotomPhoneClientCache.getCachedSkins()) {
             if (sd.id().equals(id)) {
+                String hex = tintIndex == 1 ? sd.color() : sd.itemTint();
+                if (hex == null || hex.isEmpty()) {
+                    return -1;
+                }
                 try {
-                    return 0xFF000000 | Integer.parseInt(sd.color(), 16);
+                    return 0xFF000000 | Integer.parseInt(hex, 16);
                 } catch (NumberFormatException ignored) {
                     return -1;
                 }

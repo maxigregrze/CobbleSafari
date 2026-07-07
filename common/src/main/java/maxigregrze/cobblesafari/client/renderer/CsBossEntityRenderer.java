@@ -25,15 +25,16 @@ public class CsBossEntityRenderer extends EntityRenderer<CsBossEntity> {
     private static final ResourceLocation FALLBACK_TEXTURE =
             ResourceLocation.withDefaultNamespace("textures/misc/white.png");
 
-    /** Minimum scale at the end of the departure animation: the boss becomes very small. */
-    private static final float DEATH_MIN_SCALE = 0.05f;
-
     private final Map<UUID, CsBossPosableState> states = new HashMap<>();
     private final Map<String, CsBossModelRenderer.SpeciesInfo> speciesCache = new HashMap<>();
     private final Map<UUID, Integer> lastAttackSeq = new HashMap<>();
     private final Map<UUID, Integer> lastPhase = new HashMap<>();
     /** Last rendered {@code specie} string; used to reset animation when a chained phase changes it. */
     private final Map<UUID, String> lastSpecie = new HashMap<>();
+    /** Wall-clock ms of the last frame each boss UUID was rendered; drives eviction of stale state (C3). */
+    private final Map<UUID, Long> lastSeenMs = new HashMap<>();
+    private long lastPurgeMs;
+    private static final long STATE_TTL_MS = 30_000L;
 
     public CsBossEntityRenderer(EntityRendererProvider.Context context) {
         super(context);
@@ -44,9 +45,33 @@ public class CsBossEntityRenderer extends EntityRenderer<CsBossEntity> {
         return FALLBACK_TEXTURE;
     }
 
+    /**
+     * Evicts per-UUID animation state for bosses not rendered for a while, so these maps do not grow for the
+     * whole client session on a server where bosses come and go (C3). Throttled to at most once per second.
+     */
+    private void purgeStaleStates() {
+        long now = System.currentTimeMillis();
+        if (now - lastPurgeMs < 1_000L) {
+            return;
+        }
+        lastPurgeMs = now;
+        lastSeenMs.entrySet().removeIf(e -> {
+            if (now - e.getValue() <= STATE_TTL_MS) {
+                return false;
+            }
+            UUID id = e.getKey();
+            states.remove(id);
+            lastAttackSeq.remove(id);
+            lastPhase.remove(id);
+            lastSpecie.remove(id);
+            return true;
+        });
+    }
+
     @Override
     public void render(CsBossEntity boss, float yaw, float partialTicks, PoseStack ps,
                        MultiBufferSource buffer, int packedLight) {
+        purgeStaleStates();
         String specie = boss.getSpecie();
         if (specie != null && !specie.isBlank()) {
             try {
@@ -66,6 +91,7 @@ public class CsBossEntityRenderer extends EntityRenderer<CsBossEntity> {
         int phase = boss.getPhase();
         String specie = boss.getSpecie();
         UUID id = boss.getUUID();
+        lastSeenMs.put(id, System.currentTimeMillis());
         Integer prevPhase = lastPhase.get(id);
         String prevSpecie = lastSpecie.get(id);
         if (needsAnimationReset(prevPhase, phase, prevSpecie, specie)) {
@@ -87,15 +113,9 @@ public class CsBossEntityRenderer extends EntityRenderer<CsBossEntity> {
         float limbSwing = boss.walkAnimation.position(partialTicks);
         float limbSwingAmount = Math.min(1.0f, boss.walkAnimation.speed(partialTicks));
         float anim = boss.getAnim();
-        // Entry: grows from 0 to 1. Departure: shrinks to very small during death.
-        float scaleMul;
-        if (phase == CsBossEntity.PHASE_ENTERING) {
-            scaleMul = anim;
-        } else if (phase == CsBossEntity.PHASE_DYING) {
-            scaleMul = Mth.lerp(anim, 1.0f, DEATH_MIN_SCALE);
-        } else {
-            scaleMul = 1.0f;
-        }
+        // Entry grows 0→1, departure shrinks to DEATH_MIN_SCALE — sourced from the entity so the
+        // hitbox (which uses the same animScale) always matches the rendered model.
+        float scaleMul = boss.animScale();
         float alpha = phase == CsBossEntity.PHASE_DYING ? Math.max(0.0f, 1.0f - anim) : 1.0f;
         if (scaleMul <= 0.001f) {
             return; // zero scale at the very start of entry: nothing to draw
@@ -132,9 +152,14 @@ public class CsBossEntityRenderer extends EntityRenderer<CsBossEntity> {
         int seq = boss.getAttackSeq();
         UUID id = boss.getUUID();
         Integer lastSeq = lastAttackSeq.get(id);
-        // Only start the attack animation when no primary animation is playing: this queues it (plays
-        // as soon as the model is free) instead of cutting one short, which visually breaks the model.
-        if (seq != 0 && (lastSeq == null || lastSeq != seq) && state.getPrimaryAnimation() == null) {
+        // Only start the attack animation when the model is free — no primary animation (e.g. faint) AND
+        // no attack animation still running. The battle anims (physical/special/status/cry) are *active*
+        // (non-primary) animations, so getPrimaryAnimation() stays null while they play; without the
+        // activeAnimations check the server's repeated seq bumps would stack a fresh animation each tick
+        // before the previous one finished (visible looping/stutter). This instead queues the latest seq
+        // and plays it once the running one ends.
+        if (seq != 0 && (lastSeq == null || lastSeq != seq)
+                && state.getPrimaryAnimation() == null && state.getActiveAnimations().isEmpty()) {
             lastAttackSeq.put(id, seq);
             // "cry" as fallback if the species has no battle animation (order guaranteed via LinkedHashSet).
             state.addFirstAnimation(new java.util.LinkedHashSet<>(

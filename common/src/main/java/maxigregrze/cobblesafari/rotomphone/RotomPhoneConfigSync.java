@@ -29,7 +29,7 @@ public class RotomPhoneConfigSync {
         for (RotomPhoneSkinDefinition skin : RotomPhoneSkinRegistry.getAllSkins()) {
             boolean unlocked = RotomPhoneSkinRegistry.isUnlockedByPlayer(player, skin);
             skins.add(new RotomPhoneConfigSyncPayload.SkinData(
-                    skin.getId(), skin.getDisplayName(), skin.getColor(),
+                    skin.getId(), skin.getDisplayName(), skin.getColor(), skin.getItemTint(),
                     skin.hasCustomScreen(), skin.isUnlockedFromStart(),
                     skin.hasShinyVariant(), unlocked));
         }

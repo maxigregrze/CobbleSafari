@@ -1,14 +1,14 @@
 package maxigregrze.cobblesafari.client.renderer;
 
 import com.cobblemon.mod.common.api.pokemon.PokemonProperties;
+import com.cobblemon.mod.common.api.pokemon.PokemonSpecies;
 import com.cobblemon.mod.common.client.render.models.blockbench.PosableModel;
 import com.cobblemon.mod.common.client.render.models.blockbench.PosableState;
 import com.cobblemon.mod.common.client.render.models.blockbench.pose.Pose;
 import com.cobblemon.mod.common.client.render.models.blockbench.repository.RenderContext;
 import com.cobblemon.mod.common.client.render.models.blockbench.repository.VaryingModelRepository;
 import com.cobblemon.mod.common.entity.PoseType;
-import com.cobblemon.mod.common.pokemon.Pokemon;
-import com.cobblemon.mod.common.pokemon.RenderablePokemon;
+import com.cobblemon.mod.common.pokemon.Species;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
@@ -62,12 +62,31 @@ public final class CsBossModelRenderer {
             return cached;
         }
         try {
-            Pokemon mon = PokemonProperties.Companion.parse(specie).create(null);
-            RenderablePokemon renderable = mon.asRenderablePokemon();
+            // Resolve species + aspects straight from the parsed properties rather than building a full
+            // Pokemon via create(). parse() computes aspects through the *properties* aspect providers
+            // (AspectProvider.provide(PokemonProperties)) — the client-safe path Cobblemon itself uses.
+            // This resolves tag/aspect-triggered forms (e.g. "rowlet hisuian") that the Pokemon-level
+            // providers drop on the client, and it avoids create()'s roll()/events/held-item form logic,
+            // which throws for some modded (held-item) special forms.
+            PokemonProperties props = PokemonProperties.Companion.parse(specie);
+            String speciesId = props.getSpecies();
+            if (speciesId == null) {
+                CobbleSafari.LOGGER.debug("[CSBoss] specie '{}' has no species", specie);
+                return null;
+            }
+            ResourceLocation id = speciesId.indexOf(':') >= 0
+                    ? ResourceLocation.parse(speciesId)
+                    : ResourceLocation.fromNamespaceAndPath("cobblemon", speciesId);
+            Species species = PokemonSpecies.INSTANCE.getByIdentifier(id);
+            if (species == null) {
+                CobbleSafari.LOGGER.debug("[CSBoss] unknown species '{}' for specie '{}'", id, specie);
+                return null;
+            }
+            Set<String> aspects = props.getAspects();
             SpeciesInfo info = new SpeciesInfo(
-                    renderable.getSpecies().getResourceIdentifier(),
-                    renderable.getAspects(),
-                    mon.getForm().getBaseScale());
+                    species.getResourceIdentifier(),
+                    aspects,
+                    species.getForm(aspects).getBaseScale());
             cache.put(specie, info);
             return info;
         } catch (Exception e) {

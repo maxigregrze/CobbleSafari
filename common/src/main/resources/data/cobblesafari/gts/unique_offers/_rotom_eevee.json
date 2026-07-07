@@ -3,14 +3,14 @@
   "tags": [
     "rotom_eevee"
   ],
-  "given": "eevee level=5 originaltrainertype=npc originaltrainer=Rotom",
+  "given": "eevee level=5 originaltrainertype=npc originaltrainer=Ronny",
   "givenMarks": [
     "cobblemon:ribbon_partner"
   ],
   "givenActiveMark": "cobblemon:ribbon_partner",
   "wish": {
-    "species": "pikachu",
-    "levelBucket": 1,
+    "species": "rattata",
+    "levelBucket": 0,
     "gender": "any",
     "shiny": "any"
   }

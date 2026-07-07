@@ -3,11 +3,11 @@
     "placement": [
         {
             "type": "minecraft:rarity_filter",
-            "chance": 4
+            "chance": 2
         },
         {
             "type": "minecraft:count",
-            "count": 3
+            "count": 5
         },
         {
             "type": "minecraft:in_square"
@@ -34,6 +34,11 @@
                     {
                         "type": "minecraft:matching_blocks",
                         "blocks": "minecraft:dark_prismarine",
+                        "offset": [0, -1, 0]
+                    },
+                    {
+                        "type": "minecraft:matching_blocks",
+                        "blocks": ["minecraft:gravel", "minecraft:sand", "minecraft:clay"],
                         "offset": [0, -1, 0]
                     }
                 ]

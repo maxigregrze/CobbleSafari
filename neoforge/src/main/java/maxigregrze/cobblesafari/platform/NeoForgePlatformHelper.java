@@ -1,5 +1,6 @@
 package maxigregrze.cobblesafari.platform;
 
+import maxigregrze.cobblesafari.CobbleSafari;
 import maxigregrze.cobblesafari.platform.services.IPlatformHelper;
 import maxigregrze.cobblesafari.underground.MiningSession;
 import maxigregrze.cobblesafari.underground.screen.UndergroundOpenData;
@@ -13,6 +14,7 @@ import net.neoforged.fml.loading.FMLLoader;
 import net.neoforged.fml.loading.FMLPaths;
 import net.neoforged.neoforge.network.PacketDistributor;
 
+import java.nio.file.Files;
 import java.nio.file.Path;
 
 public class NeoForgePlatformHelper implements IPlatformHelper {
@@ -35,6 +37,12 @@ public class NeoForgePlatformHelper implements IPlatformHelper {
     @Override
     public Path getConfigDir() {
         return FMLPaths.CONFIGDIR.get();
+    }
+
+    @Override
+    public Path getBundledResourceDir(String path) {
+        Path resolved = ModList.get().getModFileById(CobbleSafari.MOD_ID).getFile().findResource(path);
+        return Files.exists(resolved) ? resolved : null;
     }
 
     @Override

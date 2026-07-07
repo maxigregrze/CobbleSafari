@@ -1,6 +1,7 @@
 package maxigregrze.cobblesafari.world;
 
 import maxigregrze.cobblesafari.CobbleSafari;
+import maxigregrze.cobblesafari.dungeon.DungeonStructureBounds;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
@@ -63,11 +64,14 @@ public class StructurePlacer {
                 .withPermission(4);
 
         try {
+            DungeonStructureBounds.beginCapture();
             server.getCommands().performPrefixedCommand(source, command);
             CobbleSafari.LOGGER.info("Jigsaw: Command executed");
         } catch (Exception e) {
             CobbleSafari.LOGGER.error("Jigsaw: Command failed: {}", e.getMessage());
             return placeStructure(world, pos, "cobblesafari:underground/start/underground_entrance");
+        } finally {
+            DungeonStructureBounds.endCapture();
         }
 
         return true;
@@ -93,11 +97,14 @@ public class StructurePlacer {
                 .withPermission(4);
 
         try {
+            DungeonStructureBounds.beginCapture();
             server.getCommands().performPrefixedCommand(source, command);
             return true;
         } catch (Exception e) {
             CobbleSafari.LOGGER.error("Jigsaw (strict): command failed: {}", e.getMessage());
             return false;
+        } finally {
+            DungeonStructureBounds.endCapture();
         }
     }
 

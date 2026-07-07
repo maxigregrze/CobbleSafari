@@ -108,6 +108,9 @@ public final class WonderTradeService {
         WonderTradeDataLoader.load(server);
     }
 
+    /** Max pool entries generated per {@link #runAutofillIfNeeded} call to spread the work across ticks (C6). */
+    private static final int MAX_AUTOFILL_PER_CALL = 16;
+
     public static void runAutofillIfNeeded(MinecraftServer server) {
         WonderTradeSettings cfg = WonderTradeSettings.get();
         if (!cfg.isAutoFill()) {
@@ -119,8 +122,11 @@ public final class WonderTradeService {
         if (deficit <= 0) {
             return;
         }
+        // Budget the work per call so a large deficit (startup / daily reset) never generates hundreds of
+        // Pokémon NBTs in a single tick; the periodic scheduler tops the pool up over the next ticks (C6).
+        int budget = Math.min(deficit, MAX_AUTOFILL_PER_CALL);
         RandomSource random = server.overworld().getRandom();
-        for (int i = 0; i < deficit; i++) {
+        for (int i = 0; i < budget; i++) {
             WonderTradePoolEntry entry = tryGeneratePoolEntry(server, random);
             if (entry != null) {
                 data.addPoolEntry(entry);

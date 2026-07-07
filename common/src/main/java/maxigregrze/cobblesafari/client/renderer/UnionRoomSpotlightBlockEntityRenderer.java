@@ -45,9 +45,9 @@ public class UnionRoomSpotlightBlockEntityRenderer implements BlockEntityRendere
             return;
         }
 
-        float t = blockEntity.getLevel() != null ? blockEntity.getLevel().getGameTime() + partialTick : partialTick;
+        double t = blockEntity.getLevel() != null ? blockEntity.getLevel().getGameTime() + (double) partialTick : partialTick;
 
-        float yawDeg = (t % YAW_PERIOD_TICKS) / YAW_PERIOD_TICKS * 360f;
+        float yawDeg = (float) ((t % YAW_PERIOD_TICKS) / YAW_PERIOD_TICKS * 360.0);
 
         float pitchMid = (PITCH_MIN_DEG + PITCH_MAX_DEG) * 0.5f;
         float pitchAmplitude = (PITCH_MAX_DEG - PITCH_MIN_DEG) * 0.5f;

@@ -3,6 +3,7 @@
   "displayName": "Iono",
   "hasCustomScreen": true,
   "color": "aa70ff",
+  "itemTint": "dc68ac",
   "unlockedFromStart": false,
   "hasShinyVariant": false,
   "unlockingAdvancement": "",

@@ -156,6 +156,10 @@ public class TimerManager {
 
         int tickCount = serverInstance.getTickCount();
 
+        if (tickCount % 100 == 0) {
+            sweepPresenceInvariant();
+        }
+
         for (Map.Entry<UUID, Map<String, PlayerTimerData>> playerEntry : activeTimers.entrySet()) {
             UUID playerId = playerEntry.getKey();
             Map<String, PlayerTimerData> dimensionTimers = playerEntry.getValue();
@@ -235,6 +239,36 @@ public class TimerManager {
                 if (data.getRemainingTicks() % 20 == 0 && player != null) {
                     syncToClient(player, data);
                 }
+            }
+        }
+    }
+
+    /**
+     * Presence invariant (B6): a non-bypassed player physically inside a timed dimension must have an active
+     * timer. The normal entry vector arms it via {@code ServerPlayer.changeDimension}, but any other vector
+     * (a third-party teleport that does not go through {@code changeDimension}) would leave the player
+     * unmetered. This periodic sweep re-arms the timer exactly like the entry path — which, thanks to
+     * {@link #checkDailyReset}, also evacuates a player whose daily budget is already spent.
+     */
+    private static void sweepPresenceInvariant() {
+        if (serverInstance == null) {
+            return;
+        }
+        for (ServerPlayer player : serverInstance.getPlayerList().getPlayers()) {
+            Optional<String> dimOpt = getConfiguredDimensionId(player);
+            if (dimOpt.isEmpty()) {
+                continue;
+            }
+            if (shouldBypassTimer(player)) {
+                continue; // creative / op bypass is not subject to the timer
+            }
+            String dimId = dimOpt.get();
+            Map<String, PlayerTimerData> timers = activeTimers.get(player.getUUID());
+            PlayerTimerData data = timers == null ? null : timers.get(dimId);
+            if (data == null || !data.isActive()) {
+                CobbleSafari.LOGGER.debug("Presence sweep: arming missing timer for {} in {}",
+                        player.getName().getString(), dimId);
+                startTimer(player, dimId);
             }
         }
     }

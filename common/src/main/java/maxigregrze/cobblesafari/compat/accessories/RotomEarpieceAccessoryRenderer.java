@@ -40,10 +40,10 @@ public class RotomEarpieceAccessoryRenderer implements AccessoryRenderer {
         }
 
         // 2) Earpiece-specific placement (starting values — calibrate in-game):
-        //    left side of the head (right when viewed from the front), tilted 45° around Z then
+        //    right side of the head (left when viewed from the front), tilted 45° around X then
         //    90° around Y, at half size.
-        poseStack.translate(-0.30f, -0.25f, 0.0f);
-        poseStack.mulPose(Axis.ZP.rotationDegrees(45));
+        poseStack.translate(0.32f, -0.25f, 0.0f);
+        poseStack.mulPose(Axis.XP.rotationDegrees(135));
         poseStack.mulPose(Axis.YP.rotationDegrees(90));
         poseStack.scale(0.5f, 0.5f, 0.5f);
 

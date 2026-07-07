@@ -5,6 +5,8 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.chunk.LevelChunk;
+import net.minecraft.world.level.chunk.LevelChunkSection;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,14 +28,35 @@ public final class ArenaBlockScanner {
         int r = blockRadiusChunks * 16;
         int minY = Math.max(level.getMinBuildHeight(), trigger.getY() - ARENA_Y_BELOW);
         int maxY = Math.min(level.getMaxBuildHeight() - 1, trigger.getY() + ARENA_Y_ABOVE);
-        BlockPos.MutableBlockPos cursor = new BlockPos.MutableBlockPos();
-        for (int x = trigger.getX() - r; x <= trigger.getX() + r; x++) {
-            for (int z = trigger.getZ() - r; z <= trigger.getZ() + r; z++) {
+        int minX = trigger.getX() - r;
+        int maxX = trigger.getX() + r;
+        int minZ = trigger.getZ() - r;
+        int maxZ = trigger.getZ() + r;
+        // Iterate chunk-by-chunk: never force-load a chunk just to scan it (getChunkNow), and skip whole
+        // sections that are only air. Correctness is unchanged (every reactive block is still found) but the
+        // per-activation cost drops from up to ~2M blind getBlockState to the actual non-air volume (B1).
+        for (int cx = minX >> 4; cx <= (maxX >> 4); cx++) {
+            for (int cz = minZ >> 4; cz <= (maxZ >> 4); cz++) {
+                LevelChunk chunk = level.getChunkSource().getChunkNow(cx, cz);
+                if (chunk == null) {
+                    continue;
+                }
+                int x0 = Math.max(minX, cx << 4);
+                int x1 = Math.min(maxX, (cx << 4) + 15);
+                int z0 = Math.max(minZ, cz << 4);
+                int z1 = Math.min(maxZ, (cz << 4) + 15);
                 for (int y = minY; y <= maxY; y++) {
-                    cursor.set(x, y, z);
-                    BlockState state = level.getBlockState(cursor);
-                    if (state.getBlock() instanceof BattleReactiveBlock reactive && reactive.isReactive(state)) {
-                        out.add(cursor.immutable());
+                    LevelChunkSection section = chunk.getSection(chunk.getSectionIndex(y));
+                    if (section.hasOnlyAir()) {
+                        continue;
+                    }
+                    for (int x = x0; x <= x1; x++) {
+                        for (int z = z0; z <= z1; z++) {
+                            BlockState state = section.getBlockState(x & 15, y & 15, z & 15);
+                            if (state.getBlock() instanceof BattleReactiveBlock reactive && reactive.isReactive(state)) {
+                                out.add(new BlockPos(x, y, z));
+                            }
+                        }
                     }
                 }
             }

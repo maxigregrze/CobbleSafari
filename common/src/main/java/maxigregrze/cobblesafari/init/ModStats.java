@@ -75,6 +75,11 @@ public final class ModStats {
         player.awardStat(Stats.CUSTOM.get(statId));
     }
 
+    /** Increment the stat by {@code amount} for the player (batched play-time accounting, C4). */
+    public static void add(ServerPlayer player, ResourceLocation statId, int amount) {
+        player.awardStat(Stats.CUSTOM.get(statId), amount);
+    }
+
     /** Increment the stat by 1 and return the new total. */
     public static int awardAndGet(ServerPlayer player, ResourceLocation statId) {
         award(player, statId);

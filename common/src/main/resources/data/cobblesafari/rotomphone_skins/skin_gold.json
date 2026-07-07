@@ -3,6 +3,7 @@
   "displayName": "Glitterati",
   "hasCustomScreen": false,
   "color": "f9f9f9",
+  "itemTint": "fdf55f",
   "unlockedFromStart": false,
   "hasShinyVariant": false,
   "unlockingAdvancement": "",

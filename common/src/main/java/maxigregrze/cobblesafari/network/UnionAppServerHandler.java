@@ -38,6 +38,9 @@ public final class UnionAppServerHandler {
         if (server == null) {
             return;
         }
+        if (!maxigregrze.cobblesafari.rotomphone.RotomPhoneServerHandler.hasPhone(player)) {
+            return; // server-authoritative possession check (C1)
+        }
         if (!checkReadRateLimit(player.getUUID(), payload.actionType())) {
             return;
         }

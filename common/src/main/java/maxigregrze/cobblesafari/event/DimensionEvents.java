@@ -10,7 +10,6 @@ import maxigregrze.cobblesafari.dungeon.DungeonTeleportHandler;
 import maxigregrze.cobblesafari.dungeon.PortalSpawnManager;
 import maxigregrze.cobblesafari.manager.SafariResetManager;
 import maxigregrze.cobblesafari.manager.TimerManager;
-import maxigregrze.cobblesafari.rotomphone.RotoFallGroundClear;
 import maxigregrze.cobblesafari.rotomphone.RotoGlideServerLogic;
 import maxigregrze.cobblesafari.security.JoinThrottle;
 import maxigregrze.cobblesafari.security.RateLimiter;
@@ -45,6 +44,8 @@ public class DimensionEvents {
 
     /** Player's dimension on the previous tick, to detect a front-edge entry into the Safari. */
     private static final Map<UUID, ResourceLocation> LAST_DIMENSION = new ConcurrentHashMap<>();
+    /** Play-time stats are flushed in batches of this many ticks rather than every tick (C4). */
+    private static final int STAT_FLUSH_INTERVAL = 20;
 
     public static void onServerStarted(MinecraftServer server) {
         TimerManager.setServer(server);
@@ -80,10 +81,15 @@ public class DimensionEvents {
         maxigregrze.cobblesafari.csmusic.DimensionalMusicManager.tick(server);
         if ((server.getTickCount() % 100) == 0) {
             WonderTradeService.tickDailyScheduler(server);
+            // Budgeted top-up (C6): gradually refills the Wonder Trade pool a few entries at a time instead
+            // of generating the whole deficit in the single startup/daily-reset tick.
+            WonderTradeService.runAutofillIfNeeded(server);
             GtsService.tickDailyScheduler(server);
             GtsService.tickGcLocks(server);
             maxigregrze.cobblesafari.chat.ChatConversationService.tickDailyScheduler(server);
             maxigregrze.cobblesafari.objectives.ObjectivesManager.tickDailyScheduler(server);
+            maxigregrze.cobblesafari.power.GuaranteedShinyManager.sweepExpired(server);
+            DungeonTeleportHandler.sweepStaleGenerations();
         }
         maxigregrze.cobblesafari.safari.SafariStateManager.onServerTick(server);
         maxigregrze.cobblesafari.unionroom.UnionRoomManager.tickSessionCheck(server);
@@ -97,19 +103,22 @@ public class DimensionEvents {
      * Safari-entry day tracking (). Counts presence regardless of timer/bypass state.
      */
     private static void tickPlaytimeStats(MinecraftServer server) {
+        // Batch the four play-time awards to once per second (amount = interval) instead of an awardStat call
+        // per player per stat every single tick; the per-tick dimension tracking below is kept intact (C4).
+        boolean flush = (server.getTickCount() % STAT_FLUSH_INTERVAL) == 0;
         for (ServerPlayer player : server.getPlayerList().getPlayers()) {
             ResourceLocation dim = player.level().dimension().location();
 
-            if (dim.equals(SAFARI_DIM)) {
-                ModStats.award(player, ModStats.TIME_IN_SAFARI);
-            } else if (dim.equals(DISTORTION_DIM)) {
-                ModStats.award(player, ModStats.TIME_IN_DISTORTION);
-            } else if (dim.equals(UNDERGROUND_DIM)) {
-                ModStats.award(player, ModStats.TIME_IN_UNDERGROUND);
-            } else if (dim.equals(UNION_DIM)) {
-                int unionTicks = ModStats.awardAndGet(player, ModStats.TIME_IN_UNION_ROOM);
-                // Throttle to once per second; "Hyper-social" unlocks at 60 min (72000 ticks).
-                if (unionTicks % 20 == 0) {
+            if (flush) {
+                if (dim.equals(SAFARI_DIM)) {
+                    ModStats.add(player, ModStats.TIME_IN_SAFARI, STAT_FLUSH_INTERVAL);
+                } else if (dim.equals(DISTORTION_DIM)) {
+                    ModStats.add(player, ModStats.TIME_IN_DISTORTION, STAT_FLUSH_INTERVAL);
+                } else if (dim.equals(UNDERGROUND_DIM)) {
+                    ModStats.add(player, ModStats.TIME_IN_UNDERGROUND, STAT_FLUSH_INTERVAL);
+                } else if (dim.equals(UNION_DIM)) {
+                    int unionTicks = ModStats.addAndGet(player, ModStats.TIME_IN_UNION_ROOM, STAT_FLUSH_INTERVAL);
+                    // "Hyper-social" unlocks at 60 min (72000 ticks, a multiple of the interval).
                     ModCriteria.HYPER_SOCIAL.trigger(player, unionTicks);
                 }
             }
@@ -149,6 +158,7 @@ public class DimensionEvents {
         JoinThrottle.clear(player.getUUID());
         maxigregrze.cobblesafari.network.GtsAppServerHandler.clear(player.getUUID());
         maxigregrze.cobblesafari.network.WonderAppServerHandler.clear(player.getUUID());
+        maxigregrze.cobblesafari.network.ChatAppServerHandler.clear(player.getUUID());
         GtsService.releasePendingFor(player);
         UnionRoomDisconnectHandler.onPlayerDisconnect(player);
         TimerManager.onPlayerDisconnect(player);
@@ -156,7 +166,6 @@ public class DimensionEvents {
         maxigregrze.cobblesafari.csmusic.DimensionalMusicManager.onPlayerDisconnect(player.getUUID());
         DungeonTeleportHandler.clearPlayerData(player.getUUID());
         RotoGlideServerLogic.removeState(player.getUUID());
-        RotoFallGroundClear.removePlayer(player.getUUID());
         LAST_DIMENSION.remove(player.getUUID());
         maxigregrze.cobblesafari.objectives.ObjectivesManager.onPlayerDisconnect(player.getUUID());
     }

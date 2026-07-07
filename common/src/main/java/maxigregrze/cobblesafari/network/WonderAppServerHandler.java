@@ -36,6 +36,9 @@ public final class WonderAppServerHandler {
         if (server == null) {
             return;
         }
+        if (!maxigregrze.cobblesafari.rotomphone.RotomPhoneServerHandler.hasPhone(player)) {
+            return; // server-authoritative possession check (C1)
+        }
         if (payload.actionType() == WonderAppPayload.ACTION_REQUEST_STATE
                 && !RateLimiter.allow(
                         player.getUUID(),

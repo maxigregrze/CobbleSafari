@@ -543,6 +543,11 @@ public final class GtsService {
      */
     public static AddPersonalOfferOutcome addPersonalOfferByTag(
             MinecraftServer server, UUID targetUuid, String tag) {
+        return addPersonalOfferByTag(server, targetUuid, tag, GtsOffer.PersonalSource.MESSAGE);
+    }
+
+    public static AddPersonalOfferOutcome addPersonalOfferByTag(
+            MinecraftServer server, UUID targetUuid, String tag, GtsOffer.PersonalSource source) {
         List<GtsUniqueOfferDefinition> matches = GtsUniqueOfferRegistry.getByTag(tag);
         if (matches.isEmpty()) {
             return AddPersonalOfferOutcome.fail(AddPersonalOfferResult.NO_TAG_MATCH);
@@ -560,11 +565,16 @@ public final class GtsService {
         }
         RandomSource rng = server.overworld().getRandom();
         GtsUniqueOfferDefinition chosen = avail.get(rng.nextInt(avail.size()));
-        return addPersonalOffer(server, targetUuid, chosen.getOfferId());
+        return addPersonalOffer(server, targetUuid, chosen.getOfferId(), source);
     }
 
     public static AddPersonalOfferOutcome addPersonalOffer(
             MinecraftServer server, UUID targetUuid, String templateOfferId) {
+        return addPersonalOffer(server, targetUuid, templateOfferId, GtsOffer.PersonalSource.MESSAGE);
+    }
+
+    public static AddPersonalOfferOutcome addPersonalOffer(
+            MinecraftServer server, UUID targetUuid, String templateOfferId, GtsOffer.PersonalSource source) {
         GtsSavedData data = GtsSavedData.get(server);
         boolean duplicate =
                 data.getOffers().stream()
@@ -575,6 +585,9 @@ public final class GtsService {
                                                 && templateOfferId.equals(o.getUniqueOfferTemplateId()));
         if (duplicate) {
             return AddPersonalOfferOutcome.fail(AddPersonalOfferResult.ALREADY_HAS_PERSONAL);
+        }
+        if (source == GtsOffer.PersonalSource.ADMIN) {
+            enforceAdminPersonalCap(data, targetUuid);
         }
         AddUniqueOfferOutcome outcome = publishUniqueOffer(server, templateOfferId, targetUuid);
         AddPersonalOfferResult mapped =
@@ -590,9 +603,37 @@ public final class GtsService {
                     case ERROR -> AddPersonalOfferResult.ERROR;
                 };
         if (mapped == AddPersonalOfferResult.SUCCESS) {
+            data.findOffer(outcome.runtimeOfferId()).ifPresent(o -> o.setPersonalSource(source));
+            data.setDirty();
             return AddPersonalOfferOutcome.ok(outcome.runtimeOfferId());
         }
         return AddPersonalOfferOutcome.fail(mapped);
+    }
+
+    /** Evicts the oldest evictable ADMIN personal offers for {@code targetUuid} to keep within the cap (B3). */
+    private static void enforceAdminPersonalCap(GtsSavedData data, UUID targetUuid) {
+        int cap = GtsSettings.get().getPersonalOfferAdminMaxPerPlayer();
+        long now = System.currentTimeMillis();
+        List<GtsOffer> adminOffers =
+                data.getOffers().stream()
+                        .filter(o -> o.isPersonalOffer()
+                                && targetUuid.equals(o.getPersonalTargetUuid())
+                                && o.getPersonalSource() == GtsOffer.PersonalSource.ADMIN)
+                        .sorted(java.util.Comparator.comparingInt(GtsOffer::getId))
+                        .collect(Collectors.toList());
+        int toEvict = adminOffers.size() - cap + 1; // leave room for the incoming offer
+        for (GtsOffer o : adminOffers) {
+            if (toEvict <= 0) {
+                break;
+            }
+            boolean locked = o.isLocked() && (o.getLockExpireEpochMs() == 0L || now <= o.getLockExpireEpochMs());
+            if (locked) {
+                continue; // never evict an offer currently in a trade
+            }
+            data.removeOffer(o.getId());
+            toEvict--;
+        }
+        data.setDirty();
     }
 
     public enum RemovePersonalOfferResult {

@@ -338,7 +338,7 @@ public class BossBattleSession {
     public CsBossMinionEntity spawnMinion(ServerLevel level, Vec3 pos, double targetHeight) {
         CsBossMinionEntity minion = new CsBossMinionEntity(ModEntities.CSBOSS_MINION, level);
         minion.setSpecie(def.effectiveMinionSpecie());
-        minion.setSize(def.size());
+        minion.setSize((int) def.size());
         minion.applyTargetHeight(targetHeight);
         minion.setSessionId(id);
         minion.moveTo(pos.x, pos.y, pos.z, 0.0F, 0.0F);
@@ -348,7 +348,7 @@ public class BossBattleSession {
     }
 
     public CsBossMinionEntity spawnMinion(ServerLevel level, Vec3 pos) {
-        return spawnMinion(level, pos, def.size());
+        return spawnMinion(level, pos, (int) def.size());
     }
 
     public void pruneMinions(ServerLevel level) {

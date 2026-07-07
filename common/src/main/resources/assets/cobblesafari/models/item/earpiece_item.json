@@ -6,13 +6,6 @@
 		"0": "cobblesafari:item/rotomphone/rotomphone_item",
 		"particle": "cobblesafari:item/rotomphone/rotomphone_item"
 	},
-	"display": {
-		"gui": {
-			"rotation": [0, 0, 45],
-			"translation": [0, 0, 0],
-			"scale": [0.75, 0.75, 0.75]
-		}
-	},
 	"elements": [
 		{
 			"from": [4.74443, 5.02591, 9.2],
@@ -128,7 +121,7 @@
 			}
 		},
 		{
-			"from": [6.5, -0.25, 8],
+			"from": [6.5, -2.25, 8],
 			"to": [9.5, 3.75, 8],
 			"rotation": {"angle": 22.5, "axis": "x", "origin": [8, 3.75, 8]},
 			"faces": {
@@ -153,5 +146,11 @@
 				"south": {"uv": [13, 0, 16, 6], "texture": "#0"}
 			}
 		}
-	]
+	],
+	"display": {
+		"gui": {
+			"rotation": [0, 0, -45],
+			"scale": [0.8625, 0.8625, 0.8625]
+		}
+	}
 }

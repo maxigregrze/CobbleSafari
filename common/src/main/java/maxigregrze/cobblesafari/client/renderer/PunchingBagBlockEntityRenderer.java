@@ -50,8 +50,8 @@ public class PunchingBagBlockEntityRenderer implements BlockEntityRenderer<Punch
         // X and Z rotations are opposite-handed in world space; XN matches ZP swing for N/S facings.
         Axis swingAxis = facing.getAxis() == Direction.Axis.Z ? Axis.XN : Axis.ZP;
 
-        float t = blockEntity.getLevel().getGameTime() + partialTick;
-        float angle = swingAngle(t - blockEntity.getLastSwingGameTime());
+        double t = blockEntity.getLevel().getGameTime() + (double) partialTick;
+        float angle = swingAngle((float) (t - blockEntity.getLastSwingGameTime()));
         if (!blockEntity.isSwingPositive()) {
             angle = -angle;
         }

@@ -9,7 +9,6 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.block.BlockRenderDispatcher;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
-import net.minecraft.util.Mth;
 import net.minecraft.world.level.block.state.BlockState;
 
 public class AuspiciousPokeballBlockEntityRenderer implements BlockEntityRenderer<AuspiciousPokeballBlockEntity> {
@@ -33,9 +32,9 @@ public class AuspiciousPokeballBlockEntityRenderer implements BlockEntityRendere
         BlockState renderState = blockEntity.getBlockState().is(ModBlocks.AUSPICIOUS_POKEBALL_SMALL)
                 ? ModBlocks.AUSPICIOUS_POKEBALL_SMALL_DISPLAY.defaultBlockState()
                 : blockEntity.displayRenderBlock().defaultBlockState();
-        float t = blockEntity.getLevel() != null ? blockEntity.getLevel().getGameTime() + partialTick : partialTick;
-        float yaw = t * ROTATION_DEGREES_PER_TICK;
-        float bob = Mth.sin(t * BOB_PHASE_PER_TICK) * 0.5f;
+        double t = blockEntity.getLevel() != null ? blockEntity.getLevel().getGameTime() + (double) partialTick : partialTick;
+        float yaw = (float) ((t * ROTATION_DEGREES_PER_TICK) % 360.0);
+        float bob = (float) (Math.sin(t * BOB_PHASE_PER_TICK) * 0.5);
 
         poseStack.pushPose();
         poseStack.translate(0.5, 0.5 + bob, 0.5);

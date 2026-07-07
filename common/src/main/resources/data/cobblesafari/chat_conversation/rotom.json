@@ -1,0 +1,136 @@
+{
+  "schemaVersion": 1,
+  "id": "rotom",
+  "displayName": "Rotom",
+  "displayPriority": 1,
+  "textureFile": "rotom",
+  "unlockedFromStart": true,
+  "steps": [
+    {
+      "messagesBefore": [
+        "cobblesafari.chat.rotom.s1.b1",
+        "cobblesafari.chat.rotom.s1.b2",
+        "cobblesafari.chat.rotom.s1.b3",
+        "cobblesafari.chat.rotom.s1.b4",
+        "cobblesafari.chat.rotom.s1.b5",
+        "cobblesafari.chat.rotom.s1.b6"
+      ],
+      "advancement": "cobblesafari:rotomphone",
+      "rewardItems": "cobblesafari:gifts/rotom_day1",
+      "rewardPersonalTradeTag": "rotom_eevee",
+      "messagesAfter": [
+        "cobblesafari.chat.rotom.s1.a1",
+        "cobblesafari.chat.rotom.s1.a2"
+      ],
+      "waitNextDay": true
+    },
+    {
+      "messagesBefore": [
+        "cobblesafari.chat.rotom.s2.b1",
+        "cobblesafari.chat.rotom.s2.b2",
+        "cobblesafari.chat.rotom.s2.b3",
+        "cobblesafari.chat.rotom.s2.b4",
+        "cobblesafari.chat.rotom.s2.b5",
+        "cobblesafari.chat.rotom.s2.b6",
+        "cobblesafari.chat.rotom.s2.b7"
+      ],
+      "unlockApp": "gtsApp",
+      "advancement": "cobblesafari:deal_sniffer",
+      "rewardSkinTag": "color",
+      "messagesAfter": [
+        "cobblesafari.chat.rotom.s2.a1",
+        "cobblesafari.chat.rotom.s2.a2",
+        "cobblesafari.chat.rotom.s2.a3",
+        "cobblesafari.chat.rotom.s2.a4",
+        "cobblesafari.chat.rotom.s2.a5",
+        "cobblesafari.chat.rotom.s2.a6",
+        "cobblesafari.chat.rotom.s2.a7",
+        "cobblesafari.chat.rotom.s2.a8",
+        "cobblesafari.chat.rotom.s2.a9"
+      ],
+      "waitNextDay": true
+    },
+    {
+      "messagesBefore": [
+        "cobblesafari.chat.rotom.s3.b1",
+        "cobblesafari.chat.rotom.s3.b2",
+        "cobblesafari.chat.rotom.s3.b3"
+      ],
+      "unlockApp": "skinApp",
+      "advancement": "cobblesafari:fresh_makeover",
+      "rewardItems": "cobblesafari:gifts/rotom_wt_tickets",
+      "rewardSkinTag": "color",
+      "messagesAfter": [
+        "cobblesafari.chat.rotom.s3.a1",
+        "cobblesafari.chat.rotom.s3.a2",
+        "cobblesafari.chat.rotom.s3.a3",
+        "cobblesafari.chat.rotom.s3.a4",
+        "cobblesafari.chat.rotom.s3.a5"
+      ],
+      "waitNextDay": true
+    },
+    {
+      "messagesBefore": [
+        "cobblesafari.chat.rotom.s4.b1",
+        "cobblesafari.chat.rotom.s4.b2",
+        "cobblesafari.chat.rotom.s4.b3",
+        "cobblesafari.chat.rotom.s4.b4",
+        "cobblesafari.chat.rotom.s4.b5"
+      ],
+      "unlockApp": "wonderApp",
+      "advancement": "cobblesafari:gambling_addiction",
+      "rewardItems": "cobblesafari:gifts/rotom_wt_tickets",
+      "rewardSkinTag": "color",
+      "messagesAfter": [
+        "cobblesafari.chat.rotom.s4.a1",
+        "cobblesafari.chat.rotom.s4.a2",
+        "cobblesafari.chat.rotom.s4.a3",
+        "cobblesafari.chat.rotom.s4.a4",
+        "cobblesafari.chat.rotom.s4.a5"
+      ],
+      "waitNextDay": true
+    },
+    {
+      "messagesBefore": [
+        "cobblesafari.chat.rotom.s5.b1",
+        "cobblesafari.chat.rotom.s5.b2",
+        "cobblesafari.chat.rotom.s5.b3",
+        "cobblesafari.chat.rotom.s5.b4",
+        "cobblesafari.chat.rotom.s5.b5",
+        "cobblesafari.chat.rotom.s5.b6"
+      ],
+      "unlockApp": "settingsApp",
+      "advancement": "cobblesafari:up_and_downs",
+      "rewardSkinTag": "color",
+      "messagesAfter": [
+        "cobblesafari.chat.rotom.s5.a1",
+        "cobblesafari.chat.rotom.s5.a2",
+        "cobblesafari.chat.rotom.s5.a3",
+        "cobblesafari.chat.rotom.s5.a4",
+        "cobblesafari.chat.rotom.s5.a5"
+      ],
+      "waitNextDay": true
+    },
+    {
+      "messagesBefore": [
+        "cobblesafari.chat.rotom.s6.b1",
+        "cobblesafari.chat.rotom.s6.b2",
+        "cobblesafari.chat.rotom.s6.b3",
+        "cobblesafari.chat.rotom.s6.b4",
+        "cobblesafari.chat.rotom.s6.b5",
+        "cobblesafari.chat.rotom.s6.b6"
+      ],
+      "unlockApp": "unionApp",
+      "advancement": "cobblesafari:sociable",
+      "rewardSkinTag": "color",
+      "messagesAfter": [
+        "cobblesafari.chat.rotom.s6.a1",
+        "cobblesafari.chat.rotom.s6.a2",
+        "cobblesafari.chat.rotom.s6.a3",
+        "cobblesafari.chat.rotom.s6.a4",
+        "cobblesafari.chat.rotom.s6.a5"
+      ],
+      "waitNextDay": true
+    }
+  ]
+}

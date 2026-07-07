@@ -51,6 +51,9 @@ public class ChatProgressSavedData extends SavedData {
      * section</em>: the base conversation steps while {@code !baseComplete}, otherwise the active
      * repeatable series identified by {@code activeSeriesId} ({@code ""} = idle, no active series).
      */
+    /** Upper bound on the transcript log kept per (player, conversation) to avoid unbounded growth (A3). */
+    public static final int MAX_HISTORY = 50;
+
     public static final class ProgressEntry {
         public int stepIndex;
         public int messageIndex;
@@ -70,6 +73,25 @@ public class ChatProgressSavedData extends SavedData {
         public final List<ResolvedSeries> history = new ArrayList<>();
         /** Ids of {@code isUnique} series already completed (excluded from future rolls). */
         public final Set<String> completedUnique = new HashSet<>();
+
+        /**
+         * Appends a resolved series to the transcript while keeping {@link #history} bounded (A3):
+         * first drops entries that are permanently hidden ({@code doDisapear} resolved on a prior day —
+         * never rendered again), then trims the oldest entries beyond {@link #MAX_HISTORY}. The
+         * {@link #completedUnique} set is tracked separately and is never affected.
+         */
+        public void appendHistory(ResolvedSeries rs, long today) {
+            history.removeIf(h -> h.doDisapear && today > h.resolvedEpochDay);
+            history.add(rs);
+            trimHistory();
+        }
+
+        /** Trims the oldest transcript entries so {@link #history} never exceeds {@link #MAX_HISTORY}. */
+        public void trimHistory() {
+            while (history.size() > MAX_HISTORY) {
+                history.remove(0);
+            }
+        }
     }
 
     /** A resolved (completed or failed) repeatable series instance, for rendering the transcript. */
@@ -161,6 +183,8 @@ public class ChatProgressSavedData extends SavedData {
                             rs.doDisapear = hc.getBoolean("Hide");
                             entry.history.add(rs);
                         }
+                        // Compact legacy oversized saves on first load (A3).
+                        entry.trimHistory();
                     }
                     if (e.contains("Unique", Tag.TAG_LIST)) {
                         ListTag uniq = e.getList("Unique", Tag.TAG_STRING);

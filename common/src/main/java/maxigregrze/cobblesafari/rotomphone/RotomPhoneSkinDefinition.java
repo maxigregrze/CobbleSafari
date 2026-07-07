@@ -12,11 +12,13 @@ public class RotomPhoneSkinDefinition {
     private final boolean hasShinyVariant;
     private final List<String> tags;
     private final boolean addUnlockItem;
+    /** Optional hex tint (same format as {@code color}) applied to the base layer of the unlock disc; {@code ""} = none. */
+    private final String itemTint;
 
     public RotomPhoneSkinDefinition(String id, String displayName, String color,
                                      boolean hasCustomScreen, boolean unlockedFromStart,
                                      String unlockingAdvancement, boolean hasShinyVariant,
-                                     List<String> tags, boolean addUnlockItem) {
+                                     List<String> tags, boolean addUnlockItem, String itemTint) {
         this.id = id;
         this.displayName = displayName;
         this.color = color;
@@ -26,6 +28,7 @@ public class RotomPhoneSkinDefinition {
         this.hasShinyVariant = hasShinyVariant;
         this.tags = tags != null ? List.copyOf(tags) : List.of();
         this.addUnlockItem = addUnlockItem;
+        this.itemTint = itemTint != null ? itemTint : "";
     }
 
     public String getId() { return id; }
@@ -37,4 +40,5 @@ public class RotomPhoneSkinDefinition {
     public boolean hasShinyVariant() { return hasShinyVariant; }
     public List<String> getTags() { return tags; }
     public boolean addUnlockItem() { return addUnlockItem; }
+    public String getItemTint() { return itemTint; }
 }

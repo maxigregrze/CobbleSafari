@@ -126,6 +126,34 @@ public class ObjectivesSavedData extends SavedData {
         }
     }
 
+    /**
+     * Removes assignments whose dimension no longer has a definition (a datapack that was removed or
+     * disabled via {@code enabled:false}). Called after a datapack (re)load so the store cannot accumulate
+     * orphaned entries indefinitely on a long-running server. Returns the number removed (C8).
+     */
+    public int purgeUndefinedDimensions(java.util.function.Predicate<String> dimensionDefined) {
+        int removed = 0;
+        java.util.Iterator<Map.Entry<UUID, Map<String, ObjectiveAssignment>>> pit = byPlayer.entrySet().iterator();
+        while (pit.hasNext()) {
+            Map<String, ObjectiveAssignment> byKey = pit.next().getValue();
+            java.util.Iterator<ObjectiveAssignment> ait = byKey.values().iterator();
+            while (ait.hasNext()) {
+                ObjectiveAssignment a = ait.next();
+                if (!dimensionDefined.test(a.dimensionId())) {
+                    ait.remove();
+                    removed++;
+                }
+            }
+            if (byKey.isEmpty()) {
+                pit.remove();
+            }
+        }
+        if (removed > 0) {
+            setDirty();
+        }
+        return removed;
+    }
+
     /** Snapshot of (player, assignment) pairs whose key does NOT contain an instance separator. */
     public List<PlayerAssignment> getNonInstancedAssignments() {
         List<PlayerAssignment> out = new ArrayList<>();

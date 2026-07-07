@@ -52,6 +52,10 @@ public class JigsawPlacementMixin {
             int maxDepth, BlockPos pos, boolean keepJigsaws,
             CallbackInfoReturnable<Boolean> cir,
             @Local StructurePiecesBuilder builder) {
+        // Skip vanilla/other-mod jigsaws entirely: only a CobbleSafari placement flags this thread (B4).
+        if (!DungeonStructureBounds.isCapturing()) {
+            return;
+        }
         DungeonStructureBounds.record(pos, builder.getBoundingBox());
     }
 }

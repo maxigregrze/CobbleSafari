@@ -22,7 +22,7 @@ public class DistortionWalkAttack implements CsBossAttack {
 
     private static final int SEND_INTERVAL = 40; // a new shadow every 2 s
     private static final int SHADOW_LIFE = 100; // 5 s of forward travel
-    private static final double WALK_SPEED = 0.2; // shadow traces a path
+    private static final double WALK_SPEED = 0.2; // plancher (petites arènes) — mis à l'échelle sinon
     private static final double DEVIATION_DEG = 12.0; // max mid-course turn (left or right)
     private static final int END_DELAY = 20; // 3*40 + 100 + 20 = 240 t
     private static final int COUNT = 4; // deterministic
@@ -38,16 +38,18 @@ public class DistortionWalkAttack implements CsBossAttack {
     private static final class Walk {
         final AttackShadowEntity shadow;
         final int birthTick;
+        final double speed;
         double dirX;
         double dirZ;
         BlockPos lastBlock;
         boolean deviated;
 
-        Walk(AttackShadowEntity shadow, int birthTick, double dirX, double dirZ) {
+        Walk(AttackShadowEntity shadow, int birthTick, double dirX, double dirZ, double speed) {
             this.shadow = shadow;
             this.birthTick = birthTick;
             this.dirX = dirX;
             this.dirZ = dirZ;
+            this.speed = speed;
         }
     }
 
@@ -110,9 +112,13 @@ public class DistortionWalkAttack implements CsBossAttack {
         double theta = rng.nextDouble() * Math.PI * 2.0;
         AttackShadowEntity shadow = AttackShadowEntity.spawn(level, boss.getX(),
                 session.getTriggerPos().getY(), boss.getZ(), session.getId());
-        shadow.setMaxTravel(CsBossAttackLib.areaReach(session));
+        double reach = CsBossAttackLib.areaReach(session);
+        shadow.setMaxTravel(reach);
         session.trackAttackEntity(shadow);
-        walks.add(new Walk(shadow, tick, Math.cos(theta), Math.sin(theta)));
+        // Vitesse mise à l'échelle de l'arène : l'ombre atteint la bordure (reach) dans sa durée de vie,
+        // au lieu de mourir après 20 blocs fixes sur les grandes arènes.
+        double speed = Math.max(WALK_SPEED, reach / SHADOW_LIFE);
+        walks.add(new Walk(shadow, tick, Math.cos(theta), Math.sin(theta), speed));
         boss.triggerAttackAnimation();
         CsBossAttackLib.sound(level, boss.getX(), boss.getY(), boss.getZ(),
                 "cobblemon:move.shadowball.actor", net.minecraft.sounds.SoundSource.HOSTILE, 1.2F, 0.8F);
@@ -130,8 +136,8 @@ public class DistortionWalkAttack implements CsBossAttack {
             w.dirX = nx;
             w.dirZ = nz;
         }
-        w.shadow.setPos(w.shadow.getX() + w.dirX * WALK_SPEED, w.shadow.getY(),
-                w.shadow.getZ() + w.dirZ * WALK_SPEED);
+        w.shadow.setPos(w.shadow.getX() + w.dirX * w.speed, w.shadow.getY(),
+                w.shadow.getZ() + w.dirZ * w.speed);
 
         BlockPos here = BlockPos.containing(w.shadow.getX(), w.shadow.getY(), w.shadow.getZ());
         if (!here.equals(w.lastBlock)) {

@@ -31,7 +31,11 @@
     [],
     [],
     [],
-    [],
+    [
+      "cobblesafari:water_gravel_disk",
+      "cobblesafari:water_sand_disk",
+      "cobblesafari:water_clay_disk"
+    ],
     [],
     [],
     [

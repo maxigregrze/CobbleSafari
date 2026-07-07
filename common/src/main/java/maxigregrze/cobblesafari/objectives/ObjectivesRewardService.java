@@ -2,7 +2,9 @@ package maxigregrze.cobblesafari.objectives;
 
 import maxigregrze.cobblesafari.CobbleSafari;
 import maxigregrze.cobblesafari.block.misc.AuspiciousPokeballGoldBlockEntity;
+import maxigregrze.cobblesafari.block.misc.AuspiciousPokeballGoldIndex;
 import maxigregrze.cobblesafari.config.MiscConfig;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundSetTitleTextPacket;
@@ -11,8 +13,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
@@ -57,18 +57,15 @@ public final class ObjectivesRewardService {
         int centerX = player.chunkPosition().x;
         int centerZ = player.chunkPosition().z;
 
+        // Query the live per-dimension index instead of scanning (2·radius+1)² chunks + all their block
+        // entities: keep the "within N chunks of the player" semantics, resolve only the few candidates (B5).
         List<AuspiciousPokeballGoldBlockEntity> found = new ArrayList<>();
-        for (int cx = centerX - radius; cx <= centerX + radius; cx++) {
-            for (int cz = centerZ - radius; cz <= centerZ + radius; cz++) {
-                LevelChunk chunk = level.getChunkSource().getChunkNow(cx, cz);
-                if (chunk == null) {
-                    continue;
-                }
-                for (BlockEntity be : chunk.getBlockEntities().values()) {
-                    if (be instanceof AuspiciousPokeballGoldBlockEntity gold) {
-                        found.add(gold);
-                    }
-                }
+        for (BlockPos pos : AuspiciousPokeballGoldIndex.positionsIn(level.dimension().location())) {
+            if (Math.abs((pos.getX() >> 4) - centerX) > radius || Math.abs((pos.getZ() >> 4) - centerZ) > radius) {
+                continue;
+            }
+            if (level.getBlockEntity(pos) instanceof AuspiciousPokeballGoldBlockEntity gold) {
+                found.add(gold);
             }
         }
 

@@ -3,6 +3,7 @@
   "displayName": "Beast-Ball",
   "hasCustomScreen": true,
   "color": "367474",
+  "itemTint": "5f2f9a",
   "unlockedFromStart": false,
   "hasShinyVariant": false,
   "unlockingAdvancement": "",

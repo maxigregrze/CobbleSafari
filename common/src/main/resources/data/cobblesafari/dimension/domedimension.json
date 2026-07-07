@@ -269,22 +269,48 @@
             "y_scale": 1.0
           },
           "temperature": {
-            "type": "minecraft:shifted_noise",
-            "noise": "minecraft:temperature",
-            "xz_scale": 2.5,
-            "y_scale": 0.0,
-            "shift_x": "minecraft:shift_x",
-            "shift_y": 0.0,
-            "shift_z": "minecraft:shift_z"
+            "type": "minecraft:add",
+            "argument1": {
+              "type": "minecraft:shifted_noise",
+              "noise": "minecraft:temperature",
+              "xz_scale": 2.5,
+              "y_scale": 0.0,
+              "shift_x": { "type": "minecraft:mul", "argument1": 8.0, "argument2": "minecraft:shift_x" },
+              "shift_y": 0.0,
+              "shift_z": { "type": "minecraft:mul", "argument1": 8.0, "argument2": "minecraft:shift_z" }
+            },
+            "argument2": {
+              "type": "minecraft:mul",
+              "argument1": 0.12,
+              "argument2": {
+                "type": "minecraft:noise",
+                "noise": "minecraft:temperature",
+                "xz_scale": 12.0,
+                "y_scale": 0.0
+              }
+            }
           },
           "vegetation": {
-            "type": "minecraft:shifted_noise",
-            "noise": "minecraft:vegetation",
-            "xz_scale": 2.5,
-            "y_scale": 0.0,
-            "shift_x": "minecraft:shift_x",
-            "shift_y": 0.0,
-            "shift_z": "minecraft:shift_z"
+            "type": "minecraft:add",
+            "argument1": {
+              "type": "minecraft:shifted_noise",
+              "noise": "minecraft:vegetation",
+              "xz_scale": 2.5,
+              "y_scale": 0.0,
+              "shift_x": { "type": "minecraft:mul", "argument1": 8.0, "argument2": "minecraft:shift_x" },
+              "shift_y": 0.0,
+              "shift_z": { "type": "minecraft:mul", "argument1": 8.0, "argument2": "minecraft:shift_z" }
+            },
+            "argument2": {
+              "type": "minecraft:mul",
+              "argument1": 0.12,
+              "argument2": {
+                "type": "minecraft:noise",
+                "noise": "minecraft:vegetation",
+                "xz_scale": 12.0,
+                "y_scale": 0.0
+              }
+            }
           },
           "continents": 0.3,
           "erosion": "minecraft:overworld/erosion",
@@ -663,7 +689,7 @@
                       "then_run": {
                         "type": "minecraft:block",
                         "result_state": {
-                          "Name": "minecraft:grass_block"
+                          "Name": "minecraft:snow_block"
                         }
                       }
                     },

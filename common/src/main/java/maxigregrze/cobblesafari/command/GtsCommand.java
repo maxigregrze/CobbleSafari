@@ -617,9 +617,11 @@ public final class GtsCommand {
         String tagForError = null;
         if (token.toLowerCase(Locale.ROOT).startsWith(GtsService.TAG_PREFIX)) {
             tagForError = token.substring(GtsService.TAG_PREFIX.length()).trim();
-            outcome = GtsService.addPersonalOfferByTag(server, target.getUUID(), tagForError);
+            outcome = GtsService.addPersonalOfferByTag(
+                    server, target.getUUID(), tagForError, GtsOffer.PersonalSource.ADMIN);
         } else {
-            outcome = GtsService.addPersonalOffer(server, target.getUUID(), token);
+            outcome = GtsService.addPersonalOffer(
+                    server, target.getUUID(), token, GtsOffer.PersonalSource.ADMIN);
         }
         final String resolvedTemplateId =
                 outcome.result() == GtsService.AddPersonalOfferResult.SUCCESS

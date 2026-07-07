@@ -29,8 +29,13 @@ public final class PartnerRibbonTitles {
         if (!isPartnerRibbon(mark)) {
             return mark.getTitle(pokemonDisplayName);
         }
-        pokemon.refreshOriginalTrainer();
         String ot = pokemon.getOriginalTrainerName();
+        if (ot == null || ot.isBlank()) {
+            // Lazy: only pay the profile-cache lookup when the OT name is not resolved yet, instead of on
+            // every titled-name build (this runs in the name-render hot path). See action plan 145 (C5).
+            pokemon.refreshOriginalTrainer();
+            ot = pokemon.getOriginalTrainerName();
+        }
         if (ot == null || ot.isBlank()) {
             return pokemonDisplayName;
         }

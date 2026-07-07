@@ -35,6 +35,11 @@
                         "type": "minecraft:matching_blocks",
                         "blocks": "minecraft:dark_prismarine",
                         "offset": [0, -1, 0]
+                    },
+                    {
+                        "type": "minecraft:matching_blocks",
+                        "blocks": ["minecraft:gravel", "minecraft:sand", "minecraft:clay"],
+                        "offset": [0, -1, 0]
                     }
                 ]
             }

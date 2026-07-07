@@ -492,7 +492,7 @@ public final class ChatConversationService {
         rs.stepReached = e.stepIndex;
         rs.resolvedEpochDay = today;
         rs.doDisapear = s != null && s.doDisapear();
-        e.history.add(rs);
+        e.appendHistory(rs, today);
         if (completed && s != null && s.isUnique()) {
             e.completedUnique.add(e.activeSeriesId);
         }

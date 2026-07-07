@@ -3,6 +3,7 @@
   "displayName": "Gameboy",
   "hasCustomScreen": true,
   "color": "ceff44",
+  "itemTint": "87c207",
   "unlockedFromStart": false,
   "hasShinyVariant": false,
   "unlockingAdvancement": "",

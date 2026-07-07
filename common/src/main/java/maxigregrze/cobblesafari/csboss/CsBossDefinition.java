@@ -19,7 +19,7 @@ public record CsBossDefinition(
         int minimumDuration,
         String specie,
         @Nullable String minion,
-        int size,
+        double size,
         List<String> moveSet,
         int moveCooldownMin,
         int moveCooldownMax,

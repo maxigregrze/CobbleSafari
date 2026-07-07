@@ -3,6 +3,7 @@
   "displayName": "Poketch",
   "hasCustomScreen": true,
   "color": "c4ffc4",
+  "itemTint": "4b4c4c",
   "unlockedFromStart": false,
   "hasShinyVariant": false,
   "unlockingAdvancement": "",

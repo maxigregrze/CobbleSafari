@@ -108,7 +108,7 @@ public final class CsBossDataLoader {
         List<String> tags = readStringList(json, "tags");
         List<String> moveSet = readStringList(json, "moveSet");
 
-        int size = json.has("size") ? Math.max(1, json.get("size").getAsInt()) : CsBossDefinition.DEFAULT_SIZE;
+        double size = json.has("size") ? Math.max(1.0, json.get("size").getAsDouble()) : CsBossDefinition.DEFAULT_SIZE;
         int cdMin = json.has("moveCooldownMin")
                 ? Math.max(1, json.get("moveCooldownMin").getAsInt()) : CsBossDefinition.DEFAULT_COOLDOWN_MIN;
         int cdMax = json.has("moveCooldownMax")

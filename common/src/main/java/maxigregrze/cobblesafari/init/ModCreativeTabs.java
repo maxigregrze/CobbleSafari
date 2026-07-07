@@ -153,8 +153,14 @@ public class ModCreativeTabs {
                 output.accept(ModItems.ROTOM_APP_UNLOCK_WONDER);
                 output.accept(ModItems.ROTOM_APP_UNLOCK_UNION);
                 output.accept(ModItems.ROTOM_APP_UNLOCK_SKIN);
+                output.accept(ModItems.ROTOM_APP_UNLOCK_SETTINGS);
                 output.accept(ModItems.ROTOM_APP_UNLOCK_ALL);
-                output.accept(ModItems.ROTOM_SKIN_UNLOCK);
+                // One dynamic skin disc per disc-obtainable bundled skin (blank disc never shown).
+                for (String skinId : ModItems.SKIN_UNLOCK_TARGETS) {
+                    ItemStack disc = new ItemStack(ModItems.ROTOM_SKIN_UNLOCK);
+                    disc.set(ModComponents.SKIN_UNLOCK_TARGET, skinId);
+                    output.accept(disc);
+                }
                 output.accept(ModItems.ROTOM_SKIN_UNLOCK_ALL);
                 output.accept(ModItems.TICKET_WONDERTRADE);
                 output.accept(ModItems.WILD_EGG_BASE);

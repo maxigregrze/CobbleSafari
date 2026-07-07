@@ -39,8 +39,8 @@ public class UnionRoomGlobeUpperBlockEntityRenderer implements BlockEntityRender
         poseStack.mulPose(Axis.YP.rotationDegrees(facingYaw));
         poseStack.translate(-0.5, 0.0, -0.5);
 
-        float t = blockEntity.getLevel() != null ? blockEntity.getLevel().getGameTime() + partialTick : partialTick;
-        float spin = t * SPIN_DEGREES_PER_TICK;
+        double t = blockEntity.getLevel() != null ? blockEntity.getLevel().getGameTime() + (double) partialTick : partialTick;
+        float spin = (float) ((t * SPIN_DEGREES_PER_TICK) % 360.0);
 
         poseStack.pushPose();
         poseStack.translate(0.5, 0.5, 0.5);

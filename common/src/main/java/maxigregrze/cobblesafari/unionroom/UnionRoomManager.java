@@ -79,6 +79,8 @@ public final class UnionRoomManager {
     public static final String DIMENSION_ID = "cobblesafari:unionroom";
 
     private static final int INSTANCE_SPACING = 128;
+    /** Only run the (large) void-marker scan once every N ticks while waiting for jigsaw completion (A1). */
+    private static final int VOID_SCAN_INTERVAL = 5;
     private static final int PLAZA_SPACING = 512;
     private static final int PLAZA_Z = 1024;
     private static final int INSTANCE_Y = 64;
@@ -660,25 +662,21 @@ public final class UnionRoomManager {
 
     /** Structure NBT marks the exit anchor with {@link ModBlocks#VOID_BLOCK} (single block). */
     private static @Nullable BlockPos findUnionRoomVoidMarker(ServerLevel level, BlockPos center, int scanRadius) {
-        BlockPos best = null;
-        int bestDistSq = Integer.MAX_VALUE;
-        for (int dx = -scanRadius; dx <= scanRadius; dx++) {
-            for (int dy = -16; dy <= 32; dy++) {
+        // Early-exit at the first marker found: the structure carries a single void_block anchor, so there
+        // is no need to scan the whole volume for the "closest" one (was up to ~3.2M getBlockState per call
+        // for a plaza). Reuse a MutableBlockPos to avoid per-block allocations. See action plan 145 (A1).
+        BlockPos.MutableBlockPos cursor = new BlockPos.MutableBlockPos();
+        for (int dy = -16; dy <= 32; dy++) {
+            for (int dx = -scanRadius; dx <= scanRadius; dx++) {
                 for (int dz = -scanRadius; dz <= scanRadius; dz++) {
-                    BlockPos c = center.offset(dx, dy, dz);
-                    BlockState st = level.getBlockState(c);
-                    if (!st.is(ModBlocks.VOID_BLOCK)) {
-                        continue;
-                    }
-                    int d2 = dx * dx + dy * dy + dz * dz;
-                    if (d2 < bestDistSq) {
-                        bestDistSq = d2;
-                        best = c;
+                    cursor.set(center.getX() + dx, center.getY() + dy, center.getZ() + dz);
+                    if (level.getBlockState(cursor).is(ModBlocks.VOID_BLOCK)) {
+                        return cursor.immutable();
                     }
                 }
             }
         }
-        return best;
+        return null;
     }
 
     /**
@@ -706,17 +704,24 @@ public final class UnionRoomManager {
             }
             UnionRoomSavedData.InstanceData inst = instOpt.get();
             BlockPos structurePos = inst.structurePos.equals(BlockPos.ZERO) ? inst.anchorPos : inst.structurePos;
-            int chunkRadius = TYPE_PLAZA.equals(normalizeInstanceType(inst.type)) ? 8 : 3;
-            int scanRadius = TYPE_PLAZA.equals(normalizeInstanceType(inst.type)) ? 128 : 48;
+            boolean plaza = TYPE_PLAZA.equals(normalizeInstanceType(inst.type));
+            int chunkRadius = plaza ? 8 : 3;
+            int scanRadius = plaza ? 128 : 48;
 
-            ensureChunksLoaded(unionLevel, structurePos, chunkRadius);
-            BlockPos voidMarker = findUnionRoomVoidMarker(unionLevel, structurePos, scanRadius);
+            // Throttle the (potentially multi-million-block) marker scan to once every VOID_SCAN_INTERVAL
+            // ticks instead of every tick, and always on the final tick before giving up (A1).
+            boolean doScan = counter[0] <= 0 || (counter[0] % VOID_SCAN_INTERVAL) == 0;
+            BlockPos voidMarker = null;
+            if (doScan) {
+                ensureChunksLoaded(unionLevel, structurePos, chunkRadius);
+                voidMarker = findUnionRoomVoidMarker(unionLevel, structurePos, scanRadius);
+            }
 
             if (voidMarker != null) {
                 replaceVoidMarkerWithExit(unionLevel, voidMarker, instanceId);
                 CobbleSafari.LOGGER.info(
-                        "Union Room: exit teleporter placed for instance {} at {} (attempt {})",
-                        instanceId, voidMarker, 41 - counter[0]);
+                        "Union Room: exit teleporter placed for instance {} at {} ({} ticks remaining)",
+                        instanceId, voidMarker, counter[0]);
                 iter.remove();
             } else if (counter[0] <= 0) {
                 CobbleSafari.LOGGER.warn(

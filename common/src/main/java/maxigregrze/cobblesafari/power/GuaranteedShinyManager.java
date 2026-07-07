@@ -7,6 +7,8 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffect;
 
@@ -59,6 +61,22 @@ public final class GuaranteedShinyManager {
             }
         }
         data.removeByPrefix(uuid, prefix);
+    }
+
+    /**
+     * Periodic cleanup of expired guaranteed-shiny requests (C7). The consume path already prunes lazily,
+     * but a player who armed a request and never triggers a matching spawn (or logs off for good) would
+     * otherwise keep it forever on a long-uptime server. Empty per-player sub-maps are dropped too.
+     */
+    public static void sweepExpired(MinecraftServer server) {
+        ServerLevel overworld = server.overworld();
+        if (overworld == null) {
+            return;
+        }
+        int removed = GuaranteedShinySavedData.get(server).purgeExpired(overworld.getGameTime());
+        if (removed > 0) {
+            CobbleSafari.LOGGER.debug("[GuaranteedShiny] swept {} expired request(s)", removed);
+        }
     }
 
     public static boolean tryConsume(ServerPlayer player, PokemonEntity pe) {

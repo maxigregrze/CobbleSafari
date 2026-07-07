@@ -33,8 +33,8 @@ public class CsBossEntity extends Mob {
 
     private static final EntityDataAccessor<String> DATA_SPECIE =
             SynchedEntityData.defineId(CsBossEntity.class, EntityDataSerializers.STRING);
-    private static final EntityDataAccessor<Integer> DATA_SIZE =
-            SynchedEntityData.defineId(CsBossEntity.class, EntityDataSerializers.INT);
+    private static final EntityDataAccessor<Float> DATA_SIZE =
+            SynchedEntityData.defineId(CsBossEntity.class, EntityDataSerializers.FLOAT);
     /** Incremented server-side on each attack to trigger the client attack animation. */
     private static final EntityDataAccessor<Integer> DATA_ATTACK_SEQ =
             SynchedEntityData.defineId(CsBossEntity.class, EntityDataSerializers.INT);
@@ -53,6 +53,8 @@ public class CsBossEntity extends Mob {
     public static final double ENTRANCE_HEIGHT = 12.0;
     /** Y offset of the target position: 0 ⇒ the boss is "inside" the trigger block, not standing on top. */
     public static final double STAND_Y_OFFSET = 0.0;
+    /** Minimum scale reached at the end of the departure (death) animation. Shared with the renderer and the hitbox. */
+    public static final float DEATH_MIN_SCALE = 0.05f;
 
     private static final String KEY_SPECIE = "Specie";
     private static final String KEY_SIZE = "Size";
@@ -61,9 +63,12 @@ public class CsBossEntity extends Mob {
 
     private int sessionId;
     private boolean staticBoss = true;
-    /** Hitbox derived from the species (null ⇒ default type dimensions). */
+    /**
+     * Base hitbox = species hitbox × baseScale × size, <i>before</i> the entrance/death animation
+     * scale (applied in {@link #getDefaultDimensions}). Null ⇒ default type dimensions.
+     */
     @Nullable
-    private EntityDimensions cachedDims;
+    private EntityDimensions baseDims;
 
     public CsBossEntity(EntityType<? extends CsBossEntity> type, Level level) {
         super(type, level);
@@ -83,7 +88,7 @@ public class CsBossEntity extends Mob {
     public static CsBossEntity spawnAbove(ServerLevel level, BlockPos triggerPos, CsBossDefinition def, int sessionId) {
         CsBossEntity boss = new CsBossEntity(ModEntities.CSBOSS, level);
         boss.setSpecie(def.specie());
-        boss.setSize(def.size());
+        boss.setSize((float) def.size());
         boss.staticBoss = def.isStatic();
         boss.sessionId = sessionId;
         boss.setPhase(PHASE_ENTERING);
@@ -99,7 +104,7 @@ public class CsBossEntity extends Mob {
     protected void defineSynchedData(SynchedEntityData.Builder builder) {
         super.defineSynchedData(builder);
         builder.define(DATA_SPECIE, "");
-        builder.define(DATA_SIZE, CsBossDefinition.DEFAULT_SIZE);
+        builder.define(DATA_SIZE, (float) CsBossDefinition.DEFAULT_SIZE);
         builder.define(DATA_ATTACK_SEQ, 0);
         builder.define(DATA_PHASE, PHASE_ACTIVE);
         builder.define(DATA_ANIM, 1.0F);
@@ -110,6 +115,9 @@ public class CsBossEntity extends Mob {
         super.onSyncedDataUpdated(key);
         if (DATA_SPECIE.equals(key) || DATA_SIZE.equals(key)) {
             recomputeDimensions();
+        } else if (DATA_PHASE.equals(key) || DATA_ANIM.equals(key)) {
+            // Entrance/death animation changes the visible scale: keep the hitbox in step with it.
+            refreshDimensions();
         }
     }
 
@@ -123,16 +131,34 @@ public class CsBossEntity extends Mob {
             Pokemon mon = PokemonProperties.Companion.parse(specie).create(null);
             EntityDimensions box = mon.getForm().getHitbox();
             float scale = mon.getForm().getBaseScale() * getSize();
-            this.cachedDims = box.scale(scale);
+            this.baseDims = box.scale(scale);
             refreshDimensions();
         } catch (Exception ignored) {
             // unresolved species: keep previous / default dimensions
         }
     }
 
+    /**
+     * Scale multiplier for the current phase, shared by the renderer and the hitbox so the collision
+     * box always tracks the visible model: grows 0→1 on entrance, shrinks to {@link #DEATH_MIN_SCALE}
+     * on death, and is 1 while active.
+     */
+    public float animScale() {
+        return switch (getPhase()) {
+            case PHASE_ENTERING -> getAnim();
+            case PHASE_DYING -> Mth.lerp(getAnim(), 1.0f, DEATH_MIN_SCALE);
+            default -> 1.0f;
+        };
+    }
+
     @Override
     protected EntityDimensions getDefaultDimensions(net.minecraft.world.entity.Pose pose) {
-        return this.cachedDims != null ? this.cachedDims : super.getDefaultDimensions(pose);
+        if (this.baseDims == null) {
+            return super.getDefaultDimensions(pose);
+        }
+        // Match the visible model as it grows in / shrinks out; floor at DEATH_MIN_SCALE so the box
+        // never collapses to a degenerate zero-size AABB at the very first entrance tick.
+        return this.baseDims.scale(Math.max(animScale(), DEATH_MIN_SCALE));
     }
 
     @Override
@@ -148,12 +174,12 @@ public class CsBossEntity extends Mob {
         this.entityData.set(DATA_SPECIE, specie == null ? "" : specie);
     }
 
-    public int getSize() {
+    public float getSize() {
         return this.entityData.get(DATA_SIZE);
     }
 
-    public void setSize(int size) {
-        this.entityData.set(DATA_SIZE, Math.max(1, size));
+    public void setSize(float size) {
+        this.entityData.set(DATA_SIZE, Math.max(1.0f, size));
     }
 
     public int getSessionId() {
@@ -305,7 +331,7 @@ public class CsBossEntity extends Mob {
     public void addAdditionalSaveData(CompoundTag tag) {
         super.addAdditionalSaveData(tag);
         tag.putString(KEY_SPECIE, getSpecie());
-        tag.putInt(KEY_SIZE, getSize());
+        tag.putFloat(KEY_SIZE, getSize());
         tag.putInt(KEY_SESSION, this.sessionId);
         tag.putBoolean(KEY_STATIC, this.staticBoss);
     }
@@ -314,7 +340,7 @@ public class CsBossEntity extends Mob {
     public void readAdditionalSaveData(CompoundTag tag) {
         super.readAdditionalSaveData(tag);
         setSpecie(tag.getString(KEY_SPECIE));
-        setSize(tag.contains(KEY_SIZE) ? tag.getInt(KEY_SIZE) : CsBossDefinition.DEFAULT_SIZE);
+        setSize(tag.contains(KEY_SIZE) ? tag.getFloat(KEY_SIZE) : CsBossDefinition.DEFAULT_SIZE);
         this.sessionId = tag.getInt(KEY_SESSION);
         this.staticBoss = !tag.contains(KEY_STATIC) || tag.getBoolean(KEY_STATIC);
     }

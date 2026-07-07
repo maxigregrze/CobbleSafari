@@ -83,6 +83,15 @@ public class RotomPhoneServerHandler {
         }
     }
 
+    /**
+     * Server-authoritative possession check reused by the Rotom Phone app handlers: rejects forged app
+     * payloads from a client that does not actually hold a phone (main/off hand, accessory slot, or
+     * inventory). Mirrors the guard Roto-Glide already applies. See action plan 145 (C1).
+     */
+    public static boolean hasPhone(ServerPlayer player) {
+        return !findPhoneInInventory(player).isEmpty();
+    }
+
     private static ItemStack findPhoneInInventory(ServerPlayer player) {
         for (InteractionHand hand : InteractionHand.values()) {
             ItemStack inHand = player.getItemInHand(hand);

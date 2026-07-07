@@ -90,6 +90,17 @@ public final class RotomPhoneSkinDataLoader {
         boolean hasShinyVariant = json.has("hasShinyVariant") && json.get("hasShinyVariant").getAsBoolean();
         boolean addUnlockItem = json.has("addUnlockItem") && json.get("addUnlockItem").getAsBoolean();
 
+        // Optional tint (same format as 'color') for the base layer of the unlock disc; ignored if invalid.
+        String itemTint = "";
+        if (json.has("itemTint")) {
+            String candidate = json.get("itemTint").getAsString();
+            if (HEX_COLOR.matcher(candidate).matches()) {
+                itemTint = candidate;
+            } else {
+                CobbleSafari.LOGGER.warn("[RotomPhone] {} has invalid itemTint '{}', ignored", fileId, candidate);
+            }
+        }
+
         List<String> tags = new ArrayList<>();
         if (json.has("tags") && json.get("tags").isJsonArray()) {
             JsonArray tagArray = json.getAsJsonArray("tags");
@@ -107,6 +118,6 @@ public final class RotomPhoneSkinDataLoader {
         }
 
         return new RotomPhoneSkinDefinition(id, displayName, color, hasCustomScreen, unlockedFromStart,
-                unlockingAdvancement, hasShinyVariant, tags, addUnlockItem);
+                unlockingAdvancement, hasShinyVariant, tags, addUnlockItem, itemTint);
     }
 }

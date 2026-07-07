@@ -392,11 +392,39 @@ public class DungeonTeleportHandler {
         ServerLevel dungeonLevel;
         /** Real footprint of the placed structure (V3); null falls back to the zoneSize radius. */
         BoundingBox structureBounds;
+        /** Wall-clock start of this generation; used by the stale-lock watchdog (C11). */
+        final long startedAtMs = System.currentTimeMillis();
 
         GenerationState(DungeonConfig config, ServerLevel dungeonLevel, boolean isFirstPortalUse) {
             this.config = config;
             this.dungeonLevel = dungeonLevel;
             this.isFirstPortalUse = isFirstPortalUse;
+        }
+    }
+
+    /** Max time a generation may hold its portal lock before the watchdog force-releases it (C11). */
+    private static final long MAX_GENERATION_MS = 30_000L;
+
+    /**
+     * Watchdog for the {@link #PORTALS_GENERATING} lock: the multi-tick generation releases the lock on its
+     * explicit success/failure branches, but an unexpected exception between acquiring and releasing would
+     * otherwise strand the lock until a server restart, making the portal permanently unusable. This sweep
+     * force-releases any generation that has been in progress too long. See action plan 145 (C11).
+     */
+    public static void sweepStaleGenerations() {
+        long now = System.currentTimeMillis();
+        for (Map.Entry<UUID, GenerationState> e : GENERATION_STATES.entrySet()) {
+            if (now - e.getValue().startedAtMs > MAX_GENERATION_MS) {
+                CobbleSafari.LOGGER.warn("Dungeon generation for portal {} exceeded {} ms — force-releasing lock",
+                        e.getKey(), MAX_GENERATION_MS);
+                releaseGenerationLock(e.getKey());
+            }
+        }
+        // A lock without a matching generation state (state cleared but lock left behind) is also released.
+        for (UUID portalId : PORTALS_GENERATING) {
+            if (!GENERATION_STATES.containsKey(portalId)) {
+                PORTALS_GENERATING.remove(portalId);
+            }
         }
     }
 

@@ -94,6 +94,34 @@ public class GuaranteedShinySavedData extends SavedData {
         }
     }
 
+    /**
+     * Removes every request past its {@code expiryGameTime} across all players and drops the resulting
+     * empty sub-maps. Requests without an expiry ({@code expiryGameTime < 0}) are left untouched. Returns
+     * the number of requests removed (C7).
+     */
+    public int purgeExpired(long now) {
+        int removed = 0;
+        java.util.Iterator<Map.Entry<UUID, Map<String, GuaranteedShinyRequest>>> pit = requests.entrySet().iterator();
+        while (pit.hasNext()) {
+            Map<String, GuaranteedShinyRequest> byKey = pit.next().getValue();
+            java.util.Iterator<GuaranteedShinyRequest> rit = byKey.values().iterator();
+            while (rit.hasNext()) {
+                GuaranteedShinyRequest req = rit.next();
+                if (req.expiryGameTime() >= 0 && now > req.expiryGameTime()) {
+                    rit.remove();
+                    removed++;
+                }
+            }
+            if (byKey.isEmpty()) {
+                pit.remove();
+            }
+        }
+        if (removed > 0) {
+            setDirty();
+        }
+        return removed;
+    }
+
     public void removeByPrefix(UUID uuid, String prefix) {
         Map<String, GuaranteedShinyRequest> byKey = requests.get(uuid);
         if (byKey == null) {

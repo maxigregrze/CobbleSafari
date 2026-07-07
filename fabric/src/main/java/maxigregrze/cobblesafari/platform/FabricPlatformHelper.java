@@ -41,6 +41,13 @@ public class FabricPlatformHelper implements IPlatformHelper {
     }
 
     @Override
+    public Path getBundledResourceDir(String path) {
+        return FabricLoader.getInstance().getModContainer(CobbleSafari.MOD_ID)
+                .flatMap(container -> container.findPath(path))
+                .orElse(null);
+    }
+
+    @Override
     public void sendPayloadToPlayer(ServerPlayer player, CustomPacketPayload payload) {
         ServerPlayNetworking.send(player, payload);
     }

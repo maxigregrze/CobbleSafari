@@ -35,5 +35,82 @@
       ],
       "waitNextDay": false
     }
+  ],
+  "repeatableStepsLists": [
+    {
+      "id": "unique_makeover",
+      "weight": 5,
+      "isUnique": true,
+      "steps": [
+        {
+          "messagesBefore": [
+            "cobblesafari.test.dev.rep.unique_makeover.s1.b1",
+            "cobblesafari.test.dev.rep.unique_makeover.s1.b2"
+          ],
+          "advancement": "cobblesafari:fresh_makeover",
+          "rewardSkinTag": "color",
+          "fallbackReward": "cobblesafari:gifts/rotom_fallback",
+          "messagesAfter": [
+            "cobblesafari.test.dev.rep.unique_makeover.s1.a1"
+          ],
+          "waitNextDay": false
+        }
+      ]
+    },
+    {
+      "id": "timed_catch",
+      "weight": 10,
+      "isTimed": true,
+      "doDisapear": true,
+      "failMessage": "cobblesafari.test.dev.rep.timed_catch.fail",
+      "steps": [
+        {
+          "messagesBefore": [
+            "cobblesafari.test.dev.rep.timed_catch.s1.b1",
+            "cobblesafari.test.dev.rep.timed_catch.s1.b2"
+          ],
+          "statistic": "cobblesafari:pokemon_caught_safari",
+          "statisticAmount": 3,
+          "rewardPersonalTradeTag": "rotom_eevee",
+          "fallbackReward": "cobblesafari:gifts/rotom_wt_tickets",
+          "messagesAfter": [
+            "cobblesafari.test.dev.rep.timed_catch.s1.a1"
+          ],
+          "waitNextDay": false
+        }
+      ]
+    },
+    {
+      "id": "daily_chat",
+      "weight": 20,
+      "steps": [
+        {
+          "messagesBefore": [
+            "cobblesafari.test.dev.rep.daily_chat.s1.b1"
+          ],
+          "statistic": "cobblesafari:wonder_trades",
+          "statisticAmount": 1,
+          "unlockApp": "wonderApp",
+          "rewardItems": "cobblesafari:gifts/rotom_fallback",
+          "messagesAfter": [
+            "cobblesafari.test.dev.rep.daily_chat.s1.a1"
+          ],
+          "waitNextDay": true
+        },
+        {
+          "messagesBefore": [
+            "cobblesafari.test.dev.rep.daily_chat.s2.b1"
+          ],
+          "statistic": "cobblesafari:gts_trades",
+          "statisticAmount": 1,
+          "unlockApp": "gtsApp",
+          "rewardSkinTag": "color",
+          "messagesAfter": [
+            "cobblesafari.test.dev.rep.daily_chat.s2.a1"
+          ],
+          "waitNextDay": false
+        }
+      ]
+    }
   ]
 }

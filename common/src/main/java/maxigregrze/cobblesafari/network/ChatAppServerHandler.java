@@ -22,7 +22,15 @@ public final class ChatAppServerHandler {
     private static final long MUTATION_DEBOUNCE_MS = 2000L;
     private static final ConcurrentHashMap<UUID, Long> LAST_CLAIM_MS = new ConcurrentHashMap<>();
 
+    /** Releases the per-player claim debounce entry; call on disconnect to avoid unbounded growth (C2). */
+    public static void clear(UUID playerId) {
+        LAST_CLAIM_MS.remove(playerId);
+    }
+
     public static void handle(ServerPlayer player, ChatAppPayload payload) {
+        if (!maxigregrze.cobblesafari.rotomphone.RotomPhoneServerHandler.hasPhone(player)) {
+            return; // server-authoritative possession check (C1)
+        }
         switch (payload.actionType()) {
             case ChatAppPayload.ACTION_REQUEST_CONTACTS -> ChatConversationSync.syncToPlayer(player);
             case ChatAppPayload.ACTION_OPEN, ChatAppPayload.ACTION_POLL_TASK -> sendState(player, payload.convId());

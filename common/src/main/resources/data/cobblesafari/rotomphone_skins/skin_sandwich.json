@@ -3,6 +3,7 @@
   "displayName": "Sandwich",
   "hasCustomScreen": false,
   "color": "f9f9f9",
+  "itemTint": "e7bc82",
   "unlockedFromStart": false,
   "hasShinyVariant": true,
   "unlockingAdvancement": "",

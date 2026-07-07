@@ -625,7 +625,7 @@ public final class BossBattleManager {
 
         if (level.getEntity(s.getBossUuid()) instanceof CsBossEntity boss) {
             boss.setSpecie(nextDef.specie());
-            boss.setSize(nextDef.size());
+            boss.setSize((float) nextDef.size());
             boss.setStaticBoss(nextDef.isStatic());
             boss.setPhase(CsBossEntity.PHASE_ENTERING);
             boss.setAnim(0.0f);

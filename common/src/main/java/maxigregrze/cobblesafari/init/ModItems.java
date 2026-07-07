@@ -14,6 +14,7 @@ import maxigregrze.cobblesafari.item.RotomPhoneItem;
 import maxigregrze.cobblesafari.item.RotomSkinUnlockItem;
 import maxigregrze.cobblesafari.item.TinkhammerItem;
 import maxigregrze.cobblesafari.item.WonderTradeTicketItem;
+import maxigregrze.cobblesafari.platform.Services;
 import com.cobblemon.mod.common.api.pokemon.stats.Stats;
 import maxigregrze.cobblesafari.item.donut.DonutFlavorComponent;
 import maxigregrze.cobblesafari.item.donut.DonutItem;
@@ -48,11 +49,19 @@ import net.minecraft.world.item.DiggerItem;
 import net.minecraft.world.item.Tiers;
 import net.minecraft.world.item.Rarity;
 import net.minecraft.world.item.crafting.Ingredient;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 
 public class ModItems {
 
@@ -138,12 +147,20 @@ public class ModItems {
     public static final Item ROTOM_APP_UNLOCK_WONDER = new RotomAppUnlockItem(new Item.Properties().stacksTo(16), "wonderApp");
     public static final Item ROTOM_APP_UNLOCK_UNION = new RotomAppUnlockItem(new Item.Properties().stacksTo(16), "unionApp");
     public static final Item ROTOM_APP_UNLOCK_SKIN = new RotomAppUnlockItem(new Item.Properties().stacksTo(16), "skinApp");
+    public static final Item ROTOM_APP_UNLOCK_SETTINGS = new RotomAppUnlockItem(new Item.Properties().stacksTo(16), "settingsApp");
     public static final Item ROTOM_APP_UNLOCK_ALL = new RotomAppUnlockItem(
             new Item.Properties().stacksTo(16).rarity(Rarity.RARE), RotomAppUnlockItem.ALL);
     // Dynamic skin-unlock disc: target skin id carried per-stack in the SKIN_UNLOCK_TARGET component.
     public static final Item ROTOM_SKIN_UNLOCK = new RotomSkinUnlockItem(new Item.Properties().stacksTo(16), null);
     public static final Item ROTOM_SKIN_UNLOCK_ALL = new RotomSkinUnlockItem(
             new Item.Properties().stacksTo(16).rarity(Rarity.RARE), RotomSkinUnlockItem.ALL);
+
+    /**
+     * Ids of the mod's bundled skins flagged {@code addUnlockItem} — one dynamic disc per id is shown in
+     * the creative tab (each stack tagged with the SKIN_UNLOCK_TARGET component). Populated at init from
+     * the bundled skin JSONs; empty when no bundled skin is disc-obtainable (so no blank disc is shown).
+     */
+    public static final List<String> SKIN_UNLOCK_TARGETS = new ArrayList<>();
 
     public static final Item MUD_BALL = new MudBallItem(new Item.Properties().stacksTo(64));
     public static final Item TINKAGEAR = new Item(new Item.Properties());
@@ -235,6 +252,38 @@ public class ModItems {
                 ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, name), item);
     }
 
+    /**
+     * Scans the mod's bundled skin definitions and records the ids flagged {@code "addUnlockItem": true}
+     * into {@link #SKIN_UNLOCK_TARGETS}, sorted. Runs at mod-init (both sides) so the creative tab can
+     * list one dynamic disc per disc-obtainable bundled skin, deterministically and without a server sync.
+     */
+    private static void scanSkinUnlockTargets() {
+        SKIN_UNLOCK_TARGETS.clear();
+        Path dir = Services.PLATFORM.getBundledResourceDir("data/" + CobbleSafari.MOD_ID + "/rotomphone_skins");
+        if (dir == null) {
+            return;
+        }
+        try (Stream<Path> files = Files.walk(dir, 1)) {
+            files.filter(p -> p.getFileName() != null && p.getFileName().toString().endsWith(".json"))
+                    .sorted()
+                    .forEach(ModItems::collectSkinUnlockTarget);
+        } catch (IOException e) {
+            CobbleSafari.LOGGER.error("[RotomPhone] Failed to scan bundled skins for unlock discs", e);
+        }
+        CobbleSafari.LOGGER.info("Found {} disc-obtainable rotomphone skins", SKIN_UNLOCK_TARGETS.size());
+    }
+
+    private static void collectSkinUnlockTarget(Path file) {
+        try (BufferedReader reader = Files.newBufferedReader(file, StandardCharsets.UTF_8)) {
+            JsonObject json = JsonParser.parseReader(reader).getAsJsonObject();
+            if (json.has("addUnlockItem") && json.get("addUnlockItem").getAsBoolean() && json.has("id")) {
+                SKIN_UNLOCK_TARGETS.add(json.get("id").getAsString());
+            }
+        } catch (Exception e) {
+            CobbleSafari.LOGGER.error("[RotomPhone] Failed to read bundled skin {}", file, e);
+        }
+    }
+
     public static void register() {
         CobbleSafari.LOGGER.info("Registering items for " + CobbleSafari.MOD_ID);
 
@@ -321,9 +370,11 @@ public class ModItems {
         registerItem("rotom_app_unlock_wonder", ROTOM_APP_UNLOCK_WONDER);
         registerItem("rotom_app_unlock_union", ROTOM_APP_UNLOCK_UNION);
         registerItem("rotom_app_unlock_skin", ROTOM_APP_UNLOCK_SKIN);
+        registerItem("rotom_app_unlock_settings", ROTOM_APP_UNLOCK_SETTINGS);
         registerItem("rotom_app_unlock_all", ROTOM_APP_UNLOCK_ALL);
         registerItem("rotom_skin_unlock", ROTOM_SKIN_UNLOCK);
         registerItem("rotom_skin_unlock_all", ROTOM_SKIN_UNLOCK_ALL);
+        scanSkinUnlockTargets();
 
         registerItem("mud_ball", MUD_BALL);
         registerItem("tinkagear", TINKAGEAR);

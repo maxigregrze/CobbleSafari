@@ -19,11 +19,34 @@ public final class DungeonStructureBounds {
 
     private static final Map<BlockPos, BoundingBox> CAPTURED = new ConcurrentHashMap<>();
 
+    /**
+     * Only capture bounds while a CobbleSafari placement is running on this thread. Without this guard the
+     * jigsaw mixin (which targets the generic {@code JigsawPlacement.generateJigsaw}) would record — and never
+     * consume — a {@link BoundingBox} for every vanilla structure (village, trial chamber, …) generated over
+     * the server's uptime, leaking one entry each. See action plan 145 (B4).
+     */
+    private static final ThreadLocal<Boolean> CAPTURING = ThreadLocal.withInitial(() -> Boolean.FALSE);
+
     private DungeonStructureBounds() {}
+
+    /** Marks the current thread as running a CobbleSafari jigsaw placement (enables bounds capture). */
+    public static void beginCapture() {
+        CAPTURING.set(Boolean.TRUE);
+    }
+
+    /** Clears the capture flag for the current thread. */
+    public static void endCapture() {
+        CAPTURING.remove();
+    }
+
+    /** @return true while a CobbleSafari placement is active on this thread. */
+    public static boolean isCapturing() {
+        return Boolean.TRUE.equals(CAPTURING.get());
+    }
 
     /** Records the assembled bounding box for the structure whose start piece is at {@code start}. */
     public static void record(BlockPos start, BoundingBox box) {
-        if (start != null && box != null) {
+        if (isCapturing() && start != null && box != null) {
             CAPTURED.put(start.immutable(), box);
         }
     }

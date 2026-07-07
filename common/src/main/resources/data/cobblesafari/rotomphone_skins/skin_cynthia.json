@@ -3,6 +3,7 @@
   "displayName": "Champion Cynthia",
   "hasCustomScreen": true,
   "color": "08ffff",
+  "itemTint": "505050",
   "unlockedFromStart": false,
   "hasShinyVariant": false,
   "unlockingAdvancement": "",

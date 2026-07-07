@@ -3,6 +3,7 @@
   "displayName": "Hex Maniac",
   "hasCustomScreen": true,
   "color": "aa70ff",
+  "itemTint": "3e364e",
   "unlockedFromStart": false,
   "hasShinyVariant": false,
   "unlockingAdvancement": "",

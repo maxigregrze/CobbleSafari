@@ -3,6 +3,7 @@
   "displayName": "Arc Phone",
   "hasCustomScreen": false,
   "color": "7affff",
+  "itemTint": "ffffff",
   "unlockedFromStart": false,
   "hasShinyVariant": true,
   "addUnlockItem": false

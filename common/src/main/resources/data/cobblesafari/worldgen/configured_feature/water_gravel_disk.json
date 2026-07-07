@@ -1,0 +1,19 @@
+{
+    "type": "minecraft:disk",
+    "config": {
+        "state_provider": {
+            "fallback": { "type": "minecraft:simple_state_provider", "state": { "Name": "minecraft:gravel" } },
+            "rules": []
+        },
+        "target": {
+            "type": "minecraft:matching_blocks",
+            "blocks": [
+                "minecraft:prismarine",
+                "minecraft:prismarine_bricks",
+                "minecraft:dark_prismarine"
+            ]
+        },
+        "radius": { "type": "minecraft:uniform", "min_inclusive": 1, "max_inclusive": 2 },
+        "half_height": 1
+    }
+}

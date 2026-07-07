@@ -28,8 +28,8 @@ public class CsBossTriggerBlockEntityRenderer implements BlockEntityRenderer<CsB
         }
 
         BlockState renderState = ModBlocks.BOSSANCHOR_MOVING.defaultBlockState();
-        float t = blockEntity.getLevel() != null ? blockEntity.getLevel().getGameTime() + partialTick : partialTick;
-        float yaw = t * ROTATION_DEGREES_PER_TICK;
+        double t = blockEntity.getLevel() != null ? blockEntity.getLevel().getGameTime() + (double) partialTick : partialTick;
+        float yaw = (float) ((t * ROTATION_DEGREES_PER_TICK) % 360.0);
 
         poseStack.pushPose();
         poseStack.translate(0.5, 0.5, 0.5);

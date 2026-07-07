@@ -60,6 +60,26 @@ public final class DimensionalObjectivesDataLoader {
             }
         }
         CobbleSafari.LOGGER.info("[Objectives] Loaded {} dimension definition(s), {} skipped", ok, skipped);
+        purgeOrphanedAssignments(server);
+    }
+
+    /** Drops persisted assignments whose dimension no longer has a definition after this (re)load (C8). */
+    private static void purgeOrphanedAssignments(MinecraftServer server) {
+        if (server.getLevel(net.minecraft.world.level.Level.OVERWORLD) == null) {
+            return; // storage not available yet (very early load)
+        }
+        try {
+            int purged = maxigregrze.cobblesafari.data.ObjectivesSavedData.get(server)
+                    .purgeUndefinedDimensions(dim -> {
+                        ResourceLocation rl = ResourceLocation.tryParse(dim);
+                        return rl != null && DimensionalObjectivesRegistry.has(rl);
+                    });
+            if (purged > 0) {
+                CobbleSafari.LOGGER.info("[Objectives] Purged {} orphaned assignment(s) for undefined dimensions", purged);
+            }
+        } catch (Exception e) {
+            CobbleSafari.LOGGER.error("[Objectives] Orphan assignment purge failed", e);
+        }
     }
 
     private static DimensionalObjectivesDefinition parse(JsonObject json, String source) {

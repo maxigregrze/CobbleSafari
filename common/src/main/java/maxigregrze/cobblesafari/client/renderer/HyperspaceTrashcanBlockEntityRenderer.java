@@ -43,7 +43,8 @@ public class HyperspaceTrashcanBlockEntityRenderer implements BlockEntityRendere
         BlockState state = blockEntity.getBlockState();
         Direction facing = state.getValue(HorizontalDirectionalBlock.FACING);
 
-        float elapsed = blockEntity.getLevel().getGameTime() + partialTick - blockEntity.getLastOpenGameTime();
+        double now = blockEntity.getLevel().getGameTime() + (double) partialTick;
+        float elapsed = (float) (now - blockEntity.getLastOpenGameTime());
         float angle = lidAngle(elapsed);
 
         poseStack.pushPose();

@@ -66,7 +66,8 @@ public final class DungeonPortalLikeRenderer {
     ) {
         Level level = blockEntity.getLevel();
 
-        float spinZ = (level != null ? level.getGameTime() + partialTick : partialTick) * SPIN_Z_DEGREES_PER_TICK;
+        double t = level != null ? level.getGameTime() + (double) partialTick : partialTick;
+        float spinZ = (float) ((t * SPIN_Z_DEGREES_PER_TICK) % 360.0);
 
         poseStack.pushPose();
         poseStack.translate(0.5, 0.0, 0.5);

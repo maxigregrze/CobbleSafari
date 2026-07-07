@@ -34,6 +34,16 @@ public final class GtsOffer {
         }
     }
 
+    /**
+     * Provenance of a personal offer (B3). {@code MESSAGE} = earned through gameplay (chat rewards) —
+     * never expires, never capped. {@code ADMIN} = injected by a command / external quest API — subject to
+     * a configurable per-player cap. Defaults to {@code MESSAGE} for backward compatibility.
+     */
+    public enum PersonalSource {
+        MESSAGE,
+        ADMIN
+    }
+
     private final int id;
     private final UUID depositorUuid;
     private CompoundTag pokemonData;
@@ -47,6 +57,7 @@ public final class GtsOffer {
     private final boolean uniqueOffer;
     private final String uniqueOfferTemplateId;
     private final UUID personalTargetUuid;
+    private PersonalSource personalSource = PersonalSource.MESSAGE;
     private int age;
     private boolean locked;
     private UUID lockOwnerUuid;
@@ -196,6 +207,14 @@ public final class GtsOffer {
         return personalTargetUuid;
     }
 
+    public PersonalSource getPersonalSource() {
+        return personalSource;
+    }
+
+    public void setPersonalSource(PersonalSource personalSource) {
+        this.personalSource = personalSource == null ? PersonalSource.MESSAGE : personalSource;
+    }
+
     public int getAge() {
         return age;
     }
@@ -243,6 +262,7 @@ public final class GtsOffer {
     private static final String KEY_UNIQUE_OFFER = "UniqueOffer";
     private static final String KEY_UNIQUE_OFFER_TEMPLATE_ID = "UniqueOfferTemplateId";
     private static final String KEY_PERSONAL_TARGET = "PersonalTarget";
+    private static final String KEY_PERSONAL_SOURCE = "PersonalSource";
 
     public CompoundTag toNbt() {
         CompoundTag tag = new CompoundTag();
@@ -270,6 +290,10 @@ public final class GtsOffer {
         }
         if (personalTargetUuid != null) {
             tag.putUUID(KEY_PERSONAL_TARGET, personalTargetUuid);
+            // Only ADMIN needs persisting; MESSAGE is the backward-compatible default (B3).
+            if (personalSource == PersonalSource.ADMIN) {
+                tag.putString(KEY_PERSONAL_SOURCE, PersonalSource.ADMIN.name());
+            }
         }
         return tag;
     }
@@ -319,6 +343,10 @@ public final class GtsOffer {
                         id, dep, p, wish, bucket, gf, ws, depPath, depGender, depShiny, unique, uniqueTemplateId,
                         personalTarget);
         o.age = tag.getInt("Age");
+        if (tag.contains(KEY_PERSONAL_SOURCE, Tag.TAG_STRING)
+                && PersonalSource.ADMIN.name().equals(tag.getString(KEY_PERSONAL_SOURCE))) {
+            o.personalSource = PersonalSource.ADMIN;
+        }
         o.locked = tag.contains(KEY_LOCKED, Tag.TAG_BYTE) && tag.getBoolean(KEY_LOCKED);
         if (tag.hasUUID(KEY_LOCK_OWNER)) {
             o.lockOwnerUuid = tag.getUUID(KEY_LOCK_OWNER);
