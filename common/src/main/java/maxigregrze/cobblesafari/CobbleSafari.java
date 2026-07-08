@@ -112,6 +112,7 @@ public class CobbleSafari {
         PowerSalvageLootHandler.register();
         PowerFriendshipCatchHandler.register();
         PartyBattlePowerEffects.register();
+        maxigregrze.cobblesafari.csmusic.BattleMusicTracker.register();
 
         LOGGER.info("CobbleSafari initialized successfully!");
     }

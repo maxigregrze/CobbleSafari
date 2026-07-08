@@ -3,6 +3,8 @@ package maxigregrze.cobblesafari.csmusic;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import maxigregrze.cobblesafari.CobbleSafari;
+import maxigregrze.cobblesafari.config.DimensionalMusicConfig;
+import maxigregrze.cobblesafari.config.DimensionalMusicData;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.storage.LevelStorageSource;
@@ -92,7 +94,13 @@ final class CsMusicAreaStorage {
                 }
             }
         }
-        return new CsMusicArea(id, musicId, entry.activated, List.copyOf(boxes));
+        int priority = entry.priority > 0 ? entry.priority : defaultAreaPriority();
+        return new CsMusicArea(id, musicId, entry.activated, priority, List.copyOf(boxes));
+    }
+
+    private static int defaultAreaPriority() {
+        DimensionalMusicData cfg = DimensionalMusicConfig.data;
+        return cfg != null ? Math.max(1, cfg.defaultAreaPriority) : 1;
     }
 
     private static CsMusicBox boxFromEntry(CsMusicAreaFileData.BoxEntry entry, Path file) {
@@ -117,6 +125,7 @@ final class CsMusicAreaStorage {
             entry.id = area.id();
             entry.music = area.musicId();
             entry.activated = area.activated();
+            entry.priority = area.priority();
             entry.boxes = new ArrayList<>();
             for (CsMusicBox box : area.boxes()) {
                 CsMusicAreaFileData.BoxEntry boxEntry = new CsMusicAreaFileData.BoxEntry();

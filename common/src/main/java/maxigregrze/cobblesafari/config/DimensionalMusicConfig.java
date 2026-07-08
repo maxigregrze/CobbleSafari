@@ -9,12 +9,11 @@ import java.io.Reader;
 import java.io.Writer;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.LinkedHashMap;
 
 /**
- * Server configuration for dimensional music ({@code dimensional_music.json}).
- * Defaults are written only on <b>first creation</b>; any manual edit/removal is
- * respected afterward (no re-merge of defaults — decisionb).
+ * Server configuration for global csmusic settings ({@code dimensional_music.json}).
+ * Written only on <b>first creation</b>; any manual edit is respected afterward. Where music plays
+ * is defined by {@code csmusic/definition/*.json} trigger files, not this config.
  */
 public final class DimensionalMusicConfig {
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
@@ -35,9 +34,6 @@ public final class DimensionalMusicConfig {
         try (Reader reader = Files.newBufferedReader(CONFIG_PATH)) {
             DimensionalMusicData parsed = GSON.fromJson(reader, DimensionalMusicData.class);
             data = parsed != null ? parsed : new DimensionalMusicData();
-            if (data.dimensions == null) {
-                data.dimensions = new LinkedHashMap<>();
-            }
             CobbleSafari.LOGGER.info("CobbleSafari >> dimensional_music.json loaded from {}", CONFIG_PATH);
         } catch (Exception e) {
             CobbleSafari.LOGGER.error(

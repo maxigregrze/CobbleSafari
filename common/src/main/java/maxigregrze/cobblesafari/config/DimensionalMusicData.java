@@ -1,20 +1,14 @@
 package maxigregrze.cobblesafari.config;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
-
 /**
- * DTO for {@code dimensional_music.json}.
- * {@code enabled}: global csmusic toggle. {@code dimensions}: dimensionId → csmusicId.
+ * DTO for {@code dimensional_music.json} — global csmusic settings.
+ * {@code enabled}: global csmusic toggle. {@code defaultAreaPriority}: fallback priority for a
+ * music area created without an explicit value. Where music plays is defined entirely by
+ * {@code data/<ns>/csmusic/definition/*.json} trigger files (dimension, biome, battle, …).
  */
 public class DimensionalMusicData {
 
     public boolean enabled = true;
-    public Map<String, String> dimensions = new LinkedHashMap<>();
-
-    public DimensionalMusicData() {
-        // Defaults written only on first creation (cf. DimensionalMusicConfig.load).
-        dimensions.put("cobblesafari:dungeon_underground", "cobblesafari:underground");
-        dimensions.put("cobblesafari:dungeon_distortion", "cobblesafari:distortion");
-    }
+    /** Default priority assigned to a music area when created without an explicit value. */
+    public int defaultAreaPriority = 1;
 }

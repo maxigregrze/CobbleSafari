@@ -10,6 +10,8 @@ public class CsMusicAreaFileData {
         public String id;
         public String music;
         public boolean activated;
+        /** 0 or missing = use config {@code defaultAreaPriority} (backward compatible). */
+        public int priority;
         public List<BoxEntry> boxes = new ArrayList<>();
     }
 

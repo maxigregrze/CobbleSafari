@@ -1,0 +1,6 @@
+{
+  "loop": "cobblesafari:music.hyperspacewild.loop",
+  "intro": "cobblesafari:music.hyperspacewild.intro",
+  "parent": "cobblesafari:hyperspace",
+  "priority": 1
+}

@@ -12,6 +12,8 @@ import maxigregrze.cobblesafari.csmusic.CsMusicBox;
 import maxigregrze.cobblesafari.csmusic.CsMusicDefinition;
 import maxigregrze.cobblesafari.csmusic.CsMusicRegistry;
 import maxigregrze.cobblesafari.csmusic.DimensionalMusicManager;
+import maxigregrze.cobblesafari.config.DimensionalMusicConfig;
+import maxigregrze.cobblesafari.network.SetCsMusicPayload;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.SharedSuggestionProvider;
@@ -36,6 +38,8 @@ public final class CsMusicCommand {
     private static final String ARG_SECOND = "second";
     private static final String ARG_INDEX = "index";
     private static final String ARG_DIMENSION = "dimension";
+    private static final String ARG_SEEK = "seekMs";
+    private static final String ARG_PRIORITY = "priority";
     private static final Pattern ID_PATTERN = Pattern.compile("[a-z0-9._-]+");
 
     private static final SuggestionProvider<CommandSourceStack> MUSIC_SUGGESTIONS =
@@ -57,6 +61,24 @@ public final class CsMusicCommand {
         return Commands.literal("csmusic")
                 .then(Commands.literal("list").executes(CsMusicCommand::listMusic))
                 .then(Commands.literal("current").executes(CsMusicCommand::current))
+                // Debug commands disabled (test-only). Handlers retained below for re-enabling.
+                /*
+                .then(Commands.literal("debug")
+                        .then(Commands.literal("play")
+                                .then(Commands.argument(ARG_MUSIC, StringArgumentType.greedyString())
+                                        .suggests(MUSIC_SUGGESTIONS)
+                                        .executes(ctx -> debugPlay(ctx, 0))))
+                        .then(Commands.literal("playat")
+                                .then(Commands.argument(ARG_SEEK, IntegerArgumentType.integer(0))
+                                        .then(Commands.argument(ARG_MUSIC, StringArgumentType.greedyString())
+                                                .suggests(MUSIC_SUGGESTIONS)
+                                                .executes(ctx -> debugPlay(ctx, IntegerArgumentType.getInteger(ctx, ARG_SEEK))))))
+                        .then(Commands.literal("crossfade")
+                                .then(Commands.argument(ARG_MUSIC, StringArgumentType.greedyString())
+                                        .suggests(MUSIC_SUGGESTIONS)
+                                        .executes(CsMusicCommand::debugCrossfade)))
+                        .then(Commands.literal("stop").executes(CsMusicCommand::debugStop)))
+                */
                 .then(Commands.literal("area")
                         .then(Commands.literal("create")
                                 .then(Commands.argument(ARG_AREA, StringArgumentType.word())
@@ -81,6 +103,11 @@ public final class CsMusicCommand {
                                 .then(Commands.argument(ARG_AREA, StringArgumentType.word())
                                         .suggests(AREA_SUGGESTIONS)
                                         .executes(CsMusicCommand::areaRemove)))
+                        .then(Commands.literal("setpriority")
+                                .then(Commands.argument(ARG_AREA, StringArgumentType.word())
+                                        .suggests(AREA_SUGGESTIONS)
+                                        .then(Commands.argument(ARG_PRIORITY, IntegerArgumentType.integer(1))
+                                                .executes(CsMusicCommand::areaSetPriority))))
                         .then(Commands.literal("toggle")
                                 .then(Commands.argument(ARG_AREA, StringArgumentType.word())
                                         .suggests(AREA_SUGGESTIONS)
@@ -146,6 +173,60 @@ public final class CsMusicCommand {
         return 1;
     }
 
+    // --- Debug (Pass 1 testing) ------------------------------------------------------------------
+
+    private static int debugPlay(CommandContext<CommandSourceStack> ctx, int seekMs) {
+        ServerPlayer player = requirePlayer(ctx);
+        if (player == null) {
+            return 0;
+        }
+        CsMusicDefinition def = requireDef(ctx);
+        if (def == null) {
+            return 0;
+        }
+        DimensionalMusicManager.debugPlay(player, def, SetCsMusicPayload.MODE_CUT, seekMs);
+        ctx.getSource().sendSuccess(
+                () -> Component.literal("[csmusic debug] play " + def.id()
+                        + (seekMs > 0 ? " @ " + seekMs + " ms" : "")),
+                false);
+        return 1;
+    }
+
+    private static int debugCrossfade(CommandContext<CommandSourceStack> ctx) {
+        ServerPlayer player = requirePlayer(ctx);
+        if (player == null) {
+            return 0;
+        }
+        CsMusicDefinition def = requireDef(ctx);
+        if (def == null) {
+            return 0;
+        }
+        DimensionalMusicManager.debugPlay(player, def, SetCsMusicPayload.MODE_CROSSFADE, 0);
+        ctx.getSource().sendSuccess(
+                () -> Component.literal("[csmusic debug] crossfade -> " + def.id()),
+                false);
+        return 1;
+    }
+
+    private static int debugStop(CommandContext<CommandSourceStack> ctx) {
+        ServerPlayer player = requirePlayer(ctx);
+        if (player == null) {
+            return 0;
+        }
+        DimensionalMusicManager.debugStop(player);
+        ctx.getSource().sendSuccess(() -> Component.literal("[csmusic debug] stop"), false);
+        return 1;
+    }
+
+    private static CsMusicDefinition requireDef(CommandContext<CommandSourceStack> ctx) {
+        String id = StringArgumentType.getString(ctx, ARG_MUSIC).trim();
+        CsMusicDefinition def = CsMusicRegistry.get(id).orElse(null);
+        if (def == null) {
+            ctx.getSource().sendFailure(Component.literal("Unknown csmusic id: " + id));
+        }
+        return def;
+    }
+
     private static int areaCreateHere(CommandContext<CommandSourceStack> ctx) {
         ServerPlayer player = requirePlayer(ctx);
         return player == null ? 0 : areaCreate(ctx, player.serverLevel());
@@ -167,13 +248,37 @@ public final class CsMusicCommand {
         }
         String musicId = StringArgumentType.getString(ctx, ARG_MUSIC);
         String dimId = level.dimension().location().toString();
-        CsMusicArea area = new CsMusicArea(areaId, musicId, false, List.of());
+        CsMusicArea area = new CsMusicArea(areaId, musicId, false, defaultAreaPriority(), List.of());
         CsMusicAreaStore.put(level, area);
         CsMusicAreaStore.save(ctx.getSource().getServer(), level);
         ctx.getSource().sendSuccess(
                 () -> Component.translatable("cobblesafari.command.csmusic.area.created", areaId, musicId, dimId),
                 true);
         return 1;
+    }
+
+    private static int areaSetPriority(CommandContext<CommandSourceStack> ctx) {
+        ServerPlayer player = requirePlayer(ctx);
+        if (player == null) {
+            return 0;
+        }
+        String areaId = StringArgumentType.getString(ctx, ARG_AREA);
+        ServerLevel level = player.serverLevel();
+        CsMusicArea area = requireArea(ctx, level, areaId);
+        if (area == null) {
+            return 0;
+        }
+        int priority = IntegerArgumentType.getInteger(ctx, ARG_PRIORITY);
+        CsMusicAreaStore.put(level, area.withPriority(priority));
+        CsMusicAreaStore.save(ctx.getSource().getServer(), level);
+        ctx.getSource().sendSuccess(
+                () -> Component.literal("[csmusic] area '" + areaId + "' priority = " + priority), true);
+        return 1;
+    }
+
+    private static int defaultAreaPriority() {
+        return DimensionalMusicConfig.data != null
+                ? Math.max(1, DimensionalMusicConfig.data.defaultAreaPriority) : 1;
     }
 
     private static int areaAddVolume(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
@@ -291,8 +396,7 @@ public final class CsMusicCommand {
                 () -> Component.translatable("cobblesafari.command.csmusic.area.list.header", dimId, areas.size()),
                 false);
         for (CsMusicArea area : areas) {
-            CsMusicDefinition def = CsMusicRegistry.get(area.musicId()).orElse(null);
-            int musicPriority = def != null ? def.priority() : CsMusicDefinition.DEFAULT_PRIORITY;
+            int areaPriority = area.priority();
             Component status = area.activated()
                     ? Component.translatable("cobblesafari.command.csmusic.area.toggled.on")
                     : Component.translatable("cobblesafari.command.csmusic.area.toggled.off");
@@ -303,7 +407,7 @@ public final class CsMusicCommand {
                             area.id(),
                             area.musicId(),
                             status,
-                            musicPriority,
+                            areaPriority,
                             boxCount),
                     false);
         }

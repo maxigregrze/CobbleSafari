@@ -1,0 +1,20 @@
+{
+  "rules": [
+    {
+      "music": "cobblesafari:hyperspace",
+      "priority": 1,
+      "when": {
+        "biome": "cobblesafari:dungeon_paris_biome",
+        "battle": "never"
+      }
+    },
+    {
+      "music": "cobblesafari:hyperspacewild",
+      "priority": 5,
+      "when": {
+        "biome": "cobblesafari:dungeon_paris_biome",
+        "battle": "wild"
+      }
+    }
+  ]
+}

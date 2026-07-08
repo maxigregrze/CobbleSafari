@@ -127,5 +127,37 @@
                 "stream": true
             }
         ]
+    },
+    "music.hyperspace.loop": {
+        "sounds": [
+            {
+                "name": "cobblesafari:music/bgm_hyperspace_loop",
+                "stream": true
+            }
+        ]
+    },
+    "music.hyperspace.intro": {
+        "sounds": [
+            {
+                "name": "cobblesafari:music/bgm_hyperspace_intro",
+                "stream": true
+            }
+        ]
+    },
+    "music.hyperspacewild.intro": {
+        "sounds": [
+            {
+                "name": "cobblesafari:music/bgm_hyperspacewild_intro",
+                "stream": true
+            }
+        ]
+    },
+    "music.hyperspacewild.loop": {
+        "sounds": [
+            {
+                "name": "cobblesafari:music/bgm_hyperspacewild_loop",
+                "stream": true
+            }
+        ]
     }
 }

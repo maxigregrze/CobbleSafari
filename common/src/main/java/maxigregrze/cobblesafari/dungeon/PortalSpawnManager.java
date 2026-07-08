@@ -499,19 +499,61 @@ public class PortalSpawnManager {
             if (portal == null) continue;
 
             ServerLevel level = server.getLevel(portal.dimension());
-            if (level != null) {
-                BlockEntity blockEntity = level.getBlockEntity(portal.pos());
-                if (blockEntity instanceof DungeonPortalBlockEntity portalEntity && portalEntity.isAutoRenewPortal()) {
-                    renewCreativePortal(server, level, portal.pos(), portalEntity);
-                } else {
-                    level.removeBlock(portal.pos(), false);
-                    CobbleSafari.LOGGER.debug("Removed expired portal at {}", portal.pos());
-                }
-            } else {
-                ACTIVE_PORTALS.remove(portalId);
-                clearDungeonForPortal(server, portal);
-                PortalSavedData.get(server).removePortal(portalId);
+            if (level == null) {
+                expireWithoutBlockRemoval(server, portal);
+                continue;
             }
+
+            if (!level.hasChunkAt(portal.pos()) && !isExternallyManagedDungeon(portal)) {
+                // Chunk not loaded: clean up the dungeon side now without force-loading the
+                // chunk. The portal block self-expires via its own ticker the next time the
+                // chunk is loaded (see DungeonPortalBlockEntity.serverTick).
+                expireWithoutBlockRemoval(server, portal);
+                CobbleSafari.LOGGER.debug("Expired portal {} at {} in unloaded chunk, block removal deferred to next chunk load",
+                        portalId, portal.pos());
+                continue;
+            }
+
+            BlockEntity blockEntity = level.getBlockEntity(portal.pos());
+            if (blockEntity instanceof DungeonPortalBlockEntity portalEntity && portalEntity.isAutoRenewPortal()) {
+                renewCreativePortal(server, level, portal.pos(), portalEntity);
+            } else {
+                level.removeBlock(portal.pos(), false);
+                CobbleSafari.LOGGER.debug("Removed expired portal at {}", portal.pos());
+            }
+        }
+    }
+
+    /**
+     * Expires a tracked portal without touching its (unloaded or unavailable) block:
+     * evacuates and schedules the dungeon-instance cleanup, then drops the tracking entry
+     * and saved data. The physical block is removed later by its own ticker.
+     */
+    private static void expireWithoutBlockRemoval(MinecraftServer server, ActivePortal portal) {
+        ACTIVE_PORTALS.remove(portal.id());
+        DungeonTeleportHandler.removeInstance(portal.id());
+        clearDungeonForPortal(server, portal);
+        PortalSavedData.get(server).removePortal(portal.id());
+    }
+
+    private static boolean isExternallyManagedDungeon(ActivePortal portal) {
+        String dungeonDimId = portal.dungeonDimensionId() != null ? portal.dungeonDimensionId() : portal.dungeonId();
+        if (dungeonDimId == null) return false;
+        DungeonConfig config = DungeonDimensions.getDungeonById(dungeonDimId);
+        return config != null && config.isExternallyManaged();
+    }
+
+    /**
+     * Expires a portal block in place, called from its own block entity ticker. Safety net for
+     * portals whose chunk was unloaded when their lifetime elapsed (or whose tracking entry was
+     * lost): the block removes (or renews) itself on the first tick after its chunk is loaded.
+     */
+    public static void expirePortalInPlace(ServerLevel level, BlockPos pos, DungeonPortalBlockEntity portalEntity) {
+        if (portalEntity.isAutoRenewPortal()) {
+            renewCreativePortal(level.getServer(), level, pos, portalEntity);
+        } else {
+            level.removeBlock(pos, false);
+            CobbleSafari.LOGGER.debug("Removed expired portal at {} (self-expiry on chunk tick)", pos);
         }
     }
 
@@ -669,13 +711,20 @@ public class PortalSpawnManager {
                 if (config == null) {
                     config = DungeonPositionSavedData.resolveDungeonConfig(dungeonDimId);
                 }
-                if (config != null) {
-                    ServerLevel dungeonLevel = serverInstance.getLevel(config.getDimensionKey());
-                    if (dungeonLevel != null) {
-                        evacuatePlayersFromDungeon(dungeonLevel, portalEntity, config);
+                if (portal != null || hasPendingInstanceRecord(portalEntity, config)) {
+                    if (config != null) {
+                        ServerLevel dungeonLevel = serverInstance.getLevel(config.getDimensionKey());
+                        if (dungeonLevel != null) {
+                            evacuatePlayersFromDungeon(dungeonLevel, portalEntity, config);
+                        }
                     }
+                    DungeonInstanceCleanup.scheduleDeletionForPortal(serverInstance, portalEntity);
+                } else {
+                    // Untracked portal block with no live instance record: its dungeon cleanup
+                    // already ran when it expired (deferred removal), or its bounds are stale.
+                    // Re-clearing here could wipe a region since reallocated to another dungeon.
+                    CobbleSafari.LOGGER.debug("Skipped dungeon cleanup for untracked portal {} (no pending instance record)", portalId);
                 }
-                DungeonInstanceCleanup.scheduleDeletionForPortal(serverInstance, portalEntity);
             }
 
             if (portal != null) {
@@ -683,6 +732,14 @@ public class PortalSpawnManager {
             }
             CobbleSafari.LOGGER.info("Portal {} removed from active list (block destroyed)", portalId);
         }
+    }
+
+    private static boolean hasPendingInstanceRecord(DungeonPortalBlockEntity portalEntity, DungeonConfig config) {
+        if (serverInstance == null || config == null) return false;
+        BlockPos structurePos = portalEntity.getDungeonStructurePos();
+        if (structurePos == null) return false;
+        return DungeonPositionSavedData.get(serverInstance)
+                .findInstance(portalEntity.getPortalId(), structurePos, config.getDimensionId()) != null;
     }
 
     public static void removeAllDungeonPortals(MinecraftServer server) {

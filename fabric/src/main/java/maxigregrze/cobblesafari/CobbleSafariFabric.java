@@ -460,6 +460,7 @@ public class CobbleSafariFabric implements ModInitializer {
                 maxigregrze.cobblesafari.rotomphone.ChatConversationSync.syncToAll(server);
                 maxigregrze.cobblesafari.csboss.CsBossDataLoader.load(server);
                 maxigregrze.cobblesafari.csmusic.CsMusicDataLoader.load(server);
+                maxigregrze.cobblesafari.csmusic.CsMusicTriggerDataLoader.load(server);
             }
         });
         ServerTickEvents.END_SERVER_TICK.register(server -> {

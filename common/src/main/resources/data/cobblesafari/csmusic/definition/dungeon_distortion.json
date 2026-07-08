@@ -1,0 +1,11 @@
+{
+  "rules": [
+    {
+      "music": "cobblesafari:distortion",
+      "priority": 1,
+      "when": {
+        "dimension": "cobblesafari:dungeon_distortion"
+      }
+    }
+  ]
+}

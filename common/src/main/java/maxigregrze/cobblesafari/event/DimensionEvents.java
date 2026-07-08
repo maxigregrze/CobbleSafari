@@ -61,6 +61,7 @@ public class DimensionEvents {
         maxigregrze.cobblesafari.csboss.CsBossDataLoader.load(server);
         maxigregrze.cobblesafari.csboss.BossBattleManager.recoverAll(server);
         maxigregrze.cobblesafari.csmusic.CsMusicDataLoader.load(server);
+        maxigregrze.cobblesafari.csmusic.CsMusicTriggerDataLoader.load(server);
         maxigregrze.cobblesafari.csmusic.CsMusicAreaStore.loadAll(server);
         maxigregrze.cobblesafari.objectives.DimensionalObjectivesDataLoader.load(server);
     }

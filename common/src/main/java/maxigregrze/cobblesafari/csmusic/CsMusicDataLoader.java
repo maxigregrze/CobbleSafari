@@ -10,7 +10,10 @@ import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
 
 import java.io.InputStreamReader;
+import java.util.LinkedHashSet;
+import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 /**
@@ -50,6 +53,7 @@ public final class CsMusicDataLoader {
                 skipped++;
             }
         }
+        CsMusicRegistry.validateRelations();
         CobbleSafari.LOGGER.info("[CSMusic] Loaded {} music definition(s), {} skipped", ok, skipped);
     }
 
@@ -75,7 +79,20 @@ public final class CsMusicDataLoader {
         int priority = json.has("priority")
                 ? Math.max(1, json.get("priority").getAsInt()) : CsMusicDefinition.DEFAULT_PRIORITY;
 
-        return new CsMusicDefinition(id, loop, intro, outro, priority);
+        String parent = json.has("parent") && !json.get("parent").getAsString().isBlank()
+                ? json.get("parent").getAsString().trim() : null;
+
+        Set<String> tags = new LinkedHashSet<>();
+        if (json.has("tags") && json.get("tags").isJsonArray()) {
+            for (JsonElement e : json.getAsJsonArray("tags")) {
+                String tag = e.getAsString().trim().toLowerCase(Locale.ROOT);
+                if (!tag.isEmpty()) {
+                    tags.add(tag);
+                }
+            }
+        }
+
+        return new CsMusicDefinition(id, loop, intro, outro, priority, parent, tags);
     }
 
     private static ResourceLocation optionalSound(JsonObject json, String key, ResourceLocation file) {

@@ -74,6 +74,9 @@ public class DungeonPortalBlockEntity extends BlockEntity {
             if (activePortal != null) {
                 blockEntity.spawnTick = activePortal.spawnTick();
             } else {
+                // Orphaned portal with no persisted spawn tick and no tracking entry: adopt it
+                // now so it expires after one lifetime instead of lingering forever.
+                blockEntity.setSpawnTick(level.getGameTime());
                 return;
             }
         }
@@ -81,6 +84,14 @@ public class DungeonPortalBlockEntity extends BlockEntity {
         long currentTick = level.getGameTime();
         int lifetime = PortalSpawnConfig.getPortalLifetimeTicks();
         long elapsed = currentTick - blockEntity.spawnTick;
+
+        if (elapsed >= lifetime && PortalSpawnConfig.isEnabled()) {
+            // Self-expiry safety net: covers portals that expired while their chunk was unloaded
+            // and portals whose tracking entry was lost (they would otherwise linger forever).
+            PortalSpawnManager.expirePortalInPlace(serverLevel, pos, blockEntity);
+            return;
+        }
+
         int warningThreshold = (int) (lifetime * 0.2);
 
         if (elapsed >= lifetime - warningThreshold && elapsed < lifetime && currentTick % 5 == 0) {
