@@ -16,9 +16,13 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Loads trigger rules from {@code data/<ns>/csmusic/<SUBDIR>/*.json}. A file holds a list of
@@ -85,6 +89,17 @@ public final class CsMusicTriggerDataLoader {
             battle = CsMusicCondition.BattleMode.ANY;
         }
 
+        CsMusicTimeRange timeRange = null;
+        if (w.time_range != null) {
+            timeRange = CsMusicTimeRange.fromJson(w.time_range);
+            if (timeRange == null) {
+                CobbleSafari.LOGGER.warn(
+                        "[CSMusic] {} rule#{} invalid time_range {} - expected [start, end] in [0, {}]"
+                                + " with start != end; constraint ignored",
+                        file, idx, Arrays.toString(w.time_range), CsMusicTimeRange.DAY_LENGTH);
+            }
+        }
+
         String rawStructure = blankToNull(w.structure);
         CsMusicStructureFilter structure = null;
         if (rawStructure != null) {
@@ -110,8 +125,10 @@ public final class CsMusicTriggerDataLoader {
 
         CsMusicCondition cond = new CsMusicCondition(
                 dimensionKey(file, idx, blankToNull(w.dimension)),
+                timeRange,
                 biomeKey(file, idx, blankToNull(w.biome)),
                 biomeTagKey(file, idx, blankToNull(w.biome_tag)),
+                weatherSet(file, idx, w.weather),
                 area,
                 areaTag,
                 battle,
@@ -135,6 +152,40 @@ public final class CsMusicTriggerDataLoader {
                     file, idx, poolTag);
         }
         return new CsMusicRule(source, musicId, poolTag, Math.max(0, raw.priority), cond);
+    }
+
+    /**
+     * Compiles the {@code when.weather} list. Unknown entries are dropped with a warning; an empty or
+     * fully invalid list yields {@code null}, i.e. no constraint - the loader never kills a rule over
+     * one bad value.
+     */
+    @Nullable
+    private static Set<CsMusicWeather> weatherSet(ResourceLocation file, int idx,
+                                                  @Nullable List<String> raw) {
+        if (raw == null || raw.isEmpty()) {
+            return null;
+        }
+        EnumSet<CsMusicWeather> set = EnumSet.noneOf(CsMusicWeather.class);
+        for (String entry : raw) {
+            CsMusicWeather parsed = CsMusicWeather.fromJson(entry);
+            if (parsed == null) {
+                CobbleSafari.LOGGER.warn(
+                        "[CSMusic] {} rule#{} unknown weather '{}' - expected none / rain / snow /"
+                                + " thunder; value ignored", file, idx, entry);
+            } else {
+                set.add(parsed);
+            }
+        }
+        if (set.isEmpty()) {
+            return null;
+        }
+        if (set.size() == CsMusicWeather.values().length) {
+            // How a packmaker writes "any weather" while believing they restricted something.
+            CobbleSafari.LOGGER.warn(
+                    "[CSMusic] {} rule#{} weather lists every state - the constraint is a no-op",
+                    file, idx);
+        }
+        return Collections.unmodifiableSet(set);
     }
 
     @Nullable

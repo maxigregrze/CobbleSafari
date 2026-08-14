@@ -9,6 +9,7 @@ import net.minecraft.world.level.biome.Biome;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Locale;
+import java.util.Set;
 
 /**
  * Compiled, immutable AND-combination of play conditions for a {@link CsMusicRule}. A null field
@@ -26,11 +27,17 @@ import java.util.Locale;
  * <p>The {@code area} / {@code areaTag} axes are the only ones with nothing to compile: an area id
  * is world data, not a {@code ResourceLocation}, so it never hits an intern table. They are matched
  * against the areas the player currently stands in, resolved once per sweep by the context.</p>
+ *
+ * <p>The {@code timeRange} and {@code weather} axes read values memoized by the context. The former
+ * is the cheapest axis of all and is tested right after the dimension; the latter needs the biome
+ * holder, so it sits just after the biome axes and reuses whatever they resolved.</p>
  */
 public record CsMusicCondition(
         @Nullable ResourceKey<Level> dimension,
+        @Nullable CsMusicTimeRange timeRange,
         @Nullable ResourceKey<Biome> biome,
         @Nullable TagKey<Biome> biomeTag,
+        @Nullable Set<CsMusicWeather> weather,
         @Nullable String area,
         @Nullable String areaTag,
         BattleMode battle,
@@ -95,6 +102,10 @@ public record CsMusicCondition(
         if (dimension != null && !player.level().dimension().equals(dimension)) {
             return false;
         }
+        // Cheapest axis of all: one memoized field read per player and per sweep, no world access.
+        if (timeRange != null && !timeRange.matches(ctx.dayTime())) {
+            return false;
+        }
         if (biome != null || biomeTag != null) {
             Holder<Biome> holder = ctx.biome();
             if (biome != null && !holder.is(biome)) {
@@ -103,6 +114,11 @@ public record CsMusicCondition(
             if (biomeTag != null && !holder.is(biomeTag)) {
                 return false;
             }
+        }
+        // Right after the biome axes: this one reads the same holder, so a rule constraining both
+        // pays for it once. Still memoized per sweep, so a weather-only rule pays it once too.
+        if (weather != null && !weather.contains(ctx.weather())) {
+            return false;
         }
         // Set lookups on a per-sweep memoized scan: cheaper than the structure axes below, which
         // are the only ones that can touch chunk storage.

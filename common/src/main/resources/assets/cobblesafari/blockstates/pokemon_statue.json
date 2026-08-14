@@ -1,0 +1,37 @@
+{
+	"multipart": [
+		{
+			"when": { "half": "lower", "hologram": "false", "tinted": "false", "facing": "north" },
+			"apply": { "model": "cobblesafari:block/pokestatue" }
+		},
+		{
+			"when": { "half": "lower", "hologram": "false", "tinted": "false", "facing": "east" },
+			"apply": { "model": "cobblesafari:block/pokestatue", "y": 90 }
+		},
+		{
+			"when": { "half": "lower", "hologram": "false", "tinted": "false", "facing": "south" },
+			"apply": { "model": "cobblesafari:block/pokestatue", "y": 180 }
+		},
+		{
+			"when": { "half": "lower", "hologram": "false", "tinted": "false", "facing": "west" },
+			"apply": { "model": "cobblesafari:block/pokestatue", "y": 270 }
+		},
+
+		{
+			"when": { "half": "lower", "hologram": "false", "tinted": "true", "facing": "north" },
+			"apply": { "model": "cobblesafari:block/pokestatue_tinted" }
+		},
+		{
+			"when": { "half": "lower", "hologram": "false", "tinted": "true", "facing": "east" },
+			"apply": { "model": "cobblesafari:block/pokestatue_tinted", "y": 90 }
+		},
+		{
+			"when": { "half": "lower", "hologram": "false", "tinted": "true", "facing": "south" },
+			"apply": { "model": "cobblesafari:block/pokestatue_tinted", "y": 180 }
+		},
+		{
+			"when": { "half": "lower", "hologram": "false", "tinted": "true", "facing": "west" },
+			"apply": { "model": "cobblesafari:block/pokestatue_tinted", "y": 270 }
+		}
+	]
+}

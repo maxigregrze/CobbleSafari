@@ -113,6 +113,15 @@ public class CobbleSafariClientNeoForge {
         );
     }
 
+    /** Drops the derived greyscale statue textures on a resource reload, releasing their GL handles. */
+    @SubscribeEvent
+    public static void onRegisterClientReloadListeners(
+            net.neoforged.neoforge.client.event.RegisterClientReloadListenersEvent event) {
+        event.registerReloadListener(
+                (net.minecraft.server.packs.resources.ResourceManagerReloadListener)
+                        manager -> maxigregrze.cobblesafari.client.renderer.GreyscaleTextureCache.clear());
+    }
+
     @SubscribeEvent
     public static void onClientSetup(FMLClientSetupEvent event) {
         event.enqueueWork(() -> {
@@ -120,6 +129,8 @@ public class CobbleSafariClientNeoForge {
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.SAFARI_TELEPORTER, RenderType.translucent());
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.TELEPORT_PAD, RenderType.translucent());
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.SAFARI_EGG_NEST, RenderType.cutout());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.BELLTOWER_RAMP, RenderType.translucent());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.POKEMON_STATUE, RenderType.cutout());
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.HOOPA_RING_PORTAL, RenderType.cutout());
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.DUNGEON_PORTAL, RenderType.cutout());
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.CREATIVE_DUNGEON_PORTAL, RenderType.cutout());
@@ -298,6 +309,8 @@ public class CobbleSafariClientNeoForge {
             BlockEntityRenderers.register(ModBlockEntities.WHIRLWIND, maxigregrze.cobblesafari.client.renderer.WhirlwindBlockEntityRenderer::new);
             BlockEntityRenderers.register(ModBlockEntities.TRAP, maxigregrze.cobblesafari.client.renderer.TrapBlockEntityRenderer::new);
             BlockEntityRenderers.register(ModBlockEntities.UNION_ROOM_GLOBE_UPPER, maxigregrze.cobblesafari.client.renderer.UnionRoomGlobeUpperBlockEntityRenderer::new);
+            BlockEntityRenderers.register(ModBlockEntities.POKEMON_STATUE, maxigregrze.cobblesafari.client.renderer.PokeStatueBlockEntityRenderer::new);
+            BlockEntityRenderers.register(ModBlockEntities.CREATIVE_STATUE, maxigregrze.cobblesafari.client.renderer.PokeStatueBlockEntityRenderer::new);
             BlockEntityRenderers.register(ModBlockEntities.UNION_ROOM_SPOTLIGHT, maxigregrze.cobblesafari.client.renderer.UnionRoomSpotlightBlockEntityRenderer::new);
             BlockEntityRenderers.register(ModBlockEntities.PUNCHINGBAG, maxigregrze.cobblesafari.client.renderer.PunchingBagBlockEntityRenderer::new);
             BlockEntityRenderers.register(ModBlockEntities.BALM_DISPENSER, maxigregrze.cobblesafari.client.renderer.BalmDispenserBlockEntityRenderer::new);
@@ -345,6 +358,18 @@ public class CobbleSafariClientNeoForge {
                         : state.getValue(maxigregrze.cobblesafari.block.hyperspace.HyperspaceFlagDye.COLOR)
                                 .getTextureDiffuseColor() & 0xFFFFFF,
                 ModBlocks.HYPERSPACE_FLAG_SMALL, ModBlocks.HYPERSPACE_FLAG_LARGE);
+        // Pokemon statue: the pedestal overlay layer (tintindex 0) takes the colour configured in the
+        // block entity. Baking the overlay into the model and tinting it here - rather than drawing it
+        // as a separate translucent pass - is what keeps it from z-fighting with the base layer.
+        event.register(
+                (state, level, pos, tintIndex) -> {
+                    if (tintIndex != 0 || level == null || pos == null) {
+                        return -1;
+                    }
+                    return level.getBlockEntity(pos) instanceof maxigregrze.cobblesafari.block.pokestatue.PokeStatueBlockEntity be
+                            && be.hasColor() ? be.getColor() : -1;
+                },
+                ModBlocks.POKEMON_STATUE);
     }
 
     @SubscribeEvent
@@ -506,6 +531,13 @@ public class CobbleSafariClientNeoForge {
         context.enqueueWork(() ->
                 Minecraft.getInstance().setScreen(
                         new maxigregrze.cobblesafari.client.screen.CsBossMimicConfigScreen(payload)));
+    }
+
+    public static void handleOpenPokeStatueConfig(
+            maxigregrze.cobblesafari.network.OpenPokeStatueConfigPayload payload, IPayloadContext context) {
+        context.enqueueWork(() ->
+                Minecraft.getInstance().setScreen(
+                        new maxigregrze.cobblesafari.client.screen.PokeStatueConfigScreen(payload)));
     }
 
     public static void handleOpenTeleportPadConfig(

@@ -1,6 +1,7 @@
 package maxigregrze.cobblesafari.item;
 
 import maxigregrze.cobblesafari.block.hyperspace.HyperspaceBarrierBlock;
+import maxigregrze.cobblesafari.block.pokestatue.PokeStatueBlock;
 import maxigregrze.cobblesafari.block.teleporter.SurvivalTeleportPadBlock;
 import maxigregrze.cobblesafari.init.ModItems;
 import net.minecraft.core.BlockPos;
@@ -31,6 +32,13 @@ public class TinkhammerItem extends AxeItem {
                     context.getClickLocation(), context.getClickedFace(), pos, context.isInside());
             ItemInteractionResult result = SurvivalTeleportPadBlock.tinkhammerInteract(
                     context.getItemInHand(), state, level, pos, context.getPlayer(), hit);
+            if (result != ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION) {
+                return InteractionResult.sidedSuccess(level.isClientSide());
+            }
+        }
+        if (state.getBlock() instanceof PokeStatueBlock) {
+            ItemInteractionResult result = PokeStatueBlock.tinkhammerInteract(
+                    context.getItemInHand(), state, level, pos, context.getPlayer());
             if (result != ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION) {
                 return InteractionResult.sidedSuccess(level.isClientSide());
             }

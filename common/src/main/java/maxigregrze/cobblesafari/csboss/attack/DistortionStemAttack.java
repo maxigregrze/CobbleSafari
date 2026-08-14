@@ -11,6 +11,7 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.Entity;
 
 import java.util.ArrayList;
+import java.util.Set;
 import java.util.UUID;
 
 /**
@@ -83,21 +84,32 @@ public class DistortionStemAttack implements CsBossAttack {
         damageOnContact(level, session, boss);
 
         if (++tick >= DURATION) {
-            for (UUID u : new ArrayList<>(session.getActiveAttackEntities())) {
+            Set<UUID> tracked = session.getActiveAttackEntities();
+            for (UUID u : new ArrayList<>(tracked)) {
                 Entity e = level.getEntity(u);
-                if (e != null) {
+                if (e != null && isOwned(e)) {
                     e.discard();
+                    tracked.remove(u);
                 }
             }
-            session.getActiveAttackEntities().clear();
             done = true;
         }
+    }
+
+    /**
+     * Entities spawned by this attack: the 4 cores and the orbital stems they grow.
+     * The vertical wall stems of {@code distortion_2/3} belong to their own attack and are left alone.
+     */
+    private static boolean isOwned(Entity e) {
+        return e instanceof AttackDistortionStemCoreEntity
+                || (e instanceof AttackDistortionStemEntity stem && !stem.isVertical());
     }
 
     /** Deals 5 hearts + knockback to participants in contact with a stem (vanilla i-frames = anti-spam). */
     private void damageOnContact(ServerLevel level, BossBattleSession session, CsBossEntity boss) {
         for (UUID u : new ArrayList<>(session.getActiveAttackEntities())) {
-            if (!(level.getEntity(u) instanceof AttackDistortionStemEntity stem) || !stem.isAlive()) {
+            if (!(level.getEntity(u) instanceof AttackDistortionStemEntity stem)
+                    || stem.isVertical() || !stem.isAlive()) {
                 continue;
             }
             for (ServerPlayer p : session.aliveParticipants(level)) {

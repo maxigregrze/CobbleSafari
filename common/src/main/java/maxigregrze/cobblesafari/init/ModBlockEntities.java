@@ -12,6 +12,8 @@ import maxigregrze.cobblesafari.block.misc.AuspiciousPokeballGoldBlockEntity;
 import maxigregrze.cobblesafari.block.misc.LostItemBlockEntity;
 import maxigregrze.cobblesafari.block.misc.SafariEggNestBlockEntity;
 import maxigregrze.cobblesafari.block.misc.WhirlwindBlockEntity;
+import maxigregrze.cobblesafari.block.pokestatue.CreativeStatueBlockEntity;
+import maxigregrze.cobblesafari.block.pokestatue.PokeStatueBlockEntity;
 import maxigregrze.cobblesafari.block.trap.TrapBlockEntity;
 import maxigregrze.cobblesafari.block.misc.PunchingBagBlockEntity;
 import maxigregrze.cobblesafari.block.misc.UnionRoomDecorBlockEntity;
@@ -53,6 +55,9 @@ public class ModBlockEntities {
     public static BlockEntityType<IncubatorBlockEntity> INCUBATOR;
     public static BlockEntityType<UnionRoomDecorBlockEntity> UNION_ROOM_DECOR;
     public static BlockEntityType<UnionRoomGlobeUpperBlockEntity> UNION_ROOM_GLOBE_UPPER;
+    /** Created for both halves of the statue: the lower one holds the data, the upper one anchors the renderer. */
+    public static BlockEntityType<PokeStatueBlockEntity> POKEMON_STATUE;
+    public static BlockEntityType<CreativeStatueBlockEntity> CREATIVE_STATUE;
     public static BlockEntityType<UnionRoomExitTeleporterBlockEntity> UNION_ROOM_EXIT_TELEPORTER;
     public static BlockEntityType<WhirlwindBlockEntity> WHIRLWIND;
     public static BlockEntityType<UnionRoomSpotlightBlockEntity> UNION_ROOM_SPOTLIGHT;
@@ -165,6 +170,18 @@ public class ModBlockEntities {
                 BlockEntityType.Builder.of(UnionRoomGlobeUpperBlockEntity::new,
                         ModBlocks.UNION_ROOM_GLOBE,
                         ModBlocks.UNION_ROOM_EXIT_TELEPORTER).build(null)
+        );
+
+        POKEMON_STATUE = Registry.register(
+                BuiltInRegistries.BLOCK_ENTITY_TYPE,
+                ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, "pokemon_statue"),
+                BlockEntityType.Builder.of(PokeStatueBlockEntity::new, ModBlocks.POKEMON_STATUE).build(null)
+        );
+
+        CREATIVE_STATUE = Registry.register(
+                BuiltInRegistries.BLOCK_ENTITY_TYPE,
+                ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, "creative_statue"),
+                BlockEntityType.Builder.of(CreativeStatueBlockEntity::new, ModBlocks.CREATIVE_STATUE).build(null)
         );
 
         UNION_ROOM_EXIT_TELEPORTER = Registry.register(

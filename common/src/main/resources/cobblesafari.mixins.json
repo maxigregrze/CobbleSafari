@@ -26,7 +26,9 @@
     "client.DimensionSpecialEffectsAccessor",
     "client.EditBoxAccessor",
     "client.RotomPhoneScreenMixin",
-    "client.MarksWidgetMixin"
+    "client.MarksWidgetMixin",
+    "client.MusicManagerAccessor",
+    "client.MusicManagerConstantMusicMixin"
   ],
   "injectors": {
     "defaultRequire": 1

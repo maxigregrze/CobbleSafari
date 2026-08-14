@@ -65,6 +65,21 @@ public class CobbleSafariClientFabric implements ClientModInitializer {
 
     @Override
     public void onInitializeClient() {
+        // Drop the derived greyscale statue textures on a resource reload, releasing their GL handles.
+        net.fabricmc.fabric.api.resource.ResourceManagerHelper
+                .get(net.minecraft.server.packs.PackType.CLIENT_RESOURCES)
+                .registerReloadListener(new net.fabricmc.fabric.api.resource.SimpleSynchronousResourceReloadListener() {
+                    @Override
+                    public net.minecraft.resources.ResourceLocation getFabricId() {
+                        return net.minecraft.resources.ResourceLocation.fromNamespaceAndPath(
+                                maxigregrze.cobblesafari.CobbleSafari.MOD_ID, "greyscale_texture_cache");
+                    }
+
+                    @Override
+                    public void onResourceManagerReload(net.minecraft.server.packs.resources.ResourceManager manager) {
+                        maxigregrze.cobblesafari.client.renderer.GreyscaleTextureCache.clear();
+                    }
+                });
         TooltipComponentCallback.EVENT.register(data -> {
             if (data instanceof DonutTooltipPayload p) {
                 return new DonutFlavorClientTooltip(p);
@@ -158,6 +173,8 @@ public class CobbleSafariClientFabric implements ClientModInitializer {
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.SAFARI_TELEPORTER, RenderType.translucent());
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.TELEPORT_PAD, RenderType.translucent());
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.SAFARI_EGG_NEST, RenderType.cutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.BELLTOWER_RAMP, RenderType.translucent());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.POKEMON_STATUE, RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.HOOPA_RING_PORTAL, RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.DUNGEON_PORTAL, RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.CREATIVE_DUNGEON_PORTAL, RenderType.cutout());
@@ -354,6 +371,18 @@ public class CobbleSafariClientFabric implements ClientModInitializer {
                         : state.getValue(maxigregrze.cobblesafari.block.hyperspace.HyperspaceFlagDye.COLOR)
                                 .getTextureDiffuseColor() & 0xFFFFFF,
                 ModBlocks.HYPERSPACE_FLAG_SMALL, ModBlocks.HYPERSPACE_FLAG_LARGE);
+        // Pokemon statue: the pedestal overlay layer (tintindex 0) takes the colour configured in the
+        // block entity. Baking the overlay into the model and tinting it here - rather than drawing it
+        // as a separate translucent pass - is what keeps it from z-fighting with the base layer.
+        net.fabricmc.fabric.api.client.rendering.v1.ColorProviderRegistry.BLOCK.register(
+                (state, level, pos, tintIndex) -> {
+                    if (tintIndex != 0 || level == null || pos == null) {
+                        return -1;
+                    }
+                    return level.getBlockEntity(pos) instanceof maxigregrze.cobblesafari.block.pokestatue.PokeStatueBlockEntity be
+                            && be.hasColor() ? be.getColor() : -1;
+                },
+                ModBlocks.POKEMON_STATUE);
         // Dynamic skin-unlock disc: layer0 tinted to the target skin's color.
         net.fabricmc.fabric.api.client.rendering.v1.ColorProviderRegistry.ITEM.register(
                 (stack, tintIndex) -> maxigregrze.cobblesafari.item.RotomSkinUnlockItem.computeTint(stack, tintIndex),
@@ -373,6 +402,8 @@ public class CobbleSafariClientFabric implements ClientModInitializer {
         BlockEntityRenderers.register(ModBlockEntities.WHIRLWIND, maxigregrze.cobblesafari.client.renderer.WhirlwindBlockEntityRenderer::new);
         BlockEntityRenderers.register(ModBlockEntities.TRAP, maxigregrze.cobblesafari.client.renderer.TrapBlockEntityRenderer::new);
         BlockEntityRenderers.register(ModBlockEntities.UNION_ROOM_GLOBE_UPPER, maxigregrze.cobblesafari.client.renderer.UnionRoomGlobeUpperBlockEntityRenderer::new);
+        BlockEntityRenderers.register(ModBlockEntities.POKEMON_STATUE, maxigregrze.cobblesafari.client.renderer.PokeStatueBlockEntityRenderer::new);
+        BlockEntityRenderers.register(ModBlockEntities.CREATIVE_STATUE, maxigregrze.cobblesafari.client.renderer.PokeStatueBlockEntityRenderer::new);
         BlockEntityRenderers.register(ModBlockEntities.UNION_ROOM_SPOTLIGHT, maxigregrze.cobblesafari.client.renderer.UnionRoomSpotlightBlockEntityRenderer::new);
         BlockEntityRenderers.register(ModBlockEntities.PUNCHINGBAG, maxigregrze.cobblesafari.client.renderer.PunchingBagBlockEntityRenderer::new);
         BlockEntityRenderers.register(ModBlockEntities.HYPERSPACE_TRASHCAN, maxigregrze.cobblesafari.client.renderer.HyperspaceTrashcanBlockEntityRenderer::new);

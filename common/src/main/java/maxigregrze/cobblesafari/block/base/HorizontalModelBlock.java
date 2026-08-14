@@ -44,6 +44,7 @@ public class HorizontalModelBlock extends HorizontalDirectionalBlock {
     /** Immutable configuration for a {@link HorizontalModelBlock}. Build via {@link #builder()}. */
     public record Settings(
             @Nullable VoxelShape shape,
+            @Nullable VoxelShape collisionShape,
             Direction authoredFacing,
             boolean rotateShape,
             Direction defaultFacing,
@@ -63,6 +64,7 @@ public class HorizontalModelBlock extends HorizontalDirectionalBlock {
 
         public static final class Builder {
             private VoxelShape shape = null;
+            private VoxelShape collisionShape = null;
             private Direction authoredFacing = Direction.NORTH;
             private boolean rotateShape = false;
             private Direction defaultFacing = Direction.NORTH;
@@ -72,6 +74,8 @@ public class HorizontalModelBlock extends HorizontalDirectionalBlock {
             private String descriptionId = null;
 
             public Builder shape(VoxelShape shape) { this.shape = shape; return this; }
+            /** Collision box, when it must be narrower than the selection box (defaults to {@link #shape}). */
+            public Builder collisionShape(VoxelShape shape) { this.collisionShape = shape; return this; }
             public Builder authoredFacing(Direction facing) { this.authoredFacing = facing; return this; }
             public Builder rotateShape() { this.rotateShape = true; return this; }
             public Builder defaultFacing(Direction facing) { this.defaultFacing = facing; return this; }
@@ -81,7 +85,7 @@ public class HorizontalModelBlock extends HorizontalDirectionalBlock {
             public Builder descriptionId(String id) { this.descriptionId = id; return this; }
 
             public Settings build() {
-                return new Settings(shape, authoredFacing, rotateShape, defaultFacing,
+                return new Settings(shape, collisionShape, authoredFacing, rotateShape, defaultFacing,
                         support, collision, emptyOcclusion, descriptionId);
             }
         }
@@ -91,6 +95,10 @@ public class HorizontalModelBlock extends HorizontalDirectionalBlock {
     private final VoxelShape baseShape;
     @Nullable
     private final Map<Direction, VoxelShape> rotatedShapes;
+    @Nullable
+    private final VoxelShape baseCollisionShape;
+    @Nullable
+    private final Map<Direction, VoxelShape> rotatedCollisionShapes;
 
     public HorizontalModelBlock(Properties properties, Settings settings) {
         super(properties);
@@ -98,6 +106,10 @@ public class HorizontalModelBlock extends HorizontalDirectionalBlock {
         this.baseShape = settings.shape() != null ? settings.shape() : Shapes.block();
         this.rotatedShapes = (settings.rotateShape() && settings.shape() != null)
                 ? BlockShapeUtils.precompute(settings.shape(), settings.authoredFacing())
+                : null;
+        this.baseCollisionShape = settings.collisionShape();
+        this.rotatedCollisionShapes = (settings.rotateShape() && settings.collisionShape() != null)
+                ? BlockShapeUtils.precompute(settings.collisionShape(), settings.authoredFacing())
                 : null;
         this.registerDefaultState(this.stateDefinition.any().setValue(FACING, settings.defaultFacing()));
     }
@@ -172,7 +184,14 @@ public class HorizontalModelBlock extends HorizontalDirectionalBlock {
     @Override
     protected VoxelShape getCollisionShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
         return switch (settings.collision()) {
-            case SHAPE -> getShape(state, level, pos, context);
+            case SHAPE -> {
+                if (baseCollisionShape == null) {
+                    yield getShape(state, level, pos, context);
+                }
+                yield rotatedCollisionShapes != null
+                        ? rotatedCollisionShapes.getOrDefault(state.getValue(FACING), baseCollisionShape)
+                        : baseCollisionShape;
+            }
             case NONE -> Shapes.empty();
             case FULL -> Shapes.block();
         };

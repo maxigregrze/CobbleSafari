@@ -103,6 +103,13 @@ public class ClientNetworking {
         );
 
         ClientPlayNetworking.registerGlobalReceiver(
+                maxigregrze.cobblesafari.network.OpenPokeStatueConfigPayload.TYPE,
+                (payload, context) -> context.client().execute(() ->
+                        Minecraft.getInstance().setScreen(
+                                new maxigregrze.cobblesafari.client.screen.PokeStatueConfigScreen(payload)))
+        );
+
+        ClientPlayNetworking.registerGlobalReceiver(
                 maxigregrze.cobblesafari.network.OpenTeleportPadConfigPayload.TYPE,
                 (payload, context) -> context.client().execute(() ->
                         Minecraft.getInstance().setScreen(

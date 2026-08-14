@@ -25,6 +25,27 @@ public class CsMusicTriggerFileData {
         public String biome;
         public String biome_tag;
         /**
+         * Window of the Minecraft day the rule plays in, as {@code [start, end]} in the units of the
+         * vanilla {@code /time set} command (0 dawn, 6000 noon, 12000 dusk, 18000 midnight; a day is
+         * 24000 ticks). Both bounds in {@code [0, 24000]}, start inclusive, end exclusive; the window
+         * wraps when start > end, so {@code [18000, 6000]} is "midnight to noon". In a dimension with
+         * a fixed time, the fixed value is tested, not the world clock. Omitted ⇒ no constraint.
+         */
+        public int[] time_range;
+        /**
+         * Weather states the rule plays in, ORed together: {@code "none"}, {@code "rain"},
+         * {@code "snow"}, {@code "thunder"}. The four are mutually exclusive, so
+         * {@code ["rain", "snow", "thunder"]} is how you say "any weather at all".
+         *
+         * <p>Resolved at the player's position: {@code "rain"} and {@code "snow"} follow the biome's
+         * precipitation, so a dry biome (desert, badlands, any biome with
+         * {@code has_precipitation: false}) stays {@code "none"} through a downpour, and a cold biome
+         * reports {@code "snow"}. {@code "thunder"} is a sky state and covers the whole dimension,
+         * dry biomes included. Dimensions without weather (no skylight, or with a ceiling) always
+         * report {@code "none"}. Omitted or empty ⇒ no constraint.</p>
+         */
+        public List<String> weather;
+        /**
          * Id of a csmusic area (as created by {@code /cobblesafari csmusic area create}) the player
          * must be standing in. Areas are per-dimension world data, so this implies the dimension.
          * Omitted ⇒ no constraint.

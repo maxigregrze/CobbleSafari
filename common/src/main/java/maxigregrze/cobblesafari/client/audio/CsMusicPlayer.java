@@ -1,11 +1,14 @@
 package maxigregrze.cobblesafari.client.audio;
 
 import maxigregrze.cobblesafari.CobbleSafari;
+import maxigregrze.cobblesafari.mixin.client.MusicManagerAccessor;
 import maxigregrze.cobblesafari.network.SetCsMusicPayload;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.Options;
 import net.minecraft.client.resources.sounds.Sound;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
+import net.minecraft.client.resources.sounds.SoundInstance;
+import net.minecraft.client.sounds.MusicManager;
 import net.minecraft.client.sounds.SoundManager;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
@@ -34,6 +37,8 @@ public final class CsMusicPlayer {
 
     private static final long CROSSFADE_MS = 1000L;
     private static final long FADE_MS = 1000L;
+    /** ~5 s: ample for a stream to finish opening, and a hard bound if the instance never clears. */
+    private static final int VANILLA_KILL_TICKS = 100;
 
     private static final ExecutorService LOADER = Executors.newSingleThreadExecutor(r -> {
         Thread t = new Thread(r, "CsMusic-Loader");
@@ -49,6 +54,13 @@ public final class CsMusicPlayer {
     // Bumped on every load/outro so a late async callback can tell it has been superseded.
     private static final AtomicLong GENERATION = new AtomicLong();
     private static boolean wasPaused = false;
+
+    // Vanilla track we asked to stop, re-stopped until the sound engine really lets it go, plus the
+    // edge tracker that captures it exactly once when csmusic takes the music channel over.
+    @Nullable
+    private static SoundInstance vanillaMusicToKill = null;
+    private static int vanillaKillTicksLeft = 0;
+    private static boolean wasSuppressing = false;
 
     // Outro state: while the outgoing track's outro one-shot plays, hold the next instruction.
     private static boolean inOutro = false;
@@ -239,6 +251,9 @@ public final class CsMusicPlayer {
         currentOutroId = null;
         inOutro = false;
         pendingAfterOutro = null;
+        vanillaMusicToKill = null;
+        vanillaKillTicksLeft = 0;
+        wasSuppressing = false;
     }
 
     // --- Outro one-shot --------------------------------------------------------------------------
@@ -320,20 +335,44 @@ public final class CsMusicPlayer {
 
     // --- Client tick -----------------------------------------------------------------------------
 
+    /**
+     * {@code true} while csmusic owns the music channel (a voice is playing, one is fading out, or an
+     * outro one-shot is running). Vanilla background music must stay suppressed for as long as this
+     * holds - {@code MusicManagerConstantMusicMixin} reads it to cancel {@code MusicManager.tick}.
+     */
+    public static boolean isSuppressingVanillaMusic() {
+        return currentVoice != null || !retiring.isEmpty() || inOutro;
+    }
+
     public static void onClientTick(Minecraft mc) {
         if (mc.player == null || mc.level == null) {
-            if (currentVoice != null || !retiring.isEmpty() || inOutro) {
+            if (isSuppressingVanillaMusic()) {
                 forceStop();
             }
+            wasSuppressing = false;
             return;
         }
 
-        if (currentVoice == null && retiring.isEmpty() && !inOutro) {
+        if (!isSuppressingVanillaMusic()) {
+            // Keep chasing a still-unkilled orphan even once csmusic is done: the music manager has
+            // already forgotten that instance, so any track it starts from now on is a different one.
+            tickVanillaKill(mc);
+            wasSuppressing = false;
             return;
         }
 
         // Priority over vanilla background music (jukebox on SoundSource.RECORDS is untouched).
-        mc.getMusicManager().stopPlaying();
+        MusicManager musicManager = mc.getMusicManager();
+        if (!wasSuppressing) {
+            // Capture before stopping: stopPlaying() nulls the field, and a track stopped while its OGG
+            // stream is still loading survives the stop (the sound engine plays it from a deferred
+            // callback), so the instance is needed to keep hitting it until it is really gone.
+            vanillaMusicToKill = ((MusicManagerAccessor) musicManager).cobblesafari$getCurrentMusic();
+            vanillaKillTicksLeft = vanillaMusicToKill != null ? VANILLA_KILL_TICKS : 0;
+            wasSuppressing = true;
+        }
+        musicManager.stopPlaying();
+        tickVanillaKill(mc);
 
         boolean paused = mc.isPaused();
         if (paused != wasPaused) {
@@ -366,6 +405,23 @@ public final class CsMusicPlayer {
             v.setVolume(vol);
             return false;
         });
+    }
+
+    /**
+     * Keeps stopping the vanilla track csmusic took over from until the sound engine really drops it.
+     * The first stop can land while the OGG stream is still opening, in which case it hits a channel
+     * that has nothing attached yet and the deferred {@code play()} starts the track anyway; a later
+     * stop does land, and the instance then clears out of the engine within a couple of ticks.
+     */
+    private static void tickVanillaKill(Minecraft mc) {
+        if (vanillaMusicToKill == null) {
+            return;
+        }
+        if (--vanillaKillTicksLeft <= 0 || !mc.getSoundManager().isActive(vanillaMusicToKill)) {
+            vanillaMusicToKill = null;      // really stopped, or gave up
+            return;
+        }
+        mc.getSoundManager().stop(vanillaMusicToKill);
     }
 
     // --- Resolution / IO -------------------------------------------------------------------------

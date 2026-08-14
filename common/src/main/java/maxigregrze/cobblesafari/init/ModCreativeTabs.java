@@ -31,6 +31,7 @@ public class ModCreativeTabs {
             .title(Component.translatable("itemGroup.cobblesafari.creative_utilities"))
             .icon(() -> new ItemStack(ModBlocks.CREATIVE_DUNGEON_PORTAL))
             .displayItems((params, output) -> {
+                output.accept(ModBlocks.CREATIVE_STATUE);
                 output.accept(ModBlocks.VOID_BLOCK);
                 output.accept(ModBlocks.LIQUID_BARRIER);
                 output.accept(ModBlocks.HOOPA_RING_PORTAL);
@@ -184,6 +185,8 @@ public class ModCreativeTabs {
                 output.accept(ModBlocks.SURVIVAL_TELEPORT_PAD);
                 output.accept(ModBlocks.SAFARI_EGG_NEST);
                 output.accept(ModBlocks.WHIRLWIND);
+                output.accept(ModBlocks.BELLTOWER_RAMP);
+                output.accept(ModBlocks.POKEMON_STATUE);
                 output.accept(ModBlocks.MUD_PILE);
                 output.accept(ModBlocks.SLUDGE_PILE);
                 output.accept(ModBlocks.VOLCANIC_CRATER);

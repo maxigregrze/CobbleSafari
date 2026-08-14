@@ -22,8 +22,8 @@ import net.minecraft.world.phys.shapes.VoxelShape;
  */
 public class HyperspaceSaplingBlock extends SaplingBlock {
 
-    /** Chance per successful bonemeal interaction to advance the sapling (kept low: rare growth). */
-    private static final float BONEMEAL_SUCCESS_CHANCE = 0.10F;
+    /** Chance per bonemeal use to advance the sapling (still slower than vanilla, but less punishing). */
+    private static final float BONEMEAL_SUCCESS_CHANCE = 0.25F;
 
     /** Bushy outline matching the vanilla azalea: full upper half plus a thin central stem below. */
     private static final VoxelShape SHAPE = Shapes.or(

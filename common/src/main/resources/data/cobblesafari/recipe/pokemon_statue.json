@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " G ",
+    "STS",
+    "SAS"
+  ],
+  "key": {
+    "G": { "item": "minecraft:glowstone" },
+    "S": { "item": "minecraft:smooth_stone" },
+    "T": { "item": "cobblesafari:tinkagear_block" },
+    "A": { "item": "minecraft:gold_ingot" }
+  },
+  "result": {
+    "id": "cobblesafari:pokemon_statue",
+    "count": 1
+  }
+}

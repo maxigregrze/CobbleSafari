@@ -48,7 +48,10 @@ import maxigregrze.cobblesafari.block.misc.UnionRoomDecorBlock;
 import maxigregrze.cobblesafari.block.misc.OnlineFeaturePcBlock;
 import maxigregrze.cobblesafari.block.misc.UnionRoomGlobeBlock;
 import maxigregrze.cobblesafari.block.misc.UnionRoomExitTeleporterBlock;
+import maxigregrze.cobblesafari.block.misc.BelltowerRampBlock;
 import maxigregrze.cobblesafari.block.misc.PokemonStatueBlock;
+import maxigregrze.cobblesafari.block.pokestatue.CreativeStatueBlock;
+import maxigregrze.cobblesafari.block.pokestatue.PokeStatueBlock;
 import maxigregrze.cobblesafari.block.misc.UnionRoomPillarBlock;
 import maxigregrze.cobblesafari.block.misc.UnionRoomSpotlightBlock;
 import maxigregrze.cobblesafari.block.misc.UnionRoomSpotlightDisplayLightBlock;
@@ -109,6 +112,7 @@ import maxigregrze.cobblesafari.block.base.LitCubeBlock;
 import maxigregrze.cobblesafari.block.base.LitSlabBlock;
 import maxigregrze.cobblesafari.block.base.LitStairBlock;
 import maxigregrze.cobblesafari.block.base.LitVerticalConnectedModelBlock;
+import maxigregrze.cobblesafari.block.hyperspace.HyperspaceTriBlock;
 import maxigregrze.cobblesafari.block.hyperspace.HyperspaceTriPart;
 import maxigregrze.cobblesafari.block.hyperspace.HyperspaceTrashcanBlock;
 import net.minecraft.core.Registry;
@@ -247,10 +251,11 @@ public class ModBlocks {
 
     public static final Block SURVIVAL_TELEPORT_PAD = registerBlock("survival_teleporter_pad",
             new SurvivalTeleportPadBlock(BlockBehaviour.Properties.of()
-                    .strength(2.0f)
+                    .strength(3.0f, 3.0f)
                     .lightLevel(state -> 9)
                     .noOcclusion()
                     .pushReaction(PushReaction.DESTROY)
+                    .requiresCorrectToolForDrops()
             ));
 
     public static final Block SAFARI_EGG_NEST = registerBlock("safari_egg_nest",
@@ -1110,6 +1115,13 @@ public class ModBlocks {
                     .noOcclusion()
             ));
 
+    public static final Block BELLTOWER_RAMP = registerBlock("belltower_ramp",
+            new BelltowerRampBlock(BlockBehaviour.Properties.of()
+                    .strength(2.0f, 3.0f)
+                    .sound(SoundType.WOOD)
+                    .noOcclusion()
+            ));
+
     public static final Block EMPTYPHONE = registerBlockWithoutItem("emptyphone",
             new EmptyPhoneBlock(BlockBehaviour.Properties.of()
                     .mapColor(MapColor.METAL)
@@ -1296,6 +1308,35 @@ public class ModBlocks {
             new PokemonStatueBlock.Pikachu(BlockBehaviour.Properties.ofFullCopy(Blocks.WHITE_WOOL)));
     public static final Block SQUIRTLE_STATUE = registerBlock("squirtle_statue",
             new PokemonStatueBlock.Squirtle(BlockBehaviour.Properties.ofFullCopy(Blocks.WHITE_WOOL)));
+
+    public static final Block POKEMON_STATUE = registerBlock("pokemon_statue",
+            new PokeStatueBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.STONE)
+                    .strength(5.0f, 1200.0f)
+                    .sound(SoundType.STONE)
+                    .requiresCorrectToolForDrops()
+                    .pushReaction(PushReaction.BLOCK)
+                    .noOcclusion()
+                    .lightLevel(state -> state.getValue(PokeStatueBlock.HOLOGRAM) ? 10 : 0)
+            ));
+    /** Creative-only display statue: single block, placeable anywhere, unbreakable outside creative. */
+    public static final Block CREATIVE_STATUE = registerBlock("creative_statue",
+            new CreativeStatueBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.STONE)
+                    .strength(-1.0f, 3600000.0f)
+                    .sound(SoundType.STONE)
+                    .pushReaction(PushReaction.BLOCK)
+                    .noOcclusion()
+                    .noLootTable()
+            ));
+
+    /** Model carrier for the hologram pedestal; never placed in world. */
+    public static final Block POKESTATUE_HOLOGRAM_DISPLAY = registerBlockWithoutItem("pokestatue_hologram_display",
+            new Block(BlockBehaviour.Properties.of()
+                    .strength(0.3f)
+                    .noOcclusion()
+                    .noLootTable()
+                    .noCollission()));
     public static final Block KARATE_MANNEQUIN = registerBlock("karate_mannequin",
             new HorizontalModelBlock(BlockBehaviour.Properties.of()
                     .mapColor(MapColor.WOOD)
@@ -1524,15 +1565,42 @@ public class ModBlocks {
 
     private static final VoxelShape HS_ROAD_SHAPE = Block.box(0, 0, 0, 16, 15, 16);
     private static final VoxelShape HS_CONE_SHAPE = Block.box(3, 0, 2, 15, 12, 14);
-    private static final VoxelShape HS_FLAG_SMALL_SHAPE = Block.box(6, 12, 0, 10, 16, 2);
     private static final VoxelShape HS_IRONRAILS_SHAPE = Block.box(0, 0, 0, 16, 8, 1);
     private static final VoxelShape HS_SHUTTERS_SHAPE = Block.box(0, 0, 0, 16, 16, 2);
     private static final VoxelShape HS_PLATFORM_FLOATING_SHAPE = Block.box(0, 13, 0, 16, 16, 16);
     private static final VoxelShape HS_SLAB_SHAPE = Block.box(0, 12, 0, 16, 16, 16);
     private static final VoxelShape HS_FULL_SHAPE = Block.box(0, 0, 0, 16, 16, 16);
     private static final VoxelShape HS_LAMP_SHAPE = Block.box(6, 0, 6, 10, 16, 10);
-    private static final VoxelShape HS_NEON_TRI_SHAPE = Block.box(6, 0, 6, 10, 16, 10);
     private static final VoxelShape HS_BUSH_SHAPE = Block.box(2, 0, 2, 14, 14, 14);
+
+    // Hyperspace flags (small + large). Both are wall-mounted and authored for facing=south, i.e.
+    // with the wall plate on the z=0 side exactly like their models. The "arm" is the plate plus
+    // the 2x2 pole that carries the neon; it is the only solid part, so it is what the collision
+    // box is limited to. The neon itself is a flat element the model draws at x=8 - given 1px of
+    // thickness here so it can be selected - and it never collides. On the large flag the arms
+    // only exist on the TOP cell (at its top) and the BOTTOM cell (at its bottom), which leaves
+    // the CENTER cell entirely walk-through.
+    private static final VoxelShape HS_FLAG_ARM_TOP = union(
+            Block.box(6, 12, 0, 10, 16, 2),
+            Block.box(7, 13, 2, 9, 15, 12));
+    private static final VoxelShape HS_FLAG_ARM_BOTTOM = union(
+            Block.box(6, 0, 0, 10, 4, 2),
+            Block.box(7, 1, 2, 9, 3, 12));
+    /** Neon hanging under a top arm (model: y 0 → 13). Also the small flag's whole panel. */
+    private static final VoxelShape HS_FLAG_NEON_UNDER_ARM = Block.box(7.5, 0, 2.8, 8.5, 13, 11.8);
+    /** Neon crossing a whole cell (center of the large flag). */
+    private static final VoxelShape HS_FLAG_NEON_FULL = Block.box(7.5, 0, 2.8, 8.5, 16, 11.8);
+    /** Neon standing on a bottom arm (model: y 3 → 16). */
+    private static final VoxelShape HS_FLAG_NEON_OVER_ARM = Block.box(7.5, 3, 2.8, 8.5, 16, 11.8);
+
+    private static final VoxelShape HS_FLAG_SMALL_SHAPE = union(HS_FLAG_ARM_TOP, HS_FLAG_NEON_UNDER_ARM);
+
+    private static final HyperspaceTriBlock.TriShapes HS_FLAG_LARGE_OUTLINE = new HyperspaceTriBlock.TriShapes(
+            union(HS_FLAG_ARM_BOTTOM, HS_FLAG_NEON_OVER_ARM),
+            HS_FLAG_NEON_FULL,
+            union(HS_FLAG_ARM_TOP, HS_FLAG_NEON_UNDER_ARM));
+    private static final HyperspaceTriBlock.TriShapes HS_FLAG_LARGE_COLLISION = new HyperspaceTriBlock.TriShapes(
+            HS_FLAG_ARM_BOTTOM, Shapes.empty(), HS_FLAG_ARM_TOP);
 
     // Tube scaffolding: collision per silhouette (plan 163 - 3.5). Authored in the canonical
     // orientation - END with its opening to the north, CORNER opening north + east - and rotated
@@ -1678,7 +1746,7 @@ public class ModBlocks {
     public static final Block HYPERSPACE_CONE = registerBlock("hyperspace_cone",
             new HyperspaceShapedBlock(BlockBehaviour.Properties.of().mapColor(MapColor.STONE).instabreak().sound(SoundType.STONE).noOcclusion(), HS_CONE_SHAPE));
     public static final Block HYPERSPACE_FLAG_SMALL = registerBlock("hyperspace_flag_small",
-            new HyperspaceFlagSmallBlock(hsPaneLight(), HS_FLAG_SMALL_SHAPE));
+            new HyperspaceFlagSmallBlock(hsPaneLight(), HS_FLAG_SMALL_SHAPE, HS_FLAG_ARM_TOP));
     public static final Block HYPERSPACE_IRONRAILS = registerBlock("hyperspace_ironrails",
             new HyperspaceDirectionalBlock(hsIronHand(), HS_IRONRAILS_SHAPE, true, true));
     public static final Block HYPERSPACE_SCAFFOLDING_PLATFORM = registerBlock("hyperspace_scaffolding_platform",
@@ -1705,7 +1773,7 @@ public class ModBlocks {
     public static final Block HYPERSPACE_DOOR = registerBlock("hyperspace_door",
             new HyperspaceDoubleBlock(hsWood()));
     public static final Block HYPERSPACE_FLAG_LARGE = registerBlock("hyperspace_flag_large",
-            new HyperspaceFlagLargeBlock(hsPaneLight(), true, false, HS_NEON_TRI_SHAPE));
+            new HyperspaceFlagLargeBlock(hsPaneLight(), HS_FLAG_LARGE_OUTLINE, HS_FLAG_LARGE_COLLISION));
     public static final Block HYPERSPACE_LAMPPOST = registerBlock("hyperspace_lamppost",
             new HyperspaceQuadBlock(hsIronBlock().noOcclusion()
                     .lightLevel(s -> s.getValue(HyperspaceQuadBlock.PART) == HyperspaceQuadPart.CENTERTOP ? 15 : 0),

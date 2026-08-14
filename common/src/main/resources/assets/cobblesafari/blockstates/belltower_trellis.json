@@ -1,5 +1,6 @@
 {
 	"variants": {
-		"": { "model": "cobblesafari:block/belltower_trellis" }
+		"waterlogged=false": { "model": "cobblesafari:block/belltower_trellis" },
+		"waterlogged=true": { "model": "cobblesafari:block/belltower_trellis" }
 	}
 }

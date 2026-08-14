@@ -22,7 +22,16 @@ public class CobbleSafariMixinPlugin implements IMixinConfigPlugin {
             "com.convallyria.hugestructureblocks.HugeStructureBlocksMod"
     };
 
+    /** Constant Music compat mixins: only applied when that mod is actually present. */
+    private static final Set<String> CONSTANT_MUSIC_MIXIN_CLASSES = Set.of(
+            "maxigregrze.cobblesafari.mixin.client.MusicManagerConstantMusicMixin"
+    );
+
+    /** Pivot class of Constant Music, shared by its Fabric and NeoForge modules. */
+    private static final String CONSTANT_MUSIC_CLASS = "com.odinokland.constantmusic.common.CommonClass";
+
     private boolean jigsawMixinsEnabled = true;
+    private boolean constantMusicPresent = false;
 
     @Override
     public void onLoad(String mixinPackage) {
@@ -35,6 +44,11 @@ public class CobbleSafariMixinPlugin implements IMixinConfigPlugin {
         }
         if (jigsawMixinsEnabled) {
             LOGGER.info("No conflicting jigsaw mod detected, CobbleSafari jigsaw mixins will be applied");
+        }
+
+        constantMusicPresent = isClassPresent(CONSTANT_MUSIC_CLASS);
+        if (constantMusicPresent) {
+            LOGGER.info("Detected Constant Music, enabling CobbleSafari MusicManager suppression mixin (csmusic would otherwise fight its zero-delay music restart)");
         }
     }
 
@@ -56,6 +70,9 @@ public class CobbleSafariMixinPlugin implements IMixinConfigPlugin {
     public boolean shouldApplyMixin(String targetClassName, String mixinClassName) {
         if (JIGSAW_MIXIN_CLASSES.contains(mixinClassName)) {
             return jigsawMixinsEnabled;
+        }
+        if (CONSTANT_MUSIC_MIXIN_CLASSES.contains(mixinClassName)) {
+            return constantMusicPresent;
         }
         return true;
     }

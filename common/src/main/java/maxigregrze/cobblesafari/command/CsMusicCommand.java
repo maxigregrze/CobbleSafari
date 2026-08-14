@@ -10,6 +10,7 @@ import maxigregrze.cobblesafari.csmusic.CsMusicArea;
 import maxigregrze.cobblesafari.csmusic.CsMusicAreaStore;
 import maxigregrze.cobblesafari.csmusic.CsMusicBox;
 import maxigregrze.cobblesafari.csmusic.CsMusicDefinition;
+import maxigregrze.cobblesafari.csmusic.CsMusicEvalContext;
 import maxigregrze.cobblesafari.csmusic.CsMusicRegistry;
 import maxigregrze.cobblesafari.csmusic.CsMusicStructureTracker;
 import maxigregrze.cobblesafari.csmusic.DimensionalMusicManager;
@@ -226,6 +227,23 @@ public final class CsMusicCommand {
                         .collect(Collectors.joining(", ")));
         ctx.getSource().sendSuccess(
                 () -> Component.translatable("cobblesafari.command.csmusic.current.areas", areasLabel),
+                false);
+        // Resolved time and weather, then the two inputs the weather comes from: the dimension's sky,
+        // and what this biome lets fall at this altitude. Reading only the resolved state cannot tell
+        // "it is not raining" from "it is raining, but not in this biome".
+        CsMusicEvalContext env = new CsMusicEvalContext(player);
+        ServerLevel level = player.serverLevel();
+        long time = env.dayTime();
+        Component fixed = level.dimensionType().fixedTime().isPresent()
+                ? Component.translatable("cobblesafari.command.csmusic.current.env.fixed")
+                : Component.empty();
+        String sky = level.isThundering() ? "thunder" : (level.isRaining() ? "rain" : "clear");
+        String precip = env.biome().value()
+                .getPrecipitationAt(player.blockPosition()).name().toLowerCase(Locale.ROOT);
+        Component weather = Component.literal(env.weather().name().toLowerCase(Locale.ROOT));
+        ctx.getSource().sendSuccess(
+                () -> Component.translatable("cobblesafari.command.csmusic.current.env",
+                        time, fixed, weather, sky, precip),
                 false);
         if (sources.isEmpty()) {
             ctx.getSource().sendSuccess(

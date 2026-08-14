@@ -1,6 +1,7 @@
 package maxigregrze.cobblesafari.csmusic;
 
 import net.minecraft.core.Holder;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.biome.Biome;
 
@@ -20,6 +21,8 @@ public final class CsMusicEvalContext {
 
     private final ServerPlayer player;
     private Holder<Biome> biome;
+    private long dayTime = -1L;
+    private CsMusicWeather weather;
     private List<CsMusicArea> areasHere;
     private Set<String> areaIds;
     private Set<String> areaTags;
@@ -37,6 +40,32 @@ public final class CsMusicEvalContext {
             biome = player.serverLevel().getBiome(player.blockPosition());
         }
         return biome;
+    }
+
+    /**
+     * The time of day the player <i>perceives</i>, normalised to {@code [0, 24000)}: the dimension
+     * type's fixed time when it declares one (the sky is frozen there, so the world clock would drive
+     * a change nothing on screen explains), otherwise the level's day time. Computed once.
+     */
+    public long dayTime() {
+        if (dayTime < 0L) {
+            ServerLevel level = player.serverLevel();
+            long raw = level.dimensionType().fixedTime().orElse(level.getDayTime());
+            dayTime = Math.floorMod(raw, (long) CsMusicTimeRange.DAY_LENGTH);
+        }
+        return dayTime;
+    }
+
+    /**
+     * Weather where the player stands, for the {@code when.weather} axis. Reuses the memoized biome
+     * holder, so a rule constraining both the biome and the weather resolves the biome once. Computed
+     * once per sweep - the player does not move within one.
+     */
+    public CsMusicWeather weather() {
+        if (weather == null) {
+            weather = CsMusicWeather.current(player.serverLevel(), biome(), player.blockPosition());
+        }
+        return weather;
     }
 
     /** Activated areas of the player's dimension containing their block position. Computed once. */

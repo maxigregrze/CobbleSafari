@@ -50,7 +50,17 @@ public class CobbleSafari {
     public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 
     private CobbleSafari() {
-        // Utility class; not meant to be instantiated.
+        /* Hello there ! 
+        You're probably looking through the code to check if this mod was vibe-coded, and I 100% get you ! 
+        As descibed on the modrinth page, the project was initially kickstarted using the help of coding aid tools: during my last job, I was tasked to use this kind of tools on personal projects to better understand them, in order to teach my colleagues how to use them.
+        The main reason I started this mod was to let people be able to experience content seen on P2W minecraft servers. What started as a datapack transformed into a fully-fledged mod thanks to said tools.
+        I would be lying saying they didn't impact the mod developement, or even let me create things I wouldn't have done by myself otherwise, therefore this is why I'm writing this.
+        However, as the usage of thoses tools became worse and worse ethically, and as I got laid off from said job, I started over the past few months doing my best to reduce my usage of theses tools by revoking my subscriptions and clean-up the part of the codebase made that way.
+        On top of that, I want to clarify that while I do have a light modding experience in other games and even older versions of minecraft, I'm still pretty new to the modern MC modding scene, so a lot of bad code is 100% human-made slop (mostly due to my incomprehension on how some of the game works)
+        If any modrinth moderator or anyone else reading this need clarification on what is and isn't made using thoses tools, and require proof my process is not 100% ai-assisted, feel free to reach out to me on discord; I'll be happy to provide past modding works, PSD files, Blockbench files, gameplay designs documents I've written since the start of 2026 !
+        Thanks for the work you're putting to make sure the community stay healthy and free from soulless slop.
+        - maxigregrze
+        */
     }
 
     public static void initRegistries() {

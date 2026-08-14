@@ -3,13 +3,17 @@ package maxigregrze.cobblesafari.client.screen;
 import maxigregrze.cobblesafari.CobbleSafari;
 import maxigregrze.cobblesafari.network.TpAcceptResponsePayload;
 import maxigregrze.cobblesafari.platform.Services;
+import net.minecraft.Util;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.level.Level;
 
 public class TpAcceptScreen extends Screen {
 
@@ -23,6 +27,13 @@ public class TpAcceptScreen extends Screen {
     private static final int LOGO_WIDTH = 116;
     private static final int LOGO_HEIGHT = 128;
     private static final int LOADING_HEIGHT = 24;
+
+    /**
+     * Last-resort timeout for the {@link #loading} state. Sized well above any legitimate wait: the
+     * dungeon countdown is 100 ticks nominally but stretches with server lag, and the "waiting for
+     * another player's generation" branch extends it further.
+     */
+    private static final long LOADING_TIMEOUT_MS = 60_000L;
 
     private static final ResourceLocation TOP_TEXTURE =
             ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, "textures/gui/tpaccept/gui_tpaccept_top.png");
@@ -55,6 +66,9 @@ public class TpAcceptScreen extends Screen {
     private boolean acceptHovered;
     private boolean denyHovered;
     private boolean loading = false;
+    /** Dimension the player was in when {@link #loading} started; null while not loading. */
+    private ResourceKey<Level> loadingDimension;
+    private long loadingStartedAtMs;
 
     public TpAcceptScreen(String dimensionName, String dimensionId,
                           FeeInfo fee, String source) {
@@ -163,7 +177,7 @@ public class TpAcceptScreen extends Screen {
             int buttonsY = hasEntryFee ? guiTop + TOP_HEIGHT + BANNER_HEIGHT : guiTop + TOP_HEIGHT;
 
             if (isInBounds((int) mouseX, (int) mouseY, guiLeft, buttonsY, BUTTON_WIDTH, BUTTON_HEIGHT)) {
-                loading = true;
+                beginLoading();
                 Services.PLATFORM.sendPayloadToServer(new TpAcceptResponsePayload(true, source));
                 return true;
             }
@@ -175,6 +189,38 @@ public class TpAcceptScreen extends Screen {
             }
         }
         return super.mouseClicked(mouseX, mouseY, button);
+    }
+
+    /**
+     * Self-healing watchdog for the {@link #loading} state, which is deliberately not dismissable by
+     * the player. The server closes this screen when it commits to the teleport, but that packet is
+     * not the only thing that can go wrong: the screen must never outlive the teleport it is waiting
+     * on, or the player is soft-locked with no way out but killing the game.
+     *
+     * <p>Historically this screen relied on the vanilla {@code ReceivingLevelScreen} replacing it
+     * during the dimension change. Client mods that skip the world loading screen cancel
+     * {@code Minecraft.setScreen} outright, so that never happened and the screen survived the
+     * teleport. We now detect the dimension change ourselves and fall back to a timeout.
+     */
+    @Override
+    public void tick() {
+        super.tick();
+
+        if (!loading || this.minecraft == null) {
+            return;
+        }
+
+        ClientLevel level = this.minecraft.level;
+        if (level != null && loadingDimension != null && !loadingDimension.equals(level.dimension())) {
+            CobbleSafari.LOGGER.debug("Closing TpAccept screen: dimension changed to {}", level.dimension().location());
+            forceClose();
+            return;
+        }
+
+        if (Util.getMillis() - loadingStartedAtMs > LOADING_TIMEOUT_MS) {
+            CobbleSafari.LOGGER.warn("Closing TpAccept screen after {} ms without a teleport", LOADING_TIMEOUT_MS);
+            forceClose();
+        }
     }
 
     @Override
@@ -196,7 +242,25 @@ public class TpAcceptScreen extends Screen {
     }
 
     public void closeFromServer() {
+        forceClose();
+    }
+
+    /**
+     * Enters the loading state, recording what we are waiting on so {@link #tick()} can tell whether
+     * the teleport already happened. Stores the dimension key rather than the {@link ClientLevel}
+     * itself: a screen that fails to close must not also pin a discarded level in memory.
+     */
+    private void beginLoading() {
+        this.loading = true;
+        this.loadingStartedAtMs = Util.getMillis();
+        this.loadingDimension = (this.minecraft != null && this.minecraft.level != null)
+                ? this.minecraft.level.dimension()
+                : null;
+    }
+
+    private void forceClose() {
         this.loading = false;
+        this.loadingDimension = null;
         if (this.minecraft != null) {
             this.minecraft.setScreen(null);
         }

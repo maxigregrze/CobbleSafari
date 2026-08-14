@@ -42,6 +42,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionResult;
+import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
@@ -83,7 +84,7 @@ public class CobbleSafariNeoForge {
         NeoForge.EVENT_BUS.addListener(this::onLeftClickBlock);
         NeoForge.EVENT_BUS.addListener(this::onBlockBreak);
         NeoForge.EVENT_BUS.addListener(this::onLivingIncomingDamage);
-        NeoForge.EVENT_BUS.addListener(this::onLivingDeath);
+        NeoForge.EVENT_BUS.addListener(EventPriority.HIGHEST, this::onLivingDeath);
 
         CobbleSafari.LOGGER.info("CobbleSafari NeoForge module loaded!");
     }
@@ -177,6 +178,9 @@ public class CobbleSafariNeoForge {
             registrar.playToClient(maxigregrze.cobblesafari.network.OpenTeleportPadConfigPayload.TYPE,
                     maxigregrze.cobblesafari.network.OpenTeleportPadConfigPayload.STREAM_CODEC,
                     CobbleSafariClientNeoForge::handleOpenTeleportPadConfig);
+            registrar.playToClient(maxigregrze.cobblesafari.network.OpenPokeStatueConfigPayload.TYPE,
+                    maxigregrze.cobblesafari.network.OpenPokeStatueConfigPayload.STREAM_CODEC,
+                    CobbleSafariClientNeoForge::handleOpenPokeStatueConfig);
             registrar.playToClient(maxigregrze.cobblesafari.network.TeleportPadResultPayload.TYPE,
                     maxigregrze.cobblesafari.network.TeleportPadResultPayload.STREAM_CODEC,
                     CobbleSafariClientNeoForge::handleTeleportPadResult);
@@ -212,6 +216,9 @@ public class CobbleSafariNeoForge {
                     (payload, context) -> {});
             registrar.playToClient(maxigregrze.cobblesafari.network.OpenTeleportPadConfigPayload.TYPE,
                     maxigregrze.cobblesafari.network.OpenTeleportPadConfigPayload.STREAM_CODEC,
+                    (payload, context) -> {});
+            registrar.playToClient(maxigregrze.cobblesafari.network.OpenPokeStatueConfigPayload.TYPE,
+                    maxigregrze.cobblesafari.network.OpenPokeStatueConfigPayload.STREAM_CODEC,
                     (payload, context) -> {});
             registrar.playToClient(maxigregrze.cobblesafari.network.TeleportPadResultPayload.TYPE,
                     maxigregrze.cobblesafari.network.TeleportPadResultPayload.STREAM_CODEC,
@@ -306,6 +313,16 @@ public class CobbleSafariNeoForge {
                     context.enqueueWork(() -> {
                         if (context.player() instanceof ServerPlayer sp) {
                             maxigregrze.cobblesafari.network.CsBossMimicConfigServerHandler.handleSave(sp, payload);
+                        }
+                    });
+                });
+
+        registrar.playToServer(maxigregrze.cobblesafari.network.SavePokeStatueConfigPayload.TYPE,
+                maxigregrze.cobblesafari.network.SavePokeStatueConfigPayload.STREAM_CODEC,
+                (payload, context) -> {
+                    context.enqueueWork(() -> {
+                        if (context.player() instanceof ServerPlayer sp) {
+                            maxigregrze.cobblesafari.network.PokeStatueConfigServerHandler.handleSave(sp, payload);
                         }
                     });
                 });

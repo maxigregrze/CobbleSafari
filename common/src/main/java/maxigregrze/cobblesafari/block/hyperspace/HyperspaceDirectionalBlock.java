@@ -5,6 +5,7 @@ import maxigregrze.cobblesafari.block.base.HorizontalModelBlock;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.HorizontalDirectionalBlock;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Orientable (N/E/S/W) Hyperspace block with a custom model, now a thin configuration of
@@ -14,30 +15,49 @@ import net.minecraft.world.phys.shapes.VoxelShape;
  *       the shape is authored for {@link Direction#SOUTH} (the wall blocks render their base model facing south).</li>
  *   <li>{@code wallMounted=false} - free‑standing ({@link HorizontalModelBlock.Support#NONE}), shape authored NORTH.</li>
  *   <li>{@code hasCollision=false} - selection only (decorative banners / neon).</li>
+ *   <li>{@code collisionShape != null} - collide with only part of the outline (e.g. the flag's
+ *       arm, so the neon panel itself stays walk-through).</li>
  * </ul>
- * Reused by small neon (wall, no collision), iron railing (wall), shutters (wall).
+ * Reused by small neon (wall, arm-only collision), iron railing (wall), shutters (wall).
  */
 public class HyperspaceDirectionalBlock extends HorizontalModelBlock {
 
     private final VoxelShape northShape;
     private final boolean wallMounted;
     private final boolean hasCollision;
+    @Nullable
+    private final VoxelShape collisionShape;
 
     public HyperspaceDirectionalBlock(Properties properties, VoxelShape northShape, boolean wallMounted, boolean hasCollision) {
-        super(properties, Settings.builder()
+        this(properties, northShape, wallMounted, hasCollision, null);
+    }
+
+    public HyperspaceDirectionalBlock(Properties properties, VoxelShape northShape, boolean wallMounted,
+                                      boolean hasCollision, @Nullable VoxelShape collisionShape) {
+        super(properties, buildSettings(northShape, wallMounted, hasCollision, collisionShape));
+        this.northShape = northShape;
+        this.wallMounted = wallMounted;
+        this.hasCollision = hasCollision;
+        this.collisionShape = collisionShape;
+    }
+
+    private static Settings buildSettings(VoxelShape northShape, boolean wallMounted,
+                                          boolean hasCollision, @Nullable VoxelShape collisionShape) {
+        Settings.Builder builder = Settings.builder()
                 .shape(northShape)
                 .authoredFacing(wallMounted ? Direction.SOUTH : Direction.NORTH)
                 .rotateShape()
                 .support(wallMounted ? Support.WALL : Support.NONE)
-                .collision(hasCollision ? Collision.SHAPE : Collision.NONE)
-                .build());
-        this.northShape = northShape;
-        this.wallMounted = wallMounted;
-        this.hasCollision = hasCollision;
+                .collision(hasCollision ? Collision.SHAPE : Collision.NONE);
+        if (collisionShape != null) {
+            builder.collisionShape(collisionShape);
+        }
+        return builder.build();
     }
 
     @Override
     protected MapCodec<? extends HorizontalDirectionalBlock> codec() {
-        return simpleCodec(props -> new HyperspaceDirectionalBlock(props, this.northShape, this.wallMounted, this.hasCollision));
+        return simpleCodec(props -> new HyperspaceDirectionalBlock(props, this.northShape, this.wallMounted,
+                this.hasCollision, this.collisionShape));
     }
 }

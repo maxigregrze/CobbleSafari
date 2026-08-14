@@ -9,6 +9,7 @@ import maxigregrze.cobblesafari.config.SafariTimerConfig;
 import maxigregrze.cobblesafari.data.DungeonPositionSavedData;
 import maxigregrze.cobblesafari.data.PlayerTimerData;
 import maxigregrze.cobblesafari.manager.TimerManager;
+import maxigregrze.cobblesafari.network.ModNetworking;
 import maxigregrze.cobblesafari.world.StructurePlacer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -161,6 +162,12 @@ public class DungeonTeleportHandler {
     }
 
     public static void executeDungeonTeleport(ServerPlayer player, DungeonPortalBlockEntity portalEntity, DungeonPrepResult prep) {
+        // Close the (uncloseable) TpAccept loading screen before doing anything else: once we are in
+        // here the teleport is committed, so no branch below should leave it open. Do not rely on the
+        // vanilla ReceivingLevelScreen replacing it during changeDimension -- client mods that skip the
+        // world loading screen cancel Minecraft.setScreen entirely and would soft-lock the player.
+        ModNetworking.sendCloseTpAccept(player);
+
         PLAYER_ORIGINS.put(player.getUUID(), new PlayerOrigin(prep.playerOriginPos(), prep.playerOriginDimension()));
 
         DungeonInstance instance = ACTIVE_INSTANCES.get(portalEntity.getPortalId());

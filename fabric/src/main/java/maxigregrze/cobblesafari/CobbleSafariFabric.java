@@ -116,6 +116,7 @@ public class CobbleSafariFabric implements ModInitializer {
         PayloadTypeRegistry.playS2C().register(maxigregrze.cobblesafari.network.OpenCsBossTriggerConfigPayload.TYPE, maxigregrze.cobblesafari.network.OpenCsBossTriggerConfigPayload.STREAM_CODEC);
         PayloadTypeRegistry.playS2C().register(maxigregrze.cobblesafari.network.OpenCsBossMimicConfigPayload.TYPE, maxigregrze.cobblesafari.network.OpenCsBossMimicConfigPayload.STREAM_CODEC);
         PayloadTypeRegistry.playS2C().register(maxigregrze.cobblesafari.network.OpenTeleportPadConfigPayload.TYPE, maxigregrze.cobblesafari.network.OpenTeleportPadConfigPayload.STREAM_CODEC);
+        PayloadTypeRegistry.playS2C().register(maxigregrze.cobblesafari.network.OpenPokeStatueConfigPayload.TYPE, maxigregrze.cobblesafari.network.OpenPokeStatueConfigPayload.STREAM_CODEC);
         PayloadTypeRegistry.playS2C().register(maxigregrze.cobblesafari.network.TeleportPadResultPayload.TYPE, maxigregrze.cobblesafari.network.TeleportPadResultPayload.STREAM_CODEC);
         PayloadTypeRegistry.playS2C().register(maxigregrze.cobblesafari.network.SetCsMusicPayload.TYPE, maxigregrze.cobblesafari.network.SetCsMusicPayload.STREAM_CODEC);
         PayloadTypeRegistry.playS2C().register(OpenAuspiciousPokeballGoldConfigPayload.TYPE, OpenAuspiciousPokeballGoldConfigPayload.STREAM_CODEC);
@@ -156,6 +157,7 @@ public class CobbleSafariFabric implements ModInitializer {
         PayloadTypeRegistry.playC2S().register(maxigregrze.cobblesafari.network.SaveCsBossTriggerConfigPayload.TYPE, maxigregrze.cobblesafari.network.SaveCsBossTriggerConfigPayload.STREAM_CODEC);
         PayloadTypeRegistry.playC2S().register(maxigregrze.cobblesafari.network.SaveCsBossMimicConfigPayload.TYPE, maxigregrze.cobblesafari.network.SaveCsBossMimicConfigPayload.STREAM_CODEC);
         PayloadTypeRegistry.playC2S().register(maxigregrze.cobblesafari.network.SaveTeleportPadConfigPayload.TYPE, maxigregrze.cobblesafari.network.SaveTeleportPadConfigPayload.STREAM_CODEC);
+        PayloadTypeRegistry.playC2S().register(maxigregrze.cobblesafari.network.SavePokeStatueConfigPayload.TYPE, maxigregrze.cobblesafari.network.SavePokeStatueConfigPayload.STREAM_CODEC);
         PayloadTypeRegistry.playC2S().register(maxigregrze.cobblesafari.network.TeleportPadActionPayload.TYPE, maxigregrze.cobblesafari.network.TeleportPadActionPayload.STREAM_CODEC);
         PayloadTypeRegistry.playC2S().register(maxigregrze.cobblesafari.network.TeleportPadJumpPayload.TYPE, maxigregrze.cobblesafari.network.TeleportPadJumpPayload.STREAM_CODEC);
         PayloadTypeRegistry.playC2S().register(SaveAuspiciousPokeballGoldConfigPayload.TYPE, SaveAuspiciousPokeballGoldConfigPayload.STREAM_CODEC);
@@ -268,6 +270,17 @@ public class CobbleSafariFabric implements ModInitializer {
                     context.server().execute(() -> {
                         if (context.player() instanceof ServerPlayer sp) {
                             maxigregrze.cobblesafari.network.CsBossMimicConfigServerHandler.handleSave(sp, payload);
+                        }
+                    });
+                }
+        );
+
+        ServerPlayNetworking.registerGlobalReceiver(
+                maxigregrze.cobblesafari.network.SavePokeStatueConfigPayload.TYPE,
+                (payload, context) -> {
+                    context.server().execute(() -> {
+                        if (context.player() instanceof ServerPlayer sp) {
+                            maxigregrze.cobblesafari.network.PokeStatueConfigServerHandler.handleSave(sp, payload);
                         }
                     });
                 }

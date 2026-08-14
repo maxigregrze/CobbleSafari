@@ -9,8 +9,12 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 
 /**
  * Orientable Pokémon statue. Free‑standing (no support requirement); the hitbox is aligned
- * to the model and rotated by FACING via {@link HorizontalModelBlock} (shape authored for
- * {@link Direction#SOUTH}, default facing SOUTH).
+ * to the model and rotated by FACING via {@link HorizontalModelBlock}.
+ *
+ * <p>The shapes below are authored for {@link Direction#NORTH}: every statue blockstate renders
+ * its model unrotated ({@code y: 0}) at {@code facing=north}, and the models put the body on the
+ * high-{@code z} side, which is why the boxes start at {@code z > 0}. Declaring them as SOUTH
+ * used to flip the hitbox front/back against the model.</p>
  */
 public abstract class PokemonStatueBlock extends HorizontalModelBlock {
 
@@ -19,10 +23,10 @@ public abstract class PokemonStatueBlock extends HorizontalModelBlock {
     public static final VoxelShape PIKACHU_SHAPE = Block.box(0, 0, 6, 16, 16, 16);
     public static final VoxelShape SQUIRTLE_SHAPE = Block.box(0, 0, 5, 16, 16, 16);
 
-    protected PokemonStatueBlock(VoxelShape southShape, Properties properties) {
+    protected PokemonStatueBlock(VoxelShape northShape, Properties properties) {
         super(properties, Settings.builder()
-                .shape(southShape)
-                .authoredFacing(Direction.SOUTH)
+                .shape(northShape)
+                .authoredFacing(Direction.NORTH)
                 .rotateShape()
                 .defaultFacing(Direction.SOUTH)
                 .support(Support.NONE)

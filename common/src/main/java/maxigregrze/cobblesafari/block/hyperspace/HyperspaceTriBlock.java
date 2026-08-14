@@ -1,6 +1,7 @@
 package maxigregrze.cobblesafari.block.hyperspace;
 
 import com.mojang.serialization.MapCodec;
+import maxigregrze.cobblesafari.block.base.BlockShapeUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.entity.LivingEntity;
@@ -25,34 +26,77 @@ import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.EnumMap;
+import java.util.Map;
+
 /**
  * Orientable 3-cell vertical multiblock (large neon = wall-mounted; lamp post = ground).
  * The <em>placed</em> cell is the BOTTOM; CENTER goes at y+1 and TOP at y+2.
  * Lighting is configured per part through {@code Properties.lightLevel} at registration.
+ *
+ * <p>Shapes are given per cell through {@link TriShapes}, authored for a single facing and rotated
+ * to the other three like every other orientable block ({@link BlockShapeUtils#precompute}). The
+ * collision set is separate from the outline set so a column can be selected as a whole while only
+ * part of it is solid (see the large flag: neon in the outline, arms only in the collision).</p>
  */
 public class HyperspaceTriBlock extends HorizontalDirectionalBlock {
 
     public static final EnumProperty<HyperspaceTriPart> PART = EnumProperty.create("part", HyperspaceTriPart.class);
 
+    /** One {@link VoxelShape} per cell of the column, all authored for the same facing. */
+    public record TriShapes(VoxelShape bottom, VoxelShape center, VoxelShape top) {
+
+        /** Same shape for the three cells. */
+        public static TriShapes uniform(VoxelShape shape) {
+            return new TriShapes(shape, shape, shape);
+        }
+
+        public VoxelShape get(HyperspaceTriPart part) {
+            return switch (part) {
+                case BOTTOM -> bottom;
+                case CENTER -> center;
+                case TOP -> top;
+            };
+        }
+    }
+
     private final boolean wallMounted;
-    private final boolean hasCollision;
-    private final VoxelShape shape;
+    private final Direction authoredFacing;
+    private final TriShapes outline;
+    @Nullable
+    private final TriShapes collision;
+    private final Map<HyperspaceTriPart, Map<Direction, VoxelShape>> outlineByFacing;
+    @Nullable
+    private final Map<HyperspaceTriPart, Map<Direction, VoxelShape>> collisionByFacing;
 
     private static boolean breaking = false;
 
-    public HyperspaceTriBlock(Properties properties, boolean wallMounted, boolean hasCollision, VoxelShape shape) {
+    public HyperspaceTriBlock(Properties properties, boolean wallMounted, Direction authoredFacing,
+                              TriShapes outline, @Nullable TriShapes collision) {
         super(properties);
         this.wallMounted = wallMounted;
-        this.hasCollision = hasCollision;
-        this.shape = shape;
+        this.authoredFacing = authoredFacing;
+        this.outline = outline;
+        this.collision = collision;
+        this.outlineByFacing = precompute(outline, authoredFacing);
+        this.collisionByFacing = collision != null ? precompute(collision, authoredFacing) : null;
         this.registerDefaultState(this.stateDefinition.any()
                 .setValue(FACING, Direction.NORTH)
                 .setValue(PART, HyperspaceTriPart.BOTTOM));
     }
 
+    private static Map<HyperspaceTriPart, Map<Direction, VoxelShape>> precompute(TriShapes shapes, Direction authored) {
+        Map<HyperspaceTriPart, Map<Direction, VoxelShape>> map = new EnumMap<>(HyperspaceTriPart.class);
+        for (HyperspaceTriPart part : HyperspaceTriPart.values()) {
+            map.put(part, BlockShapeUtils.precompute(shapes.get(part), authored));
+        }
+        return map;
+    }
+
     @Override
     protected MapCodec<? extends HorizontalDirectionalBlock> codec() {
-        return simpleCodec(props -> new HyperspaceTriBlock(props, this.wallMounted, this.hasCollision, this.shape));
+        return simpleCodec(props -> new HyperspaceTriBlock(props, this.wallMounted, this.authoredFacing,
+                this.outline, this.collision));
     }
 
     @Override
@@ -184,12 +228,22 @@ public class HyperspaceTriBlock extends HorizontalDirectionalBlock {
 
     @Override
     protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
-        return shape;
+        return shapeFor(outlineByFacing, outline, state);
     }
 
     @Override
     protected VoxelShape getCollisionShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
-        return hasCollision ? shape : Shapes.empty();
+        TriShapes authored = this.collision;
+        if (collisionByFacing == null || authored == null) {
+            return Shapes.empty();
+        }
+        return shapeFor(collisionByFacing, authored, state);
+    }
+
+    private static VoxelShape shapeFor(Map<HyperspaceTriPart, Map<Direction, VoxelShape>> byFacing,
+                                       TriShapes authored, BlockState state) {
+        HyperspaceTriPart part = state.getValue(PART);
+        return byFacing.get(part).getOrDefault(state.getValue(FACING), authored.get(part));
     }
 
     @Override

@@ -266,6 +266,11 @@ public class TeleporterTickHandler {
     private static final int SLOW_FALLING_DURATION_TICKS = 200;
 
     private static void teleportToSafari(ServerPlayer player) {
+        // Close the (uncloseable) TpAccept loading screen up front so no branch below can leave it
+        // open. See DungeonTeleportHandler.executeDungeonTeleport for why we cannot rely on the
+        // vanilla ReceivingLevelScreen replacing it during changeDimension.
+        ModNetworking.sendCloseTpAccept(player);
+
         MinecraftServer server = player.getServer();
         if (server == null) return;
 
@@ -278,7 +283,6 @@ public class TeleporterTickHandler {
         ServerLevel targetLevel = server.getLevel(dimensionKey);
         if (targetLevel == null) {
             CobbleSafari.LOGGER.error("Safari dimension not found: {}", safariDimension);
-            ModNetworking.sendCloseTpAccept(player);
             player.sendSystemMessage(Component.translatable("cobblesafari.teleporter.error"));
             return;
         }

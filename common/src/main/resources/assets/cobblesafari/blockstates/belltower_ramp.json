@@ -1,0 +1,13 @@
+{
+	"variants": {
+		"facing=south,waterlogged=false": { "model": "cobblesafari:block/belltower_ramp" },
+		"facing=west,waterlogged=false": { "model": "cobblesafari:block/belltower_ramp", "y": 90 },
+		"facing=north,waterlogged=false": { "model": "cobblesafari:block/belltower_ramp", "y": 180 },
+		"facing=east,waterlogged=false": { "model": "cobblesafari:block/belltower_ramp", "y": 270 },
+
+		"facing=south,waterlogged=true": { "model": "cobblesafari:block/belltower_ramp" },
+		"facing=west,waterlogged=true": { "model": "cobblesafari:block/belltower_ramp", "y": 90 },
+		"facing=north,waterlogged=true": { "model": "cobblesafari:block/belltower_ramp", "y": 180 },
+		"facing=east,waterlogged=true": { "model": "cobblesafari:block/belltower_ramp", "y": 270 }
+	}
+}
