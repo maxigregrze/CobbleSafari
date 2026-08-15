@@ -22,6 +22,9 @@
     "cobblesafari:hyperspace_wall_sign",
     "cobblesafari:hyperspace_hanging_sign",
     "cobblesafari:hyperspace_wall_hanging_sign",
-    "cobblesafari:belltower_ramp"
+    "cobblesafari:belltower_ramp",
+    "cobblesafari:belltower_beam",
+    "cobblesafari:belltower_rooftiles",
+    "cobblesafari:belltower_trellis"
 ]
 }

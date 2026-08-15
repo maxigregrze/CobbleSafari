@@ -6,6 +6,7 @@ import maxigregrze.cobblesafari.block.dungeon.HoopaRingPortalBlockEntity;
 import maxigregrze.cobblesafari.block.distortion.GiratinaCoreBlockEntity;
 import maxigregrze.cobblesafari.block.distortion.DistortionPortalBlockEntity;
 import maxigregrze.cobblesafari.block.distortion.DistortionStoneBricksRuneBlockEntity;
+import maxigregrze.cobblesafari.block.misc.BelltowerBellBlockEntity;
 import maxigregrze.cobblesafari.block.misc.LostNotesBlockEntity;
 import maxigregrze.cobblesafari.block.misc.AuspiciousPokeballBlockEntity;
 import maxigregrze.cobblesafari.block.misc.AuspiciousPokeballGoldBlockEntity;
@@ -62,6 +63,7 @@ public class ModBlockEntities {
     public static BlockEntityType<WhirlwindBlockEntity> WHIRLWIND;
     public static BlockEntityType<UnionRoomSpotlightBlockEntity> UNION_ROOM_SPOTLIGHT;
     public static BlockEntityType<PunchingBagBlockEntity> PUNCHINGBAG;
+    public static BlockEntityType<BelltowerBellBlockEntity> BELLTOWER_BELL;
     public static BlockEntityType<CsBossTriggerBlockEntity> CSBOSS_TRIGGER;
     public static BlockEntityType<CsBossMimicBlockEntity> CSBOSS_MIMIC;
     public static BlockEntityType<BalmDispenserBlockEntity> BALM_DISPENSER;
@@ -210,6 +212,12 @@ public class ModBlockEntities {
                 BuiltInRegistries.BLOCK_ENTITY_TYPE,
                 ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, "punchingbag"),
                 BlockEntityType.Builder.of(PunchingBagBlockEntity::new, ModBlocks.PUNCHINGBAG).build(null)
+        );
+
+        BELLTOWER_BELL = Registry.register(
+                BuiltInRegistries.BLOCK_ENTITY_TYPE,
+                ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, "belltower_bell"),
+                BlockEntityType.Builder.of(BelltowerBellBlockEntity::new, ModBlocks.BELLTOWER_BELL).build(null)
         );
 
         CSBOSS_TRIGGER = Registry.register(

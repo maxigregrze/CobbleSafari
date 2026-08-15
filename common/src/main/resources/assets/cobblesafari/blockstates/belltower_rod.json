@@ -1,0 +1,100 @@
+{
+  "variants": {
+    "segment=single,layer=0,waterlogged=false": {
+      "model": "cobblesafari:block/belltower_rod_top"
+    },
+    "segment=single,layer=0,waterlogged=true": {
+      "model": "cobblesafari:block/belltower_rod_top"
+    },
+    "segment=single,layer=1,waterlogged=false": {
+      "model": "cobblesafari:block/belltower_rod_top"
+    },
+    "segment=single,layer=1,waterlogged=true": {
+      "model": "cobblesafari:block/belltower_rod_top"
+    },
+    "segment=single,layer=2,waterlogged=false": {
+      "model": "cobblesafari:block/belltower_rod_top"
+    },
+    "segment=single,layer=2,waterlogged=true": {
+      "model": "cobblesafari:block/belltower_rod_top"
+    },
+    "segment=single,layer=3,waterlogged=false": {
+      "model": "cobblesafari:block/belltower_rod_top"
+    },
+    "segment=single,layer=3,waterlogged=true": {
+      "model": "cobblesafari:block/belltower_rod_top"
+    },
+    "segment=bottom,layer=0,waterlogged=false": {
+      "model": "cobblesafari:block/belltower_rod_main"
+    },
+    "segment=bottom,layer=0,waterlogged=true": {
+      "model": "cobblesafari:block/belltower_rod_main"
+    },
+    "segment=bottom,layer=1,waterlogged=false": {
+      "model": "cobblesafari:block/belltower_rod_main"
+    },
+    "segment=bottom,layer=1,waterlogged=true": {
+      "model": "cobblesafari:block/belltower_rod_main"
+    },
+    "segment=bottom,layer=2,waterlogged=false": {
+      "model": "cobblesafari:block/belltower_rod_main"
+    },
+    "segment=bottom,layer=2,waterlogged=true": {
+      "model": "cobblesafari:block/belltower_rod_main"
+    },
+    "segment=bottom,layer=3,waterlogged=false": {
+      "model": "cobblesafari:block/belltower_rod_main"
+    },
+    "segment=bottom,layer=3,waterlogged=true": {
+      "model": "cobblesafari:block/belltower_rod_main"
+    },
+    "segment=middle,layer=0,waterlogged=false": {
+      "model": "cobblesafari:block/belltower_rod_main"
+    },
+    "segment=middle,layer=0,waterlogged=true": {
+      "model": "cobblesafari:block/belltower_rod_main"
+    },
+    "segment=middle,layer=1,waterlogged=false": {
+      "model": "cobblesafari:block/belltower_rod_alt"
+    },
+    "segment=middle,layer=1,waterlogged=true": {
+      "model": "cobblesafari:block/belltower_rod_alt"
+    },
+    "segment=middle,layer=2,waterlogged=false": {
+      "model": "cobblesafari:block/belltower_rod_main"
+    },
+    "segment=middle,layer=2,waterlogged=true": {
+      "model": "cobblesafari:block/belltower_rod_main"
+    },
+    "segment=middle,layer=3,waterlogged=false": {
+      "model": "cobblesafari:block/belltower_rod_alt"
+    },
+    "segment=middle,layer=3,waterlogged=true": {
+      "model": "cobblesafari:block/belltower_rod_alt"
+    },
+    "segment=top,layer=0,waterlogged=false": {
+      "model": "cobblesafari:block/belltower_rod_top"
+    },
+    "segment=top,layer=0,waterlogged=true": {
+      "model": "cobblesafari:block/belltower_rod_top"
+    },
+    "segment=top,layer=1,waterlogged=false": {
+      "model": "cobblesafari:block/belltower_rod_top"
+    },
+    "segment=top,layer=1,waterlogged=true": {
+      "model": "cobblesafari:block/belltower_rod_top"
+    },
+    "segment=top,layer=2,waterlogged=false": {
+      "model": "cobblesafari:block/belltower_rod_top"
+    },
+    "segment=top,layer=2,waterlogged=true": {
+      "model": "cobblesafari:block/belltower_rod_top"
+    },
+    "segment=top,layer=3,waterlogged=false": {
+      "model": "cobblesafari:block/belltower_rod_top"
+    },
+    "segment=top,layer=3,waterlogged=true": {
+      "model": "cobblesafari:block/belltower_rod_top"
+    }
+  }
+}

@@ -12,6 +12,7 @@ import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
@@ -209,6 +210,30 @@ public abstract class ConnectedModelBlock extends Block {
         }
         TagKey<Block> tag = settings.stackTag() != null ? settings.stackTag() : settings.connectTag();
         return tag != null && neighbor.is(tag);
+    }
+
+    /**
+     * Height of {@code pos} inside its vertical run of stack peers, modulo {@code layerCount}.
+     * O(1) and exact at unbounded height: one plus the layer of the block below. The block below
+     * is always current when this runs - updateShape hands us the already-written DOWN neighbour,
+     * and the cascade walks the stack upward one block at a time. A stack peer carrying no layer
+     * property (e.g. a platform variant) reads as -1, so the block resting on it restarts at 0.
+     *
+     * <p>The property is passed in rather than read from a field because it is declared per
+     * subclass, not here: {@code createBlockStateDefinition} runs before any subclass field is
+     * assigned (see this class's header). Shared by {@link LayeredSideConnectedModelBlock} and
+     * {@link LayeredVerticalConnectedModelBlock}, whose only difference is which axes they scan.</p>
+     */
+    protected int computeLayer(BlockState self, BlockGetter level, BlockPos pos,
+                               IntegerProperty layerProperty, int layerCount) {
+        if (layerCount <= 1) {
+            return 0;
+        }
+        BlockState below = level.getBlockState(pos.below());
+        if (!stacksWith(self, below)) {
+            return 0;
+        }
+        return (below.getOptionalValue(layerProperty).orElse(-1) + 1) % layerCount;
     }
 
     // ------------------------------------------------------------------ recompute

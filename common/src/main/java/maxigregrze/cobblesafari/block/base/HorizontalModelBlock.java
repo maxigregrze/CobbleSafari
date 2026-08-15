@@ -36,7 +36,7 @@ import java.util.Map;
 public class HorizontalModelBlock extends HorizontalDirectionalBlock {
 
     /** What the block must be attached to in order to survive. */
-    public enum Support { NONE, GROUND, WALL }
+    public enum Support { NONE, GROUND, WALL, CEILING }
 
     /** Collision behaviour. */
     public enum Collision { SHAPE, NONE, FULL }
@@ -151,6 +151,9 @@ public class HorizontalModelBlock extends HorizontalDirectionalBlock {
                 BlockPos supportPos = pos.relative(back);
                 yield level.getBlockState(supportPos).isFaceSturdy(level, supportPos, back.getOpposite());
             }
+            // Literally vanilla LanternBlock.canSurvive in its hanging form: a chain, a fence or a
+            // full block carries the block, a bottom slab or a pressure plate does not.
+            case CEILING -> Block.canSupportCenter(level, pos.above(), Direction.DOWN);
         };
     }
 

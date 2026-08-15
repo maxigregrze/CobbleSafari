@@ -174,6 +174,12 @@ public class CobbleSafariClientFabric implements ClientModInitializer {
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.TELEPORT_PAD, RenderType.translucent());
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.SAFARI_EGG_NEST, RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.BELLTOWER_RAMP, RenderType.translucent());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.BELLTOWER_BEAM, RenderType.cutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.BELLTOWER_BELL, RenderType.cutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.BELLTOWER_BELL_MOVING, RenderType.cutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.BELLTOWER_TOPPER, RenderType.cutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.BELLTOWER_ROD, RenderType.cutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.BELLTOWER_ROOFTILES, RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.POKEMON_STATUE, RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.HOOPA_RING_PORTAL, RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.DUNGEON_PORTAL, RenderType.cutout());
@@ -406,6 +412,7 @@ public class CobbleSafariClientFabric implements ClientModInitializer {
         BlockEntityRenderers.register(ModBlockEntities.CREATIVE_STATUE, maxigregrze.cobblesafari.client.renderer.PokeStatueBlockEntityRenderer::new);
         BlockEntityRenderers.register(ModBlockEntities.UNION_ROOM_SPOTLIGHT, maxigregrze.cobblesafari.client.renderer.UnionRoomSpotlightBlockEntityRenderer::new);
         BlockEntityRenderers.register(ModBlockEntities.PUNCHINGBAG, maxigregrze.cobblesafari.client.renderer.PunchingBagBlockEntityRenderer::new);
+        BlockEntityRenderers.register(ModBlockEntities.BELLTOWER_BELL, maxigregrze.cobblesafari.client.renderer.BelltowerBellBlockEntityRenderer::new);
         BlockEntityRenderers.register(ModBlockEntities.HYPERSPACE_TRASHCAN, maxigregrze.cobblesafari.client.renderer.HyperspaceTrashcanBlockEntityRenderer::new);
         BlockEntityRenderers.register(ModBlockEntities.BALM_DISPENSER, maxigregrze.cobblesafari.client.renderer.BalmDispenserBlockEntityRenderer::new);
         BlockEntityRenderers.register(ModBlockEntities.CSBOSS_TRIGGER, maxigregrze.cobblesafari.client.renderer.CsBossTriggerBlockEntityRenderer::new);

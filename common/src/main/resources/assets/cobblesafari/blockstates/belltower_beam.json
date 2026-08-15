@@ -1,0 +1,274 @@
+{
+  "variants": {
+    "part=p1,facing=north,alt=false": {
+      "model": "cobblesafari:block/belltower_beam_1"
+    },
+    "part=p1,facing=east,alt=false": {
+      "model": "cobblesafari:block/belltower_beam_1",
+      "y": 90
+    },
+    "part=p1,facing=south,alt=false": {
+      "model": "cobblesafari:block/belltower_beam_1",
+      "y": 180
+    },
+    "part=p1,facing=west,alt=false": {
+      "model": "cobblesafari:block/belltower_beam_1",
+      "y": 270
+    },
+    "part=p1,facing=north,alt=true": {
+      "model": "cobblesafari:block/belltower_beam_1_alt"
+    },
+    "part=p1,facing=east,alt=true": {
+      "model": "cobblesafari:block/belltower_beam_1_alt",
+      "y": 90
+    },
+    "part=p1,facing=south,alt=true": {
+      "model": "cobblesafari:block/belltower_beam_1_alt",
+      "y": 180
+    },
+    "part=p1,facing=west,alt=true": {
+      "model": "cobblesafari:block/belltower_beam_1_alt",
+      "y": 270
+    },
+    "part=p2,facing=north,alt=false": {
+      "model": "cobblesafari:block/belltower_beam_2"
+    },
+    "part=p2,facing=east,alt=false": {
+      "model": "cobblesafari:block/belltower_beam_2",
+      "y": 90
+    },
+    "part=p2,facing=south,alt=false": {
+      "model": "cobblesafari:block/belltower_beam_2",
+      "y": 180
+    },
+    "part=p2,facing=west,alt=false": {
+      "model": "cobblesafari:block/belltower_beam_2",
+      "y": 270
+    },
+    "part=p2,facing=north,alt=true": {
+      "model": "cobblesafari:block/belltower_beam_2_alt"
+    },
+    "part=p2,facing=east,alt=true": {
+      "model": "cobblesafari:block/belltower_beam_2_alt",
+      "y": 90
+    },
+    "part=p2,facing=south,alt=true": {
+      "model": "cobblesafari:block/belltower_beam_2_alt",
+      "y": 180
+    },
+    "part=p2,facing=west,alt=true": {
+      "model": "cobblesafari:block/belltower_beam_2_alt",
+      "y": 270
+    },
+    "part=p3,facing=north,alt=false": {
+      "model": "cobblesafari:block/belltower_beam_3"
+    },
+    "part=p3,facing=east,alt=false": {
+      "model": "cobblesafari:block/belltower_beam_3",
+      "y": 90
+    },
+    "part=p3,facing=south,alt=false": {
+      "model": "cobblesafari:block/belltower_beam_3",
+      "y": 180
+    },
+    "part=p3,facing=west,alt=false": {
+      "model": "cobblesafari:block/belltower_beam_3",
+      "y": 270
+    },
+    "part=p3,facing=north,alt=true": {
+      "model": "cobblesafari:block/belltower_beam_3_alt"
+    },
+    "part=p3,facing=east,alt=true": {
+      "model": "cobblesafari:block/belltower_beam_3_alt",
+      "y": 90
+    },
+    "part=p3,facing=south,alt=true": {
+      "model": "cobblesafari:block/belltower_beam_3_alt",
+      "y": 180
+    },
+    "part=p3,facing=west,alt=true": {
+      "model": "cobblesafari:block/belltower_beam_3_alt",
+      "y": 270
+    },
+    "part=p4,facing=north,alt=false": {
+      "model": "cobblesafari:block/belltower_beam_4"
+    },
+    "part=p4,facing=east,alt=false": {
+      "model": "cobblesafari:block/belltower_beam_4",
+      "y": 90
+    },
+    "part=p4,facing=south,alt=false": {
+      "model": "cobblesafari:block/belltower_beam_4",
+      "y": 180
+    },
+    "part=p4,facing=west,alt=false": {
+      "model": "cobblesafari:block/belltower_beam_4",
+      "y": 270
+    },
+    "part=p4,facing=north,alt=true": {
+      "model": "cobblesafari:block/belltower_beam_4_alt"
+    },
+    "part=p4,facing=east,alt=true": {
+      "model": "cobblesafari:block/belltower_beam_4_alt",
+      "y": 90
+    },
+    "part=p4,facing=south,alt=true": {
+      "model": "cobblesafari:block/belltower_beam_4_alt",
+      "y": 180
+    },
+    "part=p4,facing=west,alt=true": {
+      "model": "cobblesafari:block/belltower_beam_4_alt",
+      "y": 270
+    },
+    "part=p5,facing=north,alt=false": {
+      "model": "cobblesafari:block/belltower_beam_5"
+    },
+    "part=p5,facing=east,alt=false": {
+      "model": "cobblesafari:block/belltower_beam_5",
+      "y": 90
+    },
+    "part=p5,facing=south,alt=false": {
+      "model": "cobblesafari:block/belltower_beam_5",
+      "y": 180
+    },
+    "part=p5,facing=west,alt=false": {
+      "model": "cobblesafari:block/belltower_beam_5",
+      "y": 270
+    },
+    "part=p5,facing=north,alt=true": {
+      "model": "cobblesafari:block/belltower_beam_5_alt"
+    },
+    "part=p5,facing=east,alt=true": {
+      "model": "cobblesafari:block/belltower_beam_5_alt",
+      "y": 90
+    },
+    "part=p5,facing=south,alt=true": {
+      "model": "cobblesafari:block/belltower_beam_5_alt",
+      "y": 180
+    },
+    "part=p5,facing=west,alt=true": {
+      "model": "cobblesafari:block/belltower_beam_5_alt",
+      "y": 270
+    },
+    "part=p6,facing=north,alt=false": {
+      "model": "cobblesafari:block/belltower_beam_6"
+    },
+    "part=p6,facing=east,alt=false": {
+      "model": "cobblesafari:block/belltower_beam_6",
+      "y": 90
+    },
+    "part=p6,facing=south,alt=false": {
+      "model": "cobblesafari:block/belltower_beam_6",
+      "y": 180
+    },
+    "part=p6,facing=west,alt=false": {
+      "model": "cobblesafari:block/belltower_beam_6",
+      "y": 270
+    },
+    "part=p6,facing=north,alt=true": {
+      "model": "cobblesafari:block/belltower_beam_6_alt"
+    },
+    "part=p6,facing=east,alt=true": {
+      "model": "cobblesafari:block/belltower_beam_6_alt",
+      "y": 90
+    },
+    "part=p6,facing=south,alt=true": {
+      "model": "cobblesafari:block/belltower_beam_6_alt",
+      "y": 180
+    },
+    "part=p6,facing=west,alt=true": {
+      "model": "cobblesafari:block/belltower_beam_6_alt",
+      "y": 270
+    },
+    "part=p7,facing=north,alt=false": {
+      "model": "cobblesafari:block/belltower_beam_7"
+    },
+    "part=p7,facing=east,alt=false": {
+      "model": "cobblesafari:block/belltower_beam_7",
+      "y": 90
+    },
+    "part=p7,facing=south,alt=false": {
+      "model": "cobblesafari:block/belltower_beam_7",
+      "y": 180
+    },
+    "part=p7,facing=west,alt=false": {
+      "model": "cobblesafari:block/belltower_beam_7",
+      "y": 270
+    },
+    "part=p7,facing=north,alt=true": {
+      "model": "cobblesafari:block/belltower_beam_7_alt"
+    },
+    "part=p7,facing=east,alt=true": {
+      "model": "cobblesafari:block/belltower_beam_7_alt",
+      "y": 90
+    },
+    "part=p7,facing=south,alt=true": {
+      "model": "cobblesafari:block/belltower_beam_7_alt",
+      "y": 180
+    },
+    "part=p7,facing=west,alt=true": {
+      "model": "cobblesafari:block/belltower_beam_7_alt",
+      "y": 270
+    },
+    "part=p8,facing=north,alt=false": {
+      "model": "cobblesafari:block/belltower_beam_8"
+    },
+    "part=p8,facing=east,alt=false": {
+      "model": "cobblesafari:block/belltower_beam_8",
+      "y": 90
+    },
+    "part=p8,facing=south,alt=false": {
+      "model": "cobblesafari:block/belltower_beam_8",
+      "y": 180
+    },
+    "part=p8,facing=west,alt=false": {
+      "model": "cobblesafari:block/belltower_beam_8",
+      "y": 270
+    },
+    "part=p8,facing=north,alt=true": {
+      "model": "cobblesafari:block/belltower_beam_8_alt"
+    },
+    "part=p8,facing=east,alt=true": {
+      "model": "cobblesafari:block/belltower_beam_8_alt",
+      "y": 90
+    },
+    "part=p8,facing=south,alt=true": {
+      "model": "cobblesafari:block/belltower_beam_8_alt",
+      "y": 180
+    },
+    "part=p8,facing=west,alt=true": {
+      "model": "cobblesafari:block/belltower_beam_8_alt",
+      "y": 270
+    },
+    "part=p9,facing=north,alt=false": {
+      "model": "cobblesafari:block/belltower_beam_9"
+    },
+    "part=p9,facing=east,alt=false": {
+      "model": "cobblesafari:block/belltower_beam_9",
+      "y": 90
+    },
+    "part=p9,facing=south,alt=false": {
+      "model": "cobblesafari:block/belltower_beam_9",
+      "y": 180
+    },
+    "part=p9,facing=west,alt=false": {
+      "model": "cobblesafari:block/belltower_beam_9",
+      "y": 270
+    },
+    "part=p9,facing=north,alt=true": {
+      "model": "cobblesafari:block/belltower_beam_9_alt"
+    },
+    "part=p9,facing=east,alt=true": {
+      "model": "cobblesafari:block/belltower_beam_9_alt",
+      "y": 90
+    },
+    "part=p9,facing=south,alt=true": {
+      "model": "cobblesafari:block/belltower_beam_9_alt",
+      "y": 180
+    },
+    "part=p9,facing=west,alt=true": {
+      "model": "cobblesafari:block/belltower_beam_9_alt",
+      "y": 270
+    }
+  }
+}

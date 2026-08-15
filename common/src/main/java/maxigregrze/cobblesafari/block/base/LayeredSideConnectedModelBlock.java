@@ -82,24 +82,8 @@ public class LayeredSideConnectedModelBlock extends SideConnectedModelBlock {
 
     @Override
     protected BlockState computeState(BlockState state, BlockGetter level, BlockPos pos) {
-        return super.computeState(state, level, pos).setValue(LAYER, computeLayer(state, level, pos));
-    }
-
-    /**
-     * O(1) and exact at unbounded height: one plus the layer of the block below, modulo the number
-     * of authored sets. The block below is always current when this runs - updateShape hands us the
-     * already-written DOWN neighbour, and the cascade walks the stack upward one block at a time.
-     * A stack peer carrying no LAYER (e.g. a platform variant) reads as -1, so the block resting on
-     * it restarts the cycle at 0.
-     */
-    private int computeLayer(BlockState self, BlockGetter level, BlockPos pos) {
-        if (layerCount <= 1) {
-            return 0;
-        }
-        BlockState below = level.getBlockState(pos.below());
-        if (!stacksWith(self, below)) {
-            return 0;
-        }
-        return (below.getOptionalValue(LAYER).orElse(-1) + 1) % layerCount;
+        // Layer counting is axis-agnostic and shared with LayeredVerticalConnectedModelBlock.
+        return super.computeState(state, level, pos)
+                .setValue(LAYER, computeLayer(state, level, pos, LAYER, layerCount));
     }
 }

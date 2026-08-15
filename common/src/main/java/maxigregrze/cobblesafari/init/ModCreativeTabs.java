@@ -185,6 +185,7 @@ public class ModCreativeTabs {
                 output.accept(ModBlocks.SURVIVAL_TELEPORT_PAD);
                 output.accept(ModBlocks.SAFARI_EGG_NEST);
                 output.accept(ModBlocks.WHIRLWIND);
+                output.accept(ModBlocks.BELLTOWER_TRELLIS);
                 output.accept(ModBlocks.BELLTOWER_RAMP);
                 output.accept(ModBlocks.POKEMON_STATUE);
                 output.accept(ModBlocks.MUD_PILE);
@@ -436,6 +437,12 @@ public class ModCreativeTabs {
                 output.accept(ModBlocks.HYPERSPACE_HANGING_SIGN_ITEM);
                 output.accept(ModItems.HYPERSPACE_BOAT);
                 output.accept(ModItems.HYPERSPACE_CHEST_BOAT);
+                // Belltower construction set (plan 170), in build order
+                output.accept(ModBlocks.BELLTOWER_BEAM);
+                output.accept(ModBlocks.BELLTOWER_ROD);
+                output.accept(ModBlocks.BELLTOWER_ROOFTILES);
+                output.accept(ModBlocks.BELLTOWER_TOPPER);
+                output.accept(ModBlocks.BELLTOWER_BELL);
             })
             .build();
 

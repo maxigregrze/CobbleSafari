@@ -159,5 +159,14 @@
                 "stream": true
             }
         ]
+    },
+    "block.bell_chime": {
+        "sounds": [
+            {
+                "name": "cobblesafari:blocks/bell_chime",
+                "stream": false
+            }
+        ],
+        "subtitle": "subtitles.cobblesafari.block.bell_chime"
     }
 }

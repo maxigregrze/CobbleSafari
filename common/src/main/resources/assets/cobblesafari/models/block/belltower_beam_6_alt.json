@@ -1,0 +1,29 @@
+{
+	"format_version": "1.9.0",
+	"credit": "Made with Blockbench",
+	"texture_size": [64, 32],
+	"textures": {
+		"0": "cobblesafari:block/belltower_beam",
+		"particle": "cobblesafari:block/belltower_beam"
+	},
+	"elements": [
+		{
+			"from": [0, 0, 0],
+			"to": [6, 16, 16],
+			"faces": {
+				"east": {"uv": [10, 8, 14, 16], "texture": "#0"},
+				"up": {"uv": [5.5, 3, 7, 11], "texture": "#0"},
+				"down": {"uv": [5.5, 3, 7, 11], "texture": "#0"}
+			}
+		}
+	],
+	"groups": [
+		{
+			"name": "6",
+			"origin": [8, 8, 8],
+			"scope": 0,
+			"color": 0,
+			"children": [0]
+		}
+	]
+}

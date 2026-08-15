@@ -217,40 +217,54 @@ public final class PokeStatueModelRenderer {
 
         boolean named = animationName != null && !animationName.isBlank();
         PoseClip clip = named ? poseBedrockAnimations(model).get(animationName) : null;
-        ActiveAnimation anim = null;
-        float duration = 0f;
-        if (named) {
-            anim = resolveNamed(model, state, animationName);
-            if (anim == null && clip != null) {
-                anim = new BedrockActiveAnimation(clip.animation());
-            }
-            // A duration of 0 is legitimate: many bedrock "animations" are a single static posture
-            // (Ho-Oh's air_fly is 58 bones of constant rotations). The clip still poses the model.
-            duration = anim == null ? 0f : effectiveDuration(anim);
-        }
 
-        // Advance the state clock BEFORE any pose is selected. FloatingState.updatePartialTicks is
-        // incremental and calls runEffects, which fires the current pose's particle and sound
-        // keyframes - but runEffects only walks the *current* pose's animations plus the active
-        // ones, and both are still empty here, so it is a no-op. Moving either block below this one
-        // above it would make a frozen statue spray particles every frame.
-        float clockSeconds = Mth.clamp(progress, 0f, 1f)
-                * (duration > 0f ? duration : STATIC_WINDOW_SECONDS);
-        int wholeTicks = (int) Math.floor(clockSeconds * 20f);
-        state.updateAge(wholeTicks);
-        state.updatePartialTicks(clockSeconds * 20f - wholeTicks);
-
-        // The clip's own pose when it has one: its transformedParts decide part visibility.
+        // Two routes, and the distinction matters a great deal: bedrock bone transforms are
+        // ADDITIVE (`xRot += …`, `xScale *= …` in BedrockAnimation.run). Applying one clip twice
+        // therefore doubles every rotation - heads fold into torsos, limbs sink into bodies, a 45°
+        // dive becomes 90°.
         if (clip != null) {
+            // Pose route. The clip is one of this pose's own idle animations, so switching to the
+            // pose is enough: applyAnimations already runs it, with the right part visibility and
+            // alongside the pose's procedural companions (wing flap, look-at). Adding it as an
+            // active animation on top would be the exact double application described above.
+            float clockSeconds = clockFor(progress, effectiveDuration(clip.animation()));
+            setClock(state, clockSeconds);
             state.setPose(clip.poseName());
-        } else {
-            state.setPoseToFirstSuitable(PoseType.PORTRAIT);
+            return new FrozenPose(state, null, clockSeconds);
         }
+
+        // Named route: namedAnimations, model-level animations, cry / faint. These are not part of
+        // any pose's idle set, so they genuinely have to be layered over the portrait pose.
+        ActiveAnimation anim = named ? resolveNamed(model, state, animationName) : null;
+        // A duration of 0 is legitimate: many bedrock clips are a single static posture (Ho-Oh's
+        // air_fly is 58 bones of constant rotations). They still pose the model.
+        float clockSeconds = clockFor(progress, anim == null ? 0f : effectiveDuration(anim));
+        setClock(state, clockSeconds);
+        state.setPoseToFirstSuitable(PoseType.PORTRAIT);
         if (anim == null) {
             return new FrozenPose(state, null, clockSeconds);
         }
         applyAnimation(state, anim);
         return new FrozenPose(state, anim, clockSeconds);
+    }
+
+    private static float clockFor(float progress, float duration) {
+        return Mth.clamp(progress, 0f, 1f) * (duration > 0f ? duration : STATIC_WINDOW_SECONDS);
+    }
+
+    /**
+     * Parks the state clock at {@code seconds}.
+     *
+     * <p>Must be called <b>before</b> any pose is selected. {@code FloatingState.updatePartialTicks}
+     * is incremental and calls {@code runEffects}, which fires the current pose's particle and sound
+     * keyframes - but it only walks the <em>current</em> pose's animations plus the active ones, and
+     * both are still empty at this point, so here it is a no-op. Selecting a pose first would make a
+     * frozen statue spray particles every frame.</p>
+     */
+    private static void setClock(FloatingState state, float seconds) {
+        int wholeTicks = (int) Math.floor(seconds * 20f);
+        state.updateAge(wholeTicks);
+        state.updatePartialTicks(seconds * 20f - wholeTicks);
     }
 
     /** Cobblemon's own name lookup: namedAnimations, model animations, cry / faint, MoLang. */
@@ -276,9 +290,15 @@ public final class PokeStatueModelRenderer {
             return anim.getDuration();
         }
         if (anim instanceof BedrockActiveAnimation bedrock) {
-            return lastKeyframeSeconds(bedrock.getAnimation());
+            return effectiveDuration(bedrock.getAnimation());
         }
         return 0f;
+    }
+
+    /** Same, straight from a clip, for the pose route where no ActiveAnimation is ever built. */
+    private static float effectiveDuration(BedrockAnimation animation) {
+        double declared = animation.getAnimationLength();
+        return declared > 0.0 ? (float) declared : lastKeyframeSeconds(animation);
     }
 
     private static float lastKeyframeSeconds(BedrockAnimation animation) {

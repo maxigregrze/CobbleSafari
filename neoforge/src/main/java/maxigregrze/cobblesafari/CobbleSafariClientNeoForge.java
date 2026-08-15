@@ -130,6 +130,12 @@ public class CobbleSafariClientNeoForge {
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.TELEPORT_PAD, RenderType.translucent());
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.SAFARI_EGG_NEST, RenderType.cutout());
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.BELLTOWER_RAMP, RenderType.translucent());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.BELLTOWER_BEAM, RenderType.cutout());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.BELLTOWER_BELL, RenderType.cutout());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.BELLTOWER_BELL_MOVING, RenderType.cutout());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.BELLTOWER_TOPPER, RenderType.cutout());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.BELLTOWER_ROD, RenderType.cutout());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.BELLTOWER_ROOFTILES, RenderType.cutout());
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.POKEMON_STATUE, RenderType.cutout());
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.HOOPA_RING_PORTAL, RenderType.cutout());
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.DUNGEON_PORTAL, RenderType.cutout());
@@ -313,6 +319,7 @@ public class CobbleSafariClientNeoForge {
             BlockEntityRenderers.register(ModBlockEntities.CREATIVE_STATUE, maxigregrze.cobblesafari.client.renderer.PokeStatueBlockEntityRenderer::new);
             BlockEntityRenderers.register(ModBlockEntities.UNION_ROOM_SPOTLIGHT, maxigregrze.cobblesafari.client.renderer.UnionRoomSpotlightBlockEntityRenderer::new);
             BlockEntityRenderers.register(ModBlockEntities.PUNCHINGBAG, maxigregrze.cobblesafari.client.renderer.PunchingBagBlockEntityRenderer::new);
+            BlockEntityRenderers.register(ModBlockEntities.BELLTOWER_BELL, maxigregrze.cobblesafari.client.renderer.BelltowerBellBlockEntityRenderer::new);
             BlockEntityRenderers.register(ModBlockEntities.BALM_DISPENSER, maxigregrze.cobblesafari.client.renderer.BalmDispenserBlockEntityRenderer::new);
             BlockEntityRenderers.register(ModBlockEntities.CSBOSS_TRIGGER, maxigregrze.cobblesafari.client.renderer.CsBossTriggerBlockEntityRenderer::new);
             BlockEntityRenderers.register(ModBlockEntities.TELEPORT_PAD, maxigregrze.cobblesafari.client.renderer.TeleportPadBlockEntityRenderer::new);

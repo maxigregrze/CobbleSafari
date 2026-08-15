@@ -36,6 +36,10 @@ public class ModSounds {
     public static final SoundEvent MACHINE_WONDER = SoundEvent.createVariableRangeEvent(
             ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, "block.machine_wonder"));
 
+    /** Belltower bell, rung by right- or left-clicking one of its sides (plan 170). */
+    public static final SoundEvent BELL_CHIME = SoundEvent.createVariableRangeEvent(
+            ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, "block.bell_chime"));
+
     public static final SoundEvent FART = SoundEvent.createVariableRangeEvent(
             ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, "entity.generic.fart"));
 

@@ -105,6 +105,9 @@
     "cobblesafari:kalos_canopy_slab_trans",
     "cobblesafari:kalos_window_topper_trans",
     "cobblesafari:kalos_manhole",
-		"cobblesafari:pokemon_statue"
+		"cobblesafari:pokemon_statue",
+		"cobblesafari:belltower_bell",
+		"cobblesafari:belltower_topper",
+		"cobblesafari:belltower_rod"
 ]
 }

@@ -18,6 +18,7 @@ import maxigregrze.cobblesafari.block.distortion.DistortionPortalBlock;
 import maxigregrze.cobblesafari.block.distortion.DistortionWeedBlock;
 import maxigregrze.cobblesafari.block.misc.IcicleBlock;
 import maxigregrze.cobblesafari.block.distortion.DistortionBoulderBlock;
+import maxigregrze.cobblesafari.block.base.GroundedModelBlock;
 import maxigregrze.cobblesafari.block.base.HorizontalModelBlock;
 import maxigregrze.cobblesafari.block.distortion.DistortionRockBlock;
 import maxigregrze.cobblesafari.block.distortion.DistortionStoneBricksRuneBlock;
@@ -48,7 +49,11 @@ import maxigregrze.cobblesafari.block.misc.UnionRoomDecorBlock;
 import maxigregrze.cobblesafari.block.misc.OnlineFeaturePcBlock;
 import maxigregrze.cobblesafari.block.misc.UnionRoomGlobeBlock;
 import maxigregrze.cobblesafari.block.misc.UnionRoomExitTeleporterBlock;
+import maxigregrze.cobblesafari.block.misc.BelltowerBeamBlock;
+import maxigregrze.cobblesafari.block.misc.BelltowerBellBlock;
 import maxigregrze.cobblesafari.block.misc.BelltowerRampBlock;
+import maxigregrze.cobblesafari.block.misc.BelltowerRodBlock;
+import maxigregrze.cobblesafari.block.misc.BelltowerRoofTilesBlock;
 import maxigregrze.cobblesafari.block.misc.PokemonStatueBlock;
 import maxigregrze.cobblesafari.block.pokestatue.CreativeStatueBlock;
 import maxigregrze.cobblesafari.block.pokestatue.PokeStatueBlock;
@@ -1120,6 +1125,89 @@ public class ModBlocks {
                     .strength(2.0f, 3.0f)
                     .sound(SoundType.WOOD)
                     .noOcclusion()
+            ));
+
+    // ---------------------------------------------------------------- Belltower construction set
+    // Plan 170. Five decorative blocks; only the beam carries a class of its own, the others sit on
+    // the shared socles in block/base/. The shapes are declared first: static initialisation runs
+    // in declaration order, so a constant used by a registration must precede it.
+
+    /** Union of the topper's two elements: the 5x5 pad and the 3x3 cap. */
+    private static final VoxelShape BELLTOWER_TOPPER_SHAPE = Shapes.or(
+            Block.box(5.5, 0, 5.5, 10.5, 3, 10.5),
+            Block.box(6.5, 3, 6.5, 9.5, 4, 9.5));
+
+    /** The rod's central shaft, common to all three of its models. */
+    private static final VoxelShape BELLTOWER_ROD_SHAPE = Block.box(6, 0, 6, 10, 16, 10);
+
+    /** Log durability: breaks by hand, faster with an axe. 3x3 horizontal multiblock. */
+    public static final Block BELLTOWER_BEAM = registerBlock("belltower_beam",
+            new BelltowerBeamBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.WOOD)
+                    .strength(2.0f)
+                    .sound(SoundType.WOOD)
+                    .noOcclusion()
+            ));
+
+    /** Lantern durability, tool and sounds. Hangs under a supporting block. */
+    public static final Block BELLTOWER_BELL = registerBlock("belltower_bell",
+            new BelltowerBellBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.METAL)
+                    .strength(3.5f)
+                    .sound(SoundType.LANTERN)
+                    .requiresCorrectToolForDrops()
+                    .pushReaction(PushReaction.DESTROY)
+                    .noOcclusion(),
+                    HorizontalModelBlock.Settings.builder()
+                            .shape(BelltowerBellBlock.SHAPE)
+                            .support(HorizontalModelBlock.Support.CEILING)
+                            .emptyOcclusion()
+                            .build()));
+
+    /** Moving half of the bell: never placed, exists only to carry a BakedModel for the renderer. */
+    public static final Block BELLTOWER_BELL_MOVING = registerBlockWithoutItem("belltower_bell_moving",
+            new Block(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.METAL)
+                    .strength(1.0f)
+                    .noOcclusion()
+                    .noLootTable()
+                    .noCollission()));
+
+    /** Lantern durability, tool and sounds. Sits on top of a block, pressure-plate style. */
+    public static final Block BELLTOWER_TOPPER = registerBlock("belltower_topper",
+            new GroundedModelBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.METAL)
+                    .strength(3.5f)
+                    .sound(SoundType.LANTERN)
+                    .requiresCorrectToolForDrops()
+                    .pushReaction(PushReaction.DESTROY)
+                    .noOcclusion(),
+                    BELLTOWER_TOPPER_SHAPE, GroundedModelBlock.Support.GROUND));
+
+    /**
+     * Gold-block durability and tool tier. The selection box is the central 4x4 shaft only: the
+     * ornamental arms of the main model reach 16 pixels outside the cube and including them would
+     * make the neighbouring cells impossible to target.
+     */
+    public static final Block BELLTOWER_ROD = registerBlock("belltower_rod",
+            new BelltowerRodBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.GOLD)
+                    .strength(3.0f, 6.0f)
+                    .sound(SoundType.METAL)
+                    .requiresCorrectToolForDrops()
+                    .noOcclusion(),
+                    ConnectedModelBlock.Settings.builder()
+                            .shape(BELLTOWER_ROD_SHAPE)
+                            .build(), 2));
+
+    /** Log durability, sounds and tool. Stair semantics, bottom half only. */
+    public static final Block BELLTOWER_ROOFTILES = registerBlock("belltower_rooftiles",
+            new BelltowerRoofTilesBlock(Blocks.OAK_PLANKS.defaultBlockState(),
+                    BlockBehaviour.Properties.of()
+                            .mapColor(MapColor.WOOD)
+                            .strength(2.0f)
+                            .sound(SoundType.WOOD)
+                            .noOcclusion()
             ));
 
     public static final Block EMPTYPHONE = registerBlockWithoutItem("emptyphone",

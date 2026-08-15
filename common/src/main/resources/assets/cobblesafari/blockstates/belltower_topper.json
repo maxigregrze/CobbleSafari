@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "waterlogged=false": {
+      "model": "cobblesafari:block/belltower_topper"
+    },
+    "waterlogged=true": {
+      "model": "cobblesafari:block/belltower_topper"
+    }
+  }
+}
