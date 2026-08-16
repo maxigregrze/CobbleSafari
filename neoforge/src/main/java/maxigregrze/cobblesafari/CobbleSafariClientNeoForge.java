@@ -1,5 +1,6 @@
 package maxigregrze.cobblesafari;
 
+import maxigregrze.cobblesafari.client.effect.ClientShackleTracker;
 import maxigregrze.cobblesafari.client.hud.TimerHudOverlay;
 import maxigregrze.cobblesafari.init.ModBlockEntities;
 import maxigregrze.cobblesafari.init.ModBlocks;
@@ -19,6 +20,7 @@ import maxigregrze.cobblesafari.network.DimensionalBanSyncPayload;
 import maxigregrze.cobblesafari.network.OpenTpAcceptPayload;
 import maxigregrze.cobblesafari.network.OpenLostNoteBookPayload;
 import maxigregrze.cobblesafari.network.OpenRuneEditorPayload;
+import maxigregrze.cobblesafari.network.ShackleSyncPayload;
 import maxigregrze.cobblesafari.network.TimerSyncPayload;
 import maxigregrze.cobblesafari.client.renderer.DungeonPortalBlockEntityRenderer;
 import maxigregrze.cobblesafari.client.renderer.BalloonEntityRenderer;
@@ -476,6 +478,12 @@ public class CobbleSafariClientNeoForge {
     public static void handleTimerSync(TimerSyncPayload payload, IPayloadContext context) {
         context.enqueueWork(() -> {
             TimerHudOverlay.updateDisplay(payload.dimensionId(), payload.remainingTicks(), payload.active(), payload.bypassed());
+        });
+    }
+
+    public static void handleShackleSync(ShackleSyncPayload payload, IPayloadContext context) {
+        context.enqueueWork(() -> {
+            ClientShackleTracker.accept(payload.entityId(), payload.shackled());
         });
     }
 

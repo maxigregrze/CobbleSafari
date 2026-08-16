@@ -4,7 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import maxigregrze.cobblesafari.CobbleSafari;
-import maxigregrze.cobblesafari.effect.RedShackledEffects;
+import maxigregrze.cobblesafari.client.effect.ClientShackleTracker;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
@@ -29,7 +29,7 @@ public final class RedShackledChainRenderer {
 
     public static void renderOnEntity(LivingEntity entity, float partialTick, PoseStack poseStack,
                                       MultiBufferSource bufferSource) {
-        if (!RedShackledEffects.isShackled(entity)) {
+        if (!ClientShackleTracker.isShackled(entity)) {
             return;
         }
 

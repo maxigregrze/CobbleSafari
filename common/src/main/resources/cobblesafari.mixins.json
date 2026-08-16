@@ -10,7 +10,6 @@
     "LivingEntityRotoFallMixin",
     "LivingEntityRedShackledMixin",
     "LivingEntityRedShackledCombatMixin",
-    "LivingEntityShackledSyncMixin",
     "PlayerRotoFallMixin",
     "JigsawPlacementMixin",
     "JigsawStructureMixin",

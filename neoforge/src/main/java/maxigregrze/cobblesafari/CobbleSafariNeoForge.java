@@ -6,6 +6,7 @@ import maxigregrze.cobblesafari.item.LuckyMiningHelmetItem;
 import maxigregrze.cobblesafari.dungeon.DungeonTeleportCountdown;
 import maxigregrze.cobblesafari.entity.BalloonSpawnHandler;
 import maxigregrze.cobblesafari.init.ModEntities;
+import maxigregrze.cobblesafari.effect.RedShackledTrackingSync;
 import maxigregrze.cobblesafari.event.DimensionEvents;
 import maxigregrze.cobblesafari.event.DimensionTimerDeathHandler;
 import maxigregrze.cobblesafari.event.DimensionalBanEventHandler;
@@ -27,6 +28,7 @@ import maxigregrze.cobblesafari.network.LostItemConfigServerHandler;
 import maxigregrze.cobblesafari.network.AuspiciousPokeballConfigServerHandler;
 import maxigregrze.cobblesafari.network.AuspiciousPokeballGoldConfigServerHandler;
 import maxigregrze.cobblesafari.network.SaveRuneTextPayload;
+import maxigregrze.cobblesafari.network.ShackleSyncPayload;
 import maxigregrze.cobblesafari.network.TimerSyncPayload;
 import maxigregrze.cobblesafari.network.TpAcceptResponsePayload;
 import maxigregrze.cobblesafari.block.distortion.DistortionStoneBricksRuneBlockEntity;
@@ -79,6 +81,8 @@ public class CobbleSafariNeoForge {
         NeoForge.EVENT_BUS.addListener(this::onServerTick);
         NeoForge.EVENT_BUS.addListener(this::onPlayerLoggedIn);
         NeoForge.EVENT_BUS.addListener(this::onPlayerLoggedOut);
+        NeoForge.EVENT_BUS.addListener(this::onStartTracking);
+        NeoForge.EVENT_BUS.addListener(this::onStopTracking);
         NeoForge.EVENT_BUS.addListener(this::onRightClickItem);
         NeoForge.EVENT_BUS.addListener(this::onRightClickBlock);
         NeoForge.EVENT_BUS.addListener(this::onLeftClickBlock);
@@ -155,6 +159,8 @@ public class CobbleSafariNeoForge {
                 ));
 
         if (net.neoforged.fml.loading.FMLEnvironment.dist.isClient()) {
+            registrar.playToClient(ShackleSyncPayload.TYPE, ShackleSyncPayload.STREAM_CODEC,
+                    CobbleSafariClientNeoForge::handleShackleSync);
             registrar.playToClient(OpenTpAcceptPayload.TYPE, OpenTpAcceptPayload.STREAM_CODEC,
                     CobbleSafariClientNeoForge::handleOpenTpAccept);
             registrar.playToClient(CloseTpAcceptPayload.TYPE, CloseTpAcceptPayload.STREAM_CODEC,
@@ -194,6 +200,8 @@ public class CobbleSafariNeoForge {
                     maxigregrze.cobblesafari.network.HudConfigRefreshPayload.STREAM_CODEC,
                     CobbleSafariClientNeoForge::handleHudConfigRefresh);
         } else {
+            registrar.playToClient(ShackleSyncPayload.TYPE, ShackleSyncPayload.STREAM_CODEC,
+                    (payload, context) -> {});
             registrar.playToClient(OpenTpAcceptPayload.TYPE, OpenTpAcceptPayload.STREAM_CODEC,
                     (payload, context) -> {});
             registrar.playToClient(CloseTpAcceptPayload.TYPE, CloseTpAcceptPayload.STREAM_CODEC,
@@ -592,6 +600,18 @@ public class CobbleSafariNeoForge {
     private void onPlayerLoggedOut(PlayerEvent.PlayerLoggedOutEvent event) {
         if (event.getEntity() instanceof ServerPlayer sp) {
             DimensionEvents.onPlayerDisconnect(sp);
+        }
+    }
+
+    private void onStartTracking(PlayerEvent.StartTracking event) {
+        if (event.getEntity() instanceof ServerPlayer sp) {
+            RedShackledTrackingSync.onStartTracking(event.getTarget(), sp);
+        }
+    }
+
+    private void onStopTracking(PlayerEvent.StopTracking event) {
+        if (event.getEntity() instanceof ServerPlayer sp) {
+            RedShackledTrackingSync.onStopTracking(event.getTarget(), sp);
         }
     }
 

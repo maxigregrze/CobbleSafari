@@ -1,5 +1,6 @@
 package maxigregrze.cobblesafari;
 
+import maxigregrze.cobblesafari.client.effect.ClientShackleTracker;
 import maxigregrze.cobblesafari.client.hud.TimerHudOverlay;
 import maxigregrze.cobblesafari.init.ModBlockEntities;
 import maxigregrze.cobblesafari.init.ModBlocks;
@@ -8,6 +9,7 @@ import maxigregrze.cobblesafari.init.ModItems;
 import maxigregrze.cobblesafari.config.DimensionalBanConfig;
 import maxigregrze.cobblesafari.network.ClientNetworking;
 import maxigregrze.cobblesafari.network.DimensionalBanSyncPayload;
+import maxigregrze.cobblesafari.network.ShackleSyncPayload;
 import maxigregrze.cobblesafari.network.TimerSyncPayload;
 import maxigregrze.cobblesafari.client.renderer.DungeonPortalBlockEntityRenderer;
 import maxigregrze.cobblesafari.client.renderer.BalloonEntityRenderer;
@@ -136,6 +138,12 @@ public class CobbleSafariClientFabric implements ClientModInitializer {
         ClientPlayNetworking.registerGlobalReceiver(TimerSyncPayload.TYPE, (payload, context) -> {
             context.client().execute(() -> {
                 TimerHudOverlay.updateDisplay(payload.dimensionId(), payload.remainingTicks(), payload.active(), payload.bypassed());
+            });
+        });
+
+        ClientPlayNetworking.registerGlobalReceiver(ShackleSyncPayload.TYPE, (payload, context) -> {
+            context.client().execute(() -> {
+                ClientShackleTracker.accept(payload.entityId(), payload.shackled());
             });
         });
 

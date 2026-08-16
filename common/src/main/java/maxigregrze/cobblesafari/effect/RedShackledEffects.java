@@ -12,16 +12,14 @@ public final class RedShackledEffects {
 
     private RedShackledEffects() {}
 
+    /**
+     * Authoritative on the server. On the client this only answers for the local player - vanilla
+     * never sends another entity's effect list - which is enough for every caller here; the purely
+     * visual client read lives in
+     * {@link maxigregrze.cobblesafari.client.effect.ClientShackleTracker}.
+     */
     public static boolean isShackled(LivingEntity entity) {
-        if (entity == null) {
-            return false;
-        }
-        // The client never receives another entity's active effect list, so on the client we read
-        // the replicated flag (see RedShackledSynced); the server stays authoritative via hasEffect.
-        if (entity.level().isClientSide()) {
-            return entity instanceof RedShackledSynced synced && synced.cobblesafari$isShackledSynced();
-        }
-        return entity.hasEffect(ModEffects.RED_SHACKLED.holder);
+        return entity != null && entity.hasEffect(ModEffects.RED_SHACKLED.holder);
     }
 
     public static boolean isShackled(Player player) {

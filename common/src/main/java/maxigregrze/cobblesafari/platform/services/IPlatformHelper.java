@@ -3,6 +3,7 @@ package maxigregrze.cobblesafari.platform.services;
 import maxigregrze.cobblesafari.underground.MiningSession;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.Entity;
 
 import java.nio.file.Path;
 
@@ -25,6 +26,12 @@ public interface IPlatformHelper {
     Path getBundledResourceDir(String path);
 
     void sendPayloadToPlayer(ServerPlayer player, CustomPacketPayload payload);
+
+    /**
+     * Sends the payload to every player tracking the entity. A player never tracks itself, so a
+     * {@link ServerPlayer} entity does not receive its own payload.
+     */
+    void sendPayloadToTrackingPlayers(Entity entity, CustomPacketPayload payload);
 
     void sendPayloadToServer(CustomPacketPayload payload);
 

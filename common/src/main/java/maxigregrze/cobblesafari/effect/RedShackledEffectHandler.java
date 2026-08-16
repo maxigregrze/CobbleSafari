@@ -1,6 +1,7 @@
 package maxigregrze.cobblesafari.effect;
 
 import com.cobblemon.mod.common.entity.pokemon.PokemonEntity;
+import maxigregrze.cobblesafari.network.ModNetworking;
 import maxigregrze.cobblesafari.safari.SafariStateManager;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
@@ -66,9 +67,6 @@ public final class RedShackledEffectHandler {
         anchor.xRot = entity.getXRot();
         anchor.hadNoGravity = entity.isNoGravity();
         entity.setNoGravity(true);
-        if (entity instanceof RedShackledSynced synced) {
-            synced.cobblesafari$setShackledSynced(true);
-        }
         return anchor;
     }
 
@@ -78,9 +76,6 @@ public final class RedShackledEffectHandler {
             return;
         }
 
-        if (entity instanceof RedShackledSynced synced) {
-            synced.cobblesafari$setShackledSynced(false);
-        }
         entity.setNoGravity(anchor.hadNoGravity);
         if (entity instanceof Mob mob && anchor.noAiApplied) {
             mob.setNoAi(anchor.hadNoAi);
@@ -89,14 +84,18 @@ public final class RedShackledEffectHandler {
     }
 
     // Single server-side detection point for both shackle transitions, so every application path
-    // (thrown red chain, boss attack, /effect) feeds the Safari flee suspension.
+    // (thrown red chain, boss attack, /effect) feeds the Safari flee suspension and the client sync.
     private static void onShackleStarted(LivingEntity entity) {
+        ModNetworking.sendShackleSync(entity, true);
         if (entity instanceof PokemonEntity pokemon) {
             SafariStateManager.suspendFleeForShackle(pokemon);
         }
     }
 
+    // Not reached for a removed entity (clearAnchor short-circuits): the client destroys the entity
+    // on its own, and the tracker entry it leaves behind is never queried again.
     private static void onShackleEnded(LivingEntity entity) {
+        ModNetworking.sendShackleSync(entity, false);
         if (entity instanceof PokemonEntity pokemon) {
             SafariStateManager.resumeFleeAfterShackle(pokemon);
         }

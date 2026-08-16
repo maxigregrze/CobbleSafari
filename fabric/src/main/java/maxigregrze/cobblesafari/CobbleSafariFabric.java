@@ -7,6 +7,7 @@ import maxigregrze.cobblesafari.dungeon.DungeonTeleportCountdown;
 import maxigregrze.cobblesafari.entity.BalloonSpawnHandler;
 import maxigregrze.cobblesafari.cstrader.logic.CsTraderDataLoader;
 import maxigregrze.cobblesafari.init.ModEntities;
+import maxigregrze.cobblesafari.effect.RedShackledTrackingSync;
 import maxigregrze.cobblesafari.event.DimensionEvents;
 import maxigregrze.cobblesafari.event.DimensionTimerDeathHandler;
 import maxigregrze.cobblesafari.event.DimensionalBanEventHandler;
@@ -28,6 +29,7 @@ import maxigregrze.cobblesafari.network.LostItemConfigServerHandler;
 import maxigregrze.cobblesafari.network.AuspiciousPokeballConfigServerHandler;
 import maxigregrze.cobblesafari.network.AuspiciousPokeballGoldConfigServerHandler;
 import maxigregrze.cobblesafari.network.SaveRuneTextPayload;
+import maxigregrze.cobblesafari.network.ShackleSyncPayload;
 import maxigregrze.cobblesafari.network.TimerSyncPayload;
 import maxigregrze.cobblesafari.network.TpAcceptResponsePayload;
 import maxigregrze.cobblesafari.block.distortion.DistortionStoneBricksRuneBlockEntity;
@@ -47,6 +49,7 @@ import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.fabricmc.fabric.api.event.player.UseItemCallback;
 import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
+import net.fabricmc.fabric.api.networking.v1.EntityTrackingEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricDefaultAttributeRegistry;
@@ -108,6 +111,7 @@ public class CobbleSafariFabric implements ModInitializer {
 
     private void registerNetworking() {
         PayloadTypeRegistry.playS2C().register(TimerSyncPayload.TYPE, TimerSyncPayload.STREAM_CODEC);
+        PayloadTypeRegistry.playS2C().register(ShackleSyncPayload.TYPE, ShackleSyncPayload.STREAM_CODEC);
         PayloadTypeRegistry.playS2C().register(OpenTpAcceptPayload.TYPE, OpenTpAcceptPayload.STREAM_CODEC);
         PayloadTypeRegistry.playS2C().register(CloseTpAcceptPayload.TYPE, CloseTpAcceptPayload.STREAM_CODEC);
         PayloadTypeRegistry.playS2C().register(OpenRuneEditorPayload.TYPE, OpenRuneEditorPayload.STREAM_CODEC);
@@ -494,6 +498,9 @@ public class CobbleSafariFabric implements ModInitializer {
         ServerPlayConnectionEvents.DISCONNECT.register((handler, server) -> {
             DimensionEvents.onPlayerDisconnect(handler.getPlayer());
         });
+
+        EntityTrackingEvents.START_TRACKING.register(RedShackledTrackingSync::onStartTracking);
+        EntityTrackingEvents.STOP_TRACKING.register(RedShackledTrackingSync::onStopTracking);
 
         UseItemCallback.EVENT.register((player, world, hand) -> {
             return DimensionalBanEventHandler.onUseItem(player, world, hand);

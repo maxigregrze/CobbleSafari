@@ -3,6 +3,7 @@ package maxigregrze.cobblesafari.network;
 import maxigregrze.cobblesafari.config.SafariTimerConfig;
 import maxigregrze.cobblesafari.platform.Services;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.LivingEntity;
 
 public class ModNetworking {
 
@@ -39,5 +40,15 @@ public class ModNetworking {
 
     public static void sendCloseEmptyPhoneConfirm(ServerPlayer player) {
         Services.PLATFORM.sendPayloadToPlayer(player, new CloseEmptyPhoneConfirmPayload());
+    }
+
+    /** Broadcasts a shackle state change to every player tracking the entity (never to itself). */
+    public static void sendShackleSync(LivingEntity entity, boolean shackled) {
+        Services.PLATFORM.sendPayloadToTrackingPlayers(entity, new ShackleSyncPayload(entity.getId(), shackled));
+    }
+
+    /** Hands the current shackle state of an entity to a single viewer. */
+    public static void sendShackleSync(ServerPlayer viewer, LivingEntity entity, boolean shackled) {
+        Services.PLATFORM.sendPayloadToPlayer(viewer, new ShackleSyncPayload(entity.getId(), shackled));
     }
 }

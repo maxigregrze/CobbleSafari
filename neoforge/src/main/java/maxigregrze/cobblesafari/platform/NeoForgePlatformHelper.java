@@ -9,6 +9,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.SimpleMenuProvider;
+import net.minecraft.world.entity.Entity;
 import net.neoforged.fml.ModList;
 import net.neoforged.fml.loading.FMLLoader;
 import net.neoforged.fml.loading.FMLPaths;
@@ -48,6 +49,11 @@ public class NeoForgePlatformHelper implements IPlatformHelper {
     @Override
     public void sendPayloadToPlayer(ServerPlayer player, CustomPacketPayload payload) {
         PacketDistributor.sendToPlayer(player, payload);
+    }
+
+    @Override
+    public void sendPayloadToTrackingPlayers(Entity entity, CustomPacketPayload payload) {
+        PacketDistributor.sendToPlayersTrackingEntity(entity, payload);
     }
 
     @Override
