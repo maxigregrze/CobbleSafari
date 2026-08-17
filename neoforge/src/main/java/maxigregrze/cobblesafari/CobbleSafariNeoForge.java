@@ -55,6 +55,8 @@ import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
 import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.neoforged.neoforge.event.level.BlockEvent;
+import net.minecraft.util.Unit;
+import net.neoforged.neoforge.event.AddReloadListenerEvent;
 import net.neoforged.neoforge.event.server.ServerStartedEvent;
 import net.neoforged.neoforge.event.server.ServerStoppingEvent;
 import net.neoforged.neoforge.event.tick.ServerTickEvent;
@@ -76,6 +78,7 @@ public class CobbleSafariNeoForge {
         modEventBus.addListener(this::onEntityAttributeCreation);
         NeoForge.EVENT_BUS.addListener(this::onRegisterCommands);
 
+        NeoForge.EVENT_BUS.addListener(this::onAddReloadListener);
         NeoForge.EVENT_BUS.addListener(this::onServerStarted);
         NeoForge.EVENT_BUS.addListener(this::onServerStopping);
         NeoForge.EVENT_BUS.addListener(this::onServerTick);
@@ -575,6 +578,23 @@ public class CobbleSafariNeoForge {
 
     private void onServerStarted(ServerStartedEvent event) {
         DimensionEvents.onServerStarted(event.getServer());
+    }
+
+    /**
+     * NeoForge had no datapack-reload hook at all, so {@code /reload} refreshed none of the mod's
+     * data-driven registries - csmusic, csboss, the trader, the underground, phone skins and chat
+     * conversations all kept whatever they had read at boot.
+     *
+     * <p>The listener does nothing but raise a flag. It runs <b>during</b> the reload, at which
+     * point the server still exposes the previous {@code ResourceManager} and its registry tags are
+     * being rebound; the loaders therefore run on the next server tick, once both are settled.
+     * {@code DimensionEvents#onServerStarted} clears the flag so the initial resource load - which
+     * fires this same event - does not make the first tick redo the boot-time loading.</p>
+     */
+    private void onAddReloadListener(AddReloadListenerEvent event) {
+        event.addListener((stage, resourceManager, preparationsProfiler, reloadProfiler,
+                           backgroundExecutor, gameExecutor) ->
+                stage.wait(Unit.INSTANCE).thenRunAsync(DimensionEvents::onDatapackReload, gameExecutor));
     }
 
     private void onServerStopping(ServerStoppingEvent event) {

@@ -17,7 +17,7 @@ import java.util.Set;
 import java.util.regex.Pattern;
 
 /**
- * Loads csmusic definitions from {@code data/<ns>/csmusic/*.json}.
+ * Loads csmusic definitions from the initialisation files {@code data/<ns>/csmusic/*.json}.
  * Modeled on {@code CsBossDataLoader}: strict validation, never throws.
  * Sound ids are not validated here (they live in the client resource pack).
  */
@@ -27,11 +27,18 @@ public final class CsMusicDataLoader {
 
     private CsMusicDataLoader() {}
 
+    /**
+     * Reads whatever the server currently exposes. On the reload path this is only correct once the
+     * server has swapped its {@code resources} field, which is why both loaders defer to the tick
+     * following a datapack reload rather than running inside it - see
+     * {@code DimensionEvents#onDatapackReload}.
+     */
     public static void load(MinecraftServer server) {
-        CsMusicRegistry.clear();
         ResourceManager manager = server.getResourceManager();
-        // listResources recurses, so csmusic/<SUBDIR>/ (the trigger files) must be excluded here -
-        // otherwise every trigger file is parsed as a definition and warns about a missing 'loop'.
+        CsMusicRegistry.clear();
+        // listResources recurses, so csmusic/<SUBDIR>/ (the definition files) must be excluded here -
+        // otherwise every definition file is parsed as an initialisation file and warns about a
+        // missing 'loop'.
         String triggerDir = "/" + CsMusicTriggerDataLoader.SUBDIR + "/";
         Map<ResourceLocation, Resource> resources = manager.listResources(PREFIX,
                 id -> id.getPath().endsWith(".json") && !id.getPath().contains(triggerDir));
@@ -79,23 +86,47 @@ public final class CsMusicDataLoader {
         }
         ResourceLocation intro = optionalSound(json, "intro", file);
         ResourceLocation outro = optionalSound(json, "outro", file);
-        int priority = json.has("priority")
-                ? Math.max(1, json.get("priority").getAsInt()) : CsMusicDefinition.DEFAULT_PRIORITY;
+
+        // Dead since the trigger rework, and silently accepting it lets an author believe the value
+        // is doing something - /csmusic list used to echo it right back at them.
+        if (json.has("priority")) {
+            CobbleSafari.LOGGER.warn("[CSMusic] {} 'priority' is ignored since the trigger rework -"
+                    + " priority now lives on the trigger rule and on the area", file);
+        }
 
         String parent = json.has("parent") && !json.get("parent").getAsString().isBlank()
                 ? json.get("parent").getAsString().trim() : null;
 
+        return new CsMusicDefinition(id, loop, intro, outro, parent, parseTags(json, file));
+    }
+
+    /**
+     * Tags must be an array of strings. Any other shape used to be dropped without a word, so a
+     * {@code "tags": "route"} left the track out of its pool with nothing in the log to explain it.
+     */
+    private static Set<String> parseTags(JsonObject json, ResourceLocation file) {
         Set<String> tags = new LinkedHashSet<>();
-        if (json.has("tags") && json.get("tags").isJsonArray()) {
-            for (JsonElement e : json.getAsJsonArray("tags")) {
-                String tag = e.getAsString().trim().toLowerCase(Locale.ROOT);
-                if (!tag.isEmpty()) {
-                    tags.add(tag);
-                }
+        if (!json.has("tags")) {
+            return tags;
+        }
+        JsonElement raw = json.get("tags");
+        if (!raw.isJsonArray()) {
+            CobbleSafari.LOGGER.warn("[CSMusic] {} 'tags' must be an array of strings (found {}) -"
+                    + " no tag applied, this track will not appear in any tag pool",
+                    file, raw.isJsonPrimitive() ? "a single value" : "an object");
+            return tags;
+        }
+        for (JsonElement e : raw.getAsJsonArray()) {
+            if (!e.isJsonPrimitive()) {
+                CobbleSafari.LOGGER.warn("[CSMusic] {} 'tags' holds a non-string entry - ignored", file);
+                continue;
+            }
+            String tag = e.getAsString().trim().toLowerCase(Locale.ROOT);
+            if (!tag.isEmpty()) {
+                tags.add(tag);
             }
         }
-
-        return new CsMusicDefinition(id, loop, intro, outro, priority, parent, tags);
+        return tags;
     }
 
     private static ResourceLocation optionalSound(JsonObject json, String key, ResourceLocation file) {

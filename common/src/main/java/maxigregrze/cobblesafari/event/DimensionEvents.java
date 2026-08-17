@@ -67,6 +67,46 @@ public class DimensionEvents {
         maxigregrze.cobblesafari.csmusic.CsMusicTriggerDataLoader.load(server);
         maxigregrze.cobblesafari.csmusic.CsMusicAreaStore.loadAll(server);
         maxigregrze.cobblesafari.objectives.DimensionalObjectivesDataLoader.load(server);
+        // The initial resource load also fires the loaders' reload hook; swallow that flag so the
+        // first tick does not redo everything we have just done.
+        datapackReloadPending = false;
+    }
+
+    /**
+     * Set when datapacks were reloaded ({@code /reload}). The actual reloading is deferred to the
+     * next server tick <b>on purpose</b>: the loaders read {@code server.getResourceManager()}, and
+     * the server only swaps that field once the whole reload chain has completed. Running inside the
+     * reload - which is where NeoForge's {@code AddReloadListenerEvent} sits - would re-read the
+     * <b>previous</b> pack set, and would also race the rebinding of registry tags that
+     * {@code CsMusicTriggerDataLoader} validates against.
+     */
+    private static volatile boolean datapackReloadPending = false;
+
+    /** Called by both loaders' datapack-reload hook. */
+    public static void onDatapackReload() {
+        datapackReloadPending = true;
+    }
+
+    /**
+     * Re-reads every datapack-driven registry of the mod. Kept in common so Fabric and NeoForge
+     * cannot drift apart on what {@code /reload} covers.
+     */
+    private static void reloadDatapackContent(MinecraftServer server) {
+        CsTraderDataLoader.load(server);
+        maxigregrze.cobblesafari.underground.UndergroundMinigame.loadDatapacks(server);
+        maxigregrze.cobblesafari.underground.UndergroundMinigame.syncRegistryToAllPlayers(server);
+        maxigregrze.cobblesafari.rotomphone.RotomPhoneSkinDataLoader.load(server);
+        maxigregrze.cobblesafari.chat.ChatConversationDataLoader.load(server);
+        maxigregrze.cobblesafari.rotomphone.ChatConversationSync.syncToAll(server);
+        maxigregrze.cobblesafari.csboss.CsBossDataLoader.load(server);
+        // Same order as onServerStarted: the trigger loader reports rules targeting an unknown music
+        // id, which needs the definition registry populated first.
+        maxigregrze.cobblesafari.csmusic.CsMusicDataLoader.load(server);
+        maxigregrze.cobblesafari.csmusic.CsMusicStructureTracker.clear();
+        maxigregrze.cobblesafari.csmusic.CsMusicTriggerDataLoader.load(server);
+        // Clients hold a copy of their pool's entries; a pool whose membership just changed must be
+        // re-sent or they would keep sequencing the old list.
+        maxigregrze.cobblesafari.csmusic.DimensionalMusicManager.invalidateAll();
     }
 
     public static void onServerStopping(MinecraftServer server) {
@@ -79,6 +119,10 @@ public class DimensionEvents {
     }
 
     public static void onServerTick(MinecraftServer server) {
+        if (datapackReloadPending) {
+            datapackReloadPending = false;
+            reloadDatapackContent(server);
+        }
         TimerManager.tickAllTimers();
         DungeonRegionClearer.tick(server);
         PortalSpawnManager.tick(server);

@@ -1,5 +1,4 @@
 {
   "loop": "cobblesafari:music.distortion.loop",
-  "intro": "cobblesafari:music.distortion.intro",
-  "priority": 1
+  "intro": "cobblesafari:music.distortion.intro"
 }

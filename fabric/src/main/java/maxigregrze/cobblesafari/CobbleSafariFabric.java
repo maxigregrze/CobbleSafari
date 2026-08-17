@@ -5,7 +5,6 @@ import maxigregrze.cobblesafari.command.SafariExitCommand;
 import maxigregrze.cobblesafari.item.LuckyMiningHelmetItem;
 import maxigregrze.cobblesafari.dungeon.DungeonTeleportCountdown;
 import maxigregrze.cobblesafari.entity.BalloonSpawnHandler;
-import maxigregrze.cobblesafari.cstrader.logic.CsTraderDataLoader;
 import maxigregrze.cobblesafari.init.ModEntities;
 import maxigregrze.cobblesafari.effect.RedShackledTrackingSync;
 import maxigregrze.cobblesafari.event.DimensionEvents;
@@ -471,15 +470,9 @@ public class CobbleSafariFabric implements ModInitializer {
         ServerLifecycleEvents.SERVER_STOPPING.register(DimensionEvents::onServerStopping);
         ServerLifecycleEvents.END_DATA_PACK_RELOAD.register((server, resourceManager, success) -> {
             if (success) {
-                CsTraderDataLoader.load(server);
-                UndergroundMinigame.loadDatapacks(server);
-                UndergroundMinigame.syncRegistryToAllPlayers(server);
-                maxigregrze.cobblesafari.rotomphone.RotomPhoneSkinDataLoader.load(server);
-                maxigregrze.cobblesafari.chat.ChatConversationDataLoader.load(server);
-                maxigregrze.cobblesafari.rotomphone.ChatConversationSync.syncToAll(server);
-                maxigregrze.cobblesafari.csboss.CsBossDataLoader.load(server);
-                maxigregrze.cobblesafari.csmusic.CsMusicDataLoader.load(server);
-                maxigregrze.cobblesafari.csmusic.CsMusicTriggerDataLoader.load(server);
+                // What gets reloaded lives in common, so /reload cannot mean two different things
+                // on the two loaders. It runs on the next tick - see DimensionEvents#onDatapackReload.
+                DimensionEvents.onDatapackReload();
             }
         });
         ServerTickEvents.END_SERVER_TICK.register(server -> {

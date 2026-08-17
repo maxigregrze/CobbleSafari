@@ -97,7 +97,7 @@ public class CobbleSafari {
         WonderTradeSettings.load();
         maxigregrze.cobblesafari.config.CsBossSettings.load();
         maxigregrze.cobblesafari.csboss.attack.CsBossAttackRegistry.registerDefaults();
-        maxigregrze.cobblesafari.config.DimensionalMusicConfig.load();
+        maxigregrze.cobblesafari.config.CsMusicSettingsConfig.load();
 
         DungeonDimensions.register();
         SafariTimerConfig.syncDungeonDimensionTimersFromRegistry();

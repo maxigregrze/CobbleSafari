@@ -1,5 +1,4 @@
 {
   "intro": "cobblesafari:music.hyperspace.intro",
-  "loop": "cobblesafari:music.hyperspace.loop",
-  "priority": 1
+  "loop": "cobblesafari:music.hyperspace.loop"
 }

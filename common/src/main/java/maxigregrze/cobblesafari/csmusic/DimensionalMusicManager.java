@@ -1,7 +1,6 @@
 package maxigregrze.cobblesafari.csmusic;
 
-import maxigregrze.cobblesafari.config.DimensionalMusicConfig;
-import maxigregrze.cobblesafari.config.DimensionalMusicData;
+import maxigregrze.cobblesafari.config.CsMusicSettingsConfig;
 import maxigregrze.cobblesafari.network.SetCsMusicPayload;
 import maxigregrze.cobblesafari.platform.Services;
 import net.minecraft.server.MinecraftServer;
@@ -15,28 +14,40 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Random;
 import java.util.UUID;
 
 /**
- * Server-side music arbitration. Per player, picks the winning track between the boss override
- * (which <b>always</b> wins) and the set of trigger rules + areas (highest priority, deterministic
- * tiebreak). Server-authoritative; sends a packet only on change, choosing a transition
- * (fade / outro / cut / synced-crossfade when the winner is the child of the current track).
+ * Server-side music arbitration. Per player, resolves the winning <b>instruction</b> between the
+ * boss override (which <b>always</b> wins) and the set of trigger rules + areas (highest priority,
+ * deterministic tiebreak). Server-authoritative for <i>what</i> plays; a tag pool is handed to the
+ * client whole, and the client draws and sequences inside it (§ 3.1 of plan 172).
+ *
+ * <p>A packet is sent only when the resolved instruction's <b>content signature</b> changes. That is
+ * what replaced the old per-rule latch: two rules naming the same tag resolve to the same signature,
+ * so walking the border between them no longer re-draws a track every sweep.</p>
  *
  * <p>The periodic sweep runs every {@code arbitrationIntervalTicks} ticks - transitions fade over
- * ~1 s, so a few ticks of granularity are inaudible. Boss transitions bypass the cadence entirely
- * and update immediately.</p>
+ * one to five seconds, so a few ticks of granularity are inaudible. Boss transitions bypass the
+ * cadence entirely and update immediately.</p>
  */
 public final class DimensionalMusicManager {
 
-    private static final Random RANDOM = new Random();
     private static final int DEFAULT_ARBITRATION_INTERVAL = 5;
+    /** Rank of "nothing playing", so silence always sorts below any real source. */
+    private static final int SILENCE_PRIORITY = Integer.MIN_VALUE;
+    /** Rank of a boss override, which outranks everything by construction. */
+    private static final int BOSS_PRIORITY = Integer.MAX_VALUE;
 
     /** Everything the arbiter remembers about one player. Removed wholesale on disconnect. */
     private static final class PlayerState {
-        /** Last csmusic id sent ("" = silence, null = nothing sent yet). */
-        @Nullable String lastSent;
+        /** Signature of the last instruction sent ("" = silence, null = nothing sent yet). */
+        @Nullable String lastSignature;
+        /** Priority of that instruction, for the transition matrix (§ 3.9). */
+        int lastPriority = SILENCE_PRIORITY;
+        /** Id of the outgoing track when it was unambiguous, else null (pool of two or more). */
+        @Nullable String lastTrackId;
+        /** Whether every entry of the outgoing instruction declares an outro. */
+        boolean lastHasOutro;
         /** "Boss" override (csmusic id) while the fight lasts. */
         @Nullable String bossOverride;
         /** Exit mode to apply on the next send (otherwise chosen). One-shot. */
@@ -45,16 +56,15 @@ public final class DimensionalMusicManager {
         boolean debug;
         /** Last dimension seen, to hard-cut (not fade) across a dimension change. */
         @Nullable String lastDimension;
-        /** Latch for random tag pools: the winning source key and the id it resolved to. */
-        @Nullable String latchedKey;
-        @Nullable String latchedId;
     }
 
     private static final Map<UUID, PlayerState> STATES = new HashMap<>();
 
     private DimensionalMusicManager() {}
 
-    public record SourceInfo(String source, String csmusicId, int priority, boolean winner) {}
+    /** One line of {@code /csmusic current}. {@code poolSize} is 0 for a single-track source. */
+    public record SourceInfo(String source, String csmusicId, int poolSize, int repeat,
+                             int priority, boolean winner) {}
 
     private record MusicSource(String key, int priority, @Nullable String musicId, @Nullable String poolTag) {}
 
@@ -77,9 +87,8 @@ public final class DimensionalMusicManager {
     }
 
     private static int arbitrationInterval() {
-        DimensionalMusicData cfg = DimensionalMusicConfig.data;
-        int interval = cfg == null ? DEFAULT_ARBITRATION_INTERVAL : cfg.arbitrationIntervalTicks;
-        return Math.max(1, interval);
+        int interval = CsMusicSettingsConfig.data.arbitrationIntervalTicks;
+        return interval < 1 ? DEFAULT_ARBITRATION_INTERVAL : interval;
     }
 
     private static void updatePlayer(ServerPlayer player) {
@@ -100,52 +109,103 @@ public final class DimensionalMusicManager {
             st.bossOverride = null;
         }
         CsMusicDefinition boss = CsMusicRegistry.get(st.bossOverride).orElse(null);
-        CsMusicDefinition winner = boss != null ? boss : resolveWinner(player, st);
+        CsMusicInstruction winner = boss != null
+                ? CsMusicInstruction.single(boss, BOSS_PRIORITY)
+                : resolveWinner(player);
 
-        String desiredId = winner != null ? winner.id() : "";
-        if (Objects.equals(st.lastSent, desiredId)) {
+        String desired = winner != null ? winner.signature() : "";
+        if (Objects.equals(st.lastSignature, desired)) {
             st.nextMode = null;
+            // Same content at a different priority: nothing to re-emit, but the rank must stay
+            // current or the next real change would compare against a stale one.
+            st.lastPriority = winner != null ? winner.priority() : SILENCE_PRIORITY;
             return;
         }
 
-        CsMusicDefinition prev = CsMusicRegistry.get(st.lastSent).orElse(null);
-        int mode;
-        if (dimChanged && prev != null) {
-            // Crossing a dimension boundary (portal, dungeon exit, cross-dim /tp) is a discontinuity:
-            // hard-cut the outgoing track. Entering from silence still fades in.
-            mode = SetCsMusicPayload.MODE_CUT;
-        } else if (st.nextMode != null) {
-            mode = st.nextMode;
-        } else if (crossfadeRelated(prev, winner)) {
-            mode = SetCsMusicPayload.MODE_CROSSFADE; // musically related tracks: synced crossfade
-        } else {
-            mode = defaultExitMode(prev, winner);
-        }
+        int mode = chooseMode(st, winner, dimChanged);
         st.nextMode = null;
         send(player, st, winner, mode);
+    }
+
+    // --- Transition matrix (§ 3.9) ---------------------------------------------
+
+    /**
+     * Precedence: dimension change, then an explicit boss mode, then a {@code parent} relation -
+     * which imposes the synced crossfade <b>whatever the priorities</b> - and only then the
+     * priority gap. The outro is a conclusion, not a transition: it plays when the music winds down
+     * (silence or a lower-priority winner), never when something more urgent takes over.
+     */
+    private static int chooseMode(PlayerState st, @Nullable CsMusicInstruction winner, boolean dimChanged) {
+        boolean somethingPlaying = st.lastSignature != null && !st.lastSignature.isEmpty();
+        if (dimChanged && somethingPlaying) {
+            // Crossing a dimension boundary (portal, dungeon exit, cross-dim /tp) is a
+            // discontinuity: hard-cut the outgoing track. Entering from silence still fades in.
+            return SetCsMusicPayload.MODE_CUT;
+        }
+        if (st.nextMode != null) {
+            return st.nextMode;
+        }
+        if (!somethingPlaying) {
+            return SetCsMusicPayload.MODE_FADE; // entering from silence: nothing to cross with
+        }
+
+        CsMusicDefinition prev = CsMusicRegistry.get(st.lastTrackId).orElse(null);
+        CsMusicDefinition next = winner != null ? winner.soleTrack() : null;
+        if (crossfadeRelated(prev, next)) {
+            return SetCsMusicPayload.MODE_CROSSFADE;
+        }
+
+        int newPriority = winner != null ? winner.priority() : SILENCE_PRIORITY;
+        if (newPriority > st.lastPriority) {
+            return SetCsMusicPayload.MODE_CUT; // an interruption: waiting on an outro would lag it
+        }
+        if (newPriority == st.lastPriority) {
+            return SetCsMusicPayload.MODE_FADE; // lateral move: cross-ramp from the current position
+        }
+        return st.lastHasOutro ? SetCsMusicPayload.MODE_OUTRO : SetCsMusicPayload.MODE_FADE;
+    }
+
+    /**
+     * True when two tracks are musically related, so the transition is a <b>synced crossfade</b>
+     * (the incoming track starts at the outgoing track's loop playhead): the winner is the child of
+     * the current track, the current track is the child of the winner (return to parent), or both
+     * declare the same parent (siblings). Related tracks must share the same loop duration.
+     *
+     * <p>Only decidable when both sides are unambiguous. Inside a pool of two or more the server
+     * does not know which entry is playing, so the client re-checks and promotes the mode itself
+     * ({@code CsMusicPlayer#promoteIfRelated}).</p>
+     */
+    private static boolean crossfadeRelated(@Nullable CsMusicDefinition prev, @Nullable CsMusicDefinition winner) {
+        if (prev == null || winner == null) {
+            return false;
+        }
+        if (winner.hasParent() && winner.parent().equals(prev.id())) {
+            return true; // parent -> child
+        }
+        if (prev.hasParent() && prev.parent().equals(winner.id())) {
+            return true; // child -> parent
+        }
+        return prev.hasParent() && winner.hasParent() && winner.parent().equals(prev.parent()); // siblings
     }
 
     // --- Winner resolution -----------------------------------------------------
 
     @Nullable
-    private static CsMusicDefinition resolveWinner(ServerPlayer player, PlayerState st) {
+    private static CsMusicInstruction resolveWinner(ServerPlayer player) {
         if (!musicEnabled()) {
-            clearLatch(st);
             return null;
         }
         List<MusicSource> sources = collectSources(player);
         if (sources.isEmpty()) {
-            clearLatch(st);
             return null;
         }
         sources.sort(SOURCE_ORDER);
         for (MusicSource source : sources) {
-            CsMusicDefinition def = resolveSource(st, source);
-            if (def != null) {
-                return def;
+            CsMusicInstruction instruction = resolveSource(source);
+            if (instruction != null) {
+                return instruction;
             }
         }
-        clearLatch(st);
         return null;
     }
 
@@ -171,83 +231,28 @@ public final class DimensionalMusicManager {
         return list;
     }
 
-    /** Resolves a source to a definition, applying the random-pool latch (updates it for the winner). */
+    /**
+     * Resolves a source to an instruction. Pure: with the draw moved client-side there is no latch
+     * left to keep, so this is also what {@code /csmusic current} calls.
+     */
     @Nullable
-    private static CsMusicDefinition resolveSource(PlayerState st, MusicSource source) {
+    private static CsMusicInstruction resolveSource(MusicSource source) {
         if (source.poolTag() != null) {
-            if (source.key().equals(st.latchedKey) && st.latchedId != null) {
-                CsMusicDefinition held = CsMusicRegistry.get(st.latchedId).orElse(null);
-                if (held != null && held.hasTag(source.poolTag())) {
-                    return held; // keep the same pick while this pool stays the winner
-                }
-            }
             List<CsMusicDefinition> pool = CsMusicRegistry.byTag(source.poolTag());
-            if (pool.isEmpty()) {
-                return null;
-            }
-            CsMusicDefinition picked = pool.get(RANDOM.nextInt(pool.size()));
-            st.latchedKey = source.key();
-            st.latchedId = picked.id();
-            return picked;
+            return pool.isEmpty()
+                    ? null
+                    : CsMusicInstruction.pool(source.poolTag(), pool, repeatBeforeShuffle(), source.priority());
         }
         CsMusicDefinition def = CsMusicRegistry.get(source.musicId()).orElse(null);
-        if (def != null) {
-            st.latchedKey = source.key();
-            st.latchedId = def.id();
-        }
-        return def;
-    }
-
-    /** Read-only resolution (no latch mutation) for {@code /csmusic current}. */
-    @Nullable
-    private static CsMusicDefinition peekResolve(PlayerState st, MusicSource source) {
-        if (source.poolTag() != null) {
-            if (source.key().equals(st.latchedKey) && st.latchedId != null) {
-                CsMusicDefinition held = CsMusicRegistry.get(st.latchedId).orElse(null);
-                if (held != null && held.hasTag(source.poolTag())) {
-                    return held;
-                }
-            }
-            List<CsMusicDefinition> pool = CsMusicRegistry.byTag(source.poolTag());
-            return pool.isEmpty() ? null : pool.get(0);
-        }
-        return CsMusicRegistry.get(source.musicId()).orElse(null);
-    }
-
-    private static void clearLatch(PlayerState st) {
-        st.latchedKey = null;
-        st.latchedId = null;
+        return def == null ? null : CsMusicInstruction.single(def, source.priority());
     }
 
     private static boolean musicEnabled() {
-        DimensionalMusicData cfg = DimensionalMusicConfig.data;
-        return cfg == null || cfg.enabled;
+        return CsMusicSettingsConfig.data.enabled;
     }
 
-    private static int defaultExitMode(@Nullable CsMusicDefinition prev, @Nullable CsMusicDefinition winner) {
-        if (prev != null && prev.hasOutro() && winner == null) {
-            return SetCsMusicPayload.MODE_OUTRO;
-        }
-        return SetCsMusicPayload.MODE_FADE;
-    }
-
-    /**
-     * True when two tracks are musically related, so the transition is a <b>synced crossfade</b>
-     * (the incoming track starts at the outgoing track's loop playhead): the winner is the child of
-     * the current track, the current track is the child of the winner (return to parent), or both
-     * declare the same parent (siblings). Related tracks must share the same loop duration.
-     */
-    private static boolean crossfadeRelated(@Nullable CsMusicDefinition prev, @Nullable CsMusicDefinition winner) {
-        if (prev == null || winner == null) {
-            return false;
-        }
-        if (winner.hasParent() && winner.parent().equals(prev.id())) {
-            return true; // parent -> child
-        }
-        if (prev.hasParent() && prev.parent().equals(winner.id())) {
-            return true; // child -> parent
-        }
-        return prev.hasParent() && winner.hasParent() && winner.parent().equals(prev.parent()); // siblings
+    private static int repeatBeforeShuffle() {
+        return Math.max(0, CsMusicSettingsConfig.data.repeatBeforeShuffle);
     }
 
     // --- /csmusic current ------------------------------------------------------
@@ -263,7 +268,7 @@ public final class DimensionalMusicManager {
         PlayerState st = state(player.getUUID());
         CsMusicDefinition boss = CsMusicRegistry.get(st.bossOverride).orElse(null);
         if (boss != null) {
-            result.add(new SourceInfo("boss", boss.id(), Integer.MAX_VALUE, true));
+            result.add(new SourceInfo("boss", boss.id(), 0, 0, Integer.MAX_VALUE, true));
         }
         List<MusicSource> sources = collectSources(player);
         sources.sort(SOURCE_ORDER);
@@ -271,19 +276,23 @@ public final class DimensionalMusicManager {
         String winnerKey = null;
         if (boss == null) {
             for (MusicSource source : sources) {
-                if (peekResolve(st, source) != null) {
+                if (resolveSource(source) != null) {
                     winnerKey = source.key();
                     break;
                 }
             }
         }
         for (MusicSource source : sources) {
-            CsMusicDefinition def = peekResolve(st, source);
-            String id = def != null
-                    ? def.id()
+            CsMusicInstruction instruction = resolveSource(source);
+            String label = instruction != null
+                    ? instruction.displayId()
                     : (source.poolTag() != null ? "#" + source.poolTag() : String.valueOf(source.musicId()));
+            // A pool of one is reported as a plain track: the client has no choice to make either.
+            int poolSize = instruction != null && instruction.isPool() && instruction.entries().size() > 1
+                    ? instruction.entries().size() : 0;
+            int repeat = instruction != null ? instruction.repeat() : 0;
             boolean winner = boss == null && source.key().equals(winnerKey);
-            result.add(new SourceInfo(source.key(), id, source.priority(), winner));
+            result.add(new SourceInfo(source.key(), label, poolSize, repeat, source.priority(), winner));
         }
         return result;
     }
@@ -328,7 +337,7 @@ public final class DimensionalMusicManager {
             return;
         }
         st.bossOverride = null;
-        if (bid.equals(st.lastSent)) {
+        if (bid.equals(st.lastTrackId)) {
             st.nextMode = mode;
         }
         updatePlayer(player);
@@ -336,6 +345,17 @@ public final class DimensionalMusicManager {
 
     public static void onPlayerDisconnect(UUID uuid) {
         STATES.remove(uuid);
+    }
+
+    /**
+     * Forces every player's instruction to be re-sent at the next sweep. Called after a datapack
+     * reload: clients hold a copy of their pool's entries and would otherwise keep sequencing a
+     * pool whose membership just changed.
+     */
+    public static void invalidateAll() {
+        for (PlayerState st : STATES.values()) {
+            st.lastSignature = null;
+        }
     }
 
     /** Server shutdown: this state is static and would otherwise outlive an integrated server. */
@@ -355,7 +375,9 @@ public final class DimensionalMusicManager {
         SetCsMusicPayload payload = SetCsMusicPayload.track(
                 def.id(), def.intro(), def.loop(), def.outro(), mode, startMs);
         Services.PLATFORM.sendPayloadToPlayer(player, payload);
-        st.lastSent = def.id();
+        st.lastSignature = def.id();
+        st.lastTrackId = def.id();
+        st.lastHasOutro = def.hasOutro();
     }
 
     /** Clears the debug override and silences the player. */
@@ -363,16 +385,33 @@ public final class DimensionalMusicManager {
         PlayerState st = state(player.getUUID());
         st.debug = false;
         Services.PLATFORM.sendPayloadToPlayer(player, SetCsMusicPayload.silence(SetCsMusicPayload.MODE_CUT));
-        st.lastSent = null;
+        st.lastSignature = null;
+        st.lastTrackId = null;
+        st.lastHasOutro = false;
     }
 
     // --- Send ------------------------------------------------------------------
 
-    private static void send(ServerPlayer player, PlayerState st, @Nullable CsMusicDefinition def, int mode) {
-        SetCsMusicPayload payload = def != null
-                ? SetCsMusicPayload.track(def.id(), def.intro(), def.loop(), def.outro(), mode)
+    private static void send(ServerPlayer player, PlayerState st,
+                             @Nullable CsMusicInstruction instruction, int mode) {
+        SetCsMusicPayload payload = instruction != null
+                ? SetCsMusicPayload.instruction(instruction.displayId(), toEntries(instruction),
+                        instruction.repeat(), mode)
                 : SetCsMusicPayload.silence(mode);
         Services.PLATFORM.sendPayloadToPlayer(player, payload);
-        st.lastSent = def != null ? def.id() : "";
+
+        st.lastSignature = instruction != null ? instruction.signature() : "";
+        st.lastPriority = instruction != null ? instruction.priority() : SILENCE_PRIORITY;
+        CsMusicDefinition sole = instruction != null ? instruction.soleTrack() : null;
+        st.lastTrackId = sole != null ? sole.id() : null;
+        st.lastHasOutro = instruction != null && instruction.allHaveOutro();
+    }
+
+    private static List<SetCsMusicPayload.Entry> toEntries(CsMusicInstruction instruction) {
+        List<SetCsMusicPayload.Entry> out = new ArrayList<>(instruction.entries().size());
+        for (CsMusicDefinition def : instruction.entries()) {
+            out.add(new SetCsMusicPayload.Entry(def.id(), def.intro(), def.loop(), def.outro(), def.parent()));
+        }
+        return out;
     }
 }

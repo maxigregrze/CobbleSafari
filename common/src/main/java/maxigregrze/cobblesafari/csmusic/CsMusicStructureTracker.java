@@ -1,8 +1,7 @@
 package maxigregrze.cobblesafari.csmusic;
 
 import it.unimi.dsi.fastutil.longs.LongSet;
-import maxigregrze.cobblesafari.config.DimensionalMusicConfig;
-import maxigregrze.cobblesafari.config.DimensionalMusicData;
+import maxigregrze.cobblesafari.config.CsMusicSettingsConfig;
 import maxigregrze.cobblesafari.mixin.SinglePoolElementAccessor;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Registry;
@@ -52,7 +51,6 @@ import java.util.stream.Collectors;
 public final class CsMusicStructureTracker {
 
     /** Fallback TTL (ticks) when the config is not loaded yet. */
-    private static final int DEFAULT_TTL_TICKS = 600;
     /** Lower bound on the configured TTL, to keep the chunk lookups bounded. */
     private static final int MIN_TTL_TICKS = 20;
     /** Sweep cadence for expired entries, in ticks. */
@@ -217,9 +215,7 @@ public final class CsMusicStructureTracker {
     }
 
     private static long ttlTicks() {
-        DimensionalMusicData cfg = DimensionalMusicConfig.data;
-        int ttl = cfg == null ? DEFAULT_TTL_TICKS : cfg.structureCacheTtlTicks;
-        return Math.max(MIN_TTL_TICKS, ttl);
+        return Math.max(MIN_TTL_TICKS, CsMusicSettingsConfig.data.structureCacheTtlTicks);
     }
 
     /** Drops expired entries. Called from the csmusic server tick. */

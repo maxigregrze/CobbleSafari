@@ -14,7 +14,7 @@ import maxigregrze.cobblesafari.csmusic.CsMusicEvalContext;
 import maxigregrze.cobblesafari.csmusic.CsMusicRegistry;
 import maxigregrze.cobblesafari.csmusic.CsMusicStructureTracker;
 import maxigregrze.cobblesafari.csmusic.DimensionalMusicManager;
-import maxigregrze.cobblesafari.config.DimensionalMusicConfig;
+import maxigregrze.cobblesafari.config.CsMusicSettingsConfig;
 import maxigregrze.cobblesafari.network.SetCsMusicPayload;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
@@ -203,7 +203,7 @@ public final class CsMusicCommand {
         }
         for (CsMusicDefinition def : all.values()) {
             ctx.getSource().sendSuccess(
-                    () -> Component.translatable("cobblesafari.command.csmusic.list.entry", def.id(), def.priority()),
+                    () -> Component.translatable("cobblesafari.command.csmusic.list.entry", def.id()),
                     false);
         }
         return 1;
@@ -252,11 +252,17 @@ public final class CsMusicCommand {
             return 0;
         }
         for (DimensionalMusicManager.SourceInfo info : sources) {
+            // A tag pool cannot name the playing track: the draw is client-side (plan 172 § 3.7).
+            // Report the pool itself instead - id, size and repeat are what an author can act on.
+            Component label = info.poolSize() > 0
+                    ? Component.translatable("cobblesafari.command.csmusic.current.pool",
+                            info.csmusicId(), info.poolSize(), info.repeat())
+                    : Component.literal(info.csmusicId());
             ctx.getSource().sendSuccess(
                     () -> Component.translatable(
                             "cobblesafari.command.csmusic.current.entry",
                             info.source(),
-                            info.csmusicId(),
+                            label,
                             info.priority(),
                             info.winner()
                                     ? Component.translatable("cobblesafari.command.csmusic.current.winner")
@@ -488,8 +494,7 @@ public final class CsMusicCommand {
     }
 
     private static int defaultAreaPriority() {
-        return DimensionalMusicConfig.data != null
-                ? Math.max(1, DimensionalMusicConfig.data.defaultAreaPriority) : 1;
+        return Math.max(1, CsMusicSettingsConfig.data.defaultAreaPriority);
     }
 
     private static int areaAddVolume(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
