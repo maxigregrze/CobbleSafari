@@ -1,0 +1,7 @@
+{
+  "parent": "cobblesafari:block/bossanchor_base_belltower",
+  "textures": {
+    "0": "cobblesafari:block/bossanchor_base_belltower_active",
+    "particle": "cobblesafari:block/bossanchor_base_belltower_active"
+  }
+}

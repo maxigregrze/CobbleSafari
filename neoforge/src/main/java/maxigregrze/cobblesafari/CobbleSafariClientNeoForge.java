@@ -127,6 +127,7 @@ public class CobbleSafariClientNeoForge {
     @SubscribeEvent
     public static void onClientSetup(FMLClientSetupEvent event) {
         event.enqueueWork(() -> {
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.CSBOSS_PLATFORM, RenderType.translucent());
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.TINKAGEAR_BLOCK, RenderType.translucent());
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.SAFARI_TELEPORTER, RenderType.translucent());
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.TELEPORT_PAD, RenderType.translucent());

@@ -147,6 +147,7 @@ import net.minecraft.world.level.block.SlabBlock;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.StairBlock;
 import net.minecraft.world.level.block.state.properties.BlockSetType;
+import net.minecraft.world.level.block.state.properties.NoteBlockInstrument;
 import net.minecraft.world.level.block.state.properties.WoodType;
 import net.minecraft.world.level.block.grower.TreeGrower;
 import net.minecraft.world.level.block.state.BlockBehaviour;
@@ -851,6 +852,11 @@ public class ModBlocks {
             ));
 
     /** CSBoss-reactive mimic block: invisible/solid toggle, copies a target texture. */
+    /**
+     * {@code dynamicShape} is required, not decorative: the mimic's shape comes from its block
+     * entity, and the per-state cache that answers isFaceSturdy / isCollisionShapeFullBlock is built
+     * from an empty block getter and could never see one. Same reason vanilla marks the shulker box.
+     */
     public static final Block CSBOSS_MIMIC_BLOCK = registerBlock("csboss_mimic_block",
             new CsBossMimicBlock(BlockBehaviour.Properties.of()
                     .mapColor(MapColor.STONE)
@@ -858,6 +864,23 @@ public class ModBlocks {
                     .sound(SoundType.DEEPSLATE)
                     .requiresCorrectToolForDrops()
                     .noOcclusion()
+                    .dynamicShape()
+            ));
+
+    /**
+     * Boss arena platform. Glass-equivalent (durability, sound, no drops even with Silk Touch),
+     * but rendered translucent: {@code boss_platform.png} has a non-binary alpha channel.
+     */
+    public static final Block CSBOSS_PLATFORM = registerBlock("csboss_platform",
+            new Block(BlockBehaviour.Properties.of()
+                    .instrument(NoteBlockInstrument.HAT)
+                    .strength(0.3f)
+                    .sound(SoundType.GLASS)
+                    .noOcclusion()
+                    .isValidSpawn((state, level, pos, type) -> false)
+                    .isRedstoneConductor((state, level, pos) -> false)
+                    .isSuffocating((state, level, pos) -> false)
+                    .isViewBlocking((state, level, pos) -> false)
             ));
 
     public static final Block BALM_DISPENSER = registerBlock("balm_dispenser",
@@ -1208,6 +1231,19 @@ public class ModBlocks {
                             .strength(2.0f)
                             .sound(SoundType.WOOD)
                             .noOcclusion()
+            ));
+
+    /**
+     * Wooden variant of the Hyperspace ladder: same model and climbing/extension behaviour, with
+     * spruce-planks durability, sound and tool (axe, no tool tier required).
+     */
+    public static final Block BELLTOWER_LADDER = registerBlock("belltower_ladder",
+            new HyperspaceLadderBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.WOOD)
+                    .strength(2.0f, 3.0f)
+                    .sound(SoundType.WOOD)
+                    .ignitedByLava()
+                    .noOcclusion()
             ));
 
     public static final Block EMPTYPHONE = registerBlockWithoutItem("emptyphone",

@@ -1,6 +1,7 @@
 {
   "replace": false,
   "values": [
-    "cobblesafari:hyperspace_ladder"
+    "cobblesafari:hyperspace_ladder",
+    "cobblesafari:belltower_ladder"
   ]
 }

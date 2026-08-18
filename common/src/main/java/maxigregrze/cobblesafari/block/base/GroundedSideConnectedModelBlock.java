@@ -42,7 +42,7 @@ public class GroundedSideConnectedModelBlock extends SideConnectedModelBlock {
     @Override
     protected BlockState computeState(BlockState state, BlockGetter level, BlockPos pos) {
         BlockPos below = pos.below();
-        BlockState under = level.getBlockState(below);
+        BlockState under = ApparentState.at(level, below);
         // A tagged block counts even when its collision is not a sturdy face: the scaffolding tube
         // is hollow so you can drop through it, yet a platform resting on one should still skirt.
         boolean grounded = under.isFaceSturdy(level, below, Direction.UP)

@@ -4,7 +4,8 @@ import net.minecraft.util.StringRepresentable;
 
 public enum AnchorVariant implements StringRepresentable {
     DEFAULT("default", ""),
-    DISTORTION("distortion", "distortion");
+    DISTORTION("distortion", "distortion"),
+    BELLTOWER("belltower", "belltower");
 
     private final String name;
     private final String textureSuffix;

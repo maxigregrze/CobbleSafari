@@ -43,7 +43,7 @@ import java.util.Map;
  * @see SideConnectedModelBlock      the four horizontal connections
  * @see LayeredSideConnectedModelBlock  the above, plus a per-floor model set
  */
-public abstract class ConnectedModelBlock extends Block {
+public abstract class ConnectedModelBlock extends Block implements NeighborDerivedBlock {
 
     /** Collision behaviour, matching {@link HorizontalModelBlock.Collision}. */
     public enum Collision { SHAPE, NONE, FULL }
@@ -218,6 +218,8 @@ public abstract class ConnectedModelBlock extends Block {
      * is always current when this runs - updateShape hands us the already-written DOWN neighbour,
      * and the cascade walks the stack upward one block at a time. A stack peer carrying no layer
      * property (e.g. a platform variant) reads as -1, so the block resting on it restarts at 0.
+     * The peer is read through {@link ApparentState}, so a disguised block contributes the layer of
+     * the block it copies rather than none at all.
      *
      * <p>The property is passed in rather than read from a field because it is declared per
      * subclass, not here: {@code createBlockStateDefinition} runs before any subclass field is
@@ -229,7 +231,7 @@ public abstract class ConnectedModelBlock extends Block {
         if (layerCount <= 1) {
             return 0;
         }
-        BlockState below = level.getBlockState(pos.below());
+        BlockState below = ApparentState.at(level, pos.below());
         if (!stacksWith(self, below)) {
             return 0;
         }
@@ -244,6 +246,16 @@ public abstract class ConnectedModelBlock extends Block {
      * updates, where a re-entrant {@code setBlock} is a classic source of state corruption.
      */
     protected abstract BlockState computeState(BlockState state, BlockGetter level, BlockPos pos);
+
+    /**
+     * The state this block would carry at {@code pos} without ever being placed there - i.e.
+     * {@link #computeState} applied to the default state. Lets a disguised block (the CSBoss mimic)
+     * resolve a full connected state instead of a bare {@code defaultBlockState()}.
+     */
+    @Override
+    public BlockState apparentStateAt(BlockGetter level, BlockPos pos) {
+        return computeState(this.defaultBlockState(), level, pos);
+    }
 
     @Nullable
     @Override

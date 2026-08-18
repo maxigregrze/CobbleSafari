@@ -46,10 +46,12 @@ public final class CsBossMimicConfigServerHandler {
         BlockState state = player.level().getBlockState(payload.pos());
         if (state.getBlock() instanceof CsBossMimicBlock
                 && state.getValue(CsBossMimicBlock.REVERSE) != payload.reverse()) {
-            player.level().setBlock(payload.pos(),
-                    state.setValue(CsBossMimicBlock.REVERSE, payload.reverse()), Block.UPDATE_ALL);
+            state = state.setValue(CsBossMimicBlock.REVERSE, payload.reverse());
+            player.level().setBlock(payload.pos(), state, Block.UPDATE_ALL);
         }
 
-        be.syncToClients();
+        // Forced: both the target id and the reverse flag change what the neighbourhood sees us as,
+        // so the disguise has to be re-broadcast even when the resolved state lands on the same value.
+        CsBossMimicBlock.refresh(player.level(), payload.pos(), state, true);
     }
 }

@@ -15,6 +15,14 @@
     "variant=distortion,active=true,facing=north": { "model": "cobblesafari:block/bossanchor_base_distortion_active" },
     "variant=distortion,active=true,facing=east": { "model": "cobblesafari:block/bossanchor_base_distortion_active", "y": 90 },
     "variant=distortion,active=true,facing=south": { "model": "cobblesafari:block/bossanchor_base_distortion_active", "y": 180 },
-    "variant=distortion,active=true,facing=west": { "model": "cobblesafari:block/bossanchor_base_distortion_active", "y": 270 }
+    "variant=distortion,active=true,facing=west": { "model": "cobblesafari:block/bossanchor_base_distortion_active", "y": 270 },
+    "variant=belltower,active=false,facing=north": { "model": "cobblesafari:block/bossanchor_base_belltower" },
+    "variant=belltower,active=false,facing=east": { "model": "cobblesafari:block/bossanchor_base_belltower", "y": 90 },
+    "variant=belltower,active=false,facing=south": { "model": "cobblesafari:block/bossanchor_base_belltower", "y": 180 },
+    "variant=belltower,active=false,facing=west": { "model": "cobblesafari:block/bossanchor_base_belltower", "y": 270 },
+    "variant=belltower,active=true,facing=north": { "model": "cobblesafari:block/bossanchor_base_belltower_active" },
+    "variant=belltower,active=true,facing=east": { "model": "cobblesafari:block/bossanchor_base_belltower_active", "y": 90 },
+    "variant=belltower,active=true,facing=south": { "model": "cobblesafari:block/bossanchor_base_belltower_active", "y": 180 },
+    "variant=belltower,active=true,facing=west": { "model": "cobblesafari:block/bossanchor_base_belltower_active", "y": 270 }
   }
 }

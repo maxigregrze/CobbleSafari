@@ -163,8 +163,9 @@ public class SideConnectedModelBlock extends ConnectedModelBlock {
         BlockState out = state;
         for (Direction direction : Direction.Plane.HORIZONTAL) {
             BooleanProperty property = PipeBlock.PROPERTY_BY_DIRECTION.get(direction);
+            BlockPos side = pos.relative(direction);
             // Always test against the original state so no already-rewritten axis feeds the next.
-            out = out.setValue(property, connectsTo(state, level.getBlockState(pos.relative(direction)), direction));
+            out = out.setValue(property, connectsTo(state, ApparentState.at(level, side), direction));
         }
         return out;
     }

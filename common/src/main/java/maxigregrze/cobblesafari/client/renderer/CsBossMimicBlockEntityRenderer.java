@@ -3,21 +3,22 @@ package maxigregrze.cobblesafari.client.renderer;
 import com.mojang.blaze3d.vertex.PoseStack;
 import maxigregrze.cobblesafari.block.csboss.CsBossMimicBlock;
 import maxigregrze.cobblesafari.block.csboss.CsBossMimicBlockEntity;
-import maxigregrze.cobblesafari.init.ModBlocks;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.block.BlockRenderDispatcher;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
-import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 
 /**
- * Mimic renderer: when the block is "solid" (active == reverse), draws the model of
- * the configured target block (copying its texture). Falls back to {@code distortion_stone_bricks}
- * when the id is empty/invalid. Renders nothing when invisible - survival invisibility relies on
- * this, the creative outline coming from {@code getShape}.
+ * Mimic renderer: when the block is "solid" (active == reverse), draws the model of the configured
+ * target block in the state the server resolved for this position - so a run of mimics shows the
+ * same connected models a run of real blocks would. Renders nothing when invisible: survival
+ * invisibility relies on this, the creative outline coming from {@code getShape}.
+ *
+ * <p>Purely a consumer of what the server sent. It must never resolve a state of its own: real
+ * connected blocks do not recompute client-side (block updates arrive with UPDATE_KNOWN_SHAPE), so a
+ * locally derived layer would never be corrected. Until the first update arrives it falls back to
+ * the target's default state.
  */
 public class CsBossMimicBlockEntityRenderer implements BlockEntityRenderer<CsBossMimicBlockEntity> {
 
@@ -39,20 +40,10 @@ public class CsBossMimicBlockEntityRenderer implements BlockEntityRenderer<CsBos
             return;
         }
 
-        BlockState renderState = resolveMimicState(blockEntity.getMimicBlockId());
-        this.blockRenderDispatcher.renderSingleBlock(renderState, poseStack, bufferSource, packedLight, packedOverlay);
-    }
-
-    private static BlockState resolveMimicState(String id) {
-        if (id != null && !id.isBlank()) {
-            ResourceLocation loc = ResourceLocation.tryParse(id.trim());
-            if (loc != null) {
-                Block block = BuiltInRegistries.BLOCK.getOptional(loc).orElse(null);
-                if (block != null) {
-                    return block.defaultBlockState();
-                }
-            }
+        BlockState resolved = blockEntity.getResolvedMimicState();
+        if (resolved == null) {
+            resolved = CsBossMimicBlock.targetBlock(blockEntity.getMimicBlockId()).defaultBlockState();
         }
-        return ModBlocks.DISTORTION_STONE_BRICKS.defaultBlockState();
+        this.blockRenderDispatcher.renderSingleBlock(resolved, poseStack, bufferSource, packedLight, packedOverlay);
     }
 }

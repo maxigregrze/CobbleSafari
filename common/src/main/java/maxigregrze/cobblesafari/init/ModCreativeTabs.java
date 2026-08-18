@@ -50,6 +50,7 @@ public class ModCreativeTabs {
                 output.accept(ModItems.TINKHAMMER);
                 output.accept(ModBlocks.CSBOSS_TRIGGER);
                 output.accept(ModBlocks.CSBOSS_MIMIC_BLOCK);
+                output.accept(ModBlocks.CSBOSS_PLATFORM);
                 output.accept(ModBlocks.BALM_DISPENSER);
                 output.accept(ModBlocks.BALM_DISPENSER_DISTORTION);
                 output.accept(ModBlocks.DISTORTION_STONEBRICKS_DOOR);
@@ -443,6 +444,7 @@ public class ModCreativeTabs {
                 output.accept(ModBlocks.BELLTOWER_ROOFTILES);
                 output.accept(ModBlocks.BELLTOWER_TOPPER);
                 output.accept(ModBlocks.BELLTOWER_BELL);
+                output.accept(ModBlocks.BELLTOWER_LADDER);
             })
             .build();
 

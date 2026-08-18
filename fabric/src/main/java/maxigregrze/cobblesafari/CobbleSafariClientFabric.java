@@ -177,6 +177,7 @@ public class CobbleSafariClientFabric implements ClientModInitializer {
     }
 
     private void registerBlockRenderLayers() {
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.CSBOSS_PLATFORM, RenderType.translucent());
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.TINKAGEAR_BLOCK, RenderType.translucent());
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.SAFARI_TELEPORTER, RenderType.translucent());
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.TELEPORT_PAD, RenderType.translucent());

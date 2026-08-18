@@ -43,8 +43,8 @@ public class VerticalConnectedModelBlock extends ConnectedModelBlock {
 
     @Override
     protected BlockState computeState(BlockState state, BlockGetter level, BlockPos pos) {
-        boolean below = connectsTo(state, level.getBlockState(pos.below()), Direction.DOWN);
-        boolean above = connectsTo(state, level.getBlockState(pos.above()), Direction.UP);
+        boolean below = connectsTo(state, ApparentState.at(level, pos.below()), Direction.DOWN);
+        boolean above = connectsTo(state, ApparentState.at(level, pos.above()), Direction.UP);
         return state.setValue(SEGMENT, VerticalSegment.of(below, above));
     }
 
