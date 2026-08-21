@@ -100,6 +100,10 @@ import maxigregrze.cobblesafari.block.hyperspace.HyperspaceQuadBlock;
 import maxigregrze.cobblesafari.block.hyperspace.HyperspaceQuadPart;
 import maxigregrze.cobblesafari.block.hyperspace.HyperspaceRampBlock;
 import maxigregrze.cobblesafari.block.hyperspace.HyperspaceSaplingBlock;
+import maxigregrze.cobblesafari.block.misc.BelltowerBridgeBlock;
+import maxigregrze.cobblesafari.block.misc.BelltowerBridgeBlockItem;
+import maxigregrze.cobblesafari.block.nature.MapleLeafPileBlock;
+import maxigregrze.cobblesafari.block.nature.MapleLeavesBlock;
 import maxigregrze.cobblesafari.block.hyperspace.HyperspaceStandingSignBlock;
 import maxigregrze.cobblesafari.block.hyperspace.HyperspaceWallSignBlock;
 import maxigregrze.cobblesafari.block.hyperspace.HyperspaceCeilingHangingSignBlock;
@@ -142,7 +146,9 @@ import net.minecraft.world.level.block.FenceBlock;
 import net.minecraft.world.level.block.FenceGateBlock;
 import net.minecraft.world.level.block.FlowerBlock;
 import net.minecraft.world.level.block.GlazedTerracottaBlock;
+import net.minecraft.world.level.block.ComposterBlock;
 import net.minecraft.world.level.block.LeavesBlock;
+import net.minecraft.world.level.block.SaplingBlock;
 import net.minecraft.world.level.block.SlabBlock;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.StairBlock;
@@ -1246,6 +1252,21 @@ public class ModBlocks {
                     .noOcclusion()
             ));
 
+    /**
+     * Suspension bridge. Birch-log material (strength 2.0, wood sound, axe, no tool tier). Its item
+     * is registered by hand in {@link #register()} because it needs a {@link BelltowerBridgeBlockItem}
+     * for the scaffolding-style placement, which {@code registerBlock} cannot provide.
+     */
+    public static final Block BELLTOWER_BRIDGE = registerBlockWithoutItem("belltower_bridge",
+            new BelltowerBridgeBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.WOOD)
+                    .strength(2.0f)
+                    .sound(SoundType.WOOD)
+                    .ignitedByLava()
+                    .noOcclusion()
+                    .pushReaction(PushReaction.DESTROY)
+            ));
+
     public static final Block EMPTYPHONE = registerBlockWithoutItem("emptyphone",
             new EmptyPhoneBlock(BlockBehaviour.Properties.of()
                     .mapColor(MapColor.METAL)
@@ -2100,6 +2121,86 @@ public class ModBlocks {
                     .mapColor(MapColor.PLANT).noCollission().instabreak().sound(SoundType.GRASS)
                     .pushReaction(PushReaction.DESTROY)));
 
+    // --- Maples (plan 174) -------------------------------------------------------------------
+    // Three colours, no wood set of their own: the trunk is vanilla mangrove log. Leaves stay
+    // untinted simply by never registering a BlockColor for them.
+
+    private static ResourceKey<ConfiguredFeature<?, ?>> mapleTree(String colour) {
+        return ResourceKey.create(Registries.CONFIGURED_FEATURE,
+                ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, colour + "_maple_tree"));
+    }
+
+    private static TreeGrower mapleGrower(String colour) {
+        return new TreeGrower("cobblesafari:" + colour + "_maple",
+                Optional.empty(), Optional.of(mapleTree(colour)), Optional.empty());
+    }
+
+    private static final TreeGrower RED_MAPLE_GROWER = mapleGrower("red");
+    private static final TreeGrower ORANGE_MAPLE_GROWER = mapleGrower("orange");
+    private static final TreeGrower YELLOW_MAPLE_GROWER = mapleGrower("yellow");
+
+    private static BlockBehaviour.Properties mapleLeaves(MapColor colour) {
+        return BlockBehaviour.Properties.of()
+                .mapColor(colour)
+                .strength(0.2f)
+                .randomTicks()
+                .sound(SoundType.CHERRY_LEAVES)
+                .noOcclusion()
+                .isSuffocating((s, l, p) -> false)
+                .isViewBlocking((s, l, p) -> false)
+                .ignitedByLava()
+                .pushReaction(PushReaction.DESTROY);
+    }
+
+    private static BlockBehaviour.Properties mapleSapling() {
+        return BlockBehaviour.Properties.of()
+                .mapColor(MapColor.PLANT).noCollission().instabreak()
+                .sound(SoundType.GRASS).randomTicks()
+                .pushReaction(PushReaction.DESTROY);
+    }
+
+    /**
+     * Leaf pile properties. Fully collisionless: a drift is waded through, never stood on. Fall
+     * damage is softened by {@code LivingEntityMapleLeafPileMixin} rather than by {@code fallOn} -
+     * see {@link MapleLeafPileBlock#fallSofteningFactor(int)} for why no collision floor can work.
+     */
+    private static BlockBehaviour.Properties mapleLeafPile(MapColor colour) {
+        return BlockBehaviour.Properties.of()
+                .mapColor(colour)
+                .strength(0.1f)
+                .randomTicks()
+                .sound(SoundType.CHERRY_LEAVES)
+                .noCollission()
+                .noOcclusion()
+                .pushReaction(PushReaction.DESTROY);
+    }
+
+    public static final Block RED_MAPLE_LEAVES_PILE = registerBlock("red_maple_leaves_pile",
+            new MapleLeafPileBlock(mapleLeafPile(MapColor.COLOR_RED), () -> ModParticles.RED_MAPLE_LEAVES));
+    public static final Block ORANGE_MAPLE_LEAVES_PILE = registerBlock("orange_maple_leaves_pile",
+            new MapleLeafPileBlock(mapleLeafPile(MapColor.COLOR_ORANGE), () -> ModParticles.ORANGE_MAPLE_LEAVES));
+    public static final Block YELLOW_MAPLE_LEAVES_PILE = registerBlock("yellow_maple_leaves_pile",
+            new MapleLeafPileBlock(mapleLeafPile(MapColor.COLOR_YELLOW), () -> ModParticles.YELLOW_MAPLE_LEAVES));
+
+    public static final Block RED_MAPLE_LEAVES = registerBlock("red_maple_leaves",
+            new MapleLeavesBlock(mapleLeaves(MapColor.COLOR_RED),
+                    () -> ModParticles.RED_MAPLE_LEAVES, () -> RED_MAPLE_LEAVES_PILE));
+    public static final Block ORANGE_MAPLE_LEAVES = registerBlock("orange_maple_leaves",
+            new MapleLeavesBlock(mapleLeaves(MapColor.COLOR_ORANGE),
+                    () -> ModParticles.ORANGE_MAPLE_LEAVES, () -> ORANGE_MAPLE_LEAVES_PILE));
+    public static final Block YELLOW_MAPLE_LEAVES = registerBlock("yellow_maple_leaves",
+            new MapleLeavesBlock(mapleLeaves(MapColor.COLOR_YELLOW),
+                    () -> ModParticles.YELLOW_MAPLE_LEAVES, () -> YELLOW_MAPLE_LEAVES_PILE));
+
+    // Plain vanilla saplings: the maple is a common biome tree, so there is no reason to gate its
+    // growth the way HyperspaceSaplingBlock gates the Hyperspace tree.
+    public static final Block RED_MAPLE_SAPLING = registerBlock("red_maple_sapling",
+            new SaplingBlock(RED_MAPLE_GROWER, mapleSapling()));
+    public static final Block ORANGE_MAPLE_SAPLING = registerBlock("orange_maple_sapling",
+            new SaplingBlock(ORANGE_MAPLE_GROWER, mapleSapling()));
+    public static final Block YELLOW_MAPLE_SAPLING = registerBlock("yellow_maple_sapling",
+            new SaplingBlock(YELLOW_MAPLE_GROWER, mapleSapling()));
+
     // --- Wood blocks (plan 140 § 15) ---
     // Stripped log: same orientable logic as HYPERSPACE_LOG, different texture.
     public static final Block HYPERSPACE_LOG_STRIPPED = registerBlock("hyperspace_log_stripped",
@@ -2283,5 +2384,16 @@ public class ModBlocks {
         Registry.register(BuiltInRegistries.ITEM,
                 ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, "emptyphone"),
                 new maxigregrze.cobblesafari.item.EmptyPhoneItem(EMPTYPHONE, new Item.Properties()));
+
+        // Needs a custom BlockItem for the scaffolding-style placement, so it cannot go through
+        // registerBlock's plain BlockItem.
+        Registry.register(BuiltInRegistries.ITEM,
+                ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, "belltower_bridge"),
+                new BelltowerBridgeBlockItem(BELLTOWER_BRIDGE, new Item.Properties()));
+
+        // Leaf piles compost like pink petals, the vanilla leaf-carpet analogue.
+        ComposterBlock.COMPOSTABLES.put(RED_MAPLE_LEAVES_PILE.asItem(), 0.3F);
+        ComposterBlock.COMPOSTABLES.put(ORANGE_MAPLE_LEAVES_PILE.asItem(), 0.3F);
+        ComposterBlock.COMPOSTABLES.put(YELLOW_MAPLE_LEAVES_PILE.asItem(), 0.3F);
     }
 }

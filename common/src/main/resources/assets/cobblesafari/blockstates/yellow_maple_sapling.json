@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "stage=0": {
+      "model": "cobblesafari:block/yellow_maple_sapling"
+    },
+    "stage=1": {
+      "model": "cobblesafari:block/yellow_maple_sapling"
+    }
+  }
+}

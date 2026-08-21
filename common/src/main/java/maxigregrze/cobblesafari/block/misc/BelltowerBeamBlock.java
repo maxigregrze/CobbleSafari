@@ -3,6 +3,7 @@ package maxigregrze.cobblesafari.block.misc;
 import com.mojang.serialization.MapCodec;
 import maxigregrze.cobblesafari.block.base.BlockShapeUtils;
 import maxigregrze.cobblesafari.block.base.Grid3x3MultiblockBlock;
+import maxigregrze.cobblesafari.block.base.Waterlogged;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
@@ -10,16 +11,19 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.HorizontalDirectionalBlock;
 import net.minecraft.world.level.block.Mirror;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.Rotation;
+import net.minecraft.world.level.block.SimpleWaterloggedBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
+import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.Nullable;
@@ -37,7 +41,7 @@ import java.util.Map;
  * pure function of the Y coordinate, kept in the blockstate because the blockstate JSON cannot
  * read a coordinate.</p>
  */
-public class BelltowerBeamBlock extends Grid3x3MultiblockBlock {
+public class BelltowerBeamBlock extends Grid3x3MultiblockBlock implements SimpleWaterloggedBlock {
 
     public static final EnumProperty<BeamPart> PART = EnumProperty.create("part", BeamPart.class);
     public static final BooleanProperty ALT = BooleanProperty.create("alt");
@@ -65,7 +69,8 @@ public class BelltowerBeamBlock extends Grid3x3MultiblockBlock {
         this.registerDefaultState(this.stateDefinition.any()
                 .setValue(FACING, Direction.NORTH)
                 .setValue(PART, BeamPart.P5)
-                .setValue(ALT, Boolean.FALSE));
+                .setValue(ALT, Boolean.FALSE)
+                .setValue(Waterlogged.WATERLOGGED, Boolean.FALSE));
     }
 
     private static Map<BeamPart, VoxelShape> northShapes() {
@@ -97,7 +102,7 @@ public class BelltowerBeamBlock extends Grid3x3MultiblockBlock {
 
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
-        builder.add(FACING, PART, ALT);
+        builder.add(FACING, PART, ALT, Waterlogged.WATERLOGGED);
     }
 
     // ------------------------------------------------------------------ placement and Y parity
@@ -112,7 +117,8 @@ public class BelltowerBeamBlock extends Grid3x3MultiblockBlock {
         return state
                 .setValue(FACING, context.getHorizontalDirection().getOpposite())
                 .setValue(PART, BeamPart.P5)
-                .setValue(ALT, isAlt(context.getClickedPos()));
+                .setValue(ALT, isAlt(context.getClickedPos()))
+                .setValue(Waterlogged.WATERLOGGED, Waterlogged.atPlacement(context));
     }
 
     /**
@@ -162,10 +168,13 @@ public class BelltowerBeamBlock extends Grid3x3MultiblockBlock {
     }
 
     @Override
-    protected BlockState partStateFor(BlockState centerState, int dx, int dz) {
+    protected BlockState partStateFor(BlockState centerState, Level level, BlockPos partPos, int dx, int dz) {
         int[] local = unrotate(dx, dz, centerState.getValue(FACING));
-        // FACING and ALT ride along, so the nine cells cannot disagree.
-        return centerState.setValue(PART, BeamPart.at(local[0], local[1]));
+        // FACING and ALT ride along, so the nine cells cannot disagree. WATERLOGGED does not: the
+        // structure is one Y layer wide and each cell answers to the water that was standing in it.
+        return centerState
+                .setValue(PART, BeamPart.at(local[0], local[1]))
+                .setValue(Waterlogged.WATERLOGGED, Waterlogged.atPosition(level, partPos));
     }
 
     /** Local offset to world offset. north is the identity; east turns (dx, dz) into (-dz, dx). */
@@ -186,6 +195,24 @@ public class BelltowerBeamBlock extends Grid3x3MultiblockBlock {
             case WEST -> new int[]{-dz, dx};
             default -> new int[]{dx, dz};
         };
+    }
+
+    // ------------------------------------------------------------------ waterlogging
+
+    @Override
+    protected FluidState getFluidState(BlockState state) {
+        return Waterlogged.fluidState(state, super.getFluidState(state));
+    }
+
+    /**
+     * The base deliberately has no {@code updateShape} - cohesion is {@code onRemove}'s job - so
+     * this one exists only to let the water spread.
+     */
+    @Override
+    protected BlockState updateShape(BlockState state, Direction direction, BlockState neighborState,
+                                     LevelAccessor level, BlockPos pos, BlockPos neighborPos) {
+        Waterlogged.scheduleTick(state, level, pos);
+        return super.updateShape(state, direction, neighborState, level, pos, neighborPos);
     }
 
     // ------------------------------------------------------------------ orientation and shape

@@ -2,6 +2,7 @@ package maxigregrze.cobblesafari.block.base;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
@@ -32,7 +33,15 @@ public final class Waterlogged {
 
     /** True when the clicked cell holds a water source. Body of {@code getStateForPlacement}. */
     public static boolean atPlacement(BlockPlaceContext context) {
-        return context.getLevel().getFluidState(context.getClickedPos()).getType() == Fluids.WATER;
+        return atPosition(context.getLevel(), context.getClickedPos());
+    }
+
+    /**
+     * True when {@code pos} holds a water source. For the cells a multiblock writes for the player,
+     * which are not the clicked one and so have no {@code BlockPlaceContext} of their own.
+     */
+    public static boolean atPosition(BlockGetter level, BlockPos pos) {
+        return level.getFluidState(pos).getType() == Fluids.WATER;
     }
 
     /**

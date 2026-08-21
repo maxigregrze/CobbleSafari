@@ -212,7 +212,6 @@ public class DungeonRegionClearer {
 
     private static void finalizeJob(RegionClearJob job) {
         ServerLevel level = job.level();
-        removeChunkTickets(level, job.chunkMinX(), job.chunkMinZ(), job.chunkMaxX(), job.chunkMaxZ());
 
         for (ChunkPos cp : job.positions()) {
             level.getChunkSource().removeRegionTicket(DUNGEON_CLEAR, cp, CHUNK_LOAD_TICKET_LEVEL, cp);
@@ -272,7 +271,6 @@ public class DungeonRegionClearer {
 
         discardEntities(dungeonLevel, regionBounds);
         clearChunks(dungeonLevel, chunkMinX, chunkMinZ, chunkMaxX, chunkMaxZ);
-        removeChunkTickets(dungeonLevel, chunkMinX, chunkMinZ, chunkMaxX, chunkMaxZ);
 
         CobbleSafari.LOGGER.info(
                 "Dungeon region clear finished (sync): dimension {}, chunks [{},{}] to [{},{}], full height",
@@ -315,7 +313,6 @@ public class DungeonRegionClearer {
 
         discardEntities(dungeonLevel, regionBounds);
         clearChunksYBounded(dungeonLevel, chunkMinX, chunkMinZ, chunkMaxX, chunkMaxZ, minClearY, maxClearY);
-        removeChunkTickets(dungeonLevel, chunkMinX, chunkMinZ, chunkMaxX, chunkMaxZ);
 
         CobbleSafari.LOGGER.info(
                 "Dungeon region clear finished (sync): dimension {}, chunks [{},{}] to [{},{}], vertical bounds Y [{},{}]",
@@ -437,17 +434,6 @@ public class DungeonRegionClearer {
                 biome,
                 PalettedContainer.Strategy.SECTION_BIOMES
         );
-    }
-
-    private static void removeChunkTickets(ServerLevel level, int chunkMinX, int chunkMinZ, int chunkMaxX, int chunkMaxZ) {
-        for (int cx = chunkMinX; cx <= chunkMaxX; cx++) {
-            for (int cz = chunkMinZ; cz <= chunkMaxZ; cz++) {
-                ChunkPos chunkPos = new ChunkPos(cx, cz);
-                level.getChunkSource().removeRegionTicket(
-                        TicketType.FORCED, chunkPos, 1, chunkPos
-                );
-            }
-        }
     }
 
     private static final class RegionClearJob {

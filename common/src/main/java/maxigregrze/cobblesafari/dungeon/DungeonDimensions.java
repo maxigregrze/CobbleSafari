@@ -50,6 +50,20 @@ public class DungeonDimensions {
         ));
 
         REGISTERED_DUNGEONS.add(new DungeonConfig(
+                "dungeon_jump",
+                DUNGEON_JUMP,
+                "cobblesafari:jump/entrance",
+                0, 0, 0,   // spawn offsets unused for a JIGSAW dungeon
+                900,
+                1,
+                DungeonConfig.StructureType.JIGSAW,
+                12,        // jigsaw depth: entrance -> 3f..10f -> roof is 9 deep
+                1024,      // zoneSize, same spacing as the distortion world
+                0,         // clearSectionsBelow: never wipe below Y 64, the dimension floor lives at 62/63
+                10         // clearSectionsAbove: up to Y 239, the 155-block tower tops out at 218
+        ).withFixedStructureY(71));
+
+        REGISTERED_DUNGEONS.add(new DungeonConfig(
                 "dungeon_distortion",
                 DUNGEON_DISTORTION,
                 "cobblesafari:distortion/entrance",

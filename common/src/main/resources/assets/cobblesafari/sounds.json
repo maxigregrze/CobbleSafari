@@ -56,6 +56,15 @@
         ],
         "subtitle": "subtitles.cobblesafari.giratina.trade"
     },
+    "block.bell_chime": {
+        "sounds": [
+            {
+                "name": "cobblesafari:blocks/bell_chime",
+                "stream": false
+            }
+        ],
+        "subtitle": "subtitles.cobblesafari.block.bell_chime"
+    },
     "music.distortion.intro": {
         "sounds": [
             {
@@ -160,13 +169,36 @@
             }
         ]
     },
-    "block.bell_chime": {
+    "music.hooh.loop": {
         "sounds": [
             {
-                "name": "cobblesafari:blocks/bell_chime",
-                "stream": false
+                "name": "cobblesafari:music/bgm_hooh_loop",
+                "stream": true
             }
-        ],
-        "subtitle": "subtitles.cobblesafari.block.bell_chime"
+        ]
+    },
+    "music.hooh.intro": {
+        "sounds": [
+            {
+                "name": "cobblesafari:music/bgm_hooh_intro",
+                "stream": true
+            }
+        ]
+    },
+    "music.belltower.intro": {
+        "sounds": [
+            {
+                "name": "cobblesafari:music/bgm_belltower_intro",
+                "stream": true
+            }
+        ]
+    },
+    "music.belltower.loop": {
+        "sounds": [
+            {
+                "name": "cobblesafari:music/bgm_belltower_loop",
+                "stream": true
+            }
+        ]
     }
 }

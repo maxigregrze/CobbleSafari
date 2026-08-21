@@ -2302,5 +2302,15 @@
   "block.cobblesafari.kalos_canopy_stairs_trans": "Escalier de Verrière d'Extra Illumis Transparente",
   "block.cobblesafari.kalos_canopy_slab_trans": "Dalle de Verrière d'Extra Illumis Transparente",
   "block.cobblesafari.kalos_window_topper_trans": "Imposte d'Extra Illumis Transparente",
-  "block.cobblesafari.kalos_manhole": "Trappe d'Égout d'Extra Illumis"
+  "block.cobblesafari.kalos_manhole": "Trappe d'Égout d'Extra Illumis",
+  "block.cobblesafari.belltower_bridge": "Pont suspendu",
+  "block.cobblesafari.red_maple_leaves": "Feuilles d'érable rouge",
+  "block.cobblesafari.orange_maple_leaves": "Feuilles d'érable orange",
+  "block.cobblesafari.yellow_maple_leaves": "Feuilles d'érable jaune",
+  "block.cobblesafari.red_maple_sapling": "Pousse d'érable rouge",
+  "block.cobblesafari.orange_maple_sapling": "Pousse d'érable orange",
+  "block.cobblesafari.yellow_maple_sapling": "Pousse d'érable jaune",
+  "block.cobblesafari.red_maple_leaves_pile": "Tas de feuilles d'érable rouge",
+  "block.cobblesafari.orange_maple_leaves_pile": "Tas de feuilles d'érable orange",
+  "block.cobblesafari.yellow_maple_leaves_pile": "Tas de feuilles d'érable jaune"
 }

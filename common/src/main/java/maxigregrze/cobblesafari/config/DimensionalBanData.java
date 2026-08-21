@@ -53,8 +53,9 @@ public class DimensionalBanData {
 
         DimensionRestrictions dungeonJumpRestrictions = new DimensionRestrictions();
         dungeonJumpRestrictions.allowBattle = false;
-        dungeonJumpRestrictions.allowBlockBreaking = true;
+        dungeonJumpRestrictions.allowBlockBreaking = false;
         dungeonJumpRestrictions.allowBlockPlacing = false;
+        dungeonJumpRestrictions.forbidMounting = true;
         dimensions.put("cobblesafari:dungeon_jump", dungeonJumpRestrictions);
 
         

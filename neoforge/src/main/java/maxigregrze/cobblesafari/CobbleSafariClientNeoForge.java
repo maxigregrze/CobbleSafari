@@ -41,6 +41,8 @@ import maxigregrze.cobblesafari.underground.UndergroundScreen;
 import maxigregrze.cobblesafari.underground.network.UndergroundPayloads;
 import maxigregrze.cobblesafari.client.DungeonDistortionDimensionEffects;
 import maxigregrze.cobblesafari.client.audio.CsMusicPlayer;
+import maxigregrze.cobblesafari.client.particle.MapleLeafParticle;
+import maxigregrze.cobblesafari.init.ModParticles;
 import maxigregrze.cobblesafari.client.DonutItemClientSetup;
 import maxigregrze.cobblesafari.client.donut.DonutFlavorClientTooltip;
 import maxigregrze.cobblesafari.item.donut.DonutTooltipPayload;
@@ -139,6 +141,7 @@ public class CobbleSafariClientNeoForge {
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.BELLTOWER_TOPPER, RenderType.cutout());
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.BELLTOWER_ROD, RenderType.cutout());
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.BELLTOWER_ROOFTILES, RenderType.cutout());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.BELLTOWER_BRIDGE, RenderType.cutout());
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.POKEMON_STATUE, RenderType.cutout());
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.HOOPA_RING_PORTAL, RenderType.cutout());
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.DUNGEON_PORTAL, RenderType.cutout());
@@ -302,6 +305,19 @@ public class CobbleSafariClientNeoForge {
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.HYPERSPACE_LEAVES, RenderType.cutoutMipped());
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.HYPERSPACE_SAPLING, RenderType.cutout());
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.HYPERSPACE_SAPLING_FLOWERED, RenderType.cutout());
+
+            // Maples: leaves and leaf piles are cutoutMipped like every other foliage - the floor
+            // texture of the pile has transparency, so solid() would fill the gaps in. Saplings are
+            // plain cutout, matching every other cross-model plant.
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.RED_MAPLE_LEAVES, RenderType.cutoutMipped());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.ORANGE_MAPLE_LEAVES, RenderType.cutoutMipped());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.YELLOW_MAPLE_LEAVES, RenderType.cutoutMipped());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.RED_MAPLE_SAPLING, RenderType.cutout());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.ORANGE_MAPLE_SAPLING, RenderType.cutout());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.YELLOW_MAPLE_SAPLING, RenderType.cutout());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.RED_MAPLE_LEAVES_PILE, RenderType.cutoutMipped());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.ORANGE_MAPLE_LEAVES_PILE, RenderType.cutoutMipped());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.YELLOW_MAPLE_LEAVES_PILE, RenderType.cutoutMipped());
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.HYPERSPACE_WOOD_DOOR, RenderType.cutout());
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.HYPERSPACE_WOOD_TRAPDOOR, RenderType.cutout());
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.KALOS_MANHOLE, RenderType.cutout());
@@ -342,6 +358,14 @@ public class CobbleSafariClientNeoForge {
         if (net.neoforged.fml.ModList.get().isLoaded("accessories")) {
             maxigregrze.cobblesafari.compat.accessories.AccessoriesClientCompat.init();
         }
+    }
+
+    @SubscribeEvent
+    public static void onRegisterParticleProviders(
+            net.neoforged.neoforge.client.event.RegisterParticleProvidersEvent event) {
+        event.registerSpriteSet(ModParticles.RED_MAPLE_LEAVES, MapleLeafParticle.Provider::new);
+        event.registerSpriteSet(ModParticles.ORANGE_MAPLE_LEAVES, MapleLeafParticle.Provider::new);
+        event.registerSpriteSet(ModParticles.YELLOW_MAPLE_LEAVES, MapleLeafParticle.Provider::new);
     }
 
     @SubscribeEvent

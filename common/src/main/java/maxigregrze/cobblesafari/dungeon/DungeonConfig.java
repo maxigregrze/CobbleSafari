@@ -14,6 +14,9 @@ public class DungeonConfig {
     public static final int DEFAULT_CLEAR_SECTIONS_BELOW = 1;
     public static final int DEFAULT_CLEAR_SECTIONS_ABOVE = 1;
 
+    /** Sentinel for {@link #getFixedStructureY()}: no imposed altitude, the historical 96/32 alternation applies. */
+    public static final int NO_FIXED_Y = Integer.MIN_VALUE;
+
     private final String id;
     private final ResourceKey<Level> dimensionKey;
     private final String structureId;
@@ -29,6 +32,7 @@ public class DungeonConfig {
     private final int zoneSize;
     private final int clearSectionsBelow;
     private final int clearSectionsAbove;
+    private final int fixedStructureY;
 
     public DungeonConfig(String id, ResourceKey<Level> dimensionKey, String structureId,
                          int playerSpawnOffsetX, int playerSpawnOffsetY, int playerSpawnOffsetZ,
@@ -103,6 +107,16 @@ public class DungeonConfig {
                          int timerDurationSeconds, int weight, StructureType structureType, int jigsawDepth,
                          boolean skipTeleportScreen, boolean externallyManaged,
                          int zoneSize, int clearSectionsBelow, int clearSectionsAbove) {
+        this(id, dimensionKey, structureId, playerSpawnOffsetX, playerSpawnOffsetY, playerSpawnOffsetZ,
+             timerDurationSeconds, weight, structureType, jigsawDepth, skipTeleportScreen, externallyManaged,
+             zoneSize, clearSectionsBelow, clearSectionsAbove, NO_FIXED_Y);
+    }
+
+    private DungeonConfig(String id, ResourceKey<Level> dimensionKey, String structureId,
+                          int playerSpawnOffsetX, int playerSpawnOffsetY, int playerSpawnOffsetZ,
+                          int timerDurationSeconds, int weight, StructureType structureType, int jigsawDepth,
+                          boolean skipTeleportScreen, boolean externallyManaged,
+                          int zoneSize, int clearSectionsBelow, int clearSectionsAbove, int fixedStructureY) {
         this.id = id;
         this.dimensionKey = dimensionKey;
         this.structureId = structureId;
@@ -118,6 +132,20 @@ public class DungeonConfig {
         this.zoneSize = zoneSize;
         this.clearSectionsBelow = clearSectionsBelow;
         this.clearSectionsAbove = clearSectionsAbove;
+        this.fixedStructureY = fixedStructureY;
+    }
+
+    /**
+     * Copy of this configuration with an imposed anchor altitude. Required as soon as the host
+     * dimension has a floor at a fixed altitude: the structure must then always anchor at the same Y,
+     * otherwise the instance cleanup window can no longer be aligned with it (action plan 175, § 2).
+     */
+    public DungeonConfig withFixedStructureY(int y) {
+        return new DungeonConfig(id, dimensionKey, structureId,
+                playerSpawnOffsetX, playerSpawnOffsetY, playerSpawnOffsetZ,
+                timerDurationSeconds, weight, structureType, jigsawDepth,
+                skipTeleportScreen, externallyManaged,
+                zoneSize, clearSectionsBelow, clearSectionsAbove, y);
     }
 
     public String getId() {
@@ -190,5 +218,14 @@ public class DungeonConfig {
 
     public int getClearSectionsAbove() {
         return clearSectionsAbove;
+    }
+
+    /** @return true when this dungeon anchors its structure at a fixed altitude instead of the 96/32 alternation. */
+    public boolean hasFixedStructureY() {
+        return fixedStructureY != NO_FIXED_Y;
+    }
+
+    public int getFixedStructureY() {
+        return fixedStructureY;
     }
 }

@@ -8,7 +8,6 @@ import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
 
@@ -63,8 +62,14 @@ public abstract class Grid3x3MultiblockBlock extends Block {
     /** The centre of the multiblock the cell at {@code pos} carrying {@code state} belongs to. */
     protected abstract BlockPos centerOf(BlockState state, BlockPos pos);
 
-    /** The state to write at world offset {@code (dx, dz)} from the centre, on placement. */
-    protected abstract BlockState partStateFor(BlockState centerState, int dx, int dz);
+    /**
+     * The state to write at world offset {@code (dx, dz)} from the centre, on placement.
+     *
+     * <p>{@code partPos} is the cell's world position, still holding whatever the placement is
+     * about to replace - a waterlogging subclass reads its fluid here, since by the time the cell
+     * is written the fluid is the block's own.</p>
+     */
+    protected abstract BlockState partStateFor(BlockState centerState, Level level, BlockPos partPos, int dx, int dz);
 
     /** Flags for the clearing {@code setBlock}. The Giratina Core would return {@code 35}. */
     protected int removalFlags() {
@@ -99,8 +104,8 @@ public abstract class Grid3x3MultiblockBlock extends Block {
             return;
         }
         for (int[] offset : SIDE_OFFSETS) {
-            level.setBlock(pos.offset(offset[0], 0, offset[1]),
-                    partStateFor(state, offset[0], offset[1]), Block.UPDATE_ALL);
+            BlockPos partPos = pos.offset(offset[0], 0, offset[1]);
+            level.setBlock(partPos, partStateFor(state, level, partPos, offset[0], offset[1]), Block.UPDATE_ALL);
         }
     }
 
@@ -157,9 +162,16 @@ public abstract class Grid3x3MultiblockBlock extends Block {
         }
     }
 
+    /**
+     * A cell becomes its own fluid rather than plain air, so a waterlogged structure leaves water
+     * behind exactly as {@code Level.destroyBlock} does for the cell the player mined. With no
+     * fluid, {@code createLegacyBlock} is air, which is what every non-waterlogged multiblock got
+     * before.
+     */
     private void clearIfPart(Level level, BlockPos pos) {
-        if (isPartOfSame(level.getBlockState(pos))) {
-            level.setBlock(pos, Blocks.AIR.defaultBlockState(), removalFlags());
+        BlockState state = level.getBlockState(pos);
+        if (isPartOfSame(state)) {
+            level.setBlock(pos, state.getFluidState().createLegacyBlock(), removalFlags());
         }
     }
 }

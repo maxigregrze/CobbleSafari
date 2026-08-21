@@ -13,9 +13,25 @@ import net.minecraft.world.level.levelgen.structure.templatesystem.StructurePlac
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplateManager;
 
+import java.util.Comparator;
 import java.util.Optional;
 
 public class StructurePlacer {
+
+    /**
+     * Chunk-loading ticket held while a structure is being assembled. Unlike {@code TicketType.FORCED}
+     * it expires on its own: dungeon generation is spread over several ticks (position -> chunk load ->
+     * jigsaw -> finalization) and there is no single exit point where the release could be guaranteed -
+     * the player may disconnect, move away, or the portal may vanish in between. The lifespan matches
+     * the generation watchdog in {@code DungeonTeleportHandler} (MAX_GENERATION_MS = 30 s).
+     *
+     * <p>{@code TicketType.FORCED} was used here until action plan 175 (D1): it was added at region
+     * radius 0 and removed at radius 1, so the removal never matched and every generation leaked its
+     * chunks until the next restart. It is also the type {@code /forceload} uses, which made mod-held
+     * and admin-held chunks indistinguishable.
+     */
+    private static final TicketType<ChunkPos> STRUCTURE_GEN = TicketType.create(
+            "cobblesafari_structure_gen", Comparator.comparingLong(ChunkPos::toLong), 600);
 
     private StructurePlacer() {}
 
@@ -114,7 +130,7 @@ public class StructurePlacer {
         for (int dx = -radius; dx <= radius; dx++) {
             for (int dz = -radius; dz <= radius; dz++) {
                 ChunkPos cp = new ChunkPos(centerChunk.x + dx, centerChunk.z + dz);
-                world.getChunkSource().addRegionTicket(TicketType.FORCED, cp, 0, cp);
+                world.getChunkSource().addRegionTicket(STRUCTURE_GEN, cp, 0, cp);
                 world.getChunk(cp.x, cp.z);
                 count++;
             }

@@ -2322,5 +2322,15 @@
   "block.cobblesafari.kalos_canopy_stairs_trans": "Transparent Kalosian Canopy",
   "block.cobblesafari.kalos_canopy_slab_trans": "Transparent Kalosian Canopy",
   "block.cobblesafari.kalos_window_topper_trans": "Transparent Kalosian Door Window",
-  "block.cobblesafari.kalos_manhole": "Kalosian Manhole Cover"
+  "block.cobblesafari.kalos_manhole": "Kalosian Manhole Cover",
+  "block.cobblesafari.belltower_bridge": "Suspension Bridge",
+  "block.cobblesafari.red_maple_leaves": "Red Maple Leaves",
+  "block.cobblesafari.orange_maple_leaves": "Orange Maple Leaves",
+  "block.cobblesafari.yellow_maple_leaves": "Yellow Maple Leaves",
+  "block.cobblesafari.red_maple_sapling": "Red Maple Sapling",
+  "block.cobblesafari.orange_maple_sapling": "Orange Maple Sapling",
+  "block.cobblesafari.yellow_maple_sapling": "Yellow Maple Sapling",
+  "block.cobblesafari.red_maple_leaves_pile": "Red Maple Leaf Pile",
+  "block.cobblesafari.orange_maple_leaves_pile": "Orange Maple Leaf Pile",
+  "block.cobblesafari.yellow_maple_leaves_pile": "Yellow Maple Leaf Pile"
 }

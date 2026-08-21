@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/cross",
+  "textures": {
+    "cross": "cobblesafari:block/red_maple_sapling"
+  }
+}

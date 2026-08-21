@@ -13,7 +13,6 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.InteractionResult;
@@ -57,10 +56,21 @@ import org.jetbrains.annotations.Nullable;
  * the mimic were not there. The resolved state itself lives on the block entity and is recomputed by
  * {@link #refresh}.
  *
+ * <p>The disguise reaches vanilla too. The mod's own connected blocks resolve a mimic through
+ * {@link ApparentState}, which nothing in vanilla does; a vanilla fence or wall is instead handed the
+ * disguise as the neighbour state by {@link #refresh} and {@link #tellNeighbour}, which is the one
+ * channel its {@code connectsTo} reads. In the other direction {@link #walkShape} replays vanilla's
+ * own six neighbour updates, so a mimicked fence, wall, pane, bar, redstone wire or stair works out
+ * its own connections. Anything solid was already connectable, through the face-sturdiness branch
+ * that {@code dynamicShape} restored.
+ *
  * <p>Not inherited from the target: {@code LIT} (set on placement and random tick, never by the
  * connection engine, so a mimicked window always reads unlit), {@code WATERLOGGED}, multiblock parts
- * and player-chosen facings. Mobs also still path against the plain cube, because
- * {@code isPathfindable} is asked with an empty block getter and so cannot see the block entity.
+ * and player-chosen facings - which leaves fence gates out, since theirs is player-chosen. A wall's
+ * post is partial: {@code WallBlock} reads the block above straight off the level rather than through
+ * us, so it weighs our collision shape but never recognises a mimic up there as a wall. Mobs also
+ * still path against the plain cube, because {@code isPathfindable} is asked with an empty block
+ * getter and so cannot see the block entity.
  */
 public class CsBossMimicBlock extends BaseEntityBlock implements BattleReactiveBlock, ApparentStateBlock {
 
@@ -70,15 +80,8 @@ public class CsBossMimicBlock extends BaseEntityBlock implements BattleReactiveB
 
     private static final VoxelShape FULL = Block.box(0.0, 0.0, 0.0, 16.0, 16.0, 16.0);
 
-    /**
-     * Depth of the running refresh cascade. A change ripples up a run one block at a time, and
-     * {@code updateNeighbourShapes} restarts vanilla's own 512-deep budget at every hop, so a very
-     * tall run would otherwise walk the Java stack instead. Past this depth the remainder is handed
-     * to a scheduled tick: tall runs settle at {@value #MAX_REFRESH_DEPTH} blocks per tick, ordinary
-     * ones still settle within the tick that caused them.
-     */
-    private static final ThreadLocal<int[]> REFRESH_DEPTH = ThreadLocal.withInitial(() -> new int[1]);
-    private static final int MAX_REFRESH_DEPTH = 64;
+    /** Budget handed to a reciprocal shape update, matching vanilla's own default. */
+    private static final int RECIPROCAL_BUDGET = 512;
 
     public CsBossMimicBlock(Properties properties) {
         super(properties);
@@ -148,11 +151,52 @@ public class CsBossMimicBlock extends BaseEntityBlock implements BattleReactiveB
     }
 
     /** The full state the target block would carry at {@code pos}, connections included. */
-    public static BlockState resolve(String id, BlockGetter level, BlockPos pos) {
+    public static BlockState resolve(String id, LevelAccessor level, BlockPos pos) {
         Block target = targetBlock(id);
         return target instanceof NeighborDerivedBlock derived
                 ? derived.apparentStateAt(level, pos)
-                : target.defaultBlockState();
+                : walkShape(target, level, pos);
+    }
+
+    /**
+     * The fallback for a target that is not one of the mod's connected blocks: replay the six
+     * neighbour updates vanilla itself performs, starting from the default state. Fences, walls,
+     * panes, iron bars, redstone wire, chorus plant and stair corners all derive their state through
+     * {@code updateShape}, so this covers them without naming a single one.
+     *
+     * <p>{@code UPDATE_SHAPE_ORDER} is vanilla's own, and the order matters: UP comes last, which is
+     * what lets a wall settle its sides before deciding whether to raise its post. Each neighbour is
+     * read through {@link ApparentState}, so one mimicked fence connects to the next.
+     *
+     * <p>A block may schedule a tick on itself from here - a waterlogged wall does. That is harmless:
+     * the tick is filed for the target block at our position and {@code ServerLevel.tickBlock} drops
+     * any tick whose block is not the one actually standing there.
+     */
+    private static BlockState walkShape(Block target, LevelAccessor level, BlockPos pos) {
+        BlockState state = target.defaultBlockState();
+        BlockPos.MutableBlockPos neighborPos = new BlockPos.MutableBlockPos();
+        for (Direction direction : UPDATE_SHAPE_ORDER) {
+            neighborPos.setWithOffset(pos, direction);
+            BlockState updated = state.updateShape(direction, ApparentState.at(level, neighborPos),
+                    level, pos, neighborPos);
+            // A failed support check turns the block to air, or to something else entirely. It is not
+            // really standing here, so keep the plain default rather than adopt that verdict.
+            if (!updated.is(target)) {
+                return target.defaultBlockState();
+            }
+            state = updated;
+        }
+        return state;
+    }
+
+    /**
+     * Whether {@code state} already resolves its neighbours through {@link ApparentState} and so
+     * needs no help seeing through the disguise. True for the mod's own connected blocks and for
+     * other mimics; false for everything vanilla.
+     */
+    private static boolean readsApparentState(BlockState state) {
+        Block block = state.getBlock();
+        return block instanceof NeighborDerivedBlock || block instanceof ApparentStateBlock;
     }
 
     @Nullable
@@ -188,23 +232,59 @@ public class CsBossMimicBlock extends BaseEntityBlock implements BattleReactiveB
         if (!(level instanceof ServerLevel) || !(level.getBlockEntity(pos) instanceof CsBossMimicBlockEntity be)) {
             return;
         }
-        boolean changed = be.setResolvedMimicState(resolve(be.getMimicBlockId(), level, pos));
+        BlockState resolved = resolve(be.getMimicBlockId(), level, pos);
+        boolean changed = be.setResolvedMimicState(resolved);
         if (!changed && !force) {
             return;
         }
         be.syncToClients();
 
-        int[] depth = REFRESH_DEPTH.get();
-        if (depth[0] >= MAX_REFRESH_DEPTH) {
-            level.scheduleTick(pos, state.getBlock(), 1);
+        // Broadcast the disguise, not ourselves. updateNeighbourShapes hands this state to each
+        // neighbour as "what your neighbour is", and that is the only channel through which a vanilla
+        // fence or wall can be told to connect: their connectsTo reads the state they are given, and
+        // no vanilla code path routes through ApparentState. Nothing is written at our position by
+        // that call, so passing a state that is not literally here is safe.
+        //
+        // No stack guard is needed. On a Level these go through CollectingNeighborUpdater, which
+        // queues them and drains the queue iteratively rather than recursing, under its own
+        // chained-update cap. What bounds the work is the early return above: a mimic whose resolved
+        // state did not move never re-broadcasts, and the propagating dependencies form an upward DAG.
+        broadcastState(state, resolved).updateNeighbourShapes(level, pos, Block.UPDATE_ALL);
+    }
+
+    /** What the neighbourhood should see us as: the disguise while solid, ourselves once invisible. */
+    private static BlockState broadcastState(BlockState state, BlockState resolved) {
+        return isSolid(state) ? resolved : state;
+    }
+
+    /**
+     * Hands the disguise to the one neighbour that just changed. Vanilla placement bypasses every
+     * hook we have - {@code FenceBlock.getStateForPlacement} reads {@code getBlockState} straight
+     * from the level - so a fence put down beside a mimic arrives unconnected, and a refresh that
+     * found nothing to change would never correct it. Skipped for blocks that read through
+     * {@link ApparentState} already, and while invisible: dropping the disguise is carried by the
+     * ordinary block update that flipped us.
+     */
+    private static void tellNeighbour(LevelAccessor level, BlockPos pos, BlockState state,
+                                      Direction direction, BlockPos neighborPos) {
+        // Deliberately the block actually standing there, not the state we were handed: a
+        // neighbouring mimic passes us its disguise, and mistaking that for a vanilla block would
+        // have the two of them trade reciprocal updates until the depth guard cut them off.
+        if (!(level instanceof ServerLevel) || !isSolid(state)
+                || readsApparentState(level.getBlockState(neighborPos))
+                || !(level.getBlockEntity(pos) instanceof CsBossMimicBlockEntity be)) {
             return;
         }
-        depth[0]++;
-        try {
-            state.updateNeighbourShapes(level, pos, Block.UPDATE_ALL);
-        } finally {
-            depth[0]--;
+        BlockState resolved = be.getResolvedMimicState();
+        if (resolved == null) {
+            return;
         }
+        // Mirror of the call updateNeighbourShapes would have made: the direction is the one pointing
+        // from the neighbour back at us. Self-limiting - the neighbour recomputes, and if that changed
+        // it, its own write brings us straight back here, where it now recomputes to the same state
+        // and updateOrDestroy writes nothing.
+        level.neighborShapeChanged(direction.getOpposite(), resolved, neighborPos, pos,
+                Block.UPDATE_ALL, RECIPROCAL_BUDGET);
     }
 
     /** Every neighbour write reaches us here; our own state is never rewritten. */
@@ -212,13 +292,8 @@ public class CsBossMimicBlock extends BaseEntityBlock implements BattleReactiveB
     protected BlockState updateShape(BlockState state, Direction direction, BlockState neighborState,
                                      LevelAccessor level, BlockPos pos, BlockPos neighborPos) {
         refresh(level, pos, state, false);
+        tellNeighbour(level, pos, state, direction, neighborPos);
         return super.updateShape(state, direction, neighborState, level, pos, neighborPos);
-    }
-
-    /** Only ever scheduled by {@link #refresh}, when a run outgrows the stack budget. */
-    @Override
-    protected void tick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
-        refresh(level, pos, state, true);
     }
 
     @Override

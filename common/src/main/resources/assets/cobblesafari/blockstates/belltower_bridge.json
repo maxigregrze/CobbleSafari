@@ -1,0 +1,364 @@
+{
+  "variants": {
+    "facing=north,line=solo,segment=single": {
+      "model": "cobblesafari:block/belltower_bridge_single_solo"
+    },
+    "facing=north,line=left,segment=single": {
+      "model": "cobblesafari:block/belltower_bridge_single_left"
+    },
+    "facing=north,line=middle,segment=single": {
+      "model": "cobblesafari:block/belltower_bridge_single_middle"
+    },
+    "facing=north,line=right,segment=single": {
+      "model": "cobblesafari:block/belltower_bridge_single_right"
+    },
+    "facing=north,line=solo,segment=double_start": {
+      "model": "cobblesafari:block/belltower_bridge_double_start_solo"
+    },
+    "facing=north,line=left,segment=double_start": {
+      "model": "cobblesafari:block/belltower_bridge_double_start_left"
+    },
+    "facing=north,line=middle,segment=double_start": {
+      "model": "cobblesafari:block/belltower_bridge_double_start_middle"
+    },
+    "facing=north,line=right,segment=double_start": {
+      "model": "cobblesafari:block/belltower_bridge_double_start_right"
+    },
+    "facing=north,line=solo,segment=double_end": {
+      "model": "cobblesafari:block/belltower_bridge_double_end_solo"
+    },
+    "facing=north,line=left,segment=double_end": {
+      "model": "cobblesafari:block/belltower_bridge_double_end_left"
+    },
+    "facing=north,line=middle,segment=double_end": {
+      "model": "cobblesafari:block/belltower_bridge_double_end_middle"
+    },
+    "facing=north,line=right,segment=double_end": {
+      "model": "cobblesafari:block/belltower_bridge_double_end_right"
+    },
+    "facing=north,line=solo,segment=start": {
+      "model": "cobblesafari:block/belltower_bridge_start_solo"
+    },
+    "facing=north,line=left,segment=start": {
+      "model": "cobblesafari:block/belltower_bridge_start_left"
+    },
+    "facing=north,line=middle,segment=start": {
+      "model": "cobblesafari:block/belltower_bridge_start_middle"
+    },
+    "facing=north,line=right,segment=start": {
+      "model": "cobblesafari:block/belltower_bridge_start_right"
+    },
+    "facing=north,line=solo,segment=middle": {
+      "model": "cobblesafari:block/belltower_bridge_middle_solo"
+    },
+    "facing=north,line=left,segment=middle": {
+      "model": "cobblesafari:block/belltower_bridge_middle_left"
+    },
+    "facing=north,line=middle,segment=middle": {
+      "model": "cobblesafari:block/belltower_bridge_middle_middle"
+    },
+    "facing=north,line=right,segment=middle": {
+      "model": "cobblesafari:block/belltower_bridge_middle_right"
+    },
+    "facing=north,line=solo,segment=end": {
+      "model": "cobblesafari:block/belltower_bridge_end_solo"
+    },
+    "facing=north,line=left,segment=end": {
+      "model": "cobblesafari:block/belltower_bridge_end_left"
+    },
+    "facing=north,line=middle,segment=end": {
+      "model": "cobblesafari:block/belltower_bridge_end_middle"
+    },
+    "facing=north,line=right,segment=end": {
+      "model": "cobblesafari:block/belltower_bridge_end_right"
+    },
+    "facing=east,line=solo,segment=single": {
+      "model": "cobblesafari:block/belltower_bridge_single_solo",
+      "y": 90
+    },
+    "facing=east,line=left,segment=single": {
+      "model": "cobblesafari:block/belltower_bridge_single_left",
+      "y": 90
+    },
+    "facing=east,line=middle,segment=single": {
+      "model": "cobblesafari:block/belltower_bridge_single_middle",
+      "y": 90
+    },
+    "facing=east,line=right,segment=single": {
+      "model": "cobblesafari:block/belltower_bridge_single_right",
+      "y": 90
+    },
+    "facing=east,line=solo,segment=double_start": {
+      "model": "cobblesafari:block/belltower_bridge_double_start_solo",
+      "y": 90
+    },
+    "facing=east,line=left,segment=double_start": {
+      "model": "cobblesafari:block/belltower_bridge_double_start_left",
+      "y": 90
+    },
+    "facing=east,line=middle,segment=double_start": {
+      "model": "cobblesafari:block/belltower_bridge_double_start_middle",
+      "y": 90
+    },
+    "facing=east,line=right,segment=double_start": {
+      "model": "cobblesafari:block/belltower_bridge_double_start_right",
+      "y": 90
+    },
+    "facing=east,line=solo,segment=double_end": {
+      "model": "cobblesafari:block/belltower_bridge_double_end_solo",
+      "y": 90
+    },
+    "facing=east,line=left,segment=double_end": {
+      "model": "cobblesafari:block/belltower_bridge_double_end_left",
+      "y": 90
+    },
+    "facing=east,line=middle,segment=double_end": {
+      "model": "cobblesafari:block/belltower_bridge_double_end_middle",
+      "y": 90
+    },
+    "facing=east,line=right,segment=double_end": {
+      "model": "cobblesafari:block/belltower_bridge_double_end_right",
+      "y": 90
+    },
+    "facing=east,line=solo,segment=start": {
+      "model": "cobblesafari:block/belltower_bridge_start_solo",
+      "y": 90
+    },
+    "facing=east,line=left,segment=start": {
+      "model": "cobblesafari:block/belltower_bridge_start_left",
+      "y": 90
+    },
+    "facing=east,line=middle,segment=start": {
+      "model": "cobblesafari:block/belltower_bridge_start_middle",
+      "y": 90
+    },
+    "facing=east,line=right,segment=start": {
+      "model": "cobblesafari:block/belltower_bridge_start_right",
+      "y": 90
+    },
+    "facing=east,line=solo,segment=middle": {
+      "model": "cobblesafari:block/belltower_bridge_middle_solo",
+      "y": 90
+    },
+    "facing=east,line=left,segment=middle": {
+      "model": "cobblesafari:block/belltower_bridge_middle_left",
+      "y": 90
+    },
+    "facing=east,line=middle,segment=middle": {
+      "model": "cobblesafari:block/belltower_bridge_middle_middle",
+      "y": 90
+    },
+    "facing=east,line=right,segment=middle": {
+      "model": "cobblesafari:block/belltower_bridge_middle_right",
+      "y": 90
+    },
+    "facing=east,line=solo,segment=end": {
+      "model": "cobblesafari:block/belltower_bridge_end_solo",
+      "y": 90
+    },
+    "facing=east,line=left,segment=end": {
+      "model": "cobblesafari:block/belltower_bridge_end_left",
+      "y": 90
+    },
+    "facing=east,line=middle,segment=end": {
+      "model": "cobblesafari:block/belltower_bridge_end_middle",
+      "y": 90
+    },
+    "facing=east,line=right,segment=end": {
+      "model": "cobblesafari:block/belltower_bridge_end_right",
+      "y": 90
+    },
+    "facing=south,line=solo,segment=single": {
+      "model": "cobblesafari:block/belltower_bridge_single_solo",
+      "y": 180
+    },
+    "facing=south,line=left,segment=single": {
+      "model": "cobblesafari:block/belltower_bridge_single_left",
+      "y": 180
+    },
+    "facing=south,line=middle,segment=single": {
+      "model": "cobblesafari:block/belltower_bridge_single_middle",
+      "y": 180
+    },
+    "facing=south,line=right,segment=single": {
+      "model": "cobblesafari:block/belltower_bridge_single_right",
+      "y": 180
+    },
+    "facing=south,line=solo,segment=double_start": {
+      "model": "cobblesafari:block/belltower_bridge_double_start_solo",
+      "y": 180
+    },
+    "facing=south,line=left,segment=double_start": {
+      "model": "cobblesafari:block/belltower_bridge_double_start_left",
+      "y": 180
+    },
+    "facing=south,line=middle,segment=double_start": {
+      "model": "cobblesafari:block/belltower_bridge_double_start_middle",
+      "y": 180
+    },
+    "facing=south,line=right,segment=double_start": {
+      "model": "cobblesafari:block/belltower_bridge_double_start_right",
+      "y": 180
+    },
+    "facing=south,line=solo,segment=double_end": {
+      "model": "cobblesafari:block/belltower_bridge_double_end_solo",
+      "y": 180
+    },
+    "facing=south,line=left,segment=double_end": {
+      "model": "cobblesafari:block/belltower_bridge_double_end_left",
+      "y": 180
+    },
+    "facing=south,line=middle,segment=double_end": {
+      "model": "cobblesafari:block/belltower_bridge_double_end_middle",
+      "y": 180
+    },
+    "facing=south,line=right,segment=double_end": {
+      "model": "cobblesafari:block/belltower_bridge_double_end_right",
+      "y": 180
+    },
+    "facing=south,line=solo,segment=start": {
+      "model": "cobblesafari:block/belltower_bridge_start_solo",
+      "y": 180
+    },
+    "facing=south,line=left,segment=start": {
+      "model": "cobblesafari:block/belltower_bridge_start_left",
+      "y": 180
+    },
+    "facing=south,line=middle,segment=start": {
+      "model": "cobblesafari:block/belltower_bridge_start_middle",
+      "y": 180
+    },
+    "facing=south,line=right,segment=start": {
+      "model": "cobblesafari:block/belltower_bridge_start_right",
+      "y": 180
+    },
+    "facing=south,line=solo,segment=middle": {
+      "model": "cobblesafari:block/belltower_bridge_middle_solo",
+      "y": 180
+    },
+    "facing=south,line=left,segment=middle": {
+      "model": "cobblesafari:block/belltower_bridge_middle_left",
+      "y": 180
+    },
+    "facing=south,line=middle,segment=middle": {
+      "model": "cobblesafari:block/belltower_bridge_middle_middle",
+      "y": 180
+    },
+    "facing=south,line=right,segment=middle": {
+      "model": "cobblesafari:block/belltower_bridge_middle_right",
+      "y": 180
+    },
+    "facing=south,line=solo,segment=end": {
+      "model": "cobblesafari:block/belltower_bridge_end_solo",
+      "y": 180
+    },
+    "facing=south,line=left,segment=end": {
+      "model": "cobblesafari:block/belltower_bridge_end_left",
+      "y": 180
+    },
+    "facing=south,line=middle,segment=end": {
+      "model": "cobblesafari:block/belltower_bridge_end_middle",
+      "y": 180
+    },
+    "facing=south,line=right,segment=end": {
+      "model": "cobblesafari:block/belltower_bridge_end_right",
+      "y": 180
+    },
+    "facing=west,line=solo,segment=single": {
+      "model": "cobblesafari:block/belltower_bridge_single_solo",
+      "y": 270
+    },
+    "facing=west,line=left,segment=single": {
+      "model": "cobblesafari:block/belltower_bridge_single_left",
+      "y": 270
+    },
+    "facing=west,line=middle,segment=single": {
+      "model": "cobblesafari:block/belltower_bridge_single_middle",
+      "y": 270
+    },
+    "facing=west,line=right,segment=single": {
+      "model": "cobblesafari:block/belltower_bridge_single_right",
+      "y": 270
+    },
+    "facing=west,line=solo,segment=double_start": {
+      "model": "cobblesafari:block/belltower_bridge_double_start_solo",
+      "y": 270
+    },
+    "facing=west,line=left,segment=double_start": {
+      "model": "cobblesafari:block/belltower_bridge_double_start_left",
+      "y": 270
+    },
+    "facing=west,line=middle,segment=double_start": {
+      "model": "cobblesafari:block/belltower_bridge_double_start_middle",
+      "y": 270
+    },
+    "facing=west,line=right,segment=double_start": {
+      "model": "cobblesafari:block/belltower_bridge_double_start_right",
+      "y": 270
+    },
+    "facing=west,line=solo,segment=double_end": {
+      "model": "cobblesafari:block/belltower_bridge_double_end_solo",
+      "y": 270
+    },
+    "facing=west,line=left,segment=double_end": {
+      "model": "cobblesafari:block/belltower_bridge_double_end_left",
+      "y": 270
+    },
+    "facing=west,line=middle,segment=double_end": {
+      "model": "cobblesafari:block/belltower_bridge_double_end_middle",
+      "y": 270
+    },
+    "facing=west,line=right,segment=double_end": {
+      "model": "cobblesafari:block/belltower_bridge_double_end_right",
+      "y": 270
+    },
+    "facing=west,line=solo,segment=start": {
+      "model": "cobblesafari:block/belltower_bridge_start_solo",
+      "y": 270
+    },
+    "facing=west,line=left,segment=start": {
+      "model": "cobblesafari:block/belltower_bridge_start_left",
+      "y": 270
+    },
+    "facing=west,line=middle,segment=start": {
+      "model": "cobblesafari:block/belltower_bridge_start_middle",
+      "y": 270
+    },
+    "facing=west,line=right,segment=start": {
+      "model": "cobblesafari:block/belltower_bridge_start_right",
+      "y": 270
+    },
+    "facing=west,line=solo,segment=middle": {
+      "model": "cobblesafari:block/belltower_bridge_middle_solo",
+      "y": 270
+    },
+    "facing=west,line=left,segment=middle": {
+      "model": "cobblesafari:block/belltower_bridge_middle_left",
+      "y": 270
+    },
+    "facing=west,line=middle,segment=middle": {
+      "model": "cobblesafari:block/belltower_bridge_middle_middle",
+      "y": 270
+    },
+    "facing=west,line=right,segment=middle": {
+      "model": "cobblesafari:block/belltower_bridge_middle_right",
+      "y": 270
+    },
+    "facing=west,line=solo,segment=end": {
+      "model": "cobblesafari:block/belltower_bridge_end_solo",
+      "y": 270
+    },
+    "facing=west,line=left,segment=end": {
+      "model": "cobblesafari:block/belltower_bridge_end_left",
+      "y": 270
+    },
+    "facing=west,line=middle,segment=end": {
+      "model": "cobblesafari:block/belltower_bridge_end_middle",
+      "y": 270
+    },
+    "facing=west,line=right,segment=end": {
+      "model": "cobblesafari:block/belltower_bridge_end_right",
+      "y": 270
+    }
+  }
+}

@@ -6,12 +6,27 @@
     "foliage_color": 15958324,
     "grass_color": 15958324,
     "sky_color": 4176617,
-    "fog_color": 0,
+    "fog_color": 15958324,
     "water_color": 4176617,
     "water_fog_color": 4176617
   },
   "spawn_costs": {},
   "spawners": {},
   "carvers": {},
-  "features": []
+  "features": [
+    [
+      "cobblesafari:dungeon_jump_floor_logs",
+      "cobblesafari:dungeon_jump_floor_leaves"
+    ],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    []
+  ]
 }

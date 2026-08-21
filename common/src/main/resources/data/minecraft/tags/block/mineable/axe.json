@@ -1,6 +1,6 @@
 {
-	"replace": false,
-	"values": [
+  "replace": false,
+  "values": [
     "cobblesafari:hyperspace_door",
     "cobblesafari:hyperspace_flowerpot",
     "cobblesafari:hyperspace_chair",
@@ -26,6 +26,7 @@
     "cobblesafari:belltower_beam",
     "cobblesafari:belltower_rooftiles",
     "cobblesafari:belltower_trellis",
-    "cobblesafari:belltower_ladder"
-]
+    "cobblesafari:belltower_ladder",
+    "cobblesafari:belltower_bridge"
+  ]
 }

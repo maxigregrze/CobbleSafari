@@ -8,6 +8,7 @@
     "ServerPlayerMixin",
     "LivingEntitySelfCombatDamageMixin",
     "LivingEntityRotoFallMixin",
+    "LivingEntityMapleLeafPileMixin",
     "LivingEntityRedShackledMixin",
     "LivingEntityRedShackledCombatMixin",
     "PlayerRotoFallMixin",

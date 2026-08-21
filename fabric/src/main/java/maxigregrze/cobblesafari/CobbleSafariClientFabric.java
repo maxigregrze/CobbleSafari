@@ -35,6 +35,9 @@ import maxigregrze.cobblesafari.client.donut.DonutFlavorClientTooltip;
 import maxigregrze.cobblesafari.item.donut.DonutTooltipPayload;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
+import net.fabricmc.fabric.api.client.particle.v1.ParticleFactoryRegistry;
+import maxigregrze.cobblesafari.client.particle.MapleLeafParticle;
+import maxigregrze.cobblesafari.init.ModParticles;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.fabric.api.client.rendering.v1.TooltipComponentCallback;
@@ -177,7 +180,7 @@ public class CobbleSafariClientFabric implements ClientModInitializer {
     }
 
     private void registerBlockRenderLayers() {
-        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.CSBOSS_PLATFORM, RenderType.translucent());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.CSBOSS_PLATFORM, RenderType.cutoutMipped());
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.TINKAGEAR_BLOCK, RenderType.translucent());
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.SAFARI_TELEPORTER, RenderType.translucent());
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.TELEPORT_PAD, RenderType.translucent());
@@ -189,6 +192,7 @@ public class CobbleSafariClientFabric implements ClientModInitializer {
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.BELLTOWER_TOPPER, RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.BELLTOWER_ROD, RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.BELLTOWER_ROOFTILES, RenderType.cutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.BELLTOWER_BRIDGE, RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.POKEMON_STATUE, RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.HOOPA_RING_PORTAL, RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.DUNGEON_PORTAL, RenderType.cutout());
@@ -352,6 +356,26 @@ public class CobbleSafariClientFabric implements ClientModInitializer {
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.HYPERSPACE_LEAVES, RenderType.cutoutMipped());
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.HYPERSPACE_SAPLING, RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.HYPERSPACE_SAPLING_FLOWERED, RenderType.cutout());
+
+        // Maples: leaves and leaf piles are cutoutMipped like every other foliage - the floor
+        // texture of the pile has transparency, so solid() would fill the gaps in. Saplings are
+        // plain cutout, matching every other cross-model plant.
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.RED_MAPLE_LEAVES, RenderType.cutoutMipped());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.ORANGE_MAPLE_LEAVES, RenderType.cutoutMipped());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.YELLOW_MAPLE_LEAVES, RenderType.cutoutMipped());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.RED_MAPLE_SAPLING, RenderType.cutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.ORANGE_MAPLE_SAPLING, RenderType.cutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.YELLOW_MAPLE_SAPLING, RenderType.cutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.RED_MAPLE_LEAVES_PILE, RenderType.cutoutMipped());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.ORANGE_MAPLE_LEAVES_PILE, RenderType.cutoutMipped());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.YELLOW_MAPLE_LEAVES_PILE, RenderType.cutoutMipped());
+
+        ParticleFactoryRegistry.getInstance().register(
+                ModParticles.RED_MAPLE_LEAVES, MapleLeafParticle.Provider::new);
+        ParticleFactoryRegistry.getInstance().register(
+                ModParticles.ORANGE_MAPLE_LEAVES, MapleLeafParticle.Provider::new);
+        ParticleFactoryRegistry.getInstance().register(
+                ModParticles.YELLOW_MAPLE_LEAVES, MapleLeafParticle.Provider::new);
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.HYPERSPACE_WOOD_DOOR, RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.HYPERSPACE_WOOD_TRAPDOOR, RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.KALOS_MANHOLE, RenderType.cutout());

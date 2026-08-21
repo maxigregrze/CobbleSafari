@@ -27,6 +27,10 @@ public class DungeonDimensionEntry {
         return isEnabled;
     }
 
+    public void setEnabled(boolean enabled) {
+        this.isEnabled = enabled;
+    }
+
     public int getSpawnWeight() {
         return spawnWeight;
     }

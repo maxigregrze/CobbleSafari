@@ -417,6 +417,15 @@ public class ModCreativeTabs {
                 output.accept(ModBlocks.HYPERSPACE_LEAVES);
                 output.accept(ModBlocks.HYPERSPACE_SAPLING);
                 output.accept(ModBlocks.HYPERSPACE_SAPLING_FLOWERED);
+                output.accept(ModBlocks.RED_MAPLE_LEAVES);
+                output.accept(ModBlocks.RED_MAPLE_SAPLING);
+                output.accept(ModBlocks.RED_MAPLE_LEAVES_PILE);
+                output.accept(ModBlocks.ORANGE_MAPLE_LEAVES);
+                output.accept(ModBlocks.ORANGE_MAPLE_SAPLING);
+                output.accept(ModBlocks.ORANGE_MAPLE_LEAVES_PILE);
+                output.accept(ModBlocks.YELLOW_MAPLE_LEAVES);
+                output.accept(ModBlocks.YELLOW_MAPLE_SAPLING);
+                output.accept(ModBlocks.YELLOW_MAPLE_LEAVES_PILE);
                 output.accept(ModBlocks.HYPERSPACE_BUSH);
                 output.accept(ModBlocks.HYPERSPACE_BUSH_FLOWERED);
                 output.accept(ModBlocks.HYPERSPACE_FLOWERS);
@@ -445,6 +454,7 @@ public class ModCreativeTabs {
                 output.accept(ModBlocks.BELLTOWER_TOPPER);
                 output.accept(ModBlocks.BELLTOWER_BELL);
                 output.accept(ModBlocks.BELLTOWER_LADDER);
+                output.accept(ModBlocks.BELLTOWER_BRIDGE);
             })
             .build();
 

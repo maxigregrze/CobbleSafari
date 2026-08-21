@@ -33,7 +33,21 @@ public class PortalSpawnConfig {
     private static final String DEFAULT_ALLOWED_DIMENSION = "minecraft:overworld";
     private static final List<String> DEFAULT_ALLOWED_DIMENSIONS = List.of(DEFAULT_ALLOWED_DIMENSION);
 
+    /**
+     * Version of {@code dungeon_spawn_config.json}. Bumped whenever a default has to be relifted on
+     * existing files; the migration keys off this version and never off the flag's value, so a choice
+     * made by the server owner after the migration is preserved forever (action plan 175, § 7.1).
+     */
+    private static final int CURRENT_CONFIG_VERSION = 1;
+
     private static PortalSpawnConfig INSTANCE;
+
+    /**
+     * 0 = file written before the Bell Tower dungeon existed. Must stay 0 at declaration and must not
+     * be set in the constructor: Gson runs both on an existing file, so a non-zero default here would
+     * make a pre-migration file look already migrated. {@link #migrateConfigVersion()} stamps it.
+     */
+    private int configVersion = 0;
 
     private int spawnIntervalSeconds = 600;
     private int portalLifetimeMinutes = 30;
@@ -49,8 +63,32 @@ public class PortalSpawnConfig {
 
     public PortalSpawnConfig() {
         dimensions.add(new DungeonDimensionEntry(DUNGEON_UNDERGROUND_ID, true, 1));
-        dimensions.add(new DungeonDimensionEntry(DUNGEON_JUMP_ID, false, 1));
+        dimensions.add(new DungeonDimensionEntry(DUNGEON_JUMP_ID, true, 1));
         dimensions.add(new DungeonDimensionEntry(DUNGEON_DISTORTION_ID, true, 1));
+    }
+
+    /**
+     * One-shot migration. Configurations written before the Bell Tower dungeon existed carry
+     * {@code dungeon_jump: isEnabled = false}, a value that expressed the absence of the dungeon and
+     * not a server owner's choice. It is lifted once, then the file is stamped: a later manual
+     * disable is never overridden, because the condition tests the file version and not the flag.
+     */
+    private static void migrateConfigVersion() {
+        if (INSTANCE == null || INSTANCE.configVersion >= CURRENT_CONFIG_VERSION) {
+            return;
+        }
+        boolean flipped = false;
+        for (DungeonDimensionEntry entry : INSTANCE.dimensions) {
+            if (DUNGEON_JUMP_ID.equals(entry.getDimensionId()) && !entry.isEnabled()) {
+                entry.setEnabled(true);
+                flipped = true;
+            }
+        }
+        INSTANCE.configVersion = CURRENT_CONFIG_VERSION;
+        if (flipped) {
+            CobbleSafari.LOGGER.info("dungeon_spawn_config.json migrated to v{}: {} enabled",
+                    CURRENT_CONFIG_VERSION, DUNGEON_JUMP_ID);
+        }
     }
 
     private static void migrateOldConfigPath() {
@@ -90,6 +128,7 @@ public class PortalSpawnConfig {
                     INSTANCE.bannedBlocks = new ArrayList<>();
                 }
                 clampSpawnChanceInInstance();
+                migrateConfigVersion();
                 addMissingDimensions();
                 normalizeAllowedDimensions();
                 save();
@@ -100,6 +139,7 @@ public class PortalSpawnConfig {
             }
         } else {
             INSTANCE = new PortalSpawnConfig();
+            migrateConfigVersion();
             save();
         }
     }
@@ -121,7 +161,7 @@ public class PortalSpawnConfig {
 
         boolean modified = false;
         modified |= ensureDimensionConfig(DUNGEON_UNDERGROUND_ID, true, 1);
-        modified |= ensureDimensionConfig(DUNGEON_JUMP_ID, false, 1);
+        modified |= ensureDimensionConfig(DUNGEON_JUMP_ID, true, 1);
         modified |= ensureDimensionConfig(DUNGEON_DISTORTION_ID, true, 1);
 
         if (modified) {

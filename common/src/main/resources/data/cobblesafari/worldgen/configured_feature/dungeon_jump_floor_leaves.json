@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:fill_layer",
+  "config": {
+    "height": 63,
+    "state": {
+      "Name": "cobblesafari:orange_maple_leaves",
+      "Properties": {
+        "distance": "1",
+        "persistent": "false",
+        "waterlogged": "false"
+      }
+    }
+  }
+}

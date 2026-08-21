@@ -1,6 +1,9 @@
 {
   "replace": false,
   "values": [
-    "cobblesafari:hyperspace_leaves"
+    "cobblesafari:hyperspace_leaves",
+    "cobblesafari:red_maple_leaves",
+    "cobblesafari:orange_maple_leaves",
+    "cobblesafari:yellow_maple_leaves"
   ]
 }

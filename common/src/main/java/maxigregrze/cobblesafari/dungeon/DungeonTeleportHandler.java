@@ -309,7 +309,11 @@ public class DungeonTeleportHandler {
         int zOffset = positionData.getAndIncrementSlotZOffset(dimensionId, slot);
         int x = (slot % 100) * zoneSize;
         int z = (slot / 100) * zoneSize + zOffset;
-        int y = (slot % 2 == 0) ? 96 : 32;
+        // A dungeon whose dimension has a floor at a fixed altitude must always anchor at the same Y,
+        // otherwise the cleanup window can no longer be aligned with that floor (action plan 175, § 2).
+        int y = config.hasFixedStructureY()
+                ? config.getFixedStructureY()
+                : ((slot % 2 == 0) ? 96 : 32);
         BlockPos pos = new BlockPos(x, y, z);
 
         CobbleSafari.LOGGER.info("Allocated dungeon slot {} at {} (Z offset {}) for dimension {}", slot, pos, zOffset, dimensionId);

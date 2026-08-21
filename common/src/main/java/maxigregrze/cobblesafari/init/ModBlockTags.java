@@ -13,5 +13,9 @@ public final class ModBlockTags {
     public static final TagKey<Block> TRAP_SOFT_BLOCKS = TagKey.create(Registries.BLOCK,
             ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, "trap_soft_blocks"));
 
+    /** The three maple leaf piles, so the litter logic never needs three instanceof checks. */
+    public static final TagKey<Block> MAPLE_LEAF_PILES = TagKey.create(Registries.BLOCK,
+            ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, "maple_leaf_piles"));
+
     private ModBlockTags() {}
 }

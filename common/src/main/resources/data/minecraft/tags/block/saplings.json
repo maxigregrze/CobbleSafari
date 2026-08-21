@@ -2,6 +2,9 @@
   "replace": false,
   "values": [
     "cobblesafari:hyperspace_sapling",
-    "cobblesafari:hyperspace_sapling_flowered"
+    "cobblesafari:hyperspace_sapling_flowered",
+    "cobblesafari:red_maple_sapling",
+    "cobblesafari:orange_maple_sapling",
+    "cobblesafari:yellow_maple_sapling"
   ]
 }

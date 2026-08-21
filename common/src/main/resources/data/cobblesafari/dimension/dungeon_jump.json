@@ -3,9 +3,9 @@
   "generator": {
     "type": "minecraft:flat",
     "settings": {
-      "biome": "cobblesafari:dungeon_biome",
+      "biome": "cobblesafari:dungeon_jump_biome",
       "lakes": false,
-      "features": false,
+      "features": true,
       "layers": [
         {
           "height": 256,

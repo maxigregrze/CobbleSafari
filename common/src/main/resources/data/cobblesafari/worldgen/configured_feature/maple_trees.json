@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:random_selector",
+  "config": {
+    "features": [
+      {
+        "feature": "cobblesafari:red_maple_tree",
+        "chance": 0.4
+      },
+      {
+        "feature": "cobblesafari:orange_maple_tree",
+        "chance": 0.5833333
+      }
+    ],
+    "default": "cobblesafari:yellow_maple_tree"
+  }
+}

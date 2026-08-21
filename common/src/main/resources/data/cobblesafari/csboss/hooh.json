@@ -1,0 +1,20 @@
+{
+    "bossId": "hooh",
+    "displayName": "Ho-Oh",
+    "tags": ["belltowerBoss"],
+    "maximumDuration": 600,
+    "minimumDuration": 300,
+    "specie": "hooh",
+    "minion": "hooh",
+    "size": 2,
+    "portalSize": 8.0,
+    "portalDistance": 22.0,
+    "allowSimultaneousAttacks": true,
+    "moveCooldownMin": 2,
+    "moveCooldownMax": 3,
+    "isStatic": true,
+    "music": "cobblesafari:hooh",
+    "healthStyle": "notched_10",
+    "healthColor": "red"
+  }
+  
