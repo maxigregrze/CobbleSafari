@@ -56,6 +56,9 @@ public class DimensionalBanData {
         dungeonJumpRestrictions.allowBlockBreaking = false;
         dungeonJumpRestrictions.allowBlockPlacing = false;
         dungeonJumpRestrictions.forbidMounting = true;
+        // Bell Tower is a jumping dungeon: the Roto-Fall guard cancels every fall and Roto-Glide hands
+        // out a free second storey, which is precisely what the tower is meant to charge for.
+        dungeonJumpRestrictions.allowRotomSafety = false;
         dimensions.put("cobblesafari:dungeon_jump", dungeonJumpRestrictions);
 
         
@@ -89,6 +92,12 @@ public class DimensionalBanData {
         public boolean allowBlockBreaking = true;
         public boolean allowBlockPlacing = true;
         public boolean forbidMounting = false;
+        /**
+         * Rotom Phone safety features (Roto-Fall guard + Roto-Glide double jump). The phone itself
+         * stays fully usable and both toggles stay operable in its settings screen; only their effect
+         * is suppressed. Permissive by default, like the three allow* flags above.
+         */
+        public boolean allowRotomSafety = true;
 
         public DimensionRestrictions() {
             // Required no-arg constructor for GSON deserialization.

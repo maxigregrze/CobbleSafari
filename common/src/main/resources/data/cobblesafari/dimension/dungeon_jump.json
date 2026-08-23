@@ -8,7 +8,15 @@
       "features": true,
       "layers": [
         {
-          "height": 256,
+          "height": 8,
+          "block": "minecraft:air"
+        },
+        {
+          "height": 1,
+          "block": "minecraft:mangrove_log"
+        },
+        {
+          "height": 247,
           "block": "minecraft:air"
         }
       ],

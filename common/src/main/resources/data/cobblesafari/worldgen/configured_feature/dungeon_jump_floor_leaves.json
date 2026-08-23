@@ -1,7 +1,7 @@
 {
   "type": "minecraft:fill_layer",
   "config": {
-    "height": 63,
+    "height": 9,
     "state": {
       "Name": "cobblesafari:orange_maple_leaves",
       "Properties": {

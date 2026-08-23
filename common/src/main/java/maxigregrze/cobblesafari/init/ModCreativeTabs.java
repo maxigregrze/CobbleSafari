@@ -41,7 +41,9 @@ public class ModCreativeTabs {
                 output.accept(ModItems.TICKET_WONDERTRADE);
                 output.accept(ModItems.TICKET_GTS);
                 output.accept(ModBlocks.LOST_NOTES);
-                output.accept(ModBlocks.LOST_ITEM);
+                output.accept(ModBlocks.LOST_ITEM_RUBBLES_ITEM);
+                output.accept(ModBlocks.LOST_ITEM_CLASSIC_ITEM);
+                output.accept(ModBlocks.LOST_ITEM_BURIED_ITEM);
                 output.accept(ModItems.EGG_CREATIVE);
                 output.accept(ModBlocks.AUSPICIOUS_POKEBALL);
                 output.accept(ModBlocks.AUSPICIOUS_POKEBALL_SMALL);

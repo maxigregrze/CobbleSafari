@@ -1,7 +1,10 @@
 package maxigregrze.cobblesafari.network;
 
 import com.mojang.logging.LogUtils;
+import maxigregrze.cobblesafari.block.misc.LostItemBlock;
 import maxigregrze.cobblesafari.block.misc.LostItemBlockEntity;
+import maxigregrze.cobblesafari.block.misc.LostItemSkin;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
@@ -11,7 +14,9 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.loot.LootTable;
 
 import java.util.function.BiConsumer;
@@ -57,6 +62,10 @@ public final class LostItemConfigServerHandler {
             return;
         }
 
+        // Applied before the mode switch on purpose: every applyMode* branch can bail out on a
+        // validation failure, and losing the skin because a loot table id was misspelled would be a trap.
+        applySkin(player, payload.pos(), LostItemSkin.byName(payload.skin()));
+
         int mode = payload.mode();
         if (mode < 0 || mode > 2) {
             mode = 0;
@@ -67,6 +76,17 @@ public final class LostItemConfigServerHandler {
             case 1 -> applyMode1(serverLevel, player, be, payload.lostItemLootTableId().trim());
             case 2 -> applyMode2(player, be, payload.lootItemId().trim());
             default -> applyMode0(serverLevel, player, be, payload);
+        }
+    }
+
+    /**
+     * Rewrites the {@code skin} block state property; no-op when it already matches. Changing a property
+     * without changing the block keeps the block entity, so claims and loot config survive untouched.
+     */
+    private static void applySkin(ServerPlayer player, BlockPos pos, LostItemSkin skin) {
+        BlockState state = player.level().getBlockState(pos);
+        if (state.getBlock() instanceof LostItemBlock && state.getValue(LostItemBlock.SKIN) != skin) {
+            player.level().setBlock(pos, state.setValue(LostItemBlock.SKIN, skin), Block.UPDATE_ALL);
         }
     }
 

@@ -81,6 +81,21 @@ public class BannedItemsManager {
         return !restrictions.forbidMounting;
     }
 
+    /**
+     * Whether the Rotom Phone safety features (Roto-Fall, Roto-Glide) take effect in this dimension.
+     * The phone itself is never restricted by this flag - only the outcome of its two safety toggles.
+     */
+    public static boolean isRotomSafetyAllowed(ResourceKey<Level> dimension) {
+        String dimensionId = dimension.location().toString();
+        DimensionalBanData.DimensionRestrictions restrictions = DimensionalBanConfig.getEffectiveData().dimensions.get(dimensionId);
+
+        if (restrictions == null) {
+            return true;
+        }
+
+        return restrictions.allowRotomSafety;
+    }
+
     public static boolean hasDimensionRestrictions(ResourceKey<Level> dimension) {
         String dimensionId = dimension.location().toString();
         return DimensionalBanConfig.getEffectiveData().dimensions.containsKey(dimensionId);

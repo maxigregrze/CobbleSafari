@@ -15,7 +15,8 @@ public class LostItemVisualBlock extends Block {
         this.registerDefaultState(this.stateDefinition.any()
                 .setValue(LostItemBlock.FACE, AttachFace.FLOOR)
                 .setValue(LostItemBlock.FACING, Direction.NORTH)
-                .setValue(LostItemBlock.HAS_ITEM, true));
+                .setValue(LostItemBlock.HAS_ITEM, true)
+                .setValue(LostItemBlock.SKIN, LostItemSkin.RUBBLES));
     }
 
     @Override
@@ -25,6 +26,6 @@ public class LostItemVisualBlock extends Block {
 
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
-        builder.add(LostItemBlock.FACE, LostItemBlock.FACING, LostItemBlock.HAS_ITEM);
+        builder.add(LostItemBlock.FACE, LostItemBlock.FACING, LostItemBlock.HAS_ITEM, LostItemBlock.SKIN);
     }
 }

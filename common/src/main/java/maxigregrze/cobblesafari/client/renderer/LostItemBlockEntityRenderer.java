@@ -33,7 +33,8 @@ public class LostItemBlockEntityRenderer implements BlockEntityRenderer<LostItem
         BlockState renderState = ModBlocks.LOST_ITEM_VISUAL.defaultBlockState()
                 .setValue(LostItemBlock.FACE, state.getValue(LostItemBlock.FACE))
                 .setValue(LostItemBlock.FACING, state.getValue(LostItemBlock.FACING))
-                .setValue(LostItemBlock.HAS_ITEM, !claimed);
+                .setValue(LostItemBlock.HAS_ITEM, !claimed)
+                .setValue(LostItemBlock.SKIN, state.getValue(LostItemBlock.SKIN));
 
         poseStack.pushPose();
         blockRenderDispatcher.renderSingleBlock(renderState, poseStack, bufferSource, packedLight, packedOverlay);

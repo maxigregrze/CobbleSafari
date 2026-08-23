@@ -54,4 +54,20 @@ public class RotomPhoneConfigSync {
         }
         return store != null && store.isAppUnlocked(player.getUUID(), appId);
     }
+
+    /**
+     * Same question as {@link #isAppUnlockedByPlayer(ServerPlayer, String, RotomPhoneConfig.PhoneAppConfig,
+     * RotomPhoneUnlockSavedData)}, for a caller that holds neither the app config nor the store.
+     * An app id absent from the config is treated as locked.
+     */
+    public static boolean isAppUnlockedByPlayer(ServerPlayer player, String appId) {
+        RotomPhoneConfig.PhoneAppConfig cfg = RotomPhoneConfig.getPhoneApps().get(appId);
+        if (cfg == null) {
+            return false;
+        }
+        if (cfg.isEnabledByDefault()) {
+            return true;
+        }
+        return isAppUnlockedByPlayer(player, appId, cfg, RotomPhoneUnlockSavedData.get(player.server));
+    }
 }

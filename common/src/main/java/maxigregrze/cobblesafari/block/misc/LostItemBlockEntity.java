@@ -181,6 +181,11 @@ public class LostItemBlockEntity extends BlockEntity {
     }
 
     public OpenLostItemConfigPayload createOpenPayload() {
+        // The skin lives on the block state, not here: read it back rather than keeping a second copy.
+        BlockState state = this.getBlockState();
+        String skin = state.hasProperty(LostItemBlock.SKIN)
+                ? state.getValue(LostItemBlock.SKIN).getSerializedName()
+                : LostItemSkin.RUBBLES.getSerializedName();
         return new OpenLostItemConfigPayload(
                 this.worldPosition,
                 this.poolBerryId,
@@ -191,7 +196,8 @@ public class LostItemBlockEntity extends BlockEntity {
                 this.maxRoll,
                 this.lostItemLootTableId,
                 this.lootItemId,
-                this.mode
+                this.mode,
+                skin
         );
     }
 

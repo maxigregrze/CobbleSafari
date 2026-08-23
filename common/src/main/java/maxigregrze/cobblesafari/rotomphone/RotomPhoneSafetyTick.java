@@ -1,6 +1,7 @@
 package maxigregrze.cobblesafari.rotomphone;
 
 import maxigregrze.cobblesafari.init.ModEffects;
+import maxigregrze.cobblesafari.manager.BannedItemsManager;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -20,6 +21,14 @@ public final class RotomPhoneSafetyTick {
     private RotomPhoneSafetyTick() {}
 
     public static void tryApplyRotoFall(ServerPlayer player) {
+        if (!BannedItemsManager.isRotomSafetyAllowed(player.level().dimension())) {
+            // Strip, don't just skip: the guard lasts 40 ticks, so a player teleported mid-fall into a
+            // restricted dimension would otherwise keep one free landing on the way in.
+            if (player.hasEffect(ModEffects.ROTO_FALL.holder)) {
+                player.removeEffect(ModEffects.ROTO_FALL.holder);
+            }
+            return;
+        }
         if (player.onGround()) {
             // Landed: drop the guard immediately rather than paying for a separate ground-clear tick.
             if (player.hasEffect(ModEffects.ROTO_FALL.holder)) {

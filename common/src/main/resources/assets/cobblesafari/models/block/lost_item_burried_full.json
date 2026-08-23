@@ -1,0 +1,80 @@
+{
+	"format_version": "1.9.0",
+	"credit": "Made with Blockbench",
+	"parent": "minecraft:block/block",
+	"textures": {
+		"1": "cobblesafari:block/lost_item_shadow",
+		"2": "cobblesafari:block/auspiciouspokeball_small",
+		"particle": "cobblesafari:block/lost_item_shadow"
+	},
+	"elements": [
+		{
+			"name": "bottom",
+			"from": [5.95, -1.75, 5.95],
+			"to": [10.05, 0.3, 10.05],
+			"rotation": {"angle": 22.5, "axis": "x", "origin": [8, 0.3125, 6.9225]},
+			"faces": {
+				"north": {"uv": [4, 10, 8, 12], "texture": "#2"},
+				"east": {"uv": [0, 10, 4, 12], "texture": "#2"},
+				"south": {"uv": [8, 10, 12, 12], "texture": "#2"},
+				"west": {"uv": [4, 10, 0, 12], "texture": "#2"},
+				"down": {"uv": [16, 8, 12, 12], "texture": "#2"}
+			}
+		},
+		{
+			"name": "lid",
+			"from": [5.95, 0.325, 5.95],
+			"to": [10.05, 2.375, 10.05],
+			"rotation": {"angle": 22.5, "axis": "x", "origin": [8, 0.3125, 6.9225]},
+			"faces": {
+				"north": {"uv": [4, 8, 8, 10], "texture": "#2"},
+				"east": {"uv": [0, 8, 4, 10], "texture": "#2"},
+				"south": {"uv": [8, 8, 12, 10], "texture": "#2"},
+				"west": {"uv": [4, 8, 0, 10], "texture": "#2"},
+				"up": {"uv": [4, 4, 0, 0], "texture": "#2"}
+			}
+		},
+		{
+			"name": "lid",
+			"from": [7.5, -0.2, 5.845],
+			"to": [8.5, 0.8, 5.845],
+			"rotation": {"angle": 22.5, "axis": "x", "origin": [8, 0.3125, 6.9225]},
+			"faces": {
+				"north": {"uv": [5.5, 9.5, 6.5, 10.5], "texture": "#2"}
+			}
+		},
+		{
+			"name": "lid",
+			"from": [6, -1.7, 6],
+			"to": [10, 2.3, 10],
+			"rotation": {"angle": 22.5, "axis": "x", "origin": [8, 0.3125, 6.9225]},
+			"faces": {
+				"north": {"uv": [4, 4, 8, 8], "texture": "#2"},
+				"east": {"uv": [0, 4, 4, 8], "texture": "#2"},
+				"south": {"uv": [12, 4, 16, 8], "texture": "#2"},
+				"west": {"uv": [8, 4, 12, 8], "texture": "#2"},
+				"up": {"uv": [8, 4, 4, 0], "texture": "#2"},
+				"down": {"uv": [12, 0, 8, 4], "texture": "#2"}
+			}
+		},
+		{
+			"from": [2, 0, 2],
+			"to": [14, 0, 14],
+			"rotation": {"angle": 0, "axis": "y", "origin": [2, 0, 2]},
+			"faces": {
+				"up": {"uv": [0, 0, 16, 16], "texture": "#1"},
+				"down": {"uv": [0, 0, 16, 16], "texture": "#1"}
+			}
+		}
+	],
+	"groups": [
+		{
+			"name": "group",
+			"origin": [10.15, 4.15, 10.25],
+			"scope": 0,
+			"color": 0,
+			"children": [0, 1, 2, 3]
+		},
+		4
+	]
+}

@@ -17,13 +17,15 @@ public record OpenLostItemConfigPayload(
         int maxRoll,
         String lostItemLootTableId,
         String lootItemId,
-        int mode
+        int mode,
+        String skin
 ) implements CustomPacketPayload {
 
     public static final CustomPacketPayload.Type<OpenLostItemConfigPayload> TYPE =
             new CustomPacketPayload.Type<>(ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, "open_lost_item_config"));
 
     private static final int MAX_STR = 512;
+    private static final int MAX_SKIN = 32;
 
     public static final StreamCodec<FriendlyByteBuf, OpenLostItemConfigPayload> STREAM_CODEC = StreamCodec.of(
             (buf, p) -> {
@@ -37,6 +39,7 @@ public record OpenLostItemConfigPayload(
                 buf.writeUtf(p.lostItemLootTableId, MAX_STR);
                 buf.writeUtf(p.lootItemId, MAX_STR);
                 buf.writeInt(p.mode);
+                buf.writeUtf(p.skin, MAX_SKIN);
             },
             buf -> new OpenLostItemConfigPayload(
                     buf.readBlockPos(),
@@ -48,7 +51,8 @@ public record OpenLostItemConfigPayload(
                     buf.readInt(),
                     buf.readUtf(MAX_STR),
                     buf.readUtf(MAX_STR),
-                    buf.readInt()
+                    buf.readInt(),
+                    buf.readUtf(MAX_SKIN)
             )
     );
 

@@ -6,8 +6,39 @@
       "bonus_rolls": 0,
       "entries": [
         {
-          "type": "minecraft:item",
-          "name": "cobblesafari:lost_item"
+          "type": "minecraft:alternatives",
+          "children": [
+            {
+              "type": "minecraft:item",
+              "name": "cobblesafari:lost_item_classic",
+              "conditions": [
+                {
+                  "condition": "minecraft:block_state_property",
+                  "block": "cobblesafari:lost_item",
+                  "properties": {
+                    "skin": "classic"
+                  }
+                }
+              ]
+            },
+            {
+              "type": "minecraft:item",
+              "name": "cobblesafari:lost_item_buried",
+              "conditions": [
+                {
+                  "condition": "minecraft:block_state_property",
+                  "block": "cobblesafari:lost_item",
+                  "properties": {
+                    "skin": "buried"
+                  }
+                }
+              ]
+            },
+            {
+              "type": "minecraft:item",
+              "name": "cobblesafari:lost_item"
+            }
+          ]
         }
       ],
       "conditions": [

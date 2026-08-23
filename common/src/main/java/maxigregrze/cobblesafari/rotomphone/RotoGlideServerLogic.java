@@ -1,6 +1,7 @@
 package maxigregrze.cobblesafari.rotomphone;
 
 import maxigregrze.cobblesafari.item.RotomPhoneItem;
+import maxigregrze.cobblesafari.manager.BannedItemsManager;
 import net.minecraft.network.protocol.game.ClientboundSetEntityMotionPacket;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
@@ -153,6 +154,12 @@ public final class RotoGlideServerLogic {
         // disabled. Block the feature entirely in creative rather than checking for
         // the (already cleared) flying state.
         if (player.getAbilities().instabuild) {
+            return true;
+        }
+        // Dimensional restriction (action plan 176). This method is called from the client too, by
+        // RotoGlideClient.tick, so the same line also stops the client emitting requests the server
+        // would only reject.
+        if (!BannedItemsManager.isRotomSafetyAllowed(player.level().dimension())) {
             return true;
         }
         return player.isFallFlying();

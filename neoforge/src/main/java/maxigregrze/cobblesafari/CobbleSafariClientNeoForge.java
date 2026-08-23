@@ -201,8 +201,10 @@ public class CobbleSafariClientNeoForge {
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.DISTORTION_STONEBRICKS_DOOR, RenderType.cutout());
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.DISTORTION_STONEBRICKS_RUBBLE, RenderType.cutout());
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.LOST_NOTES, RenderType.cutout());
-            ItemBlockRenderTypes.setRenderLayer(ModBlocks.LOST_ITEM, RenderType.cutout());
-            ItemBlockRenderTypes.setRenderLayer(ModBlocks.LOST_ITEM_VISUAL, RenderType.cutout());
+            // Translucent, not cutout: the lost-item skins share a ground-shadow texture with a
+            // graded alpha channel, which cutout would slam to fully opaque or fully gone.
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.LOST_ITEM, RenderType.translucent());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.LOST_ITEM_VISUAL, RenderType.translucent());
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.WHIRLWIND, RenderType.translucent());
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.WHIRLWIND_DISPLAY, RenderType.translucent());
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.CSBOSS_ELECTRICITY, RenderType.cutout());

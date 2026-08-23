@@ -29,6 +29,11 @@ public class RotomPhoneConfig {
     private static final String APP_UNION = "unionApp";
     private static final String APP_WONDER = "wonderApp";
     private static final String APP_GTS = "gtsApp";
+    /**
+     * Settings app - the one that hosts the two Rotom Phone safety toggles. Public because the
+     * dimensional safety ban (action plan 176) has to ask whether a player has unlocked it.
+     */
+    public static final String APP_SETTINGS = "settingsApp";
 
     @SerializedName("CONFIG_VERSION")
     private int configVersion = 2;
@@ -88,7 +93,7 @@ public class RotomPhoneConfig {
         apps.put(APP_UNION, new PhoneAppConfig(false, List.of(
                 DIM_DUNGEON_UNDERGROUND, DIM_DUNGEON_DISTORTION)));
         apps.put("skinApp", new PhoneAppConfig(false, new ArrayList<>()));
-        apps.put("settingsApp", new PhoneAppConfig(false, new ArrayList<>()));
+        apps.put(APP_SETTINGS, new PhoneAppConfig(false, new ArrayList<>()));
         return apps;
     }
 

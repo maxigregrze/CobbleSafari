@@ -1,5 +1,6 @@
 package maxigregrze.cobblesafari.client.screen;
 
+import maxigregrze.cobblesafari.block.misc.LostItemSkin;
 import maxigregrze.cobblesafari.config.MiscConfig;
 import maxigregrze.cobblesafari.network.LostItemResetClaimsPayload;
 import maxigregrze.cobblesafari.network.OpenLostItemConfigPayload;
@@ -15,6 +16,9 @@ public class LostItemConfigScreen extends CobbleSafariConfigScreen {
 
     private static final int OUT_OF_VIEW = -4096;
     private static final int MODE_BUTTON_Y = 52;
+    /** Fixed row, kept out of the mode-dependent field area so it never has to be repositioned. */
+    private static final int SKIN_ROW_Y = MODE_BUTTON_Y + BUTTON_HEIGHT + 14;
+    private static final int ARROW_WIDTH = 20;
 
     private final OpenLostItemConfigPayload initial;
 
@@ -31,16 +35,19 @@ public class LostItemConfigScreen extends CobbleSafariConfigScreen {
 
     private Button modeButton;
 
+    private LostItemSkin skin;
+
     public LostItemConfigScreen(OpenLostItemConfigPayload initial) {
         super(Component.translatable("gui.cobblesafari.lost_item.title"));
         this.initial = initial;
         int m = initial.mode();
         this.displayMode = (m >= 0 && m <= 2) ? m : 0;
+        this.skin = LostItemSkin.byName(initial.skin());
     }
 
     @Override
     protected int contentTopY() {
-        return MODE_BUTTON_Y + BUTTON_HEIGHT + 14;
+        return SKIN_ROW_Y + BUTTON_HEIGHT + 14;
     }
 
     @Override
@@ -58,6 +65,11 @@ public class LostItemConfigScreen extends CobbleSafariConfigScreen {
             this.relayoutEditBoxes();
             this.focusFirstFieldForMode();
         }).bounds(left, MODE_BUTTON_Y, PANEL_WIDTH, BUTTON_HEIGHT).build());
+
+        addScroll(Button.builder(Component.literal("< "), b -> this.skin = this.skin.prev())
+                .bounds(left, SKIN_ROW_Y, ARROW_WIDTH, BUTTON_HEIGHT).build());
+        addScroll(Button.builder(Component.literal(" >"), b -> this.skin = this.skin.next())
+                .bounds(left + PANEL_WIDTH - ARROW_WIDTH, SKIN_ROW_Y, ARROW_WIDTH, BUTTON_HEIGHT).build());
 
         this.poolBerryBox = makeEditBox(left, 0, PANEL_WIDTH, 512, this.initial.poolBerryId());
         this.poolCandyBox = makeEditBox(left, 0, PANEL_WIDTH, 512, this.initial.poolCandyId());
@@ -93,7 +105,8 @@ public class LostItemConfigScreen extends CobbleSafariConfigScreen {
                     this.minRollBox.getValue(),
                     this.maxRollBox.getValue(),
                     this.lostLootTableBox.getValue(),
-                    this.lootItemBox.getValue()
+                    this.lootItemBox.getValue(),
+                    this.skin.getSerializedName()
             ));
             this.onClose();
         }).bounds(left + COLUMN_OFFSET, duoY, COLUMN_WIDTH, BUTTON_HEIGHT).build());
@@ -187,5 +200,12 @@ public class LostItemConfigScreen extends CobbleSafariConfigScreen {
         drawFieldLabel(guiGraphics, this.maxRollBox, "gui.cobblesafari.lost_item.hint.max_roll");
         drawFieldLabel(guiGraphics, this.lostLootTableBox, "gui.cobblesafari.lost_item.hint.lost_item_loot_table");
         drawFieldLabel(guiGraphics, this.lootItemBox, "gui.cobblesafari.lost_item.hint.loot_item");
+
+        int left = this.panelLeft();
+        guiGraphics.drawString(this.font, Component.translatable("gui.cobblesafari.lost_item.skin"), left,
+                SKIN_ROW_Y - LABEL_TO_FIELD_GAP - this.font.lineHeight, LABEL_COLOR, false);
+        guiGraphics.drawCenteredString(this.font,
+                Component.translatable("gui.cobblesafari.lost_item.skin." + this.skin.getSerializedName()),
+                left + PANEL_HALF_WIDTH, SKIN_ROW_Y + (BUTTON_HEIGHT - this.font.lineHeight) / 2, TITLE_COLOR);
     }
 }

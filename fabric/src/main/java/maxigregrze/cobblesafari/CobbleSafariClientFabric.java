@@ -252,8 +252,10 @@ public class CobbleSafariClientFabric implements ClientModInitializer {
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.DISTORTION_STONEBRICKS_DOOR, RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.DISTORTION_STONEBRICKS_RUBBLE, RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.LOST_NOTES, RenderType.cutout());
-        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.LOST_ITEM, RenderType.cutout());
-        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.LOST_ITEM_VISUAL, RenderType.cutout());
+        // Translucent, not cutout: the lost-item skins share a ground-shadow texture with a graded
+        // alpha channel, which cutout would slam to fully opaque or fully gone.
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.LOST_ITEM, RenderType.translucent());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.LOST_ITEM_VISUAL, RenderType.translucent());
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.WHIRLWIND, RenderType.translucent());
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.WHIRLWIND_DISPLAY, RenderType.translucent());
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.CSBOSS_ELECTRICITY, RenderType.cutout());

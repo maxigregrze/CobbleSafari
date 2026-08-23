@@ -2,15 +2,19 @@ package maxigregrze.cobblesafari.event;
 
 import maxigregrze.cobblesafari.CobbleSafari;
 import maxigregrze.cobblesafari.config.DimensionalBanConfig;
+import maxigregrze.cobblesafari.config.RotomPhoneConfig;
 import maxigregrze.cobblesafari.gts.GtsService;
 import maxigregrze.cobblesafari.wondertrade.WonderTradeService;
 import maxigregrze.cobblesafari.cstrader.logic.CsTraderDataLoader;
 import maxigregrze.cobblesafari.dungeon.DungeonRegionClearer;
 import maxigregrze.cobblesafari.dungeon.DungeonTeleportHandler;
 import maxigregrze.cobblesafari.dungeon.PortalSpawnManager;
+import maxigregrze.cobblesafari.manager.BannedItemsManager;
 import maxigregrze.cobblesafari.manager.SafariResetManager;
 import maxigregrze.cobblesafari.manager.TimerManager;
 import maxigregrze.cobblesafari.rotomphone.RotoGlideServerLogic;
+import maxigregrze.cobblesafari.rotomphone.RotomPhoneConfigSync;
+import maxigregrze.cobblesafari.rotomphone.RotomPhoneEquipped;
 import maxigregrze.cobblesafari.security.JoinThrottle;
 import maxigregrze.cobblesafari.security.RateLimiter;
 import maxigregrze.cobblesafari.unionroom.UnionRoomDisconnectHandler;
@@ -19,6 +23,7 @@ import maxigregrze.cobblesafari.platform.Services;
 import maxigregrze.cobblesafari.advancement.ModCriteria;
 import maxigregrze.cobblesafari.data.StatProgressSavedData;
 import maxigregrze.cobblesafari.init.ModStats;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
@@ -176,10 +181,36 @@ public class DimensionEvents {
             }
 
             ResourceLocation last = LAST_DIMENSION.put(player.getUUID(), dim);
-            if (dim.equals(SAFARI_DIM) && !dim.equals(last)) {
-                onSafariEntered(player);
+            if (!dim.equals(last)) {
+                onDimensionEntered(player);
+                if (dim.equals(SAFARI_DIM)) {
+                    onSafariEntered(player);
+                }
             }
         }
+    }
+
+    /**
+     * Front edge of any dimension change: warns the carrier of a Rotom device that this dimension
+     * suppresses the phone's safety features (action plan 176). Also fires on the first tick after
+     * login, which is deliberate - reconnecting inside the dungeon is exactly when the reminder is
+     * worth having.
+     *
+     * <p>Three guards, cheapest first. The last one keeps the message from spoiling a feature the
+     * player has not met yet: the safety toggles live in the settings app, which is not unlocked from
+     * the start, so a player without it has nothing to be told about.
+     */
+    private static void onDimensionEntered(ServerPlayer player) {
+        if (BannedItemsManager.isRotomSafetyAllowed(player.level().dimension())) {
+            return;
+        }
+        if (!RotomPhoneEquipped.hasRotomDevice(player)) {
+            return;
+        }
+        if (!RotomPhoneConfigSync.isAppUnlockedByPlayer(player, RotomPhoneConfig.APP_SETTINGS)) {
+            return;
+        }
+        player.sendSystemMessage(Component.translatable("cobblesafari.ban.rotom_safety_banned"));
     }
 
     /** First Safari entry of a given day records a distinct day for the "Safari Addict" achievement. */

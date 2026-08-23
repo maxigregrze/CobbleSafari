@@ -30,7 +30,9 @@ import maxigregrze.cobblesafari.block.misc.AuspiciousPokeballBlock;
 import maxigregrze.cobblesafari.block.misc.AuspiciousPokeballSmallBlock;
 import maxigregrze.cobblesafari.block.misc.AuspiciousPokeballGoldBlock;
 import maxigregrze.cobblesafari.block.misc.LostItemBlock;
+import maxigregrze.cobblesafari.block.misc.LostItemSkin;
 import maxigregrze.cobblesafari.block.misc.LostItemVisualBlock;
+import maxigregrze.cobblesafari.item.LostItemBlockItem;
 import maxigregrze.cobblesafari.block.misc.MagneticClusterBlock;
 import maxigregrze.cobblesafari.block.misc.MagneticCrystalBlock;
 import maxigregrze.cobblesafari.block.misc.LiquidBarrierBlock;
@@ -829,7 +831,7 @@ public class ModBlocks {
                     .noCollission()
             ));
 
-    public static final Block LOST_ITEM = registerBlock("lost_item",
+    public static final Block LOST_ITEM = registerBlockWithoutItem("lost_item",
             new LostItemBlock(BlockBehaviour.Properties.of()
                     .mapColor(MapColor.STONE)
                     .instabreak()
@@ -837,6 +839,14 @@ public class ModBlocks {
                     .noOcclusion()
                     .noCollission()
             ));
+
+    /**
+     * One creative block item per Lost Item skin (action plan 176). Assigned in {@link #register()}
+     * because they are not plain BlockItems and must be registered in a controlled order.
+     */
+    public static Item LOST_ITEM_CLASSIC_ITEM;
+    public static Item LOST_ITEM_BURIED_ITEM;
+    public static Item LOST_ITEM_RUBBLES_ITEM;
 
     public static final Block LOST_ITEM_VISUAL = registerBlockWithoutItem("lost_item_visual",
             new LostItemVisualBlock(BlockBehaviour.Properties.of()
@@ -2376,6 +2386,24 @@ public class ModBlocks {
         Registry.register(BuiltInRegistries.ITEM,
                 ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, "secretbase_pc"),
                 new BasePCBlockItem(SECRETBASE_PC, new Item.Properties().rarity(Rarity.RARE)));
+
+        // One item per Lost Item skin, each stamping its skin onto the placed block state.
+        //
+        // Three items share a single block, so Item.BY_BLOCK - a plain Block -> Item map - can only
+        // hold one of them, and whichever registration lands last is the one Block#asItem() reports.
+        // The rubbles skin is registered last so that resolution stays on the historical item.
+        // Nothing here actually depends on it: pick-block goes through LostItemBlock#getCloneItemStack,
+        // the loot table names its items explicitly, and the creative tab accepts these Item fields
+        // directly rather than the Block. Keep the order anyway - it is the least surprising answer.
+        LOST_ITEM_CLASSIC_ITEM = Registry.register(BuiltInRegistries.ITEM,
+                ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, "lost_item_classic"),
+                new LostItemBlockItem(LOST_ITEM, new Item.Properties(), LostItemSkin.CLASSIC));
+        LOST_ITEM_BURIED_ITEM = Registry.register(BuiltInRegistries.ITEM,
+                ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, "lost_item_buried"),
+                new LostItemBlockItem(LOST_ITEM, new Item.Properties(), LostItemSkin.BURIED));
+        LOST_ITEM_RUBBLES_ITEM = Registry.register(BuiltInRegistries.ITEM,
+                ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, "lost_item"),
+                new LostItemBlockItem(LOST_ITEM, new Item.Properties(), LostItemSkin.RUBBLES));
 
         Registry.register(BuiltInRegistries.ITEM,
                 ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, "incubator"),

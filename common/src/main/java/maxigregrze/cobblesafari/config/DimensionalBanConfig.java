@@ -22,10 +22,18 @@ import java.util.Map;
  * Manual edits are respected after first load.
  */
 public class DimensionalBanConfig {
-    public static final int CONFIG_VERSION = 1;
+    public static final int CONFIG_VERSION = 2;
+
+    /**
+     * Version that relifts the {@code cobblesafari:dungeon_jump} restrictions. The entry predates the
+     * Bell Tower dungeon and shipped with permissive values that described an empty dimension, not a
+     * server owner's choice; see {@link #migrateDungeonJumpRestrictions}.
+     */
+    private static final int VERSION_DUNGEON_JUMP_RESTRICTIONS = 2;
 
     private static final String KEY_CONFIG_VERSION = "CONFIG_VERSION";
     private static final String KEY_DIMENSIONS = "dimensions";
+    private static final String DUNGEON_JUMP_DIMENSION_ID = "cobblesafari:dungeon_jump";
 
     private static final Path CONFIG_DIR = Services.PLATFORM.getConfigDir().resolve("cobblesafari");
     private static final Path CONFIG_PATH = CONFIG_DIR.resolve("dimensional_restrictions_config.json");
@@ -104,12 +112,21 @@ public class DimensionalBanConfig {
             DimensionalBanData parsed = GSON.fromJson(root, DimensionalBanData.class);
             data = parsed != null ? parsed : new DimensionalBanData();
             ensureDataDefaults(data);
-            boolean migrated = migrateForbidMounting(root, data);
+            int loadedVersion = readStoredVersion(root);
+            boolean mountingMigrated = migrateForbidMounting(root, data);
+            boolean jumpMigrated = migrateDungeonJumpRestrictions(loadedVersion, data);
             CobbleSafari.LOGGER.info("CobbleSafari >> dimensional_restrictions_config.json loaded successfully from {}", CONFIG_PATH);
-            if (migrated) {
+            if (mountingMigrated || jumpMigrated) {
                 save();
-                CobbleSafari.LOGGER.info(
-                        "CobbleSafari >> dimensional_restrictions_config.json migrated: forbidMounting defaults written (true for cobblesafari:dungeon_distortion)");
+                if (mountingMigrated) {
+                    CobbleSafari.LOGGER.info(
+                            "CobbleSafari >> dimensional_restrictions_config.json migrated: forbidMounting defaults written (true for cobblesafari:dungeon_distortion)");
+                }
+                if (jumpMigrated) {
+                    CobbleSafari.LOGGER.info(
+                            "CobbleSafari >> dimensional_restrictions_config.json migrated from v{} to v{}: {} restrictions reset to defaults",
+                            loadedVersion, CONFIG_VERSION, DUNGEON_JUMP_DIMENSION_ID);
+                }
             }
         } catch (Exception e) {
             CobbleSafari.LOGGER.error(
@@ -143,6 +160,57 @@ public class DimensionalBanConfig {
             }
         }
         return migrationNeeded;
+    }
+
+    /** @return the version stamped in the file, or 0 when absent or unreadable. */
+    private static int readStoredVersion(JsonObject root) {
+        if (!root.has(KEY_CONFIG_VERSION) || !root.get(KEY_CONFIG_VERSION).isJsonPrimitive()) {
+            return 0;
+        }
+        try {
+            return root.get(KEY_CONFIG_VERSION).getAsInt();
+        } catch (NumberFormatException e) {
+            return 0;
+        }
+    }
+
+    /**
+     * One-shot relift of the {@code cobblesafari:dungeon_jump} restrictions (action plan 175, § 7.3).
+     * The entry has existed since long before the dungeon did, and shipped with
+     * {@code allowBlockBreaking = true} and no {@code forbidMounting} - values that described an empty
+     * dimension. Left alone they would let a Bell Tower run be walked straight past, so they are
+     * overwritten once with the current defaults.
+     *
+     * <p>Keyed on the file version and never on the values themselves: once the file is stamped, a
+     * server owner who loosens the dungeon again keeps that choice across every later start.
+     *
+     * <p>Only the five flags are rewritten. {@code bannedItems} and {@code bannedBlocks} are left
+     * untouched, since anything in them was necessarily put there by hand.
+     *
+     * <p>{@code allowRotomSafety} (action plan 176) rides along on this same step rather than getting a
+     * version of its own: the palier below was never published - 0.3.4 still writes
+     * {@code CONFIG_VERSION = 1} - so every file in the wild passes through here anyway.
+     */
+    private static boolean migrateDungeonJumpRestrictions(int loadedVersion, DimensionalBanData loaded) {
+        if (loadedVersion >= VERSION_DUNGEON_JUMP_RESTRICTIONS) {
+            return false;
+        }
+        DimensionalBanData.DimensionRestrictions defaults =
+                new DimensionalBanData().dimensions.get(DUNGEON_JUMP_DIMENSION_ID);
+        if (defaults == null) {
+            return false;
+        }
+        DimensionalBanData.DimensionRestrictions current = loaded.dimensions.get(DUNGEON_JUMP_DIMENSION_ID);
+        if (current == null) {
+            loaded.dimensions.put(DUNGEON_JUMP_DIMENSION_ID, defaults);
+            return true;
+        }
+        current.allowBattle = defaults.allowBattle;
+        current.allowBlockBreaking = defaults.allowBlockBreaking;
+        current.allowBlockPlacing = defaults.allowBlockPlacing;
+        current.forbidMounting = defaults.forbidMounting;
+        current.allowRotomSafety = defaults.allowRotomSafety;
+        return true;
     }
 
     private static void ensureDataDefaults(DimensionalBanData loaded) {

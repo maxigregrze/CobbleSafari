@@ -27,4 +27,24 @@ public final class RotomPhoneEquipped {
         }
         return ItemStack.EMPTY;
     }
+
+    /**
+     * True when the player carries either Rotom device - phone or Rotie Earpiece - in a hand or in an
+     * Accessories slot. Used to decide whether Rotom has a mouth to speak through; the Accessories
+     * lookup already accepts both items ({@code AccessoriesCompat.isPhoneOrEarpiece}).
+     *
+     * <p>The rest of the inventory is deliberately not searched: those are exactly the slots where a
+     * safety feature can apply, and a phone at the bottom of the bag has never protected anything.
+     */
+    public static boolean hasRotomDevice(Player player) {
+        if (isRotomDevice(player.getMainHandItem()) || isRotomDevice(player.getOffhandItem())) {
+            return true;
+        }
+        return Services.PLATFORM.isModLoaded("accessories")
+                && !AccessoriesCompat.getPhoneFromSlot(player).isEmpty();
+    }
+
+    private static boolean isRotomDevice(ItemStack stack) {
+        return stack.is(ModItems.ROTOM_PHONE) || stack.is(ModItems.ROTOM_EARPIECE);
+    }
 }

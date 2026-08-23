@@ -17,6 +17,8 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
+import maxigregrze.cobblesafari.init.ModBlocks;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -64,6 +66,7 @@ public class LostItemBlock extends BaseEntityBlock {
     public static final EnumProperty<AttachFace> FACE = BlockStateProperties.ATTACH_FACE;
     public static final EnumProperty<Direction> FACING = HorizontalDirectionalBlock.FACING;
     public static final BooleanProperty HAS_ITEM = BooleanProperty.create("has_item");
+    public static final EnumProperty<LostItemSkin> SKIN = EnumProperty.create("skin", LostItemSkin.class);
 
     private static final VoxelShape FLOOR_SHAPE = Block.box(2, 0, 2, 14, 4, 14);
     private static final VoxelShape CEILING_SHAPE = Block.box(2, 12, 2, 14, 16, 14);
@@ -77,7 +80,8 @@ public class LostItemBlock extends BaseEntityBlock {
         this.registerDefaultState(this.stateDefinition.any()
                 .setValue(FACE, AttachFace.FLOOR)
                 .setValue(FACING, Direction.NORTH)
-                .setValue(HAS_ITEM, true));
+                .setValue(HAS_ITEM, true)
+                .setValue(SKIN, LostItemSkin.RUBBLES));
     }
 
     @Override
@@ -87,7 +91,7 @@ public class LostItemBlock extends BaseEntityBlock {
 
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
-        builder.add(FACE, FACING, HAS_ITEM);
+        builder.add(FACE, FACING, HAS_ITEM, SKIN);
     }
 
     @Override
@@ -337,6 +341,20 @@ public class LostItemBlock extends BaseEntityBlock {
             case FLOOR -> Direction.UP;
             case CEILING -> Direction.DOWN;
             case WALL -> state.getValue(FACING);
+        };
+    }
+
+    /** Pick-block hands back the skin actually in front of the player, not always the rubbles item. */
+    @Override
+    public ItemStack getCloneItemStack(LevelReader level, BlockPos pos, BlockState state) {
+        return new ItemStack(itemForSkin(state.getValue(SKIN)));
+    }
+
+    private static Item itemForSkin(LostItemSkin skin) {
+        return switch (skin) {
+            case CLASSIC -> ModBlocks.LOST_ITEM_CLASSIC_ITEM;
+            case BURIED -> ModBlocks.LOST_ITEM_BURIED_ITEM;
+            case RUBBLES -> ModBlocks.LOST_ITEM_RUBBLES_ITEM;
         };
     }
 

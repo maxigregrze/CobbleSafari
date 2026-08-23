@@ -59,9 +59,9 @@ public class DungeonDimensions {
                 DungeonConfig.StructureType.JIGSAW,
                 12,        // jigsaw depth: entrance -> 3f..10f -> roof is 9 deep
                 1024,      // zoneSize, same spacing as the distortion world
-                0,         // clearSectionsBelow: never wipe below Y 64, the dimension floor lives at 62/63
-                10         // clearSectionsAbove: up to Y 239, the 155-block tower tops out at 218
-        ).withFixedStructureY(71));
+                0,         // clearSectionsBelow: clearing starts at Y 0, sparing the scenery floor at -8/-7
+                10         // clearSectionsAbove: up to Y 175, the 155-block tower tops out at 154
+        ).withFixedStructureY(8));
 
         REGISTERED_DUNGEONS.add(new DungeonConfig(
                 "dungeon_distortion",
