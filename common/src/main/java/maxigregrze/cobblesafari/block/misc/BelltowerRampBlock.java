@@ -1,9 +1,12 @@
 package maxigregrze.cobblesafari.block.misc;
 
 import com.mojang.serialization.MapCodec;
+import maxigregrze.cobblesafari.block.base.BlockShapeUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
@@ -19,9 +22,15 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.EntityCollisionContext;
+import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.EnumMap;
+import java.util.Map;
 
 /**
  * Jump ramp: a 1-pixel-thick orientable pad that launches whatever walks or lands on it
@@ -33,6 +42,12 @@ import org.jetbrains.annotations.Nullable;
  * This is why the block cannot reuse {@code HorizontalModelBlock}, whose placement always faces
  * the player.</p>
  *
+ * <p>The launch face is <b>one-way</b>: the model draws a full-width guardrail across it, and
+ * {@link #getCollisionShape} makes that guardrail solid for anything trying to get <em>in</em>
+ * through it, while staying absent for anything already on the pad or flying out of it. Plan 177.
+ * See {@link #isBeyondFrontFace} for the invariant that makes it safe, and {@code ModBlocks} for
+ * why the block must be registered {@code dynamicShape}.</p>
+ *
  * <p>Unrelated to {@link BelltowerTrellisBlock} beyond sharing two vanilla plank textures.</p>
  */
 public class BelltowerRampBlock extends HorizontalDirectionalBlock implements SimpleWaterloggedBlock {
@@ -40,8 +55,35 @@ public class BelltowerRampBlock extends HorizontalDirectionalBlock implements Si
     public static final MapCodec<BelltowerRampBlock> CODEC = simpleCodec(BelltowerRampBlock::new);
     public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
 
-    /** Selection and collision alike: a 1-pixel slab, identical in all four orientations. */
+    /** Selection, and the collision every entity but one gets: a 1-pixel slab, all four orientations. */
     private static final VoxelShape SHAPE = Block.box(0, 0, 0, 16, 1, 16);
+
+    /** Vanilla's collision comparison slack. */
+    private static final double EPSILON = 1.0E-7;
+
+    /**
+     * Front barrier: a 2-pixel plate flush with the launch face, 3 blocks tall. Only ever handed to
+     * an entity that is entirely beyond that face (see {@link #isBeyondFrontFace}), so it can never
+     * overlap the entity it is shown to - it stops motion into the cell and does nothing else.
+     *
+     * <p>Thickness matches the 2-pixel footprint of the model's front guardrail (z 14..16); what
+     * actually decides where an entity is stopped is the outer face, which is flush with the block
+     * face. Height is the sizing constraint: {@link RampLaunchManager}'s arc peaks at exactly
+     * 2 blocks, so a 2-block wall would leave a ramp aimed at this one's face crossing it within a
+     * thousandth of a block of the top - passing or not depending on air control. 3 blocks settles
+     * it, and outlasts a running jump (1.25 blocks) by a wide margin.</p>
+     */
+    private static final VoxelShape FRONT_WALL_SOUTH = Block.box(0, 0, 14, 16, 48, 16);
+
+    /** {@link #SHAPE} joined with the barrier, one entry per facing. Authored south, like the model. */
+    private static final Map<Direction, VoxelShape> BLOCKED_SHAPES = buildBlockedShapes();
+
+    private static Map<Direction, VoxelShape> buildBlockedShapes() {
+        Map<Direction, VoxelShape> blocked = new EnumMap<>(Direction.class);
+        BlockShapeUtils.precompute(FRONT_WALL_SOUTH, Direction.SOUTH)
+                .forEach((facing, wall) -> blocked.put(facing, Shapes.or(SHAPE, wall)));
+        return blocked;
+    }
 
     public BelltowerRampBlock(Properties properties) {
         super(properties);
@@ -72,6 +114,62 @@ public class BelltowerRampBlock extends HorizontalDirectionalBlock implements Si
     @Override
     protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
         return SHAPE;
+    }
+
+    /**
+     * A wall on the launch face - for whoever is trying to get in through it, and only for them.
+     * The idiom is vanilla's: {@code PowderSnowBlock} reads its entity out of the collision context
+     * the same way, as do {@code CsBossMimicBlock} and the reactive distortion flowers here.
+     */
+    @Override
+    protected VoxelShape getCollisionShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+        if (!(context instanceof EntityCollisionContext entityContext)) {
+            return SHAPE;
+        }
+        Entity entity = entityContext.getEntity();
+        // LivingEntity mirrors RampLaunchManager: what the ramp will not launch, it will not stop
+        // either - and projectiles resolve their flight against this very shape, so an arrow shot at
+        // the front of a ramp would otherwise stop in mid-air on nothing. The spectator test is
+        // redundant (Player.tick sets noPhysics, which short-circuits block collision outright) but
+        // says so out loud.
+        if (!(entity instanceof LivingEntity) || entity.isSpectator()) {
+            return SHAPE;
+        }
+        // Same exemptions as tryLaunch: a builder flying past a ramp must not hit anything.
+        if (entity instanceof Player player && (player.getAbilities().flying || player.isFallFlying())) {
+            return SHAPE;
+        }
+        Direction facing = state.getValue(FACING);
+        return isBeyondFrontFace(facing, pos, entity.getBoundingBox()) ? BLOCKED_SHAPES.get(facing) : SHAPE;
+    }
+
+    /**
+     * Is {@code box} entirely beyond the block's launch face, i.e. in front of the ramp looking back
+     * at it? Purely geometric: no velocity, no entity facing, no stored state, so client and server
+     * evaluate the same function on the same input and cannot disagree.
+     *
+     * <p>This is the invariant that makes the barrier safe. The plate's outer face is flush with the
+     * block face, so "entirely beyond that face" and "cannot overlap the plate" are the same
+     * statement. An entity is therefore never handed a shape it is already inside: the barrier can
+     * stop motion into the cell, and can never push, trap or suffocate anything.</p>
+     *
+     * <p>The consequence at the other end is what keeps the launch working: an entity standing on
+     * the pad, or flying out of the cell, still overlaps it, so the barrier simply does not exist
+     * for it - no special case needed. It reappears only once the entity is clear of the plate,
+     * behind it and moving away.</p>
+     *
+     * <p>The epsilon widens the zone where the wall exists rather than narrowing it, so an entity
+     * pressed flush against the face keeps its wall instead of flickering; vanilla ignores overlaps
+     * below 1e-7, so nothing is pushed out.</p>
+     */
+    private static boolean isBeyondFrontFace(Direction facing, BlockPos pos, AABB box) {
+        return switch (facing) {
+            case NORTH -> box.maxZ <= pos.getZ() + EPSILON;
+            case SOUTH -> box.minZ >= pos.getZ() + 1.0 - EPSILON;
+            case WEST -> box.maxX <= pos.getX() + EPSILON;
+            case EAST -> box.minX >= pos.getX() + 1.0 - EPSILON;
+            default -> false;
+        };
     }
 
     @Override

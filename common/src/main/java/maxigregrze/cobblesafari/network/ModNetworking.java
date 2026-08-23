@@ -51,4 +51,20 @@ public class ModNetworking {
     public static void sendShackleSync(ServerPlayer viewer, LivingEntity entity, boolean shackled) {
         Services.PLATFORM.sendPayloadToPlayer(viewer, new ShackleSyncPayload(entity.getId(), shackled));
     }
+
+    /**
+     * Announces a Rainbow Feather save to every client that can see it, the saved entity included.
+     *
+     * <p>The tracking helpers of both loaders ({@code PlayerLookup.tracking} on Fabric,
+     * {@code PacketDistributor.sendToPlayersTrackingEntity} on NeoForge) exclude the entity itself
+     * when it is a player, so the second send is not redundant: without it, the one player who most
+     * needs the feedback would be the only one not to get it.</p>
+     */
+    public static void sendRainbowFeatherUsed(LivingEntity entity) {
+        RainbowFeatherUsedPayload payload = new RainbowFeatherUsedPayload(entity.getId());
+        Services.PLATFORM.sendPayloadToTrackingPlayers(entity, payload);
+        if (entity instanceof ServerPlayer player) {
+            Services.PLATFORM.sendPayloadToPlayer(player, payload);
+        }
+    }
 }

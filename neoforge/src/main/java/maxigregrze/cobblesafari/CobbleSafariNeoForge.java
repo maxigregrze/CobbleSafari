@@ -202,8 +202,14 @@ public class CobbleSafariNeoForge {
             registrar.playToClient(maxigregrze.cobblesafari.network.HudConfigRefreshPayload.TYPE,
                     maxigregrze.cobblesafari.network.HudConfigRefreshPayload.STREAM_CODEC,
                     CobbleSafariClientNeoForge::handleHudConfigRefresh);
+            registrar.playToClient(maxigregrze.cobblesafari.network.RainbowFeatherUsedPayload.TYPE,
+                    maxigregrze.cobblesafari.network.RainbowFeatherUsedPayload.STREAM_CODEC,
+                    CobbleSafariClientNeoForge::handleRainbowFeatherUsed);
         } else {
             registrar.playToClient(ShackleSyncPayload.TYPE, ShackleSyncPayload.STREAM_CODEC,
+                    (payload, context) -> {});
+            registrar.playToClient(maxigregrze.cobblesafari.network.RainbowFeatherUsedPayload.TYPE,
+                    maxigregrze.cobblesafari.network.RainbowFeatherUsedPayload.STREAM_CODEC,
                     (payload, context) -> {});
             registrar.playToClient(OpenTpAcceptPayload.TYPE, OpenTpAcceptPayload.STREAM_CODEC,
                     (payload, context) -> {});

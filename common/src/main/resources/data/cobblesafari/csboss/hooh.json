@@ -13,6 +13,8 @@
     "moveCooldownMin": 2,
     "moveCooldownMax": 3,
     "isStatic": true,
+    "uniqueReward": "cobblesafari:csboss/hooh_unique",
+    "rewards": "cobblesafari:csboss/hooh_common",
     "music": "cobblesafari:hooh",
     "healthStyle": "notched_10",
     "healthColor": "red"

@@ -108,6 +108,8 @@ public class ModCreativeTabs {
                 output.accept(ModItems.REDCHAIN_FRAGMENT);
                 output.accept(ModItems.RED_CHAIN_CORE);
                 output.accept(ModItems.RED_CHAIN);
+                output.accept(ModItems.RAINBOW_FEATHER);
+                output.accept(ModItems.HOOH_ASHES);
                 output.accept(ModItems.HYPERBERRY_ENIGMA);
                 output.accept(ModItems.HYPERBERRY_TAMATO);
                 output.accept(ModItems.HYPERBERRY_GREPA);

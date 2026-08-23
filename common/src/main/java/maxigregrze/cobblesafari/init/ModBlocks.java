@@ -1159,11 +1159,20 @@ public class ModBlocks {
                     .noOcclusion()
             ));
 
+    /**
+     * {@code dynamicShape} is required, not decorative: the ramp's launch face carries an
+     * entity-dependent barrier taller than the block itself, and the per-state cache that answers
+     * hasLargeCollisionShape is built from an empty context, where the ramp reports its plain
+     * 1-pixel slab. Without the flag, BlockCollisions skips the ramp whenever it sits on the border
+     * of an entity's swept box - which is exactly a jump over the front face, the case the barrier
+     * exists for. Plan 177.
+     */
     public static final Block BELLTOWER_RAMP = registerBlock("belltower_ramp",
             new BelltowerRampBlock(BlockBehaviour.Properties.of()
                     .strength(2.0f, 3.0f)
                     .sound(SoundType.WOOD)
                     .noOcclusion()
+                    .dynamicShape()
             ));
 
     // ---------------------------------------------------------------- Belltower construction set

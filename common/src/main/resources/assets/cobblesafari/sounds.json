@@ -1,4 +1,13 @@
 {
+    "entity.generic.rainbow_feather_revive": {
+        "sounds": [
+            {
+                "name": "cobblesafari:entity/generic/rainbow_feather_revive",
+                "stream": false
+            }
+        ],
+        "subtitle": "subtitles.cobblesafari.item.rainbow_feather_revive"
+    },
     "entity.generic.incense_spray": {
         "sounds": [
             {

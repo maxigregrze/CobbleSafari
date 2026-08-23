@@ -150,6 +150,12 @@ public class CobbleSafariClientFabric implements ClientModInitializer {
             });
         });
 
+        ClientPlayNetworking.registerGlobalReceiver(
+                maxigregrze.cobblesafari.network.RainbowFeatherUsedPayload.TYPE, (payload, context) -> {
+                    context.client().execute(() ->
+                            maxigregrze.cobblesafari.client.effect.ClientRainbowFeatherFx.accept(payload.entityId()));
+                });
+
         ClientPlayNetworking.registerGlobalReceiver(DimensionalBanSyncPayload.TYPE, (payload, context) -> {
             context.client().execute(() -> {
                 DimensionalBanConfig.applyClientSync(payload.dimensions());

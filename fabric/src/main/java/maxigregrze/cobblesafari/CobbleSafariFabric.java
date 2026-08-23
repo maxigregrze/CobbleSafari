@@ -111,6 +111,8 @@ public class CobbleSafariFabric implements ModInitializer {
     private void registerNetworking() {
         PayloadTypeRegistry.playS2C().register(TimerSyncPayload.TYPE, TimerSyncPayload.STREAM_CODEC);
         PayloadTypeRegistry.playS2C().register(ShackleSyncPayload.TYPE, ShackleSyncPayload.STREAM_CODEC);
+        PayloadTypeRegistry.playS2C().register(maxigregrze.cobblesafari.network.RainbowFeatherUsedPayload.TYPE,
+                maxigregrze.cobblesafari.network.RainbowFeatherUsedPayload.STREAM_CODEC);
         PayloadTypeRegistry.playS2C().register(OpenTpAcceptPayload.TYPE, OpenTpAcceptPayload.STREAM_CODEC);
         PayloadTypeRegistry.playS2C().register(CloseTpAcceptPayload.TYPE, CloseTpAcceptPayload.STREAM_CODEC);
         PayloadTypeRegistry.playS2C().register(OpenRuneEditorPayload.TYPE, OpenRuneEditorPayload.STREAM_CODEC);

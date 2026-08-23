@@ -514,6 +514,13 @@ public class CobbleSafariClientNeoForge {
         });
     }
 
+    public static void handleRainbowFeatherUsed(
+            maxigregrze.cobblesafari.network.RainbowFeatherUsedPayload payload, IPayloadContext context) {
+        context.enqueueWork(() -> {
+            maxigregrze.cobblesafari.client.effect.ClientRainbowFeatherFx.accept(payload.entityId());
+        });
+    }
+
     public static void handleDimensionalBanSync(DimensionalBanSyncPayload payload, IPayloadContext context) {
         context.enqueueWork(() -> {
             DimensionalBanConfig.applyClientSync(payload.dimensions());

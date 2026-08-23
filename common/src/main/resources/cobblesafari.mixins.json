@@ -11,6 +11,7 @@
     "LivingEntityMapleLeafPileMixin",
     "LivingEntityRedShackledMixin",
     "LivingEntityRedShackledCombatMixin",
+    "LivingEntityRainbowFeatherMixin",
     "PlayerRotoFallMixin",
     "JigsawPlacementMixin",
     "JigsawStructureMixin",

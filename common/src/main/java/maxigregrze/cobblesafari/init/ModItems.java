@@ -10,6 +10,7 @@ import maxigregrze.cobblesafari.item.GtsTicketItem;
 import maxigregrze.cobblesafari.item.IncenseItem;
 import maxigregrze.cobblesafari.item.LuckyMiningHelmetItem;
 import maxigregrze.cobblesafari.item.MudBallItem;
+import maxigregrze.cobblesafari.item.PhoenixAshesItem;
 import maxigregrze.cobblesafari.item.RotomAppUnlockItem;
 import maxigregrze.cobblesafari.item.RotomPhoneItem;
 import maxigregrze.cobblesafari.item.RotomSkinUnlockItem;
@@ -181,6 +182,12 @@ public class ModItems {
     public static final Item REDCHAIN_FRAGMENT = new RedChainFragmentItem(new Item.Properties().stacksTo(64));
     public static final Item RED_CHAIN_CORE = new RedChainCoreItem(new Item.Properties().stacksTo(64));
     public static final Item RED_CHAIN = new RedChainItem(new Item.Properties().stacksTo(16));
+
+    /** Ho-Oh's Rainbow Feather: a boosted Totem of Undying, consumed from either hand (plan 178, § 3). */
+    public static final Item RAINBOW_FEATHER = new Item(new Item.Properties().stacksTo(1).rarity(Rarity.EPIC));
+
+    /** Phoenix Ashes: deterministic, 3x3 bone meal (plan 178, § 4). */
+    public static final Item HOOH_ASHES = new PhoenixAshesItem(new Item.Properties().stacksTo(16).rarity(Rarity.RARE));
 
     public static final Item HYPERBERRY_ENIGMA = new HyperBerryEnigmaItem(new Item.Properties().rarity(Rarity.RARE), "hyperberry_enigma");
     public static final Item HYPERBERRY_TAMATO = new HyperBerryEVItem(new Item.Properties().rarity(Rarity.RARE), "hyperberry_tamato", Stats.SPEED);
@@ -395,6 +402,9 @@ public class ModItems {
         registerItem("redchain_fragment", REDCHAIN_FRAGMENT);
         registerItem("red_chain_core", RED_CHAIN_CORE);
         registerItem("red_chain", RED_CHAIN);
+
+        registerItem("rainbow_feather", RAINBOW_FEATHER);
+        registerItem("hooh_ashes", HOOH_ASHES);
 
         registerItem("hyperberry_enigma", HYPERBERRY_ENIGMA);
         registerItem("hyperberry_tamato", HYPERBERRY_TAMATO);

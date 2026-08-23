@@ -46,6 +46,10 @@ public class ModSounds {
     public static final SoundEvent FART_REVERB = SoundEvent.createVariableRangeEvent(
             ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, "entity.generic.fart_reverb"));
 
+    /** Played on every client that can see a Rainbow Feather save (plan 178, § 3.5). */
+    public static final SoundEvent RAINBOW_FEATHER_REVIVE = SoundEvent.createVariableRangeEvent(
+            ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, "entity.generic.rainbow_feather_revive"));
+
     /** Intentionally silent sound (empty sounds.json entry) - used to mute the fart trap's explosion boom. */
     public static final SoundEvent SILENT = SoundEvent.createVariableRangeEvent(
             ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, "entity.generic.silent"));
