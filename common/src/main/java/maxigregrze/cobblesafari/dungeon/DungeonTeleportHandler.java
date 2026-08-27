@@ -300,13 +300,16 @@ public class DungeonTeleportHandler {
         return null;
     }
 
-    private static BlockPos calculateUniquePosition(MinecraftServer server, DungeonConfig config) {
+    /** Slot allocated for a new dungeon, together with the anchor position derived from it. */
+    private record SlotAllocation(int slot, BlockPos pos) {}
+
+    private static SlotAllocation calculateUniquePosition(MinecraftServer server, DungeonConfig config) {
         String dimensionId = config.getDimensionId();
         DungeonPositionSavedData positionData = DungeonPositionSavedData.get(server);
         int zoneSize = config.getZoneSize();
 
         int slot = positionData.allocateSlot(dimensionId);
-        int zOffset = positionData.getAndIncrementSlotZOffset(dimensionId, slot);
+        int zOffset = positionData.getAndIncrementSlotZOffset(dimensionId, slot, zoneSize);
         int x = (slot % 100) * zoneSize;
         int z = (slot / 100) * zoneSize + zOffset;
         // A dungeon whose dimension has a floor at a fixed altitude must always anchor at the same Y,
@@ -317,7 +320,7 @@ public class DungeonTeleportHandler {
         BlockPos pos = new BlockPos(x, y, z);
 
         CobbleSafari.LOGGER.info("Allocated dungeon slot {} at {} (Z offset {}) for dimension {}", slot, pos, zOffset, dimensionId);
-        return pos;
+        return new SlotAllocation(slot, pos);
     }
 
     private static void placeExitPortal(ServerLevel level, BlockPos pos, BlockPos originPos, ResourceKey<Level> originDimension, Direction facing) {
@@ -398,6 +401,11 @@ public class DungeonTeleportHandler {
     private static class GenerationState {
         BlockPos structurePos;
         BlockPos exitPortalPos;
+        /**
+         * Slot handed out by {@code allocateSlot} on first use, or
+         * {@link DungeonInstanceCleanup#UNKNOWN_SLOT} on re-entry; carrying it avoids re-deriving it.
+         */
+        int slot = DungeonInstanceCleanup.UNKNOWN_SLOT;
         boolean isFirstPortalUse;
         DungeonConfig config;
         ServerLevel dungeonLevel;
@@ -462,7 +470,9 @@ public class DungeonTeleportHandler {
             CobbleSafari.LOGGER.info("Reusing existing dungeon for portal {}: structure at {}, exit portal at {}",
                     portalId, state.structurePos, state.exitPortalPos);
         } else {
-            state.structurePos = calculateUniquePosition(server, config);
+            SlotAllocation allocation = calculateUniquePosition(server, config);
+            state.slot = allocation.slot();
+            state.structurePos = allocation.pos();
             CobbleSafari.LOGGER.info("Calculated new dungeon position at {}", state.structurePos);
         }
 
@@ -658,7 +668,8 @@ public class DungeonTeleportHandler {
                     portalEntity.getDungeonChunkMinX(),
                     portalEntity.getDungeonChunkMinZ(),
                     portalEntity.getDungeonChunkMaxX(),
-                    portalEntity.getDungeonChunkMaxZ()
+                    portalEntity.getDungeonChunkMaxZ(),
+                    state.slot
             );
         }
 

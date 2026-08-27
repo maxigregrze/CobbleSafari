@@ -1,213 +1,247 @@
 {
-    "entity.generic.rainbow_feather_revive": {
-        "sounds": [
-            {
-                "name": "cobblesafari:entity/generic/rainbow_feather_revive",
-                "stream": false
-            }
-        ],
-        "subtitle": "subtitles.cobblesafari.item.rainbow_feather_revive"
-    },
-    "entity.generic.incense_spray": {
-        "sounds": [
-            {
-                "name": "cobblesafari:entity/generic/incense_spray",
-                "stream": false
-            }
-        ],
-        "subtitle": "subtitles.entity.generic.incense_spray"
-    },
-    "entity.generic.fart": {
-        "sounds": [
-            {
-                "name": "cobblesafari:entity/generic/fart",
-                "stream": false
-            }
-        ],
-        "subtitle": "subtitles.entity.generic.fart"
-    },
-    "entity.generic.fart_reverb": {
-        "sounds": [
-            {
-                "name": "cobblesafari:entity/generic/fart_reverb",
-                "stream": false
-            }
-        ],
-        "subtitle": "subtitles.entity.generic.fart"
-    },
-    "entity.generic.silent": {
-        "sounds": []
-    },
-    "safari.flee": {
-        "sounds": [
-            {
-                "name": "cobblesafari:safari/flee",
-                "stream": false
-            }
-        ],
-        "subtitle": "subtitles.cobblesafari.safari.flee"
-    },
-    "safari.spray": {
-        "sounds": [
-            {
-                "name": "cobblesafari:safari/spray",
-                "stream": false
-            }
-        ],
-        "subtitle": "subtitles.cobblesafari.safari.spray"
-    },
-    "giratina.trade": {
-        "sounds": [
-            {
-                "name": "cobblesafari:giratina/trade",
-                "stream": false
-            }
-        ],
-        "subtitle": "subtitles.cobblesafari.giratina.trade"
-    },
-    "block.bell_chime": {
-        "sounds": [
-            {
-                "name": "cobblesafari:blocks/bell_chime",
-                "stream": false
-            }
-        ],
-        "subtitle": "subtitles.cobblesafari.block.bell_chime"
-    },
-    "music.distortion.intro": {
-        "sounds": [
-            {
-                "name": "cobblesafari:music/bgm_distortion_intro",
-                "stream": true
-            }
-        ]
-    },
-    "music.distortion.loop": {
-        "sounds": [
-            {
-                "name": "cobblesafari:music/bgm_distortion_loop",
-                "stream": true
-            }
-        ]
-    },
-    "music.underground.intro": {
-        "sounds": [
-            {
-                "name": "cobblesafari:music/bgm_underground_intro",
-                "stream": true
-            }
-        ]
-    },
-    "music.underground.loop": {
-        "sounds": [
-            {
-                "name": "cobblesafari:music/bgm_underground_loop",
-                "stream": true
-            }
-        ]
-    },
-    "music.giratina1.intro": {
-        "sounds": [
-            {
-                "name": "cobblesafari:music/bgm_giratina_1_intro",
-                "stream": true
-            }
-        ]
-    },
-    "music.giratina1.loop": {
-        "sounds": [
-            {
-                "name": "cobblesafari:music/bgm_giratina_1_loop",
-                "stream": true
-            }
-        ]
-    },
-    "music.giratina2.intro": {
-        "sounds": [
-            {
-                "name": "cobblesafari:music/bgm_giratina_2_intro",
-                "stream": true
-            }
-        ]
-    },
-    "music.giratina2.loop": {
-        "sounds": [
-            {
-                "name": "cobblesafari:music/bgm_giratina_2_loop",
-                "stream": true
-            }
-        ]
-    },
-    "music.giratina2.outro": {
-        "sounds": [
-            {
-                "name": "cobblesafari:music/bgm_giratina_2_outro",
-                "stream": true
-            }
-        ]
-    },
-    "music.hyperspace.loop": {
-        "sounds": [
-            {
-                "name": "cobblesafari:music/bgm_hyperspace_loop",
-                "stream": true
-            }
-        ]
-    },
-    "music.hyperspace.intro": {
-        "sounds": [
-            {
-                "name": "cobblesafari:music/bgm_hyperspace_intro",
-                "stream": true
-            }
-        ]
-    },
-    "music.hyperspacewild.intro": {
-        "sounds": [
-            {
-                "name": "cobblesafari:music/bgm_hyperspacewild_intro",
-                "stream": true
-            }
-        ]
-    },
-    "music.hyperspacewild.loop": {
-        "sounds": [
-            {
-                "name": "cobblesafari:music/bgm_hyperspacewild_loop",
-                "stream": true
-            }
-        ]
-    },
-    "music.hooh.loop": {
-        "sounds": [
-            {
-                "name": "cobblesafari:music/bgm_hooh_loop",
-                "stream": true
-            }
-        ]
-    },
-    "music.hooh.intro": {
-        "sounds": [
-            {
-                "name": "cobblesafari:music/bgm_hooh_intro",
-                "stream": true
-            }
-        ]
-    },
-    "music.belltower.intro": {
-        "sounds": [
-            {
-                "name": "cobblesafari:music/bgm_belltower_intro",
-                "stream": true
-            }
-        ]
-    },
-    "music.belltower.loop": {
-        "sounds": [
-            {
-                "name": "cobblesafari:music/bgm_belltower_loop",
-                "stream": true
-            }
-        ]
-    }
+  "entity.generic.rainbow_feather_revive": {
+    "sounds": [
+      {
+        "name": "cobblesafari:entity/generic/rainbow_feather_revive",
+        "stream": false
+      }
+    ],
+    "subtitle": "subtitles.cobblesafari.item.rainbow_feather_revive"
+  },
+  "entity.generic.incense_spray": {
+    "sounds": [
+      {
+        "name": "cobblesafari:entity/generic/incense_spray",
+        "stream": false
+      }
+    ],
+    "subtitle": "subtitles.entity.generic.incense_spray"
+  },
+  "entity.generic.fart": {
+    "sounds": [
+      {
+        "name": "cobblesafari:entity/generic/fart",
+        "stream": false
+      }
+    ],
+    "subtitle": "subtitles.entity.generic.fart"
+  },
+  "entity.generic.fart_reverb": {
+    "sounds": [
+      {
+        "name": "cobblesafari:entity/generic/fart_reverb",
+        "stream": false
+      }
+    ],
+    "subtitle": "subtitles.entity.generic.fart"
+  },
+  "entity.generic.silent": {
+    "sounds": []
+  },
+  "safari.flee": {
+    "sounds": [
+      {
+        "name": "cobblesafari:safari/flee",
+        "stream": false
+      }
+    ],
+    "subtitle": "subtitles.cobblesafari.safari.flee"
+  },
+  "safari.spray": {
+    "sounds": [
+      {
+        "name": "cobblesafari:safari/spray",
+        "stream": false
+      }
+    ],
+    "subtitle": "subtitles.cobblesafari.safari.spray"
+  },
+  "giratina.trade": {
+    "sounds": [
+      {
+        "name": "cobblesafari:giratina/trade",
+        "stream": false
+      }
+    ],
+    "subtitle": "subtitles.cobblesafari.giratina.trade"
+  },
+  "block.bell_chime": {
+    "sounds": [
+      {
+        "name": "cobblesafari:blocks/bell_chime",
+        "stream": false
+      }
+    ],
+    "subtitle": "subtitles.cobblesafari.block.bell_chime"
+  },
+  "music.distortion.intro": {
+    "sounds": [
+      {
+        "name": "cobblesafari:music/bgm_distortion_intro",
+        "stream": true
+      }
+    ]
+  },
+  "music.distortion.loop": {
+    "sounds": [
+      {
+        "name": "cobblesafari:music/bgm_distortion_loop",
+        "stream": true
+      }
+    ]
+  },
+  "music.underground.intro": {
+    "sounds": [
+      {
+        "name": "cobblesafari:music/bgm_underground_intro",
+        "stream": true
+      }
+    ]
+  },
+  "music.underground.loop": {
+    "sounds": [
+      {
+        "name": "cobblesafari:music/bgm_underground_loop",
+        "stream": true
+      }
+    ]
+  },
+  "music.giratina1.intro": {
+    "sounds": [
+      {
+        "name": "cobblesafari:music/bgm_giratina_1_intro",
+        "stream": true
+      }
+    ]
+  },
+  "music.giratina1.loop": {
+    "sounds": [
+      {
+        "name": "cobblesafari:music/bgm_giratina_1_loop",
+        "stream": true
+      }
+    ]
+  },
+  "music.giratina2.intro": {
+    "sounds": [
+      {
+        "name": "cobblesafari:music/bgm_giratina_2_intro",
+        "stream": true
+      }
+    ]
+  },
+  "music.giratina2.loop": {
+    "sounds": [
+      {
+        "name": "cobblesafari:music/bgm_giratina_2_loop",
+        "stream": true
+      }
+    ]
+  },
+  "music.giratina2.outro": {
+    "sounds": [
+      {
+        "name": "cobblesafari:music/bgm_giratina_2_outro",
+        "stream": true
+      }
+    ]
+  },
+  "music.hyperspace.loop": {
+    "sounds": [
+      {
+        "name": "cobblesafari:music/bgm_hyperspace_loop",
+        "stream": true
+      }
+    ]
+  },
+  "music.hyperspace.intro": {
+    "sounds": [
+      {
+        "name": "cobblesafari:music/bgm_hyperspace_intro",
+        "stream": true
+      }
+    ]
+  },
+  "music.hyperspacewild.intro": {
+    "sounds": [
+      {
+        "name": "cobblesafari:music/bgm_hyperspacewild_intro",
+        "stream": true
+      }
+    ]
+  },
+  "music.hyperspacewild.loop": {
+    "sounds": [
+      {
+        "name": "cobblesafari:music/bgm_hyperspacewild_loop",
+        "stream": true
+      }
+    ]
+  },
+  "music.hooh.loop": {
+    "sounds": [
+      {
+        "name": "cobblesafari:music/bgm_hooh_loop",
+        "stream": true
+      }
+    ]
+  },
+  "music.hooh.intro": {
+    "sounds": [
+      {
+        "name": "cobblesafari:music/bgm_hooh_intro",
+        "stream": true
+      }
+    ]
+  },
+  "music.belltower.intro": {
+    "sounds": [
+      {
+        "name": "cobblesafari:music/bgm_belltower_intro",
+        "stream": true
+      }
+    ]
+  },
+  "music.belltower.loop": {
+    "sounds": [
+      {
+        "name": "cobblesafari:music/bgm_belltower_loop",
+        "stream": true
+      }
+    ]
+  },
+  "music.ultrawarpride.intro": {
+    "sounds": [
+      {
+        "name": "cobblesafari:music/bgm_ultrawarpride_intro",
+        "stream": true
+      }
+    ]
+  },
+  "music.ultrawarpride.loop": {
+    "sounds": [
+      {
+        "name": "cobblesafari:music/bgm_ultrawarpride_loop",
+        "stream": true
+      }
+    ]
+  },
+  "warpride.positive": {
+    "sounds": []
+  },
+  "warpride.negative": {
+    "sounds": []
+  },
+  "warpride.jump": {
+    "sounds": []
+  },
+  "warpride.portal": {
+    "sounds": []
+  },
+  "warpride.warning": {
+    "sounds": []
+  },
+  "warpride.countdown": {
+    "sounds": []
+  }
 }

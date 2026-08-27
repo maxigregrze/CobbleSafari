@@ -20,6 +20,44 @@ public class ClientNetworking {
 
     public static void registerFabricClientReceivers() {
         ClientPlayNetworking.registerGlobalReceiver(
+                maxigregrze.cobblesafari.warpride.network.WarpRidePayloads.OpenPayload.TYPE,
+                (payload, context) -> context.client().execute(() ->
+                        maxigregrze.cobblesafari.client.screen.warpride.UltraWarpRideScreen.open(payload)));
+
+        ClientPlayNetworking.registerGlobalReceiver(
+                maxigregrze.cobblesafari.warpride.network.WarpRidePayloads.DestinationSyncPayload.TYPE,
+                (payload, context) -> context.client().execute(() ->
+                        maxigregrze.cobblesafari.client.screen.warpride.UltraWarpRideScreen
+                                .acceptTints(payload.tints())));
+
+        ClientPlayNetworking.registerGlobalReceiver(
+                maxigregrze.cobblesafari.warpride.network.WarpRidePayloads.WavesPayload.TYPE,
+                (payload, context) -> context.client().execute(() -> {
+                    var screen = maxigregrze.cobblesafari.client.screen.warpride.UltraWarpRideScreen.active();
+                    if (screen != null) {
+                        screen.acceptWaves(payload);
+                    }
+                }));
+
+        ClientPlayNetworking.registerGlobalReceiver(
+                maxigregrze.cobblesafari.warpride.network.WarpRidePayloads.StatePayload.TYPE,
+                (payload, context) -> context.client().execute(() -> {
+                    var screen = maxigregrze.cobblesafari.client.screen.warpride.UltraWarpRideScreen.active();
+                    if (screen != null) {
+                        screen.acceptState(payload);
+                    }
+                }));
+
+        ClientPlayNetworking.registerGlobalReceiver(
+                maxigregrze.cobblesafari.warpride.network.WarpRidePayloads.EventPayload.TYPE,
+                (payload, context) -> context.client().execute(() -> {
+                    var screen = maxigregrze.cobblesafari.client.screen.warpride.UltraWarpRideScreen.active();
+                    if (screen != null) {
+                        screen.acceptEvent(payload);
+                    }
+                }));
+
+        ClientPlayNetworking.registerGlobalReceiver(
                 OpenTpAcceptPayload.TYPE,
                 (payload, context) -> {
                     context.client().execute(() -> {

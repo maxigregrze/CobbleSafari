@@ -25,6 +25,12 @@ public class DungeonPositionSavedData extends SavedData {
     private static final String NBT_SLOT_GENERATIONS = "SlotGenerations";
     private static final String NBT_INSTANCES = "Instances";
 
+    /**
+     * Z shift applied per slot reuse so a regenerated jigsaw is never bit-identical, cycling within
+     * {@code [0, zoneSize)} so the anchor can never leave its own zone.
+     */
+    public static final int SLOT_Z_STEP = 16;
+
     private final Map<String, Set<Integer>> usedSlots = new ConcurrentHashMap<>();
     private final Map<String, Map<Integer, Integer>> slotUseCounts = new ConcurrentHashMap<>();
     private final Map<UUID, DungeonInstanceRecord> instances = new ConcurrentHashMap<>();
@@ -148,13 +154,41 @@ public class DungeonPositionSavedData extends SavedData {
         return slot;
     }
 
-    public int getAndIncrementSlotZOffset(String dimensionId, int slot) {
+    public int getAndIncrementSlotZOffset(String dimensionId, int slot, int zoneSize) {
+        int span = Math.max(SLOT_Z_STEP, zoneSize);
         Map<Integer, Integer> dimCounts = slotUseCounts.computeIfAbsent(dimensionId, k -> new ConcurrentHashMap<>());
-        int zOffset = dimCounts.getOrDefault(slot, 0);
-        dimCounts.put(slot, zOffset + 16);
+        // floorMod on read doubles as an in-flight repair of a counter that already drifted past zoneSize.
+        int zOffset = Math.floorMod(dimCounts.getOrDefault(slot, 0), span);
+        dimCounts.put(slot, Math.floorMod(zOffset + SLOT_Z_STEP, span));
         setDirty();
-        CobbleSafari.LOGGER.debug("Slot {} Z offset {} (next will be {}) for dimension {}", slot, zOffset, zOffset + 16, dimensionId);
+        CobbleSafari.LOGGER.debug("Slot {} Z offset {} for dimension {} (step {}, span {})",
+                slot, zOffset, dimensionId, SLOT_Z_STEP, span);
         return zOffset;
+    }
+
+    /** One-shot repair bringing {@code SlotGenerations} counters back into {@code [0, zoneSize)}. */
+    public void normalizeSlotZOffsets() {
+        boolean changed = false;
+        for (Map.Entry<String, Map<Integer, Integer>> dim : slotUseCounts.entrySet()) {
+            DungeonConfig config = resolveDungeonConfig(dim.getKey());
+            if (config == null || config.getZoneSize() <= 0) {
+                continue;
+            }
+            int span = Math.max(SLOT_Z_STEP, config.getZoneSize());
+            for (Map.Entry<Integer, Integer> slot : dim.getValue().entrySet()) {
+                int previous = slot.getValue();
+                int normalized = Math.floorMod(previous, span);
+                if (normalized != previous) {
+                    slot.setValue(normalized);
+                    changed = true;
+                    CobbleSafari.LOGGER.info("Normalized drifted Z offset for slot {} of {}: {} -> {}",
+                            slot.getKey(), dim.getKey(), previous, normalized);
+                }
+            }
+        }
+        if (changed) {
+            setDirty();
+        }
     }
 
     public void freeSlot(String dimensionId, int slot) {
@@ -175,9 +209,13 @@ public class DungeonPositionSavedData extends SavedData {
         freeSlot(dimensionId, slot);
     }
 
+    /**
+     * Legacy grid bucket. {@code floorDiv} (not {@code /}) so a negative coordinate lands in the
+     * column west of 0 instead of sharing column 0 with its positive mirror.
+     */
     public static int slotFromPos(BlockPos pos, int zoneSize) {
-        int col = pos.getX() / zoneSize;
-        int row = pos.getZ() / zoneSize;
+        int col = Math.floorDiv(pos.getX(), zoneSize);
+        int row = Math.floorDiv(pos.getZ(), zoneSize);
         return col + row * 100;
     }
 
@@ -208,23 +246,71 @@ public class DungeonPositionSavedData extends SavedData {
     }
 
     /**
-     * Resolves the live dungeon instance occupying the slot at {@code pos} in {@code dimensionId}
-     *. Returns {@code null} if the dimension is not a dungeon or no live instance
-     * (non-pending) matches the slot.
+     * Resolves the live dungeon instance whose real footprint contains {@code pos}, or {@code null}
+     * when no live instance can plausibly own it. Matched on the persisted footprint, never a grid
+     * cell: a jigsaw may sprawl 512 blocks from an anchor sitting on the corner of its zone, so a
+     * grid test drops players who are still inside the dungeon.
      */
     public DungeonInstanceRecord findInstanceByPosition(String dimensionId, BlockPos pos) {
         DungeonConfig config = resolveDungeonConfig(dimensionId);
         if (config == null || config.getZoneSize() <= 0) {
             return null;
         }
+        List<DungeonInstanceRecord> live = liveRecords(dimensionId);
+
+        // Pass 1 - real footprint bounds, Y as tie-breaker only.
+        DungeonInstanceRecord best = null;
+        for (DungeonInstanceRecord record : live) {
+            if (record.hasUsableBounds() && record.containsColumn(pos)
+                    && (best == null || isCloser(record, best, pos))) {
+                best = record;
+            }
+        }
+        if (best != null) {
+            return best;
+        }
+
+        // Pass 2 - legacy grid, for records written before bounds were captured.
         int slot = slotFromPos(pos, config.getZoneSize());
-        for (DungeonInstanceRecord record : instances.values()) {
-            if (!record.pendingDeletion() && record.slot() == slot
-                    && dimensionId.equals(record.dimensionId())) {
+        for (DungeonInstanceRecord record : live) {
+            if (!record.hasUsableBounds() && record.slot() == slot) {
                 return record;
             }
         }
-        return null;
+
+        // Pass 3 - nearest anchor within one zone (bounds narrower than the walkable structure:
+        // the jigsaw capture is defensive, require = 0, and may have been skipped).
+        for (DungeonInstanceRecord record : live) {
+            int dx = Math.abs(pos.getX() - record.structurePos().getX());
+            int dz = Math.abs(pos.getZ() - record.structurePos().getZ());
+            if (Math.max(dx, dz) <= config.getZoneSize()
+                    && (best == null || isCloser(record, best, pos))) {
+                best = record;
+            }
+        }
+        return best;
+    }
+
+    private List<DungeonInstanceRecord> liveRecords(String dimensionId) {
+        return instances.values().stream()
+                .filter(r -> !r.pendingDeletion() && dimensionId.equals(r.dimensionId()))
+                .toList();
+    }
+
+    /** Closer = smaller |dY| to the anchor; ties broken by squared XZ distance to the anchor. */
+    private static boolean isCloser(DungeonInstanceRecord candidate, DungeonInstanceRecord best, BlockPos pos) {
+        int dyC = Math.abs(pos.getY() - candidate.structureY());
+        int dyB = Math.abs(pos.getY() - best.structureY());
+        if (dyC != dyB) {
+            return dyC < dyB;
+        }
+        return sqDistXZ(candidate, pos) < sqDistXZ(best, pos);
+    }
+
+    private static long sqDistXZ(DungeonInstanceRecord record, BlockPos pos) {
+        long dx = (long) pos.getX() - record.structurePos().getX();
+        long dz = (long) pos.getZ() - record.structurePos().getZ();
+        return dx * dx + dz * dz;
     }
 
     public List<DungeonInstanceRecord> getPendingDeletionInstances() {
@@ -274,10 +360,12 @@ public class DungeonPositionSavedData extends SavedData {
                     continue;
                 }
 
-                int zOffset = generations.getOrDefault(slot, 0);
-                if (zOffset > 0) {
-                    zOffset -= 16;
-                }
+                // Recover the offset of the LAST allocation: the decrement is modular, so a counter
+                // that just wrapped to 0 resolves to zoneSize - step rather than to 0.
+                int span = Math.max(SLOT_Z_STEP, zoneSize);
+                int zOffset = generations.containsKey(slot)
+                        ? Math.floorMod(generations.get(slot) - SLOT_Z_STEP, span)
+                        : 0;
                 BlockPos structurePos = structurePosFromSlot(slot, zOffset, zoneSize);
                 int[] bounds = chunkBoundsFromStructure(structurePos, zoneSize);
                 DungeonInstanceRecord orphan = DungeonInstanceRecord.create(

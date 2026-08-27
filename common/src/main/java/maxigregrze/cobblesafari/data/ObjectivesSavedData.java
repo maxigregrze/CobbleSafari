@@ -99,6 +99,12 @@ public class ObjectivesSavedData extends SavedData {
         return byKey == null ? null : byKey.get(key);
     }
 
+    /** Snapshot of every assignment held by one player (join-time context recovery, plan 179 § 4.2). */
+    public List<ObjectiveAssignment> getForPlayer(UUID player) {
+        Map<String, ObjectiveAssignment> byKey = byPlayer.get(player);
+        return byKey == null ? List.of() : List.copyOf(byKey.values());
+    }
+
     public void put(UUID player, ObjectiveAssignment assignment) {
         byPlayer.computeIfAbsent(player, k -> new LinkedHashMap<>()).put(assignment.key(), assignment);
         setDirty();

@@ -67,4 +67,53 @@ public class NeoForgeClientPayloadHandlers {
             TreasureRegistry.applyClientSync(payload.entries());
         });
     }
+
+
+    public static void handleWarpRideOpen(
+            maxigregrze.cobblesafari.warpride.network.WarpRidePayloads.OpenPayload payload,
+            IPayloadContext context) {
+        context.enqueueWork(() ->
+                maxigregrze.cobblesafari.client.screen.warpride.UltraWarpRideScreen.open(payload));
+    }
+
+    public static void handleWarpRideDestinationSync(
+            maxigregrze.cobblesafari.warpride.network.WarpRidePayloads.DestinationSyncPayload payload,
+            IPayloadContext context) {
+        context.enqueueWork(() ->
+                maxigregrze.cobblesafari.client.screen.warpride.UltraWarpRideScreen
+                        .acceptTints(payload.tints()));
+    }
+
+    public static void handleWarpRideWaves(
+            maxigregrze.cobblesafari.warpride.network.WarpRidePayloads.WavesPayload payload,
+            IPayloadContext context) {
+        context.enqueueWork(() -> {
+            var screen = maxigregrze.cobblesafari.client.screen.warpride.UltraWarpRideScreen.active();
+            if (screen != null) {
+                screen.acceptWaves(payload);
+            }
+        });
+    }
+
+    public static void handleWarpRideState(
+            maxigregrze.cobblesafari.warpride.network.WarpRidePayloads.StatePayload payload,
+            IPayloadContext context) {
+        context.enqueueWork(() -> {
+            var screen = maxigregrze.cobblesafari.client.screen.warpride.UltraWarpRideScreen.active();
+            if (screen != null) {
+                screen.acceptState(payload);
+            }
+        });
+    }
+
+    public static void handleWarpRideEvent(
+            maxigregrze.cobblesafari.warpride.network.WarpRidePayloads.EventPayload payload,
+            IPayloadContext context) {
+        context.enqueueWork(() -> {
+            var screen = maxigregrze.cobblesafari.client.screen.warpride.UltraWarpRideScreen.active();
+            if (screen != null) {
+                screen.acceptEvent(payload);
+            }
+        });
+    }
 }

@@ -1,0 +1,7 @@
+{
+  "typeId": 1,
+  "weight": 10,
+  "structurePool": "cobblesafari:ultra_space/debug_alpha",
+  "tint": "#4FE08A",
+  "encounters": { "0": [], "1": [], "2": [], "3": [] }
+}

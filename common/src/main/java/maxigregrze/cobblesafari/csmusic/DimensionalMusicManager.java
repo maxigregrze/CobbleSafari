@@ -50,6 +50,10 @@ public final class DimensionalMusicManager {
         boolean lastHasOutro;
         /** "Boss" override (csmusic id) while the fight lasts. */
         @Nullable String bossOverride;
+        /** Warp-ride override (csmusic id) for the whole mini-game session; outranks even the boss. */
+        @Nullable String warpRideOverride;
+        /** After the portal is taken, the ride music fades out and this keeps everything else silent. */
+        boolean warpRideSilenced;
         /** Exit mode to apply on the next send (otherwise chosen). One-shot. */
         @Nullable Integer nextMode;
         /** Under a {@code /csmusic debug} override: normal arbitration is suspended. */
@@ -102,16 +106,32 @@ public final class DimensionalMusicManager {
         st.lastDimension = dimNow;
         boolean dimChanged = dimPrev != null && !dimPrev.equals(dimNow);
 
-        // Failsafe: a boss override always wins arbitration, so a missed end-of-fight hook would
-        // pin this player's music forever. Drop it as soon as they are no longer in a fight.
+        // Failsafe: a warp-ride override wins arbitration, so a missed end hook would pin this
+        // player's music forever. Drop it as soon as they are no longer riding.
+        if (st.warpRideOverride != null
+                && !maxigregrze.cobblesafari.warpride.WarpRideManager.isRiding(uuid)) {
+            st.warpRideOverride = null;
+            st.warpRideSilenced = false;
+        }
+        // Failsafe: same for the boss override.
         if (st.bossOverride != null
                 && !maxigregrze.cobblesafari.csboss.BossBattleManager.isParticipant(uuid)) {
             st.bossOverride = null;
         }
-        CsMusicDefinition boss = CsMusicRegistry.get(st.bossOverride).orElse(null);
-        CsMusicInstruction winner = boss != null
-                ? CsMusicInstruction.single(boss, BOSS_PRIORITY)
-                : resolveWinner(player);
+        CsMusicInstruction winner;
+        if (st.warpRideOverride != null) {
+            // The mini-game owns the music: its own track, or deliberate silence once the portal is
+            // taken - and in both cases nothing below (boss, rules, areas) may play.
+            CsMusicDefinition warp = st.warpRideSilenced
+                    ? null
+                    : CsMusicRegistry.get(st.warpRideOverride).orElse(null);
+            winner = warp != null ? CsMusicInstruction.single(warp, BOSS_PRIORITY) : null;
+        } else {
+            CsMusicDefinition boss = CsMusicRegistry.get(st.bossOverride).orElse(null);
+            winner = boss != null
+                    ? CsMusicInstruction.single(boss, BOSS_PRIORITY)
+                    : resolveWinner(player);
+        }
 
         String desired = winner != null ? winner.signature() : "";
         if (Objects.equals(st.lastSignature, desired)) {
@@ -266,15 +286,23 @@ public final class DimensionalMusicManager {
     public static List<SourceInfo> describeSourcesFor(ServerPlayer player) {
         List<SourceInfo> result = new ArrayList<>();
         PlayerState st = state(player.getUUID());
+        boolean warpActive = st.warpRideOverride != null;
+        if (warpActive) {
+            CsMusicDefinition warp = st.warpRideSilenced
+                    ? null : CsMusicRegistry.get(st.warpRideOverride).orElse(null);
+            String label = st.warpRideSilenced ? "(silence)"
+                    : (warp != null ? warp.id() : st.warpRideOverride);
+            result.add(new SourceInfo("warpride", label, 0, 0, Integer.MAX_VALUE, true));
+        }
         CsMusicDefinition boss = CsMusicRegistry.get(st.bossOverride).orElse(null);
         if (boss != null) {
-            result.add(new SourceInfo("boss", boss.id(), 0, 0, Integer.MAX_VALUE, true));
+            result.add(new SourceInfo("boss", boss.id(), 0, 0, Integer.MAX_VALUE, !warpActive));
         }
         List<MusicSource> sources = collectSources(player);
         sources.sort(SOURCE_ORDER);
 
         String winnerKey = null;
-        if (boss == null) {
+        if (!warpActive && boss == null) {
             for (MusicSource source : sources) {
                 if (resolveSource(source) != null) {
                     winnerKey = source.key();
@@ -291,7 +319,7 @@ public final class DimensionalMusicManager {
             int poolSize = instruction != null && instruction.isPool() && instruction.entries().size() > 1
                     ? instruction.entries().size() : 0;
             int repeat = instruction != null ? instruction.repeat() : 0;
-            boolean winner = boss == null && source.key().equals(winnerKey);
+            boolean winner = !warpActive && boss == null && source.key().equals(winnerKey);
             result.add(new SourceInfo(source.key(), label, poolSize, repeat, source.priority(), winner));
         }
         return result;
@@ -340,6 +368,38 @@ public final class DimensionalMusicManager {
         if (bid.equals(st.lastTrackId)) {
             st.nextMode = mode;
         }
+        updatePlayer(player);
+    }
+
+    /** The ride opened: its music takes top priority for the whole session, above even the boss. */
+    public static void onWarpRideStart(ServerPlayer player, String csmusicId) {
+        if (!CsMusicRegistry.has(csmusicId)) {
+            return;
+        }
+        PlayerState st = state(player.getUUID());
+        st.warpRideOverride = csmusicId;
+        st.warpRideSilenced = false;
+        updatePlayer(player); // immediate: the full-screen mini-game has already taken over the view
+    }
+
+    /** The portal was taken: fade the ride music out but keep everything else suppressed. */
+    public static void onWarpRideMusicStop(ServerPlayer player) {
+        PlayerState st = state(player.getUUID());
+        if (st.warpRideOverride == null || st.warpRideSilenced) {
+            return;
+        }
+        st.warpRideSilenced = true;
+        updatePlayer(player);
+    }
+
+    /** The screen closed: release the override so normal arbitration (dimension music) resumes. */
+    public static void onWarpRideEnd(ServerPlayer player) {
+        PlayerState st = state(player.getUUID());
+        if (st.warpRideOverride == null) {
+            return;
+        }
+        st.warpRideOverride = null;
+        st.warpRideSilenced = false;
         updatePlayer(player);
     }
 

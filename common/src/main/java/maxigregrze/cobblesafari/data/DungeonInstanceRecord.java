@@ -82,6 +82,27 @@ public record DungeonInstanceRecord(
         );
     }
 
+    /**
+     * Whether the persisted bounds are real: a live-pipeline record carries a ±1-chunk margin, so a
+     * genuine box spans three chunks or more, and an all-zero box means "bounds unknown".
+     */
+    public boolean hasUsableBounds() {
+        return chunkMaxX - chunkMinX >= 2 && chunkMaxZ - chunkMinZ >= 2;
+    }
+
+    /**
+     * Whether {@code pos} falls inside this instance's footprint, ignoring Y: a player above the
+     * cleanup window still belongs here. Y only breaks ties between overlapping instances.
+     */
+    public boolean containsColumn(BlockPos pos) {
+        int minX = chunkMinX << 4;
+        int minZ = chunkMinZ << 4;
+        int maxX = (chunkMaxX << 4) + 15;
+        int maxZ = (chunkMaxZ << 4) + 15;
+        return pos.getX() >= minX && pos.getX() <= maxX
+                && pos.getZ() >= minZ && pos.getZ() <= maxZ;
+    }
+
     public CompoundTag save() {
         CompoundTag tag = new CompoundTag();
         tag.putUUID(NBT_INSTANCE_ID, instanceId);

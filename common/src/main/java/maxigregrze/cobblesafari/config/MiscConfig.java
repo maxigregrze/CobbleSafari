@@ -47,6 +47,12 @@ public class MiscConfig {
     private int teleportpadForwardLeeway = 5;
 
     /**
+     * CSMusic id played while a player is in the Ultra Warp Ride mini-game. It takes priority over
+     * everything, csboss battle music included. Unnamespaced ids resolve to {@code cobblesafari:}.
+     */
+    private String ultraWarpDiveCSMusic = "ultrawarpridemusic";
+
+    /**
      * Default values for a newly placed "lost item" block (see {@code misc_config.json}, key {@code lostItem}).
      */
     private LostItemDefaults lostItem = new LostItemDefaults();
@@ -271,6 +277,14 @@ public class MiscConfig {
             return 5;
         }
         return Math.max(5, INSTANCE.teleportpadForwardLeeway);
+    }
+
+    /** CSMusic id for the Ultra Warp Ride mini-game (empty string = no override). */
+    public static String getUltraWarpDiveCSMusic() {
+        if (INSTANCE == null || INSTANCE.ultraWarpDiveCSMusic == null) {
+            return "ultrawarpridemusic";
+        }
+        return INSTANCE.ultraWarpDiveCSMusic;
     }
 
     public void ensureLostItemDefaults() {

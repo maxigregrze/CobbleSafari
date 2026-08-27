@@ -11,6 +11,7 @@ public final class RateLimiter {
     public static final int SERVICE_UNION = 3;
     public static final int SERVICE_UNDERGROUND = 4;
     public static final int SERVICE_ROTOMPHONE = 5;
+    public static final int SERVICE_WARPRIDE = 6;
 
     private static final Map<UUID, Map<Integer, Long>> LAST_HIT_MS = new ConcurrentHashMap<>();
 

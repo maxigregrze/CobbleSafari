@@ -2323,5 +2323,21 @@
   "block.cobblesafari.yellow_maple_sapling": "Pousse d'érable jaune",
   "block.cobblesafari.red_maple_leaves_pile": "Tas de feuilles d'érable rouge",
   "block.cobblesafari.orange_maple_leaves_pile": "Tas de feuilles d'érable orange",
-  "block.cobblesafari.yellow_maple_leaves_pile": "Tas de feuilles d'érable jaune"
+  "block.cobblesafari.yellow_maple_leaves_pile": "Tas de feuilles d'érable jaune",
+  "gui.cobblesafari.warpride.tutorial.title": "Ultra Warp Ride",
+  "gui.cobblesafari.warpride.tutorial.start": "Appuyez sur une touche pour commencer",
+  "gui.cobblesafari.warpride.tutorial.dont_show": "Ne plus afficher",
+  "gui.cobblesafari.warpride.countdown.go": "PARTEZ !",
+  "gui.cobblesafari.warpride.hud.energy": "Énergie",
+  "gui.cobblesafari.warpride.hud.distance": "%s al",
+  "gui.cobblesafari.warpride.drift": "Plus d'énergie — prends le prochain portail",
+  "gui.cobblesafari.warpride.result.title": "Distorsion terminée",
+  "gui.cobblesafari.warpride.result.line": "%s al — monde %s, rang %s",
+  "gui.cobblesafari.warpride.pause.resume": "Reprendre",
+  "gui.cobblesafari.warpride.pause.quit": "Quitter la course",
+  "cobblesafari.command.warpride.already_riding": "%s est déjà en course.",
+  "cobblesafari.command.warpride.started": "Course lancée pour %s.",
+  "cobblesafari.command.warpride.stopped": "Course arrêtée pour %s.",
+  "cobblesafari.command.warpride.no_session": "%s n'est pas en course.",
+  "cobblesafari.command.warpride.bad_difficulty": "Table de difficulté invalide ; voir le journal du serveur."
 }

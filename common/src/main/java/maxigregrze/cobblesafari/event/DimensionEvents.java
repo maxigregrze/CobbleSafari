@@ -72,6 +72,8 @@ public class DimensionEvents {
         maxigregrze.cobblesafari.csmusic.CsMusicTriggerDataLoader.load(server);
         maxigregrze.cobblesafari.csmusic.CsMusicAreaStore.loadAll(server);
         maxigregrze.cobblesafari.objectives.DimensionalObjectivesDataLoader.load(server);
+        maxigregrze.cobblesafari.warpride.logic.WarpRideDifficultyLoader.load(server);
+        maxigregrze.cobblesafari.warpride.logic.WarpRideDestinationLoader.load(server);
         // The initial resource load also fires the loaders' reload hook; swallow that flag so the
         // first tick does not redo everything we have just done.
         datapackReloadPending = false;
@@ -112,6 +114,10 @@ public class DimensionEvents {
         // Clients hold a copy of their pool's entries; a pool whose membership just changed must be
         // re-sent or they would keep sequencing the old list.
         maxigregrze.cobblesafari.csmusic.DimensionalMusicManager.invalidateAll();
+        maxigregrze.cobblesafari.warpride.logic.WarpRideDifficultyLoader.load(server);
+        maxigregrze.cobblesafari.warpride.logic.WarpRideDestinationLoader.load(server);
+        // Clients hold the typeId -> tint map to draw portal sprites, so a changed colour must be re-sent.
+        maxigregrze.cobblesafari.warpride.WarpRideManager.syncDestinationsToAll(server);
     }
 
     public static void onServerStopping(MinecraftServer server) {
@@ -131,6 +137,7 @@ public class DimensionEvents {
         TimerManager.tickAllTimers();
         DungeonRegionClearer.tick(server);
         PortalSpawnManager.tick(server);
+        maxigregrze.cobblesafari.warpride.WarpRideManager.tickAll(server);
         SafariResetManager.tick(server);
         maxigregrze.cobblesafari.csboss.BossBattleManager.onServerTick(server);
         maxigregrze.cobblesafari.csmusic.DimensionalMusicManager.tick(server);
@@ -234,6 +241,9 @@ public class DimensionEvents {
         maxigregrze.cobblesafari.rotomphone.RotomPhoneConfigSync.syncToPlayer(player);
         maxigregrze.cobblesafari.rotomphone.ChatConversationSync.syncToPlayer(player);
         GtsService.onPlayerJoin(player);
+        // A server killed mid-ride leaves the rider's protection in their saved NBT; this is the net.
+        maxigregrze.cobblesafari.warpride.RiderBodyGuard.clearIfMarked(player);
+        maxigregrze.cobblesafari.warpride.WarpRideManager.syncDestinations(player);
     }
 
     public static void onPlayerDisconnect(ServerPlayer player) {
@@ -253,5 +263,6 @@ public class DimensionEvents {
         maxigregrze.cobblesafari.rotomphone.OnlinePcAccess.clear(player.getUUID());
         LAST_DIMENSION.remove(player.getUUID());
         maxigregrze.cobblesafari.objectives.ObjectivesManager.onPlayerDisconnect(player.getUUID());
+        maxigregrze.cobblesafari.warpride.WarpRideManager.onPlayerDisconnect(player);
     }
 }

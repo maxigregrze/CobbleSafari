@@ -392,6 +392,54 @@ public class CobbleSafariNeoForge {
                     });
                 });
 
+        registrar.playToServer(
+                maxigregrze.cobblesafari.warpride.network.WarpRidePayloads.ReadyPayload.TYPE,
+                maxigregrze.cobblesafari.warpride.network.WarpRidePayloads.ReadyPayload.STREAM_CODEC,
+                (payload, context) -> context.enqueueWork(() -> {
+                    if (context.player() instanceof ServerPlayer sp) {
+                        maxigregrze.cobblesafari.warpride.network.WarpRideNetworking.handleReady(sp, payload);
+                    }
+                }));
+
+        registrar.playToServer(
+                maxigregrze.cobblesafari.warpride.network.WarpRidePayloads.InputPayload.TYPE,
+                maxigregrze.cobblesafari.warpride.network.WarpRidePayloads.InputPayload.STREAM_CODEC,
+                (payload, context) -> context.enqueueWork(() -> {
+                    if (context.player() instanceof ServerPlayer sp) {
+                        maxigregrze.cobblesafari.warpride.network.WarpRideNetworking.handleInput(sp, payload);
+                    }
+                }));
+
+        registrar.playToServer(
+                maxigregrze.cobblesafari.warpride.network.WarpRidePayloads.ClosePayload.TYPE,
+                maxigregrze.cobblesafari.warpride.network.WarpRidePayloads.ClosePayload.STREAM_CODEC,
+                (payload, context) -> context.enqueueWork(() -> {
+                    if (context.player() instanceof ServerPlayer sp) {
+                        maxigregrze.cobblesafari.warpride.network.WarpRideNetworking.handleClose(sp, payload);
+                    }
+                }));
+
+        registrar.playToClient(
+                maxigregrze.cobblesafari.warpride.network.WarpRidePayloads.OpenPayload.TYPE,
+                maxigregrze.cobblesafari.warpride.network.WarpRidePayloads.OpenPayload.STREAM_CODEC,
+                NeoForgeClientPayloadHandlers::handleWarpRideOpen);
+        registrar.playToClient(
+                maxigregrze.cobblesafari.warpride.network.WarpRidePayloads.DestinationSyncPayload.TYPE,
+                maxigregrze.cobblesafari.warpride.network.WarpRidePayloads.DestinationSyncPayload.STREAM_CODEC,
+                NeoForgeClientPayloadHandlers::handleWarpRideDestinationSync);
+        registrar.playToClient(
+                maxigregrze.cobblesafari.warpride.network.WarpRidePayloads.WavesPayload.TYPE,
+                maxigregrze.cobblesafari.warpride.network.WarpRidePayloads.WavesPayload.STREAM_CODEC,
+                NeoForgeClientPayloadHandlers::handleWarpRideWaves);
+        registrar.playToClient(
+                maxigregrze.cobblesafari.warpride.network.WarpRidePayloads.StatePayload.TYPE,
+                maxigregrze.cobblesafari.warpride.network.WarpRidePayloads.StatePayload.STREAM_CODEC,
+                NeoForgeClientPayloadHandlers::handleWarpRideState);
+        registrar.playToClient(
+                maxigregrze.cobblesafari.warpride.network.WarpRidePayloads.EventPayload.TYPE,
+                maxigregrze.cobblesafari.warpride.network.WarpRidePayloads.EventPayload.STREAM_CODEC,
+                NeoForgeClientPayloadHandlers::handleWarpRideEvent);
+
         registrar.playToServer(UndergroundPayloads.MineActionPayload.TYPE,
                 UndergroundPayloads.MineActionPayload.STREAM_CODEC,
                 (payload, context) -> {

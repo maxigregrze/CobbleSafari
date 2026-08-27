@@ -201,6 +201,47 @@ public class CobbleSafariFabric implements ModInitializer {
                 UndergroundPayloads.TreasureRegistrySyncPayload.STREAM_CODEC
         );
 
+        PayloadTypeRegistry.playS2C().register(
+                maxigregrze.cobblesafari.warpride.network.WarpRidePayloads.OpenPayload.TYPE,
+                maxigregrze.cobblesafari.warpride.network.WarpRidePayloads.OpenPayload.STREAM_CODEC);
+        PayloadTypeRegistry.playS2C().register(
+                maxigregrze.cobblesafari.warpride.network.WarpRidePayloads.DestinationSyncPayload.TYPE,
+                maxigregrze.cobblesafari.warpride.network.WarpRidePayloads.DestinationSyncPayload.STREAM_CODEC);
+        PayloadTypeRegistry.playS2C().register(
+                maxigregrze.cobblesafari.warpride.network.WarpRidePayloads.WavesPayload.TYPE,
+                maxigregrze.cobblesafari.warpride.network.WarpRidePayloads.WavesPayload.STREAM_CODEC);
+        PayloadTypeRegistry.playS2C().register(
+                maxigregrze.cobblesafari.warpride.network.WarpRidePayloads.StatePayload.TYPE,
+                maxigregrze.cobblesafari.warpride.network.WarpRidePayloads.StatePayload.STREAM_CODEC);
+        PayloadTypeRegistry.playS2C().register(
+                maxigregrze.cobblesafari.warpride.network.WarpRidePayloads.EventPayload.TYPE,
+                maxigregrze.cobblesafari.warpride.network.WarpRidePayloads.EventPayload.STREAM_CODEC);
+        PayloadTypeRegistry.playC2S().register(
+                maxigregrze.cobblesafari.warpride.network.WarpRidePayloads.ReadyPayload.TYPE,
+                maxigregrze.cobblesafari.warpride.network.WarpRidePayloads.ReadyPayload.STREAM_CODEC);
+        PayloadTypeRegistry.playC2S().register(
+                maxigregrze.cobblesafari.warpride.network.WarpRidePayloads.InputPayload.TYPE,
+                maxigregrze.cobblesafari.warpride.network.WarpRidePayloads.InputPayload.STREAM_CODEC);
+        PayloadTypeRegistry.playC2S().register(
+                maxigregrze.cobblesafari.warpride.network.WarpRidePayloads.ClosePayload.TYPE,
+                maxigregrze.cobblesafari.warpride.network.WarpRidePayloads.ClosePayload.STREAM_CODEC);
+
+        ServerPlayNetworking.registerGlobalReceiver(
+                maxigregrze.cobblesafari.warpride.network.WarpRidePayloads.ReadyPayload.TYPE,
+                (payload, context) -> context.server().execute(() ->
+                        maxigregrze.cobblesafari.warpride.network.WarpRideNetworking
+                                .handleReady(context.player(), payload)));
+        ServerPlayNetworking.registerGlobalReceiver(
+                maxigregrze.cobblesafari.warpride.network.WarpRidePayloads.InputPayload.TYPE,
+                (payload, context) -> context.server().execute(() ->
+                        maxigregrze.cobblesafari.warpride.network.WarpRideNetworking
+                                .handleInput(context.player(), payload)));
+        ServerPlayNetworking.registerGlobalReceiver(
+                maxigregrze.cobblesafari.warpride.network.WarpRidePayloads.ClosePayload.TYPE,
+                (payload, context) -> context.server().execute(() ->
+                        maxigregrze.cobblesafari.warpride.network.WarpRideNetworking
+                                .handleClose(context.player(), payload)));
+
         ServerPlayNetworking.registerGlobalReceiver(
                 TpAcceptResponsePayload.TYPE,
                 (payload, context) -> {

@@ -2343,5 +2343,21 @@
   "block.cobblesafari.yellow_maple_sapling": "Yellow Maple Sapling",
   "block.cobblesafari.red_maple_leaves_pile": "Red Maple Leaf Pile",
   "block.cobblesafari.orange_maple_leaves_pile": "Orange Maple Leaf Pile",
-  "block.cobblesafari.yellow_maple_leaves_pile": "Yellow Maple Leaf Pile"
+  "block.cobblesafari.yellow_maple_leaves_pile": "Yellow Maple Leaf Pile",
+  "gui.cobblesafari.warpride.tutorial.title": "Ultra Warp Ride",
+  "gui.cobblesafari.warpride.tutorial.start": "Press any key to start",
+  "gui.cobblesafari.warpride.tutorial.dont_show": "Don't show again",
+  "gui.cobblesafari.warpride.countdown.go": "GO!",
+  "gui.cobblesafari.warpride.hud.energy": "Energy",
+  "gui.cobblesafari.warpride.hud.distance": "%s ly",
+  "gui.cobblesafari.warpride.drift": "Out of energy — take the next portal",
+  "gui.cobblesafari.warpride.result.title": "Warp complete",
+  "gui.cobblesafari.warpride.result.line": "%s ly — world %s, rank %s",
+  "gui.cobblesafari.warpride.pause.resume": "Resume",
+  "gui.cobblesafari.warpride.pause.quit": "Quit ride",
+  "cobblesafari.command.warpride.already_riding": "%s is already riding.",
+  "cobblesafari.command.warpride.started": "Warp ride started for %s.",
+  "cobblesafari.command.warpride.stopped": "Warp ride stopped for %s.",
+  "cobblesafari.command.warpride.no_session": "%s is not riding.",
+  "cobblesafari.command.warpride.bad_difficulty": "Difficulty table is invalid; check the server log."
 }

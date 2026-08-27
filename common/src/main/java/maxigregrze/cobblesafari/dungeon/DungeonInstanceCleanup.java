@@ -22,8 +22,15 @@ public final class DungeonInstanceCleanup {
 
     private static final Set<UUID> IN_FLIGHT_CLEARS = new HashSet<>();
 
+    /** Sentinel for "the allocated slot is not known here" — the caller falls back to deriving it. */
+    public static final int UNKNOWN_SLOT = -1;
+
     private DungeonInstanceCleanup() {}
 
+    /**
+     * @param allocatedSlot the slot {@code allocateSlot} handed out, or {@link #UNKNOWN_SLOT} to
+     *                      derive it from {@code structurePos}
+     */
     public static void registerActiveInstance(
             MinecraftServer server,
             UUID portalId,
@@ -32,14 +39,17 @@ public final class DungeonInstanceCleanup {
             int chunkMinX,
             int chunkMinZ,
             int chunkMaxX,
-            int chunkMaxZ
+            int chunkMaxZ,
+            int allocatedSlot
     ) {
         DungeonPositionSavedData data = DungeonPositionSavedData.get(server);
         DungeonInstanceRecord existing = data.findInstance(portalId, structurePos, config.getDimensionId());
         if (existing != null) {
             return;
         }
-        int slot = DungeonPositionSavedData.slotFromPos(structurePos, config.getZoneSize());
+        int slot = allocatedSlot >= 0
+                ? allocatedSlot
+                : DungeonPositionSavedData.slotFromPos(structurePos, config.getZoneSize());
         DungeonInstanceRecord record = DungeonInstanceRecord.create(
                 portalId,
                 config.getDimensionId(),
@@ -167,6 +177,8 @@ public final class DungeonInstanceCleanup {
         IN_FLIGHT_CLEARS.clear();
 
         DungeonPositionSavedData data = DungeonPositionSavedData.get(server);
+        // Must run BEFORE reconciliation, which reads these counters for each slot's last anchor offset.
+        data.normalizeSlotZOffsets();
         data.reconcileOrphanedSlotsToInstances();
 
         List<DungeonInstanceRecord> pending = data.getPendingDeletionInstances();
