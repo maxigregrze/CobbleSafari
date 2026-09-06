@@ -17,9 +17,6 @@
           }
         }
       ]
-    },
-    {
-      "processor_type": "cobblesafari:oasis_spawner_processor"
     }
   ]
 }

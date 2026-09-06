@@ -1,0 +1,53 @@
+{
+  "enabled": true,
+  "neededInstalledMods": [],
+  "neededUninstalledMods": [],
+  "spawns": [
+    {
+      "id": "corviknight-steel-safariwildherd",
+      "presets": [
+        "cobblesafari"
+      ],
+      "type": "pokemon-herd",
+      "bucket": "rare",
+      "context": "grounded",
+      "maxHerdSize": 6,
+      "levelRange": "15-40",
+      "weight": 0.75,
+      "condition": {
+        "biomes": [
+          "cobblesafari:steel"
+        ],
+        "canSeeSky": true
+      },
+      "herdablePokemon": [
+        {
+          "pokemon": "corviknight",
+          "weight": 30.0,
+          "levelRange": "38-100",
+          "maxTimes": 1,
+          "isLeader": true,
+          "isFollower": false
+        },
+        {
+          "pokemon": "corvisquire",
+          "weight": 60.0,
+          "levelRange": "5-15",
+          "maxTimes": 3,
+          "isLeader": false,
+          "isFollower": true,
+          "levelRangeOffset": "-3-3"
+        },
+        {
+          "pokemon": "rookidee",
+          "weight": 80.0,
+          "levelRange": "5-15",
+          "maxTimes": 4,
+          "isLeader": false,
+          "isFollower": true,
+          "levelRangeOffset": "-3-3"
+        }
+      ]
+    }
+  ]
+}

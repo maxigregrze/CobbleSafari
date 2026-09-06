@@ -1151,9 +1151,9 @@
   "effect.cobblesafari.paradox_boost": "Boost Paradoxe",
   "effect.cobblesafari.legendary_boost": "Boost Legendaire",
   "effect.cobblesafari.mythical_boost": "Boost Mythique",
-  "effect.cobblesafari.alpha_1": "Aura Alpha N. 1",
-  "effect.cobblesafari.alpha_2": "Aura Alpha N. 2",
-  "effect.cobblesafari.alpha_3": "Aura Alpha N. 3",
+  "effect.cobblesafari.alpha_1": "Aura Baron N. 1",
+  "effect.cobblesafari.alpha_2": "Aura Baron N. 2",
+  "effect.cobblesafari.alpha_3": "Aura Baron N. 3",
   "effect.cobblesafari.friendship_1": "Aura Amitié N. 1",
   "effect.cobblesafari.friendship_2": "Aura Amitié N. 2",
   "effect.cobblesafari.friendship_3": "Aura Amitié N. 3",
@@ -2302,5 +2302,13 @@
   "block.cobblesafari.kalos_canopy_stairs_trans": "Escalier de Verrière d'Extra Illumis Transparente",
   "block.cobblesafari.kalos_canopy_slab_trans": "Dalle de Verrière d'Extra Illumis Transparente",
   "block.cobblesafari.kalos_window_topper_trans": "Imposte d'Extra Illumis Transparente",
-  "block.cobblesafari.kalos_manhole": "Trappe d'Égout d'Extra Illumis"
+  "block.cobblesafari.kalos_manhole": "Trappe d'Égout d'Extra Illumis",
+  "cobblesafari.safari.alpha_enraged": "Le %s Baron est enragé !",
+  "cobblesafari.safari.alpha_calmed": "Le %s Baron s'est calmé'.",
+  "cobblesafari.habitat.underground_oasis_ice.name": "CobbleSafari - Oasis de Glace",
+  "cobblesafari.habitat.underground_oasis_water.name": "CobbleSafari - Oasis d'Eau",
+  "cobblesafari.habitat.underground_oasis_fire.name": "CobbleSafari - Oasis de Feu",
+  "cobblesafari.habitat.underground_oasis_grass.name": "CobbleSafari - Oasis d'Herbe",
+  "cobblesafari.habitat.underground_oasis_crystal.name": "CobbleSafari - Oasis de Cristal",
+  "cobblesafari.habitat.underground_oasis_stone.name": "CobbleSafari - Oasis de Roche"
 }

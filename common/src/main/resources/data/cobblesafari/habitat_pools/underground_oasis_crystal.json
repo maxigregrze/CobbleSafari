@@ -1,0 +1,301 @@
+{
+  "name": "cobblesafari.habitat.underground_oasis_crystal.name",
+  "spawns": [
+    {
+      "species": "roggenrola",
+      "bucket": "common",
+      "spawnablePositionType": "grounded",
+      "weight": 6.0,
+      "levelRange": "18-30",
+      "phases": "1"
+    },
+    {
+      "species": "joltik",
+      "bucket": "common",
+      "spawnablePositionType": "grounded",
+      "weight": 6.0,
+      "levelRange": "18-30",
+      "phases": "1"
+    },
+    {
+      "species": "electrike",
+      "bucket": "common",
+      "spawnablePositionType": "grounded",
+      "weight": 6.0,
+      "levelRange": "18-30",
+      "phases": "1"
+    },
+    {
+      "species": "beldum",
+      "bucket": "common",
+      "spawnablePositionType": "grounded",
+      "weight": 6.0,
+      "levelRange": "18-30",
+      "phases": "1"
+    },
+    {
+      "species": "ferroseed",
+      "bucket": "common",
+      "spawnablePositionType": "grounded",
+      "weight": 6.0,
+      "levelRange": "18-30",
+      "phases": "1"
+    },
+    {
+      "species": "magnemite",
+      "bucket": "common",
+      "spawnablePositionType": "grounded",
+      "weight": 6.0,
+      "levelRange": "18-30",
+      "phases": "1"
+    },
+    {
+      "species": "boldore",
+      "bucket": "common",
+      "spawnablePositionType": "grounded",
+      "weight": 6.0,
+      "levelRange": "18-30",
+      "phases": "1"
+    },
+    {
+      "species": "galvantula",
+      "bucket": "common",
+      "spawnablePositionType": "grounded",
+      "weight": 6.0,
+      "levelRange": "18-30",
+      "phases": "1"
+    },
+    {
+      "species": "manectric",
+      "bucket": "common",
+      "spawnablePositionType": "grounded",
+      "weight": 6.0,
+      "levelRange": "27-39",
+      "phases": "2"
+    },
+    {
+      "species": "metang",
+      "bucket": "common",
+      "spawnablePositionType": "grounded",
+      "weight": 6.0,
+      "levelRange": "27-39",
+      "phases": "2"
+    },
+    {
+      "species": "ferrothorn",
+      "bucket": "common",
+      "spawnablePositionType": "grounded",
+      "weight": 6.0,
+      "levelRange": "27-39",
+      "phases": "2"
+    },
+    {
+      "species": "magneton",
+      "bucket": "common",
+      "spawnablePositionType": "grounded",
+      "weight": 6.0,
+      "levelRange": "27-39",
+      "phases": "2"
+    },
+    {
+      "species": "gastly",
+      "bucket": "common",
+      "spawnablePositionType": "grounded",
+      "weight": 6.0,
+      "levelRange": "27-39",
+      "phases": "2"
+    },
+    {
+      "species": "misdreavus",
+      "bucket": "common",
+      "spawnablePositionType": "grounded",
+      "weight": 6.0,
+      "levelRange": "27-39",
+      "phases": "2"
+    },
+    {
+      "species": "meditite",
+      "bucket": "common",
+      "spawnablePositionType": "grounded",
+      "weight": 6.0,
+      "levelRange": "27-39",
+      "phases": "2"
+    },
+    {
+      "species": "chingling",
+      "bucket": "common",
+      "spawnablePositionType": "grounded",
+      "weight": 6.0,
+      "levelRange": "27-39",
+      "phases": "2"
+    },
+    {
+      "species": "bronzor",
+      "bucket": "uncommon",
+      "spawnablePositionType": "grounded",
+      "weight": 3.0,
+      "levelRange": "36-48",
+      "phases": "3"
+    },
+    {
+      "species": "kadabra",
+      "bucket": "uncommon",
+      "spawnablePositionType": "grounded",
+      "weight": 3.0,
+      "levelRange": "36-48",
+      "phases": "3"
+    },
+    {
+      "species": "girafarig",
+      "bucket": "uncommon",
+      "spawnablePositionType": "grounded",
+      "weight": 3.0,
+      "levelRange": "36-48",
+      "phases": "3"
+    },
+    {
+      "species": "nidoranf",
+      "bucket": "uncommon",
+      "spawnablePositionType": "grounded",
+      "weight": 3.0,
+      "levelRange": "36-48",
+      "phases": "3"
+    },
+    {
+      "species": "nidorina",
+      "bucket": "uncommon",
+      "spawnablePositionType": "grounded",
+      "weight": 3.0,
+      "levelRange": "36-48",
+      "phases": "3"
+    },
+    {
+      "species": "nidoranm",
+      "bucket": "uncommon",
+      "spawnablePositionType": "grounded",
+      "weight": 3.0,
+      "levelRange": "36-48",
+      "phases": "3"
+    },
+    {
+      "species": "nidorino",
+      "bucket": "uncommon",
+      "spawnablePositionType": "grounded",
+      "weight": 3.0,
+      "levelRange": "36-48",
+      "phases": "3"
+    },
+    {
+      "species": "slowpoke",
+      "bucket": "uncommon",
+      "spawnablePositionType": "grounded",
+      "weight": 3.0,
+      "levelRange": "44-56",
+      "phases": "4"
+    },
+    {
+      "species": "drowzee",
+      "bucket": "uncommon",
+      "spawnablePositionType": "grounded",
+      "weight": 3.0,
+      "levelRange": "44-56",
+      "phases": "4"
+    },
+    {
+      "species": "voltorb",
+      "bucket": "uncommon",
+      "spawnablePositionType": "grounded",
+      "weight": 3.0,
+      "levelRange": "44-56",
+      "phases": "4"
+    },
+    {
+      "species": "elekid",
+      "bucket": "uncommon",
+      "spawnablePositionType": "grounded",
+      "weight": 3.0,
+      "levelRange": "44-56",
+      "phases": "4"
+    },
+    {
+      "species": "ralts",
+      "bucket": "uncommon",
+      "spawnablePositionType": "grounded",
+      "weight": 3.0,
+      "levelRange": "44-56",
+      "phases": "4"
+    },
+    {
+      "species": "kirlia",
+      "bucket": "uncommon",
+      "spawnablePositionType": "grounded",
+      "weight": 3.0,
+      "levelRange": "44-56",
+      "phases": "4"
+    },
+    {
+      "species": "sableye",
+      "bucket": "uncommon",
+      "spawnablePositionType": "grounded",
+      "weight": 3.0,
+      "levelRange": "44-56",
+      "phases": "4"
+    },
+    {
+      "species": "mawile",
+      "bucket": "uncommon",
+      "spawnablePositionType": "grounded",
+      "weight": 3.0,
+      "levelRange": "53-65",
+      "phases": "5"
+    },
+    {
+      "species": "lunatone",
+      "bucket": "uncommon",
+      "spawnablePositionType": "grounded",
+      "weight": 3.0,
+      "levelRange": "53-65",
+      "phases": "5"
+    },
+    {
+      "species": "solrock",
+      "bucket": "uncommon",
+      "spawnablePositionType": "grounded",
+      "weight": 3.0,
+      "levelRange": "53-65",
+      "phases": "5"
+    },
+    {
+      "species": "banette",
+      "bucket": "uncommon",
+      "spawnablePositionType": "grounded",
+      "weight": 3.0,
+      "levelRange": "53-65",
+      "phases": "5"
+    },
+    {
+      "species": "duskull",
+      "bucket": "uncommon",
+      "spawnablePositionType": "grounded",
+      "weight": 3.0,
+      "levelRange": "53-65",
+      "phases": "5"
+    },
+    {
+      "species": "dusclops",
+      "bucket": "uncommon",
+      "spawnablePositionType": "grounded",
+      "weight": 3.0,
+      "levelRange": "53-65",
+      "phases": "5"
+    },
+    {
+      "species": "absol",
+      "bucket": "uncommon",
+      "spawnablePositionType": "grounded",
+      "weight": 3.0,
+      "levelRange": "53-65",
+      "phases": "5"
+    }
+  ]
+}

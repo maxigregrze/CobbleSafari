@@ -6,9 +6,9 @@
   "given": "rotom level=1 originaltrainertype=npc originaltrainer=maxigregrze",
   "givenMarks": [
     "cobblemon:ribbon_partner",
-    "cobblesafari:ribbon_dungeon_distortion",
-    "cobblesafari:ribbon_dungeon_paris",
-    "cobblesafari:ribbon_dungeon_underground",
+    "cobblesafari:ribbon_distortion",
+    "cobblesafari:ribbon_paris",
+    "cobblesafari:ribbon_underground",
     "cobblesafari:ribbon_safari"
   ],
   "givenActiveMark": "cobblemon:ribbon_partner",

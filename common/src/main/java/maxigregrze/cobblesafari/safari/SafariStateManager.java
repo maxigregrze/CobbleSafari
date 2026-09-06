@@ -17,6 +17,8 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.Difficulty;
+import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.phys.AABB;
 
 import java.util.*;
@@ -55,6 +57,11 @@ public class SafariStateManager {
             for (ScheduledTask task : tasksToExecute) {
                 task.action.run();
             }
+        }
+
+        // Once a second is ample for a 30s rage, and keeps the per-tick cost off the state map.
+        if (currentServerTick % 20 == 0) {
+            tickRageDeadlines(server);
         }
 
         // Drop state for Pokémon whose entity is gone (caught / despawned / unloaded) so the
@@ -129,6 +136,12 @@ public class SafariStateManager {
         if (!isInSafariDimension(pokemonEntity)) return;
         if (isShackleProtected(pokemonEntity)) return;
 
+        // An alpha does not run. Mud balls and failed captures make it angry instead.
+        if (canEnrage(pokemonEntity)) {
+            tryEnrage(pokemonEntity);
+            return;
+        }
+
         UUID entityId = pokemonEntity.getUUID();
         SafariPokemonState state = getOrCreate(entityId);
         if (state.isFleeing()) return;
@@ -179,6 +192,155 @@ public class SafariStateManager {
 
     private static boolean isShackleProtected(PokemonEntity pokemonEntity) {
         return SafariConfig.redShackledSuspendsFlee() && RedShackledEffects.isShackled(pokemonEntity);
+    }
+
+    // ------------------------------------------------------------------ alpha rage
+
+    /**
+     * Whether this Pokémon answers provocation with violence rather than flight.
+     *
+     * <p>Two hard fallbacks send an alpha back to the ordinary flee path, because in both cases it
+     * would otherwise become neither catchable by attrition nor losable:
+     * <ul>
+     *   <li><b>Peaceful difficulty</b> — both {@code AttackAngryAtTask} and the {@code switch_to_fight}
+     *       task bail out on {@link Difficulty#PEACEFUL}, so no attack would ever land.</li>
+     *   <li><b>{@code fightsMelee == false}</b> — the alpha would enter the fight activity and give
+     *       chase without ever being able to strike.</li>
+     * </ul>
+     */
+    private static boolean canEnrage(PokemonEntity pokemonEntity) {
+        if (!pokemonEntity.getPokemon().isAlpha()) {
+            return false;
+        }
+        if (!(pokemonEntity.level() instanceof ServerLevel serverLevel)) {
+            return false;
+        }
+        if (serverLevel.getCurrentDifficultyAt(pokemonEntity.blockPosition()).getDifficulty() == Difficulty.PEACEFUL) {
+            return false;
+        }
+        return pokemonEntity.getPokemon().getForm().getBehaviour().getCombat().getFightsMelee();
+    }
+
+    /**
+     * Rolls the same 255-sided die the flee path uses, but resolves it as rage. Mud balls therefore
+     * still "push" an alpha and bait still soothes it — what changes is the outcome, not the odds.
+     */
+    private static void tryEnrage(PokemonEntity pokemonEntity) {
+        UUID entityId = pokemonEntity.getUUID();
+        SafariPokemonState state = getOrCreate(entityId);
+        if (state.isEnraged()) {
+            // Already angry: refresh the timer rather than stacking a second rage.
+            armRage(pokemonEntity, state);
+            return;
+        }
+
+        int roll = pokemonEntity.getRandom().nextInt(255);
+        if (roll > state.getActualFleeRate()) {
+            return;
+        }
+
+        ServerPlayer target = resolveLastInteractingPlayer(pokemonEntity, state);
+        if (target == null) {
+            return;
+        }
+
+        armRage(pokemonEntity, state);
+        // Cobblemon's own breakFree() puts an AVOID_TARGET on the thrower for 5-20s. Left in place
+        // the alpha would want to flee and attack at the same time, so it has to go.
+        pokemonEntity.getBrain().eraseMemory(MemoryModuleType.AVOID_TARGET);
+        // AttackAngryAtTask only requires ANGRY_AT to be present; it does not care how it got there,
+        // so no damage is needed. It then sets ATTACK_TARGET and switch_to_fight takes over.
+        pokemonEntity.getBrain().setMemoryWithExpiry(
+                MemoryModuleType.ANGRY_AT, target.getUUID(), SafariConfig.getAlphaRageDurationTicks());
+
+        Component message = Component.translatable(
+                "cobblesafari.safari.alpha_enraged",
+                pokemonEntity.getExposedSpecies().getTranslatedName());
+        sendSubtitleToNearbyPlayers(pokemonEntity, message);
+        pokemonEntity.cry();
+    }
+
+    private static void armRage(PokemonEntity pokemonEntity, SafariPokemonState state) {
+        state.setEnraged(true);
+        state.setRageDeadlineTick(currentServerTick + SafariConfig.getAlphaRageDurationTicks());
+    }
+
+    /**
+     * Attempts to soothe an enraged alpha with a bait. Succeeds with
+     * {@link SafariConfig#getAlphaRageBaitCalmChance()} probability and, unlike an ordinary bait,
+     * leaves the mood gauge untouched on failure.
+     *
+     * @return {@code true} when the bait was consumed by the rage system, i.e. the caller must not
+     *         apply the normal bait / flee handling.
+     */
+    public static boolean tryCalmWithBait(PokemonEntity pokemonEntity) {
+        SafariPokemonState state = getState(pokemonEntity.getUUID());
+        if (state == null || !state.isEnraged()) {
+            return false;
+        }
+        if (pokemonEntity.getRandom().nextFloat() < SafariConfig.getAlphaRageBaitCalmChance()) {
+            calmRage(pokemonEntity, state, true);
+        }
+        return true;
+    }
+
+    /**
+     * Ends a rage. Erasing {@code ANGRY_AT} alone is not enough: {@code AttackAngryAtTask} has
+     * already written {@code ATTACK_TARGET} and never runs again while it is present, so the alpha
+     * would keep attacking. Both memories go together.
+     *
+     * @param viaBait when {@code true}, pins the mood to its calmest end — the real cost of
+     *                de-escalating with bait instead of surviving the timer.
+     */
+    private static void calmRage(PokemonEntity pokemonEntity, SafariPokemonState state, boolean viaBait) {
+        pokemonEntity.getBrain().eraseMemory(MemoryModuleType.ANGRY_AT);
+        pokemonEntity.getBrain().eraseMemory(MemoryModuleType.ATTACK_TARGET);
+        state.setEnraged(false);
+        state.setRageDeadlineTick(0);
+        if (viaBait) {
+            state.forceMoodToCalmest();
+        }
+
+        Component message = Component.translatable(
+                "cobblesafari.safari.alpha_calmed",
+                pokemonEntity.getExposedSpecies().getTranslatedName());
+        sendSubtitleToNearbyPlayers(pokemonEntity, message);
+    }
+
+    private static void tickRageDeadlines(MinecraftServer server) {
+        if (STATES.isEmpty()) {
+            return;
+        }
+        for (Map.Entry<UUID, SafariPokemonState> entry : STATES.entrySet()) {
+            SafariPokemonState state = entry.getValue();
+            if (!state.isEnraged() || currentServerTick < state.getRageDeadlineTick()) {
+                continue;
+            }
+            PokemonEntity entity = findPokemon(server, entry.getKey());
+            if (entity == null) {
+                state.setEnraged(false);
+                state.setRageDeadlineTick(0);
+                continue;
+            }
+            calmRage(entity, state, false);
+        }
+    }
+
+    private static PokemonEntity findPokemon(MinecraftServer server, UUID entityId) {
+        for (ServerLevel level : server.getAllLevels()) {
+            if (level.getEntity(entityId) instanceof PokemonEntity pokemonEntity) {
+                return pokemonEntity;
+            }
+        }
+        return null;
+    }
+
+    private static ServerPlayer resolveLastInteractingPlayer(PokemonEntity pokemonEntity, SafariPokemonState state) {
+        UUID playerId = state.getLastInteractingPlayer();
+        if (playerId == null || !(pokemonEntity.level() instanceof ServerLevel serverLevel)) {
+            return null;
+        }
+        return serverLevel.getServer().getPlayerList().getPlayer(playerId);
     }
 
     /**

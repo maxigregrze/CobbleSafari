@@ -1,0 +1,245 @@
+{
+  "name": "cobblesafari.habitat.underground_oasis_water.name",
+  "spawns": [
+    {
+      "species": "wailmer",
+      "bucket": "common",
+      "spawnablePositionType": "submerged",
+      "weight": 6.0,
+      "levelRange": "18-30",
+      "phases": "1"
+    },
+    {
+      "species": "finneon",
+      "bucket": "common",
+      "spawnablePositionType": "submerged",
+      "weight": 6.0,
+      "levelRange": "18-30",
+      "phases": "1"
+    },
+    {
+      "species": "wiglett",
+      "bucket": "common",
+      "spawnablePositionType": "grounded",
+      "weight": 6.0,
+      "levelRange": "18-30",
+      "phases": "1"
+    },
+    {
+      "species": "corsola",
+      "bucket": "common",
+      "spawnablePositionType": "submerged",
+      "weight": 6.0,
+      "levelRange": "18-30",
+      "phases": "1"
+    },
+    {
+      "species": "frillish",
+      "bucket": "common",
+      "spawnablePositionType": "submerged",
+      "weight": 6.0,
+      "levelRange": "18-30",
+      "phases": "1"
+    },
+    {
+      "species": "mareanie",
+      "bucket": "common",
+      "spawnablePositionType": "submerged",
+      "weight": 6.0,
+      "levelRange": "18-30",
+      "phases": "1"
+    },
+    {
+      "species": "wailord",
+      "bucket": "common",
+      "spawnablePositionType": "submerged",
+      "weight": 6.0,
+      "levelRange": "27-39",
+      "phases": "2"
+    },
+    {
+      "species": "lumineon",
+      "bucket": "common",
+      "spawnablePositionType": "submerged",
+      "weight": 6.0,
+      "levelRange": "27-39",
+      "phases": "2"
+    },
+    {
+      "species": "wugtrio",
+      "bucket": "common",
+      "spawnablePositionType": "grounded",
+      "weight": 6.0,
+      "levelRange": "27-39",
+      "phases": "2"
+    },
+    {
+      "species": "jellicent",
+      "bucket": "common",
+      "spawnablePositionType": "submerged",
+      "weight": 6.0,
+      "levelRange": "27-39",
+      "phases": "2"
+    },
+    {
+      "species": "toxapex",
+      "bucket": "common",
+      "spawnablePositionType": "submerged",
+      "weight": 6.0,
+      "levelRange": "27-39",
+      "phases": "2"
+    },
+    {
+      "species": "barboach",
+      "bucket": "common",
+      "spawnablePositionType": "submerged",
+      "weight": 6.0,
+      "levelRange": "27-39",
+      "phases": "2"
+    },
+    {
+      "species": "wooper",
+      "bucket": "uncommon",
+      "spawnablePositionType": "grounded",
+      "weight": 3.0,
+      "levelRange": "36-48",
+      "phases": "3"
+    },
+    {
+      "species": "quagsire",
+      "bucket": "uncommon",
+      "spawnablePositionType": "grounded",
+      "weight": 3.0,
+      "levelRange": "36-48",
+      "phases": "3"
+    },
+    {
+      "species": "tentacool",
+      "bucket": "uncommon",
+      "spawnablePositionType": "submerged",
+      "weight": 3.0,
+      "levelRange": "36-48",
+      "phases": "3"
+    },
+    {
+      "species": "tentacruel",
+      "bucket": "uncommon",
+      "spawnablePositionType": "submerged",
+      "weight": 3.0,
+      "levelRange": "36-48",
+      "phases": "3"
+    },
+    {
+      "species": "octillery",
+      "bucket": "uncommon",
+      "spawnablePositionType": "submerged",
+      "weight": 3.0,
+      "levelRange": "36-48",
+      "phases": "3"
+    },
+    {
+      "species": "whiscash",
+      "bucket": "uncommon",
+      "spawnablePositionType": "submerged",
+      "weight": 3.0,
+      "levelRange": "36-48",
+      "phases": "3"
+    },
+    {
+      "species": "seel",
+      "bucket": "uncommon",
+      "spawnablePositionType": "grounded",
+      "weight": 3.0,
+      "levelRange": "44-56",
+      "phases": "4"
+    },
+    {
+      "species": "dewgong",
+      "bucket": "uncommon",
+      "spawnablePositionType": "grounded",
+      "weight": 3.0,
+      "levelRange": "44-56",
+      "phases": "4"
+    },
+    {
+      "species": "shellder",
+      "bucket": "uncommon",
+      "spawnablePositionType": "submerged",
+      "weight": 3.0,
+      "levelRange": "44-56",
+      "phases": "4"
+    },
+    {
+      "species": "horsea",
+      "bucket": "uncommon",
+      "spawnablePositionType": "submerged",
+      "weight": 3.0,
+      "levelRange": "44-56",
+      "phases": "4"
+    },
+    {
+      "species": "staryu",
+      "bucket": "uncommon",
+      "spawnablePositionType": "submerged",
+      "weight": 3.0,
+      "levelRange": "44-56",
+      "phases": "4"
+    },
+    {
+      "species": "chinchou",
+      "bucket": "uncommon",
+      "spawnablePositionType": "submerged",
+      "weight": 3.0,
+      "levelRange": "44-56",
+      "phases": "4"
+    },
+    {
+      "species": "lanturn",
+      "bucket": "uncommon",
+      "spawnablePositionType": "submerged",
+      "weight": 3.0,
+      "levelRange": "53-65",
+      "phases": "5"
+    },
+    {
+      "species": "qwilfish",
+      "bucket": "uncommon",
+      "spawnablePositionType": "submerged",
+      "weight": 3.0,
+      "levelRange": "53-65",
+      "phases": "5"
+    },
+    {
+      "species": "carvanha",
+      "bucket": "uncommon",
+      "spawnablePositionType": "submerged",
+      "weight": 3.0,
+      "levelRange": "53-65",
+      "phases": "5"
+    },
+    {
+      "species": "corphish",
+      "bucket": "uncommon",
+      "spawnablePositionType": "grounded",
+      "weight": 3.0,
+      "levelRange": "53-65",
+      "phases": "5"
+    },
+    {
+      "species": "crawdaunt",
+      "bucket": "uncommon",
+      "spawnablePositionType": "grounded",
+      "weight": 3.0,
+      "levelRange": "53-65",
+      "phases": "5"
+    },
+    {
+      "species": "clamperl",
+      "bucket": "uncommon",
+      "spawnablePositionType": "submerged",
+      "weight": 3.0,
+      "levelRange": "53-65",
+      "phases": "5"
+    }
+  ]
+}

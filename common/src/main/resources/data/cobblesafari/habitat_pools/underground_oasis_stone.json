@@ -1,0 +1,181 @@
+{
+  "name": "cobblesafari.habitat.underground_oasis_stone.name",
+  "spawns": [
+    {
+      "species": "cacnea",
+      "bucket": "common",
+      "spawnablePositionType": "grounded",
+      "weight": 6.0,
+      "levelRange": "18-30",
+      "phases": "1"
+    },
+    {
+      "species": "maractus",
+      "bucket": "common",
+      "spawnablePositionType": "grounded",
+      "weight": 6.0,
+      "levelRange": "18-30",
+      "phases": "1"
+    },
+    {
+      "species": "yamask",
+      "bucket": "common",
+      "spawnablePositionType": "grounded",
+      "weight": 6.0,
+      "levelRange": "18-30",
+      "phases": "1"
+    },
+    {
+      "species": "sandshrew",
+      "bucket": "common",
+      "spawnablePositionType": "grounded",
+      "weight": 6.0,
+      "levelRange": "18-30",
+      "phases": "1"
+    },
+    {
+      "species": "golett",
+      "bucket": "common",
+      "spawnablePositionType": "grounded",
+      "weight": 6.0,
+      "levelRange": "18-30",
+      "phases": "1"
+    },
+    {
+      "species": "sableye",
+      "bucket": "common",
+      "spawnablePositionType": "grounded",
+      "weight": 6.0,
+      "levelRange": "27-39",
+      "phases": "2"
+    },
+    {
+      "species": "baltoy",
+      "bucket": "common",
+      "spawnablePositionType": "grounded",
+      "weight": 6.0,
+      "levelRange": "27-39",
+      "phases": "2"
+    },
+    {
+      "species": "cacturne",
+      "bucket": "common",
+      "spawnablePositionType": "grounded",
+      "weight": 6.0,
+      "levelRange": "27-39",
+      "phases": "2"
+    },
+    {
+      "species": "cofagrigus",
+      "bucket": "common",
+      "spawnablePositionType": "grounded",
+      "weight": 6.0,
+      "levelRange": "27-39",
+      "phases": "2"
+    },
+    {
+      "species": "sandslash",
+      "bucket": "common",
+      "spawnablePositionType": "grounded",
+      "weight": 6.0,
+      "levelRange": "27-39",
+      "phases": "2"
+    },
+    {
+      "species": "golurk",
+      "bucket": "uncommon",
+      "spawnablePositionType": "grounded",
+      "weight": 3.0,
+      "levelRange": "36-48",
+      "phases": "3"
+    },
+    {
+      "species": "claydol",
+      "bucket": "uncommon",
+      "spawnablePositionType": "grounded",
+      "weight": 3.0,
+      "levelRange": "36-48",
+      "phases": "3"
+    },
+    {
+      "species": "geodude",
+      "bucket": "uncommon",
+      "spawnablePositionType": "grounded",
+      "weight": 3.0,
+      "levelRange": "36-48",
+      "phases": "3"
+    },
+    {
+      "species": "onix",
+      "bucket": "uncommon",
+      "spawnablePositionType": "grounded",
+      "weight": 3.0,
+      "levelRange": "36-48",
+      "phases": "3"
+    },
+    {
+      "species": "skorupi",
+      "bucket": "uncommon",
+      "spawnablePositionType": "grounded",
+      "weight": 3.0,
+      "levelRange": "44-56",
+      "phases": "4"
+    },
+    {
+      "species": "bronzor",
+      "bucket": "uncommon",
+      "spawnablePositionType": "grounded",
+      "weight": 3.0,
+      "levelRange": "44-56",
+      "phases": "4"
+    },
+    {
+      "species": "graveler",
+      "bucket": "uncommon",
+      "spawnablePositionType": "grounded",
+      "weight": 3.0,
+      "levelRange": "44-56",
+      "phases": "4"
+    },
+    {
+      "species": "hippopotas",
+      "bucket": "uncommon",
+      "spawnablePositionType": "grounded",
+      "weight": 3.0,
+      "levelRange": "44-56",
+      "phases": "4"
+    },
+    {
+      "species": "gligar",
+      "bucket": "uncommon",
+      "spawnablePositionType": "grounded",
+      "weight": 3.0,
+      "levelRange": "53-65",
+      "phases": "5"
+    },
+    {
+      "species": "shuckle",
+      "bucket": "uncommon",
+      "spawnablePositionType": "grounded",
+      "weight": 3.0,
+      "levelRange": "53-65",
+      "phases": "5"
+    },
+    {
+      "species": "phanpy",
+      "bucket": "uncommon",
+      "spawnablePositionType": "grounded",
+      "weight": 3.0,
+      "levelRange": "53-65",
+      "phases": "5"
+    },
+    {
+      "species": "beldum",
+      "bucket": "uncommon",
+      "spawnablePositionType": "grounded",
+      "weight": 3.0,
+      "levelRange": "53-65",
+      "phases": "5"
+    }
+  ]
+}

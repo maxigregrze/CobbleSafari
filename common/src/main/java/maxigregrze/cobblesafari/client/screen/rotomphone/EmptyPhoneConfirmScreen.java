@@ -2,6 +2,7 @@ package maxigregrze.cobblesafari.client.screen.rotomphone;
 
 import com.cobblemon.mod.common.api.pokemon.PokemonSpecies;
 import com.cobblemon.mod.common.client.gui.PokemonGuiUtilsKt;
+import com.cobblemon.mod.common.client.gui.ProfileTransformType;
 import com.cobblemon.mod.common.client.render.models.blockbench.FloatingState;
 import com.cobblemon.mod.common.entity.PoseType;
 import com.cobblemon.mod.common.pokemon.RenderablePokemon;
@@ -30,6 +31,8 @@ import java.util.Set;
  */
 public class EmptyPhoneConfirmScreen extends Screen {
 
+    /** Matches Cobblemon's own {@code drawProfilePokemon} default: flat, well-lit inventory rendering. */
+    private static final int BLOCK_LIGHT = 13;
     private static final int GUI_WIDTH = 272;
     private static final int TOP_HEIGHT = 184;
     private static final int BANNER_HEIGHT = 22;
@@ -202,7 +205,7 @@ public class EmptyPhoneConfirmScreen extends Screen {
                 floatingState,
                 partialTick,
                 MODEL_SCALE,
-                true,
+                ProfileTransformType.PROFILE,
                 false,
                 true,
                 1f,
@@ -210,7 +213,8 @@ public class EmptyPhoneConfirmScreen extends Screen {
                 1f,
                 1f,
                 0f,
-                0f);
+                0f,
+                BLOCK_LIGHT);
         graphics.pose().popPose();
         graphics.disableScissor();
     }

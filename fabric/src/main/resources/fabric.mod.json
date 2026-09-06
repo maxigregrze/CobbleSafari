@@ -33,12 +33,11 @@
     "minecraft": "~1.21.1",
     "java": ">=${java_version}",
     "fabric-api": "*",
-    "cobblemon": ">=1.7.1 <=1.8.0"
+    "cobblemon": ">=1.8.0 <1.9.0"
   },
   "suggests": {
     "jade": "*",
     "wthit": "*",
-    "mega-showdown": "*",
-    "cobblemontrialsedition": ">=1.2.0"
+    "mega-showdown": "*"
   }
 }

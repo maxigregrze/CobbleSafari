@@ -48,7 +48,6 @@ public class DimensionalBanData {
         domeRestrictions.bannedItems.add("cobblemon:ancient_wing_ball");
         domeRestrictions.bannedItems.add("cobblemon:ancient_jet_ball");
         domeRestrictions.bannedItems.add("cobblemon:ancient_origin_ball");
-        domeRestrictions.bannedItems.add("cobblemon:ancient_strange_ball");
         dimensions.put("cobblesafari:domedimension", domeRestrictions);
 
         DimensionRestrictions dungeonJumpRestrictions = new DimensionRestrictions();

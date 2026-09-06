@@ -9,7 +9,7 @@
   ],
   "givenActiveMark": "cobblemon:ribbon_partner",
   "wish": {
-    "species": "growlithe hisui",
+    "species": "growlithe form=hisui",
     "levelBucket": 9,
     "gender": "any",
     "shiny": "any"

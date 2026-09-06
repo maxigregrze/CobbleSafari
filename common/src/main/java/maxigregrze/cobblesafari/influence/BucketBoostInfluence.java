@@ -1,12 +1,12 @@
 package maxigregrze.cobblesafari.influence;
 
-import com.cobblemon.mod.common.api.spawning.SpawnBucket;
 import com.cobblemon.mod.common.api.spawning.influence.SpawningInfluence;
 import maxigregrze.cobblesafari.config.SpawnBoostConfig;
 import maxigregrze.cobblesafari.init.ModEffects;
 import net.minecraft.server.level.ServerPlayer;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Locale;
 import java.util.Map;
 
 public class BucketBoostInfluence implements SpawningInfluence {
@@ -18,7 +18,7 @@ public class BucketBoostInfluence implements SpawningInfluence {
     }
 
     @Override
-    public void affectBucketWeights(@NotNull Map<SpawnBucket, Float> bucketWeights) {
+    public void affectBucketWeights(@NotNull Map<String, Float> bucketWeights) {
         float uncommonMultiplier = 1.0f;
         float rareMultiplier = 1.0f;
         float ultraRareMultiplier = 1.0f;
@@ -36,9 +36,9 @@ public class BucketBoostInfluence implements SpawningInfluence {
             ultraRareMultiplier = SpawnBoostConfig.data.effectSettings.ultraRareBoostMultiplier * (amp + 1);
         }
 
-        for (Map.Entry<SpawnBucket, Float> entry : bucketWeights.entrySet()) {
-            SpawnBucket bucket = entry.getKey();
-            String bucketName = bucket.getName().toLowerCase();
+        // Cobblemon 1.8 deleted SpawnBucket: the map key *is* the bucket name.
+        for (Map.Entry<String, Float> entry : bucketWeights.entrySet()) {
+            String bucketName = entry.getKey().toLowerCase(Locale.ROOT);
 
             if (bucketName.contains("uncommon") && uncommonMultiplier > 1.0f) {
                 entry.setValue(entry.getValue() * uncommonMultiplier);

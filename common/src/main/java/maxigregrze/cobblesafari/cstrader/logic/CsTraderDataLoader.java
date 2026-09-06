@@ -1,6 +1,7 @@
 package maxigregrze.cobblesafari.cstrader.logic;
 
 import com.google.gson.JsonArray;
+import com.google.gson.JsonPrimitive;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -150,21 +151,23 @@ public final class CsTraderDataLoader {
             sourceQty2 = tradeJson.has("sourceQty2") ? Math.max(1, tradeJson.get("sourceQty2").getAsInt()) : 1;
         }
 
-        List<Item> resultItems = new ArrayList<>();
+        List<CsTraderItemSpec> resultItems = new ArrayList<>();
         List<CsTraderResultOption> resultOptions = new ArrayList<>();
+        List<ResourceLocation> resultTmPool = new ArrayList<>();
 
         boolean hasResultItems = tradeJson.has("resultItems") && tradeJson.get("resultItems").isJsonArray();
         boolean hasResultOptions = tradeJson.has("resultOptions") && tradeJson.get("resultOptions").isJsonArray();
-        if (!hasResultItems && !hasResultOptions) {
-            warnSkip(fileId, traderName, variantId, tradeIndex, "missing resultItems/resultOptions");
+        boolean hasResultTm = tradeJson.has("resultTm") || tradeJson.has("resultTmPool");
+        if (!hasResultItems && !hasResultOptions && !hasResultTm) {
+            warnSkip(fileId, traderName, variantId, tradeIndex, "missing resultItems/resultOptions/resultTm");
             return null;
         }
 
         if (hasResultItems) {
             for (JsonElement itemElement : tradeJson.getAsJsonArray("resultItems")) {
-                Item item = resolveItemStrict(fileId, traderName, variantId, tradeIndex, "resultItems", itemElement.getAsString());
-                if (item != null) {
-                    resultItems.add(item);
+                CsTraderItemSpec spec = resolveItemSpec(fileId, traderName, variantId, tradeIndex, "resultItems", itemElement);
+                if (spec != null) {
+                    resultItems.add(spec);
                 }
             }
         }
@@ -173,14 +176,25 @@ public final class CsTraderDataLoader {
                 if (!optionElement.isJsonObject()) continue;
                 JsonObject optionJson = optionElement.getAsJsonObject();
                 if (!optionJson.has("itemId") || !optionJson.has("qty")) continue;
-                Item optionItem = resolveItemStrict(fileId, traderName, variantId, tradeIndex, "resultOptions.itemId", optionJson.get("itemId").getAsString());
-                if (optionItem == null) continue;
+                CsTraderItemSpec spec = resolveItemSpec(fileId, traderName, variantId, tradeIndex,
+                        "resultOptions.itemId", optionJson.get("itemId"));
+                if (spec == null) continue;
                 int qty = Math.max(1, optionJson.get("qty").getAsInt());
-                resultOptions.add(new CsTraderResultOption(optionItem, qty));
+                resultOptions.add(new CsTraderResultOption(spec, qty));
+            }
+        }
+        if (hasResultTm) {
+            if (tradeJson.has("resultTm")) {
+                addTmId(resultTmPool, fileId, traderName, variantId, tradeIndex, tradeJson.get("resultTm"));
+            }
+            if (tradeJson.has("resultTmPool") && tradeJson.get("resultTmPool").isJsonArray()) {
+                for (JsonElement tmElement : tradeJson.getAsJsonArray("resultTmPool")) {
+                    addTmId(resultTmPool, fileId, traderName, variantId, tradeIndex, tmElement);
+                }
             }
         }
 
-        if (resultItems.isEmpty() && resultOptions.isEmpty()) {
+        if (resultItems.isEmpty() && resultOptions.isEmpty() && resultTmPool.isEmpty()) {
             warnSkip(fileId, traderName, variantId, tradeIndex, "all result items/options invalid or missing");
             return null;
         }
@@ -200,6 +214,7 @@ public final class CsTraderDataLoader {
                 sourceQty2,
                 resultItems,
                 resultOptions,
+                resultTmPool,
                 resultQty,
                 resultQtyMin,
                 resultQtyMax,
@@ -208,6 +223,74 @@ public final class CsTraderDataLoader {
                 xp,
                 priceMultiplier
         );
+    }
+
+    /**
+     * Reads a result item, accepting either a bare id string (the historical form, unchanged) or an
+     * object carrying data components.
+     */
+    private static CsTraderItemSpec resolveItemSpec(ResourceLocation fileId, String traderName, String variantId,
+                                                    int tradeIndex, String field, JsonElement element) {
+        if (element instanceof JsonPrimitive primitive && primitive.isString()) {
+            Item item = resolveItemStrict(fileId, traderName, variantId, tradeIndex, field, primitive.getAsString());
+            return item == null ? null : CsTraderItemSpec.of(item);
+        }
+        if (!element.isJsonObject()) {
+            warnSkip(fileId, traderName, variantId, tradeIndex, field + " must be an id or an object");
+            return null;
+        }
+        JsonObject object = element.getAsJsonObject();
+        if (!object.has("id")) {
+            warnSkip(fileId, traderName, variantId, tradeIndex, field + " object is missing 'id'");
+            return null;
+        }
+        Item item = resolveItemStrict(fileId, traderName, variantId, tradeIndex, field, object.get("id").getAsString());
+        if (item == null) {
+            return null;
+        }
+
+        List<CsTraderComponentSpec> components = new ArrayList<>();
+        if (object.has("dataComponents") && object.get("dataComponents").isJsonArray()) {
+            for (JsonElement componentElement : object.getAsJsonArray("dataComponents")) {
+                if (!componentElement.isJsonObject()) continue;
+                JsonObject componentJson = componentElement.getAsJsonObject();
+                if (!componentJson.has("dataId") || !componentJson.has("dataValue")) {
+                    warnSkip(fileId, traderName, variantId, tradeIndex,
+                            field + " component is missing dataId/dataValue");
+                    continue;
+                }
+                ResourceLocation dataId;
+                try {
+                    dataId = ResourceLocation.parse(componentJson.get("dataId").getAsString());
+                } catch (Exception e) {
+                    warnSkip(fileId, traderName, variantId, tradeIndex,
+                            field + " component has an invalid dataId");
+                    continue;
+                }
+                if (!BuiltInRegistries.DATA_COMPONENT_TYPE.containsKey(dataId)) {
+                    warnSkip(fileId, traderName, variantId, tradeIndex,
+                            field + " component type not found: " + dataId);
+                    continue;
+                }
+                components.add(new CsTraderComponentSpec(dataId, componentJson.get("dataValue")));
+            }
+        }
+        return new CsTraderItemSpec(item, List.copyOf(components));
+    }
+
+    /** Stores a TM id verbatim; existence is checked when the offer is generated, not here. */
+    private static void addTmId(List<ResourceLocation> pool, ResourceLocation fileId, String traderName,
+                                String variantId, int tradeIndex, JsonElement element) {
+        String raw = element.isJsonPrimitive() ? element.getAsString() : null;
+        if (raw == null || raw.isBlank()) {
+            warnSkip(fileId, traderName, variantId, tradeIndex, "resultTm entry is empty");
+            return;
+        }
+        try {
+            pool.add(ResourceLocation.parse(raw));
+        } catch (Exception e) {
+            warnSkip(fileId, traderName, variantId, tradeIndex, "resultTm has an invalid id: " + raw);
+        }
     }
 
     private static Item resolveItemStrict(ResourceLocation fileId, String traderName, String variantId, int tradeIndex,

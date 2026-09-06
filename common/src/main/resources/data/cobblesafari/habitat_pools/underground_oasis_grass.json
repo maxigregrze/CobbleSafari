@@ -1,0 +1,221 @@
+{
+  "name": "cobblesafari.habitat.underground_oasis_grass.name",
+  "spawns": [
+    {
+      "species": "tangela",
+      "bucket": "common",
+      "spawnablePositionType": "grounded",
+      "weight": 6.0,
+      "levelRange": "18-30",
+      "phases": "1"
+    },
+    {
+      "species": "paras",
+      "bucket": "common",
+      "spawnablePositionType": "grounded",
+      "weight": 6.0,
+      "levelRange": "18-30",
+      "phases": "1"
+    },
+    {
+      "species": "yanma",
+      "bucket": "common",
+      "spawnablePositionType": "grounded",
+      "weight": 6.0,
+      "levelRange": "18-30",
+      "phases": "1"
+    },
+    {
+      "species": "shuckle",
+      "bucket": "common",
+      "spawnablePositionType": "grounded",
+      "weight": 6.0,
+      "levelRange": "18-30",
+      "phases": "1"
+    },
+    {
+      "species": "carnivine",
+      "bucket": "common",
+      "spawnablePositionType": "grounded",
+      "weight": 6.0,
+      "levelRange": "18-30",
+      "phases": "1"
+    },
+    {
+      "species": "morelull",
+      "bucket": "common",
+      "spawnablePositionType": "grounded",
+      "weight": 6.0,
+      "levelRange": "18-30",
+      "phases": "1"
+    },
+    {
+      "species": "tropius",
+      "bucket": "common",
+      "spawnablePositionType": "grounded",
+      "weight": 6.0,
+      "levelRange": "27-39",
+      "phases": "2"
+    },
+    {
+      "species": "tangrowth",
+      "bucket": "common",
+      "spawnablePositionType": "grounded",
+      "weight": 6.0,
+      "levelRange": "27-39",
+      "phases": "2"
+    },
+    {
+      "species": "parasect",
+      "bucket": "common",
+      "spawnablePositionType": "grounded",
+      "weight": 6.0,
+      "levelRange": "27-39",
+      "phases": "2"
+    },
+    {
+      "species": "yanmega",
+      "bucket": "common",
+      "spawnablePositionType": "grounded",
+      "weight": 6.0,
+      "levelRange": "27-39",
+      "phases": "2"
+    },
+    {
+      "species": "shiinotic",
+      "bucket": "common",
+      "spawnablePositionType": "grounded",
+      "weight": 6.0,
+      "levelRange": "27-39",
+      "phases": "2"
+    },
+    {
+      "species": "roselia",
+      "bucket": "common",
+      "spawnablePositionType": "grounded",
+      "weight": 6.0,
+      "levelRange": "27-39",
+      "phases": "2"
+    },
+    {
+      "species": "skorupi",
+      "bucket": "uncommon",
+      "spawnablePositionType": "grounded",
+      "weight": 3.0,
+      "levelRange": "36-48",
+      "phases": "3"
+    },
+    {
+      "species": "croagunk",
+      "bucket": "uncommon",
+      "spawnablePositionType": "grounded",
+      "weight": 3.0,
+      "levelRange": "36-48",
+      "phases": "3"
+    },
+    {
+      "species": "golbat",
+      "bucket": "uncommon",
+      "spawnablePositionType": "grounded",
+      "weight": 3.0,
+      "levelRange": "36-48",
+      "phases": "3"
+    },
+    {
+      "species": "barboach",
+      "bucket": "uncommon",
+      "spawnablePositionType": "grounded",
+      "weight": 3.0,
+      "levelRange": "36-48",
+      "phases": "3"
+    },
+    {
+      "species": "oddish",
+      "bucket": "uncommon",
+      "spawnablePositionType": "grounded",
+      "weight": 3.0,
+      "levelRange": "36-48",
+      "phases": "3"
+    },
+    {
+      "species": "gloom",
+      "bucket": "uncommon",
+      "spawnablePositionType": "grounded",
+      "weight": 3.0,
+      "levelRange": "44-56",
+      "phases": "4"
+    },
+    {
+      "species": "venonat",
+      "bucket": "uncommon",
+      "spawnablePositionType": "grounded",
+      "weight": 3.0,
+      "levelRange": "44-56",
+      "phases": "4"
+    },
+    {
+      "species": "venomoth",
+      "bucket": "uncommon",
+      "spawnablePositionType": "grounded",
+      "weight": 3.0,
+      "levelRange": "44-56",
+      "phases": "4"
+    },
+    {
+      "species": "bellsprout",
+      "bucket": "uncommon",
+      "spawnablePositionType": "grounded",
+      "weight": 3.0,
+      "levelRange": "44-56",
+      "phases": "4"
+    },
+    {
+      "species": "weepinbell",
+      "bucket": "uncommon",
+      "spawnablePositionType": "grounded",
+      "weight": 3.0,
+      "levelRange": "44-56",
+      "phases": "4"
+    },
+    {
+      "species": "ledian",
+      "bucket": "uncommon",
+      "spawnablePositionType": "grounded",
+      "weight": 3.0,
+      "levelRange": "53-65",
+      "phases": "5"
+    },
+    {
+      "species": "ariados",
+      "bucket": "uncommon",
+      "spawnablePositionType": "grounded",
+      "weight": 3.0,
+      "levelRange": "53-65",
+      "phases": "5"
+    },
+    {
+      "species": "pineco",
+      "bucket": "uncommon",
+      "spawnablePositionType": "grounded",
+      "weight": 3.0,
+      "levelRange": "53-65",
+      "phases": "5"
+    },
+    {
+      "species": "zangoose",
+      "bucket": "uncommon",
+      "spawnablePositionType": "grounded",
+      "weight": 3.0,
+      "levelRange": "53-65",
+      "phases": "5"
+    },
+    {
+      "species": "seviper",
+      "bucket": "uncommon",
+      "spawnablePositionType": "grounded",
+      "weight": 3.0,
+      "levelRange": "53-65",
+      "phases": "5"
+    }
+  ]
+}

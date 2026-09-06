@@ -14,7 +14,6 @@
   "key": {
     "I": { "item": "minecraft:iron_ingot" },
     "D": { "item": "minecraft:diamond" },
-    "C": { "item": "minecraft:copper_ingot" },
     "G": { "item": "minecraft:gold_ingot" }
   },
   "result": {

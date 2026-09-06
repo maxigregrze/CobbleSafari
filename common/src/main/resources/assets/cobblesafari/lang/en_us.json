@@ -2322,5 +2322,13 @@
   "block.cobblesafari.kalos_canopy_stairs_trans": "Transparent Kalosian Canopy",
   "block.cobblesafari.kalos_canopy_slab_trans": "Transparent Kalosian Canopy",
   "block.cobblesafari.kalos_window_topper_trans": "Transparent Kalosian Door Window",
-  "block.cobblesafari.kalos_manhole": "Kalosian Manhole Cover"
+  "block.cobblesafari.kalos_manhole": "Kalosian Manhole Cover",
+  "cobblesafari.safari.alpha_enraged": "The Alpha %s is enraged!",
+  "cobblesafari.safari.alpha_calmed": "The Alpha %s has calmed down.",
+  "cobblesafari.habitat.underground_oasis_ice.name": "CobbleSafari - Frozen Oasis",
+  "cobblesafari.habitat.underground_oasis_water.name": "CobbleSafari - Sunken Oasis",
+  "cobblesafari.habitat.underground_oasis_fire.name": "CobbleSafari - Molten Oasis",
+  "cobblesafari.habitat.underground_oasis_grass.name": "CobbleSafari - Overgrown Oasis",
+  "cobblesafari.habitat.underground_oasis_crystal.name": "CobbleSafari - Crystal Oasis",
+  "cobblesafari.habitat.underground_oasis_stone.name": "CobbleSafari - Ruins Oasis"
 }

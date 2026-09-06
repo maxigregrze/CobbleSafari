@@ -1,6 +1,5 @@
 package maxigregrze.cobblesafari.influence;
 
-import com.cobblemon.mod.common.api.spawning.detail.PokemonSpawnDetail;
 import com.cobblemon.mod.common.api.spawning.detail.SpawnDetail;
 import com.cobblemon.mod.common.api.spawning.influence.SpawningInfluence;
 import com.cobblemon.mod.common.api.spawning.position.SpawnablePosition;
@@ -25,14 +24,14 @@ public class TypedEncounterBoostInfluence implements SpawningInfluence {
 
     @Override
     public float affectWeight(@NotNull SpawnDetail detail, @NotNull SpawnablePosition spawnablePosition, float weight) {
-        if (!(detail instanceof PokemonSpawnDetail psd)) {
+        if (!SpawnDetails.isPokemonSpawn(detail)) {
             return weight;
         }
         if (player.blockPosition().distSqr(spawnablePosition.getPosition()) > getEffectDistanceSq()) {
             return weight;
         }
 
-        EncounterSel sel = findEncounter(psd);
+        EncounterSel sel = findEncounter(detail);
         if (sel == null) {
             return weight;
         }
@@ -46,7 +45,7 @@ public class TypedEncounterBoostInfluence implements SpawningInfluence {
         return weight * (1.0f + bonus);
     }
 
-    private EncounterSel findEncounter(PokemonSpawnDetail detail) {
+    private EncounterSel findEncounter(SpawnDetail detail) {
         for (int lv = 3; lv >= 1; lv--) {
             for (int vi = 0; vi < PowerVariantRegistry.ELEMENTAL_COUNT; vi++) {
                 if (!player.hasEffect(ModPowerEffects.encounter(vi, lv))) {
