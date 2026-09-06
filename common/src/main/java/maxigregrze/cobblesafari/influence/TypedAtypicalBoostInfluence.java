@@ -1,6 +1,5 @@
 package maxigregrze.cobblesafari.influence;
 
-import com.cobblemon.mod.common.api.spawning.detail.PokemonSpawnDetail;
 import com.cobblemon.mod.common.api.spawning.detail.SpawnDetail;
 import com.cobblemon.mod.common.api.spawning.influence.SpawningInfluence;
 import com.cobblemon.mod.common.api.spawning.position.SpawnablePosition;
@@ -12,6 +11,8 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffectInstance;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Locale;
+
 public class TypedAtypicalBoostInfluence implements SpawningInfluence {
 
     private final ServerPlayer player;
@@ -22,16 +23,16 @@ public class TypedAtypicalBoostInfluence implements SpawningInfluence {
 
     @Override
     public float affectWeight(@NotNull SpawnDetail detail, @NotNull SpawnablePosition spawnablePosition, float weight) {
-        if (!(detail instanceof PokemonSpawnDetail psd)) {
+        if (!SpawnDetails.isPokemonSpawn(detail)) {
             return weight;
         }
 
-        AtypicalSel sel = findAtypical(psd);
+        AtypicalSel sel = findAtypical(detail);
         if (sel == null) {
             return weight;
         }
 
-        String bucketName = detail.getBucket().getName().toLowerCase();
+        String bucketName = detail.getBucket().toLowerCase(Locale.ROOT);
         boolean ultra = bucketName.contains("ultra-rare") || bucketName.contains("ultrarare");
         boolean rareOnly = bucketName.contains("rare") && !ultra;
         boolean uncommon = bucketName.contains("uncommon");
@@ -59,7 +60,7 @@ public class TypedAtypicalBoostInfluence implements SpawningInfluence {
         return weight * mult * (amp + 1);
     }
 
-    private AtypicalSel findAtypical(PokemonSpawnDetail detail) {
+    private AtypicalSel findAtypical(SpawnDetail detail) {
         for (int level = 3; level >= 1; level--) {
             for (int vi = 0; vi < PowerVariantRegistry.VARIANT_COUNT; vi++) {
                 if (!player.hasEffect(ModPowerEffects.atypical(vi, level))) {

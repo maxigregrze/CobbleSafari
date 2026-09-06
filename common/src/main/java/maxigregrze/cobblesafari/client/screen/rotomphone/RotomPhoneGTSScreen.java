@@ -5,6 +5,7 @@ import com.cobblemon.mod.common.api.pokemon.stats.Stat;
 import com.cobblemon.mod.common.api.pokemon.stats.Stats;
 import com.cobblemon.mod.common.client.CobblemonClient;
 import com.cobblemon.mod.common.client.gui.PokemonGuiUtilsKt;
+import com.cobblemon.mod.common.client.gui.ProfileTransformType;
 import com.cobblemon.mod.common.client.render.models.blockbench.FloatingState;
 import com.cobblemon.mod.common.client.storage.ClientParty;
 import com.cobblemon.mod.common.entity.PoseType;
@@ -77,6 +78,8 @@ public class RotomPhoneGTSScreen extends RotomPhoneBaseScreen {
     private static final ResourceLocation TEX_VALID = loc("gts/rotomphone_gui_icon_valid.png");
     private static final ResourceLocation TEX_INVALID = loc("gts/rotomphone_gui_icon_invalid.png");
 
+    /** Matches Cobblemon's own {@code drawProfilePokemon} default: flat, well-lit inventory rendering. */
+    private static final int BLOCK_LIGHT = 13;
     private static final int PARTY_SLOT_SIZE = 32;
     private static final float PARTY_SLOT_BASE_SCALE = 3.5f;
     private static final float PARTY_SLOT_MODEL_SCALE = 5.5f;
@@ -2158,14 +2161,15 @@ public class RotomPhoneGTSScreen extends RotomPhoneBaseScreen {
                 floatingState,
                 partialTick,
                 scaledModel,
-                true,
+                ProfileTransformType.PROFILE,
                 false,
                 1f,
                 1f,
                 1f,
                 1f,
                 0f,
-                0f);
+                0f,
+                BLOCK_LIGHT);
         g.pose().popPose();
         g.disableScissor();
     }

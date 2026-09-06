@@ -2382,5 +2382,13 @@
   "block.cobblesafari.ultraspace_cable_stairs": "Strange Bent Cable",
   "block.cobblesafari.megapolis_light": "Megapolis Light Spot",
   "block.cobblesafari.megapolis_stairs": "Megapolis Stairs",
-  "block.cobblesafari.lightningspot": "Lightning Spot"
+  "block.cobblesafari.lightningspot": "Lightning Spot",
+  "cobblesafari.safari.alpha_enraged": "The Alpha %s is enraged!",
+  "cobblesafari.safari.alpha_calmed": "The Alpha %s has calmed down.",
+  "cobblesafari.habitat.underground_oasis_ice.name": "CobbleSafari - Frozen Oasis",
+  "cobblesafari.habitat.underground_oasis_water.name": "CobbleSafari - Sunken Oasis",
+  "cobblesafari.habitat.underground_oasis_fire.name": "CobbleSafari - Molten Oasis",
+  "cobblesafari.habitat.underground_oasis_grass.name": "CobbleSafari - Overgrown Oasis",
+  "cobblesafari.habitat.underground_oasis_crystal.name": "CobbleSafari - Crystal Oasis",
+  "cobblesafari.habitat.underground_oasis_stone.name": "CobbleSafari - Ruins Oasis"
 }

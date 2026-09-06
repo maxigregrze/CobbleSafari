@@ -1,0 +1,52 @@
+{
+  "enabled": true,
+  "neededInstalledMods": [],
+  "neededUninstalledMods": [],
+  "spawns": [
+    {
+      "id": "slowbro-psychic-safariherd",
+      "presets": [
+        "cobblesafari"
+      ],
+      "type": "pokemon-herd",
+      "bucket": "boss",
+      "context": "grounded",
+      "maxHerdSize": 5,
+      "levelRange": "5-15",
+      "weight": 10.0,
+      "condition": {
+        "biomes": [
+          "cobblesafari:psychic"
+        ],
+        "canSeeSky": true
+      },
+      "herdablePokemon": [
+        {
+          "pokemon": "slowbro alpha=true",
+          "weight": 15.0,
+          "levelRange": "1-100",
+          "maxTimes": 1,
+          "isLeader": true,
+          "isFollower": false
+        },
+        {
+          "pokemon": "slowking alpha=true",
+          "weight": 15.0,
+          "levelRange": "1-100",
+          "maxTimes": 1,
+          "isLeader": true,
+          "isFollower": false
+        },
+        {
+          "pokemon": "slowpoke",
+          "weight": 80.0,
+          "levelRange": "5-15",
+          "maxTimes": 4,
+          "isLeader": false,
+          "isFollower": true,
+          "levelRangeOffset": "-3-3"
+        }
+      ]
+    }
+  ]
+}

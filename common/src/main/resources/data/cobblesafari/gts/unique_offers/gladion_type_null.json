@@ -3,7 +3,7 @@
   "tags": [
     "trainerspokemon"
   ],
-  "given": "type_null level=1 originaltrainertype=npc originaltrainer=Gladion",
+  "given": "typenull level=1 originaltrainertype=npc originaltrainer=Gladion",
   "givenMarks": [
     "cobblemon:ribbon_partner"
   ],

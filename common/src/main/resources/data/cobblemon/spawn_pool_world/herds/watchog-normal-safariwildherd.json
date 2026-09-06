@@ -1,0 +1,44 @@
+{
+  "enabled": true,
+  "neededInstalledMods": [],
+  "neededUninstalledMods": [],
+  "spawns": [
+    {
+      "id": "watchog-normal-safariwildherd",
+      "presets": [
+        "cobblesafari"
+      ],
+      "type": "pokemon-herd",
+      "bucket": "uncommon",
+      "context": "grounded",
+      "maxHerdSize": 5,
+      "levelRange": "15-40",
+      "weight": 0.75,
+      "condition": {
+        "biomes": [
+          "cobblesafari:normal"
+        ],
+        "canSeeSky": true
+      },
+      "herdablePokemon": [
+        {
+          "pokemon": "watchog",
+          "weight": 30.0,
+          "levelRange": "20-100",
+          "maxTimes": 1,
+          "isLeader": true,
+          "isFollower": false
+        },
+        {
+          "pokemon": "patrat",
+          "weight": 80.0,
+          "levelRange": "5-15",
+          "maxTimes": 4,
+          "isLeader": false,
+          "isFollower": true,
+          "levelRangeOffset": "-3-3"
+        }
+      ]
+    }
+  ]
+}

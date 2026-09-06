@@ -67,7 +67,12 @@ public class ThrownBaitEntity extends ThrowableItemProjectile {
             return;
         }
 
-        SafariStateManager.applyBait(pokemon);
+        // An enraged alpha consumes the bait as a calming attempt: the mood gauge is left alone,
+        // and success pins it to its calmest end instead. Stats and sound still apply.
+        boolean consumedByRage = SafariStateManager.tryCalmWithBait(pokemon);
+        if (!consumedByRage) {
+            SafariStateManager.applyBait(pokemon);
+        }
 
         if (thrower != null) {
             int total = maxigregrze.cobblesafari.init.ModStats.awardAndGet(
@@ -78,7 +83,9 @@ public class ThrownBaitEntity extends ThrowableItemProjectile {
         level().playSound(null, pokemon.getX(), pokemon.getY(), pokemon.getZ(),
                 SoundEvents.ITEM_PICKUP, pokemon.getSoundSource(), 0.8f, 0.8f);
 
-        SafariStateManager.tryFlee(pokemon);
+        if (!consumedByRage) {
+            SafariStateManager.tryFlee(pokemon);
+        }
     }
 
     @Override

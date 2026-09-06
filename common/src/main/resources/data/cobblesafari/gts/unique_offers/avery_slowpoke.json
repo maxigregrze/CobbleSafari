@@ -9,7 +9,7 @@
   ],
   "givenActiveMark": "cobblemon:ribbon_partner",
   "wish": {
-    "species": "slowking galar",
+    "species": "slowking form=galar",
     "levelBucket": 9,
     "gender": "any",
     "shiny": "any"

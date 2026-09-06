@@ -1,0 +1,44 @@
+{
+  "enabled": true,
+  "neededInstalledMods": [],
+  "neededUninstalledMods": [],
+  "spawns": [
+    {
+      "id": "ninjask-ground-safariwildherd",
+      "presets": [
+        "cobblesafari"
+      ],
+      "type": "pokemon-herd",
+      "bucket": "rare",
+      "context": "grounded",
+      "maxHerdSize": 5,
+      "levelRange": "15-40",
+      "weight": 0.75,
+      "condition": {
+        "biomes": [
+          "cobblesafari:ground"
+        ],
+        "canSeeSky": true
+      },
+      "herdablePokemon": [
+        {
+          "pokemon": "ninjask",
+          "weight": 30.0,
+          "levelRange": "20-100",
+          "maxTimes": 1,
+          "isLeader": true,
+          "isFollower": false
+        },
+        {
+          "pokemon": "nincada",
+          "weight": 80.0,
+          "levelRange": "5-15",
+          "maxTimes": 4,
+          "isLeader": false,
+          "isFollower": true,
+          "levelRangeOffset": "-3-3"
+        }
+      ]
+    }
+  ]
+}

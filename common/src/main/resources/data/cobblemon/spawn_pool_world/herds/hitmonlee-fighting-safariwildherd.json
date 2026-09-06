@@ -1,0 +1,60 @@
+{
+  "enabled": true,
+  "neededInstalledMods": [],
+  "neededUninstalledMods": [],
+  "spawns": [
+    {
+      "id": "hitmonlee-fighting-safariwildherd",
+      "presets": [
+        "cobblesafari"
+      ],
+      "type": "pokemon-herd",
+      "bucket": "ultra-rare",
+      "context": "grounded",
+      "maxHerdSize": 5,
+      "levelRange": "15-40",
+      "weight": 0.75,
+      "condition": {
+        "biomes": [
+          "cobblesafari:fighting"
+        ],
+        "canSeeSky": true
+      },
+      "herdablePokemon": [
+        {
+          "pokemon": "hitmonlee",
+          "weight": 10.0,
+          "levelRange": "20-100",
+          "maxTimes": 1,
+          "isLeader": true,
+          "isFollower": false
+        },
+        {
+          "pokemon": "hitmonchan",
+          "weight": 10.0,
+          "levelRange": "20-100",
+          "maxTimes": 1,
+          "isLeader": true,
+          "isFollower": false
+        },
+        {
+          "pokemon": "hitmontop",
+          "weight": 10.0,
+          "levelRange": "20-100",
+          "maxTimes": 1,
+          "isLeader": true,
+          "isFollower": false
+        },
+        {
+          "pokemon": "tyrogue",
+          "weight": 80.0,
+          "levelRange": "5-15",
+          "maxTimes": 4,
+          "isLeader": false,
+          "isFollower": true,
+          "levelRangeOffset": "-3-3"
+        }
+      ]
+    }
+  ]
+}

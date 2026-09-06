@@ -24,10 +24,10 @@ public enum TaskType {
     TASK_UNDERGROUND_PERFECT("task_underground_perfect", false, false, false, false, false),
     TASK_CSTRADER_BASE("task_cstrader_base", false, false, false, false, false),
     TASK_GIRATINACORE_BASE("task_giratinacore_base", false, false, false, false, false),
-    // Reserved for Cobblemon 1.8 (alpha mechanic) - rejected by the loader until implemented @TODO ALPHA
-    TASK_CATCH_ALPHA("task_catch_alpha", false, false, false, false, true),
-    TASK_CATCH_ALPHASHINY("task_catch_alphashiny", false, false, false, false, true),
-    TASK_FIGHT_ALPHA("task_fight_alpha", false, false, false, false, true);
+    // Alpha mechanic, live since Cobblemon 1.8.
+    TASK_CATCH_ALPHA("task_catch_alpha", false, false, false, false, false),
+    TASK_CATCH_ALPHASHINY("task_catch_alphashiny", false, false, false, false, false),
+    TASK_FIGHT_ALPHA("task_fight_alpha", false, false, false, false, false);
 
     private final String id;
     private final boolean usesCount;

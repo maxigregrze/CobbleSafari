@@ -9,7 +9,7 @@
   ],
   "givenActiveMark": "cobblemon:ribbon_partner",
   "wish": {
-    "species": "lycanroc midnight",
+    "species": "lycanroc form=midnight",
     "levelBucket": 9,
     "gender": "any",
     "shiny": "any"

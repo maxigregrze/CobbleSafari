@@ -1,0 +1,53 @@
+{
+  "enabled": true,
+  "neededInstalledMods": [],
+  "neededUninstalledMods": [],
+  "spawns": [
+    {
+      "id": "dragonite-dragon-safariwildherd",
+      "presets": [
+        "cobblesafari"
+      ],
+      "type": "pokemon-herd",
+      "bucket": "ultra-rare",
+      "context": "grounded",
+      "maxHerdSize": 6,
+      "levelRange": "15-40",
+      "weight": 0.375,
+      "condition": {
+        "biomes": [
+          "cobblesafari:dragon"
+        ],
+        "canSeeSky": true
+      },
+      "herdablePokemon": [
+        {
+          "pokemon": "dragonite",
+          "weight": 30.0,
+          "levelRange": "55-100",
+          "maxTimes": 1,
+          "isLeader": true,
+          "isFollower": false
+        },
+        {
+          "pokemon": "dragonair",
+          "weight": 60.0,
+          "levelRange": "5-15",
+          "maxTimes": 3,
+          "isLeader": false,
+          "isFollower": true,
+          "levelRangeOffset": "-3-3"
+        },
+        {
+          "pokemon": "dratini",
+          "weight": 80.0,
+          "levelRange": "5-15",
+          "maxTimes": 4,
+          "isLeader": false,
+          "isFollower": true,
+          "levelRangeOffset": "-3-3"
+        }
+      ]
+    }
+  ]
+}

@@ -1,6 +1,5 @@
 package maxigregrze.cobblesafari.influence;
 
-import com.cobblemon.mod.common.api.spawning.detail.PokemonSpawnDetail;
 import com.cobblemon.mod.common.api.spawning.detail.SpawnDetail;
 import com.cobblemon.mod.common.api.spawning.influence.SpawningInfluence;
 import com.cobblemon.mod.common.api.spawning.position.SpawnablePosition;
@@ -23,7 +22,7 @@ public class CsBossArenaSpawnBlockInfluence implements SpawningInfluence {
 
     @Override
     public boolean affectSpawnable(@NotNull SpawnDetail detail, @NotNull SpawnablePosition position) {
-        if (!(detail instanceof PokemonSpawnDetail)) {
+        if (!SpawnDetails.isPokemonSpawn(detail)) {
             return true;
         }
         return !BossBattleManager.isNearActiveArena(player.level().dimension(), position.getPosition());

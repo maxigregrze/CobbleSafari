@@ -781,6 +781,266 @@
           "maxUses": 4
         }
       ]
+    },
+    {
+      "id": "tm_small",
+      "aliases": [
+        "tm",
+        "tms",
+        "tm_small_sphere"
+      ],
+      "minTrades": 4,
+      "maxTrades": 6,
+      "trades": [
+        {
+          "sourceItem1": "cobblesafari:sphere_red_s",
+          "sourceQty1": 16,
+          "resultTmPool": [
+            "cobblemon:bulletseed",
+            "cobblemon:fling",
+            "cobblemon:payback",
+            "cobblemon:cut",
+            "cobblemon:rocksmash"
+          ],
+          "maxUses": 10
+        },
+        {
+          "sourceItem1": "cobblesafari:sphere_green_s",
+          "sourceQty1": 10,
+          "resultTmPool": [
+            "cobblemon:bulkup",
+            "cobblemon:torment",
+            "cobblemon:attract",
+            "cobblemon:skillswap",
+            "cobblemon:recycle",
+            "cobblemon:rockpolish",
+            "cobblemon:psychup",
+            "cobblemon:swagger",
+            "cobblemon:defog"
+          ],
+          "maxUses": 10
+        },
+        {
+          "sourceItem1": "cobblesafari:sphere_red_s",
+          "sourceQty1": 40,
+          "sourceItem2": "cobblesafari:sphere_prism_s",
+          "sourceQty2": 16,
+          "resultTmPool": [
+            "cobblemon:irontail",
+            "cobblemon:thief",
+            "cobblemon:steelwing",
+            "cobblemon:shadowclaw",
+            "cobblemon:avalanche",
+            "cobblemon:pluck"
+          ],
+          "maxUses": 5,
+          "priceShiftMax": 2
+        },
+        {
+          "sourceItem1": "cobblesafari:sphere_blue_s",
+          "sourceQty1": 40,
+          "sourceItem2": "cobblesafari:sphere_prism_s",
+          "sourceQty2": 16,
+          "resultTmPool": [
+            "cobblemon:waterpulse",
+            "cobblemon:shockwave",
+            "cobblemon:brine",
+            "cobblemon:chargebeam",
+            "cobblemon:grassknot"
+          ],
+          "maxUses": 5,
+          "priceShiftMax": 2
+        },
+        {
+          "sourceItem1": "cobblesafari:sphere_red_s",
+          "sourceQty1": 64,
+          "sourceItem2": "cobblesafari:sphere_prism_s",
+          "sourceQty2": 32,
+          "resultTmPool": [
+            "cobblemon:drainpunch",
+            "cobblemon:xscissor",
+            "cobblemon:fly",
+            "cobblemon:strength",
+            "cobblemon:waterfall",
+            "cobblemon:rockclimb"
+          ],
+          "maxUses": 5,
+          "priceShiftMax": 2
+        },
+        {
+          "sourceItem1": "cobblesafari:sphere_blue_s",
+          "sourceQty1": 64,
+          "sourceItem2": "cobblesafari:sphere_prism_s",
+          "sourceQty2": 32,
+          "resultTmPool": [
+            "cobblemon:scald",
+            "cobblemon:bugbuzz",
+            "cobblemon:dreameater",
+            "cobblemon:flashcannon",
+            "cobblemon:surf"
+          ],
+          "maxUses": 5,
+          "priceShiftMax": 2
+        },
+        {
+          "sourceItem1": "cobblesafari:sphere_green_s",
+          "sourceQty1": 48,
+          "sourceItem2": "cobblesafari:sphere_pale_s",
+          "sourceQty2": 24,
+          "resultTmPool": [
+            "cobblemon:calmmind",
+            "cobblemon:toxic",
+            "cobblemon:taunt",
+            "cobblemon:willowisp",
+            "cobblemon:nastyplot",
+            "cobblemon:thunderwave",
+            "cobblemon:stealthrock",
+            "cobblemon:sleeptalk",
+            "cobblemon:trickroom"
+          ],
+          "maxUses": 5,
+          "priceShiftMax": 2
+        },
+        {
+          "sourceItem1": "cobblesafari:sphere_prism_s",
+          "sourceQty1": 64,
+          "sourceItem2": "cobblesafari:sphere_pale_s",
+          "sourceQty2": 64,
+          "resultTmPool": [
+            "cobblemon:focuspunch"
+          ],
+          "maxUses": 2,
+          "priceShiftMax": 2
+        }
+      ]
+    },
+    {
+      "id": "tm_large",
+      "aliases": [
+        "tm_large_sphere"
+      ],
+      "minTrades": 4,
+      "maxTrades": 6,
+      "trades": [
+        {
+          "sourceItem1": "cobblesafari:sphere_green_l",
+          "sourceQty1": 2,
+          "resultTmPool": [
+            "cobblemon:roar"
+          ],
+          "maxUses": 10
+        },
+        {
+          "sourceItem1": "cobblesafari:sphere_red_l",
+          "sourceQty1": 6,
+          "sourceItem2": "cobblesafari:sphere_prism_l",
+          "sourceQty2": 2,
+          "resultTmPool": [
+            "cobblemon:rocktomb",
+            "cobblemon:aerialace",
+            "cobblemon:facade"
+          ],
+          "maxUses": 5,
+          "priceShiftMax": 2
+        },
+        {
+          "sourceItem1": "cobblesafari:sphere_blue_l",
+          "sourceQty1": 6,
+          "sourceItem2": "cobblesafari:sphere_prism_l",
+          "sourceQty2": 2,
+          "resultTmPool": [
+            "cobblemon:voltswitch",
+            "cobblemon:snarl"
+          ],
+          "maxUses": 5,
+          "priceShiftMax": 2
+        },
+        {
+          "sourceItem1": "cobblesafari:sphere_red_l",
+          "sourceQty1": 8,
+          "sourceItem2": "cobblesafari:sphere_prism_l",
+          "sourceQty2": 4,
+          "resultTmPool": [
+            "cobblemon:dragonclaw",
+            "cobblemon:brickbreak",
+            "cobblemon:poisonjab"
+          ],
+          "maxUses": 5,
+          "priceShiftMax": 2
+        },
+        {
+          "sourceItem1": "cobblesafari:sphere_blue_l",
+          "sourceQty1": 8,
+          "sourceItem2": "cobblesafari:sphere_prism_l",
+          "sourceQty2": 4,
+          "resultTmPool": [
+            "cobblemon:gigadrain",
+            "cobblemon:shadowball",
+            "cobblemon:sludgebomb",
+            "cobblemon:energyball",
+            "cobblemon:darkpulse"
+          ],
+          "maxUses": 5,
+          "priceShiftMax": 2
+        },
+        {
+          "sourceItem1": "cobblesafari:sphere_green_l",
+          "sourceQty1": 6,
+          "sourceItem2": "cobblesafari:sphere_pale_l",
+          "sourceQty2": 4,
+          "resultTmPool": [
+            "cobblemon:roost"
+          ],
+          "maxUses": 5,
+          "priceShiftMax": 2
+        },
+        {
+          "sourceItem1": "cobblesafari:sphere_red_l",
+          "sourceQty1": 16,
+          "sourceItem2": "cobblesafari:sphere_prism_l",
+          "sourceQty2": 8,
+          "resultTmPool": [
+            "cobblemon:earthquake",
+            "cobblemon:stoneedge",
+            "cobblemon:rockslide"
+          ],
+          "maxUses": 3,
+          "priceShiftMax": 2
+        },
+        {
+          "sourceItem1": "cobblesafari:sphere_blue_l",
+          "sourceQty1": 16,
+          "sourceItem2": "cobblesafari:sphere_prism_l",
+          "sourceQty2": 8,
+          "resultTmPool": [
+            "cobblemon:dragonpulse"
+          ],
+          "maxUses": 3,
+          "priceShiftMax": 2
+        },
+        {
+          "sourceItem1": "cobblesafari:sphere_pale_l",
+          "sourceQty1": 16,
+          "sourceItem2": "cobblesafari:sphere_prism_l",
+          "sourceQty2": 14,
+          "resultTmPool": [
+            "cobblemon:overheat"
+          ],
+          "maxUses": 2,
+          "priceShiftMax": 2
+        },
+        {
+          "sourceItem1": "cobblesafari:sphere_pale_l",
+          "sourceQty1": 20,
+          "sourceItem2": "cobblesafari:sphere_prism_l",
+          "sourceQty2": 20,
+          "resultTmPool": [
+            "cobblemon:explosion"
+          ],
+          "maxUses": 2,
+          "priceShiftMax": 2
+        }
+      ]
     }
   ]
 }

@@ -1,0 +1,61 @@
+{
+  "enabled": true,
+  "neededInstalledMods": [],
+  "neededUninstalledMods": [],
+  "spawns": [
+    {
+      "id": "gardevoir-psychic-safariwildherd",
+      "presets": [
+        "cobblesafari"
+      ],
+      "type": "pokemon-herd",
+      "bucket": "rare",
+      "context": "grounded",
+      "maxHerdSize": 6,
+      "levelRange": "5-15",
+      "weight": 0.75,
+      "condition": {
+        "biomes": [
+          "cobblesafari:psychic"
+        ],
+        "canSeeSky": true
+      },
+      "herdablePokemon": [
+        {
+          "pokemon": "gardevoir",
+          "weight": 15.0,
+          "levelRange": "30-100",
+          "maxTimes": 1,
+          "isLeader": true,
+          "isFollower": false
+        },
+        {
+          "pokemon": "gallade",
+          "weight": 15.0,
+          "levelRange": "30-100",
+          "maxTimes": 1,
+          "isLeader": true,
+          "isFollower": false
+        },
+        {
+          "pokemon": "kirlia",
+          "weight": 60.0,
+          "levelRange": "5-15",
+          "maxTimes": 3,
+          "isLeader": false,
+          "isFollower": true,
+          "levelRangeOffset": "-3-3"
+        },
+        {
+          "pokemon": "ralts",
+          "weight": 80.0,
+          "levelRange": "5-15",
+          "maxTimes": 4,
+          "isLeader": false,
+          "isFollower": true,
+          "levelRangeOffset": "-3-3"
+        }
+      ]
+    }
+  ]
+}

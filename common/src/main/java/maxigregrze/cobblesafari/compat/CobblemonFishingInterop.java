@@ -6,7 +6,7 @@ import java.lang.reflect.Method;
 
 public final class CobblemonFishingInterop {
 
-    //private static final Method ALTER_ALPHA_ATTEMPT; @TODO ALPHA
+    private static final Method ALTER_ALPHA_ATTEMPT;
     private static final Method ALTER_HA_ATTEMPT;
     private static final Object FISHING_SPAWN_CAUSE_COMPANION;
 
@@ -15,7 +15,7 @@ public final class CobblemonFishingInterop {
             Class<?> outer = Class.forName("com.cobblemon.mod.common.api.spawning.fishing.FishingSpawnCause");
             FISHING_SPAWN_CAUSE_COMPANION = outer.getField("Companion").get(null);
             Class<?> comp = FISHING_SPAWN_CAUSE_COMPANION.getClass();
-            //ALTER_ALPHA_ATTEMPT = comp.getMethod("alterAlphaAttempt", PokemonEntity.class); 
+            ALTER_ALPHA_ATTEMPT = comp.getMethod("alterAlphaAttempt", PokemonEntity.class);
             ALTER_HA_ATTEMPT = comp.getMethod("alterHAAttempt", PokemonEntity.class);
         } catch (ReflectiveOperationException e) {
             throw new ExceptionInInitializerError(e);
@@ -24,13 +24,20 @@ public final class CobblemonFishingInterop {
 
     private CobblemonFishingInterop() {}
 
-    /*public static void alterAlphaAttempt(PokemonEntity entity) {
+    /**
+     * Turns a freshly spawned Pokémon into an alpha, the way the Hopo Berry bait effect does.
+     *
+     * <p>Self-contained since Cobblemon 1.8: it sets {@code isAlpha}, rebuilds the moveset from the
+     * {@code cobblemon:alpha} builder, calls {@code remakeBrain()} so the alpha-only sensors and
+     * memories attach, and pushes {@code IS_ALPHA} to the client.
+     */
+    public static void alterAlphaAttempt(PokemonEntity entity) {
         try {
-            //ALTER_ALPHA_ATTEMPT.invoke(FISHING_SPAWN_CAUSE_COMPANION, entity);
+            ALTER_ALPHA_ATTEMPT.invoke(FISHING_SPAWN_CAUSE_COMPANION, entity);
         } catch (ReflectiveOperationException e) {
             throw new IllegalStateException(e);
         }
-    }*/
+    }
 
     public static void alterHiddenAbilityAttempt(PokemonEntity entity) {
         try {

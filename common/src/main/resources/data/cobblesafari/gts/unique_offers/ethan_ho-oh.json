@@ -3,13 +3,13 @@
   "tags": [
     "trainerspokemon"
   ],
-  "given": "ho-oh level=1 originaltrainertype=npc originaltrainer=Ethan",
+  "given": "hooh level=1 originaltrainertype=npc originaltrainer=Ethan",
   "givenMarks": [
     "cobblemon:ribbon_partner"
   ],
   "givenActiveMark": "cobblemon:ribbon_partner",
   "wish": {
-    "species": "ho-oh",
+    "species": "hooh",
     "levelBucket": 9,
     "gender": "any",
     "shiny": "any"

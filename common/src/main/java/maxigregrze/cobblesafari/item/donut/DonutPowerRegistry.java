@@ -42,7 +42,8 @@ public final class DonutPowerRegistry {
     }
 
     private static void registerAll() {
-        // "alpha" power is not yet implemented in pre-1.8.0 @TODO ALPHA
+        // Untyped power, like friendship/luck: only alpha_1..3 effects exist, so typeNbr is 1.
+        register(new DonutPower("alpha", DonutMainFlavor.SPICY, 1, 1, 1, 2, 3));
         register(new DonutPower("friendship", DonutMainFlavor.SWEET, 1, 1, 50, 75, 100));
         register(new DonutPower("hidden", DonutMainFlavor.DRY, 2, 19, 10, 20, 30));
         register(new DonutPower("atypical", DonutMainFlavor.SWEET, 2, 19, 1, 2, 3));

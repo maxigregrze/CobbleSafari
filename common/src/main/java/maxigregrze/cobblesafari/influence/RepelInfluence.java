@@ -1,6 +1,5 @@
 package maxigregrze.cobblesafari.influence;
 
-import com.cobblemon.mod.common.api.spawning.detail.PokemonSpawnDetail;
 import com.cobblemon.mod.common.api.spawning.detail.SpawnDetail;
 import com.cobblemon.mod.common.api.spawning.influence.SpawningInfluence;
 import com.cobblemon.mod.common.api.spawning.position.SpawnablePosition;
@@ -26,6 +25,6 @@ public class RepelInfluence implements SpawningInfluence {
         if (!player.hasEffect(ModEffects.REPEL.holder)) return true;
         if (player.blockPosition().distSqr(position.getPosition()) > getEffectDistanceSq()) return true;
 
-        return !(detail instanceof PokemonSpawnDetail);
+        return !SpawnDetails.isPokemonSpawn(detail);
     }
 }

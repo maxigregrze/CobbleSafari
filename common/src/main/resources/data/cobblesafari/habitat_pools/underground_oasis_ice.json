@@ -1,0 +1,165 @@
+{
+  "name": "cobblesafari.habitat.underground_oasis_ice.name",
+  "spawns": [
+    {
+      "species": "spheal",
+      "bucket": "common",
+      "spawnablePositionType": "grounded",
+      "weight": 6.0,
+      "levelRange": "18-30",
+      "phases": "1"
+    },
+    {
+      "species": "glalie",
+      "bucket": "common",
+      "spawnablePositionType": "grounded",
+      "weight": 6.0,
+      "levelRange": "18-30",
+      "phases": "1"
+    },
+    {
+      "species": "snorunt",
+      "bucket": "common",
+      "spawnablePositionType": "grounded",
+      "weight": 6.0,
+      "levelRange": "18-30",
+      "phases": "1"
+    },
+    {
+      "species": "cryogonal",
+      "bucket": "common",
+      "spawnablePositionType": "grounded",
+      "weight": 6.0,
+      "levelRange": "18-30",
+      "phases": "1"
+    },
+    {
+      "species": "eiscue",
+      "bucket": "common",
+      "spawnablePositionType": "grounded",
+      "weight": 6.0,
+      "levelRange": "27-39",
+      "phases": "2"
+    },
+    {
+      "species": "froslass",
+      "bucket": "common",
+      "spawnablePositionType": "grounded",
+      "weight": 6.0,
+      "levelRange": "27-39",
+      "phases": "2"
+    },
+    {
+      "species": "swinub",
+      "bucket": "common",
+      "spawnablePositionType": "grounded",
+      "weight": 6.0,
+      "levelRange": "27-39",
+      "phases": "2"
+    },
+    {
+      "species": "sealeo",
+      "bucket": "common",
+      "spawnablePositionType": "grounded",
+      "weight": 6.0,
+      "levelRange": "27-39",
+      "phases": "2"
+    },
+    {
+      "species": "piloswine",
+      "bucket": "uncommon",
+      "spawnablePositionType": "grounded",
+      "weight": 3.0,
+      "levelRange": "36-48",
+      "phases": "3"
+    },
+    {
+      "species": "munchlax",
+      "bucket": "uncommon",
+      "spawnablePositionType": "grounded",
+      "weight": 3.0,
+      "levelRange": "36-48",
+      "phases": "3"
+    },
+    {
+      "species": "mrmime",
+      "bucket": "uncommon",
+      "spawnablePositionType": "grounded",
+      "weight": 3.0,
+      "levelRange": "36-48",
+      "phases": "3"
+    },
+    {
+      "species": "sneasel",
+      "bucket": "uncommon",
+      "spawnablePositionType": "grounded",
+      "weight": 3.0,
+      "levelRange": "36-48",
+      "phases": "3"
+    },
+    {
+      "species": "snover",
+      "bucket": "uncommon",
+      "spawnablePositionType": "grounded",
+      "weight": 3.0,
+      "levelRange": "44-56",
+      "phases": "4"
+    },
+    {
+      "species": "seel",
+      "bucket": "uncommon",
+      "spawnablePositionType": "grounded",
+      "weight": 3.0,
+      "levelRange": "44-56",
+      "phases": "4"
+    },
+    {
+      "species": "dewgong",
+      "bucket": "uncommon",
+      "spawnablePositionType": "grounded",
+      "weight": 3.0,
+      "levelRange": "44-56",
+      "phases": "4"
+    },
+    {
+      "species": "delibird",
+      "bucket": "uncommon",
+      "spawnablePositionType": "grounded",
+      "weight": 3.0,
+      "levelRange": "44-56",
+      "phases": "4"
+    },
+    {
+      "species": "swablu",
+      "bucket": "uncommon",
+      "spawnablePositionType": "grounded",
+      "weight": 3.0,
+      "levelRange": "53-65",
+      "phases": "5"
+    },
+    {
+      "species": "walrein",
+      "bucket": "uncommon",
+      "spawnablePositionType": "grounded",
+      "weight": 3.0,
+      "levelRange": "53-65",
+      "phases": "5"
+    },
+    {
+      "species": "beldum",
+      "bucket": "uncommon",
+      "spawnablePositionType": "grounded",
+      "weight": 3.0,
+      "levelRange": "53-65",
+      "phases": "5"
+    },
+    {
+      "species": "bronzor",
+      "bucket": "uncommon",
+      "spawnablePositionType": "grounded",
+      "weight": 3.0,
+      "levelRange": "53-65",
+      "phases": "5"
+    }
+  ]
+}

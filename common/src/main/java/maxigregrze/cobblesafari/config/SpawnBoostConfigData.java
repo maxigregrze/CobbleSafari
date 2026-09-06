@@ -17,10 +17,12 @@ public class SpawnBoostConfigData {
         public float legendaryBoostMultiplier = 10.0f;
         public float mythicalBoostMultiplier = 10.0f;
         public float effectDistanceBlocks = 80.0f;
-
-        public float alphaPowerLevel1BoostMultiplier = 11.0f;
-        public float alphaPowerLevel2BoostMultiplier = 21.0f;
-        public float alphaPowerLevel3BoostMultiplier = 51.0f;
+        public float alphaPowerLevel1BossBucketMultiplier = 5.0f;
+        public float alphaPowerLevel2BossBucketMultiplier = 10.0f;
+        public float alphaPowerLevel3BossBucketMultiplier = 20.0f;
+        public float alphaPowerLevel1PromotionChance = 0.01f;
+        public float alphaPowerLevel2PromotionChance = 0.02f;
+        public float alphaPowerLevel3PromotionChance = 0.10f;
 
         public float hiddenPowerLevel1BoostMultiplier = 2.0f;
         public float hiddenPowerLevel2BoostMultiplier = 3.0f;

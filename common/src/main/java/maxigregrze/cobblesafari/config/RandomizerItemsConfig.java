@@ -61,8 +61,7 @@ public class RandomizerItemsConfig {
         new WeightedPokeballEntry("cobblemon:ancient_feather_ball", 1),
         new WeightedPokeballEntry("cobblemon:ancient_wing_ball", 1),
         new WeightedPokeballEntry("cobblemon:ancient_jet_ball", 1),
-        new WeightedPokeballEntry("cobblemon:ancient_origin_ball", 1),
-        new WeightedPokeballEntry("cobblemon:ancient_strange_ball", 1)
+        new WeightedPokeballEntry("cobblemon:ancient_origin_ball", 1)
     ));
 
     private Integer redChainRandomShinyRollMax = 1024;

@@ -53,6 +53,11 @@ public class SafariConfig {
     private int dailyBaitCount = 32;
     private int dailyMudBallCount = 32;
 
+    /** Ticks an enraged alpha stays angry. 600 matches vanilla {@code PiglinAi.ANGER_DURATION}. */
+    private int alphaRageDurationTicks = 600;
+    /** Chance for a single bait to calm an enraged alpha. Does not move the mood gauge. */
+    private float alphaRageBaitCalmChance = 0.15f;
+
     public SafariConfig() {
         // Required no-arg constructor for GSON deserialization.
     }
@@ -219,6 +224,16 @@ public class SafariConfig {
     public static int getGracePeriodDuration() {
         if (INSTANCE == null) return 300;
         return Math.max(0, INSTANCE.gracePeriodDuration);
+    }
+
+    public static int getAlphaRageDurationTicks() {
+        if (INSTANCE == null) return 600;
+        return Math.max(20, INSTANCE.alphaRageDurationTicks);
+    }
+
+    public static float getAlphaRageBaitCalmChance() {
+        if (INSTANCE == null) return 0.15f;
+        return Math.clamp(INSTANCE.alphaRageBaitCalmChance, 0.0f, 1.0f);
     }
 
     public static int getBaseFleeRate() {

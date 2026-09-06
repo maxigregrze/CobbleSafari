@@ -16,6 +16,8 @@ public class SafariPokemonState {
     private boolean fled = false;
     private int moodLevel = 0;
     private UUID lastInteractingPlayer = null;
+    private boolean enraged = false;
+    private long rageDeadlineTick = 0;
 
     public SafariPokemonState(UUID pokemonEntityId) {
         this.pokemonEntityId = pokemonEntityId;
@@ -49,6 +51,37 @@ public class SafariPokemonState {
         int oldMood = moodLevel;
         moodLevel = Math.min(maxMood, moodLevel + 1);
         return moodLevel - oldMood;
+    }
+
+    /**
+     * Whether this alpha is currently retaliating instead of fleeing.
+     *
+     * <p>Alphas never flee in the Safari: mud balls and failed captures push them into rage
+     * instead. See {@code SafariStateManager#tryEnrage}.
+     */
+    public boolean isEnraged() {
+        return enraged;
+    }
+
+    public void setEnraged(boolean enraged) {
+        this.enraged = enraged;
+    }
+
+    /** Absolute {@code SafariStateManager} tick at which the rage lapses, or {@code 0} when calm. */
+    public long getRageDeadlineTick() {
+        return rageDeadlineTick;
+    }
+
+    public void setRageDeadlineTick(long rageDeadlineTick) {
+        this.rageDeadlineTick = rageDeadlineTick;
+    }
+
+    /**
+     * Pins the mood to its most placid end: least likely to flee, hardest to catch. This is the
+     * price of calming an enraged alpha with bait rather than waiting the rage out.
+     */
+    public void forceMoodToCalmest() {
+        this.moodLevel = SafariConfig.MAX_MOOD_LEVEL;
     }
 
     public float getCatchRateMultiplier() {
