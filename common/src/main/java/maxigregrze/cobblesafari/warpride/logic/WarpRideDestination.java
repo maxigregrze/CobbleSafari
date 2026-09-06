@@ -7,8 +7,14 @@ import java.util.Map;
  * One Ultra Space destination. {@code typeId} is stable and unique ({@code >= 1}) and is what the
  * sub-instance record stores; {@code weight} is its share of a portal roll; {@code tint} is ARGB for
  * the portal sprite; {@code encounters} maps rank 0..3 to flat {@code "species form=x"} strings.
+ *
+ * <p>{@code destinationId} is the human name, derived by the loader from the file name rather than
+ * authored (action plan 184, Decision section 12.3): {@code typeId} is already the machine identity
+ * and the file name is already the human one, so a {@code name} field would only be a second source
+ * of truth to keep in sync. It exists for the server log, and reaches no client.</p>
  */
 public record WarpRideDestination(
+        String destinationId,
         int typeId,
         int weight,
         String structurePool,

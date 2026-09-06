@@ -1,0 +1,16 @@
+{
+	"variants": {
+		"facing=north": {
+			"model": "cobblesafari:block/ultra_wormhole_empty"
+		},
+		"facing=east": {
+			"model": "cobblesafari:block/ultra_wormhole_empty"
+		},
+		"facing=south": {
+			"model": "cobblesafari:block/ultra_wormhole_empty"
+		},
+		"facing=west": {
+			"model": "cobblesafari:block/ultra_wormhole_empty"
+		}
+	}
+}

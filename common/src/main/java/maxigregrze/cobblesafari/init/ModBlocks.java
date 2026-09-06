@@ -91,7 +91,7 @@ import maxigregrze.cobblesafari.block.trap.TeleportTrapBlock;
 import maxigregrze.cobblesafari.block.trap.WindTrapBlock;
 import maxigregrze.cobblesafari.block.underground.UndergroundTimberBlock;
 import maxigregrze.cobblesafari.block.hyperspace.HyperspaceBarrierBlock;
-import maxigregrze.cobblesafari.block.hyperspace.HyperspaceBushBlock;
+import maxigregrze.cobblesafari.block.base.ModelBushBlock;
 import maxigregrze.cobblesafari.block.hyperspace.HyperspaceDirectionalBlock;
 import maxigregrze.cobblesafari.block.hyperspace.HyperspaceFlagLargeBlock;
 import maxigregrze.cobblesafari.block.hyperspace.HyperspaceFlagSmallBlock;
@@ -111,11 +111,21 @@ import maxigregrze.cobblesafari.block.hyperspace.HyperspaceWallSignBlock;
 import maxigregrze.cobblesafari.block.hyperspace.HyperspaceCeilingHangingSignBlock;
 import maxigregrze.cobblesafari.block.hyperspace.HyperspaceWallHangingSignBlock;
 import maxigregrze.cobblesafari.block.hyperspace.HyperspaceScaffoldStairsBlock;
-import maxigregrze.cobblesafari.block.hyperspace.HyperspaceShapedBlock;
+import maxigregrze.cobblesafari.block.base.ShapedBlock;
 import maxigregrze.cobblesafari.block.base.ConnectedModelBlock;
 import maxigregrze.cobblesafari.block.base.ConnectedShape;
 import maxigregrze.cobblesafari.block.base.LayeredSideConnectedModelBlock;
 import maxigregrze.cobblesafari.block.base.SideConnectedModelBlock;
+import maxigregrze.cobblesafari.block.base.BlockShapeUtils;
+import maxigregrze.cobblesafari.block.base.FaceAttachedModelBlock;
+import maxigregrze.cobblesafari.block.base.FullShapeStairBlock;
+import maxigregrze.cobblesafari.block.misc.LightningSpotBlock;
+import maxigregrze.cobblesafari.block.ultraspace.UltraspaceBonsaiStemBlock;
+import maxigregrze.cobblesafari.block.ultraspace.UltraspaceBulbBlock;
+import maxigregrze.cobblesafari.block.ultraspace.UltraspaceLeavesBlock;
+import maxigregrze.cobblesafari.block.ultraspace.UltraspaceCrystallizedSandBlock;
+import maxigregrze.cobblesafari.block.ultraspace.UltraspaceSandBlock;
+import maxigregrze.cobblesafari.block.ultraspace.UltraspaceSandPathBlock;
 import maxigregrze.cobblesafari.block.base.VerticalConnectedModelBlock;
 import maxigregrze.cobblesafari.block.base.DaylightLit;
 import maxigregrze.cobblesafari.block.base.GroundedSideConnectedModelBlock;
@@ -152,6 +162,10 @@ import net.minecraft.world.level.block.ComposterBlock;
 import net.minecraft.world.level.block.LeavesBlock;
 import net.minecraft.world.level.block.SaplingBlock;
 import net.minecraft.world.level.block.SlabBlock;
+import net.minecraft.util.ColorRGBA;
+import net.minecraft.world.level.block.AmethystBlock;
+import net.minecraft.world.level.block.AmethystClusterBlock;
+import net.minecraft.world.level.block.RotatedPillarBlock;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.StairBlock;
 import net.minecraft.world.level.block.state.properties.BlockSetType;
@@ -302,6 +316,37 @@ public class ModBlocks {
                     .lightLevel(state -> 10)
                     .noOcclusion()
                     .noCollission()
+            ));
+
+    // --- Ultra Wormhole (action plan 183, B2) ------------------------------------------------
+    // The device, hand-placed in a parent dungeon's wormhole room. Unbreakable and dropless: the
+    // joint survival of its two halves guards against commands and explosions, not against a pick.
+    public static final Block ULTRA_ENTRANCE_PORTAL = registerBlock("ultra_entrance_portal",
+            new maxigregrze.cobblesafari.block.dungeon.UltraEntrancePortalBlock(BlockBehaviour.Properties.of()
+                    .strength(-1.0f, 3600000.0f)
+                    .lightLevel(state -> 10)
+                    .noOcclusion()
+                    // Collidable, unlike the two portals below it: the frame's post is solid, and
+                    // its shape is the three solid elements of the model (not the flat plane).
+                    .noLootTable()
+            ));
+
+    // The return portal, generated inside a sub-instance. RenderShape.INVISIBLE: everything is
+    // drawn by UltraWormholeBlockEntityRenderer from derived, per-destination tinted textures.
+    public static final Block ULTRA_WORMHOLE = registerBlock("ultra_wormhole",
+            new maxigregrze.cobblesafari.block.dungeon.UltraWormholeBlock(BlockBehaviour.Properties.of()
+                    .strength(-1.0f, 3600000.0f)
+                    .lightLevel(state -> 10)
+                    .noOcclusion()
+                    .noCollission()
+                    .noLootTable()
+            ));
+
+    // An author's marker: placed by hand in the .nbt, collected and erased by the pipeline.
+    public static final Block ULTRA_SPAWN_ANCHOR = registerBlock("ultra_spawn_anchor",
+            new maxigregrze.cobblesafari.block.dungeon.UltraSpawnAnchorBlock(BlockBehaviour.Properties.of()
+                    .strength(1.5f, 6.0f)
+                    .noLootTable()
             ));
 
     public static final Block DUNGEON_PORTAL_EFFECT = registerBlockWithoutItem("dungeon_portal_effect",
@@ -1848,9 +1893,9 @@ public class ModBlocks {
     public static final Block HYPERSPACE_FLOOR = registerBlock("hyperspace_floor", new Block(hsStone()));
     public static final Block HYPERSPACE_FLOOR_PLAIN = registerBlock("hyperspace_floor_plain", new Block(hsStone()));
     public static final Block HYPERSPACE_ROAD = registerBlock("hyperspace_road",
-            new HyperspaceShapedBlock(hsStone().noOcclusion(), HS_ROAD_SHAPE));
+            new ShapedBlock(hsStone().noOcclusion(), HS_ROAD_SHAPE));
     public static final Block HYPERSPACE_ROAD_PLAIN = registerBlock("hyperspace_road_plain",
-            new HyperspaceShapedBlock(hsStone().noOcclusion(), HS_ROAD_SHAPE));
+            new ShapedBlock(hsStone().noOcclusion(), HS_ROAD_SHAPE));
     public static final Block HYPERSPACE_MANHOLE = registerBlock("hyperspace_manhole", new Block(hsIronBlock()));
     public static final Block HYPERSPACE_WALL = registerBlock("hyperspace_wall", new Block(hsStone()));
     public static final Block HYPERSPACE_WALL_PLAIN = registerBlock("hyperspace_wall_plain", new Block(hsStone()));
@@ -1908,7 +1953,7 @@ public class ModBlocks {
     public static final Block HYPERSPACE_BARRIER = registerBlock("hyperspace_barrier",
             new HyperspaceBarrierBlock(hsIronHand()));
     public static final Block HYPERSPACE_CONE = registerBlock("hyperspace_cone",
-            new HyperspaceShapedBlock(BlockBehaviour.Properties.of().mapColor(MapColor.STONE).instabreak().sound(SoundType.STONE).noOcclusion(), HS_CONE_SHAPE));
+            new ShapedBlock(BlockBehaviour.Properties.of().mapColor(MapColor.STONE).instabreak().sound(SoundType.STONE).noOcclusion(), HS_CONE_SHAPE));
     public static final Block HYPERSPACE_FLAG_SMALL = registerBlock("hyperspace_flag_small",
             new HyperspaceFlagSmallBlock(hsPaneLight(), HS_FLAG_SMALL_SHAPE, HS_FLAG_ARM_TOP));
     public static final Block HYPERSPACE_IRONRAILS = registerBlock("hyperspace_ironrails",
@@ -1932,7 +1977,7 @@ public class ModBlocks {
     public static final Block HYPERSPACE_SHUTTERS = registerBlock("hyperspace_shutters",
             new HyperspaceDirectionalBlock(hsTrapdoor(), HS_SHUTTERS_SHAPE, true, true));
     public static final Block HYPERSPACE_SLAB = registerBlock("hyperspace_slab",
-            new HyperspaceShapedBlock(hsIronPick(), HS_SLAB_SHAPE));
+            new ShapedBlock(hsIronPick(), HS_SLAB_SHAPE));
 
     public static final Block HYPERSPACE_DOOR = registerBlock("hyperspace_door",
             new HyperspaceDoubleBlock(hsWood()));
@@ -1943,7 +1988,7 @@ public class ModBlocks {
                     .lightLevel(s -> s.getValue(HyperspaceQuadBlock.PART) == HyperspaceQuadPart.CENTERTOP ? 15 : 0),
                     false, true, HS_LAMP_SHAPE));
     public static final Block HYPERSPACE_FLOWERPOT = registerBlock("hyperspace_flowerpot",
-            new HyperspaceShapedBlock(hsPlanks().noOcclusion(), HS_FULL_SHAPE));
+            new ShapedBlock(hsPlanks().noOcclusion(), HS_FULL_SHAPE));
     public static final Block HYPERSPACE_LADDER = registerBlock("hyperspace_ladder",
             new HyperspaceLadderBlock(hsIronHand()));
     public static final Block HYPERSPACE_RAMP = registerBlock("hyperspace_ramp",
@@ -1991,9 +2036,9 @@ public class ModBlocks {
     // Foliage-tinted bushes (tintindex 0 on the bush faces); plant-like (need dirt/grass below,
     // break if unsupported, like flowers/saplings); shears-only drop via loot table.
     public static final Block HYPERSPACE_BUSH = registerBlock("hyperspace_bush",
-            new HyperspaceBushBlock(hsLeafy(), HS_BUSH_SHAPE));
+            new ModelBushBlock(hsLeafy(), HS_BUSH_SHAPE));
     public static final Block HYPERSPACE_BUSH_FLOWERED = registerBlock("hyperspace_bush_flowered",
-            new HyperspaceBushBlock(hsLeafy(), HS_BUSH_SHAPE));
+            new ModelBushBlock(hsLeafy(), HS_BUSH_SHAPE));
     // Hollow "tube" scaffolding variant (iron, pickaxe): full-cube selection, hollow collision.
     public static final Block HYPERSPACE_SCAFFOLDING_TUBE = registerBlock("hyperspace_scaffolding_tube",
             new LayeredSideConnectedModelBlock(hsIronPick(), ConnectedModelBlock.Settings.builder()
@@ -2035,9 +2080,9 @@ public class ModBlocks {
     public static final Block KALOS_WINDOW_TOPPER = registerBlock("kalos_window_topper",
             new LitCubeBlock(hsGlass().randomTicks().lightLevel(DaylightLit::lightLevel)));
     public static final Block KALOS_ROAD = registerBlock("kalos_road",
-            new HyperspaceShapedBlock(hsStone().noOcclusion(), HS_ROAD_SHAPE));
+            new ShapedBlock(hsStone().noOcclusion(), HS_ROAD_SHAPE));
     public static final Block KALOS_ROAD_PLAIN = registerBlock("kalos_road_plain",
-            new HyperspaceShapedBlock(hsStone().noOcclusion(), HS_ROAD_SHAPE));
+            new ShapedBlock(hsStone().noOcclusion(), HS_ROAD_SHAPE));
     // Manhole: HYPERSPACE_MANHOLE's texture on a trapdoor. Iron-block material (hsIronBlock:
     // METAL sounds, pickaxe, iron tier) with wooden-trapdoor behaviour - BlockSetType.STONE is
     // the metal-sounding set that still has canOpenByHand, so hand *and* redstone open it.
@@ -2260,9 +2305,228 @@ public class ModBlocks {
             new HyperspaceCeilingHangingSignBlock(ModWoodTypes.HYPERSPACE, hsSign()));
     public static final Block HYPERSPACE_WALL_HANGING_SIGN = registerBlockWithoutItem("hyperspace_wall_hanging_sign",
             new HyperspaceWallHangingSignBlock(ModWoodTypes.HYPERSPACE, hsSign()));
+
+    // ================================================================================
+    // Ultra Space decorative set (plan 185)
+    // ================================================================================
+    //
+    // Twenty blocks; fourteen of them are bare instances of a shared base or of a vanilla class.
+    // Every visual variant (the 80/10/10 sand textures, the 50/50 bonsai and bulb models) lives in
+    // the blockstate JSON as a weighted model array - no state property, no Java roll.
+
+    private static final TagKey<Block> ULTRASPACE_SAND_PATTERN_CONNECTS = blockTag("ultraspace_sand_pattern_connects");
+    private static final TagKey<Block> ULTRASPACE_PLANTABLE = blockTag("ultraspace_plantable");
+
+    /** Average tint of ultrasand_0.png - the puff of dust a falling sand block leaves. */
+    private static final ColorRGBA US_SAND_DUST = new ColorRGBA(0xFFC6B9D8);
+
+    private static final VoxelShape US_BUSH_SHAPE = Block.box(2, 0, 2, 14, 13, 14);
+    private static final VoxelShape US_STEM_SHAPE = Block.box(4, 0, 4, 12, 16, 12);
+    private static final VoxelShape US_BULB_SHAPE = Block.box(1, 0, 1, 15, 16, 15);
+
+    // Bonsai stem: a flat panel, authored for FACING=north and turned with the block by
+    // rotateFloorShape() - without that the box stays put while the model spins.
+    private static final VoxelShape US_STEM_PANEL_FLOOR = Block.box(0, 0, 6, 16, 11, 10);
+    /**
+     * The stem on a wall. The wall model carries a baked 90 degree turn (see the asset generator),
+     * so the panel stands as a vertical fin growing out of the wall instead of lying flat: thin in
+     * X, full height, reaching 10px into the room. Authored for FACING=north, where the support is
+     * to the south, then turned to the other three facings.
+     */
+    private static final VoxelShape US_STEM_PANEL_WALL_NORTH = Block.box(7, 0, 6, 9, 16, 16);
+    private static final Map<Direction, VoxelShape> US_STEM_PANEL_WALL =
+            BlockShapeUtils.precompute(US_STEM_PANEL_WALL_NORTH, Direction.NORTH);
+
+    // Bonsai: the models are three blocks wide and two tall, but only the trunk is worth clicking.
+    // Ground trunk rises through the middle of the cell; the wall trunk hugs the east face, which
+    // is the side the wall models attach by.
+    private static final VoxelShape US_BONSAI_TRUNK_FLOOR = Block.box(5, 0, 5, 11, 16, 11);
+    private static final VoxelShape US_BONSAI_TRUNK_WALL_AUTHORED = Block.box(12, 0, 5, 16, 16, 11);
+    /**
+     * {@code precompute} keys its map by the facing whose blockstate {@code y} it applied, using the
+     * usual north=0 / east=90 / south=180 / west=270 table. The bonsai wall blockstate does not use
+     * that table - it turns the model by 90/180/270/0 for north/east/south/west, to bring the
+     * model's east side onto the support - so every entry sits one quarter turn ahead. Reading the
+     * map through {@code getClockWise()} is that quarter turn.
+     */
+    private static final Map<Direction, VoxelShape> US_BONSAI_TRUNK_WALL =
+            BlockShapeUtils.precompute(US_BONSAI_TRUNK_WALL_AUTHORED, Direction.NORTH);
+
+    private static VoxelShape bonsaiTrunkWall(Direction facing) {
+        return US_BONSAI_TRUNK_WALL.get(facing.getClockWise());
+    }
+
+    // Cable zip tie: a plate four pixels thick standing across the cell, the tie wrapped around a
+    // cable that runs through it. Authored for FACING=north and turned with the block.
+    private static final VoxelShape US_ZIP_PLATE_FLOOR = Block.box(0, 0, 6, 16, 16, 10);
+    /** The same plate once the blockstate has tipped it onto a wall (x:90 plus the baked turn). */
+    private static final VoxelShape US_ZIP_PLATE_WALL_NORTH = Block.box(6, 0, 0, 10, 16, 16);
+    private static final Map<Direction, VoxelShape> US_ZIP_PLATE_WALL =
+            BlockShapeUtils.precompute(US_ZIP_PLATE_WALL_NORTH, Direction.NORTH);
+
+    // Cable strap: a 2px plate, laid on whichever face it attaches to.
+    private static final VoxelShape US_STRAP_FLOOR = Block.box(0, 0, 0, 16, 2, 16);
+    private static final VoxelShape US_STRAP_CEILING = Block.box(0, 14, 0, 16, 16, 16);
+    private static final VoxelShape US_STRAP_WALL_N = Block.box(0, 0, 14, 16, 16, 16);
+    private static final VoxelShape US_STRAP_WALL_S = Block.box(0, 0, 0, 16, 16, 2);
+    private static final VoxelShape US_STRAP_WALL_E = Block.box(0, 0, 0, 2, 16, 16);
+    private static final VoxelShape US_STRAP_WALL_W = Block.box(14, 0, 0, 16, 16, 16);
+
+    // --- sand family -------------------------------------------------------------
+    public static final Block ULTRASPACE_SAND = registerBlock("ultraspace_sand",
+            new UltraspaceSandBlock(US_SAND_DUST, usSand()));
+    public static final Block ULTRASPACE_SAND_PATH = registerBlock("ultraspace_sand_path",
+            new UltraspaceSandPathBlock(usSand().strength(0.6f).noOcclusion()));
+    public static final Block ULTRASPACE_SAND_PATTERN = registerBlock("ultraspace_sand_pattern",
+            new SideConnectedModelBlock(usSand().strength(0.6f).noOcclusion(),
+                    ConnectedModelBlock.Settings.builder()
+                            .connectTag(ULTRASPACE_SAND_PATTERN_CONNECTS)
+                            .shape(UltraspaceSandPathBlock.SHAPE)
+                            .collision(ConnectedModelBlock.Collision.FULL)
+                            .build()));
+    public static final Block ULTRASPACE_SANDSTONE = registerBlock("ultraspace_sandstone",
+            new Block(BlockBehaviour.Properties.of().mapColor(MapColor.SAND)
+                    .requiresCorrectToolForDrops().strength(0.8f)));
+
+    // --- crystals ----------------------------------------------------------------
+    // Buds like budding amethyst and, like it, drops nothing: noLootTable() rather than an empty
+    // loot table, so nothing has to ship a file that says "nothing".
+    public static final Block ULTRASPACE_SAND_CRYSTALIZED = registerBlock("ultraspace_sand_crystalized",
+            new UltraspaceCrystallizedSandBlock(US_SAND_DUST,
+                    usSand().strength(0.6f).randomTicks().noLootTable()));
+    public static final Block ULTRASPACE_CRYSTAL = registerBlock("ultraspace_crystal",
+            new AmethystClusterBlock(7.0f, 3.0f, BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.COLOR_PURPLE).forceSolidOn().noOcclusion().randomTicks()
+                    .sound(SoundType.AMETHYST_CLUSTER).strength(1.5f).lightLevel(state -> 5)
+                    .pushReaction(PushReaction.DESTROY)));
+    public static final Block ULTRASPACE_CRYSTAL_BLOCK = registerBlock("ultraspace_crystal_block",
+            new AmethystBlock(BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_PURPLE)
+                    .strength(1.5f).sound(SoundType.AMETHYST).requiresCorrectToolForDrops()));
+
+    // --- deep rock ---------------------------------------------------------------
+    public static final Block ULTRASPACE_DEEPSTONE = registerBlock("ultraspace_deepstone",
+            new Block(usDeepstone()));
+    public static final Block ULTRASPACE_BULB = registerBlock("ultraspace_bulb",
+            new UltraspaceBulbBlock(usDeepstone().noOcclusion(), US_BULB_SHAPE));
+    public static final Block ULTRASPACE_STEM = registerBlock("ultraspace_stem",
+            new GroundedModelBlock(usDeepstone().noOcclusion(), US_STEM_SHAPE,
+                    GroundedModelBlock.Support.NONE));
+
+    // --- flesh -------------------------------------------------------------------
+    // speedFactor(0.4F) is exactly vanilla soul sand's slowdown, and costs no code. The block stays
+    // a full cube: soul sand's 2px sink is a quirk that only complicates building.
+    public static final Block ULTRASPACE_FLESH = registerBlock("ultraspace_flesh",
+            new Block(BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_RED)
+                    .strength(0.5f).sound(SoundType.SOUL_SOIL).speedFactor(0.4f)));
+
+    // --- vegetation --------------------------------------------------------------
+    // The bush is planted on strange sand, not on dirt, hence the ground tag: vanilla BushBlock
+    // would refuse every block of the dimension it is meant to grow in.
+    public static final Block ULTRASPACE_BUSH = registerBlock("ultraspace_bush",
+            new ModelBushBlock(usPlant().noCollission(), US_BUSH_SHAPE, ULTRASPACE_PLANTABLE));
+    public static final Block ULTRASPACE_LEAVES = registerBlock("ultraspace_leaves",
+            new UltraspaceLeavesBlock(usPlant().strength(0.1f)));
+    public static final Block ULTRASPACE_BONSAI_STEM = registerBlock("ultraspace_bonsai_stem",
+            new UltraspaceBonsaiStemBlock(usPlant(), FaceAttachedModelBlock.Settings.builder()
+                    .shapes(US_STEM_PANEL_FLOOR, US_STEM_PANEL_FLOOR,
+                            US_STEM_PANEL_WALL.get(Direction.NORTH), US_STEM_PANEL_WALL.get(Direction.SOUTH),
+                            US_STEM_PANEL_WALL.get(Direction.EAST), US_STEM_PANEL_WALL.get(Direction.WEST))
+                    .rotateFloorShape()
+                    .noCeiling()
+                    .requireFullBlockSupport()
+                    .build()));
+    // Oversized model (three blocks wide, two tall) but the box stays inside the cell, as for every
+    // other outsized decorative model in the mod.
+    public static final Block ULTRASPACE_BONSAI = registerBlock("ultraspace_bonsai",
+            new FaceAttachedModelBlock(BlockBehaviour.Properties.of().mapColor(MapColor.PLANT)
+                    .strength(2.5f).sound(SoundType.WOOD).noOcclusion(),
+                    FaceAttachedModelBlock.Settings.builder()
+                            .shapes(US_BONSAI_TRUNK_FLOOR, US_BONSAI_TRUNK_FLOOR,
+                                    bonsaiTrunkWall(Direction.NORTH), bonsaiTrunkWall(Direction.SOUTH),
+                                    bonsaiTrunkWall(Direction.EAST), bonsaiTrunkWall(Direction.WEST))
+                            .noCeiling()
+                            .requireFullBlockSupport()
+                            .build()));
+
+    // --- cabling -----------------------------------------------------------------
+    public static final Block ULTRASPACE_CABLE = registerBlock("ultraspace_cable",
+            new RotatedPillarBlock(BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_GRAY)
+                    .strength(0.8f).sound(SoundType.WOOL)));
+    public static final Block ULTRASPACE_CABLE_STRAP = registerBlock("ultraspace_cable_strap",
+            new FaceAttachedModelBlock(usCable(), FaceAttachedModelBlock.Settings.builder()
+                    .shapes(US_STRAP_FLOOR, US_STRAP_CEILING,
+                            US_STRAP_WALL_N, US_STRAP_WALL_S, US_STRAP_WALL_E, US_STRAP_WALL_W)
+                    .build()));
+    public static final Block ULTRASPACE_CABLE_ZIP = registerBlock("ultraspace_cable_zip",
+            new FaceAttachedModelBlock(usCable(), FaceAttachedModelBlock.Settings.builder()
+                    .shapes(US_ZIP_PLATE_FLOOR, US_ZIP_PLATE_FLOOR,
+                            US_ZIP_PLATE_WALL.get(Direction.NORTH), US_ZIP_PLATE_WALL.get(Direction.SOUTH),
+                            US_ZIP_PLATE_WALL.get(Direction.EAST), US_ZIP_PLATE_WALL.get(Direction.WEST))
+                    .rotateFloorShape()
+                    .noSupport()
+                    .build()));
+    // Bent cable: stair semantics with three hand-drawn models, but a full cube of hitbox and
+    // collision - the model fills its cell, and a stair-shaped box would only make it fiddly to
+    // walk on and to click.
+    public static final Block ULTRASPACE_CABLE_STAIRS = registerBlock("ultraspace_cable_stairs",
+            new FullShapeStairBlock(ULTRASPACE_CABLE.defaultBlockState(),
+                    BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_GRAY)
+                            .strength(0.8f).sound(SoundType.WOOL).noOcclusion()));
+
+    // --- Megapolis ---------------------------------------------------------------
+    public static final Block MEGAPOLIS_LIGHT = registerBlock("megapolis_light",
+            new Block(usMegapolisMetal().lightLevel(state -> 15)));
+    public static final Block MEGAPOLIS_STAIRS = registerBlock("megapolis_stairs",
+            new StairBlock(MEGAPOLIS_LIGHT.defaultBlockState(), usMegapolisMetal().noOcclusion()));
+
+    // --- lightning marker --------------------------------------------------------
+    // Lives in block/misc, not block/ultraspace: nothing about it is Ultra Space specific.
+    // Barrier recipe - indestructible in survival, no loot - plus replaceable() so a builder can
+    // place straight through it the way they would through air.
+    public static final Block LIGHTNINGSPOT = registerBlock("lightningspot",
+            new LightningSpotBlock(BlockBehaviour.Properties.of()
+                    .replaceable()
+                    .noCollission()
+                    .noOcclusion()
+                    .strength(-1.0f, 3600000.0f)
+                    .noLootTable()
+                    // An invisible block has no texture to shatter, and this is also the second
+                    // half of the guard that keeps ParticleEngine.crack away from its empty shape.
+                    .noTerrainParticles()
+                    .pushReaction(PushReaction.DESTROY)));
+
     // Sign items (one item spans the standing+wall pair); assigned in register().
     public static Item HYPERSPACE_SIGN_ITEM;
     public static Item HYPERSPACE_HANGING_SIGN_ITEM;
+
+    /** Ultra Space sand: vanilla sand, tint and sound included. */
+    private static BlockBehaviour.Properties usSand() {
+        return BlockBehaviour.Properties.of().mapColor(MapColor.SAND).strength(0.5f).sound(SoundType.SAND);
+    }
+
+    /** Ultra Space deep rock: vanilla blackstone. */
+    private static BlockBehaviour.Properties usDeepstone() {
+        return BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_BLACK).strength(1.5f, 6.0f)
+                .sound(SoundType.STONE).requiresCorrectToolForDrops();
+    }
+
+    /** Ultra Space vegetation: breaks by hand, grass sound, never occludes. */
+    private static BlockBehaviour.Properties usPlant() {
+        return BlockBehaviour.Properties.of().mapColor(MapColor.PLANT).instabreak()
+                .sound(SoundType.GRASS).noOcclusion().pushReaction(PushReaction.DESTROY);
+    }
+
+    /** Cable strap and zip tie: wool sound, no tool, breaks by hand. */
+    private static BlockBehaviour.Properties usCable() {
+        return BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_GRAY).instabreak()
+                .sound(SoundType.WOOL).noOcclusion().pushReaction(PushReaction.DESTROY);
+    }
+
+    /** Megapolis metalwork: vanilla iron block. */
+    private static BlockBehaviour.Properties usMegapolisMetal() {
+        return BlockBehaviour.Properties.of().mapColor(MapColor.METAL).requiresCorrectToolForDrops()
+                .strength(5.0f, 6.0f).sound(SoundType.METAL);
+    }
 
     private static BlockBehaviour.Properties hsStone() {
         return BlockBehaviour.Properties.of().mapColor(MapColor.STONE).strength(1.5f, 6.0f)

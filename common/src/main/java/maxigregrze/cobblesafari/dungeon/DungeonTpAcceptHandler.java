@@ -5,6 +5,7 @@ import maxigregrze.cobblesafari.api.DungeonRegistrationAPI;
 import maxigregrze.cobblesafari.api.PortalInterceptor;
 import maxigregrze.cobblesafari.block.dungeon.DungeonPortalBlockEntity;
 import maxigregrze.cobblesafari.data.PlayerTimerData;
+import maxigregrze.cobblesafari.data.TimerScope;
 import maxigregrze.cobblesafari.compat.EntryFeeHelper;
 import maxigregrze.cobblesafari.manager.TimerManager;
 import maxigregrze.cobblesafari.network.ModNetworking;
@@ -79,9 +80,10 @@ public class DungeonTpAcceptHandler {
         int feeAmount = dimConfig.map(DungeonDimensionEntry::getEntryFeeAmount).orElse(5000);
         String feeItem = dimConfig.map(DungeonDimensionEntry::getEntryFee).orElse("minecraft:diamond");
 
-        String fullDimensionId = validation.config().getDimensionId();
-        PlayerTimerData timerData = TimerManager.getOrCreateData(player, fullDimensionId);
-        boolean alreadyPaid = timerData.hasPaidEntryFeeToday();
+        // "Already paid" now means "is resuming a visit that still has time on it" (plan 181
+        // § 6.1). The payload is unchanged; only what fills the flag differs. An exhausted session
+        // is NOT already paid - re-entering it is a re-purchase and must show the fee.
+        boolean alreadyPaid = entryIsFree(player, portalEntity, validation);
 
         ModNetworking.sendOpenTpAccept(player, dimensionName, dimensionId,
                 hasFee, isCobbledollarFee, feeAmount, feeItem, "dungeon", alreadyPaid);
@@ -163,48 +165,125 @@ public class DungeonTpAcceptHandler {
             return;
         }
 
-        String fullDimensionId = validation.config().getDimensionId();
-        PlayerTimerData timerData = TimerManager.getOrCreateData(player, fullDimensionId);
-
-        if (!timerData.hasPaidEntryFeeToday()) {
-            boolean charged = EntryFeeHelper.tryChargeFee(player, enableFee, feeItem, useCobbledollar, feeAmount);
-            if (!charged) {
+        // The session is the receipt (plan 181 § 6.1): charge unless the player is resuming a visit
+        // that still has time on it. On a first entry no instance exists yet, so there can be no
+        // session; on a re-purchase the session exists but is spent. Both are charged.
+        ChargedFee charged = null;
+        if (!entryIsFree(player, portalEntity, validation)) {
+            boolean ok = EntryFeeHelper.tryChargeFee(player, enableFee, feeItem, useCobbledollar, feeAmount);
+            if (!ok) {
                 player.sendSystemMessage(Component.translatable("cobblesafari.dungeon.entry.fee.insufficient"));
                 ModNetworking.sendCloseTpAccept(player);
                 return;
             }
-            timerData.markEntryFeePaidToday();
-            TimerManager.savePlayerData(player, timerData);
+            EntryFeeHelper.FeeType feeType = EntryFeeHelper.getEffectiveFeeType(enableFee, useCobbledollar);
+            if (feeType != EntryFeeHelper.FeeType.NONE) {
+                charged = new ChargedFee(feeType, feeItem, feeAmount);
+            }
+            // Paying is what makes a new run, so it is also what gives the wormhole back. The
+            // once-per-run entry lives on the instance record and used to reset only when the
+            // instance itself did - which meant a player who let their time run out and bought a
+            // second entry into the SAME instance was still refused (action plan 183, B7).
+            //
+            // Hooked to the charge and not to the entry: walking out through the exit portal with
+            // credit left and walking back in is free, takes this branch, and must not hand out a
+            // second wormhole.
+            resetWormholeEntryForNewRun(player, portalEntity, validation);
         }
 
-        executeTeleportOrCountdown(player, portalEntity, validation,
-                new FeeContext(enableFee, useCobbledollar, feeItem, feeAmount), timerData);
+        executeTeleportOrCountdown(player, portalEntity, validation, charged);
     }
 
-    private record FeeContext(boolean enableFee, boolean useCobbledollar, String feeItem, int feeAmount) {}
+    /**
+     * The player's session for the instance this portal admits to, or {@code null}. Resolved
+     * <em>by portal</em>, since at this point the player is still standing in the overworld.
+     */
+    private static PlayerTimerData sessionForPortal(ServerPlayer player, DungeonPortalBlockEntity portalEntity,
+                                                    DungeonTeleportHandler.DungeonValidationResult validation) {
+        UUID instanceId = validation.instanceId() != null
+                ? validation.instanceId()
+                : DungeonTeleportHandler.resolveInstanceForPortal(
+                        player.getServer(), portalEntity, validation.config().getDimensionId());
+        if (instanceId == null) {
+            return null;
+        }
+        return TimerManager.session(player,
+                TimerScope.of(validation.config().getDimensionId(), instanceId));
+    }
+
+    /**
+     * Whether this entry is free, i.e. the player is resuming a visit they still have time on.
+     * <p>
+     * Holding a session is <b>not</b> sufficient: a session at zero credit is a spent visit, and
+     * re-entering it is the re-purchase of § 6.2 - which must be charged like a first entry. Reading
+     * this as "holds a session" collapses that row of the table and lets an exhausted player back in
+     * for free, with a screen that wrongly says they already paid.
+     * <p>
+     * When the credit is zero and {@code allowMultiplePayment} is off, we never get here:
+     * {@code validateDungeonEntry} has already refused with {@code no_time_remaining}.
+     */
+    private static boolean entryIsFree(ServerPlayer player, DungeonPortalBlockEntity portalEntity,
+                                       DungeonTeleportHandler.DungeonValidationResult validation) {
+        PlayerTimerData session = sessionForPortal(player, portalEntity, validation);
+        return session != null && session.getRemainingTicks() > 0;
+    }
+
+    /**
+     * Clears this player's once-per-run wormhole entry on the instance they are paying to enter.
+     * No-op on a first entry, where no instance record exists yet - and none can have been spent.
+     */
+    private static void resetWormholeEntryForNewRun(ServerPlayer player, DungeonPortalBlockEntity portalEntity,
+                                                    DungeonTeleportHandler.DungeonValidationResult validation) {
+        MinecraftServer server = player.getServer();
+        if (server == null) {
+            return;
+        }
+        UUID instanceId = validation.instanceId() != null
+                ? validation.instanceId()
+                : DungeonTeleportHandler.resolveInstanceForPortal(
+                        server, portalEntity, validation.config().getDimensionId());
+        if (instanceId == null) {
+            return;
+        }
+        maxigregrze.cobblesafari.dungeon.sub.SubDungeonManager.refundEntry(server, instanceId, player.getUUID());
+    }
+
+    /** A fee actually taken from the player, carried so every abandon path can hand it back. */
+    public record ChargedFee(EntryFeeHelper.FeeType feeType, String feeItem, int feeAmount) {}
 
     private static void executeTeleportOrCountdown(ServerPlayer player, DungeonPortalBlockEntity portalEntity,
                                                     DungeonTeleportHandler.DungeonValidationResult validation,
-                                                    FeeContext fee, PlayerTimerData timerData) {
+                                                    ChargedFee charged) {
         if (validation.isReEntry() || portalEntity.getDungeonStructurePos() != null) {
             DungeonTeleportHandler.DungeonPrepResult prepResult =
                     DungeonTeleportHandler.buildPrepResultFromPortal(player, portalEntity, validation);
-            if (prepResult != null) {
-                DungeonTeleportHandler.executeDungeonTeleport(player, portalEntity, prepResult);
+            if (prepResult != null && prepResult.instanceId() != null) {
+                // Even here the teleport can abort (player removed, chunk-tracking NPE), and the fee
+                // was taken before we got here - so the outcome decides whether it is owed back.
+                if (!DungeonTeleportHandler.executeDungeonTeleport(player, portalEntity, prepResult)) {
+                    refundCharged(player, charged);
+                }
             } else {
                 ModNetworking.sendCloseTpAccept(player);
                 player.sendSystemMessage(Component.translatable("cobblesafari.dungeon.error.structure_failed"));
+                // The fee was taken before this branch could fail, so it is owed back (D1).
+                refundCharged(player, charged);
             }
         } else {
-            boolean started = DungeonTeleportCountdown.startTeleportSequence(player, portalEntity);
+            boolean started = DungeonTeleportCountdown.startTeleportSequence(player, portalEntity, charged);
             if (!started) {
                 ModNetworking.sendCloseTpAccept(player);
-                if (fee.enableFee() && !timerData.hasPaidEntryFeeToday()) {
-                    EntryFeeHelper.FeeType feeType = EntryFeeHelper.getEffectiveFeeType(fee.enableFee(), fee.useCobbledollar());
-                    refundFee(player, feeType, fee.feeItem(), fee.feeAmount());
-                }
+                refundCharged(player, charged);
             }
         }
+    }
+
+    /** The single refund entry point; every abandon path funnels here (plan 181 § 11.2). */
+    public static void refundCharged(ServerPlayer player, ChargedFee charged) {
+        if (charged == null) {
+            return;
+        }
+        refundFee(player, charged.feeType(), charged.feeItem(), charged.feeAmount());
     }
 
     private static void refundFee(ServerPlayer player, EntryFeeHelper.FeeType feeType, String feeItem, int feeAmount) {

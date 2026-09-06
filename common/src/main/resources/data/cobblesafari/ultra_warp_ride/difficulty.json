@@ -11,5 +11,28 @@
     { "fromDistance": 3500, "rankWeights": [0.31, 0.50, 0.16, 0.03], "portalChance": 0.09, "bonusChance": 0.15, "negativeWeights": [0.00, 0.30, 0.50, 0.20] },
     { "fromDistance": 4000, "rankWeights": [0.30, 0.50, 0.16, 0.04], "portalChance": 0.10, "bonusChance": 0.00, "negativeWeights": [0.00, 0.20, 0.50, 0.30] },
     { "fromDistance": 4500, "rankWeights": [0.29, 0.50, 0.16, 0.05], "portalChance": 0.10, "bonusChance": 0.00, "negativeWeights": [0.00, 0.10, 0.45, 0.45] }
-  ]
+  ],
+
+  "rewards": {
+    "performanceStepLy": 500,
+    "performanceMaxSteps": 9,
+
+    "levelOffset":                  [-10, -5, 0, 5],
+    "ivPerfectCount":               [3, 4, 5, 6],
+
+    "shinyPercentBase":             [1, 1, 1, 0],
+    "shinyPercentPerStep":          [0, 1, 2, 4],
+
+    "hiddenAbilityPercentBase":     [0, 1, 2, 4],
+    "hiddenAbilityPercentPerStep":  [0, 1, 2, 4],
+
+    "bonusMovePercentBase":         [0, 3.3, 6.6, 10],
+    "bonusMovePercentPerStep":      [0, 3.3, 6.6, 10],
+
+    "secondMovePercentBase":        [0, 0, 0, 5],
+    "secondMovePercentPerStep":     [0, 0, 0, 5],
+
+    "alphaPercentBase":             [0, 1, 2, 3],
+    "alphaPercentPerStep":          [0, 1, 2, 3]
+  }
 }

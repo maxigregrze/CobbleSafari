@@ -29,6 +29,19 @@ public final class WarpRideManager {
 
     private static final Map<UUID, WarpRideSession> SESSIONS = new ConcurrentHashMap<>();
 
+    /**
+     * The parent run a ride is nested inside, or absent for the debug launcher. Parentless is a
+     * first-class state, not a stopgap: the ride runs, shows its outcome, and hands off to nothing.
+     */
+    public record ParentContext(String parentScopeKey, java.util.UUID parentInstanceId,
+                                net.minecraft.core.BlockPos devicePos,
+                                net.minecraft.resources.ResourceKey<net.minecraft.world.level.Level> parentDimension) {}
+
+    private static final Map<UUID, ParentContext> PARENTS = new ConcurrentHashMap<>();
+
+    /** Players whose ride ended on a portal and whose sub-dungeon is being generated right now. */
+    private static final Map<UUID, ParentContext> HANDOFF = new ConcurrentHashMap<>();
+
     public static WarpRideSession getSession(UUID playerId) {
         return SESSIONS.get(playerId);
     }
@@ -53,8 +66,13 @@ public final class WarpRideManager {
         NO_DESTINATION
     }
 
-    /** The single entry point a caller uses to start a ride, with or without a parent context. */
+    /** The debug launcher's door: a ride with no parent, which hands off to nothing. */
     public static OpenResult open(ServerPlayer player) {
+        return open(player, null);
+    }
+
+    /** The single entry point a caller uses to start a ride, with or without a parent context. */
+    public static OpenResult open(ServerPlayer player, ParentContext parent) {
         MinecraftServer server = player.getServer();
         if (server == null) {
             return OpenResult.NO_DESTINATION;
@@ -74,6 +92,11 @@ public final class WarpRideManager {
         WarpRideSession session = new WarpRideSession(
                 sessionId, player.getUUID(), seed, cfg, RiderBodyGuard.apply(player), now);
         SESSIONS.put(player.getUUID(), session);
+        if (parent != null) {
+            PARENTS.put(player.getUUID(), parent);
+        } else {
+            PARENTS.remove(player.getUUID());
+        }
 
         Services.PLATFORM.sendPayloadToPlayer(player, new WarpRidePayloads.OpenPayload(
                 sessionId,
@@ -109,9 +132,36 @@ public final class WarpRideManager {
         return OpenResult.OK;
     }
 
-    /** The debug command's door, kept distinct so removing the command is a mechanical deletion. */
+    /**
+     * The debug command's door. It opens a <b>parentless</b> ride: no once-per-run entry is spent
+     * (there is no parent instance to carry one), no parent clock applies, and the outcome hands
+     * off to nothing. That mode is kept deliberately - {@code noBonusDistance} and the difficulty
+     * columns can only be chosen by playing, and making each tuning pass cost a full dungeon run
+     * would be a poor trade.
+     */
     public static OpenResult openDebugSession(ServerPlayer player) {
-        return open(player);
+        return open(player, null);
+    }
+
+    public static ParentContext parentOf(UUID playerId) {
+        return PARENTS.get(playerId);
+    }
+
+    /** True while the server is generating this player's sub-dungeon and holding their screen. */
+    public static boolean isHandingOff(UUID playerId) {
+        return HANDOFF.containsKey(playerId);
+    }
+
+    /** Generation failed after a won ride: close the screen and let the caller message them. */
+    public static void endHandoffFailure(MinecraftServer server, UUID playerId) {
+        HANDOFF.remove(playerId);
+        endSession(server, playerId, WarpRidePayloads.END_REASON_ABORTED);
+    }
+
+    /** Generation succeeded: the player is already in the sub-dungeon, so just close the screen. */
+    public static void endHandoffSuccess(MinecraftServer server, UUID playerId) {
+        HANDOFF.remove(playerId);
+        endSession(server, playerId, WarpRidePayloads.END_REASON_HANDOFF);
     }
 
     /** The mini-game music id from config, qualified to {@code cobblesafari:} when unnamespaced. */
@@ -157,6 +207,9 @@ public final class WarpRideManager {
             }
 
             WarpRidePhase before = session.getPhase();
+            if (pushParentClock(server, player, session)) {
+                sendEvent(player, session, WarpRidePayloads.EVENT_PANIC, -1, 0, 0, 0.0);
+            }
             session.tick(now);
             RiderBodyGuard.pin(player, session.getAnchor());
 
@@ -179,6 +232,7 @@ public final class WarpRideManager {
                 CobbleSafari.LOGGER.info("[WarpRide] {} took a portal: distance={} type={} tier={}",
                         player.getName().getString(), session.getOutcomeDistance(),
                         session.getOutcomeTypeId(), session.getOutcomeRank());
+                startHandoff(server, player, session);
             }
 
             if (session.isDrifting() && before == WarpRidePhase.RIDING
@@ -197,6 +251,60 @@ public final class WarpRideManager {
                         UltraWarpRideConfig.get().sessionWatchdogSeconds);
                 endSession(server, playerId, WarpRidePayloads.END_REASON_ABORTED);
             }
+        }
+    }
+
+    /**
+     * Reads the parent session's remaining credit and feeds it to the simulation as a plain int.
+     *
+     * @return true on the tick the panic decay first fires, so the caller sends the warning
+     */
+    private static boolean pushParentClock(MinecraftServer server, ServerPlayer player, WarpRideSession session) {
+        ParentContext parent = PARENTS.get(player.getUUID());
+        if (parent == null) {
+            session.setParentRemainingTicks(WarpRideSession.NO_PARENT, 0, 0.0);
+            return false;
+        }
+        maxigregrze.cobblesafari.data.TimerScope scope =
+                maxigregrze.cobblesafari.data.TimerScope.parse(parent.parentScopeKey());
+        maxigregrze.cobblesafari.data.PlayerTimerData data =
+                maxigregrze.cobblesafari.manager.TimerManager.session(player, scope);
+        int remaining = data == null ? 0 : data.getRemainingTicks();
+        return session.setParentRemainingTicks(
+                remaining,
+                maxigregrze.cobblesafari.config.MiscConfig.getUltraWormholePanicTriggerSeconds() * 20,
+                maxigregrze.cobblesafari.config.MiscConfig.getUltraWormholePanicDecayPerSecond());
+    }
+
+    /**
+     * Starts the sub-dungeon generation in the same tick the portal was taken, and keeps the
+     * screen open on black until it completes.
+     *
+     * <p>There is deliberately <b>no</b> "animation complete" packet from the client, and there
+     * must never be one: a teleport gated on a client acknowledgement is a stall vector - a client
+     * that never sends it would hold a generated sub-instance and its slot open indefinitely. The
+     * server closes the screen when <em>generation</em> is done (W6).</p>
+     */
+    private static void startHandoff(MinecraftServer server, ServerPlayer player, WarpRideSession session) {
+        ParentContext parent = PARENTS.remove(player.getUUID());
+        if (parent == null) {
+            return;                                    // parentless debug ride: nothing to hand to
+        }
+        HANDOFF.put(player.getUUID(), parent);
+        // Tell the screen to hold on black. There is no reply, and there must never be one: a
+        // teleport gated on a client acknowledgement would let a silent client pin a generated
+        // sub-instance and its slot open indefinitely (W6).
+        sendEvent(player, session, WarpRidePayloads.EVENT_HANDOFF, -1, 0, 0, 0.0);
+        boolean started = maxigregrze.cobblesafari.dungeon.sub.SubDungeonManager.beginGeneration(
+                server, player, parent,
+                session.getOutcomeTypeId(), session.getOutcomeRank(), session.getOutcomeDistance());
+        if (!started) {
+            HANDOFF.remove(player.getUUID());
+            maxigregrze.cobblesafari.dungeon.sub.SubDungeonManager.refundEntry(
+                    server, parent.parentInstanceId(), player.getUUID());
+            player.sendSystemMessage(net.minecraft.network.chat.Component.translatable(
+                    "cobblesafari.wormhole.generation_failed"));
+            endSession(server, player.getUUID(), WarpRidePayloads.END_REASON_ABORTED);
         }
     }
 
@@ -256,6 +364,7 @@ public final class WarpRideManager {
 
 
     public static void endSession(MinecraftServer server, UUID playerId, int reason) {
+        PARENTS.remove(playerId);
         WarpRideSession session = SESSIONS.remove(playerId);
         if (session == null) {
             return;
@@ -288,6 +397,8 @@ public final class WarpRideManager {
 
     public static void onPlayerDisconnect(ServerPlayer player) {
         MinecraftServer server = player.getServer();
+        PARENTS.remove(player.getUUID());
+        HANDOFF.remove(player.getUUID());
         WarpRideSession session = SESSIONS.remove(player.getUUID());
         if (session == null) {
             return;
@@ -305,5 +416,7 @@ public final class WarpRideManager {
     public static void onServerStopping() {
         SESSIONS.clear();
         DRIFT_ANNOUNCED.clear();
+        PARENTS.clear();
+        HANDOFF.clear();
     }
 }

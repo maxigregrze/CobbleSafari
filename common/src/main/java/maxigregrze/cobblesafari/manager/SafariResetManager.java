@@ -176,8 +176,8 @@ public class SafariResetManager {
 
         List<ServerPlayer> players = List.copyOf(safariLevel.players());
         for (ServerPlayer player : players) {
-            PlayerTimerData data = TimerManager.getOrCreateData(player, safariDimensionId);
-            TimerManager.teleportOnTimerExpired(player, safariDimensionId, data);
+            PlayerTimerData data = TimerManager.getOrCreateAccount(player, safariDimensionId);
+            TimerManager.teleportOnTimerExpired(player, maxigregrze.cobblesafari.data.TimerScope.of(safariDimensionId), data);
             data.setActive(false);
             TimerManager.savePlayerData(player, data);
             player.sendSystemMessage(
@@ -234,8 +234,8 @@ public class SafariResetManager {
         ResourceLocation playerDimension = player.level().dimension().location();
 
         if (playerDimension.equals(safariDimension)) {
-            PlayerTimerData data = TimerManager.getOrCreateData(player, safariDimensionId);
-            TimerManager.teleportOnTimerExpired(player, safariDimensionId, data);
+            PlayerTimerData data = TimerManager.getOrCreateAccount(player, safariDimensionId);
+            TimerManager.teleportOnTimerExpired(player, maxigregrze.cobblesafari.data.TimerScope.of(safariDimensionId), data);
             data.setActive(false);
             TimerManager.savePlayerData(player, data);
             player.sendSystemMessage(

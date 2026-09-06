@@ -1,0 +1,36 @@
+{
+	"format_version": "1.9.0",
+	"credit": "Made with Blockbench",
+	"parent": "minecraft:block/block",
+	"textures": {
+		"front": "cobblesafari:block/ultramegalopolis_lightstairs_front",
+		"particle": "cobblesafari:block/ultramegalopolis_lightstairs_sides",
+		"side": "cobblesafari:block/ultramegalopolis_lightstairs_sides",
+		"top": "cobblesafari:block/ultramegalopolis_lightstairs_top"
+	},
+	"elements": [
+		{
+			"from": [0, 0, 0],
+			"to": [16, 8, 16],
+			"faces": {
+				"north": {"uv": [0, 8, 16, 16], "texture": "#side", "cullface": "north"},
+				"east": {"uv": [0, 8, 16, 16], "texture": "#side", "cullface": "east"},
+				"south": {"uv": [0, 8, 16, 16], "texture": "#side", "cullface": "south"},
+				"west": {"uv": [0, 8, 16, 16], "texture": "#front", "cullface": "west"},
+				"up": {"uv": [0, 0, 16, 16], "rotation": 90, "texture": "#top"},
+				"down": {"uv": [0, 0, 16, 16], "texture": "#side", "cullface": "down"}
+			}
+		},
+		{
+			"from": [8, 8, 0],
+			"to": [16, 16, 16],
+			"faces": {
+				"north": {"uv": [0, 0, 8, 8], "texture": "#side", "cullface": "north"},
+				"east": {"uv": [0, 0, 16, 8], "texture": "#side", "cullface": "east"},
+				"south": {"uv": [8, 0, 16, 8], "texture": "#side", "cullface": "south"},
+				"west": {"uv": [0, 0, 16, 8], "texture": "#front"},
+				"up": {"uv": [0, 0, 16, 8], "rotation": 90, "texture": "#top", "cullface": "up"}
+			}
+		}
+	]
+}

@@ -1,0 +1,34 @@
+{
+  "variants": {
+    "": [
+      {
+        "model": "cobblesafari:block/ultraspace_sand_crystalized_0"
+      },
+      {
+        "model": "cobblesafari:block/ultraspace_sand_crystalized_0",
+        "y": 180
+      },
+      {
+        "model": "cobblesafari:block/ultraspace_sand_crystalized_0_mirrored"
+      },
+      {
+        "model": "cobblesafari:block/ultraspace_sand_crystalized_0_mirrored",
+        "y": 180
+      },
+      {
+        "model": "cobblesafari:block/ultraspace_sand_crystalized_1"
+      },
+      {
+        "model": "cobblesafari:block/ultraspace_sand_crystalized_1",
+        "y": 180
+      },
+      {
+        "model": "cobblesafari:block/ultraspace_sand_crystalized_1_mirrored"
+      },
+      {
+        "model": "cobblesafari:block/ultraspace_sand_crystalized_1_mirrored",
+        "y": 180
+      }
+    ]
+  }
+}

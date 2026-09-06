@@ -1,7 +1,12 @@
 {
-	"replace": false,
-	"values": [
-		"cobblesafari:mud_pile",
-		"cobblesafari:sludge_pile"
-	]
+  "replace": false,
+  "values": [
+    "cobblesafari:mud_pile",
+    "cobblesafari:sludge_pile",
+    "cobblesafari:ultraspace_sand",
+    "cobblesafari:ultraspace_sand_path",
+    "cobblesafari:ultraspace_sand_pattern",
+    "cobblesafari:ultraspace_sand_crystalized",
+    "cobblesafari:ultraspace_flesh"
+  ]
 }

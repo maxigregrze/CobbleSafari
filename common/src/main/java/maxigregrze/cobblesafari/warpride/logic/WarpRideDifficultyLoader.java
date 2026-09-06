@@ -154,7 +154,146 @@ public final class WarpRideDifficultyLoader {
             return null;
         }
 
-        return new WarpRideDifficulty(noBonusDistance, bands);
+        return new WarpRideDifficulty(noBonusDistance, bands, readRewards(fileId, json));
+    }
+
+    /**
+     * Reads the optional {@code rewards} block (action plan 184, section 3.4).
+     *
+     * <p>Its failure policy is deliberately <b>not</b> the bands' policy. A band whose
+     * {@code bonusChance} does not ratchet to zero produces a ride that never ends, which is why a
+     * malformed band rejects the whole file. No reward scale has that power - at worst it hands out
+     * a Pokemon that is too weak or too strong. Rejecting the file over a three-entry array would
+     * drop the <i>bands</i> back to the built-ins too, a punishment unrelated to the mistake. So the
+     * granularity of the fallback is the field, and a missing block is silent: that is every
+     * difficulty.json written before this plan.</p>
+     */
+    private static WarpRideRewards readRewards(ResourceLocation fileId, JsonObject json) {
+        WarpRideRewards fallback = WarpRideRewards.defaults();
+        if (!json.has("rewards")) {
+            return fallback;
+        }
+        if (!json.get("rewards").isJsonObject()) {
+            CobbleSafari.LOGGER.warn("[WarpRide] {} has a 'rewards' entry that is not an object; "
+                    + "using the built-in reward scale", fileId);
+            return fallback;
+        }
+        JsonObject r = json.getAsJsonObject("rewards");
+
+        int stepLy = readBoundedInt(fileId, r, "performanceStepLy", fallback.stepLy(), 1);
+        int maxSteps = readBoundedInt(fileId, r, "performanceMaxSteps", fallback.maxSteps(), 0);
+
+        return new WarpRideRewards(
+                stepLy, maxSteps,
+                readIntRow(fileId, r, "levelOffset", DEFAULT_LEVEL_OFFSET),
+                readIntRow(fileId, r, "ivPerfectCount", DEFAULT_IV_PERFECT_COUNT),
+                readPercentRow(fileId, r, "shinyPercentBase", DEFAULT_SHINY_BASE),
+                readPercentRow(fileId, r, "shinyPercentPerStep", DEFAULT_SHINY_PER_STEP),
+                readPercentRow(fileId, r, "hiddenAbilityPercentBase", DEFAULT_HA_BASE),
+                readPercentRow(fileId, r, "hiddenAbilityPercentPerStep", DEFAULT_HA_PER_STEP),
+                readPercentRow(fileId, r, "bonusMovePercentBase", DEFAULT_MOVE_BASE),
+                readPercentRow(fileId, r, "bonusMovePercentPerStep", DEFAULT_MOVE_PER_STEP),
+                readPercentRow(fileId, r, "secondMovePercentBase", DEFAULT_SECOND_MOVE_BASE),
+                readPercentRow(fileId, r, "secondMovePercentPerStep", DEFAULT_SECOND_MOVE_PER_STEP),
+                readPercentRow(fileId, r, "alphaPercentBase", DEFAULT_ALPHA_BASE),
+                readPercentRow(fileId, r, "alphaPercentPerStep", DEFAULT_ALPHA_PER_STEP));
+    }
+
+    // The shipped rows, spelled out here rather than read back off WarpRideRewards.defaults():
+    // that class exposes each scale only through its (rank, p) accessor, and inverting
+    // base + perStep * p to recover two rows would be a fragile way to write a constant.
+    private static final int[] DEFAULT_LEVEL_OFFSET = {-10, -5, 0, 5};
+    private static final int[] DEFAULT_IV_PERFECT_COUNT = {3, 4, 5, 6};
+    private static final double[] DEFAULT_SHINY_BASE = {1.0, 1.0, 1.0, 0.0};
+    private static final double[] DEFAULT_SHINY_PER_STEP = {0.0, 1.0, 2.0, 4.0};
+    private static final double[] DEFAULT_HA_BASE = {0.0, 1.0, 2.0, 4.0};
+    private static final double[] DEFAULT_HA_PER_STEP = {0.0, 1.0, 2.0, 4.0};
+    private static final double[] DEFAULT_MOVE_BASE = {0.0, 3.3, 6.6, 10.0};
+    private static final double[] DEFAULT_MOVE_PER_STEP = {0.0, 3.3, 6.6, 10.0};
+    private static final double[] DEFAULT_SECOND_MOVE_BASE = {0.0, 0.0, 0.0, 5.0};
+    private static final double[] DEFAULT_SECOND_MOVE_PER_STEP = {0.0, 0.0, 0.0, 5.0};
+    private static final double[] DEFAULT_ALPHA_BASE = {0.0, 1.0, 2.0, 3.0};
+    private static final double[] DEFAULT_ALPHA_PER_STEP = {0.0, 1.0, 2.0, 3.0};
+
+    private static int readBoundedInt(ResourceLocation fileId, JsonObject rewards, String key,
+                                      int fallback, int minimum) {
+        if (!rewards.has(key)) {
+            return fallback;
+        }
+        JsonElement element = rewards.get(key);
+        if (!element.isJsonPrimitive() || !element.getAsJsonPrimitive().isNumber()) {
+            CobbleSafari.LOGGER.warn("[WarpRide] {} rewards.{} is not a number; using {}",
+                    fileId, key, fallback);
+            return fallback;
+        }
+        int value = element.getAsInt();
+        if (value < minimum) {
+            CobbleSafari.LOGGER.warn("[WarpRide] {} rewards.{} = {} is below {}; using {}",
+                    fileId, key, value, minimum, fallback);
+            return fallback;
+        }
+        return value;
+    }
+
+    private static int[] readIntRow(ResourceLocation fileId, JsonObject rewards, String key,
+                                    int[] fallback) {
+        JsonArray array = rankArray(fileId, rewards, key);
+        if (array == null) {
+            return fallback;
+        }
+        int[] out = new int[WarpRideDifficulty.RANK_COUNT];
+        for (int rank = 0; rank < out.length; rank++) {
+            out[rank] = array.get(rank).getAsInt();
+        }
+        return out;
+    }
+
+    private static double[] readPercentRow(ResourceLocation fileId, JsonObject rewards, String key,
+                                           double[] fallback) {
+        JsonArray array = rankArray(fileId, rewards, key);
+        if (array == null) {
+            return fallback;
+        }
+        double[] out = new double[WarpRideDifficulty.RANK_COUNT];
+        for (int rank = 0; rank < out.length; rank++) {
+            double value = array.get(rank).getAsDouble();
+            double clamped = Math.max(0.0, Math.min(100.0, value));
+            if (Double.compare(clamped, value) != 0) {
+                CobbleSafari.LOGGER.warn("[WarpRide] {} rewards.{}[{}] = {} is outside 0..100; clamped to {}",
+                        fileId, key, rank, value, clamped);
+            }
+            out[rank] = clamped;
+        }
+        return out;
+    }
+
+    /** @return the array when present and exactly {@code RANK_COUNT} numbers long, else null. */
+    private static JsonArray rankArray(ResourceLocation fileId, JsonObject rewards, String key) {
+        if (!rewards.has(key)) {
+            CobbleSafari.LOGGER.debug("[WarpRide] {} rewards.{} is absent; using the built-in row",
+                    fileId, key);
+            return null;
+        }
+        if (!rewards.get(key).isJsonArray()) {
+            CobbleSafari.LOGGER.warn("[WarpRide] {} rewards.{} is not an array; using the built-in row",
+                    fileId, key);
+            return null;
+        }
+        JsonArray array = rewards.getAsJsonArray(key);
+        if (array.size() != WarpRideDifficulty.RANK_COUNT) {
+            CobbleSafari.LOGGER.warn("[WarpRide] {} rewards.{} has {} entries instead of {}; "
+                    + "using the built-in row", fileId, key, array.size(), WarpRideDifficulty.RANK_COUNT);
+            return null;
+        }
+        for (int i = 0; i < array.size(); i++) {
+            JsonElement element = array.get(i);
+            if (!element.isJsonPrimitive() || !element.getAsJsonPrimitive().isNumber()) {
+                CobbleSafari.LOGGER.warn("[WarpRide] {} rewards.{}[{}] is not a number; "
+                        + "using the built-in row", fileId, key, i);
+                return null;
+            }
+        }
+        return array;
     }
 
     private static double[] readWeights(JsonObject band, String key, int expectedLength) {

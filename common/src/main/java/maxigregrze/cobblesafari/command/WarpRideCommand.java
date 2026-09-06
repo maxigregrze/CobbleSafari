@@ -11,11 +11,16 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 
 /**
- * The Ultra Warp Ride debug launcher. <b>Temporary, and must be removed</b> once the wormhole device
- * is the normal way in: it opens a ride outside any dungeon, bypassing the once-per-run entry, the
- * parent clock and the credit floor. Removal also takes the {@code warpride} subtree in
- * {@code CobbleSafariCommand}, the {@code cobblesafari.command.warpride.*} lang keys and
- * {@code WarpRideManager.openDebugSession}.
+ * The Ultra Warp Ride debug launcher, operator-gated.
+ *
+ * <p>It opens a <b>parentless</b> ride: no once-per-run entry is spent - there is no parent
+ * instance to carry one - no parent clock applies, and the outcome hands off to nothing. That is a
+ * first-class state of {@code WarpRideManager}, not a stopgap.
+ *
+ * <p>An earlier revision promised this command would be deleted once the wormhole device shipped.
+ * That promise is withdrawn (action plan 183, Decision section 12): {@code noBonusDistance} and the
+ * difficulty columns can only be chosen by playing, that tuning is not finished, and making each
+ * pass cost a full dungeon run would be a poor trade.
  */
 public final class WarpRideCommand {
 

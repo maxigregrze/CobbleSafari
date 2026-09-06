@@ -39,6 +39,36 @@ public class PortalSpawnManager {
     private static MinecraftServer serverInstance;
     private static volatile boolean suppressDungeonCleanup = false;
 
+    /**
+     * Which portal id is currently expiring <em>naturally</em> (action plan 182, A1/S5).
+     * <p>
+     * Both a natural expiry and a pickaxe reach {@link #onPortalBlockRemoved} through
+     * {@code Block.onRemove}, so the caller has to say which it is. Deliberately <b>not</b> shaped
+     * like {@link #suppressDungeonCleanup}: that is a global {@code boolean} set around a
+     * <em>loop</em>, and a global boolean set around a loop mis-classifies any other portal removal
+     * triggered from inside it - an API callback, a cascade. Keying the marker to one portal id, and
+     * restoring the previous value rather than clearing it, makes it precise and re-entrant. Anything
+     * that reaches {@code onRemove} without matching the marker keeps today's immediate wipe, which
+     * is the safe direction to fail in.
+     */
+    private static final ThreadLocal<UUID> NATURAL_EXPIRY_PORTAL = new ThreadLocal<>();
+
+    /** Runs {@code action} marked as the natural expiry of {@code portalId}. */
+    private static void withNaturalExpiry(UUID portalId, Runnable action) {
+        UUID previous = NATURAL_EXPIRY_PORTAL.get();
+        NATURAL_EXPIRY_PORTAL.set(portalId);
+        try {
+            action.run();
+        } finally {
+            NATURAL_EXPIRY_PORTAL.set(previous);
+        }
+    }
+
+    /** Whether the removal currently in progress is the natural expiry of this very portal. */
+    private static boolean isNaturalExpiryOf(UUID portalId) {
+        return portalId != null && portalId.equals(NATURAL_EXPIRY_PORTAL.get());
+    }
+
     private PortalSpawnManager() {}
 
     public static void setServer(MinecraftServer server) {
@@ -98,41 +128,58 @@ public class PortalSpawnManager {
     }
 
     private static void scanWorldForPortals(MinecraftServer server) {
-        scanWorldForPortals(server, false);
+        scanWorldForPortalsInternal(server);
     }
 
+    /**
+     * Re-runs the portal scan on demand ({@code /cs dungeon list portal force}).
+     * <p>
+     * It used to force every chunk in a 65x65 grid to load - <em>generating</em> the ones that did
+     * not exist yet - for every allowed dimension. That is 4 225 synchronous chunk generations per
+     * dimension on the server thread, and it reliably tripped the watchdog: a single tick of 60
+     * seconds, then a forced shutdown. It now inspects only chunks that are already loaded.
+     * <p>
+     * Nothing is lost by that. A chunk that was never generated cannot contain a portal, so
+     * generating it to look was always pure waste; and a portal sitting in a generated-but-unloaded
+     * chunk is inert until that chunk loads, at which point
+     * {@code DungeonPortalBlockEntity.serverTick} self-expires it through the existing safety net.
+     * What remains - re-registering a live but untracked portal in an area the operator has flown
+     * to - is exactly what the command is for.
+     */
     public static int forceScanWorldForPortals(MinecraftServer server) {
-        return scanWorldForPortals(server, true);
+        return scanWorldForPortalsInternal(server);
     }
 
-    private static int scanWorldForPortals(MinecraftServer server, boolean forceLoad) {
+    private static int scanWorldForPortalsInternal(MinecraftServer server) {
         int foundPortals = 0;
         for (String dimId : PortalSpawnConfig.getAllowedDimensions()) {
             ResourceKey<Level> key = ResourceKey.create(Registries.DIMENSION, ResourceLocation.parse(dimId));
             ServerLevel level = server.getLevel(key);
             if (level != null) {
-                foundPortals += scanLevelForPortals(level, forceLoad);
+                foundPortals += scanLevelForPortals(level);
             }
         }
 
         if (foundPortals > 0) {
-            CobbleSafari.LOGGER.info("Found {} additional portals in world not in saved data (forceLoad: {})", foundPortals, forceLoad);
+            CobbleSafari.LOGGER.info("Found {} additional portal(s) in loaded chunks not in saved data", foundPortals);
             savePortals();
         }
 
         return foundPortals;
     }
 
-    private static int scanLevelForPortals(ServerLevel level, boolean forceLoad) {
+    private static int scanLevelForPortals(ServerLevel level) {
         int foundPortals = 0;
 
         for (int chunkX = -32; chunkX <= 32; chunkX++) {
             for (int chunkZ = -32; chunkZ <= 32; chunkZ++) {
-                if (!forceLoad && !level.hasChunk(chunkX, chunkZ)) {
-                    continue;
-                }
-
-                net.minecraft.world.level.chunk.ChunkAccess chunk = level.getChunk(chunkX, chunkZ);
+                // Ask for an already-loaded chunk and accept null: with load = false the chunk
+                // source never generates, so "we do not generate" is a property of the call rather
+                // than of a guard someone can later bypass - which is precisely how the watchdog
+                // crash got in (the old `forceLoad` flag skipped the guard and called
+                // level.getChunk, which generates).
+                net.minecraft.world.level.chunk.ChunkAccess chunk = level.getChunkSource()
+                        .getChunk(chunkX, chunkZ, net.minecraft.world.level.chunk.status.ChunkStatus.FULL, false);
                 if (chunk instanceof net.minecraft.world.level.chunk.LevelChunk levelChunk) {
                     for (BlockEntity blockEntity : levelChunk.getBlockEntities().values()) {
                         if (blockEntity instanceof DungeonPortalBlockEntity portalEntity) {
@@ -189,6 +236,10 @@ public class PortalSpawnManager {
     public static List<String> getEnabledDungeonIdsForCycle() {
         List<String> ids = new ArrayList<>();
         for (DungeonConfig dungeon : DungeonDimensions.getAllDungeons()) {
+            // A sub-dungeon is never listed in the portal cycle (action plan 183, section 3.2).
+            if (dungeon.isSubDungeon()) {
+                continue;
+            }
             boolean enabled = PortalSpawnConfig.getDimensionConfig(dungeon.getId())
                     .map(DungeonDimensionEntry::isEnabled)
                     .orElse(true);
@@ -518,8 +569,9 @@ public class PortalSpawnManager {
             if (blockEntity instanceof DungeonPortalBlockEntity portalEntity && portalEntity.isAutoRenewPortal()) {
                 renewCreativePortal(server, level, portal.pos(), portalEntity);
             } else {
-                level.removeBlock(portal.pos(), false);
-                CobbleSafari.LOGGER.debug("Removed expired portal at {}", portal.pos());
+                // Natural expiry: the block goes, the region stays until it empties (plan 182, A1).
+                withNaturalExpiry(portalId, () -> level.removeBlock(portal.pos(), false));
+                CobbleSafari.LOGGER.debug("Removed expired portal at {} (instance detached)", portal.pos());
             }
         }
     }
@@ -532,7 +584,7 @@ public class PortalSpawnManager {
     private static void expireWithoutBlockRemoval(MinecraftServer server, ActivePortal portal) {
         ACTIVE_PORTALS.remove(portal.id());
         DungeonTeleportHandler.removeInstance(portal.id());
-        clearDungeonForPortal(server, portal);
+        detachDungeonForPortal(server, portal);
         PortalSavedData.get(server).removePortal(portal.id());
     }
 
@@ -552,7 +604,8 @@ public class PortalSpawnManager {
         if (portalEntity.isAutoRenewPortal()) {
             renewCreativePortal(level.getServer(), level, pos, portalEntity);
         } else {
-            level.removeBlock(pos, false);
+            // Self-expiry is a natural expiry: detach, do not wipe (plan 182, A1).
+            withNaturalExpiry(portalEntity.getPortalId(), () -> level.removeBlock(pos, false));
             CobbleSafari.LOGGER.debug("Removed expired portal at {} (self-expiry on chunk tick)", pos);
         }
     }
@@ -633,7 +686,9 @@ public class PortalSpawnManager {
         UUID oldPortalId = portalEntity.getPortalId();
         ActivePortal oldPortal = ACTIVE_PORTALS.get(oldPortalId);
 
-        onPortalBlockRemoved(portalEntity);
+        // A renewal cycle is a natural expiry of the old portal: without the marker each cycle would
+        // wipe the previous instance and evict whoever is still inside it (plan 58, plan 182 A1).
+        withNaturalExpiry(oldPortalId, () -> onPortalBlockRemoved(portalEntity));
 
         UUID newPortalId = UUID.randomUUID();
         portalEntity.setPortalId(newPortalId);
@@ -712,13 +767,20 @@ public class PortalSpawnManager {
                     config = DungeonPositionSavedData.resolveDungeonConfig(dungeonDimId);
                 }
                 if (portal != null || hasPendingInstanceRecord(portalEntity, config)) {
-                    if (config != null) {
-                        ServerLevel dungeonLevel = serverInstance.getLevel(config.getDimensionKey());
-                        if (dungeonLevel != null) {
-                            evacuatePlayersFromDungeon(dungeonLevel, portalEntity, config);
+                    if (isNaturalExpiryOf(portalId)) {
+                        // The entrance closed on its own: keep the region for whoever is inside it.
+                        DungeonInstanceCleanup.detachInstanceForPortal(serverInstance, portalEntity);
+                    } else {
+                        // Deliberate destruction - pickaxe, explosion, /setblock. Still the panic
+                        // button: wipe now, evacuating anyone inside first.
+                        if (config != null) {
+                            ServerLevel dungeonLevel = serverInstance.getLevel(config.getDimensionKey());
+                            if (dungeonLevel != null) {
+                                evacuatePlayersFromDungeon(dungeonLevel, portalEntity, config);
+                            }
                         }
+                        DungeonInstanceCleanup.scheduleDeletionForPortal(serverInstance, portalEntity);
                     }
-                    DungeonInstanceCleanup.scheduleDeletionForPortal(serverInstance, portalEntity);
                 } else {
                     // Untracked portal block with no live instance record: its dungeon cleanup
                     // already ran when it expired (deferred removal), or its bounds are stale.
@@ -774,25 +836,20 @@ public class PortalSpawnManager {
         }
     }
 
-    private static void clearDungeonForPortal(MinecraftServer server, ActivePortal portal) {
+    /**
+     * Natural expiry of a portal whose block is unavailable (unloaded chunk): the instance is
+     * detached rather than cleared, and released by the sweep once it empties (plan 182, A1).
+     */
+    private static void detachDungeonForPortal(MinecraftServer server, ActivePortal portal) {
         if (portal.dungeonDimensionId() == null) return;
 
         DungeonConfig config = DungeonDimensions.getDungeonById(portal.dungeonDimensionId());
-        if (config == null) return;
-
-        if (config.isExternallyManaged()) {
+        if (config == null || config.isExternallyManaged()) {
             return;
         }
-
         if (!portal.hasDungeonChunkBounds()) return;
 
-        ServerLevel dungeonLevel = server.getLevel(config.getDimensionKey());
-        if (dungeonLevel != null) {
-            evacuatePlayersFromDungeonByChunkBounds(dungeonLevel, config,
-                    portal.dungeonChunkMinX(), portal.dungeonChunkMinZ(),
-                    portal.dungeonChunkMaxX(), portal.dungeonChunkMaxZ());
-        }
-        DungeonInstanceCleanup.scheduleDeletionForActivePortal(server, portal);
+        DungeonInstanceCleanup.detachInstanceForActivePortal(server, portal);
     }
 
     private static void evacuatePlayersFromDungeon(ServerLevel dungeonLevel, DungeonPortalBlockEntity portalEntity, DungeonConfig config) {
@@ -828,8 +885,15 @@ public class PortalSpawnManager {
                     playersInRegion.stream().map(p -> p.getName().getString()).toList());
 
             for (ServerPlayer player : playersInRegion) {
-                maxigregrze.cobblesafari.manager.TimerManager.teleportOnTimerExpired(player, config.getDimensionId(),
-                        maxigregrze.cobblesafari.manager.TimerManager.getOrCreateData(player, config.getDimensionId()));
+                // Resolve the scope from where the player actually stands: this region belongs to
+                // one instance, and evacuating them under another instance's session would send
+                // them to the wrong origin.
+                maxigregrze.cobblesafari.data.TimerScope scope =
+                        maxigregrze.cobblesafari.manager.TimerManager.currentScope(player);
+                if (scope == null) {
+                    scope = maxigregrze.cobblesafari.data.TimerScope.of(config.getDimensionId());
+                }
+                maxigregrze.cobblesafari.manager.TimerManager.expireSessionAndTeleport(player, scope, false);
                 player.sendSystemMessage(Component.translatable("cobblesafari.dungeon.evacuated"));
                 CobbleSafari.LOGGER.info("Player {} evacuated from dungeon {} (portal expired)",
                         player.getName().getString(), config.getId());

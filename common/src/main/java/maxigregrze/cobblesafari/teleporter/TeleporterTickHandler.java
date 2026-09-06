@@ -110,7 +110,7 @@ public class TeleporterTickHandler {
             return;
         }
 
-        PlayerTimerData timerData = TimerManager.getOrCreateData(player, SafariTimerConfig.getSafariDimensionId());
+        PlayerTimerData timerData = TimerManager.getOrCreateAccount(player, SafariTimerConfig.getSafariDimensionId());
         TimerManager.checkDailyReset(player, timerData);
 
         boolean bypassed = TimerManager.shouldBypassTimer(player);
@@ -193,7 +193,7 @@ public class TeleporterTickHandler {
             return;
         }
 
-        PlayerTimerData timerData = TimerManager.getOrCreateData(player, SafariTimerConfig.getSafariDimensionId());
+        PlayerTimerData timerData = TimerManager.getOrCreateAccount(player, SafariTimerConfig.getSafariDimensionId());
         TimerManager.checkDailyReset(player, timerData);
 
         boolean bypassed = TimerManager.shouldBypassTimer(player);
@@ -312,7 +312,8 @@ public class TeleporterTickHandler {
         player.changeDimension(transition);
         player.addEffect(new MobEffectInstance(MobEffects.SLOW_FALLING, SLOW_FALLING_DURATION_TICKS, 0, false, true));
 
-        TimerManager.setPlayerOrigin(player, SafariTimerConfig.getSafariDimensionId(),
+        TimerManager.setPlayerOrigin(player,
+                maxigregrze.cobblesafari.data.TimerScope.of(SafariTimerConfig.getSafariDimensionId()),
                 originPos, originDimension);
 
         server.execute(() -> {

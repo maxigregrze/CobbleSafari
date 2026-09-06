@@ -29,6 +29,7 @@ import maxigregrze.cobblesafari.block.csboss.CsBossMimicBlockEntity;
 import maxigregrze.cobblesafari.block.balm.BalmDispenserBlockEntity;
 import maxigregrze.cobblesafari.block.teleporter.TeleportPadBlockEntity;
 import maxigregrze.cobblesafari.block.hyperspace.HyperspaceTrashcanBlockEntity;
+import maxigregrze.cobblesafari.block.misc.LightningSpotBlockEntity;
 import maxigregrze.cobblesafari.block.hyperspace.HyperspaceHangingSignBlockEntity;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -44,7 +45,9 @@ public class ModBlockEntities {
     public static BlockEntityType<SafariEggNestBlockEntity> SAFARI_EGG_NEST;
     public static BlockEntityType<HoopaRingPortalBlockEntity> HOOPA_RING_PORTAL;
     public static BlockEntityType<DungeonPortalBlockEntity> DUNGEON_PORTAL;
+    public static BlockEntityType<maxigregrze.cobblesafari.block.dungeon.UltraWormholeBlockEntity> ULTRA_WORMHOLE;
     public static BlockEntityType<VoidBlockEntity> VOID_BLOCK;
+    public static BlockEntityType<LightningSpotBlockEntity> LIGHTNINGSPOT;
     public static BlockEntityType<GiratinaCoreBlockEntity> GIRATINA_CORE;
     public static BlockEntityType<DistortionPortalBlockEntity> DISTORTION_PORTAL;
     public static BlockEntityType<DistortionStoneBricksRuneBlockEntity> DISTORTION_STONEBRICKS_RUNE;
@@ -86,6 +89,14 @@ public class ModBlockEntities {
                 BuiltInRegistries.BLOCK_ENTITY_TYPE,
                 ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, "hoopa_ring_portal"),
                 BlockEntityType.Builder.of(HoopaRingPortalBlockEntity::new, ModBlocks.HOOPA_RING_PORTAL).build(null)
+        );
+
+        ULTRA_WORMHOLE = Registry.register(
+                BuiltInRegistries.BLOCK_ENTITY_TYPE,
+                ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, "ultra_wormhole"),
+                BlockEntityType.Builder.of(
+                        maxigregrze.cobblesafari.block.dungeon.UltraWormholeBlockEntity::new,
+                        ModBlocks.ULTRA_WORMHOLE).build(null)
         );
 
         DUNGEON_PORTAL = Registry.register(
@@ -281,6 +292,14 @@ public class ModBlockEntities {
                 BlockEntityType.Builder.<HangingSignBlockEntity>of(
                         HyperspaceHangingSignBlockEntity::new,
                         ModBlocks.HYPERSPACE_HANGING_SIGN, ModBlocks.HYPERSPACE_WALL_HANGING_SIGN).build(null)
+        );
+
+        // Holds no data and never ticks: it exists only so the marker icon can be drawn or not
+        // depending on what the viewing player carries, which a blockstate cannot express.
+        LIGHTNINGSPOT = Registry.register(
+                BuiltInRegistries.BLOCK_ENTITY_TYPE,
+                ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, "lightningspot"),
+                BlockEntityType.Builder.of(LightningSpotBlockEntity::new, ModBlocks.LIGHTNINGSPOT).build(null)
         );
     }
 }

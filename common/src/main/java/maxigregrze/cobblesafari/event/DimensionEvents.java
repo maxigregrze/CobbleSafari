@@ -55,6 +55,13 @@ public class DimensionEvents {
     public static void onServerStarted(MinecraftServer server) {
         TimerManager.setServer(server);
         maxigregrze.cobblesafari.dungeon.DungeonInstanceCleanup.resumePendingClears(server);
+        // Nobody can be inside a sub-instance across a restart - sessions persist, players do not -
+        // so every one of them is marked pending here, and the login path returns whoever was in
+        // one to their recorded origin (action plan 183, section 7.4).
+        maxigregrze.cobblesafari.dungeon.sub.SubDungeonManager.sweepSubInstancesOnBoot(server);
+        // Covers a crash between a region clear and its purge: any session whose instance no longer
+        // exists is dropped here (plan 181 § 7). Idempotent, and cheap - it walks stored records once.
+        TimerManager.sweepOrphanedSessions(server);
         PortalSpawnManager.setServer(server);
         maxigregrze.cobblesafari.incubator.EggIncubatorRegistry.load(server);
         CsTraderDataLoader.load(server);
@@ -121,6 +128,7 @@ public class DimensionEvents {
     }
 
     public static void onServerStopping(MinecraftServer server) {
+        maxigregrze.cobblesafari.dungeon.sub.SubDungeonGeneration.onServerStopping();
         TimerManager.saveAllData();
         TimerManager.clearServer();
         maxigregrze.cobblesafari.csmusic.DimensionalMusicManager.clearAll();
@@ -138,11 +146,23 @@ public class DimensionEvents {
         DungeonRegionClearer.tick(server);
         PortalSpawnManager.tick(server);
         maxigregrze.cobblesafari.warpride.WarpRideManager.tickAll(server);
+        // The staged sub-dungeon generation: one phase per tick, never a blocking chunk call on
+        // the server thread (plan 138, V1).
+        maxigregrze.cobblesafari.dungeon.sub.SubDungeonGeneration.tick(server);
         SafariResetManager.tick(server);
         maxigregrze.cobblesafari.csboss.BossBattleManager.onServerTick(server);
         maxigregrze.cobblesafari.csmusic.DimensionalMusicManager.tick(server);
         maxigregrze.cobblesafari.csmusic.CsMusicStructureTracker.purge(server);
+        if ((server.getTickCount() % 20) == 0) {
+            // S15: settlement hangs off having LEFT the sub-dimension, never off a portal, so a
+            // /tp out cannot keep the parent credit. Aligned with the presence guard's cadence.
+            maxigregrze.cobblesafari.dungeon.sub.SubDungeonManager.sweepSettlements(server);
+        }
         if ((server.getTickCount() % 100) == 0) {
+            // Feature A's guarantee (plan 182 § 5.1): release any detached instance that has emptied.
+            // A sweep rather than hooks on the departure paths, so no exit can be forgotten - and
+            // Feature B will add one.
+            maxigregrze.cobblesafari.dungeon.DungeonInstanceCleanup.sweepDetachedInstances(server);
             WonderTradeService.tickDailyScheduler(server);
             // Budgeted top-up (C6): gradually refills the Wonder Trade pool a few entries at a time instead
             // of generating the whole deficit in the single startup/daily-reset tick.
@@ -153,6 +173,9 @@ public class DimensionEvents {
             maxigregrze.cobblesafari.objectives.ObjectivesManager.tickDailyScheduler(server);
             maxigregrze.cobblesafari.power.GuaranteedShinyManager.sweepExpired(server);
             DungeonTeleportHandler.sweepStaleGenerations();
+            // The same 145 C11 lesson one level down: a stale lock would soft-lock the device for
+            // the rest of the run, with the once-per-run entry already spent.
+            maxigregrze.cobblesafari.dungeon.sub.SubDungeonGeneration.sweepStaleSubGenerations(server);
         }
         DimensionalBanEventHandler.tickMountEnforcement(server);
         maxigregrze.cobblesafari.safari.SafariStateManager.onServerTick(server);
@@ -233,6 +256,9 @@ public class DimensionEvents {
 
     public static void onPlayerJoin(ServerPlayer player) {
         TimerManager.loadPlayerData(player);
+        // If the instance they logged out of was cleared while they were away, put them back where
+        // they came in rather than leaving them inside erased blocks (plan 182, A3).
+        TimerManager.handleDungeonReturnOnJoin(player);
         UnionRoomDisconnectHandler.onPlayerLogin(player);
         SafariResetManager.handleReconnectEvacuation(player);
         Services.PLATFORM.sendPayloadToPlayer(player,
@@ -254,7 +280,24 @@ public class DimensionEvents {
         maxigregrze.cobblesafari.network.ChatAppServerHandler.clear(player.getUUID());
         GtsService.releasePendingFor(player);
         UnionRoomDisconnectHandler.onPlayerDisconnect(player);
+        // Read the scope BEFORE onPlayerDisconnect tears the player's timer state down: logging out
+        // is a departure, so the instance may now be empty (plan 182, A3).
+        maxigregrze.cobblesafari.data.TimerScope leftScope = TimerManager.scopeOnDisconnect(player);
+        if (leftScope != null) {
+            TimerManager.recordPendingReturn(player, leftScope);
+        }
         TimerManager.onPlayerDisconnect(player);
+        if (leftScope != null && player.getServer() != null) {
+            try {
+                maxigregrze.cobblesafari.dungeon.DungeonInstanceCleanup.maybeReleaseInstance(
+                        player.getServer(), java.util.UUID.fromString(leftScope.scopeId()));
+            } catch (IllegalArgumentException ignored) {
+                // Non-UUID scope id (a future subsystem): the 100-tick sweep still covers it.
+            }
+        }
+        // A visit that ends without settling leaves its running counter behind; it is only used
+        // for the "time spent" message, but it must not survive into the next visit.
+        maxigregrze.cobblesafari.dungeon.sub.SubDungeonManager.forgetSpent(player.getUUID());
         maxigregrze.cobblesafari.csboss.BossBattleManager.onPlayerDisconnect(player);
         maxigregrze.cobblesafari.csmusic.DimensionalMusicManager.onPlayerDisconnect(player.getUUID());
         DungeonTeleportHandler.clearPlayerData(player.getUUID());

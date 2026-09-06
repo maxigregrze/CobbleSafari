@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/cube_bottom_top",
+  "textures": {
+    "top": "cobblesafari:block/ultramegalopolis_lighttop",
+    "bottom": "cobblesafari:block/ultramegalopolis_lighttop",
+    "side": "cobblesafari:block/ultramegalopolis_lightspot"
+  }
+}

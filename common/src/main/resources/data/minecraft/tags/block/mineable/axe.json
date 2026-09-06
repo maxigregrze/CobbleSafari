@@ -27,6 +27,9 @@
     "cobblesafari:belltower_rooftiles",
     "cobblesafari:belltower_trellis",
     "cobblesafari:belltower_ladder",
-    "cobblesafari:belltower_bridge"
+    "cobblesafari:belltower_bridge",
+    "cobblesafari:ultraspace_bonsai",
+    "cobblesafari:ultraspace_cable",
+    "cobblesafari:ultraspace_cable_stairs"
   ]
 }

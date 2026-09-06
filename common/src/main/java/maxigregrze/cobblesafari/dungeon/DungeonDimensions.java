@@ -30,6 +30,17 @@ public class DungeonDimensions {
             ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, "dungeon_distortion")
     );
 
+    public static final ResourceKey<Level> DUNGEON_MEGALOPOLIS = ResourceKey.create(
+            Registries.DIMENSION,
+            ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, "dungeon_megalopolis")
+    );
+
+    /** The sub-dungeon (action plan 183, B1). Registered like any other, excluded in two places. */
+    public static final ResourceKey<Level> DUNGEON_ULTRASPACE = ResourceKey.create(
+            Registries.DIMENSION,
+            ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, "dungeon_ultraspace")
+    );
+
     private static final List<DungeonConfig> REGISTERED_DUNGEONS = new ArrayList<>();
     private static final Random RANDOM = new Random();
     private static int totalWeight = 0;
@@ -77,6 +88,37 @@ public class DungeonDimensions {
                 10      
         ));
 
+        // The wormhole's host (action plan 183, section 3.3). An ordinary dungeon in every
+        // respect; the only thing that distinguishes it is that its pool carries a wormhole room.
+        REGISTERED_DUNGEONS.add(new DungeonConfig(
+                "dungeon_megalopolis",
+                DUNGEON_MEGALOPOLIS,
+                "cobblesafari:megalopolis/entrance",
+                0, 0, 0,   // spawn offsets unused for a JIGSAW dungeon
+                900,
+                1,
+                DungeonConfig.StructureType.JIGSAW,
+                10,        // jigsaw depth
+                512,       // zoneSize - the slot grid pitch
+                1,         // clearSectionsBelow
+                10         // clearSectionsAbove
+        ));
+
+        // The sub-dungeon (action plan 183, section 3.4). structureId is deliberately empty: the
+        // pool comes from the destination file, supplied by the caller at generation time.
+        // weight 0 is redundant with the two exclusions below, and deliberately so.
+        REGISTERED_DUNGEONS.add(new DungeonConfig(
+                "dungeon_ultraspace",
+                DUNGEON_ULTRASPACE,
+                "",
+                0, 0, 0,
+                300,
+                0,
+                DungeonConfig.StructureType.JIGSAW,
+                5,
+                512, 1, 10
+        ).withFixedStructureY(64).asSubDungeon());
+
         recalculateTotalWeight();
         CobbleSafari.LOGGER.info("Registered {} dungeon dimensions with total weight {}", 
                 REGISTERED_DUNGEONS.size(), totalWeight);
@@ -84,6 +126,7 @@ public class DungeonDimensions {
 
     private static void recalculateTotalWeight() {
         totalWeight = REGISTERED_DUNGEONS.stream()
+                .filter(d -> !d.isSubDungeon())
                 .mapToInt(DungeonConfig::getWeight)
                 .sum();
     }
@@ -93,6 +136,9 @@ public class DungeonDimensions {
         int enabledTotalWeight = 0;
 
         for (DungeonConfig dungeon : REGISTERED_DUNGEONS) {
+            // A sub-dungeon is never a Hoopa portal destination (action plan 183, section 3.2).
+            if (dungeon.isSubDungeon()) continue;
+
             java.util.Optional<DungeonDimensionEntry> dimConfig =
                     PortalSpawnConfig.getDimensionConfig(dungeon.getId());
 
@@ -140,6 +186,21 @@ public class DungeonDimensions {
                 .anyMatch(d -> d.getDimensionId().equals(dimensionId));
     }
 
+    /**
+     * A dungeon dimension registered <em>and</em> managed by the mod: it owns
+     * {@code DungeonInstanceRecord}s, so a timer session can be scoped to one of its instances
+     * (action plan 181, V1). Externally managed dungeons have no mod-side record and are therefore
+     * never instanced for timer purposes.
+     * <p>
+     * This is the derivation behind {@code DimensionTimerEntry.isInstanced()}. It is read lazily
+     * rather than stamped into the config so that dungeons registered through
+     * {@code DungeonRegistrationAPI} after start-up answer correctly too.
+     */
+    public static boolean isInstancedDungeonDimension(String dimensionId) {
+        return REGISTERED_DUNGEONS.stream()
+                .anyMatch(d -> d.getDimensionId().equals(dimensionId) && !d.isExternallyManaged());
+    }
+
     public static DungeonConfig getDungeonByDimension(ResourceKey<Level> dimension) {
         return REGISTERED_DUNGEONS.stream()
                 .filter(d -> d.getDimensionKey().equals(dimension))
@@ -153,6 +214,25 @@ public class DungeonDimensions {
 
     public static List<String> getRegisteredDungeonIdsSorted() {
         return REGISTERED_DUNGEONS.stream()
+                .map(DungeonConfig::getId)
+                .sorted(Comparator.naturalOrder())
+                .toList();
+    }
+
+    /**
+     * Dungeons a Hoopa portal may legitimately be pointed at: enabled, and <b>not</b> a sub-dungeon.
+     *
+     * <p>A sub-dungeon is reached from inside another dungeon and its structure comes from a
+     * destination file, not from its {@code DungeonConfig}. A portal aimed at one generates nothing
+     * and drops the player into an empty region, so it is excluded from the command's suggestions
+     * and refused outright by the command itself (action plan 183, section 3.2).</p>
+     */
+    public static List<String> getPortalDestinationIdsSorted() {
+        return REGISTERED_DUNGEONS.stream()
+                .filter(d -> !d.isSubDungeon())
+                .filter(d -> PortalSpawnConfig.getDimensionConfig(d.getId())
+                        .map(DungeonDimensionEntry::isEnabled)
+                        .orElse(true))
                 .map(DungeonConfig::getId)
                 .sorted(Comparator.naturalOrder())
                 .toList();

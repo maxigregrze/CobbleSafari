@@ -22,7 +22,7 @@ import java.util.Map;
  * Manual edits are respected after first load.
  */
 public class DimensionalBanConfig {
-    public static final int CONFIG_VERSION = 2;
+    public static final int CONFIG_VERSION = 3;
 
     /**
      * Version that relifts the {@code cobblesafari:dungeon_jump} restrictions. The entry predates the
@@ -31,9 +31,18 @@ public class DimensionalBanConfig {
      */
     private static final int VERSION_DUNGEON_JUMP_RESTRICTIONS = 2;
 
+    /**
+     * Version that creates the entries for the two dimensions of action plan 183 (S20). Keyed on
+     * the version stamp and never on the values, exactly like the palier above: a server owner who
+     * later loosens either dimension keeps that choice across every subsequent start.
+     */
+    private static final int VERSION_ULTRA_DIMENSIONS = 3;
+
     private static final String KEY_CONFIG_VERSION = "CONFIG_VERSION";
     private static final String KEY_DIMENSIONS = "dimensions";
     private static final String DUNGEON_JUMP_DIMENSION_ID = "cobblesafari:dungeon_jump";
+    private static final String[] ULTRA_DIMENSION_IDS = {
+            "cobblesafari:dungeon_megalopolis", "cobblesafari:dungeon_ultraspace" };
 
     private static final Path CONFIG_DIR = Services.PLATFORM.getConfigDir().resolve("cobblesafari");
     private static final Path CONFIG_PATH = CONFIG_DIR.resolve("dimensional_restrictions_config.json");
@@ -115,9 +124,15 @@ public class DimensionalBanConfig {
             int loadedVersion = readStoredVersion(root);
             boolean mountingMigrated = migrateForbidMounting(root, data);
             boolean jumpMigrated = migrateDungeonJumpRestrictions(loadedVersion, data);
+            boolean ultraMigrated = migrateUltraDimensions(loadedVersion, data);
             CobbleSafari.LOGGER.info("CobbleSafari >> dimensional_restrictions_config.json loaded successfully from {}", CONFIG_PATH);
-            if (mountingMigrated || jumpMigrated) {
+            if (mountingMigrated || jumpMigrated || ultraMigrated) {
                 save();
+                if (ultraMigrated) {
+                    CobbleSafari.LOGGER.info(
+                            "CobbleSafari >> dimensional_restrictions_config.json migrated from v{} to v{}: entries created for the Ultra dimensions",
+                            loadedVersion, CONFIG_VERSION);
+                }
                 if (mountingMigrated) {
                     CobbleSafari.LOGGER.info(
                             "CobbleSafari >> dimensional_restrictions_config.json migrated: forbidMounting defaults written (true for cobblesafari:dungeon_distortion)");
@@ -160,6 +175,34 @@ public class DimensionalBanConfig {
             }
         }
         return migrationNeeded;
+    }
+
+    /**
+     * One-shot creation of the {@code dungeon_megalopolis} and {@code dungeon_ultraspace} entries
+     * (action plan 183, section 11.9, finding S20).
+     *
+     * <p>Only <b>missing</b> entries are written. An owner who already added one by hand - or who
+     * ran a build where it existed - keeps it untouched, so this can never overwrite a decision.
+     * The version stamp is what stops it running twice, which is what lets a later loosening of
+     * either dimension survive.</p>
+     */
+    private static boolean migrateUltraDimensions(int loadedVersion, DimensionalBanData loaded) {
+        if (loadedVersion >= VERSION_ULTRA_DIMENSIONS) {
+            return false;
+        }
+        DimensionalBanData defaults = new DimensionalBanData();
+        boolean changed = false;
+        for (String dimensionId : ULTRA_DIMENSION_IDS) {
+            if (loaded.dimensions.containsKey(dimensionId)) {
+                continue;
+            }
+            DimensionalBanData.DimensionRestrictions preset = defaults.dimensions.get(dimensionId);
+            if (preset != null) {
+                loaded.dimensions.put(dimensionId, preset);
+                changed = true;
+            }
+        }
+        return changed;
     }
 
     /** @return the version stamped in the file, or 0 when absent or unreadable. */

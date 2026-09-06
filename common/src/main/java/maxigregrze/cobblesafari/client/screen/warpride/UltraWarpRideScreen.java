@@ -55,8 +55,16 @@ public class UltraWarpRideScreen extends Screen {
     /** Tints arrive independently of any session, so they are cached even with no screen open. */
     private static java.util.List<WarpRidePayloads.TintData> pendingTints = java.util.List.of();
 
+    /** Wall-clock deadline for the panic banner; 0 when the parent clock has not panicked. */
+    private long panicWarningUntil;
+
+    /** True once the server says a sub-dungeon is generating: hold black, never show a result. */
+    private boolean handoffPending;
+
     public static void acceptTints(java.util.List<WarpRidePayloads.TintData> tints) {
         pendingTints = tints;
+        // The exit portal is tinted outside any ride, so the table also lives on its own.
+        maxigregrze.cobblesafari.client.renderer.WarpRideClientTints.accept(tints);
         UltraWarpRideScreen screen = active();
         if (screen != null) {
             screen.state.applyTints(tints);
@@ -84,16 +92,32 @@ public class UltraWarpRideScreen extends Screen {
                 playSound(ModSounds.WARPRIDE_NEGATIVE);
             }
             case WarpRidePayloads.EVENT_DRIFT -> playSound(ModSounds.WARPRIDE_WARNING);
+            case WarpRidePayloads.EVENT_PANIC -> {
+                // The energy bar draining ten times faster with no explanation reads as a bug, so
+                // this warning has to be unmissable (action plan 183, section 8.2).
+                panicWarningUntil = System.nanoTime() + 4_000_000_000L;
+                playSound(ModSounds.WARPRIDE_WARNING);
+            }
             case WarpRidePayloads.EVENT_COUNTDOWN -> {
                 countdownStep = payload.a();
                 countdownShownUntil = System.nanoTime() + 950_000_000L;
                 playSound(ModSounds.WARPRIDE_COUNTDOWN);
             }
+            case WarpRidePayloads.EVENT_HANDOFF -> handoffPending = true;
             case WarpRidePayloads.EVENT_PORTAL_TAKEN -> {
                 state.onPortalTaken(payload.a(), payload.b(), (int) payload.value());
                 playSound(ModSounds.WARPRIDE_PORTAL);
             }
-            case WarpRidePayloads.EVENT_RIDE_ENDED -> state.phase = WarpRideClientState.PHASE_ENDED;
+            case WarpRidePayloads.EVENT_RIDE_ENDED -> {
+                // END_REASON_HANDOFF means the server already teleported us into the sub-dungeon
+                // while the screen held on black: close outright rather than showing a result the
+                // player is no longer anywhere near (W6 - the server, never the client, decides).
+                if (payload.a() == WarpRidePayloads.END_REASON_HANDOFF) {
+                    onClose();
+                } else {
+                    state.phase = WarpRideClientState.PHASE_ENDED;
+                }
+            }
             default -> {
                 // Unknown event ids are ignored: a newer server must not break an older client.
             }
@@ -340,6 +364,7 @@ public class UltraWarpRideScreen extends Screen {
             WarpRideRenderer.renderObjects(graphics, state, true);    // gone by: in front of the rider
             hud.render(graphics, this.font, state);
             renderCountdown(graphics);
+            renderPanicWarning(graphics);
             if (showTutorial) {
                 renderTutorial(graphics);
             }
@@ -379,9 +404,21 @@ public class UltraWarpRideScreen extends Screen {
         double fadeP = state.fadeProgress(now);
         int alpha = (int) Math.round(Math.max(0.0, Math.min(1.0, fadeP)) * 255.0);
         WarpRideRenderer.fillViewport(graphics, alpha << 24);
-        if (fadeP >= 1.0) {
+        if (fadeP >= 1.0 && !handoffPending) {
             renderResult(graphics);
         }
+        // handoffPending: stay on black. A black screen is the one frame that can be held for an
+        // unknown duration without anyone noticing, which is exactly why the generation is allowed
+        // to take as long as it takes. The server closes this screen when it is done.
+    }
+
+    /** The parent clock's panic banner. Deliberately loud: see the Decision at section 8.2. */
+    private void renderPanicWarning(GuiGraphics graphics) {
+        if (panicWarningUntil == 0L || System.nanoTime() > panicWarningUntil) {
+            return;
+        }
+        centered(graphics, Component.translatable("cobblesafari.wormhole.panic_warning").getString(),
+                240, 3.0f, 0xFFFF5555);
     }
 
     private void renderCountdown(GuiGraphics graphics) {

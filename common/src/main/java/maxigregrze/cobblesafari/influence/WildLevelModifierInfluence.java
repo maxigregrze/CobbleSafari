@@ -27,17 +27,32 @@ public class WildLevelModifierInfluence implements SpawningInfluence {
         if (!(entity instanceof PokemonEntity pe)) {
             return;
         }
-        if (!pe.getPokemon().isWild()) {
-            return;
-        }
+        // The proximity gate stays here, and deliberately does NOT move into applyLevelDelta
+        // (action plan 184, Decision section 11.1): it is what keeps the open-world spawner from
+        // resizing Pokemon that appear far from the eater. A generated encounter has no such
+        // ambiguity - it exists because that one player asked for it - and the Ultra Space call
+        // site would fail this check every time, since the encounter spawns a phase before the
+        // player is teleported in.
         if (player.blockPosition().distSqr(pe.blockPosition()) > getEffectDistanceSq()) {
             return;
         }
+        applyLevelDelta(player, pe);
+    }
 
-        int humongoDelta = activeHumongoDelta();
-        int teensyLoss = activeTeensyLoss();
+    /**
+     * Applies the Humongo/Teensy level delta, with no proximity check (action plan 184, section
+     * 11.1). Extracted so a hand-placed spawn can honour the donut without duplicating the lookup.
+     *
+     * @return the signed delta actually applied, 0 when no power is active or the Pokemon is not wild
+     */
+    public static int applyLevelDelta(ServerPlayer player, PokemonEntity pe) {
+        if (!pe.getPokemon().isWild()) {
+            return 0;
+        }
+        int humongoDelta = activeHumongoDelta(player);
+        int teensyLoss = activeTeensyLoss(player);
         if (humongoDelta == 0 && teensyLoss == 0) {
-            return;
+            return 0;
         }
 
         int level = pe.getPokemon().getLevel();
@@ -45,9 +60,10 @@ public class WildLevelModifierInfluence implements SpawningInfluence {
         int max = Cobblemon.INSTANCE.getConfig().getMaxPokemonLevel();
         next = Math.min(max, Math.max(1, next));
         pe.getPokemon().setLevel(next);
+        return next - level;
     }
 
-    private int activeHumongoDelta() {
+    private static int activeHumongoDelta(ServerPlayer player) {
         for (int lv = 3; lv >= 1; lv--) {
             if (player.hasEffect(ModPowerEffects.humongo(lv))) {
                 return switch (lv) {
@@ -61,7 +77,7 @@ public class WildLevelModifierInfluence implements SpawningInfluence {
         return 0;
     }
 
-    private int activeTeensyLoss() {
+    private static int activeTeensyLoss(ServerPlayer player) {
         for (int lv = 3; lv >= 1; lv--) {
             if (player.hasEffect(ModPowerEffects.teensy(lv))) {
                 return switch (lv) {

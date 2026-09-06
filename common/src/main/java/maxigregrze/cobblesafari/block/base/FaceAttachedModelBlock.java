@@ -19,6 +19,8 @@ import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Map;
+
 /**
  * Shared base for orthonormal blocks: a custom model that attaches to the floor, the
  * ceiling, or one of the four walls (12 orientations: {@code FACE} × {@code FACING}), with
@@ -51,6 +53,10 @@ public class FaceAttachedModelBlock extends FaceAttachedHorizontalDirectionalBlo
             VoxelShape wallEast,
             VoxelShape wallWest,
             boolean allowWallPlacement,
+            boolean allowCeilingPlacement,
+            boolean rotateFloorShape,
+            boolean requireSupport,
+            boolean requireFullBlockSupport,
             FloorFacing floorCeilingFacing,
             Collision collision) {
 
@@ -66,6 +72,10 @@ public class FaceAttachedModelBlock extends FaceAttachedHorizontalDirectionalBlo
             private VoxelShape wallEast = Shapes.block();
             private VoxelShape wallWest = Shapes.block();
             private boolean allowWallPlacement = true;
+            private boolean allowCeilingPlacement = true;
+            private boolean rotateFloorShape = false;
+            private boolean requireSupport = true;
+            private boolean requireFullBlockSupport = false;
             private FloorFacing floorCeilingFacing = FloorFacing.OPPOSITE;
             private Collision collision = Collision.SHAPE;
 
@@ -82,21 +92,45 @@ public class FaceAttachedModelBlock extends FaceAttachedHorizontalDirectionalBlo
             }
 
             public Builder noWall() { this.allowWallPlacement = false; return this; }
+            /**
+             * Turn the floor and ceiling shapes with FACING, as the blockstate turns the model.
+             * Only needed when that shape is not radially symmetric - a flat panel, say.
+             */
+            public Builder rotateFloorShape() { this.rotateFloorShape = true; return this; }
+            /** Refuse placement under a block - the plant case, which only grows up or sideways. */
+            public Builder noCeiling() { this.allowCeilingPlacement = false; return this; }
+            /**
+             * Drop the support requirement entirely: the block survives wherever it is put and never
+             * pops off. For decorations that read as floating rather than fixed to a surface.
+             */
+            public Builder noSupport() { this.requireSupport = false; return this; }
+            /** Demand a full cube behind the attachment, not merely a sturdy face (no slabs, stairs, fences). */
+            public Builder requireFullBlockSupport() { this.requireFullBlockSupport = true; return this; }
             public Builder floorFacing(FloorFacing facing) { this.floorCeilingFacing = facing; return this; }
             public Builder collision(Collision collision) { this.collision = collision; return this; }
 
             public Settings build() {
                 return new Settings(floor, ceiling, wallNorth, wallSouth, wallEast, wallWest,
-                        allowWallPlacement, floorCeilingFacing, collision);
+                        allowWallPlacement, allowCeilingPlacement, rotateFloorShape, requireSupport, requireFullBlockSupport,
+                        floorCeilingFacing, collision);
             }
         }
     }
 
     private final Settings settings;
+    /** Floor / ceiling shapes turned to each facing, or null when the shape does not turn. */
+    @Nullable
+    private final Map<Direction, VoxelShape> rotatedFloor;
+    @Nullable
+    private final Map<Direction, VoxelShape> rotatedCeiling;
 
     public FaceAttachedModelBlock(Properties properties, Settings settings) {
         super(properties);
         this.settings = settings;
+        this.rotatedFloor = settings.rotateFloorShape()
+                ? BlockShapeUtils.precompute(settings.floor(), Direction.NORTH) : null;
+        this.rotatedCeiling = settings.rotateFloorShape()
+                ? BlockShapeUtils.precompute(settings.ceiling(), Direction.NORTH) : null;
         this.registerDefaultState(this.stateDefinition.any()
                 .setValue(FACE, AttachFace.FLOOR)
                 .setValue(FACING, Direction.NORTH));
@@ -124,6 +158,9 @@ public class FaceAttachedModelBlock extends FaceAttachedHorizontalDirectionalBlo
         if (face == AttachFace.WALL && !settings.allowWallPlacement()) {
             return null;
         }
+        if (face == AttachFace.CEILING && !settings.allowCeilingPlacement()) {
+            return null;
+        }
         Direction facing;
         if (face == AttachFace.WALL) {
             facing = clicked;
@@ -139,8 +176,8 @@ public class FaceAttachedModelBlock extends FaceAttachedHorizontalDirectionalBlo
     @Override
     protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
         return switch (state.getValue(FACE)) {
-            case FLOOR -> settings.floor();
-            case CEILING -> settings.ceiling();
+            case FLOOR -> rotatedFloor != null ? rotatedFloor.get(state.getValue(FACING)) : settings.floor();
+            case CEILING -> rotatedCeiling != null ? rotatedCeiling.get(state.getValue(FACING)) : settings.ceiling();
             case WALL -> switch (state.getValue(FACING)) {
                 case NORTH -> settings.wallNorth();
                 case SOUTH -> settings.wallSouth();
@@ -158,9 +195,16 @@ public class FaceAttachedModelBlock extends FaceAttachedHorizontalDirectionalBlo
 
     @Override
     public boolean canSurvive(BlockState state, LevelReader level, BlockPos pos) {
+        if (!settings.requireSupport()) {
+            return true;
+        }
         Direction attachDir = getConnectedDirection(state);
         BlockPos supportPos = pos.relative(attachDir.getOpposite());
-        return level.getBlockState(supportPos).isFaceSturdy(level, supportPos, attachDir);
+        BlockState support = level.getBlockState(supportPos);
+        if (!support.isFaceSturdy(level, supportPos, attachDir)) {
+            return false;
+        }
+        return !settings.requireFullBlockSupport() || support.isCollisionShapeFullBlock(level, supportPos);
     }
 
     @Override

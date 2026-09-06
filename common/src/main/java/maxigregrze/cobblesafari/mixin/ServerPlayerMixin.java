@@ -21,8 +21,18 @@ public abstract class ServerPlayerMixin {
         TimerManager.pauseAllTimers(self);
 
         Optional<String> configuredDimension = TimerManager.getConfiguredDimensionId(self);
-        if (configuredDimension.isPresent()) {
-            TimerManager.startTimer(self, configuredDimension.get());
+        if (configuredDimension.isEmpty()) {
+            return;
         }
+        String dimensionId = configuredDimension.get();
+
+        // Non-instanced dimensions (Safari, Union Room) keep arming on arrival, as before. An
+        // instanced one must NOT: arriving is not being admitted, and creating a timer here would
+        // hand credit to anyone who found another way in (finding S1). The session is opened at the
+        // door by DungeonTeleportHandler, and the presence sweep evicts whoever holds none.
+        if (TimerManager.isInstancedDimension(dimensionId)) {
+            return;
+        }
+        TimerManager.startTimer(self, dimensionId);
     }
 }

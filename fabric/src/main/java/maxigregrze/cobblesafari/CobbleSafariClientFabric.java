@@ -22,6 +22,7 @@ import maxigregrze.cobblesafari.client.renderer.AuspiciousPokeballBlockEntityRen
 import maxigregrze.cobblesafari.client.renderer.DistortionPortalBlockEntityRenderer;
 import maxigregrze.cobblesafari.client.DungeonDistortionDimensionEffects;
 import maxigregrze.cobblesafari.mixin.client.DimensionSpecialEffectsAccessor;
+import maxigregrze.cobblesafari.client.renderer.LightningSpotBlockEntityRenderer;
 import maxigregrze.cobblesafari.client.renderer.LostItemBlockEntityRenderer;
 import maxigregrze.cobblesafari.client.renderer.VoidBlockRenderer;
 import maxigregrze.cobblesafari.client.model.BalloonEntityModel;
@@ -83,6 +84,9 @@ public class CobbleSafariClientFabric implements ClientModInitializer {
                     @Override
                     public void onResourceManagerReload(net.minecraft.server.packs.resources.ResourceManager manager) {
                         maxigregrze.cobblesafari.client.renderer.GreyscaleTextureCache.clear();
+                        // Same hook, same reason: a derived texture that outlived a reload would
+                        // point at a freed image (action plan 183, section 4.2.1).
+                        maxigregrze.cobblesafari.client.renderer.UltraWormholeTintCache.clear();
                     }
                 });
         TooltipComponentCallback.EVENT.register(data -> {
@@ -199,11 +203,25 @@ public class CobbleSafariClientFabric implements ClientModInitializer {
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.BELLTOWER_ROD, RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.BELLTOWER_ROOFTILES, RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.BELLTOWER_BRIDGE, RenderType.cutout());
+        // Ultra Space set (plan 185)
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.ULTRASPACE_BONSAI_STEM, RenderType.cutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.ULTRASPACE_BONSAI, RenderType.cutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.ULTRASPACE_BUSH, RenderType.cutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.ULTRASPACE_LEAVES, RenderType.cutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.ULTRASPACE_CRYSTAL, RenderType.cutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.ULTRASPACE_CABLE_STRAP, RenderType.cutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.ULTRASPACE_CABLE_ZIP, RenderType.cutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.ULTRASPACE_BULB, RenderType.translucent());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.ULTRASPACE_STEM, RenderType.cutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.MEGAPOLIS_STAIRS, RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.POKEMON_STATUE, RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.HOOPA_RING_PORTAL, RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.DUNGEON_PORTAL, RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.CREATIVE_DUNGEON_PORTAL, RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.DUNGEON_PORTAL_EFFECT, RenderType.translucent());
+        // Translucent, not cutout: ultra_entrance_portal.png carries a graded alpha channel, and
+        // cutout would round every texel to fully opaque or fully gone (action plan 183, B2).
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.ULTRA_ENTRANCE_PORTAL, RenderType.translucent());
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.GIRATINA_CORE, RenderType.translucent());
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.GIRATINA_CORE_N, RenderType.translucent());
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.GIRATINA_CORE_NE, RenderType.translucent());
@@ -438,11 +456,14 @@ public class CobbleSafariClientFabric implements ClientModInitializer {
 
     private void registerRenderers() {
         BlockEntityRenderers.register(ModBlockEntities.HOOPA_RING_PORTAL, HoopaRingPortalBlockEntityRenderer::new);
+        BlockEntityRenderers.register(ModBlockEntities.ULTRA_WORMHOLE,
+                maxigregrze.cobblesafari.client.renderer.UltraWormholeBlockEntityRenderer::new);
         BlockEntityRenderers.register(ModBlockEntities.DUNGEON_PORTAL, DungeonPortalBlockEntityRenderer::new);
         BlockEntityRenderers.register(ModBlockEntities.VOID_BLOCK, VoidBlockRenderer::new);
         BlockEntityRenderers.register(ModBlockEntities.GIRATINA_CORE, GiratinaCoreBlockEntityRenderer::new);
         BlockEntityRenderers.register(ModBlockEntities.DISTORTION_PORTAL, DistortionPortalBlockEntityRenderer::new);
         BlockEntityRenderers.register(ModBlockEntities.LOST_ITEM, LostItemBlockEntityRenderer::new);
+        BlockEntityRenderers.register(ModBlockEntities.LIGHTNINGSPOT, LightningSpotBlockEntityRenderer::new);
         BlockEntityRenderers.register(ModBlockEntities.AUSPICIOUS_POKEBALL, AuspiciousPokeballBlockEntityRenderer::new);
         BlockEntityRenderers.register(ModBlockEntities.AUSPICIOUS_POKEBALL_GOLD, AuspiciousPokeballBlockEntityRenderer::new);
         BlockEntityRenderers.register(ModBlockEntities.UNION_ROOM_DECOR, maxigregrze.cobblesafari.client.renderer.UnionRoomDecorBlockEntityRenderer::new);

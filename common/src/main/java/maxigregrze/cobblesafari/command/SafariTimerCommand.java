@@ -22,7 +22,7 @@ public class SafariTimerCommand {
         int seconds = IntegerArgumentType.getInteger(context, ARG_SECONDS);
         int ticks = seconds * 20;
 
-        PlayerTimerData data = TimerManager.getOrCreateData(target);
+        PlayerTimerData data = TimerManager.getOrCreateAccount(target);
         data.setRemainingTicks(data.getRemainingTicks() + ticks);
         TimerManager.savePlayerData(target, data);
 
@@ -45,7 +45,7 @@ public class SafariTimerCommand {
         int seconds = IntegerArgumentType.getInteger(context, ARG_SECONDS);
         int ticks = seconds * 20;
 
-        PlayerTimerData data = TimerManager.getOrCreateData(target);
+        PlayerTimerData data = TimerManager.getOrCreateAccount(target);
         int newTicks = Math.max(0, data.getRemainingTicks() - ticks);
         data.setRemainingTicks(newTicks);
         TimerManager.savePlayerData(target, data);
@@ -69,7 +69,7 @@ public class SafariTimerCommand {
         int seconds = IntegerArgumentType.getInteger(context, ARG_SECONDS);
         int ticks = seconds * 20;
 
-        PlayerTimerData data = TimerManager.getOrCreateData(target);
+        PlayerTimerData data = TimerManager.getOrCreateAccount(target);
         data.setRemainingTicks(ticks);
         TimerManager.savePlayerData(target, data);
 
@@ -89,7 +89,7 @@ public class SafariTimerCommand {
     static int executeGet(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
         ServerPlayer target = EntityArgument.getPlayer(context, ARG_PLAYER);
 
-        PlayerTimerData data = TimerManager.getOrCreateData(target);
+        PlayerTimerData data = TimerManager.getOrCreateAccount(target);
 
         context.getSource().sendSuccess(() -> Component.translatable(
                 "cobblesafari.command.get.success",
@@ -105,8 +105,7 @@ public class SafariTimerCommand {
 
         TimerManager.toggleBypass(target, null);
 
-        PlayerTimerData data = TimerManager.getOrCreateData(target);
-        boolean bypassed = data.isTimerBypassed();
+        boolean bypassed = TimerManager.shouldBypassTimer(target);
 
         String key = bypassed
                 ? "cobblesafari.command.toggle.enabled"

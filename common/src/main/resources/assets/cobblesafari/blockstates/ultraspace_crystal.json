@@ -1,0 +1,132 @@
+{
+  "variants": {
+    "facing=down,waterlogged=false": [
+      {
+        "model": "cobblesafari:block/ultraspace_crystal_0",
+        "x": 180
+      },
+      {
+        "model": "cobblesafari:block/ultraspace_crystal_1",
+        "x": 180
+      }
+    ],
+    "facing=down,waterlogged=true": [
+      {
+        "model": "cobblesafari:block/ultraspace_crystal_0",
+        "x": 180
+      },
+      {
+        "model": "cobblesafari:block/ultraspace_crystal_1",
+        "x": 180
+      }
+    ],
+    "facing=up,waterlogged=false": [
+      {
+        "model": "cobblesafari:block/ultraspace_crystal_0"
+      },
+      {
+        "model": "cobblesafari:block/ultraspace_crystal_1"
+      }
+    ],
+    "facing=up,waterlogged=true": [
+      {
+        "model": "cobblesafari:block/ultraspace_crystal_0"
+      },
+      {
+        "model": "cobblesafari:block/ultraspace_crystal_1"
+      }
+    ],
+    "facing=north,waterlogged=false": [
+      {
+        "model": "cobblesafari:block/ultraspace_crystal_0",
+        "x": 90
+      },
+      {
+        "model": "cobblesafari:block/ultraspace_crystal_1",
+        "x": 90
+      }
+    ],
+    "facing=north,waterlogged=true": [
+      {
+        "model": "cobblesafari:block/ultraspace_crystal_0",
+        "x": 90
+      },
+      {
+        "model": "cobblesafari:block/ultraspace_crystal_1",
+        "x": 90
+      }
+    ],
+    "facing=east,waterlogged=false": [
+      {
+        "model": "cobblesafari:block/ultraspace_crystal_0",
+        "x": 90,
+        "y": 90
+      },
+      {
+        "model": "cobblesafari:block/ultraspace_crystal_1",
+        "x": 90,
+        "y": 90
+      }
+    ],
+    "facing=east,waterlogged=true": [
+      {
+        "model": "cobblesafari:block/ultraspace_crystal_0",
+        "x": 90,
+        "y": 90
+      },
+      {
+        "model": "cobblesafari:block/ultraspace_crystal_1",
+        "x": 90,
+        "y": 90
+      }
+    ],
+    "facing=south,waterlogged=false": [
+      {
+        "model": "cobblesafari:block/ultraspace_crystal_0",
+        "x": 90,
+        "y": 180
+      },
+      {
+        "model": "cobblesafari:block/ultraspace_crystal_1",
+        "x": 90,
+        "y": 180
+      }
+    ],
+    "facing=south,waterlogged=true": [
+      {
+        "model": "cobblesafari:block/ultraspace_crystal_0",
+        "x": 90,
+        "y": 180
+      },
+      {
+        "model": "cobblesafari:block/ultraspace_crystal_1",
+        "x": 90,
+        "y": 180
+      }
+    ],
+    "facing=west,waterlogged=false": [
+      {
+        "model": "cobblesafari:block/ultraspace_crystal_0",
+        "x": 90,
+        "y": 270
+      },
+      {
+        "model": "cobblesafari:block/ultraspace_crystal_1",
+        "x": 90,
+        "y": 270
+      }
+    ],
+    "facing=west,waterlogged=true": [
+      {
+        "model": "cobblesafari:block/ultraspace_crystal_0",
+        "x": 90,
+        "y": 270
+      },
+      {
+        "model": "cobblesafari:block/ultraspace_crystal_1",
+        "x": 90,
+        "y": 270
+      }
+    ]
+  }
+}

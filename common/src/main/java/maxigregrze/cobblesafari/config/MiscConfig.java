@@ -53,6 +53,31 @@ public class MiscConfig {
     private String ultraWarpDiveCSMusic = "ultrawarpridemusic";
 
     /**
+     * Ultra Wormhole parent-clock rules (action plan 183, section 13.1). The ride's <i>physics</i>
+     * stay in {@code UltraWarpRideConfig}'s Java fields - they only make sense tuned together, by
+     * the author. These five are rules of <i>access</i>, of the same nature as an entry fee or a
+     * stay duration, so a server owner running a long parent dungeon will want to move them.
+     * <p>No migration: a file written before this update simply lacks the keys and reads the
+     * defaults below, exactly like every other nullable-by-absence field here.</p>
+     */
+    private int ultraWormholeMinParentSeconds = 180;
+
+    /** Parent credit at which the ride's energy decay jumps from 1/s to {@link #ultraWormholePanicDecayPerSecond}. */
+    private int ultraWormholePanicTriggerSeconds = 90;
+
+    /** Energy drained per second once the panic decay fires (against 1/s in normal flight). */
+    private int ultraWormholePanicDecayPerSecond = 10;
+
+    /**
+     * Parent-credit reserve. Serves <b>both</b> uses the spec ties together - the ride's abort
+     * backstop and the sub-dungeon entry floor - from one value, so they cannot drift apart.
+     */
+    private int ultraWormholeReserveSeconds = 30;
+
+    /** Minimum gap between two right-clicks on the wormhole device (S13's residue, section 11.2). */
+    private int ultraWormholeDeviceRateLimitMs = 2000;
+
+    /**
      * Default values for a newly placed "lost item" block (see {@code misc_config.json}, key {@code lostItem}).
      */
     private LostItemDefaults lostItem = new LostItemDefaults();
@@ -277,6 +302,46 @@ public class MiscConfig {
             return 5;
         }
         return Math.max(5, INSTANCE.teleportpadForwardLeeway);
+    }
+
+    /** Opening floor: the device refuses to open below this much parent credit (section 8.2). */
+    public static int getUltraWormholeMinParentSeconds() {
+        if (INSTANCE == null) {
+            return 180;
+        }
+        return Math.max(0, INSTANCE.ultraWormholeMinParentSeconds);
+    }
+
+    /** Parent credit at which the panic decay fires (section 8.2). */
+    public static int getUltraWormholePanicTriggerSeconds() {
+        if (INSTANCE == null) {
+            return 90;
+        }
+        return Math.max(0, INSTANCE.ultraWormholePanicTriggerSeconds);
+    }
+
+    /** Energy drained per second under the panic decay. Clamped to at least 1: a zero would never end the ride. */
+    public static int getUltraWormholePanicDecayPerSecond() {
+        if (INSTANCE == null) {
+            return 10;
+        }
+        return Math.max(1, INSTANCE.ultraWormholePanicDecayPerSecond);
+    }
+
+    /** Parent-credit reserve, and the sub-dungeon entry floor. One value, two uses (section 8.2). */
+    public static int getUltraWormholeReserveSeconds() {
+        if (INSTANCE == null) {
+            return 30;
+        }
+        return Math.max(0, INSTANCE.ultraWormholeReserveSeconds);
+    }
+
+    /** Right-click rate limit on the wormhole device, in milliseconds. */
+    public static int getUltraWormholeDeviceRateLimitMs() {
+        if (INSTANCE == null) {
+            return 2000;
+        }
+        return Math.max(0, INSTANCE.ultraWormholeDeviceRateLimitMs);
     }
 
     /** CSMusic id for the Ultra Warp Ride mini-game (empty string = no override). */

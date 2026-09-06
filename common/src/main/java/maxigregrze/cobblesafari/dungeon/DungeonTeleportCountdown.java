@@ -42,6 +42,16 @@ public class DungeonTeleportCountdown {
     }
 
     public static boolean startTeleportSequence(ServerPlayer player, DungeonPortalBlockEntity portalEntity) {
+        return startTeleportSequence(player, portalEntity, null);
+    }
+
+    /**
+     * @param charged the entry fee already taken, or {@code null} if none was. Carried so that every
+     *                abandon path below can hand it back (plan 181, V8): the fee is debited before
+     *                generation starts, and generation has ten ways to give up.
+     */
+    public static boolean startTeleportSequence(ServerPlayer player, DungeonPortalBlockEntity portalEntity,
+                                                DungeonTpAcceptHandler.ChargedFee charged) {
         UUID playerId = player.getUUID();
 
         if (pendingTeleports.containsKey(playerId)) {
@@ -63,7 +73,8 @@ public class DungeonTeleportCountdown {
                 COUNTDOWN_TICKS,
                 validation,
                 null,
-                false
+                false,
+                charged
         ));
 
         int secondsTotal = COUNTDOWN_TICKS / 20;
@@ -78,9 +89,17 @@ public class DungeonTeleportCountdown {
         return pendingTeleports.containsKey(playerId);
     }
 
-    public static void cancelTeleport(UUID playerId) {
+    /**
+     * Cancels a pending teleport and refunds the entry fee, if one was taken. Takes the server
+     * because the refund needs the player: an abandoned teleport that silently kept the fee is
+     * exactly the defect V8 closes.
+     */
+    public static void cancelTeleport(MinecraftServer server, UUID playerId) {
         TeleportState removed = pendingTeleports.remove(playerId);
         releaseGenerationLockIfHeld(removed);
+        if (server != null) {
+            refundIfNotTeleported(server, playerId, removed);
+        }
     }
 
     public static void onServerTick(MinecraftServer server) {
@@ -226,29 +245,19 @@ public class DungeonTeleportCountdown {
             }
 
             if (state.ticksRemaining <= 0 && state.prepResult != null) {
-                long portalRemaining = portalEntity.getRemainingLifetimeTicks();
+                // The third of the three portal-life clamps removed by plan 182 (A4). Only the
+                // first-entry / re-entry distinction survives: a first entry re-reads the config
+                // in case it changed during the countdown, a re-entry keeps its computed credit.
                 int recalculatedTicks;
-                
+
                 if (!state.validation.isReEntry()) {
-                    int configuredTicks = SafariTimerConfig.getDimensionConfig(state.prepResult.dimensionId())
+                    recalculatedTicks = SafariTimerConfig.getDimensionConfig(state.prepResult.dimensionId())
                             .map(DimensionTimerEntry::getTimerDurationTicks)
                             .orElse(SafariTimerConfig.getTimerDurationTicks());
-                    if (portalRemaining >= 0 && portalRemaining < configuredTicks) {
-                        recalculatedTicks = (int) portalRemaining;
-                    } else {
-                        recalculatedTicks = configuredTicks;
-                    }
                 } else {
-                    int currentTimerTicks = state.prepResult.timerTicks();
-                    if (portalRemaining >= 0 && portalRemaining < currentTimerTicks) {
-                        recalculatedTicks = (int) portalRemaining;
-                        CobbleSafari.LOGGER.info("Player {} re-entering dungeon (countdown): timer capped from {} to {} ticks (portal expiring)",
-                                player.getName().getString(), currentTimerTicks, recalculatedTicks);
-                    } else {
-                        recalculatedTicks = currentTimerTicks;
-                    }
+                    recalculatedTicks = state.prepResult.timerTicks();
                 }
-                
+
                 state.prepResult = new DungeonTeleportHandler.DungeonPrepResult(
                         state.prepResult.dungeonLevel(),
                         state.prepResult.playerSpawnPos(),
@@ -257,18 +266,56 @@ public class DungeonTeleportCountdown {
                         state.prepResult.isReEntry(),
                         recalculatedTicks,
                         state.prepResult.playerOriginPos(),
-                        state.prepResult.playerOriginDimension()
+                        state.prepResult.playerOriginDimension(),
+                        state.prepResult.instanceId()
                 );
-                DungeonTeleportHandler.executeDungeonTeleport(player, portalEntity, state.prepResult);
+                if (state.prepResult.instanceId() == null) {
+                    // No instance to scope a session to: abandon rather than admit an unmetered
+                    // player. The drain loop below refunds the fee.
+                    CobbleSafari.LOGGER.error("Aborting countdown teleport for {}: no instance resolved",
+                            player.getName().getString());
+                    ModNetworking.sendCloseTpAccept(player);
+                    player.sendSystemMessage(Component.translatable("cobblesafari.dungeon.error.structure_failed"));
+                    toRemove.add(playerId);
+                    continue;
+                }
+                state.teleported =
+                        DungeonTeleportHandler.executeDungeonTeleport(player, portalEntity, state.prepResult);
                 toRemove.add(playerId);
-                CobbleSafari.LOGGER.info("Dungeon teleport completed for player {}", player.getName().getString());
+                if (state.teleported) {
+                    CobbleSafari.LOGGER.info("Dungeon teleport completed for player {}", player.getName().getString());
+                } else {
+                    // The drain loop below refunds: the fee was taken before generation began.
+                    CobbleSafari.LOGGER.warn("Dungeon teleport aborted for player {} after payment",
+                            player.getName().getString());
+                }
             }
         }
 
+        // One state, one exit (audit 145, Motif § 1). Every abandon branch above converges here, so
+        // the refund lives here and nowhere else: adding it to each branch would guarantee that the
+        // eleventh branch forgets it.
         for (UUID id : toRemove) {
             TeleportState removed = pendingTeleports.remove(id);
             releaseGenerationLockIfHeld(removed);
+            refundIfNotTeleported(server, id, removed);
         }
+    }
+
+    /** Hands the entry fee back when a pending teleport ended in anything but a teleport (V8). */
+    private static void refundIfNotTeleported(MinecraftServer server, UUID playerId, TeleportState state) {
+        if (state == null || state.teleported || state.chargedFee == null) {
+            return;
+        }
+        ServerPlayer player = server.getPlayerList().getPlayer(playerId);
+        if (player == null) {
+            // Offline: the fee cannot be handed back now. Log it loudly rather than swallow it.
+            CobbleSafari.LOGGER.warn(
+                    "Dungeon entry fee for {} could not be refunded (player offline); {} x{} owed",
+                    playerId, state.chargedFee.feeItem(), state.chargedFee.feeAmount());
+            return;
+        }
+        DungeonTpAcceptHandler.refundCharged(player, state.chargedFee);
     }
 
     /**
@@ -294,10 +341,15 @@ public class DungeonTeleportCountdown {
         boolean waitingForOtherGeneration;
         /** Portal id whose generation lock this player acquired (null until calculatePosition succeeds). */
         UUID heldGenerationPortalId;
+        /** Entry fee already debited, refunded on every path that does not end in a teleport. */
+        final DungeonTpAcceptHandler.ChargedFee chargedFee;
+        /** Set once the player is actually through; the drain loop refunds when this stays false. */
+        boolean teleported;
 
         TeleportState(BlockPos portalPos, ResourceKey<Level> portalDimension, Vec3 startPos,
                       int ticksRemaining, DungeonTeleportHandler.DungeonValidationResult validation,
-                      DungeonTeleportHandler.DungeonPrepResult prepResult, boolean generationDone) {
+                      DungeonTeleportHandler.DungeonPrepResult prepResult, boolean generationDone,
+                      DungeonTpAcceptHandler.ChargedFee chargedFee) {
             this.portalPos = portalPos;
             this.portalDimension = portalDimension;
             this.startPos = startPos;
@@ -308,6 +360,8 @@ public class DungeonTeleportCountdown {
             this.generationPhase = 0;
             this.waitingForOtherGeneration = false;
             this.heldGenerationPortalId = null;
+            this.chargedFee = chargedFee;
+            this.teleported = false;
         }
     }
 }

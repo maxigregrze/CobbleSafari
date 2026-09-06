@@ -17,25 +17,48 @@ public class PlayerTimerData {
     private static final String KEY_ORIGIN_X = "OriginX";
     private static final String KEY_ORIGIN_DIMENSION = "OriginDimension";
     private static final String KEY_LAST_SAFARI_BALL_GRANT_DAY = "lastSafariBallGrantDay";
+    /** @deprecated hoisted to {@link TimerSavedData}; read only to migrate legacy records (plan 181 § 10). */
+    @Deprecated
     private static final String KEY_TIMER_BYPASSED = "timerBypassed";
     private static final String KEY_LAST_ENTRY_FEE_PAY_DAY = "lastEntryFeePayDay";
     private static final String KEY_NEEDS_EVACUATION = "needsEvacuation";
+    /** Present only on session records; its absence is the legacy discriminator (plan 181 § 10). */
+    private static final String KEY_SCOPE_ID = "ScopeId";
+    /** Present only on a nested session; see {@link #getParentScopeId()} (plan 182 § 5.2). */
+    private static final String KEY_PARENT_SCOPE_ID = "ParentScopeId";
 
     private final UUID playerId;
     private final String dimensionId;
+    /** {@code null} for an account (non-instanced dimension); the instance id for a session. */
+    private final String scopeId;
+    /**
+     * The scope key of the visit this one is nested inside, or {@code null} - which is every session
+     * this version can create.
+     * <p>
+     * It exists so that the instance-release sweep can tell <em>absent</em> from <em>gone</em>
+     * (action plan 182 § 5.2): a player who steps into a sub-dungeon is still holding their parent
+     * run, and deleting it under them would strand them on the way back. Feature B fills this in;
+     * the hook is built here so the sweep is already correct the day it lands, rather than becoming
+     * silently wrong on that feature's nominal path.
+     */
+    private String parentScopeId;
     private int remainingTicks;
     private long lastResetTimestamp;
     private boolean isActive;
     private BlockPos originPos;
     private ResourceKey<Level> originDimension;
     private long lastSafariBallGrantDay = 0;
-    private boolean timerBypassed = false;
     private long lastEntryFeePayDay = -1;
     private boolean needsEvacuation = false;
 
     public PlayerTimerData(UUID playerId, String dimensionId) {
+        this(playerId, dimensionId, null);
+    }
+
+    public PlayerTimerData(UUID playerId, String dimensionId, String scopeId) {
         this.playerId = playerId;
         this.dimensionId = dimensionId;
+        this.scopeId = scopeId;
         this.remainingTicks = getInitialTicks(dimensionId);
         this.lastResetTimestamp = System.currentTimeMillis();
         this.isActive = false;
@@ -44,13 +67,26 @@ public class PlayerTimerData {
     }
 
     public PlayerTimerData(UUID playerId, String dimensionId, int remainingTicks, long lastResetTimestamp, boolean isActive) {
+        this(playerId, dimensionId, null, remainingTicks, lastResetTimestamp, isActive);
+    }
+
+    public PlayerTimerData(UUID playerId, String dimensionId, String scopeId,
+                           int remainingTicks, long lastResetTimestamp, boolean isActive) {
         this.playerId = playerId;
         this.dimensionId = dimensionId;
+        this.scopeId = scopeId;
         this.remainingTicks = remainingTicks;
         this.lastResetTimestamp = lastResetTimestamp;
         this.isActive = isActive;
         this.originPos = null;
         this.originDimension = null;
+    }
+
+    /** Creates an empty session record: a session starts at zero and is credited by its opener. */
+    public static PlayerTimerData newSession(UUID playerId, TimerScope scope) {
+        PlayerTimerData data = new PlayerTimerData(playerId, scope.dimensionId(), scope.scopeId(),
+                0, System.currentTimeMillis(), false);
+        return data;
     }
 
     /** @deprecated use the dimension-aware constructor {@link #PlayerTimerData(UUID, String)} instead. */
@@ -117,6 +153,29 @@ public class PlayerTimerData {
         return dimensionId;
     }
 
+    /** {@code null} for an account; the opaque instance id for a session. */
+    public String getScopeId() {
+        return scopeId;
+    }
+
+    /** Scope key of the enclosing visit, or {@code null} when this session is not nested. */
+    public String getParentScopeId() {
+        return parentScopeId;
+    }
+
+    public void setParentScopeId(String parentScopeId) {
+        this.parentScopeId = parentScopeId;
+    }
+
+    /** The scope this record is stored under. Its {@link TimerScope#key()} is the storage key. */
+    public TimerScope scope() {
+        return new TimerScope(dimensionId, scopeId);
+    }
+
+    public boolean isSession() {
+        return scopeId != null;
+    }
+
     public int getRemainingTicks() {
         return remainingTicks;
     }
@@ -171,14 +230,6 @@ public class PlayerTimerData {
         this.lastSafariBallGrantDay = day;
     }
 
-    public boolean isTimerBypassed() {
-        return timerBypassed;
-    }
-
-    public void setTimerBypassed(boolean bypassed) {
-        this.timerBypassed = bypassed;
-    }
-
     public long getLastEntryFeePayDay() {
         return lastEntryFeePayDay;
     }
@@ -226,12 +277,29 @@ public class PlayerTimerData {
             tag.putString(KEY_ORIGIN_DIMENSION, originDimension.location().toString());
         }
 
+        // Written only for sessions, so an account record keeps its NBT byte for byte - and its
+        // absence is what tells a legacy dungeon record apart on load (plan 181 § 10).
+        if (scopeId != null) {
+            tag.putString(KEY_SCOPE_ID, scopeId);
+        }
+        if (parentScopeId != null) {
+            tag.putString(KEY_PARENT_SCOPE_ID, parentScopeId);
+        }
+
         tag.putLong(KEY_LAST_SAFARI_BALL_GRANT_DAY, lastSafariBallGrantDay);
-        tag.putBoolean(KEY_TIMER_BYPASSED, timerBypassed);
         tag.putLong(KEY_LAST_ENTRY_FEE_PAY_DAY, lastEntryFeePayDay);
         tag.putBoolean(KEY_NEEDS_EVACUATION, needsEvacuation);
 
         return tag;
+    }
+
+    /**
+     * Reads the hoisted bypass flag out of a pre-181 record. Returns {@code false} for records
+     * written after the hoist, which no longer carry the key.
+     */
+    @SuppressWarnings("deprecation")
+    public static boolean readLegacyBypass(CompoundTag tag) {
+        return tag.contains(KEY_TIMER_BYPASSED) && tag.getBoolean(KEY_TIMER_BYPASSED);
     }
 
     public static PlayerTimerData fromNbt(CompoundTag tag) {
@@ -239,12 +307,18 @@ public class PlayerTimerData {
         String dimensionId = tag.contains(KEY_DIMENSION_ID) 
                 ? tag.getString(KEY_DIMENSION_ID) 
                 : SafariTimerConfig.getSafariDimensionId();
+        String scopeId = tag.contains(KEY_SCOPE_ID) ? tag.getString(KEY_SCOPE_ID) : null;
         int remainingTicks = tag.getInt("remainingTicks");
         long lastResetTimestamp = tag.getLong("lastResetTimestamp");
         boolean isActive = tag.getBoolean("isActive");
-        
-        PlayerTimerData data = new PlayerTimerData(playerId, dimensionId, remainingTicks, lastResetTimestamp, isActive);
-        
+
+        PlayerTimerData data = new PlayerTimerData(playerId, dimensionId, scopeId,
+                remainingTicks, lastResetTimestamp, isActive);
+
+        if (tag.contains(KEY_PARENT_SCOPE_ID)) {
+            data.parentScopeId = tag.getString(KEY_PARENT_SCOPE_ID);
+        }
+
         if (tag.contains(KEY_ORIGIN_X)) {
             data.originPos = new BlockPos(
                     tag.getInt(KEY_ORIGIN_X),
@@ -262,10 +336,6 @@ public class PlayerTimerData {
 
         if (tag.contains(KEY_LAST_SAFARI_BALL_GRANT_DAY)) {
             data.lastSafariBallGrantDay = tag.getLong(KEY_LAST_SAFARI_BALL_GRANT_DAY);
-        }
-
-        if (tag.contains(KEY_TIMER_BYPASSED)) {
-            data.timerBypassed = tag.getBoolean(KEY_TIMER_BYPASSED);
         }
 
         if (tag.contains(KEY_LAST_ENTRY_FEE_PAY_DAY)) {

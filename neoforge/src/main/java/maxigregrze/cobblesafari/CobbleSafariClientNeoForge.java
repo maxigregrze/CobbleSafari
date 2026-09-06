@@ -31,6 +31,7 @@ import maxigregrze.cobblesafari.client.renderer.HoopaRingPortalBlockEntityRender
 import maxigregrze.cobblesafari.client.renderer.GiratinaCoreBlockEntityRenderer;
 import maxigregrze.cobblesafari.client.renderer.AuspiciousPokeballBlockEntityRenderer;
 import maxigregrze.cobblesafari.client.renderer.DistortionPortalBlockEntityRenderer;
+import maxigregrze.cobblesafari.client.renderer.LightningSpotBlockEntityRenderer;
 import maxigregrze.cobblesafari.client.renderer.LostItemBlockEntityRenderer;
 import maxigregrze.cobblesafari.client.renderer.VoidBlockRenderer;
 import maxigregrze.cobblesafari.client.model.BalloonEntityModel;
@@ -123,13 +124,21 @@ public class CobbleSafariClientNeoForge {
             net.neoforged.neoforge.client.event.RegisterClientReloadListenersEvent event) {
         event.registerReloadListener(
                 (net.minecraft.server.packs.resources.ResourceManagerReloadListener)
-                        manager -> maxigregrze.cobblesafari.client.renderer.GreyscaleTextureCache.clear());
+                        manager -> {
+                            maxigregrze.cobblesafari.client.renderer.GreyscaleTextureCache.clear();
+                            // Same hook, same reason: a derived texture that outlived a reload
+                            // would point at a freed image (action plan 183, section 4.2.1).
+                            maxigregrze.cobblesafari.client.renderer.UltraWormholeTintCache.clear();
+                        });
     }
 
     @SubscribeEvent
     public static void onClientSetup(FMLClientSetupEvent event) {
         event.enqueueWork(() -> {
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.CSBOSS_PLATFORM, RenderType.translucent());
+            // Translucent, not cutout: ultra_entrance_portal.png carries a graded alpha channel,
+            // and cutout would round every texel to fully opaque or fully gone (plan 183, B2).
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.ULTRA_ENTRANCE_PORTAL, RenderType.translucent());
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.TINKAGEAR_BLOCK, RenderType.translucent());
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.SAFARI_TELEPORTER, RenderType.translucent());
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.TELEPORT_PAD, RenderType.translucent());
@@ -142,6 +151,17 @@ public class CobbleSafariClientNeoForge {
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.BELLTOWER_ROD, RenderType.cutout());
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.BELLTOWER_ROOFTILES, RenderType.cutout());
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.BELLTOWER_BRIDGE, RenderType.cutout());
+            // Ultra Space set (plan 185)
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.ULTRASPACE_BONSAI_STEM, RenderType.cutout());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.ULTRASPACE_BONSAI, RenderType.cutout());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.ULTRASPACE_BUSH, RenderType.cutout());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.ULTRASPACE_LEAVES, RenderType.cutout());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.ULTRASPACE_CRYSTAL, RenderType.cutout());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.ULTRASPACE_CABLE_STRAP, RenderType.cutout());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.ULTRASPACE_CABLE_ZIP, RenderType.cutout());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.ULTRASPACE_BULB, RenderType.translucent());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.ULTRASPACE_STEM, RenderType.cutout());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.MEGAPOLIS_STAIRS, RenderType.cutout());
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.POKEMON_STATUE, RenderType.cutout());
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.HOOPA_RING_PORTAL, RenderType.cutout());
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.DUNGEON_PORTAL, RenderType.cutout());
@@ -325,11 +345,14 @@ public class CobbleSafariClientNeoForge {
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.KALOS_MANHOLE, RenderType.cutout());
 
             BlockEntityRenderers.register(ModBlockEntities.HOOPA_RING_PORTAL, HoopaRingPortalBlockEntityRenderer::new);
+            BlockEntityRenderers.register(ModBlockEntities.ULTRA_WORMHOLE,
+                    maxigregrze.cobblesafari.client.renderer.UltraWormholeBlockEntityRenderer::new);
             BlockEntityRenderers.register(ModBlockEntities.DUNGEON_PORTAL, DungeonPortalBlockEntityRenderer::new);
             BlockEntityRenderers.register(ModBlockEntities.VOID_BLOCK, VoidBlockRenderer::new);
             BlockEntityRenderers.register(ModBlockEntities.GIRATINA_CORE, GiratinaCoreBlockEntityRenderer::new);
             BlockEntityRenderers.register(ModBlockEntities.DISTORTION_PORTAL, DistortionPortalBlockEntityRenderer::new);
             BlockEntityRenderers.register(ModBlockEntities.LOST_ITEM, LostItemBlockEntityRenderer::new);
+            BlockEntityRenderers.register(ModBlockEntities.LIGHTNINGSPOT, LightningSpotBlockEntityRenderer::new);
             BlockEntityRenderers.register(ModBlockEntities.AUSPICIOUS_POKEBALL, AuspiciousPokeballBlockEntityRenderer::new);
             BlockEntityRenderers.register(ModBlockEntities.AUSPICIOUS_POKEBALL_GOLD, AuspiciousPokeballBlockEntityRenderer::new);
             BlockEntityRenderers.register(ModBlockEntities.UNION_ROOM_DECOR, maxigregrze.cobblesafari.client.renderer.UnionRoomDecorBlockEntityRenderer::new);

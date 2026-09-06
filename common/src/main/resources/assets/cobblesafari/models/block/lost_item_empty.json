@@ -3,6 +3,7 @@
 	"credit": "Made with Blockbench",
 	"textures": {
 		"0": "cobblesafari:block/distortion_stonebricks_rubble",
+		"1": "cobblesafari:block/lost_item_shadow",
 		"particle": "cobblesafari:block/distortion_stonebricks_rubble"
 	},
 	"elements": [
@@ -56,6 +57,15 @@
 				"west": {"uv": [12, 3, 14, 6], "rotation": 90, "texture": "#0"},
 				"up": {"uv": [6, 3, 11, 6], "texture": "#0"},
 				"down": {"uv": [6, 3, 11, 6], "texture": "#0"}
+			}
+		},
+		{
+			"from": [2, 0.01, 2],
+			"to": [14, 0.01, 14],
+			"rotation": {"angle": 0, "axis": "y", "origin": [2, 0, 2]},
+			"faces": {
+				"up": {"uv": [0, 0, 16, 16], "texture": "#1"},
+				"down": {"uv": [0, 0, 16, 16], "texture": "#1"}
 			}
 		}
 	]

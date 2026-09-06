@@ -83,6 +83,24 @@ public class DimensionalBanData {
         dungeonDistortionRestrictions.bannedItems.add("minecraft:firework_rocket");
         dungeonDistortionRestrictions.forbidMounting = true;
         dimensions.put("cobblesafari:dungeon_distortion", dungeonDistortionRestrictions);
+
+        // Action plan 183, S20 - "the lawless pocket". A dimension shipped without its own entry
+        // inherits nothing: item use, block breaking, summoning and mounting would all be allowed
+        // in a world whose parent forbids them, and no server owner would think to add it. Both
+        // new dimensions get the dungeon_jump profile, the strictest already in place.
+        DimensionRestrictions dungeonMegalopolisRestrictions = new DimensionRestrictions();
+        dungeonMegalopolisRestrictions.allowBattle = true;
+        dungeonMegalopolisRestrictions.allowBlockBreaking = false;
+        dungeonMegalopolisRestrictions.allowBlockPlacing = false;
+        dungeonMegalopolisRestrictions.forbidMounting = true;
+        dimensions.put("cobblesafari:dungeon_megalopolis", dungeonMegalopolisRestrictions);
+
+        DimensionRestrictions dungeonUltraspaceRestrictions = new DimensionRestrictions();
+        dungeonUltraspaceRestrictions.allowBattle = true;
+        dungeonUltraspaceRestrictions.allowBlockBreaking = false;
+        dungeonUltraspaceRestrictions.allowBlockPlacing = false;
+        dungeonUltraspaceRestrictions.forbidMounting = true;
+        dimensions.put("cobblesafari:dungeon_ultraspace", dungeonUltraspaceRestrictions);
     }
 
     public static class DimensionRestrictions {

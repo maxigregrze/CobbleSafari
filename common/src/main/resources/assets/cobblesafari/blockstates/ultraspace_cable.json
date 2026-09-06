@@ -1,0 +1,16 @@
+{
+  "variants": {
+    "axis=y": {
+      "model": "cobblesafari:block/ultraspace_cable"
+    },
+    "axis=x": {
+      "model": "cobblesafari:block/ultraspace_cable",
+      "x": 90,
+      "y": 90
+    },
+    "axis=z": {
+      "model": "cobblesafari:block/ultraspace_cable",
+      "x": 90
+    }
+  }
+}

@@ -30,6 +30,7 @@ public class PortalSpawnConfig {
     private static final String DUNGEON_UNDERGROUND_ID = "dungeon_underground";
     private static final String DUNGEON_JUMP_ID = "dungeon_jump";
     private static final String DUNGEON_DISTORTION_ID = "dungeon_distortion";
+    private static final String DUNGEON_MEGALOPOLIS_ID = "dungeon_megalopolis";
     private static final String DEFAULT_ALLOWED_DIMENSION = "minecraft:overworld";
     private static final List<String> DEFAULT_ALLOWED_DIMENSIONS = List.of(DEFAULT_ALLOWED_DIMENSION);
 
@@ -65,6 +66,7 @@ public class PortalSpawnConfig {
         dimensions.add(new DungeonDimensionEntry(DUNGEON_UNDERGROUND_ID, true, 1));
         dimensions.add(new DungeonDimensionEntry(DUNGEON_JUMP_ID, true, 1));
         dimensions.add(new DungeonDimensionEntry(DUNGEON_DISTORTION_ID, true, 1));
+        dimensions.add(new DungeonDimensionEntry(DUNGEON_MEGALOPOLIS_ID, true, 1));
     }
 
     /**
@@ -163,6 +165,9 @@ public class PortalSpawnConfig {
         modified |= ensureDimensionConfig(DUNGEON_UNDERGROUND_ID, true, 1);
         modified |= ensureDimensionConfig(DUNGEON_JUMP_ID, true, 1);
         modified |= ensureDimensionConfig(DUNGEON_DISTORTION_ID, true, 1);
+        // dungeon_ultraspace is deliberately absent: this file is the Hoopa portal wheel, and an
+        // "enabled" entry for a sub-dungeon would be an invitation to turn it on (183, section 3.2).
+        modified |= ensureDimensionConfig(DUNGEON_MEGALOPOLIS_ID, true, 1);
 
         if (modified) {
             save();

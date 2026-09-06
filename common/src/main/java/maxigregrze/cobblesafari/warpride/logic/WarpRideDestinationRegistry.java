@@ -77,6 +77,19 @@ public final class WarpRideDestinationRegistry {
         return Collections.min(BY_TYPE_ID.keySet());
     }
 
+    /**
+     * An unweighted uniform pick, used only to colour a decorative portal a player placed by hand
+     * (action plan 183, section 4.2.2). Returns 0 when nothing is registered, which the renderer
+     * reads as "no tint".
+     */
+    public static int randomTypeId(RandomSource random) {
+        if (BY_TYPE_ID.isEmpty()) {
+            return 0;
+        }
+        List<Integer> ids = new ArrayList<>(BY_TYPE_ID.keySet());
+        return ids.get(random.nextInt(ids.size()));
+    }
+
     /** The lean {@code typeId → tint} view sent to clients. */
     public static List<int[]> tintSyncView() {
         List<int[]> out = new ArrayList<>(BY_TYPE_ID.size());

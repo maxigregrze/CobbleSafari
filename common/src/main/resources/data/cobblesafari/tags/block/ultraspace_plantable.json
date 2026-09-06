@@ -1,0 +1,11 @@
+{
+  "replace": false,
+  "values": [
+    "cobblesafari:ultraspace_sand",
+    "cobblesafari:ultraspace_sand_path",
+    "cobblesafari:ultraspace_sand_pattern",
+    "cobblesafari:ultraspace_sandstone",
+    "cobblesafari:ultraspace_deepstone",
+    "#minecraft:dirt"
+  ]
+}

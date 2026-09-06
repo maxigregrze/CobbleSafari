@@ -1,0 +1,68 @@
+{
+  "variants": {
+    "waterlogged=false": [
+      {
+        "model": "cobblesafari:block/ultraspace_stem_0"
+      },
+      {
+        "model": "cobblesafari:block/ultraspace_stem_0",
+        "y": 90
+      },
+      {
+        "model": "cobblesafari:block/ultraspace_stem_0",
+        "y": 180
+      },
+      {
+        "model": "cobblesafari:block/ultraspace_stem_0",
+        "y": 270
+      },
+      {
+        "model": "cobblesafari:block/ultraspace_stem_1"
+      },
+      {
+        "model": "cobblesafari:block/ultraspace_stem_1",
+        "y": 90
+      },
+      {
+        "model": "cobblesafari:block/ultraspace_stem_1",
+        "y": 180
+      },
+      {
+        "model": "cobblesafari:block/ultraspace_stem_1",
+        "y": 270
+      }
+    ],
+    "waterlogged=true": [
+      {
+        "model": "cobblesafari:block/ultraspace_stem_0"
+      },
+      {
+        "model": "cobblesafari:block/ultraspace_stem_0",
+        "y": 90
+      },
+      {
+        "model": "cobblesafari:block/ultraspace_stem_0",
+        "y": 180
+      },
+      {
+        "model": "cobblesafari:block/ultraspace_stem_0",
+        "y": 270
+      },
+      {
+        "model": "cobblesafari:block/ultraspace_stem_1"
+      },
+      {
+        "model": "cobblesafari:block/ultraspace_stem_1",
+        "y": 90
+      },
+      {
+        "model": "cobblesafari:block/ultraspace_stem_1",
+        "y": 180
+      },
+      {
+        "model": "cobblesafari:block/ultraspace_stem_1",
+        "y": 270
+      }
+    ]
+  }
+}

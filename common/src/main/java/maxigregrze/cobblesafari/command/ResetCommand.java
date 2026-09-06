@@ -153,20 +153,28 @@ public class ResetCommand {
         return 1;
     }
 
-    static int executeDungeonReset(CommandContext<CommandSourceStack> context) {
+    /**
+     * @param force skip the "players are still inside" refusal. That check is a courtesy, not a
+     *              safety property: {@code scheduleRegionClear} evacuates every occupant before it
+     *              erases anything. Without a force there is no way to reset while anyone is in a
+     *              dungeon at all, which makes several admin scenarios untestable.
+     */
+    static int executeDungeonReset(CommandContext<CommandSourceStack> context, boolean force) {
         CommandSourceStack source = context.getSource();
         MinecraftServer server = source.getServer();
 
         List<DungeonConfig> dungeons = DungeonDimensions.getAllDungeons();
 
-        for (DungeonConfig dungeon : dungeons) {
-            ServerLevel dungeonLevel = server.getLevel(dungeon.getDimensionKey());
-            if (dungeonLevel != null) {
-                List<ServerPlayer> playersInDimension = dungeonLevel.players();
-                if (!playersInDimension.isEmpty()) {
-                    source.sendFailure(Component.translatable("cobblesafari.command.reset.players_present",
-                            playersInDimension.size(), dungeon.getDimensionId()));
-                    return 0;
+        if (!force) {
+            for (DungeonConfig dungeon : dungeons) {
+                ServerLevel dungeonLevel = server.getLevel(dungeon.getDimensionKey());
+                if (dungeonLevel != null) {
+                    List<ServerPlayer> playersInDimension = dungeonLevel.players();
+                    if (!playersInDimension.isEmpty()) {
+                        source.sendFailure(Component.translatable("cobblesafari.command.reset.players_present",
+                                playersInDimension.size(), dungeon.getDimensionId()));
+                        return 0;
+                    }
                 }
             }
         }

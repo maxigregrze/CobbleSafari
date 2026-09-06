@@ -1,0 +1,15 @@
+{
+  "name": "cobblesafari:megalopolis/entrance",
+  "fallback": "minecraft:empty",
+  "elements": [
+    {
+      "weight": 1,
+      "element": {
+        "location": "cobblesafari:megalopolis/wormhole_room",
+        "processors": "minecraft:empty",
+        "projection": "rigid",
+        "element_type": "minecraft:single_pool_element"
+      }
+    }
+  ]
+}

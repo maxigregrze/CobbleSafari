@@ -213,10 +213,11 @@ public final class UnionRoomManager {
             instance.occupied = true;
 
             data.savePlayerOrigin(player.getUUID(), player.blockPosition(), player.level().dimension());
-            PlayerTimerData timerData = TimerManager.getOrCreateData(player, DIMENSION_ID);
+            PlayerTimerData timerData = TimerManager.getOrCreateAccount(player, DIMENSION_ID);
             timerData.setRemainingTicks(TIMER_SECONDS * 20);
             timerData.setLastResetTimestamp(System.currentTimeMillis());
-            TimerManager.setPlayerOrigin(player, DIMENSION_ID, player.blockPosition(), player.level().dimension());
+            TimerManager.setPlayerOrigin(player, maxigregrze.cobblesafari.data.TimerScope.of(DIMENSION_ID),
+                    player.blockPosition(), player.level().dimension());
 
             teleportToInstance(player, unionLevel, instance);
             TimerManager.startTimer(player, DIMENSION_ID);
@@ -303,10 +304,11 @@ public final class UnionRoomManager {
         synchronized (UnionRoomManager.class) {
             session.guestUUIDs.add(player.getUUID());
             data.savePlayerOrigin(player.getUUID(), player.blockPosition(), player.level().dimension());
-            PlayerTimerData timerData = TimerManager.getOrCreateData(player, DIMENSION_ID);
+            PlayerTimerData timerData = TimerManager.getOrCreateAccount(player, DIMENSION_ID);
             timerData.setRemainingTicks(TIMER_SECONDS * 20);
             timerData.setLastResetTimestamp(System.currentTimeMillis());
-            TimerManager.setPlayerOrigin(player, DIMENSION_ID, player.blockPosition(), player.level().dimension());
+            TimerManager.setPlayerOrigin(player, maxigregrze.cobblesafari.data.TimerScope.of(DIMENSION_ID),
+                    player.blockPosition(), player.level().dimension());
 
             teleportToInstance(player, unionLevel, instance);
             TimerManager.startTimer(player, DIMENSION_ID);
@@ -350,7 +352,7 @@ public final class UnionRoomManager {
         for (UnionRoomSavedData.SessionData session : data.getAllSessions()) {
             ServerPlayer host = server.getPlayerList().getPlayer(session.hostUUID);
             if (host != null && !isInUnionRoom(host)) {
-                PlayerTimerData td = TimerManager.getOrCreateData(host, DIMENSION_ID);
+                PlayerTimerData td = TimerManager.getOrCreateAccount(host, DIMENSION_ID);
                 td.setActive(false);
                 td.setRemainingTicks(0);
                 TimerManager.savePlayerData(host, td);
@@ -458,7 +460,7 @@ public final class UnionRoomManager {
                 player.getYRot(), player.getXRot());
         player.resetFallDistance();
 
-        PlayerTimerData td = TimerManager.getOrCreateData(player, DIMENSION_ID);
+        PlayerTimerData td = TimerManager.getOrCreateAccount(player, DIMENSION_ID);
         td.setRemainingTicks(0);
         td.setActive(false);
         TimerManager.savePlayerData(player, td);
@@ -542,8 +544,8 @@ public final class UnionRoomManager {
         BULK_UNION_EVAC.set(true);
         try {
             for (ServerPlayer p : toEvac) {
-                TimerManager.expireActiveTimerAndTeleport(p, DIMENSION_ID,
-                        TimerManager.getOrCreateData(p, DIMENSION_ID), true, unionFriendlyEvacMessage);
+                TimerManager.expireActiveTimerAndTeleport(p, maxigregrze.cobblesafari.data.TimerScope.of(DIMENSION_ID),
+                        TimerManager.getOrCreateAccount(p, DIMENSION_ID), true, unionFriendlyEvacMessage);
             }
         } finally {
             BULK_UNION_EVAC.remove();

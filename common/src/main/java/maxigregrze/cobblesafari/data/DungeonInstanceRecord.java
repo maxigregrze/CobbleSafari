@@ -2,7 +2,12 @@ package maxigregrze.cobblesafari.data;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.NbtUtils;
+import net.minecraft.nbt.Tag;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -23,7 +28,34 @@ public record DungeonInstanceRecord(
         int clearSectionsBelow,
         int clearSectionsAbove,
         int zoneSize,
-        boolean pendingDeletion
+        boolean pendingDeletion,
+        /**
+         * The entrance portal is gone, but this region is not: it lives on while it is occupied
+         * (action plan 182, A1). Absent from a pre-182 record, which therefore reads {@code false}
+         * - "entrance still open" - and behaves exactly as before until its portal disappears.
+         */
+        boolean entranceClosed,
+        /**
+         * The parent instance this one is nested inside, or {@code null} for an ordinary dungeon
+         * (action plan 183, B3). Every field below is additive and optional on read: a pre-183
+         * record reads {@code null} / {@code 0} / empty and behaves exactly as before.
+         */
+        UUID parentInstanceId,
+        /** The single player this sub-instance belongs to, or {@code null}. */
+        UUID ownerPlayerId,
+        /** Credit granted on entry - the minuend of the debit (action plan 183, section 6.2). */
+        int grantedTicks,
+        /** The ride's {@code type}: <b>interpreted</b>, it selects the structure. */
+        int rollTypeId,
+        /** The ride's {@code tier}: recorded, never interpreted (spec v2 section 4.7). */
+        int rollTier,
+        /** The ride's {@code distance}: recorded, never interpreted (spec v2 section 4.7). */
+        int rollDistance,
+        /**
+         * Players who have already spent their once-per-run wormhole entry on <b>this</b> parent
+         * instance (action plan 183, B7). Per run by construction: it resets with the instance.
+         */
+        List<UUID> subEntriesUsed
 ) {
     private static final String NBT_INSTANCE_ID = "InstanceId";
     private static final String NBT_PORTAL_ID = "PortalId";
@@ -40,6 +72,14 @@ public record DungeonInstanceRecord(
     private static final String NBT_CLEAR_SECTIONS_ABOVE = "ClearSectionsAbove";
     private static final String NBT_ZONE_SIZE = "ZoneSize";
     private static final String NBT_PENDING_DELETION = "PendingDeletion";
+    private static final String NBT_ENTRANCE_CLOSED = "EntranceClosed";
+    private static final String NBT_PARENT_INSTANCE_ID = "ParentInstanceId";
+    private static final String NBT_OWNER_PLAYER_ID = "OwnerPlayerId";
+    private static final String NBT_GRANTED_TICKS = "GrantedTicks";
+    private static final String NBT_ROLL_TYPE = "RollType";
+    private static final String NBT_ROLL_TIER = "RollTier";
+    private static final String NBT_ROLL_DISTANCE = "RollDistance";
+    private static final String NBT_SUB_ENTRIES_USED = "SubEntriesUsed";
 
     public static DungeonInstanceRecord create(
             UUID portalId,
@@ -69,7 +109,63 @@ public record DungeonInstanceRecord(
                 clearSectionsBelow,
                 clearSectionsAbove,
                 zoneSize,
-                false
+                false,
+                false,
+                null,
+                null,
+                0,
+                0,
+                0,
+                0,
+                List.of()
+        );
+    }
+
+    /**
+     * A sub-instance: no portal, one owner, one parent, and the ride's three values
+     * (action plan 183, section 5.4).
+     */
+    public static DungeonInstanceRecord createSub(
+            String dimensionId,
+            int slot,
+            BlockPos structurePos,
+            int chunkMinX,
+            int chunkMinZ,
+            int chunkMaxX,
+            int chunkMaxZ,
+            int clearSectionsBelow,
+            int clearSectionsAbove,
+            int zoneSize,
+            UUID parentInstanceId,
+            UUID ownerPlayerId,
+            int grantedTicks,
+            int rollTypeId,
+            int rollTier,
+            int rollDistance
+    ) {
+        return new DungeonInstanceRecord(
+                UUID.randomUUID(),
+                null,
+                dimensionId,
+                slot,
+                structurePos,
+                chunkMinX,
+                chunkMinZ,
+                chunkMaxX,
+                chunkMaxZ,
+                structurePos.getY(),
+                clearSectionsBelow,
+                clearSectionsAbove,
+                zoneSize,
+                false,
+                false,
+                parentInstanceId,
+                ownerPlayerId,
+                grantedTicks,
+                rollTypeId,
+                rollTier,
+                rollDistance,
+                List.of()
         );
     }
 
@@ -78,8 +174,68 @@ public record DungeonInstanceRecord(
                 instanceId, portalId, dimensionId, slot, structurePos,
                 chunkMinX, chunkMinZ, chunkMaxX, chunkMaxZ,
                 structureY, clearSectionsBelow, clearSectionsAbove, zoneSize,
-                pendingDeletion
+                pendingDeletion, entranceClosed,
+                parentInstanceId, ownerPlayerId, grantedTicks,
+                rollTypeId, rollTier, rollDistance, subEntriesUsed
         );
+    }
+
+    /** Detach: the portal is gone, the region is not (action plan 182, A1). */
+    public DungeonInstanceRecord withEntranceClosed(boolean entranceClosed) {
+        return new DungeonInstanceRecord(
+                instanceId, portalId, dimensionId, slot, structurePos,
+                chunkMinX, chunkMinZ, chunkMaxX, chunkMaxZ,
+                structureY, clearSectionsBelow, clearSectionsAbove, zoneSize,
+                pendingDeletion, entranceClosed,
+                parentInstanceId, ownerPlayerId, grantedTicks,
+                rollTypeId, rollTier, rollDistance, subEntriesUsed
+        );
+    }
+
+    /**
+     * Spends {@code playerId}'s once-per-run wormhole entry on this parent instance
+     * (action plan 183, B7). Idempotent: a player already in the list is not added twice.
+     */
+    public DungeonInstanceRecord withSubEntryConsumed(UUID playerId) {
+        if (playerId == null || subEntriesUsed.contains(playerId)) {
+            return this;
+        }
+        List<UUID> spent = new ArrayList<>(subEntriesUsed);
+        spent.add(playerId);
+        return new DungeonInstanceRecord(
+                instanceId, portalId, dimensionId, slot, structurePos,
+                chunkMinX, chunkMinZ, chunkMaxX, chunkMaxZ,
+                structureY, clearSectionsBelow, clearSectionsAbove, zoneSize,
+                pendingDeletion, entranceClosed,
+                parentInstanceId, ownerPlayerId, grantedTicks,
+                rollTypeId, rollTier, rollDistance, List.copyOf(spent)
+        );
+    }
+
+    /** Gives {@code playerId} their entry back - the two server-initiated failures of section 8.4. */
+    public DungeonInstanceRecord withSubEntryRefunded(UUID playerId) {
+        if (playerId == null || !subEntriesUsed.contains(playerId)) {
+            return this;
+        }
+        List<UUID> spent = new ArrayList<>(subEntriesUsed);
+        spent.remove(playerId);
+        return new DungeonInstanceRecord(
+                instanceId, portalId, dimensionId, slot, structurePos,
+                chunkMinX, chunkMinZ, chunkMaxX, chunkMaxZ,
+                structureY, clearSectionsBelow, clearSectionsAbove, zoneSize,
+                pendingDeletion, entranceClosed,
+                parentInstanceId, ownerPlayerId, grantedTicks,
+                rollTypeId, rollTier, rollDistance, List.copyOf(spent)
+        );
+    }
+
+    public boolean hasSpentSubEntry(UUID playerId) {
+        return playerId != null && subEntriesUsed.contains(playerId);
+    }
+
+    /** @return true when this record describes a nested visit rather than an ordinary dungeon. */
+    public boolean isSubInstance() {
+        return parentInstanceId != null || ownerPlayerId != null;
     }
 
     /**
@@ -122,6 +278,33 @@ public record DungeonInstanceRecord(
         tag.putInt(NBT_CLEAR_SECTIONS_ABOVE, clearSectionsAbove);
         tag.putInt(NBT_ZONE_SIZE, zoneSize);
         tag.putBoolean(NBT_PENDING_DELETION, pendingDeletion);
+        tag.putBoolean(NBT_ENTRANCE_CLOSED, entranceClosed);
+        // Sub-instance fields: written only when set, so an ordinary record's NBT is unchanged.
+        if (parentInstanceId != null) {
+            tag.putUUID(NBT_PARENT_INSTANCE_ID, parentInstanceId);
+        }
+        if (ownerPlayerId != null) {
+            tag.putUUID(NBT_OWNER_PLAYER_ID, ownerPlayerId);
+        }
+        if (grantedTicks != 0) {
+            tag.putInt(NBT_GRANTED_TICKS, grantedTicks);
+        }
+        if (rollTypeId != 0) {
+            tag.putInt(NBT_ROLL_TYPE, rollTypeId);
+        }
+        if (rollTier != 0) {
+            tag.putInt(NBT_ROLL_TIER, rollTier);
+        }
+        if (rollDistance != 0) {
+            tag.putInt(NBT_ROLL_DISTANCE, rollDistance);
+        }
+        if (!subEntriesUsed.isEmpty()) {
+            ListTag spent = new ListTag();
+            for (UUID id : subEntriesUsed) {
+                spent.add(NbtUtils.createUUID(id));
+            }
+            tag.put(NBT_SUB_ENTRIES_USED, spent);
+        }
         return tag;
     }
 
@@ -133,6 +316,14 @@ public record DungeonInstanceRecord(
                 tag.getInt(NBT_STRUCTURE_Y),
                 tag.getInt(NBT_STRUCTURE_Z)
         );
+        List<UUID> spent = List.of();
+        if (tag.contains(NBT_SUB_ENTRIES_USED)) {
+            List<UUID> parsed = new ArrayList<>();
+            for (Tag entry : tag.getList(NBT_SUB_ENTRIES_USED, Tag.TAG_INT_ARRAY)) {
+                parsed.add(NbtUtils.loadUUID(entry));
+            }
+            spent = List.copyOf(parsed);
+        }
         return new DungeonInstanceRecord(
                 instanceId,
                 portalId,
@@ -147,7 +338,17 @@ public record DungeonInstanceRecord(
                 tag.getInt(NBT_CLEAR_SECTIONS_BELOW),
                 tag.getInt(NBT_CLEAR_SECTIONS_ABOVE),
                 tag.getInt(NBT_ZONE_SIZE),
-                tag.getBoolean(NBT_PENDING_DELETION)
+                tag.getBoolean(NBT_PENDING_DELETION),
+                // Absent on a pre-182 record: false, i.e. the entrance is still open.
+                tag.getBoolean(NBT_ENTRANCE_CLOSED),
+                // Absent on a pre-183 record: not a sub-instance, no rolls, no entries spent.
+                tag.contains(NBT_PARENT_INSTANCE_ID) ? tag.getUUID(NBT_PARENT_INSTANCE_ID) : null,
+                tag.contains(NBT_OWNER_PLAYER_ID) ? tag.getUUID(NBT_OWNER_PLAYER_ID) : null,
+                tag.getInt(NBT_GRANTED_TICKS),
+                tag.getInt(NBT_ROLL_TYPE),
+                tag.getInt(NBT_ROLL_TIER),
+                tag.getInt(NBT_ROLL_DISTANCE),
+                spent
         );
     }
 }

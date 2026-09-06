@@ -1,7 +1,20 @@
 {
   "typeId": 2,
   "weight": 10,
-  "structurePool": "cobblesafari:ultra_space/debug_beta",
+  "structurePool": "cobblesafari:ultraspace/debug_beta",
   "tint": "#E04FD0",
-  "encounters": { "0": [], "1": [], "2": [], "3": [] }
+  "encounters": {
+    "0": [
+      "stakataka"
+    ],
+    "1": [
+      "pheromosa"
+    ],
+    "2": [
+      "minior"
+    ],
+    "3": [
+      "solrock"
+    ]
+  }
 }

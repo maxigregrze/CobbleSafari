@@ -33,6 +33,7 @@ public class DungeonConfig {
     private final int clearSectionsBelow;
     private final int clearSectionsAbove;
     private final int fixedStructureY;
+    private final boolean subDungeon;
 
     public DungeonConfig(String id, ResourceKey<Level> dimensionKey, String structureId,
                          int playerSpawnOffsetX, int playerSpawnOffsetY, int playerSpawnOffsetZ,
@@ -117,6 +118,17 @@ public class DungeonConfig {
                           int timerDurationSeconds, int weight, StructureType structureType, int jigsawDepth,
                           boolean skipTeleportScreen, boolean externallyManaged,
                           int zoneSize, int clearSectionsBelow, int clearSectionsAbove, int fixedStructureY) {
+        this(id, dimensionKey, structureId, playerSpawnOffsetX, playerSpawnOffsetY, playerSpawnOffsetZ,
+             timerDurationSeconds, weight, structureType, jigsawDepth, skipTeleportScreen, externallyManaged,
+             zoneSize, clearSectionsBelow, clearSectionsAbove, fixedStructureY, false);
+    }
+
+    private DungeonConfig(String id, ResourceKey<Level> dimensionKey, String structureId,
+                          int playerSpawnOffsetX, int playerSpawnOffsetY, int playerSpawnOffsetZ,
+                          int timerDurationSeconds, int weight, StructureType structureType, int jigsawDepth,
+                          boolean skipTeleportScreen, boolean externallyManaged,
+                          int zoneSize, int clearSectionsBelow, int clearSectionsAbove, int fixedStructureY,
+                          boolean subDungeon) {
         this.id = id;
         this.dimensionKey = dimensionKey;
         this.structureId = structureId;
@@ -133,6 +145,7 @@ public class DungeonConfig {
         this.clearSectionsBelow = clearSectionsBelow;
         this.clearSectionsAbove = clearSectionsAbove;
         this.fixedStructureY = fixedStructureY;
+        this.subDungeon = subDungeon;
     }
 
     /**
@@ -145,7 +158,24 @@ public class DungeonConfig {
                 playerSpawnOffsetX, playerSpawnOffsetY, playerSpawnOffsetZ,
                 timerDurationSeconds, weight, structureType, jigsawDepth,
                 skipTeleportScreen, externallyManaged,
-                zoneSize, clearSectionsBelow, clearSectionsAbove, y);
+                zoneSize, clearSectionsBelow, clearSectionsAbove, y, subDungeon);
+    }
+
+    /**
+     * Copy of this configuration marked as a <b>sub-dungeon</b>: a dimension reached from inside
+     * another dungeon rather than from a Hoopa portal (action plan 183, B1).
+     *
+     * <p>The flag is read in exactly two places, both exclusions - {@code getRandomDungeon()} and
+     * {@code PortalSpawnManager.getEnabledDungeonIdsForCycle()}. Every other part of the chain
+     * applies unchanged: slot allocation, bounds capture, the async clearer, the timer registry
+     * sync, and {@code isDungeonDimension} (and therefore the void guard and the presence sweep).</p>
+     */
+    public DungeonConfig asSubDungeon() {
+        return new DungeonConfig(id, dimensionKey, structureId,
+                playerSpawnOffsetX, playerSpawnOffsetY, playerSpawnOffsetZ,
+                timerDurationSeconds, weight, structureType, jigsawDepth,
+                skipTeleportScreen, externallyManaged,
+                zoneSize, clearSectionsBelow, clearSectionsAbove, fixedStructureY, true);
     }
 
     public String getId() {
@@ -227,5 +257,10 @@ public class DungeonConfig {
 
     public int getFixedStructureY() {
         return fixedStructureY;
+    }
+
+    /** @return true when this dimension is entered from inside another dungeon (action plan 183, B1). */
+    public boolean isSubDungeon() {
+        return subDungeon;
     }
 }

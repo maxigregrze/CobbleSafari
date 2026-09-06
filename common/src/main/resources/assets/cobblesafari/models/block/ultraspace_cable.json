@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/cube_column",
+  "textures": {
+    "end": "cobblesafari:block/ultracable_top",
+    "side": "cobblesafari:block/ultracable_sides"
+  }
+}

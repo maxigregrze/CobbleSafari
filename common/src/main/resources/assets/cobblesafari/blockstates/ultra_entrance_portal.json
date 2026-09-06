@@ -1,0 +1,34 @@
+{
+	"variants": {
+		"facing=north,half=lower": {
+			"model": "cobblesafari:block/ultra_entranceportal_down"
+		},
+		"facing=north,half=upper": {
+			"model": "cobblesafari:block/ultra_entranceportal_up"
+		},
+		"facing=east,half=lower": {
+			"model": "cobblesafari:block/ultra_entranceportal_down",
+			"y": 90
+		},
+		"facing=east,half=upper": {
+			"model": "cobblesafari:block/ultra_entranceportal_up",
+			"y": 90
+		},
+		"facing=south,half=lower": {
+			"model": "cobblesafari:block/ultra_entranceportal_down",
+			"y": 180
+		},
+		"facing=south,half=upper": {
+			"model": "cobblesafari:block/ultra_entranceportal_up",
+			"y": 180
+		},
+		"facing=west,half=lower": {
+			"model": "cobblesafari:block/ultra_entranceportal_down",
+			"y": 270
+		},
+		"facing=west,half=upper": {
+			"model": "cobblesafari:block/ultra_entranceportal_up",
+			"y": 270
+		}
+	}
+}

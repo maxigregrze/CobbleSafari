@@ -6,8 +6,10 @@ import maxigregrze.cobblesafari.block.dungeon.DungeonPortalBlockEntity;
 import maxigregrze.cobblesafari.init.ModBlocks;
 import maxigregrze.cobblesafari.config.DimensionTimerEntry;
 import maxigregrze.cobblesafari.config.SafariTimerConfig;
+import maxigregrze.cobblesafari.data.DungeonInstanceRecord;
 import maxigregrze.cobblesafari.data.DungeonPositionSavedData;
 import maxigregrze.cobblesafari.data.PlayerTimerData;
+import maxigregrze.cobblesafari.data.TimerScope;
 import maxigregrze.cobblesafari.manager.TimerManager;
 import maxigregrze.cobblesafari.network.ModNetworking;
 import maxigregrze.cobblesafari.world.StructurePlacer;
@@ -35,13 +37,17 @@ import java.util.concurrent.ConcurrentHashMap;
 public class DungeonTeleportHandler {
 
     private static final Map<UUID, DungeonInstance> ACTIVE_INSTANCES = new ConcurrentHashMap<>();
-    private static final Map<UUID, PlayerOrigin> PLAYER_ORIGINS = new ConcurrentHashMap<>();
     private static final Map<UUID, GenerationState> GENERATION_STATES = new ConcurrentHashMap<>();
     private static final Set<UUID> PORTALS_GENERATING = ConcurrentHashMap.newKeySet();
     public static final int ZONE_SIZE = 512;
 
     private DungeonTeleportHandler() {}
 
+    /**
+     * @param instanceId the instance this portal admits to, or {@code null} on a first entry where
+     *                   the structure does not exist yet. Resolved by portal, never by position:
+     *                   at admission time the player is still in the overworld (plan 181 § 3.5).
+     */
     public record DungeonValidationResult(
             DungeonConfig config,
             ServerLevel dungeonLevel,
@@ -49,9 +55,11 @@ public class DungeonTeleportHandler {
             boolean isReEntry,
             int timerTicks,
             BlockPos playerOriginPos,
-            ResourceKey<Level> playerOriginDimension
+            ResourceKey<Level> playerOriginDimension,
+            UUID instanceId
     ) {}
 
+    /** @param instanceId the instance the player is about to enter; the session's scope id. */
     public record DungeonPrepResult(
             ServerLevel dungeonLevel,
             BlockPos playerSpawnPos,
@@ -60,8 +68,27 @@ public class DungeonTeleportHandler {
             boolean isReEntry,
             int timerTicks,
             BlockPos playerOriginPos,
-            ResourceKey<Level> playerOriginDimension
+            ResourceKey<Level> playerOriginDimension,
+            UUID instanceId
     ) {}
+
+    /**
+     * The "by portal" scope resolver (plan 181 § 3.5): which live instance does this portal admit to?
+     * Returns {@code null} when the structure has not been generated yet (a first entry), or when the
+     * instance is already scheduled for deletion - a door onto a region that is being erased.
+     */
+    public static UUID resolveInstanceForPortal(MinecraftServer server, DungeonPortalBlockEntity portalEntity,
+                                                String dimensionId) {
+        if (server == null || portalEntity == null) {
+            return null;
+        }
+        DungeonInstanceRecord record = DungeonPositionSavedData.get(server).findInstance(
+                portalEntity.getPortalId(), portalEntity.getDungeonStructurePos(), dimensionId);
+        if (record == null || record.pendingDeletion()) {
+            return null;
+        }
+        return record.instanceId();
+    }
 
     public static DungeonValidationResult validateDungeonEntry(ServerPlayer player, DungeonPortalBlockEntity portalEntity) {
         MinecraftServer server = player.getServer();
@@ -81,11 +108,17 @@ public class DungeonTeleportHandler {
 
         String dimensionId = config.getDimensionId();
         boolean isReEntry = portalEntity.hasPlayerEntered(player.getUUID());
-        PlayerTimerData timerData = TimerManager.getOrCreateData(player, dimensionId);
+        UUID instanceId = resolveInstanceForPortal(server, portalEntity, dimensionId);
+
+        // The session for the instance this portal admits to, if the player already holds one.
+        // Absent on a first entry, when no instance exists yet.
+        PlayerTimerData session = instanceId == null
+                ? null
+                : TimerManager.session(player, TimerScope.of(dimensionId, instanceId));
 
         int timerTicks;
-        if (isReEntry) {
-            Integer reEntryTicks = computeReEntryTimerTicks(player, portalEntity, config, timerData);
+        if (isReEntry && session != null) {
+            Integer reEntryTicks = computeReEntryTimerTicks(player, portalEntity, config, session);
             if (reEntryTicks == null) {
                 return null;
             }
@@ -99,7 +132,7 @@ public class DungeonTeleportHandler {
 
         return new DungeonValidationResult(
                 config, dungeonLevel, dimensionId,
-                isReEntry, timerTicks, playerOriginPos, playerOriginDimension
+                isReEntry, timerTicks, playerOriginPos, playerOriginDimension, instanceId
         );
     }
 
@@ -115,7 +148,14 @@ public class DungeonTeleportHandler {
         return config;
     }
 
-    /** Returns the timer ticks for a re-entry, or {@code null} if entry must be denied. */
+    /**
+     * Returns the timer ticks for a re-entry, or {@code null} if entry must be denied.
+     * <p>
+     * Pure calculation since plan 181 (V4): it used to call {@code resetEntryFeePayDay()} - a
+     * mutation, from a method invoked up to three times per interaction including when the player
+     * <em>declines</em>. Deciding to charge now belongs to the caller, the only one that knows
+     * whether the player accepted.
+     */
     private static Integer computeReEntryTimerTicks(ServerPlayer player, DungeonPortalBlockEntity portalEntity,
                                                     DungeonConfig config, PlayerTimerData timerData) {
         if (timerData.getRemainingTicks() <= 0) {
@@ -126,15 +166,14 @@ public class DungeonTeleportHandler {
                 player.sendSystemMessage(Component.translatable("cobblesafari.dungeon.error.no_time_remaining"));
                 return null;
             }
-            timerData.resetEntryFeePayDay();
+            // A re-purchase is a first entry (plan 181 § 6.2): same grant, same clamp, same stamp.
+            // The branch used to return getRemainingTicks() here - that is, 0 - so the player was
+            // charged and then evicted on the next tick.
+            return computeNewEntryTimerTicks(portalEntity, config.getDimensionId());
         }
 
-        long portalRemaining = portalEntity.getRemainingLifetimeTicks();
-        if (portalRemaining >= 0 && timerData.getRemainingTicks() > portalRemaining) {
-            CobbleSafari.LOGGER.info("Player {} re-entering dungeon: timer capped from {} to {} ticks (portal expiring)",
-                    player.getName().getString(), timerData.getRemainingTicks(), (int) portalRemaining);
-            return (int) portalRemaining;
-        }
+        // No clamp to the portal's remaining life since plan 182 (A4). That clamp was fix 2 of plan
+        // 43, and it existed because the instance died with the portal - which it no longer does.
         return timerData.getRemainingTicks();
     }
 
@@ -143,10 +182,8 @@ public class DungeonTeleportHandler {
                 .map(DimensionTimerEntry::getTimerDurationTicks)
                 .orElse(SafariTimerConfig.getTimerDurationTicks());
 
-        long portalRemaining = portalEntity.getRemainingLifetimeTicks();
-        if (portalRemaining >= 0 && portalRemaining < configuredTicks) {
-            return (int) portalRemaining;
-        }
+        // The whole point of Feature A: a player entering at minute 29 of a 30-minute window gets
+        // the full configured stay, and plays it out after the entrance closes (plan 182, A4).
         return configuredTicks;
     }
 
@@ -161,43 +198,49 @@ public class DungeonTeleportHandler {
         return finalizeGeneration(player, portalEntity, validation);
     }
 
-    public static void executeDungeonTeleport(ServerPlayer player, DungeonPortalBlockEntity portalEntity, DungeonPrepResult prep) {
+    /** @return {@code true} only if the player is actually through; {@code false} means the
+     *          entry fee is still owed back (plan 181, V8). */
+    public static boolean executeDungeonTeleport(ServerPlayer player, DungeonPortalBlockEntity portalEntity, DungeonPrepResult prep) {
         // Close the (uncloseable) TpAccept loading screen before doing anything else: once we are in
         // here the teleport is committed, so no branch below should leave it open. Do not rely on the
         // vanilla ReceivingLevelScreen replacing it during changeDimension -- client mods that skip the
         // world loading screen cancel Minecraft.setScreen entirely and would soft-lock the player.
         ModNetworking.sendCloseTpAccept(player);
 
-        PLAYER_ORIGINS.put(player.getUUID(), new PlayerOrigin(prep.playerOriginPos(), prep.playerOriginDimension()));
+        // The scope must be known before the door opens; nothing is written until it is crossed.
+        if (prep.instanceId() == null) {
+            CobbleSafari.LOGGER.error("Aborting dungeon teleport for {}: no instance resolved for portal {}",
+                    player.getName().getString(), portalEntity.getPortalId());
+            return false;
+        }
+        // D2 (plan 182 section 5.4): the instance id was resolved in completeFinalization, up to 100
+        // ticks ago, and PortalSpawnManager.tick runs earlier in this very tick than the countdown.
+        // An entrance that closed in between may already have released it, so re-check before
+        // admitting anyone. Abandoning here refunds the fee through plan 181 V8.
+        MinecraftServer teleportServer = player.getServer();
+        if (teleportServer == null
+                || !DungeonPositionSavedData.get(teleportServer).isInstanceLive(prep.instanceId())) {
+            CobbleSafari.LOGGER.warn("Aborting dungeon teleport for {}: instance {} is no longer live",
+                    player.getName().getString(), prep.instanceId());
+            ModNetworking.sendCloseTpAccept(player);
+            player.sendSystemMessage(Component.translatable("cobblesafari.dungeon.error.structure_failed"));
+            return false;
+        }
+
+        TimerScope scope = TimerScope.of(prep.dimensionId(), prep.instanceId());
 
         DungeonInstance instance = ACTIVE_INSTANCES.get(portalEntity.getPortalId());
         if (instance != null) {
             instance.addPlayer(player.getUUID());
         }
 
-        if (!prep.isReEntry()) {
-            portalEntity.addEnteredPlayer(player.getUUID());
-            int portalsUsed = maxigregrze.cobblesafari.init.ModStats.awardAndGet(
-                    player, maxigregrze.cobblesafari.init.ModStats.HOOPA_PORTALS_EXPLORED);
-            maxigregrze.cobblesafari.advancement.ModCriteria.PORTAL_USED.trigger(player, portalsUsed);
-            PlayerTimerData timerData = TimerManager.getOrCreateData(player, prep.dimensionId());
-            timerData.setRemainingTicks(prep.timerTicks());
-            timerData.setLastResetTimestamp(System.currentTimeMillis());
-        } else {
-            PlayerTimerData timerData = TimerManager.getOrCreateData(player, prep.dimensionId());
-            if (prep.timerTicks() < timerData.getRemainingTicks()) {
-                timerData.setRemainingTicks(prep.timerTicks());
-                TimerManager.savePlayerData(player, timerData);
-            }
-        }
-
-        TimerManager.setPlayerOrigin(player, prep.dimensionId(), prep.playerOriginPos(), prep.playerOriginDimension());
-
         if (player.isRemoved()) {
             CobbleSafari.LOGGER.warn("Player {} is already removed ({}), aborting dungeon teleport",
                     player.getName().getString(), player.getRemovalReason());
-            PLAYER_ORIGINS.remove(player.getUUID());
-            return;
+            if (instance != null) {
+                instance.removePlayer(player.getUUID());
+            }
+            return false;
         }
 
         DimensionTransition transition = new DimensionTransition(
@@ -214,50 +257,77 @@ public class DungeonTeleportHandler {
         } catch (NullPointerException e) {
             CobbleSafari.LOGGER.error("Failed to teleport player {} to dungeon due to chunk tracking inconsistency: {}",
                     player.getName().getString(), e.getMessage());
-            PLAYER_ORIGINS.remove(player.getUUID());
             if (instance != null) {
                 instance.removePlayer(player.getUUID());
             }
-            return;
+            return false;
         }
 
-        TimerManager.startTimer(player, prep.dimensionId());
+        // The receipt is issued at the door, not at the till (plan 181 § 4.2). Everything above can
+        // still abort; from here the player is demonstrably inside, so "a session exists" is
+        // equivalent to "this player was admitted" - the equivalence the presence guard rests on.
+        if (!prep.isReEntry()) {
+            portalEntity.addEnteredPlayer(player.getUUID());
+            int portalsUsed = maxigregrze.cobblesafari.init.ModStats.awardAndGet(
+                    player, maxigregrze.cobblesafari.init.ModStats.HOOPA_PORTALS_EXPLORED);
+            maxigregrze.cobblesafari.advancement.ModCriteria.PORTAL_USED.trigger(player, portalsUsed);
+            TimerManager.openSession(player, scope, prep.timerTicks(),
+                    prep.playerOriginPos(), prep.playerOriginDimension());
+        } else {
+            PlayerTimerData existing = TimerManager.session(player, scope);
+            if (existing == null) {
+                // Re-entry into an instance whose session is gone (purged mid-flight): treat it as
+                // the first entry it effectively is, rather than admitting an unmetered player.
+                TimerManager.openSession(player, scope, prep.timerTicks(),
+                        prep.playerOriginPos(), prep.playerOriginDimension());
+            } else {
+                // Assign, do not clamp. computeReEntryTimerTicks has already produced the correct
+                // figure for both cases: min(remaining, portal life) for a normal re-entry, and a
+                // full fresh grant for a re-purchase (§ 6.2). A "only lower it" guard would leave a
+                // re-purchase at zero - which is exactly the half of S2 this plan closes.
+                existing.setRemainingTicks(prep.timerTicks());
+                existing.setLastResetTimestamp(System.currentTimeMillis());
+                existing.setOriginPos(prep.playerOriginPos());
+                existing.setOriginDimension(prep.playerOriginDimension());
+                TimerManager.savePlayerData(player, existing);
+            }
+        }
+
+        TimerManager.startSession(player, scope);
         player.sendSystemMessage(Component.translatable("cobblesafari.dungeon.teleport.entrance"));
 
-        CobbleSafari.LOGGER.info("Player {} teleported to dungeon at {}",
-                player.getName().getString(), prep.playerSpawnPos());
+        CobbleSafari.LOGGER.info("Player {} teleported to dungeon at {} (session {})",
+                player.getName().getString(), prep.playerSpawnPos(), scope.key());
+        return true;
     }
 
     public static void teleportToExit(ServerPlayer player, DungeonPortalBlockEntity portalEntity) {
         MinecraftServer server = player.getServer();
         if (server == null) return;
 
-        PlayerOrigin origin = PLAYER_ORIGINS.get(player.getUUID());
+        // One source of origin, in one order (plan 181 § 8): the session that recorded it, then the
+        // exit portal's own record, then spawn. There is no in-memory map to disagree with the
+        // persisted data any more, and no "first dungeon with any origin" fallback to pick the wrong
+        // one (finding S3).
+        PlayerTimerData session = TimerManager.currentSession(player);
         BlockPos targetPos;
         ServerLevel targetLevel;
         boolean usedFailsafe = false;
 
-        if (origin != null) {
-            targetPos = origin.position();
-            targetLevel = server.getLevel(origin.dimension());
-            PLAYER_ORIGINS.remove(player.getUUID());
+        if (session != null && session.getOriginPos() != null && session.getOriginDimension() != null) {
+            targetPos = session.getOriginPos();
+            targetLevel = server.getLevel(session.getOriginDimension());
         } else if (portalEntity.getOriginPos() != null && portalEntity.getOriginDimension() != null) {
             targetPos = portalEntity.getOriginPos();
             targetLevel = server.getLevel(portalEntity.getOriginDimension());
+            CobbleSafari.LOGGER.warn("Using exit portal origin fallback for player {} exit teleport",
+                    player.getName().getString());
         } else {
-            PlayerTimerData timerData = findTimerDataWithOrigin(player, server);
-            if (timerData != null && timerData.getOriginPos() != null && timerData.getOriginDimension() != null) {
-                targetPos = timerData.getOriginPos();
-                targetLevel = server.getLevel(timerData.getOriginDimension());
-                CobbleSafari.LOGGER.warn("Using PlayerTimerData fallback for player {} exit teleport",
-                        player.getName().getString());
-            } else {
-                targetLevel = server.overworld();
-                targetPos = targetLevel.getSharedSpawnPos();
-                usedFailsafe = true;
-                CobbleSafari.LOGGER.warn("No origin data found for player {}, teleporting to spawn (failsafe)",
-                        player.getName().getString());
-            }
+            targetLevel = server.overworld();
+            targetPos = targetLevel.getSharedSpawnPos();
+            usedFailsafe = true;
+            CobbleSafari.LOGGER.warn("No origin data found for player {}, teleporting to spawn (failsafe)",
+                    player.getName().getString());
         }
 
         if (targetLevel == null) {
@@ -277,7 +347,33 @@ public class DungeonTeleportHandler {
                 DimensionTransition.DO_NOTHING
         );
 
+        // Leaving is final once the entrance is gone: there is no door to come back through, so the
+        // credit is spent rather than left dangling in the HUD (plan 182, A5). Read before the
+        // teleport, while the session is still resolvable from where the player stands.
+        boolean entranceClosed = isInsideClosedInstance(server, player);
+        if (entranceClosed && session != null) {
+            // Zero the credit, but leave isActive alone: changeDimension below fires
+            // ServerPlayerMixin -> pauseAllTimers, which deactivates AND syncs. Deactivating here
+            // instead makes pauseAllTimers skip the record ("already inactive"), so no packet is
+            // ever sent and the client's HUD stays frozen on screen outside the dungeon.
+            session.setRemainingTicks(0);
+            TimerManager.savePlayerData(player, session);
+        }
+
         player.changeDimension(transition);
+
+        if (entranceClosed) {
+            if (session != null) {
+                // Belt and braces: the HUD hides only on an active=false packet for the dimension
+                // it is showing, and this exit is the last chance to send one - the instance is
+                // about to be released and the session purged with it.
+                session.setActive(false);
+                TimerManager.savePlayerData(player, session);
+                TimerManager.syncToClient(player, session, false);
+            }
+            player.displayClientMessage(
+                    Component.translatable("cobblesafari.dungeon.exit.final"), true);
+        }
 
         if (usedFailsafe) {
             player.sendSystemMessage(Component.translatable("cobblesafari.dungeon.teleport.exit.failsafe"));
@@ -289,15 +385,19 @@ public class DungeonTeleportHandler {
                 player.getName().getString(), targetPos, usedFailsafe ? " (failsafe)" : "");
     }
 
-    private static PlayerTimerData findTimerDataWithOrigin(ServerPlayer player, @SuppressWarnings("unused") MinecraftServer server) {
-        for (DungeonConfig dungeon : DungeonDimensions.getAllDungeons()) {
-            String dimId = dungeon.getDimensionId();
-            PlayerTimerData data = TimerManager.getOrCreateData(player, dimId);
-            if (data.getOriginPos() != null && data.getOriginDimension() != null) {
-                return data;
-            }
+    /** Whether the player stands in an instance whose entrance has already closed (plan 182, A5). */
+    private static boolean isInsideClosedInstance(MinecraftServer server, ServerPlayer player) {
+        TimerScope scope = TimerManager.currentScope(player);
+        if (scope == null || !scope.isSession()) {
+            return false;
         }
-        return null;
+        try {
+            DungeonInstanceRecord record = DungeonPositionSavedData.get(server)
+                    .getInstance(UUID.fromString(scope.scopeId()));
+            return record != null && record.entranceClosed();
+        } catch (IllegalArgumentException e) {
+            return false;
+        }
     }
 
     /** Slot allocated for a new dungeon, together with the anchor position derived from it. */
@@ -376,8 +476,12 @@ public class DungeonTeleportHandler {
         };
     }
 
+    /**
+     * Detaches a player from the in-memory instances. It used to also drop their origin, which is
+     * how finding S11 arose: the call is dimension-agnostic, so unwinding one dungeon wiped the
+     * origin of another. The origin now lives on the session and nothing here can touch it.
+     */
     public static void clearPlayerData(UUID playerId) {
-        PLAYER_ORIGINS.remove(playerId);
         for (DungeonInstance instance : ACTIVE_INSTANCES.values()) {
             instance.removePlayer(playerId);
         }
@@ -395,8 +499,6 @@ public class DungeonTeleportHandler {
     public static Map<UUID, DungeonInstance> getActiveInstances() {
         return ACTIVE_INSTANCES;
     }
-
-    private record PlayerOrigin(BlockPos position, ResourceKey<Level> dimension) {}
 
     private static class GenerationState {
         BlockPos structurePos;
@@ -687,10 +789,14 @@ public class DungeonTeleportHandler {
         GENERATION_STATES.remove(portalEntity.getPortalId());
         PORTALS_GENERATING.remove(portalEntity.getPortalId());
 
+        // The instance exists now (registerActiveInstance ran above, or this portal already had
+        // one): this is where a first entry finally learns its scope.
+        UUID instanceId = resolveInstanceForPortal(server, portalEntity, validation.dimensionId());
+
         return new DungeonPrepResult(
                 state.dungeonLevel, playerSpawnPos, playerYaw, validation.dimensionId(),
                 validation.isReEntry(), validation.timerTicks(),
-                validation.playerOriginPos(), validation.playerOriginDimension()
+                validation.playerOriginPos(), validation.playerOriginDimension(), instanceId
         );
     }
 
@@ -723,10 +829,14 @@ public class DungeonTeleportHandler {
             playerYaw = 180.0f;
         }
 
+        UUID instanceId = validation.instanceId() != null
+                ? validation.instanceId()
+                : resolveInstanceForPortal(server, portalEntity, validation.dimensionId());
+
         return new DungeonPrepResult(
                 dungeonLevel, playerSpawnPos, playerYaw, validation.dimensionId(),
                 validation.isReEntry(), validation.timerTicks(),
-                validation.playerOriginPos(), validation.playerOriginDimension()
+                validation.playerOriginPos(), validation.playerOriginDimension(), instanceId
         );
     }
 }

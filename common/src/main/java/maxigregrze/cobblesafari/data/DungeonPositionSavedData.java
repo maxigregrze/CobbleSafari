@@ -259,13 +259,7 @@ public class DungeonPositionSavedData extends SavedData {
         List<DungeonInstanceRecord> live = liveRecords(dimensionId);
 
         // Pass 1 - real footprint bounds, Y as tie-breaker only.
-        DungeonInstanceRecord best = null;
-        for (DungeonInstanceRecord record : live) {
-            if (record.hasUsableBounds() && record.containsColumn(pos)
-                    && (best == null || isCloser(record, best, pos))) {
-                best = record;
-            }
-        }
+        DungeonInstanceRecord best = footprintMatch(live, pos);
         if (best != null) {
             return best;
         }
@@ -289,6 +283,37 @@ public class DungeonPositionSavedData extends SavedData {
             }
         }
         return best;
+    }
+
+    /**
+     * Pass 1 of {@link #findInstanceByPosition} <em>alone</em>: the live instance whose real captured
+     * footprint contains {@code pos}, or {@code null}.
+     * <p>
+     * Action plan 181 (V3) needs this stricter answer because the full resolver's third pass matches
+     * "nearest anchor within one {@code zoneSize}" - and {@code zoneSize} is exactly the grid pitch
+     * between neighbouring instances, so that pass can return a live but <em>wrong</em> instance.
+     * For objectives that only hides a HUD; for the timer it would evacuate a legitimate player, so
+     * the presence guard evacuates only on a footprint hit.
+     */
+    public DungeonInstanceRecord findInstanceByFootprint(String dimensionId, BlockPos pos) {
+        return footprintMatch(liveRecords(dimensionId), pos);
+    }
+
+    private DungeonInstanceRecord footprintMatch(List<DungeonInstanceRecord> live, BlockPos pos) {
+        DungeonInstanceRecord best = null;
+        for (DungeonInstanceRecord record : live) {
+            if (record.hasUsableBounds() && record.containsColumn(pos)
+                    && (best == null || isCloser(record, best, pos))) {
+                best = record;
+            }
+        }
+        return best;
+    }
+
+    /** {@code true} when {@code instanceId} names a live (known, non-pending) instance. */
+    public boolean isInstanceLive(UUID instanceId) {
+        DungeonInstanceRecord record = instances.get(instanceId);
+        return record != null && !record.pendingDeletion();
     }
 
     private List<DungeonInstanceRecord> liveRecords(String dimensionId) {

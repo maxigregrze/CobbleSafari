@@ -49,7 +49,7 @@ public class SafariExitCommand {
             return 0;
         }
 
-        PlayerTimerData timerData = TimerManager.getOrCreateData(player, safariDimensionId);
+        PlayerTimerData timerData = TimerManager.getOrCreateAccount(player, safariDimensionId);
         BlockPos originPos = timerData.getOriginPos();
         ResourceKey<Level> originDimension = timerData.getOriginDimension();
 

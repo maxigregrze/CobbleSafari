@@ -34,6 +34,7 @@ public class CobbleSafariCommand {
     private static final String ARG_PLAYER = "player";
     private static final String ARG_SECONDS = "seconds";
     private static final String ARG_DIMENSION = "dimension";
+    private static final String ARG_SCOPE = "scope";
     private static final String ROOT_LITERAL = "cobblesafari";
     private static final String ROOT_ALIAS = "cs";
     private static final int ROOT_PERMISSION_LEVEL = 2;
@@ -44,7 +45,8 @@ public class CobbleSafariCommand {
     private static final SuggestionProvider<CommandSourceStack> DIMENSION_SUGGESTIONS =
             (context, builder) -> SharedSuggestionProvider.suggest(SafariTimerConfig.getConfiguredDimensionIds(), builder);
     private static final SuggestionProvider<CommandSourceStack> DUNGEON_SPAWN_SUGGESTIONS =
-            (context, builder) -> SharedSuggestionProvider.suggest(DungeonDimensions.getEnabledDungeonIdsSorted(), builder);
+            (context, builder) -> SharedSuggestionProvider.suggest(
+                    DungeonDimensions.getPortalDestinationIdsSorted(), builder);
 
     private CobbleSafariCommand() {}
 
@@ -76,7 +78,8 @@ public class CobbleSafariCommand {
                         .requires(source -> source.hasPermission(ROOT_PERMISSION_LEVEL))
                         .then(CsBossCommand.build())
                         .then(CsMusicCommand.build())
-                        // TEMPORARY: delete this subtree once the wormhole device is the normal way in.
+                        // Operator-gated tuning launcher for a parentless ride. Kept deliberately:
+                        // see WarpRideCommand's javadoc (action plan 183, Decision section 12).
                         .then(Commands.literal("warpride")
                                 .then(Commands.literal("start")
                                         .executes(WarpRideCommand::executeStartSelf)
@@ -93,7 +96,12 @@ public class CobbleSafariCommand {
                                 .then(Commands.literal("safari")
                                         .executes(CobbleSafariCommand::executeResetSafari))
                                 .then(Commands.literal("dungeon")
-                                        .executes(CobbleSafariCommand::executeResetDungeon))
+                                        .executes(CobbleSafariCommand::executeResetDungeon)
+                                        // `force` skips the "someone is still inside" refusal. The
+                                        // clear pipeline evacuates before it erases anything, so
+                                        // the refusal is a courtesy, not a safety property.
+                                        .then(Commands.literal("force")
+                                                .executes(CobbleSafariCommand::executeResetDungeonForce)))
                                 .then(Commands.literal("system")
                                         .executes(CobbleSafariCommand::executeResetSystem)
                                         .then(Commands.literal("hard")
@@ -155,7 +163,27 @@ public class CobbleSafariCommand {
                                                 .then(Commands.argument(ARG_PLAYER, EntityArgument.player())
                                                         .then(Commands.argument(ARG_DIMENSION, StringArgumentType.greedyString())
                                                                 .suggests(DIMENSION_SUGGESTIONS)
-                                                                .executes(CobbleSafariCommand::executeTimerDimensionGet))))))
+                                                                .executes(CobbleSafariCommand::executeTimerDimensionGet)))))
+                                // One `session` node, not a `session`/`sessions` pair: the two read
+                                // almost identically and an operator cannot tell which is which.
+                                // `list` is the discovery path - it prints clickable scope ids that
+                                // copy themselves - and `add`/`set` consume one (plan 181 § 9).
+                                .then(Commands.literal("session")
+                                        .then(Commands.literal("list")
+                                                .then(Commands.argument(ARG_PLAYER, EntityArgument.player())
+                                                        .executes(CobbleSafariCommand::executeTimerSessionList)))
+                                        .then(Commands.literal("add")
+                                                .then(Commands.argument(ARG_PLAYER, EntityArgument.player())
+                                                        .then(Commands.argument(ARG_SCOPE, StringArgumentType.word())
+                                                                .suggests(DimensionTimerCommand.SCOPE_SUGGESTIONS)
+                                                                .then(Commands.argument(ARG_SECONDS, IntegerArgumentType.integer(1))
+                                                                        .executes(CobbleSafariCommand::executeTimerSessionAdd)))))
+                                        .then(Commands.literal("set")
+                                                .then(Commands.argument(ARG_PLAYER, EntityArgument.player())
+                                                        .then(Commands.argument(ARG_SCOPE, StringArgumentType.word())
+                                                                .suggests(DimensionTimerCommand.SCOPE_SUGGESTIONS)
+                                                                .then(Commands.argument(ARG_SECONDS, IntegerArgumentType.integer(0))
+                                                                        .executes(CobbleSafariCommand::executeTimerSessionSet)))))))
                         .then(Commands.literal("refresh")
                                 .requires(source -> source.hasPermission(4))
                                 .executes(CobbleSafariCommand::executeRefresh))
@@ -167,24 +195,45 @@ public class CobbleSafariCommand {
                         .then(Commands.literal("dungeon")
                         .then(Commands.literal("spawn")
                                 .executes(CobbleSafariCommand::executeDungeonSpawnSelf)
+                                // A destination can be named without forcing: the roll is what
+                                // "force" overrides, not the choice of dungeon.
+                                .then(Commands.argument(DungeonCommand.ARG_DUNGEON_ID, StringArgumentType.greedyString())
+                                        .suggests(DUNGEON_SPAWN_SUGGESTIONS)
+                                        .executes(CobbleSafariCommand::executeDungeonSpawnSelfSpecific))
                                 .then(Commands.literal("force")
                                         .executes(CobbleSafariCommand::executeDungeonSpawnForceSelf)
-                                        .then(Commands.argument(DungeonCommand.ARG_DUNGEON_ID, StringArgumentType.word())
+                                        .then(Commands.argument(DungeonCommand.ARG_DUNGEON_ID, StringArgumentType.greedyString())
                                                 .suggests(DUNGEON_SPAWN_SUGGESTIONS)
                                                 .executes(CobbleSafariCommand::executeDungeonSpawnForceSelfSpecific))
                                         .then(Commands.argument(ARG_PLAYER, EntityArgument.player())
                                                 .executes(CobbleSafariCommand::executeDungeonSpawnForce)
-                                                .then(Commands.argument(DungeonCommand.ARG_DUNGEON_ID, StringArgumentType.word())
+                                                .then(Commands.argument(DungeonCommand.ARG_DUNGEON_ID, StringArgumentType.greedyString())
                                                         .suggests(DUNGEON_SPAWN_SUGGESTIONS)
                                                         .executes(CobbleSafariCommand::executeDungeonSpawnForceSpecific))))
                                 .then(Commands.argument(ARG_PLAYER, EntityArgument.player())
-                                        .executes(CobbleSafariCommand::executeDungeonSpawn)))
+                                        .executes(CobbleSafariCommand::executeDungeonSpawn)
+                                        .then(Commands.argument(DungeonCommand.ARG_DUNGEON_ID, StringArgumentType.greedyString())
+                                                .suggests(DUNGEON_SPAWN_SUGGESTIONS)
+                                                .executes(CobbleSafariCommand::executeDungeonSpawnSpecific))))
+                                // Bare `list` gives instances: since plan 182 an instance outlives
+                                // its portal while occupied, so instances are what an operator
+                                // usually needs. Portals moved under an explicit sub-literal.
                                 .then(Commands.literal("list")
                                         .executes(CobbleSafariCommand::executeDungeonList)
-                                        .then(Commands.literal("force")
-                                                .executes(CobbleSafariCommand::executeDungeonForceList)))
+                                        .then(Commands.literal("portal")
+                                                .executes(CobbleSafariCommand::executeDungeonPortalList)
+                                                .then(Commands.literal("force")
+                                                        .executes(CobbleSafariCommand::executeDungeonForceList))))
                                 .then(Commands.literal("dimensions")
                                         .executes(CobbleSafariCommand::executeDungeonDimensions)));
+    }
+
+    private static int executeDungeonSpawnSelfSpecific(CommandContext<CommandSourceStack> context) {
+        return DungeonCommand.executeSpawnSelfWithDungeon(context);
+    }
+
+    private static int executeDungeonSpawnSpecific(CommandContext<CommandSourceStack> context) {
+        return DungeonCommand.executeSpawnWithDungeon(context);
     }
 
     private static int executeResetSafari(CommandContext<CommandSourceStack> context) {
@@ -192,7 +241,11 @@ public class CobbleSafariCommand {
     }
 
     private static int executeResetDungeon(CommandContext<CommandSourceStack> context) {
-        return ResetCommand.executeDungeonReset(context);
+        return ResetCommand.executeDungeonReset(context, false);
+    }
+
+    private static int executeResetDungeonForce(CommandContext<CommandSourceStack> context) {
+        return ResetCommand.executeDungeonReset(context, true);
     }
 
     private static int executeRefresh(CommandContext<CommandSourceStack> context) {
@@ -298,6 +351,18 @@ public class CobbleSafariCommand {
         return SafariTimerCommand.executeToggleWithState(context);
     }
 
+    private static int executeTimerSessionList(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
+        return DimensionTimerCommand.executeSessionList(context);
+    }
+
+    private static int executeTimerSessionAdd(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
+        return DimensionTimerCommand.executeSessionAdd(context);
+    }
+
+    private static int executeTimerSessionSet(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
+        return DimensionTimerCommand.executeSessionSet(context);
+    }
+
     private static int executeTimerDimensionAdd(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
         return DimensionTimerCommand.executeAdd(context);
     }
@@ -340,6 +405,10 @@ public class CobbleSafariCommand {
 
     private static int executeDungeonList(CommandContext<CommandSourceStack> context) {
         return DungeonCommand.executeList(context);
+    }
+
+    private static int executeDungeonPortalList(CommandContext<CommandSourceStack> context) {
+        return DungeonCommand.executePortalList(context);
     }
 
     private static int executeDungeonForceList(CommandContext<CommandSourceStack> context) {

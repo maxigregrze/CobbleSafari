@@ -1,6 +1,8 @@
 {
-	"replace": false,
-	"values": [
-		"cobblesafari:pokemon_statue"
-	]
+  "replace": false,
+  "values": [
+    "cobblesafari:pokemon_statue",
+    "cobblesafari:megapolis_light",
+    "cobblesafari:megapolis_stairs"
+  ]
 }

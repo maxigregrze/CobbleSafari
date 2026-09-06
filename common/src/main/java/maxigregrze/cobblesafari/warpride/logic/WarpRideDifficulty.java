@@ -61,10 +61,12 @@ public final class WarpRideDifficulty {
 
     private final int noBonusDistance;
     private final List<Band> bands;
+    private final WarpRideRewards rewards;
 
-    public WarpRideDifficulty(int noBonusDistance, List<Band> bands) {
+    public WarpRideDifficulty(int noBonusDistance, List<Band> bands, WarpRideRewards rewards) {
         this.noBonusDistance = noBonusDistance;
         this.bands = List.copyOf(bands);
+        this.rewards = rewards == null ? WarpRideRewards.defaults() : rewards;
     }
 
     public int noBonusDistance() {
@@ -73,6 +75,15 @@ public final class WarpRideDifficulty {
 
     public List<Band> bands() {
         return bands;
+    }
+
+    /**
+     * What a ride pays out (action plan 184). Never null: a file with no {@code rewards} block -
+     * which is every file written before that plan - falls back to the shipped scale field by
+     * field, because a wrong reward scale cannot break a ride the way a wrong band can.
+     */
+    public WarpRideRewards rewards() {
+        return rewards;
     }
 
     /** The band in force at {@code distance}; never null as long as a band starts at 0. */
@@ -109,6 +120,6 @@ public final class WarpRideDifficulty {
                 new double[]{0.00, 0.20, 0.50, 0.30}));
         b.add(new Band(4500, new double[]{0.29, 0.50, 0.16, 0.05}, 0.10, 0.00,
                 new double[]{0.00, 0.10, 0.45, 0.45}));
-        return new WarpRideDifficulty(4000, b);
+        return new WarpRideDifficulty(4000, b, WarpRideRewards.defaults());
     }
 }

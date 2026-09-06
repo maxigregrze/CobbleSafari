@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/cube_bottom_top",
+  "textures": {
+    "top": "cobblesafari:block/ultrasandstone_top",
+    "side": "cobblesafari:block/ultrasandstone_side",
+    "bottom": "cobblesafari:block/ultrasandstone_bottom"
+  }
+}

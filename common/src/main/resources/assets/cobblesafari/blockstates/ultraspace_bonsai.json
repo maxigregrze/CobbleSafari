@@ -1,0 +1,126 @@
+{
+  "variants": {
+    "face=floor,facing=north": [
+      {
+        "model": "cobblesafari:block/ultraspace_bonsai_ground"
+      },
+      {
+        "model": "cobblesafari:block/ultraspace_bonsai_ground_alt"
+      }
+    ],
+    "face=ceiling,facing=north": [
+      {
+        "model": "cobblesafari:block/ultraspace_bonsai_ground",
+        "x": 180
+      },
+      {
+        "model": "cobblesafari:block/ultraspace_bonsai_ground_alt",
+        "x": 180
+      }
+    ],
+    "face=wall,facing=north": [
+      {
+        "model": "cobblesafari:block/ultraspace_bonsai_wall",
+        "y": 90
+      },
+      {
+        "model": "cobblesafari:block/ultraspace_bonsai_wall_alt",
+        "y": 90
+      }
+    ],
+    "face=floor,facing=east": [
+      {
+        "model": "cobblesafari:block/ultraspace_bonsai_ground",
+        "y": 90
+      },
+      {
+        "model": "cobblesafari:block/ultraspace_bonsai_ground_alt",
+        "y": 90
+      }
+    ],
+    "face=ceiling,facing=east": [
+      {
+        "model": "cobblesafari:block/ultraspace_bonsai_ground",
+        "x": 180,
+        "y": 90
+      },
+      {
+        "model": "cobblesafari:block/ultraspace_bonsai_ground_alt",
+        "x": 180,
+        "y": 90
+      }
+    ],
+    "face=wall,facing=east": [
+      {
+        "model": "cobblesafari:block/ultraspace_bonsai_wall",
+        "y": 180
+      },
+      {
+        "model": "cobblesafari:block/ultraspace_bonsai_wall_alt",
+        "y": 180
+      }
+    ],
+    "face=floor,facing=south": [
+      {
+        "model": "cobblesafari:block/ultraspace_bonsai_ground",
+        "y": 180
+      },
+      {
+        "model": "cobblesafari:block/ultraspace_bonsai_ground_alt",
+        "y": 180
+      }
+    ],
+    "face=ceiling,facing=south": [
+      {
+        "model": "cobblesafari:block/ultraspace_bonsai_ground",
+        "x": 180,
+        "y": 180
+      },
+      {
+        "model": "cobblesafari:block/ultraspace_bonsai_ground_alt",
+        "x": 180,
+        "y": 180
+      }
+    ],
+    "face=wall,facing=south": [
+      {
+        "model": "cobblesafari:block/ultraspace_bonsai_wall",
+        "y": 270
+      },
+      {
+        "model": "cobblesafari:block/ultraspace_bonsai_wall_alt",
+        "y": 270
+      }
+    ],
+    "face=floor,facing=west": [
+      {
+        "model": "cobblesafari:block/ultraspace_bonsai_ground",
+        "y": 270
+      },
+      {
+        "model": "cobblesafari:block/ultraspace_bonsai_ground_alt",
+        "y": 270
+      }
+    ],
+    "face=ceiling,facing=west": [
+      {
+        "model": "cobblesafari:block/ultraspace_bonsai_ground",
+        "x": 180,
+        "y": 270
+      },
+      {
+        "model": "cobblesafari:block/ultraspace_bonsai_ground_alt",
+        "x": 180,
+        "y": 270
+      }
+    ],
+    "face=wall,facing=west": [
+      {
+        "model": "cobblesafari:block/ultraspace_bonsai_wall"
+      },
+      {
+        "model": "cobblesafari:block/ultraspace_bonsai_wall_alt"
+      }
+    ]
+  }
+}

@@ -1,7 +1,20 @@
 {
   "typeId": 1,
   "weight": 10,
-  "structurePool": "cobblesafari:ultra_space/debug_alpha",
+  "structurePool": "cobblesafari:ultraspace/debug_alpha",
   "tint": "#4FE08A",
-  "encounters": { "0": [], "1": [], "2": [], "3": [] }
+  "encounters": {
+    "0": [
+      "nihilego"
+    ],
+    "1": [
+      "poipole"
+    ],
+    "2": [
+      "blipbug"
+    ],
+    "3": [
+      "venipede"
+    ]
+  }
 }

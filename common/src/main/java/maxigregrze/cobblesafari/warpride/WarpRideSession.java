@@ -35,6 +35,17 @@ public final class WarpRideSession {
 
     private double odometer;
     private double energy;
+
+    /**
+     * Parent-dungeon credit remaining, in ticks, pushed in from outside every tick. A plain int is
+     * the whole of the coupling: the simulation stays ignorant of the dungeon system, and the seam
+     * lives in {@code WarpRideManager}, which may read {@code TimerManager} (plan 183, 8.2 bis).
+     * {@link #NO_PARENT} for a parentless (debug) ride, which never panics.
+     */
+    private int parentRemainingTicks = NO_PARENT;
+    private int panicTriggerTicks;
+    private double panicDecayPerSecond;
+    private boolean panicking;
     private double speed;
     private int lane;
     private boolean drifting;
@@ -71,6 +82,9 @@ public final class WarpRideSession {
 
     /** Waves generated this tick, drained by the manager and pushed to the client. */
     private final List<Wave> pendingWaves = new ArrayList<>();
+
+    /** Sentinel: this ride is not nested in a dungeon run, so no parent clock applies. */
+    public static final int NO_PARENT = -1;
 
     /** One impact resolved this tick; {@code energyAfter} is the authoritative energy after it. */
     public record ImpactEvent(int waveIndex, int lane, boolean positive, double energyAfter) {}
@@ -169,6 +183,33 @@ public final class WarpRideSession {
 
     public int getOutcomeDistance() {
         return outcomeDistance;
+    }
+
+    /**
+     * Feeds the parent clock in. Returns true on the tick the panic decay first fires, so the
+     * caller can send the one warning the rider must not miss - an energy bar draining ten times
+     * faster with no explanation reads as a bug.
+     */
+    public boolean setParentRemainingTicks(int remaining, int triggerTicks, double decayPerSecond) {
+        this.parentRemainingTicks = remaining;
+        this.panicTriggerTicks = triggerTicks;
+        this.panicDecayPerSecond = decayPerSecond;
+        if (remaining == NO_PARENT || panicking) {
+            return false;
+        }
+        if (remaining <= triggerTicks) {
+            panicking = true;
+            return true;
+        }
+        return false;
+    }
+
+    public int getParentRemainingTicks() {
+        return parentRemainingTicks;
+    }
+
+    public boolean isPanicking() {
+        return panicking;
     }
 
     public int cooldownTicksLeft(long now) {
@@ -315,7 +356,12 @@ public final class WarpRideSession {
         laneHistory[(int) Math.floorMod(now, LANE_HISTORY_SIZE)] = lane;
 
         if (now >= decayFrozenUntil) {
-            energy = Math.max(0.0, energy - cfg.decayPerSecond / 20.0);
+            // The panic decay ends the ride with the game's own machinery: a bigger number in the
+            // one subtraction that was already running. From any energy at all, 10/s empties the
+            // bar within 10 s, the rider drifts, the drift guarantee plants a portal, and the ride
+            // finishes the way every ride finishes. No planted portal, no forced take, no new state.
+            double perSecond = panicking ? panicDecayPerSecond : cfg.decayPerSecond;
+            energy = Math.max(0.0, energy - perSecond / 20.0);
         }
 
         double target = speedFromEnergy(energy);

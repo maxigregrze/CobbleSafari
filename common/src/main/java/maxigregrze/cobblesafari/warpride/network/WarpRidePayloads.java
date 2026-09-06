@@ -37,9 +37,19 @@ public final class WarpRidePayloads {
     public static final int EVENT_PORTAL_TAKEN = 3;
     public static final int EVENT_RIDE_ENDED = 4;
     public static final int EVENT_COUNTDOWN = 5;
+    /** The parent clock crossed its panic threshold: energy now drains ten times faster. */
+    public static final int EVENT_PANIC = 6;
+    /**
+     * The ride ended on a portal <b>and</b> a sub-dungeon is being generated: hold the black
+     * screen instead of showing the result, because the server is about to teleport. Sent only
+     * for a parented ride; a parentless (debug) one shows its outcome as before.
+     */
+    public static final int EVENT_HANDOFF = 7;
 
     public static final int END_REASON_PORTAL = 0;
     public static final int END_REASON_ABORTED = 1;
+    /** The ride was won and the sub-dungeon generated: the player is already through. */
+    public static final int END_REASON_HANDOFF = 2;
 
     /**
      * @param kind 0 positive, 1 negative, 2 portal

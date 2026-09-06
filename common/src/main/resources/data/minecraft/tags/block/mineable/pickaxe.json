@@ -105,9 +105,17 @@
     "cobblesafari:kalos_canopy_slab_trans",
     "cobblesafari:kalos_window_topper_trans",
     "cobblesafari:kalos_manhole",
-		"cobblesafari:pokemon_statue",
-		"cobblesafari:belltower_bell",
-		"cobblesafari:belltower_topper",
-		"cobblesafari:belltower_rod"
-]
+    "cobblesafari:pokemon_statue",
+    "cobblesafari:belltower_bell",
+    "cobblesafari:belltower_topper",
+    "cobblesafari:belltower_rod",
+    "cobblesafari:ultraspace_sandstone",
+    "cobblesafari:ultraspace_crystal",
+    "cobblesafari:ultraspace_crystal_block",
+    "cobblesafari:ultraspace_deepstone",
+    "cobblesafari:ultraspace_bulb",
+    "cobblesafari:ultraspace_stem",
+    "cobblesafari:megapolis_light",
+    "cobblesafari:megapolis_stairs"
+  ]
 }

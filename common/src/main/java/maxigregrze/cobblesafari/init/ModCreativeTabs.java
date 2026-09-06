@@ -36,6 +36,11 @@ public class ModCreativeTabs {
                 output.accept(ModBlocks.LIQUID_BARRIER);
                 output.accept(ModBlocks.HOOPA_RING_PORTAL);
                 output.accept(ModBlocks.CREATIVE_DUNGEON_PORTAL);
+                // Ultra Wormhole (action plan 183). The device and the spawn anchor are structure
+                // authoring tools; the exit portal is decorative when placed by hand.
+                output.accept(ModBlocks.ULTRA_ENTRANCE_PORTAL);
+                output.accept(ModBlocks.ULTRA_WORMHOLE);
+                output.accept(ModBlocks.ULTRA_SPAWN_ANCHOR);
                 output.accept(ModItems.TICKET_DUNGEON);
                 output.accept(ModItems.TICKET_SAFARI);
                 output.accept(ModItems.TICKET_WONDERTRADE);
@@ -459,6 +464,29 @@ public class ModCreativeTabs {
                 output.accept(ModBlocks.BELLTOWER_BELL);
                 output.accept(ModBlocks.BELLTOWER_LADDER);
                 output.accept(ModBlocks.BELLTOWER_BRIDGE);
+                // Ultra Space set (plan 185)
+                output.accept(ModBlocks.ULTRASPACE_SAND);
+                output.accept(ModBlocks.ULTRASPACE_SAND_PATH);
+                output.accept(ModBlocks.ULTRASPACE_SAND_PATTERN);
+                output.accept(ModBlocks.ULTRASPACE_SANDSTONE);
+                output.accept(ModBlocks.ULTRASPACE_SAND_CRYSTALIZED);
+                output.accept(ModBlocks.ULTRASPACE_CRYSTAL);
+                output.accept(ModBlocks.ULTRASPACE_CRYSTAL_BLOCK);
+                output.accept(ModBlocks.ULTRASPACE_DEEPSTONE);
+                output.accept(ModBlocks.ULTRASPACE_BULB);
+                output.accept(ModBlocks.ULTRASPACE_STEM);
+                output.accept(ModBlocks.ULTRASPACE_FLESH);
+                output.accept(ModBlocks.ULTRASPACE_BUSH);
+                output.accept(ModBlocks.ULTRASPACE_LEAVES);
+                output.accept(ModBlocks.ULTRASPACE_BONSAI_STEM);
+                output.accept(ModBlocks.ULTRASPACE_BONSAI);
+                output.accept(ModBlocks.ULTRASPACE_CABLE);
+                output.accept(ModBlocks.ULTRASPACE_CABLE_STRAP);
+                output.accept(ModBlocks.ULTRASPACE_CABLE_ZIP);
+                output.accept(ModBlocks.ULTRASPACE_CABLE_STAIRS);
+                output.accept(ModBlocks.MEGAPOLIS_LIGHT);
+                output.accept(ModBlocks.MEGAPOLIS_STAIRS);
+                output.accept(ModBlocks.LIGHTNINGSPOT);
             })
             .build();
 

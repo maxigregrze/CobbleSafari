@@ -17,9 +17,14 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Loads {@code data/cobblesafari/ultra_warp_ride/destination/*.json}. Staged validation: a missing
- * or duplicate {@code typeId}, {@code tint} or {@code weight} is rejected, while an unresolvable
- * {@code structurePool} or empty species list is only warned about, having no consumer yet.
+ * Loads {@code data/cobblesafari/ultra_warp_ride/destination/*.json}.
+ *
+ * <p>Validation follows the consumer. {@code typeId}, {@code tint} and {@code weight} have been
+ * hard-validated since the ride engine shipped. <b>{@code structurePool} joins them here</b>
+ * (action plan 183, section 13.2, finding W12): this plan is the first to generate anything from
+ * it, and a pool that fails to resolve mid-handoff would leave the rider in a locked screen with
+ * their once-per-run entry already spent. Rejecting at load is the only place that cannot happen.
+ * The species list stays warn-level: the species plan is its first consumer.</p>
  */
 public final class WarpRideDestinationLoader {
 
@@ -98,21 +103,23 @@ public final class WarpRideDestinationLoader {
             CobbleSafari.LOGGER.warn("[WarpRide] Destination {} has no tint, using white", fileId);
         }
 
-        // --- warning only: no consumer in this plan (see the class javadoc) ---
+        // --- hard from this plan on: generation is now a real consumer (W12) ---
         String structurePool = json.has("structurePool") ? json.get("structurePool").getAsString() : "";
         if (structurePool.isEmpty()) {
-            CobbleSafari.LOGGER.warn("[WarpRide] Destination {} declares no structurePool. Harmless "
-                    + "until the sub-dungeon mechanism exists, which is what will hard-validate it", fileId);
-        } else if (ResourceLocation.tryParse(structurePool) == null) {
-            CobbleSafari.LOGGER.warn("[WarpRide] Destination {} has a malformed structurePool '{}'. "
-                    + "Harmless until generation consumes it, but it will be rejected then",
-                    fileId, structurePool);
+            CobbleSafari.LOGGER.error("[WarpRide] Destination {} declares no structurePool, rejecting: "
+                    + "the sub-dungeon generator would have nothing to place", fileId);
+            return false;
+        }
+        if (ResourceLocation.tryParse(structurePool) == null) {
+            CobbleSafari.LOGGER.error("[WarpRide] Destination {} has a malformed structurePool '{}', "
+                    + "rejecting", fileId, structurePool);
+            return false;
         }
 
         Map<Integer, List<String>> encounters = readEncounters(fileId, json);
 
-        WarpRideDestination destination =
-                new WarpRideDestination(typeId, weight, structurePool, tint, encounters);
+        WarpRideDestination destination = new WarpRideDestination(
+                destinationIdOf(fileId), typeId, weight, structurePool, tint, encounters);
 
         if (!WarpRideDestinationRegistry.register(destination)) {
             CobbleSafari.LOGGER.warn("[WarpRide] Destination {} duplicates typeId={} already "
@@ -121,6 +128,18 @@ public final class WarpRideDestinationLoader {
             return false;
         }
         return true;
+    }
+
+    /**
+     * The destination's human name: the file's base name, without directory or extension
+     * ({@code .../destination/debug_alpha.json} to {@code debug_alpha}). Nothing to author, and the
+     * six real destinations will name themselves (action plan 184, section 12.3).
+     */
+    private static String destinationIdOf(ResourceLocation fileId) {
+        String path = fileId.getPath();
+        int slash = path.lastIndexOf('/');
+        String name = slash < 0 ? path : path.substring(slash + 1);
+        return name.endsWith(".json") ? name.substring(0, name.length() - ".json".length()) : name;
     }
 
     private static Map<Integer, List<String>> readEncounters(ResourceLocation fileId, JsonObject json) {
