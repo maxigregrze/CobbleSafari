@@ -2,6 +2,7 @@ package maxigregrze.cobblesafari.dungeon.sub;
 
 import com.cobblemon.mod.common.Cobblemon;
 import com.cobblemon.mod.common.CobblemonEntities;
+import com.cobblemon.mod.common.api.moves.Move;
 import com.cobblemon.mod.common.api.moves.MoveTemplate;
 import com.cobblemon.mod.common.api.pokemon.PokemonProperties;
 import com.cobblemon.mod.common.api.pokemon.moves.Learnset;
@@ -122,9 +123,11 @@ final class SubDungeonEncounter {
                 props.getCustomProperties().add(new HiddenAbilityProperty(true));
             }
 
-            // @TODO ALPHA - rewards.alphaPercent(rank, p) plugs in here, once a Cobblemon release
-            // has the concept at all. There is none in 1.7.3: FishingSpawnCause.Companion has no
-            // alterAlphaAttempt, and the whole source tree has no notion of an alpha Pokemon.
+            double alphaPercent = rewards.alphaPercent(rank, p);
+            boolean alphaRolled = props.isAlpha() == null && rollPercent(random, alphaPercent);
+            if (alphaRolled) {
+                props.setAlpha(true);
+            }
 
             double shinyPercent = rewards.shinyPercent(rank, p);
             boolean shinyByRank = props.getShiny() == null && rollPercent(random, shinyPercent);
@@ -161,7 +164,8 @@ final class SubDungeonEncounter {
 
             logOutcome(player, request, destination, pokemon, bonusMoves);
             logProvenance(p, shinyPercent, shinyByRank, haPercent, haRolled,
-                    median, targetLevel, bonusMoves, rewards, rank, applied);
+                    alphaPercent, alphaRolled, median, targetLevel, bonusMoves, rewards, rank,
+                    applied);
         } catch (Exception e) {
             // A malformed species line is a data error: log it and leave the room empty rather
             // than failing a generation the player has already paid a ride for.
@@ -206,6 +210,9 @@ final class SubDungeonEncounter {
         return n % 2 == 1 ? sorted[n / 2] : (sorted[n / 2 - 1] + sorted[n / 2]) / 2.0;
     }
 
+    /** Slots 3 and 4 of Cobblemon's own {@code cobblemon:alpha} moveset builder, which it fills with TMs. */
+    private static final int ALPHA_TM_MOVES = 2;
+
     private static int clampLevel(int level) {
         int max = Math.min(LEVEL_CEILING, Cobblemon.INSTANCE.getConfig().getMaxPokemonLevel());
         return Mth.clamp(level, 1, max);
@@ -214,12 +221,24 @@ final class SubDungeonEncounter {
     // ------------------------------------------------------------------ moves
 
     /**
-     * Draws 0, 1 or 2 bonus moves from the resolved form's egg and TM pools, merged.
+     * Draws the new moves: 0, 1 or 2 rank bonuses from the resolved form's egg and TM pools merged,
+     * plus the two TM moves an alpha is owed.
      *
      * <p>Merged on purpose: most Ultra Beasts have no egg moves at all, and an egg-only pool would
      * have made rank 3's promise fail silently on exactly the species this dungeon exists to hand
      * out. The known price is that a species with forty TMs and four egg moves will usually draw a
      * TM - which is why the log names which kind it actually was.</p>
+     *
+     * <p>The alpha half needs no draw at all. {@code PokemonProperties.create} runs
+     * {@code apply} - which sets {@code isAlpha} - and then {@code initialize()}, which finds an
+     * empty moveset and calls {@code initializeMovesetFromDefault()}; for an alpha that resolves
+     * the {@code cobblemon:alpha} builder, whose slots 3 and 4 are {@code tm}. The two TM moves are
+     * therefore already on the Pokemon by the time we get here. What they need is <b>protection</b>:
+     * the bonus insertion picks its target slots at random, so it could overwrite them and the
+     * guarantee would vanish silently. Listing them among the requested moves is what prevents it -
+     * see the note on {@link #drawInto} callers below. A fully rolled alpha thus ends up with two TM
+     * moves and two bonus moves, a whole moveset of new moves, which is the system's own ceiling
+     * rather than one imposed here.</p>
      */
     private static List<MoveTemplate> drawBonusMoves(Pokemon pokemon, WarpRideRewards rewards,
                                                      int rank, double p, RandomSource random) {
@@ -230,23 +249,40 @@ final class SubDungeonEncounter {
                 wanted = 2;
             }
         }
-        if (wanted == 0) {
-            return List.of();
-        }
 
         Learnset learnset = pokemon.getForm().getMoves();
-        Set<MoveTemplate> pool = new LinkedHashSet<>(learnset.getEggMoves());
-        pool.addAll(learnset.getTmMoves());
-        if (pool.isEmpty()) {
-            return List.of();
+        List<MoveTemplate> drawn = new ArrayList<>(wanted + ALPHA_TM_MOVES);
+
+        if (wanted > 0) {
+            Set<MoveTemplate> pool = new LinkedHashSet<>(learnset.getEggMoves());
+            pool.addAll(learnset.getTmMoves());
+            drawInto(drawn, pool, wanted, random);
         }
 
-        List<MoveTemplate> candidates = new ArrayList<>(pool);
-        List<MoveTemplate> drawn = new ArrayList<>(Math.min(wanted, candidates.size()));
-        for (int i = 0; i < wanted && !candidates.isEmpty(); i++) {
-            drawn.add(candidates.remove(random.nextInt(candidates.size())));
+        // Cobblemon already granted the alpha its TM moves (see the javadoc). Naming them in the
+        // requested set does not insert them a second time - PokemonProperties.apply filters out
+        // moves the Pokemon already knows - but it does mark their slots unreplaceable, which is
+        // the only way to stop the bonus draw from landing on top of them.
+        if (pokemon.isAlpha()) {
+            List<MoveTemplate> tmMoves = learnset.getTmMoves();
+            pokemon.getMoveSet().getMoves().stream()
+                    .map(Move::getTemplate)
+                    .filter(tmMoves::contains)
+                    .limit(ALPHA_TM_MOVES)
+                    .filter(move -> !drawn.contains(move))
+                    .forEach(drawn::add);
         }
         return drawn;
+    }
+
+    /** Draws up to {@code wanted} entries from {@code pool}, skipping what {@code into} already holds. */
+    private static void drawInto(List<MoveTemplate> into, Set<MoveTemplate> pool, int wanted,
+                                 RandomSource random) {
+        List<MoveTemplate> candidates = new ArrayList<>(pool);
+        candidates.removeAll(into);
+        for (int i = 0; i < wanted && !candidates.isEmpty(); i++) {
+            into.add(candidates.remove(random.nextInt(candidates.size())));
+        }
     }
 
     private static boolean isEggMove(Pokemon pokemon, MoveTemplate move) {
@@ -268,7 +304,9 @@ final class SubDungeonEncounter {
         if (pokemon.getShiny()) {
             modifiers.add("is Shiny");
         }
-        // "is Alpha" belongs here, and is deliberately never produced: see the @TODO ALPHA above.
+        if (pokemon.isAlpha()) {
+            modifiers.add("is Alpha");
+        }
         if (new HiddenAbilityProperty(true).matches(pokemon)) {
             modifiers.add("has a hidden ability");
         }
@@ -299,19 +337,37 @@ final class SubDungeonEncounter {
         return head + " & " + modifiers.get(modifiers.size() - 1);
     }
 
-    /** @return null when no bonus move landed, otherwise a fragment naming what kind it was */
+    /**
+     * @return null when no new move landed, otherwise a fragment naming how many of each kind
+     *         the <b>finished</b> Pokemon ended up with. Counts up to four, since an alpha with
+     *         both rank bonuses fills a whole moveset.
+     */
     private static String describeBonusMoves(Pokemon pokemon, List<MoveTemplate> bonusMoves) {
         if (bonusMoves.isEmpty()) {
             return null;
         }
         long eggs = bonusMoves.stream().filter(m -> isEggMove(pokemon, m)).count();
-        if (bonusMoves.size() == 1) {
-            return eggs == 1 ? "has an egg move" : "has a TM move";
+        long tms = bonusMoves.size() - eggs;
+        if (eggs > 0 && tms > 0) {
+            return "has " + countMoves(eggs, "an", "egg move")
+                    + " and " + countMoves(tms, "a", "TM move");
         }
-        if (eggs == 2) {
-            return "has two egg moves";
+        return eggs > 0
+                ? "has " + countMoves(eggs, "an", "egg move")
+                : "has " + countMoves(tms, "a", "TM move");
+    }
+
+    private static String countMoves(long count, String article, String noun) {
+        if (count == 1) {
+            return article + " " + noun;
         }
-        return eggs == 0 ? "has two TM moves" : "has an egg move and a TM move";
+        String spelled = switch ((int) count) {
+            case 2 -> "two";
+            case 3 -> "three";
+            case 4 -> "four";
+            default -> Long.toString(count);
+        };
+        return spelled + " " + noun + "s";
     }
 
     private static int perfectIvCount(Pokemon pokemon) {
@@ -331,6 +387,7 @@ final class SubDungeonEncounter {
     @SuppressWarnings("java:S107")   // a debug line has as many inputs as it has facts to report
     private static void logProvenance(double p, double shinyPercent, boolean shinyByRank,
                                       double haPercent, boolean haRolled,
+                                      double alphaPercent, boolean alphaRolled,
                                       double median, int targetLevel, List<MoveTemplate> bonusMoves,
                                       WarpRideRewards rewards, int rank,
                                       UltraEncounterModifiers.Applied applied) {
@@ -338,12 +395,13 @@ final class SubDungeonEncounter {
             return;
         }
         CobbleSafari.LOGGER.debug(
-                "[WarpRide]   detail: p={} ; shinyRoll={}% {} ; haRoll={}% {} ; modHaBoost={} ; "
-                        + "median={} base={} humongo/teensy={} ; moves={} ; ivTarget={} ; "
-                        + "guaranteedShiny={}",
+                "[WarpRide]   detail: p={} ; shinyRoll={}% {} ; haRoll={}% {} ; alphaRoll={}% {} ; "
+                        + "modHaBoost={} ; median={} base={} humongo/teensy={} ; moves={} ; "
+                        + "ivTarget={} ; guaranteedShiny={}",
                 String.format("%.2f", p),
                 String.format("%.1f", shinyPercent), shinyByRank ? "won" : "lost",
                 String.format("%.1f", haPercent), haRolled ? "won" : "lost",
+                String.format("%.1f", alphaPercent), alphaRolled ? "won" : "lost",
                 applied.hiddenAbilityAttempted() ? "granted" : "no",
                 String.format("%.1f", median), targetLevel,
                 applied.levelDelta() >= 0 ? "+" + applied.levelDelta() : applied.levelDelta(),

@@ -125,13 +125,8 @@ public final class WarpRideRewards {
     }
 
     /**
-     * Alpha chance in percent. <b>Never called.</b>
-     *
-     * <p>Shipped with its data and its validation so that enabling alpha is one uncommented line
-     * rather than reopening a loader and re-arguing a scale. There is no alpha in Cobblemon 1.7.3:
-     * {@code FishingSpawnCause.Companion} has no {@code alterAlphaAttempt}, and the whole 1.7.3
-     * source tree contains no such concept. See the two {@code @TODO ALPHA} markers already in
-     * {@code CobblemonFishingInterop} and {@code AlphaSpawnBoostInfluence}.</p>
+     * Chance for the reward to be an alpha, in percent. Live since Cobblemon 1.8, which is the
+     * release that introduced the concept at all.
      */
     public double alphaPercent(int rank, double p) {
         return at(alphaPercentBase, alphaPercentPerStep, rank, p);
