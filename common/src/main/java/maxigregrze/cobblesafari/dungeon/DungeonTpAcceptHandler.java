@@ -245,7 +245,8 @@ public class DungeonTpAcceptHandler {
         if (instanceId == null) {
             return;
         }
-        maxigregrze.cobblesafari.dungeon.sub.SubDungeonManager.refundEntry(server, instanceId, player.getUUID());
+        maxigregrze.cobblesafari.dungeon.sub.SubDungeonManager.clearEntriesForNewRun(
+                server, instanceId, player.getUUID());
     }
 
     /** A fee actually taken from the player, carried so every abandon path can hand it back. */

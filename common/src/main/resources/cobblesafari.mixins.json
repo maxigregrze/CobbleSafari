@@ -13,6 +13,7 @@
     "LivingEntityRedShackledCombatMixin",
     "LivingEntityRainbowFeatherMixin",
     "PlayerRotoFallMixin",
+    "JigsawBoundsMixin",
     "JigsawPlacementMixin",
     "JigsawStructureMixin",
     "SinglePoolElementAccessor",

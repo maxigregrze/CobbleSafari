@@ -1,0 +1,21 @@
+{
+  "typeId": 5,
+  "weight": 10,
+  "structurePool": "cobblesafari:ultraspace/crater/start",
+  "tint": "#8a1d12",
+  "dimension": "cobblesafari:dungeon_ultra_crater",
+  "encounters": {
+    "0": [
+      "stakataka"
+    ],
+    "1": [
+      "pheromosa"
+    ],
+    "2": [
+      "minior"
+    ],
+    "3": [
+      "solrock"
+    ]
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "typeId": 1,
+  "weight": 10,
+  "structurePool": "cobblesafari:ultraspace/deep/start",
+  "tint": "#25408e",
+  "biome": "cobblesafari:dungeon_ultra_deep_biome",
+  "encounters": {
+    "0": [
+      "nihilego"
+    ],
+    "1": [
+      "poipole"
+    ],
+    "2": [
+      "minior"
+    ],
+    "3": [
+      "solrock"
+    ]
+  }
+}

@@ -178,6 +178,22 @@
       }
     ]
   },
+  "music.hyperspacealpha.intro": {
+    "sounds": [
+      {
+        "name": "cobblesafari:music/bgm_hyperspacealpha_intro",
+        "stream": true
+      }
+    ]
+  },
+  "music.hyperspacealpha.loop": {
+    "sounds": [
+      {
+        "name": "cobblesafari:music/bgm_hyperspacealpha_loop",
+        "stream": true
+      }
+    ]
+  },
   "music.hooh.loop": {
     "sounds": [
       {
@@ -243,5 +259,149 @@
   },
   "warpride.countdown": {
     "sounds": []
+  },
+  "music.megalopolis.intro": {
+    "sounds": [
+      {
+        "name": "cobblesafari:music/bgm_megalopolis_intro",
+        "stream": true
+      }
+    ]
+  },
+  "music.megalopolis.loop": {
+    "sounds": [
+      {
+        "name": "cobblesafari:music/bgm_megalopolis_loop",
+        "stream": true
+      }
+    ]
+  },
+  "music.ultrabattle.intro": {
+    "sounds": [
+      {
+        "name": "cobblesafari:music/bgm_ultra_battle_intro",
+        "stream": true
+      }
+    ]
+  },
+  "music.ultrabattle.loop": {
+    "sounds": [
+      {
+        "name": "cobblesafari:music/bgm_ultra_battle_loop",
+        "stream": true
+      }
+    ]
+  },
+  "music.ultradeep.intro": {
+    "sounds": [
+      {
+        "name": "cobblesafari:music/bgm_ultra_deep_intro",
+        "stream": true
+      }
+    ]
+  },
+  "music.ultradeep.loop": {
+    "sounds": [
+      {
+        "name": "cobblesafari:music/bgm_ultra_deep_loop",
+        "stream": true
+      }
+    ]
+  },
+  "music.ultrajungle.intro": {
+    "sounds": [
+      {
+        "name": "cobblesafari:music/bgm_ultra_jungle_intro",
+        "stream": true
+      }
+    ]
+  },
+  "music.ultrajungle.loop": {
+    "sounds": [
+      {
+        "name": "cobblesafari:music/bgm_ultra_jungle_loop",
+        "stream": true
+      }
+    ]
+  },
+  "music.ultradesert.intro": {
+    "sounds": [
+      {
+        "name": "cobblesafari:music/bgm_ultra_desert_intro",
+        "stream": true
+      }
+    ]
+  },
+  "music.ultradesert.loop": {
+    "sounds": [
+      {
+        "name": "cobblesafari:music/bgm_ultra_desert_loop",
+        "stream": true
+      }
+    ]
+  },
+  "music.ultraplant.intro": {
+    "sounds": [
+      {
+        "name": "cobblesafari:music/bgm_ultra_plant_intro",
+        "stream": true
+      }
+    ]
+  },
+  "music.ultraplant.loop": {
+    "sounds": [
+      {
+        "name": "cobblesafari:music/bgm_ultra_plant_loop",
+        "stream": true
+      }
+    ]
+  },
+  "music.ultracrater.intro": {
+    "sounds": [
+      {
+        "name": "cobblesafari:music/bgm_ultra_crater_intro",
+        "stream": true
+      }
+    ]
+  },
+  "music.ultracrater.loop": {
+    "sounds": [
+      {
+        "name": "cobblesafari:music/bgm_ultra_crater_loop",
+        "stream": true
+      }
+    ]
+  },
+  "music.ultraforest.intro": {
+    "sounds": [
+      {
+        "name": "cobblesafari:music/bgm_ultra_forest_intro",
+        "stream": true
+      }
+    ]
+  },
+  "music.ultraforest.loop": {
+    "sounds": [
+      {
+        "name": "cobblesafari:music/bgm_ultra_forest_loop",
+        "stream": true
+      }
+    ]
+  },
+  "music.ultraruins.intro": {
+    "sounds": [
+      {
+        "name": "cobblesafari:music/bgm_ultra_ruins_intro",
+        "stream": true
+      }
+    ]
+  },
+  "music.ultraruins.loop": {
+    "sounds": [
+      {
+        "name": "cobblesafari:music/bgm_ultra_ruins_loop",
+        "stream": true
+      }
+    ]
   }
 }

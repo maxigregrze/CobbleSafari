@@ -2452,6 +2452,14 @@ public class ModBlocks {
     public static final Block ULTRASPACE_CABLE = registerBlock("ultraspace_cable",
             new RotatedPillarBlock(BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_GRAY)
                     .strength(0.8f).sound(SoundType.WOOL)));
+    // Vines: log semantics again - the axis follows the face you aim at - so that a run of them
+    // can be laid in any direction. The plain one caps its ends; the block form wraps the side
+    // texture all the way round, which is why both go through cube_column rather than cube_all:
+    // the side texture is directional and must run along the axis.
+    public static final Block ULTRASPACE_VINES = registerBlock("ultraspace_vines",
+            new RotatedPillarBlock(usVine()));
+    public static final Block ULTRASPACE_VINES_BLOCK = registerBlock("ultraspace_vines_block",
+            new RotatedPillarBlock(usVine()));
     public static final Block ULTRASPACE_CABLE_STRAP = registerBlock("ultraspace_cable_strap",
             new FaceAttachedModelBlock(usCable(), FaceAttachedModelBlock.Settings.builder()
                     .shapes(US_STRAP_FLOOR, US_STRAP_CEILING,
@@ -2520,6 +2528,12 @@ public class ModBlocks {
     private static BlockBehaviour.Properties usCable() {
         return BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_GRAY).instabreak()
                 .sound(SoundType.WOOL).noOcclusion().pushReaction(PushReaction.DESTROY);
+    }
+
+    /** Ultra Space vines: vanilla moss block's hardness and sound. */
+    private static BlockBehaviour.Properties usVine() {
+        return BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_GRAY)
+                .strength(0.1f).sound(SoundType.MOSS);
     }
 
     /** Megapolis metalwork: vanilla iron block. */

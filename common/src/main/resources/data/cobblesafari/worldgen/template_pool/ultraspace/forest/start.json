@@ -1,0 +1,15 @@
+{
+  "name": "cobblesafari:ultraspace/forest/start",
+  "fallback": "minecraft:empty",
+  "elements": [
+    {
+      "weight": 1,
+      "element": {
+        "location": "cobblesafari:ultraspace/forest/start",
+        "processors": "minecraft:empty",
+        "projection": "rigid",
+        "element_type": "minecraft:single_pool_element"
+      }
+    }
+  ]
+}

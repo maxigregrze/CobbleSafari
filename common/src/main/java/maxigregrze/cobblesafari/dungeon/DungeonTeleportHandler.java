@@ -613,11 +613,33 @@ public class DungeonTeleportHandler {
         if (!state.isFirstPortalUse) return true;
 
         ChunkPos chunkPos = new ChunkPos(state.structurePos);
+        // Radius matched to what the placement actually touches (action plan 187, C5). It used to
+        // reserve 4 while StructurePlacer blocked over 8, so the ring from 5 to 8 was generated
+        // synchronously on the server thread - invisible while every dungeon dimension was an empty
+        // void, and a stall of several hundred chunk generations as soon as one has worldgen.
         state.dungeonLevel.getChunkSource().addRegionTicket(
-                TicketType.PORTAL, chunkPos, 4, state.structurePos);
+                TicketType.PORTAL, chunkPos, StructurePlacer.STRUCTURE_PLACEMENT_RADIUS, state.structurePos);
+        StructurePlacer.ticketPlacementChunks(
+                state.dungeonLevel, state.structurePos, StructurePlacer.STRUCTURE_PLACEMENT_RADIUS);
 
         CobbleSafari.LOGGER.info("Loaded chunks for dungeon at {}", state.structurePos);
         return true;
+    }
+
+    /**
+     * Whether the chunks reserved by {@link #loadChunks} have finished loading (action plan 187, C5).
+     *
+     * <p>The generation sequence must wait on this before {@link #generateStructure}, so that the
+     * blocking {@code getChunk} calls inside the placement are all cache hits. Returns true for a
+     * repeat use of an already-generated dungeon, which places nothing.</p>
+     */
+    public static boolean areChunksReady(DungeonPortalBlockEntity portalEntity) {
+        GenerationState state = GENERATION_STATES.get(portalEntity.getPortalId());
+        if (state == null || !state.isFirstPortalUse) {
+            return true;
+        }
+        return StructurePlacer.areChunksReady(
+                state.dungeonLevel, state.structurePos, StructurePlacer.STRUCTURE_PLACEMENT_RADIUS);
     }
 
     public static boolean generateStructure(ServerPlayer player, DungeonPortalBlockEntity portalEntity, DungeonValidationResult validation) {

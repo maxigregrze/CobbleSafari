@@ -1,0 +1,11 @@
+{
+  "type": "cobblesafari:dungeon_ultra_jungle_type",
+  "generator": {
+    "type": "minecraft:noise",
+    "settings": "cobblesafari:ultra_jungle",
+    "biome_source": {
+      "type": "minecraft:fixed",
+      "biome": "cobblesafari:dungeon_ultra_jungle_biome"
+    }
+  }
+}

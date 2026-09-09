@@ -5,6 +5,8 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import maxigregrze.cobblesafari.CobbleSafari;
+import maxigregrze.cobblesafari.dungeon.DungeonConfig;
+import maxigregrze.cobblesafari.dungeon.DungeonDimensions;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.packs.resources.Resource;
@@ -116,10 +118,45 @@ public final class WarpRideDestinationLoader {
             return false;
         }
 
+        // --- hard from plan 187 on: a destination that names a dimension is generated in it ---
+        // Validated exactly as strictly as structurePool, and for the same reason (W12): both are
+        // consumed mid-handoff, when the rider's once-per-run entry is already spent and the only
+        // remaining outcome for a bad value is a locked screen.
+        String dimension = readOptionalString(json, "dimension");
+        if (dimension != null) {
+            if (ResourceLocation.tryParse(dimension) == null) {
+                CobbleSafari.LOGGER.error("[WarpRide] Destination {} has a malformed dimension '{}', "
+                        + "rejecting", fileId, dimension);
+                return false;
+            }
+            DungeonConfig host = DungeonDimensions.getDungeonByDimensionId(dimension);
+            if (host == null) {
+                CobbleSafari.LOGGER.error("[WarpRide] Destination {} names dimension '{}', which is not "
+                        + "a registered dungeon; rejecting", fileId, dimension);
+                return false;
+            }
+            if (!host.isSubDungeon()) {
+                CobbleSafari.LOGGER.error("[WarpRide] Destination {} names dimension '{}', which is a "
+                        + "registered dungeon but not a sub-dungeon; rejecting", fileId, dimension);
+                return false;
+            }
+        }
+
+        String biome = readOptionalString(json, "biome");
+        if (biome != null && ResourceLocation.tryParse(biome) == null) {
+            CobbleSafari.LOGGER.error("[WarpRide] Destination {} has a malformed biome '{}', rejecting",
+                    fileId, biome);
+            return false;
+        }
+        if (dimension != null && biome != null) {
+            CobbleSafari.LOGGER.warn("[WarpRide] Destination {} declares both a dimension and a biome; "
+                    + "the biome is ignored - a dimension supplies its own", fileId);
+        }
+
         Map<Integer, List<String>> encounters = readEncounters(fileId, json);
 
         WarpRideDestination destination = new WarpRideDestination(
-                destinationIdOf(fileId), typeId, weight, structurePool, tint, encounters);
+                destinationIdOf(fileId), typeId, weight, structurePool, tint, dimension, biome, encounters);
 
         if (!WarpRideDestinationRegistry.register(destination)) {
             CobbleSafari.LOGGER.warn("[WarpRide] Destination {} duplicates typeId={} already "
@@ -140,6 +177,15 @@ public final class WarpRideDestinationLoader {
         int slash = path.lastIndexOf('/');
         String name = slash < 0 ? path : path.substring(slash + 1);
         return name.endsWith(".json") ? name.substring(0, name.length() - ".json".length()) : name;
+    }
+
+    /** A trimmed string field, or {@code null} when absent, non-primitive or blank. */
+    private static String readOptionalString(JsonObject json, String key) {
+        if (!json.has(key) || !json.get(key).isJsonPrimitive()) {
+            return null;
+        }
+        String value = json.get(key).getAsString().trim();
+        return value.isEmpty() ? null : value;
     }
 
     private static Map<Integer, List<String>> readEncounters(ResourceLocation fileId, JsonObject json) {

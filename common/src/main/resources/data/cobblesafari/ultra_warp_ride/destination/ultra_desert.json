@@ -1,0 +1,21 @@
+{
+  "typeId": 3,
+  "weight": 10,
+  "structurePool": "cobblesafari:ultraspace/desert/start",
+  "tint": "#1dc0cf",
+  "dimension": "cobblesafari:dungeon_ultra_desert",
+  "encounters": {
+    "0": [
+      "stakataka"
+    ],
+    "1": [
+      "poipole"
+    ],
+    "2": [
+      "minior"
+    ],
+    "3": [
+      "solrock"
+    ]
+  }
+}

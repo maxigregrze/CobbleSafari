@@ -1,0 +1,11 @@
+{
+  "type": "cobblesafari:dungeon_ultra_crater_type",
+  "generator": {
+    "type": "minecraft:noise",
+    "settings": "cobblesafari:ultra_crater",
+    "biome_source": {
+      "type": "minecraft:fixed",
+      "biome": "cobblesafari:dungeon_ultra_crater_biome"
+    }
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "typeId": 7,
+  "weight": 10,
+  "structurePool": "cobblesafari:ultraspace/ruin/start",
+  "tint": "#d7d7d7",
+  "biome": "cobblesafari:dungeon_ultra_ruin_biome",
+  "encounters": {
+    "0": [
+      "stakataka"
+    ],
+    "1": [
+      "nihilego"
+    ],
+    "2": [
+      "minior"
+    ],
+    "3": [
+      "solrock"
+    ]
+  }
+}

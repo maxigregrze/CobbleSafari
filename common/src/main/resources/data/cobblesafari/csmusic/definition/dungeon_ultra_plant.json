@@ -1,0 +1,20 @@
+{
+  "rules": [
+    {
+      "music": "cobblesafari:ultraplant",
+      "priority": 1,
+      "when": {
+        "dimension": "cobblesafari:dungeon_ultra_plant",
+        "battle": "never"
+      }
+    },
+    {
+      "music": "cobblesafari:ultrabattle",
+      "priority": 10,
+      "when": {
+        "dimension": "cobblesafari:dungeon_ultra_plant",
+        "battle": "in_battle"
+      }
+    }
+  ]
+}

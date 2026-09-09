@@ -1,0 +1,20 @@
+{
+  "rules": [
+    {
+      "music": "cobblesafari:ultradesert",
+      "priority": 1,
+      "when": {
+        "dimension": "cobblesafari:dungeon_ultra_desert",
+        "battle": "never"
+      }
+    },
+    {
+      "music": "cobblesafari:ultrabattle",
+      "priority": 10,
+      "when": {
+        "dimension": "cobblesafari:dungeon_ultra_desert",
+        "battle": "in_battle"
+      }
+    }
+  ]
+}

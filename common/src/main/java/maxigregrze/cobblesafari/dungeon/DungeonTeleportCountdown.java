@@ -189,7 +189,13 @@ public class DungeonTeleportCountdown {
                         CobbleSafari.LOGGER.debug("Phase 2 (90-85s): Chunks loaded for player {}", player.getName().getString());
                     }
 
-                    if (state.ticksRemaining <= PHASE_STRUCTURE_GENERATION && state.generationPhase == 2) {
+                    // The chunk-readiness gate is what turns phase 2's ticket into a real wait
+                    // (action plan 187, C5). Until it passes, the phase simply does not advance and
+                    // is retried next tick; the countdown has seconds of slack here, and the
+                    // alternative is letting the placement's blocking getChunk build the whole
+                    // radius on the server thread.
+                    if (state.ticksRemaining <= PHASE_STRUCTURE_GENERATION && state.generationPhase == 2
+                            && DungeonTeleportHandler.areChunksReady(portalEntity)) {
                         if (!DungeonTeleportHandler.generateStructure(player, portalEntity, state.validation)) {
                             ModNetworking.sendCloseTpAccept(player);
                             toRemove.add(playerId);

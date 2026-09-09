@@ -1,10 +1,38 @@
 {
   "rules": [
     {
-      "music": "cobblesafari:hyperspace",
+      "music": "cobblesafari:ultradeep",
       "priority": 1,
       "when": {
-        "dimension": "cobblesafari:dungeon_ultraspace"
+        "dimension": "cobblesafari:dungeon_ultraspace",
+        "battle": "never",
+        "biome": "cobblesafari:dungeon_ultra_deep_biome"
+      }
+    },
+    {
+      "music": "cobblesafari:ultraforest",
+      "priority": 1,
+      "when": {
+        "dimension": "cobblesafari:dungeon_ultraspace",
+        "battle": "never",
+        "biome": "cobblesafari:dungeon_ultra_forest_biome"
+      }
+    },
+    {
+      "music": "cobblesafari:ultraruins",
+      "priority": 1,
+      "when": {
+        "dimension": "cobblesafari:dungeon_ultraspace",
+        "battle": "never",
+        "biome": "cobblesafari:dungeon_ultra_ruin_biome"
+      }
+    },
+    {
+      "music": "cobblesafari:ultrabattle",
+      "priority": 10,
+      "when": {
+        "dimension": "cobblesafari:dungeon_ultraspace",
+        "battle": "in_battle"
       }
     }
   ]

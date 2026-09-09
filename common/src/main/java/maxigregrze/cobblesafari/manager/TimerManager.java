@@ -9,6 +9,7 @@ import maxigregrze.cobblesafari.data.DungeonPositionSavedData;
 import maxigregrze.cobblesafari.data.PlayerTimerData;
 import maxigregrze.cobblesafari.data.TimerScope;
 import maxigregrze.cobblesafari.data.TimerSavedData;
+import maxigregrze.cobblesafari.dungeon.DungeonConfig;
 import maxigregrze.cobblesafari.dungeon.DungeonDimensions;
 import maxigregrze.cobblesafari.dungeon.DungeonTeleportHandler;
 import maxigregrze.cobblesafari.network.ModNetworking;
@@ -495,8 +496,10 @@ public class TimerManager {
                         continue;
                     }
 
-                    if (DungeonDimensions.isDungeonDimension(timerDimensionId)) {
-                        if (player.getY() < 0) {
+                    DungeonConfig timerDungeon =
+                            DungeonDimensions.getDungeonByDimensionId(timerDimensionId);
+                    if (timerDungeon != null) {
+                        if (player.getY() < timerDungeon.getVoidGuardY()) {
                             expireActiveTimerAndTeleport(player, data.scope(), data, true);
                             CobbleSafari.LOGGER.info("Player {} detected in void in dungeon dimension {}, teleporting out",
                                     player.getName().getString(), timerDimensionId);
@@ -585,7 +588,8 @@ public class TimerManager {
             // It used to live only inside tickAllTimers, which skips records that are not active.
             // A player who had left the dungeon (their session paused) and returned by any other
             // route therefore had no void protection at all, and simply fell out of the world.
-            if (DungeonDimensions.isDungeonDimension(dimId) && player.getY() < 0) {
+            DungeonConfig dungeonHere = DungeonDimensions.getDungeonByDimensionId(dimId);
+            if (dungeonHere != null && player.getY() < dungeonHere.getVoidGuardY()) {
                 evacuateFromVoid(player, dimId);
                 continue;
             }

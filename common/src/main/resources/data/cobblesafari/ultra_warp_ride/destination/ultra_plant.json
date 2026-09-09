@@ -1,0 +1,21 @@
+{
+  "typeId": 4,
+  "weight": 10,
+  "structurePool": "cobblesafari:ultraspace/plant/start",
+  "tint": "#fdeb26",
+  "dimension": "cobblesafari:dungeon_ultra_plant",
+  "encounters": {
+    "0": [
+      "nihilego"
+    ],
+    "1": [
+      "poipole"
+    ],
+    "2": [
+      "blipbug"
+    ],
+    "3": [
+      "venipede"
+    ]
+  }
+}

@@ -301,7 +301,7 @@ public final class WarpRideManager {
         if (!started) {
             HANDOFF.remove(player.getUUID());
             maxigregrze.cobblesafari.dungeon.sub.SubDungeonManager.refundEntry(
-                    server, parent.parentInstanceId(), player.getUUID());
+                    server, parent.parentInstanceId(), player.getUUID(), parent.devicePos());
             player.sendSystemMessage(net.minecraft.network.chat.Component.translatable(
                     "cobblesafari.wormhole.generation_failed"));
             endSession(server, player.getUUID(), WarpRidePayloads.END_REASON_ABORTED);

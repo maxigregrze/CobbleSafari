@@ -35,9 +35,9 @@ public class LightningSpotBlock extends BaseEntityBlock {
 
     public static final MapCodec<LightningSpotBlock> CODEC = simpleCodec(LightningSpotBlock::new);
 
-    /** Bounds of the delay between two attempts, in ticks. Mean 400 ticks = 20 s. */
-    private static final int MIN_DELAY_TICKS = 200;
-    private static final int DELAY_SPREAD_TICKS = 400;
+    /** Delay between two attempts: 600 to 1200 ticks, i.e. anywhere from 30 to 60 seconds. */
+    private static final int MIN_DELAY_TICKS = 600;
+    private static final int DELAY_SPREAD_TICKS = 600;
 
     /** Trigger radius, in blocks. */
     private static final double TRIGGER_RADIUS = 32.0;

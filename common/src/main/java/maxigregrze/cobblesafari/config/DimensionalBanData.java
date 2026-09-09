@@ -94,12 +94,33 @@ public class DimensionalBanData {
         dungeonMegalopolisRestrictions.forbidMounting = true;
         dimensions.put("cobblesafari:dungeon_megalopolis", dungeonMegalopolisRestrictions);
 
-        DimensionRestrictions dungeonUltraspaceRestrictions = new DimensionRestrictions();
-        dungeonUltraspaceRestrictions.allowBattle = true;
-        dungeonUltraspaceRestrictions.allowBlockBreaking = false;
-        dungeonUltraspaceRestrictions.allowBlockPlacing = false;
-        dungeonUltraspaceRestrictions.forbidMounting = true;
-        dimensions.put("cobblesafari:dungeon_ultraspace", dungeonUltraspaceRestrictions);
+        dimensions.put("cobblesafari:dungeon_ultraspace", defaultDungeonRestrictions());
+
+        // Action plan 187, § 4.9 - the same reasoning as S20 above, for the four sub-dimensions
+        // that own their world. Their floors are scenery seen from a structure nobody may dig out
+        // of, so they carry exactly the ultraspace profile.
+        dimensions.put("cobblesafari:dungeon_ultra_jungle", defaultDungeonRestrictions());
+        dimensions.put("cobblesafari:dungeon_ultra_desert", defaultDungeonRestrictions());
+        dimensions.put("cobblesafari:dungeon_ultra_plant", defaultDungeonRestrictions());
+        dimensions.put("cobblesafari:dungeon_ultra_crater", defaultDungeonRestrictions());
+    }
+
+    /**
+     * The strict dungeon profile: battles allowed, nothing built or broken, no mounting. It is the
+     * {@code dungeon_jump} profile of plan 183 S20, and the default handed to any dimension
+     * registered through {@code DungeonRegistrationAPI} that does not already have an entry.
+     *
+     * <p>Returns a fresh instance every call on purpose: the restrictions object is mutable and
+     * server owners edit it per dimension, so sharing one between entries would make an edit to any
+     * of them an edit to all.</p>
+     */
+    public static DimensionRestrictions defaultDungeonRestrictions() {
+        DimensionRestrictions restrictions = new DimensionRestrictions();
+        restrictions.allowBattle = true;
+        restrictions.allowBlockBreaking = false;
+        restrictions.allowBlockPlacing = false;
+        restrictions.forbidMounting = true;
+        return restrictions;
     }
 
     public static class DimensionRestrictions {

@@ -19,11 +19,37 @@ public record WarpRideDestination(
         int weight,
         String structurePool,
         int tint,
+        String dimension,
+        String biome,
         Map<Integer, List<String>> encounters
 ) {
+
+    /** Id of the registered sub-dungeon hosting this destination. */
+    public String dungeonId() {
+        return hasOwnDimension()
+                ? dimension.substring(dimension.indexOf(':') + 1)
+                : SHARED_DUNGEON_ID;
+    }
+
+    /** @return true when this destination generates in its own dimension rather than the shared one. */
+    public boolean hasOwnDimension() {
+        return dimension != null && !dimension.isBlank();
+    }
+
+    /**
+     * Biome to stamp on the footprint, or {@code null}. Always {@code null} for a destination that
+     * owns its dimension: there the biome comes from the dimension's own generator, and stamping
+     * one over the structure would only fight it.
+     */
+    public String effectiveBiome() {
+        return hasOwnDimension() ? null : biome;
+    }
 
     public List<String> encountersForRank(int rank) {
         List<String> list = encounters.get(rank);
         return list == null ? List.of() : list;
     }
+
+    /** The shared sub-dimension, used by every destination that does not name one. */
+    public static final String SHARED_DUNGEON_ID = "dungeon_ultraspace";
 }

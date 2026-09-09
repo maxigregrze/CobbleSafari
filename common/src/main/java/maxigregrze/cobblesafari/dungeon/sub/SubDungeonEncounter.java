@@ -12,11 +12,17 @@ import com.cobblemon.mod.common.pokemon.IVs;
 import com.cobblemon.mod.common.pokemon.Pokemon;
 import com.cobblemon.mod.common.pokemon.properties.HiddenAbilityProperty;
 import maxigregrze.cobblesafari.CobbleSafari;
+import maxigregrze.cobblesafari.dungeon.DungeonConfig;
+import maxigregrze.cobblesafari.dungeon.DungeonDimensions;
 import maxigregrze.cobblesafari.warpride.logic.WarpRideDestination;
 import maxigregrze.cobblesafari.warpride.logic.WarpRideDestinationRegistry;
 import maxigregrze.cobblesafari.warpride.logic.WarpRideDifficultyLoader;
 import maxigregrze.cobblesafari.warpride.logic.WarpRideRewards;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
+import net.minecraft.world.entity.ai.attributes.Attribute;
+import net.minecraft.world.entity.ai.attributes.AttributeInstance;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
@@ -62,17 +68,33 @@ final class SubDungeonEncounter {
      */
     static void resolve(ServerLevel level, ServerPlayer player, List<BlockPos> anchors,
                         SubDungeonRequest request) {
-        BlockPos spot = anchors.isEmpty()
+        // Only anchors the player can actually reach are eligible. A structure that straddles the
+        // void guard carries some of its anchors in the buried half, below the line - a Pokemon
+        // placed there would be walled into the terrain, and a player going after it would be
+        // evacuated on the way down. The draw is therefore over the reachable anchors only, while
+        // the erasure below still covers every one of them.
+        DungeonConfig config = DungeonDimensions.getDungeonByDimension(level.dimension());
+        int guardY = config == null ? Integer.MIN_VALUE : config.getVoidGuardY();
+        List<BlockPos> reachable = anchors.stream().filter(a -> a.getY() >= guardY).toList();
+
+        BlockPos spot = reachable.isEmpty()
                 ? null
-                : anchors.get(level.getRandom().nextInt(anchors.size()));
+                : reachable.get(level.getRandom().nextInt(reachable.size()));
 
         for (BlockPos anchor : anchors) {
             level.setBlock(anchor, Blocks.AIR.defaultBlockState(), net.minecraft.world.level.block.Block.UPDATE_ALL);
         }
 
         if (spot == null) {
-            CobbleSafari.LOGGER.warn("[SubDungeon] no ultra_spawn_anchor found in {}; no encounter spawned",
-                    request.structurePool());
+            if (anchors.isEmpty()) {
+                CobbleSafari.LOGGER.warn("[SubDungeon] no ultra_spawn_anchor found in {}; no encounter spawned",
+                        request.structurePool());
+            } else {
+                CobbleSafari.LOGGER.warn("[SubDungeon] all {} ultra_spawn_anchor(s) in {} sit below the void "
+                        + "guard at Y {}; no encounter spawned. The pool needs at least one anchor in the "
+                        + "half of the structure players can occupy",
+                        anchors.size(), request.structurePool(), guardY);
+            }
             return;
         }
 
@@ -86,6 +108,14 @@ final class SubDungeonEncounter {
 
         String picked = species.get(level.getRandom().nextInt(species.size()));
         spawnReward(level, player, spot, picked, destination, request);
+    }
+
+    /** Pins one movement attribute to zero, if the entity carries it at all. */
+    private static void zeroSpeed(PokemonEntity entity, Holder<Attribute> attribute) {
+        AttributeInstance instance = entity.getAttribute(attribute);
+        if (instance != null) {
+            instance.setBaseValue(0.0);
+        }
     }
 
     /**
@@ -160,6 +190,24 @@ final class SubDungeonEncounter {
 
             entity.moveTo(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5,
                     random.nextFloat() * 360.0f, 0.0f);
+
+            // The reward stays on its anchor. A structure this shape is full of ledges and open
+            // shafts, and a Pokemon left to roam does not merely wander off: a flying or levitating
+            // species climbs out of the room entirely and parks somewhere the player cannot follow -
+            // in the buried half below the void guard, or clear of the structure altogether. The
+            // encounter was paid for with a ride, so it may not be allowed to walk away from the
+            // person who won it.
+            //
+            // Zeroing the speed attributes rather than setNoAi: the brain keeps running, so the
+            // Pokemon still turns, tracks the player and plays its idle animations - it simply has
+            // no speed to translate with. setNoAi would freeze it into an ornament.
+            //
+            // Both attributes are zeroed because walking and flight read different ones, and a
+            // levitating species is precisely the case that gets out of reach.
+            zeroSpeed(entity, Attributes.MOVEMENT_SPEED);
+            zeroSpeed(entity, Attributes.FLYING_SPEED);
+            entity.setPersistenceRequired();
+
             level.addFreshEntity(entity);
 
             logOutcome(player, request, destination, pokemon, bonusMoves);

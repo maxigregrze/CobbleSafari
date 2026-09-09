@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/cube_column",
+  "textures": {
+    "end": "cobblesafari:block/ultravine_sides",
+    "side": "cobblesafari:block/ultravine_sides"
+  }
+}

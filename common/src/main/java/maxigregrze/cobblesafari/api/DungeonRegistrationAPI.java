@@ -42,9 +42,20 @@ public final class DungeonRegistrationAPI {
             return false;
         }
         DungeonDimensions.addDungeon(config);
-        PortalSpawnConfig.ensureDimensionEntry(config.getId(), true, config.getWeight());
+        // A sub-dungeon is never a Hoopa portal destination (action plan 183, § 3.2): seeding an
+        // *enabled* wheel entry for one would be an invitation to turn it on, and a portal aimed at
+        // it generates nothing because its structure comes from a destination file, not the config.
+        if (!config.isSubDungeon()) {
+            PortalSpawnConfig.ensureDimensionEntry(config.getId(), true, config.getWeight());
+        }
         if (!config.isExternallyManaged()) {
             SafariTimerConfig.ensureDimensionEntry(config.getDimensionId(), config.getTimerDurationSeconds(), 0);
+            // A dimension shipped without a restrictions entry inherits nothing - item use, block
+            // breaking, Cobblemon summoning and mounts are all allowed in a dimension whose parent
+            // may forbid all four (action plan 183, § 11.9). Seeded with the same defaults the mod's
+            // own dungeons carry.
+            DimensionalBanConfig.ensureDimensionEntry(
+                    config.getDimensionId(), DimensionalBanData.defaultDungeonRestrictions());
         }
         return true;
     }

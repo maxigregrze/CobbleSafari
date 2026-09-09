@@ -5,14 +5,16 @@
     "settings": {
       "biome": "cobblesafari:dungeon_megalopolis_biome",
       "lakes": false,
-      "features": false,
+      "features": true,
       "layers": [
         {
-          "height": 256,
-          "block": "minecraft:air"
+          "height": 1,
+          "block": "minecraft:black_concrete"
         }
       ],
-      "structure_overrides": []
+      "structure_overrides": [
+        "cobblesafari:megalopolis_decoration"
+      ]
     }
   }
 }

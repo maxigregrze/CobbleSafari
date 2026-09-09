@@ -1,0 +1,16 @@
+{
+  "variants": {
+    "axis=y": {
+      "model": "cobblesafari:block/ultraspace_vines_block"
+    },
+    "axis=x": {
+      "model": "cobblesafari:block/ultraspace_vines_block",
+      "x": 90,
+      "y": 90
+    },
+    "axis=z": {
+      "model": "cobblesafari:block/ultraspace_vines_block",
+      "x": 90
+    }
+  }
+}

@@ -18,6 +18,9 @@ import java.util.UUID;
  * @param devicePos       where to put them back: the wormhole block
  * @param parentDimension the dimension that block stands in
  * @param structurePool   what to generate, taken from the destination file - never from the config
+ * @param dungeonId       which registered sub-dungeon hosts it, taken from the destination file
+ * @param biome           biome to stamp on the footprint, or {@code null} - ignored when the
+ *                        destination owns its dimension
  * @param typeId          the ride's {@code type}: interpreted, it chose {@code structurePool}
  * @param tier            the ride's {@code tier}: recorded, never interpreted
  * @param distance        the ride's {@code distance}: recorded, never interpreted
@@ -29,6 +32,8 @@ public record SubDungeonRequest(
         BlockPos devicePos,
         ResourceKey<Level> parentDimension,
         String structurePool,
+        String dungeonId,
+        String biome,
         int typeId,
         int tier,
         int distance

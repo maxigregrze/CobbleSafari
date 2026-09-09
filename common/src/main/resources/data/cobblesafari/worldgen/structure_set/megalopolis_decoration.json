@@ -1,0 +1,14 @@
+{
+  "structures": [
+    {
+      "structure": "cobblesafari:megalopolis_decoration",
+      "weight": 1
+    }
+  ],
+  "placement": {
+    "type": "minecraft:random_spread",
+    "salt": 771305,
+    "spacing": 1,
+    "separation": 0
+  }
+}

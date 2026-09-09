@@ -15,6 +15,15 @@
         "biome": "cobblesafari:dungeon_paris_biome",
         "battle": "wild"
       }
+    },
+    {
+      "music": "cobblesafari:hyperspacealpha",
+      "priority": 5,
+      "when": {
+        "biome": "cobblesafari:dungeon_paris_biome",
+        "battle": "wild",
+        "form": "alpha"
+      }
     }
   ]
 }

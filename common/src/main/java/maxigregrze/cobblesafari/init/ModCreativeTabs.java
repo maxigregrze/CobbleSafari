@@ -484,6 +484,8 @@ public class ModCreativeTabs {
                 output.accept(ModBlocks.ULTRASPACE_CABLE_STRAP);
                 output.accept(ModBlocks.ULTRASPACE_CABLE_ZIP);
                 output.accept(ModBlocks.ULTRASPACE_CABLE_STAIRS);
+                output.accept(ModBlocks.ULTRASPACE_VINES);
+                output.accept(ModBlocks.ULTRASPACE_VINES_BLOCK);
                 output.accept(ModBlocks.MEGAPOLIS_LIGHT);
                 output.accept(ModBlocks.MEGAPOLIS_STAIRS);
                 output.accept(ModBlocks.LIGHTNINGSPOT);

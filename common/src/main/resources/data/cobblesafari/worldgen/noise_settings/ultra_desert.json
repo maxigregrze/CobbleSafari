@@ -1,0 +1,154 @@
+{
+  "sea_level": 0,
+  "disable_mob_generation": true,
+  "aquifers_enabled": false,
+  "ore_veins_enabled": false,
+  "legacy_random_source": false,
+  "default_block": {
+    "Name": "cobblesafari:ultraspace_sandstone"
+  },
+  "default_fluid": {
+    "Name": "minecraft:air"
+  },
+  "noise": {
+    "min_y": 0,
+    "height": 128,
+    "size_horizontal": 1,
+    "size_vertical": 2
+  },
+  "spawn_target": [],
+  "noise_router": {
+    "barrier": {
+      "type": "minecraft:constant",
+      "argument": 0.0
+    },
+    "fluid_level_floodedness": {
+      "type": "minecraft:constant",
+      "argument": 0.0
+    },
+    "fluid_level_spread": {
+      "type": "minecraft:constant",
+      "argument": 0.0
+    },
+    "lava": {
+      "type": "minecraft:constant",
+      "argument": 0.0
+    },
+    "temperature": {
+      "type": "minecraft:constant",
+      "argument": 0.0
+    },
+    "vegetation": {
+      "type": "minecraft:constant",
+      "argument": 0.0
+    },
+    "continents": {
+      "type": "minecraft:constant",
+      "argument": 0.0
+    },
+    "erosion": {
+      "type": "minecraft:constant",
+      "argument": 0.0
+    },
+    "depth": {
+      "type": "minecraft:constant",
+      "argument": 0.0
+    },
+    "ridges": {
+      "type": "minecraft:constant",
+      "argument": 0.0
+    },
+    "initial_density_without_jaggedness": {
+      "type": "minecraft:constant",
+      "argument": 0.0
+    },
+    "final_density": {
+      "type": "minecraft:add",
+      "argument1": {
+        "type": "minecraft:y_clamped_gradient",
+        "from_y": 0,
+        "to_y": 8,
+        "from_value": 1.0,
+        "to_value": -1.0
+      },
+      "argument2": {
+        "type": "minecraft:mul",
+        "argument1": {
+          "type": "minecraft:noise",
+          "noise": "cobblesafari:ultra_surface",
+          "xz_scale": 1.0,
+          "y_scale": 0.0
+        },
+        "argument2": 0.75
+      }
+    },
+    "vein_toggle": {
+      "type": "minecraft:constant",
+      "argument": 0.0
+    },
+    "vein_ridged": {
+      "type": "minecraft:constant",
+      "argument": 0.0
+    },
+    "vein_gap": {
+      "type": "minecraft:constant",
+      "argument": 0.0
+    }
+  },
+  "surface_rule": {
+    "type": "minecraft:sequence",
+    "sequence": [
+      {
+        "type": "minecraft:condition",
+        "if_true": {
+          "type": "minecraft:vertical_gradient",
+          "random_name": "cobblesafari:bedrock_floor",
+          "true_at_and_below": {
+            "above_bottom": 0
+          },
+          "false_at_and_above": {
+            "above_bottom": 2
+          }
+        },
+        "then_run": {
+          "type": "minecraft:block",
+          "result_state": {
+            "Name": "minecraft:bedrock"
+          }
+        }
+      },
+      {
+        "type": "minecraft:condition",
+        "if_true": {
+          "type": "minecraft:stone_depth",
+          "offset": 0,
+          "surface_type": "floor",
+          "add_surface_depth": false,
+          "secondary_depth_range": 0
+        },
+        "then_run": {
+          "type": "minecraft:block",
+          "result_state": {
+            "Name": "cobblesafari:ultraspace_sand"
+          }
+        }
+      },
+      {
+        "type": "minecraft:condition",
+        "if_true": {
+          "type": "minecraft:stone_depth",
+          "offset": 3,
+          "surface_type": "floor",
+          "add_surface_depth": false,
+          "secondary_depth_range": 0
+        },
+        "then_run": {
+          "type": "minecraft:block",
+          "result_state": {
+            "Name": "cobblesafari:ultraspace_sandstone"
+          }
+        }
+      }
+    ]
+  }
+}

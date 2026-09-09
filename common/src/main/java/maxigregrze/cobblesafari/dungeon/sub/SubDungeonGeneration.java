@@ -13,11 +13,18 @@ import maxigregrze.cobblesafari.init.ModBlocks;
 import maxigregrze.cobblesafari.world.StructurePlacer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.Holder;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.commands.FillBiomeCommand;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.level.TicketType;
+import net.minecraft.util.Mth;
 import net.minecraft.world.level.ChunkPos;
+import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.level.chunk.status.ChunkStatus;
@@ -26,6 +33,7 @@ import net.minecraft.world.level.levelgen.structure.BoundingBox;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -53,12 +61,30 @@ public final class SubDungeonGeneration {
     /** How much of the footprint the marker scan reads per tick: one chunk section, 4096 states. */
     private static final int SECTION = 16;
 
-    /** Bounded box searched around the anchor for the exit-portal marker. */
-    private static final int PORTAL_SCAN_RADIUS = 8;
-    private static final int PORTAL_SCAN_DOWN = 4;
-    private static final int PORTAL_SCAN_UP = 8;
+    /** Chunk sections the marker sweep reads per tick. 4096 block reads apiece, so this is cheap. */
+    private static final int SECTIONS_PER_TICK = 8;
 
-    private enum Phase { ALLOCATE, LOAD_CHUNKS, PLACE, PORTAL, SCAN_MARKERS, ENCOUNTER, REGISTER }
+    /**
+     * Fallback half-extent, used only when the jigsaw reported no bounds at all.
+     *
+     * <p>Deliberately <b>generous</b>. It used to be a tight box around the anchor, on the
+     * assumption that a bounds-less placement was a small one - which is exactly backwards: the
+     * anchor is a jigsaw block somewhere inside the start piece, not the centre of the assembly, and
+     * an assembly readily runs tens of blocks away from it on every axis. A box that misses the
+     * attached pieces finds none of their spawn anchors and none of their exit portal, and does so
+     * silently. Erring wide costs a few dozen ticks of scanning; erring narrow costs the instance.</p>
+     */
+    private static final int FALLBACK_SCAN_RADIUS = 48;
+    private static final int FALLBACK_SCAN_DOWN = 48;
+    private static final int FALLBACK_SCAN_UP = 48;
+
+    /**
+     * Phases. {@code SCAN_MARKERS} runs <b>before</b> {@code PORTAL} since action plan 187 (C3):
+     * the exit-portal marker is collected by the same bounds-driven sweep that already collects the
+     * spawn anchors, because a fixed box around the anchor cannot see a marker 31 blocks below it
+     * once the structure hangs downward from its anchor.
+     */
+    private enum Phase { ALLOCATE, LOAD_CHUNKS, AWAIT_CHUNKS, PLACE, SCAN_MARKERS, PORTAL, FILL_BIOME, ENCOUNTER, REGISTER }
 
     /** One in-flight generation. The lock is <b>per player</b>: several riders share one device. */
     private static final Map<UUID, State> IN_FLIGHT = new ConcurrentHashMap<>();
@@ -82,6 +108,11 @@ public final class SubDungeonGeneration {
         // Marker scan cursor, walked one section per tick over the captured footprint.
         int scanX, scanZ, scanY, scanMinY, scanMaxY;
         final List<BlockPos> markers = new ArrayList<>();
+        /** Exit-portal markers found by the same sweep (C3). First one wins. */
+        final List<BlockPos> portalMarkers = new ArrayList<>();
+
+        /** Biome-fill cursor: index into the footprint's chunk list, one chunk per tick (C7). */
+        int fillCursor;
 
         State(SubDungeonRequest request, DungeonConfig config, ServerLevel level) {
             this.request = request;
@@ -100,9 +131,20 @@ public final class SubDungeonGeneration {
      * refunds (section 8.4).
      */
     public static boolean begin(MinecraftServer server, SubDungeonRequest request) {
-        DungeonConfig config = DungeonDimensions.getDungeonById("dungeon_ultraspace");
+        // The host comes from the destination file, not from a constant (plan 187, C6). Everything
+        // downstream already reads state.config / state.level, and every cleanup path is already
+        // keyed on record.dimensionId(), so this one lookup is what opens the mechanism onto the
+        // five sub-dimensions.
+        String dungeonId = request.dungeonId() == null || request.dungeonId().isBlank()
+                ? "dungeon_ultraspace"
+                : request.dungeonId();
+        DungeonConfig config = DungeonDimensions.getDungeonById(dungeonId);
         if (config == null) {
-            CobbleSafari.LOGGER.error("[SubDungeon] dungeon_ultraspace is not registered");
+            CobbleSafari.LOGGER.error("[SubDungeon] {} is not registered", dungeonId);
+            return false;
+        }
+        if (!config.isSubDungeon()) {
+            CobbleSafari.LOGGER.error("[SubDungeon] {} is registered but is not a sub-dungeon", dungeonId);
             return false;
         }
         ServerLevel level = server.getLevel(config.getDimensionKey());
@@ -135,7 +177,7 @@ public final class SubDungeonGeneration {
             DungeonInstanceRecord orphan = DungeonInstanceRecord.createSub(
                     state.config.getDimensionId(), state.slot, state.anchor,
                     state.chunkMinX, state.chunkMinZ, state.chunkMaxX, state.chunkMaxZ,
-                    state.config.getClearSectionsBelow(), state.config.getClearSectionsAbove(),
+                    sectionsBelow(state), sectionsAbove(state),
                     state.config.getZoneSize(),
                     state.request.parentInstanceId(), playerId, 0,
                     state.request.typeId(), state.request.tier(), state.request.distance());
@@ -202,10 +244,26 @@ public final class SubDungeonGeneration {
                 state.phase = Phase.LOAD_CHUNKS;
             }
             case LOAD_CHUNKS -> {
-                // Self-expiring ticket, never TicketType.FORCED (plan 175, D1).
+                // Self-expiring ticket, never TicketType.FORCED (plan 175, D1). The radius is the
+                // one the placement actually touches, not the 4 this used to reserve while
+                // forceLoadChunks blocked over 8 (plan 187, C5).
                 state.level.getChunkSource().addRegionTicket(
-                        TicketType.PORTAL, new ChunkPos(state.anchor), 4, state.anchor);
-                state.phase = Phase.PLACE;
+                        TicketType.PORTAL, new ChunkPos(state.anchor),
+                        StructurePlacer.STRUCTURE_PLACEMENT_RADIUS, state.anchor);
+                StructurePlacer.ticketPlacementChunks(
+                        state.level, state.anchor, StructurePlacer.STRUCTURE_PLACEMENT_RADIUS);
+                state.phase = Phase.AWAIT_CHUNKS;
+            }
+            case AWAIT_CHUNKS -> {
+                // Wait for the tickets rather than letting the placement's blocking getChunk build
+                // the chunks on the server thread. In a void flat dimension this passes on the next
+                // tick; in a dimension with a floor, features and scattered structures it is what
+                // stops several hundred full chunk generations landing in one tick. The 30 s
+                // watchdog above remains the backstop if they never arrive.
+                if (StructurePlacer.areChunksReady(
+                        state.level, state.anchor, StructurePlacer.STRUCTURE_PLACEMENT_RADIUS)) {
+                    state.phase = Phase.PLACE;
+                }
             }
             case PLACE -> {
                 boolean placed;
@@ -215,6 +273,16 @@ public final class SubDungeonGeneration {
                             state.level, state.anchor, state.request.structurePool(), state.config.getJigsawDepth());
                     if (placed) {
                         state.bounds = DungeonStructureBounds.consume(state.anchor);
+                        if (state.bounds == null) {
+                            // Never silent. Everything downstream - the clear window and both marker
+                            // sweeps - is sized off these bounds, and their absence used to degrade
+                            // into boxes too small to contain the structure. The run still succeeds
+                            // on the wide fallbacks below, but a capture that has stopped firing is
+                            // a mixin that needs looking at, not a condition to swallow.
+                            CobbleSafari.LOGGER.warn("[SubDungeon] no assembled bounds captured for {} at {};"
+                                    + " falling back to a {}-block box. JigsawPlacementMixin may no longer apply",
+                                    state.request.structurePool(), state.anchor, FALLBACK_SCAN_RADIUS);
+                        }
                     }
                 } finally {
                     DungeonStructureBounds.endCapture();
@@ -227,14 +295,27 @@ public final class SubDungeonGeneration {
                 state.structurePlaced = true;
                 computeChunkBounds(state);
                 prepareScan(state);
-                state.phase = Phase.PORTAL;
-            }
-            case PORTAL -> {
-                placeExitPortal(state);
                 state.phase = Phase.SCAN_MARKERS;
             }
             case SCAN_MARKERS -> {
-                if (scanOneSection(state)) {
+                boolean done = false;
+                for (int i = 0; i < SECTIONS_PER_TICK && !done; i++) {
+                    done = scanOneSection(state);
+                }
+                if (done) {
+                    state.phase = Phase.PORTAL;
+                }
+            }
+            case PORTAL -> {
+                if (!placeExitPortal(state)) {
+                    abort(server, state.request.playerId(),
+                            "no hoopa_ring_portal marker in " + state.request.structurePool());
+                    return;
+                }
+                state.phase = Phase.FILL_BIOME;
+            }
+            case FILL_BIOME -> {
+                if (fillOneChunkBiome(state)) {
                     state.phase = Phase.ENCOUNTER;
                 }
             }
@@ -246,6 +327,7 @@ public final class SubDungeonGeneration {
                 DungeonInstanceRecord record = SubDungeonManager.registerAndEnter(
                         server, player, state.request, state.config, state.slot, state.anchor,
                         state.chunkMinX, state.chunkMinZ, state.chunkMaxX, state.chunkMaxZ,
+                        sectionsBelow(state), sectionsAbove(state),
                         state.exitPortal, state.exitFacing);
                 IN_FLIGHT.remove(state.request.playerId());
                 if (record == null) {
@@ -264,6 +346,90 @@ public final class SubDungeonGeneration {
                 }
             }
         }
+    }
+
+    /**
+     * Clear-window sections <b>measured</b> from the assembled structure, not read from the config
+     * (action plan 187, C2).
+     *
+     * <p>The config's {@code clearSectionsBelow} / {@code clearSectionsAbove} are a bet on which way
+     * a structure grows, and the bet changes with every new pool. It is already wrong for Ultra
+     * Space: the sub-dungeon pools anchor at their <b>top</b> and hang downward, so the shipped 1/10
+     * is the exact inverse of the 2/0 they need. Measuring removes the bet - the window cannot reach
+     * a floor it does not overlap, whichever way the structure grew, and nobody has to remember.</p>
+     *
+     * <p>The fallbacks are the pre-187 config defaults, used only when the jigsaw reported no bounds
+     * at all, which is also the case {@code computeChunkBounds} already falls back for.</p>
+     */
+    private static int sectionsBelow(State state) {
+        if (state.bounds == null) {
+            return state.config.getClearSectionsBelow();
+        }
+        return Math.max(0, Mth.ceil((state.anchor.getY() - state.bounds.minY()) / 16.0));
+    }
+
+    private static int sectionsAbove(State state) {
+        if (state.bounds == null) {
+            return state.config.getClearSectionsAbove();
+        }
+        return Math.max(0, Mth.ceil((state.bounds.maxY() - state.anchor.getY()) / 16.0));
+    }
+
+    /**
+     * Stamps the destination's biome over the footprint, one chunk per tick (action plan 187, C7).
+     *
+     * <p>Only for a destination without its own dimension: the four that own one get their biome
+     * from their generator, and stamping over it would only fight it. {@code FillBiomeCommand.fill}
+     * is public and does the whole job - resolver, {@code setUnsaved}, {@code resendBiomesForChunks}
+     * - but caps its volume at the {@code commandModificationBlockLimit} game rule, which is why
+     * this walks one chunk at a time instead of handing it the whole footprint.</p>
+     *
+     * <p>Nothing undoes this explicitly: {@code DungeonRegionClearer} already re-derives each cleared
+     * section's biome from the generator's biome source, so the stamp disappears with the instance.</p>
+     *
+     * @return true once the whole footprint has been stamped, or immediately when there is nothing
+     *         to stamp
+     */
+    private static boolean fillOneChunkBiome(State state) {
+        String biomeId = state.request.biome();
+        if (biomeId == null || biomeId.isBlank() || state.bounds == null) {
+            return true;
+        }
+        ResourceLocation id = ResourceLocation.tryParse(biomeId);
+        if (id == null) {
+            return true;
+        }
+        Optional<Holder.Reference<Biome>> biome = state.level.registryAccess()
+                .registryOrThrow(Registries.BIOME)
+                .getHolder(ResourceKey.create(Registries.BIOME, id));
+        if (biome.isEmpty()) {
+            // Not fatal: the structure stands and the ride succeeded. Only the mood is missing, and
+            // saying so once beats stranding a rider who already spent their entry.
+            CobbleSafari.LOGGER.warn("[SubDungeon] biome {} is not registered; footprint left unstamped",
+                    biomeId);
+            return true;
+        }
+
+        int minChunkX = state.bounds.minX() >> 4;
+        int maxChunkX = state.bounds.maxX() >> 4;
+        int minChunkZ = state.bounds.minZ() >> 4;
+        int maxChunkZ = state.bounds.maxZ() >> 4;
+        int width = maxChunkX - minChunkX + 1;
+        int total = width * (maxChunkZ - minChunkZ + 1);
+        if (state.fillCursor >= total) {
+            return true;
+        }
+
+        int cx = minChunkX + (state.fillCursor % width);
+        int cz = minChunkZ + (state.fillCursor / width);
+        BlockPos from = new BlockPos(cx << 4, state.bounds.minY(), cz << 4);
+        BlockPos to = new BlockPos((cx << 4) + 15, state.bounds.maxY(), (cz << 4) + 15);
+        FillBiomeCommand.fill(state.level, from, to, biome.get())
+                .ifRight(error -> CobbleSafari.LOGGER.warn(
+                        "[SubDungeon] biome fill failed for chunk {},{}: {}", cx, cz, error.getMessage()));
+
+        state.fillCursor++;
+        return state.fillCursor >= total;
     }
 
     /** V3 of plan 138: clear exactly the structure's real footprint, with a one-chunk margin. */
@@ -289,10 +455,10 @@ public final class SubDungeonGeneration {
             state.scanMinY = state.bounds.minY();
             state.scanMaxY = state.bounds.maxY();
         } else {
-            state.scanX = state.anchor.getX() - PORTAL_SCAN_RADIUS;
-            state.scanZ = state.anchor.getZ() - PORTAL_SCAN_RADIUS;
-            state.scanMinY = state.anchor.getY() - PORTAL_SCAN_DOWN;
-            state.scanMaxY = state.anchor.getY() + PORTAL_SCAN_UP;
+            state.scanX = state.anchor.getX() - FALLBACK_SCAN_RADIUS;
+            state.scanZ = state.anchor.getZ() - FALLBACK_SCAN_RADIUS;
+            state.scanMinY = state.anchor.getY() - FALLBACK_SCAN_DOWN;
+            state.scanMaxY = state.anchor.getY() + FALLBACK_SCAN_UP;
         }
         state.scanY = state.scanMinY;
     }
@@ -307,8 +473,8 @@ public final class SubDungeonGeneration {
      * @return true once the whole footprint has been walked
      */
     private static boolean scanOneSection(State state) {
-        int maxX = state.bounds != null ? state.bounds.maxX() : state.anchor.getX() + PORTAL_SCAN_RADIUS;
-        int maxZ = state.bounds != null ? state.bounds.maxZ() : state.anchor.getZ() + PORTAL_SCAN_RADIUS;
+        int maxX = state.bounds != null ? state.bounds.maxX() : state.anchor.getX() + FALLBACK_SCAN_RADIUS;
+        int maxZ = state.bounds != null ? state.bounds.maxZ() : state.anchor.getZ() + FALLBACK_SCAN_RADIUS;
 
         int endX = Math.min(state.scanX + SECTION - 1, maxX);
         int endZ = Math.min(state.scanZ + SECTION - 1, maxZ);
@@ -322,8 +488,14 @@ public final class SubDungeonGeneration {
                 for (int z = state.scanZ; z <= endZ; z++) {
                     for (int y = state.scanY; y <= endY; y++) {
                         cursor.set(x, y, z);
-                        if (state.level.getBlockState(cursor).is(ModBlocks.ULTRA_SPAWN_ANCHOR)) {
+                        BlockState scanned = state.level.getBlockState(cursor);
+                        if (scanned.is(ModBlocks.ULTRA_SPAWN_ANCHOR)) {
                             state.markers.add(cursor.immutable());
+                        } else if (scanned.is(ModBlocks.HOOPA_RING_PORTAL)) {
+                            // Collected by the same sweep as the spawn anchors (C3): a fixed box
+                            // around the anchor cannot reach a marker at the foot of a structure
+                            // that hangs 31 blocks below it.
+                            state.portalMarkers.add(cursor.immutable());
                         }
                     }
                 }
@@ -337,7 +509,7 @@ public final class SubDungeonGeneration {
             if (state.scanX > maxX) {
                 state.scanX = state.bounds != null
                         ? state.bounds.minX()
-                        : state.anchor.getX() - PORTAL_SCAN_RADIUS;
+                        : state.anchor.getX() - FALLBACK_SCAN_RADIUS;
                 state.scanZ += SECTION;
                 return state.scanZ > maxZ;
             }
@@ -349,14 +521,24 @@ public final class SubDungeonGeneration {
      * Replaces the {@code hoopa_ring_portal} marker with the real exit portal - the same convention
      * the Hoopa dungeons already use. First occurrence wins: two exits in one structure would be a
      * second way out to reason about, for no gain.
+     *
+     * <p>The marker comes from the bounds-driven sweep in {@link #scanOneSection}, not from a box
+     * around the anchor (action plan 187, C3). It used to be searched within {@code -4..+8} of the
+     * anchor, which cannot reach the foot of a structure whose anchor is at its top - the scan then
+     * failed, the fallback put the portal two blocks above the roof, and the arriving player was
+     * dropped into the air beside it.</p>
+     *
+     * <p>A missing marker is now an <b>abort</b> rather than a guessed position. It is an authoring
+     * error in the pool, and the honest outcome is to refund the entry and leave the rider in their
+     * parent dungeon rather than hand them a broken instance.</p>
+     *
+     * @return false when the structure carries no marker
      */
-    private static void placeExitPortal(State state) {
-        BlockPos marker = findPortalMarker(state);
-        if (marker == null) {
-            CobbleSafari.LOGGER.warn("[SubDungeon] no hoopa_ring_portal marker near {}, using default offset",
-                    state.anchor);
-            marker = state.anchor.offset(0, 2, -1);
+    private static boolean placeExitPortal(State state) {
+        if (state.portalMarkers.isEmpty()) {
+            return false;
         }
+        BlockPos marker = state.portalMarkers.get(0);
         BlockState existing = state.level.getBlockState(marker);
         Direction facing = existing.hasProperty(UltraWormholeBlock.FACING)
                 ? existing.getValue(UltraWormholeBlock.FACING)
@@ -366,21 +548,7 @@ public final class SubDungeonGeneration {
         state.level.setBlock(marker,
                 ModBlocks.ULTRA_WORMHOLE.defaultBlockState().setValue(UltraWormholeBlock.FACING, facing),
                 net.minecraft.world.level.block.Block.UPDATE_ALL);
-    }
-
-    private static BlockPos findPortalMarker(State state) {
-        BlockPos.MutableBlockPos cursor = new BlockPos.MutableBlockPos();
-        for (int dy = -PORTAL_SCAN_DOWN; dy <= PORTAL_SCAN_UP; dy++) {
-            for (int dx = -PORTAL_SCAN_RADIUS; dx <= PORTAL_SCAN_RADIUS; dx++) {
-                for (int dz = -PORTAL_SCAN_RADIUS; dz <= PORTAL_SCAN_RADIUS; dz++) {
-                    cursor.set(state.anchor.getX() + dx, state.anchor.getY() + dy, state.anchor.getZ() + dz);
-                    if (state.level.getBlockState(cursor).is(ModBlocks.HOOPA_RING_PORTAL)) {
-                        return cursor.immutable();
-                    }
-                }
-            }
-        }
-        return null;
+        return true;
     }
 
     /** Where the arriving player is put: one block in front of the exit portal. */

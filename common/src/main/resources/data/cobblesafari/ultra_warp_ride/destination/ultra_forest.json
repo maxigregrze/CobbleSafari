@@ -1,0 +1,21 @@
+{
+  "typeId": 6,
+  "weight": 10,
+  "structurePool": "cobblesafari:ultraspace/forest/start",
+  "tint": "#afbb56",
+  "biome": "cobblesafari:dungeon_ultra_forest_biome",
+  "encounters": {
+    "0": [
+      "pheromosa"
+    ],
+    "1": [
+      "poipole"
+    ],
+    "2": [
+      "blipbug"
+    ],
+    "3": [
+      "venipede"
+    ]
+  }
+}

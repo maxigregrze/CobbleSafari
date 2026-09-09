@@ -22,7 +22,7 @@ import java.util.Map;
  * Manual edits are respected after first load.
  */
 public class DimensionalBanConfig {
-    public static final int CONFIG_VERSION = 3;
+    public static final int CONFIG_VERSION = 4;
 
     /**
      * Version that relifts the {@code cobblesafari:dungeon_jump} restrictions. The entry predates the
@@ -38,11 +38,21 @@ public class DimensionalBanConfig {
      */
     private static final int VERSION_ULTRA_DIMENSIONS = 3;
 
+    /**
+     * Version that creates the entries for the four sub-dimensions of action plan 187 (§ 4.9).
+     * Same reasoning as the palier above, and the same guarantee: only missing entries are written,
+     * so a server owner who loosened one keeps that choice across every subsequent start.
+     */
+    private static final int VERSION_ULTRA_SUB_DIMENSIONS = 4;
+
     private static final String KEY_CONFIG_VERSION = "CONFIG_VERSION";
     private static final String KEY_DIMENSIONS = "dimensions";
     private static final String DUNGEON_JUMP_DIMENSION_ID = "cobblesafari:dungeon_jump";
     private static final String[] ULTRA_DIMENSION_IDS = {
             "cobblesafari:dungeon_megalopolis", "cobblesafari:dungeon_ultraspace" };
+    private static final String[] ULTRA_SUB_DIMENSION_IDS = {
+            "cobblesafari:dungeon_ultra_jungle", "cobblesafari:dungeon_ultra_desert",
+            "cobblesafari:dungeon_ultra_plant", "cobblesafari:dungeon_ultra_crater" };
 
     private static final Path CONFIG_DIR = Services.PLATFORM.getConfigDir().resolve("cobblesafari");
     private static final Path CONFIG_PATH = CONFIG_DIR.resolve("dimensional_restrictions_config.json");
@@ -124,7 +134,11 @@ public class DimensionalBanConfig {
             int loadedVersion = readStoredVersion(root);
             boolean mountingMigrated = migrateForbidMounting(root, data);
             boolean jumpMigrated = migrateDungeonJumpRestrictions(loadedVersion, data);
-            boolean ultraMigrated = migrateUltraDimensions(loadedVersion, data);
+            boolean ultraMigrated = seedMissingDimensions(
+                    loadedVersion, VERSION_ULTRA_DIMENSIONS, ULTRA_DIMENSION_IDS, data);
+            boolean ultraSubMigrated = seedMissingDimensions(
+                    loadedVersion, VERSION_ULTRA_SUB_DIMENSIONS, ULTRA_SUB_DIMENSION_IDS, data);
+            ultraMigrated = ultraMigrated || ultraSubMigrated;
             CobbleSafari.LOGGER.info("CobbleSafari >> dimensional_restrictions_config.json loaded successfully from {}", CONFIG_PATH);
             if (mountingMigrated || jumpMigrated || ultraMigrated) {
                 save();
@@ -178,21 +192,26 @@ public class DimensionalBanConfig {
     }
 
     /**
-     * One-shot creation of the {@code dungeon_megalopolis} and {@code dungeon_ultraspace} entries
-     * (action plan 183, section 11.9, finding S20).
+     * One-shot creation of a batch of dimension entries, guarded by a version stamp.
+     *
+     * <p>Introduced for {@code dungeon_megalopolis} and {@code dungeon_ultraspace} (action plan 183,
+     * § 11.9, finding S20) and generalised by action plan 187, which adds a second batch for the
+     * four sub-dimensions that own their world. Each batch keeps its own threshold, so an owner who
+     * is already past the first does not get its entries re-seeded when the second runs.</p>
      *
      * <p>Only <b>missing</b> entries are written. An owner who already added one by hand - or who
      * ran a build where it existed - keeps it untouched, so this can never overwrite a decision.
      * The version stamp is what stops it running twice, which is what lets a later loosening of
-     * either dimension survive.</p>
+     * any of these dimensions survive.</p>
      */
-    private static boolean migrateUltraDimensions(int loadedVersion, DimensionalBanData loaded) {
-        if (loadedVersion >= VERSION_ULTRA_DIMENSIONS) {
+    private static boolean seedMissingDimensions(int loadedVersion, int threshold,
+                                                 String[] dimensionIds, DimensionalBanData loaded) {
+        if (loadedVersion >= threshold) {
             return false;
         }
         DimensionalBanData defaults = new DimensionalBanData();
         boolean changed = false;
-        for (String dimensionId : ULTRA_DIMENSION_IDS) {
+        for (String dimensionId : dimensionIds) {
             if (loaded.dimensions.containsKey(dimensionId)) {
                 continue;
             }

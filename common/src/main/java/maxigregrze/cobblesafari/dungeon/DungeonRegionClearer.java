@@ -8,6 +8,7 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.TicketType;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.ChunkPos;
@@ -37,6 +38,18 @@ public class DungeonRegionClearer {
 
     private static final int CHUNK_CLEAR_PER_TICK = 32;
     private static final int CHUNK_CLEAR_PER_TICK_DRAIN = 256;
+
+    /**
+     * Restoration budget, deliberately an order of magnitude below the clear's.
+     *
+     * <p>Clearing a chunk is a memset - microseconds, which is why 32 per tick is safe. Rebuilding
+     * one runs the decoration step, and doing that at the same rate would produce exactly the
+     * multi-second hang that plans 138 (V1), 145 (C11), 182 (C8) and 187 (C5) have each had to fix
+     * once already. At four per tick a ~225-chunk region takes around three seconds of wall time and
+     * is invisible; with nobody connected there is no tick to protect, so the drain runs wide.</p>
+     */
+    private static final int CHUNK_RESTORE_PER_TICK = 4;
+    private static final int CHUNK_RESTORE_PER_TICK_DRAIN = 32;
 
     /** Ticks a job may wait for its chunks before yielding its queue slot to the next pending job (~10 s). */
     private static final int AWAIT_YIELD_TICKS = 200;
@@ -68,8 +81,23 @@ public class DungeonRegionClearer {
             }
             return;
         }
+        // Whether this dimension's worldgen is rebuilt afterwards, and therefore whether the window
+        // may reach down through the terrain at all (action plan 187, § 6). A restoring dungeon
+        // rests on its ground, so the window is forced down past the flat layers: clearing it is
+        // unavoidable, and putting it back is what makes the next instance in this slot land on
+        // pristine terrain instead of in a crater.
+        DungeonConfig config = DungeonDimensions.getDungeonByDimensionId(
+                dungeonLevel.dimension().location().toString());
+        boolean restore = config != null && config.restoresWorldgen();
+        int effectiveBelow = sectionsBelow;
+        if (restore) {
+            int toBedrock = Math.max(0,
+                    Mth.ceil((structureY - dungeonLevel.getMinBuildHeight()) / 16.0));
+            effectiveBelow = Math.max(sectionsBelow, toBedrock);
+        }
+
         PENDING_JOBS.add(new RegionClearJob(dungeonLevel, chunkMinX, chunkMinZ, chunkMaxX, chunkMaxZ,
-                structureY, sectionsBelow, sectionsAbove, positions, onFullyCleared));
+                structureY, effectiveBelow, sectionsAbove, positions, restore, onFullyCleared));
     }
 
     public static void tick(MinecraftServer server) {
@@ -89,6 +117,7 @@ public class DungeonRegionClearer {
             case ADD_TICKETS -> addAllDungeonClearTickets(job);
             case AWAIT_LOADED -> awaitChunksLoaded(job);
             case CLEAR_CHUNKS -> clearChunkBatch(server, job);
+            case RESTORE_WORLDGEN -> restoreChunkBatch(server, job);
             case FINALIZE -> finalizeJob(job);
         }
     }
@@ -206,6 +235,31 @@ public class DungeonRegionClearer {
         job.setClearCursor(end);
 
         if (job.clearCursor() >= job.positions().size()) {
+            job.setPhase(job.restoreWorldgen()
+                    ? RegionClearJob.Phase.RESTORE_WORLDGEN
+                    : RegionClearJob.Phase.FINALIZE);
+        }
+    }
+
+    /**
+     * Rebuilds the worldgen the clear just erased, one small batch per tick (action plan 187, § 6).
+     *
+     * <p>Only reached for a dungeon whose config opts in. The others keep the historical behaviour
+     * exactly: their structures float clear of the ground, their clear window never touches terrain,
+     * and there is nothing to put back.</p>
+     */
+    private static void restoreChunkBatch(MinecraftServer server, RegionClearJob job) {
+        ServerLevel level = job.level();
+        int budget = server.getPlayerCount() == 0 ? CHUNK_RESTORE_PER_TICK_DRAIN : CHUNK_RESTORE_PER_TICK;
+        int end = Math.min(job.restoreCursor() + budget, job.positions().size());
+        for (int i = job.restoreCursor(); i < end; i++) {
+            DungeonWorldgenRestorer.restoreChunk(level, job.positions().get(i));
+        }
+        job.setRestoreCursor(end);
+
+        if (job.restoreCursor() >= job.positions().size()) {
+            CobbleSafari.LOGGER.info("Dungeon region worldgen restored: dimension {}, {} chunks",
+                    level.dimension().location(), job.positions().size());
             job.setPhase(RegionClearJob.Phase.FINALIZE);
         }
     }
@@ -441,6 +495,7 @@ public class DungeonRegionClearer {
             ADD_TICKETS,
             AWAIT_LOADED,
             CLEAR_CHUNKS,
+            RESTORE_WORLDGEN,
             FINALIZE
         }
 
@@ -460,12 +515,16 @@ public class DungeonRegionClearer {
         private int minClearY;
         private int maxClearY;
         private int clearCursor;
+        private int restoreCursor;
+        private final boolean restoreWorldgen;
 
         RegionClearJob(ServerLevel level,
                        int chunkMinX, int chunkMinZ, int chunkMaxX, int chunkMaxZ,
                        int structureY, int sectionsBelow, int sectionsAbove,
                        List<ChunkPos> positions,
+                       boolean restoreWorldgen,
                        @Nullable Runnable onFullyCleared) {
+            this.restoreWorldgen = restoreWorldgen;
             this.level = level;
             this.chunkMinX = chunkMinX;
             this.chunkMinZ = chunkMinZ;
@@ -492,6 +551,18 @@ public class DungeonRegionClearer {
 
         void setPhase(Phase phase) {
             this.phase = phase;
+        }
+
+        boolean restoreWorldgen() {
+            return restoreWorldgen;
+        }
+
+        int restoreCursor() {
+            return restoreCursor;
+        }
+
+        void setRestoreCursor(int restoreCursor) {
+            this.restoreCursor = restoreCursor;
         }
 
         int incrementAwaitTicks() {

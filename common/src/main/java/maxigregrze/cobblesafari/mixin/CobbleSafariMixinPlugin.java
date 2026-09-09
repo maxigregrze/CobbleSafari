@@ -13,6 +13,16 @@ public class CobbleSafariMixinPlugin implements IMixinConfigPlugin {
 
     private static final Logger LOGGER = LogManager.getLogger("CobbleSafari");
 
+    /**
+     * Mixins disabled when another mod already lifts the jigsaw size limits.
+     *
+     * <p>{@code JigsawBoundsMixin} is deliberately <b>absent</b> from this set. It shares a target
+     * method with {@code JigsawPlacementMixin} but not its subject: it only reads the assembled
+     * bounding box, which conflicts with nothing and which the dungeon clearer and the marker sweep
+     * both depend on. It used to be part of {@code JigsawPlacementMixin}, and switching that class
+     * off for compatibility silently took the capture with it - leaving the bottom courses of every
+     * cleared structure standing and every spawn anchor outside the start piece unfound.</p>
+     */
     private static final Set<String> JIGSAW_MIXIN_CLASSES = Set.of(
             "maxigregrze.cobblesafari.mixin.JigsawPlacementMixin",
             "maxigregrze.cobblesafari.mixin.JigsawStructureMixin"

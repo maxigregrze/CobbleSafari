@@ -13,3 +13,25 @@
 *.pyd binary
 *.cfg text eol=lf
 *.jks binary
+
+# Binary assets - MUST never go through EOL normalization.
+# The `* text eol=lf` rule above applies to every path, so any format not
+# listed here gets its CRLF byte pairs collapsed to LF on commit, which
+# silently destroys binary content (this corrupted 9 .ogg files).
+*.ogg binary
+*.wav binary
+*.mp3 binary
+*.flac binary
+*.nbt binary
+*.schem binary
+*.jpg binary
+*.jpeg binary
+*.webp binary
+*.ico binary
+*.tga binary
+*.psd binary
+*.ttf binary
+*.otf binary
+*.pyc binary
+*.bin binary
+*.gz binary

@@ -3,7 +3,6 @@ package maxigregrze.cobblesafari.data;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.NbtUtils;
 import net.minecraft.nbt.Tag;
 
 import java.util.ArrayList;
@@ -52,11 +51,24 @@ public record DungeonInstanceRecord(
         /** The ride's {@code distance}: recorded, never interpreted (spec v2 section 4.7). */
         int rollDistance,
         /**
-         * Players who have already spent their once-per-run wormhole entry on <b>this</b> parent
-         * instance (action plan 183, B7). Per run by construction: it resets with the instance.
+         * Wormhole entries already spent on <b>this</b> parent instance, one per (player, device)
+         * pair (action plan 187, C4). Per run by construction: it resets with the instance.
+         *
+         * <p>Plan 183 B7 keyed this on the player alone - one ride per run, whatever the number of
+         * devices. Keying it on the device instead makes the number of rides follow the structure's
+         * own contents: three wormhole blocks in a megalopolis grant three rides, and adding a
+         * fourth is an authoring change rather than a config key. Positions are absolute, which is
+         * safe because a record belongs to one instance and its structure is placed once.</p>
          */
-        List<UUID> subEntriesUsed
+        List<SubEntry> subEntries
 ) {
+    /**
+     * One spent entry: which player, at which device. {@code devicePos} is always the block the
+     * player interacted with as {@code SubDungeonManager} resolved it - the lower half for a double
+     * block - so the two halves of one wormhole can never count as two entries.
+     */
+    public record SubEntry(UUID playerId, BlockPos devicePos) {}
+
     private static final String NBT_INSTANCE_ID = "InstanceId";
     private static final String NBT_PORTAL_ID = "PortalId";
     private static final String NBT_DIMENSION_ID = "DimensionId";
@@ -79,7 +91,16 @@ public record DungeonInstanceRecord(
     private static final String NBT_ROLL_TYPE = "RollType";
     private static final String NBT_ROLL_TIER = "RollTier";
     private static final String NBT_ROLL_DISTANCE = "RollDistance";
-    private static final String NBT_SUB_ENTRIES_USED = "SubEntriesUsed";
+    /**
+     * Per-device entries (action plan 187, C4). A <b>new</b> key: the pre-187 {@code SubEntriesUsed}
+     * list of bare UUIDs is neither read nor written any more. Ultra Space content is unreleased, so
+     * no save in circulation depends on it, and writing under a new key guarantees that no record
+     * created from here on carries the legacy shape - a record written before this plan simply
+     * reads as "no entry spent" rather than as something ambiguous.
+     */
+    private static final String NBT_SUB_ENTRIES_BY_PORTAL = "SubEntriesByPortal";
+    private static final String NBT_SUB_ENTRY_PLAYER = "Player";
+    private static final String NBT_SUB_ENTRY_POS = "Pos";
 
     public static DungeonInstanceRecord create(
             UUID portalId,
@@ -133,6 +154,12 @@ public record DungeonInstanceRecord(
             int chunkMinZ,
             int chunkMaxX,
             int chunkMaxZ,
+            /**
+             * Clear-window sections. Since action plan 187 (C2) the sub-dungeon path passes values
+             * <b>measured</b> from the assembled structure here, not {@code DungeonConfig}'s: the
+             * config values are a bet on which way a structure grows, and Ultra Space's pools grow
+             * downward from an anchor at their top.
+             */
             int clearSectionsBelow,
             int clearSectionsAbove,
             int zoneSize,
@@ -176,7 +203,7 @@ public record DungeonInstanceRecord(
                 structureY, clearSectionsBelow, clearSectionsAbove, zoneSize,
                 pendingDeletion, entranceClosed,
                 parentInstanceId, ownerPlayerId, grantedTicks,
-                rollTypeId, rollTier, rollDistance, subEntriesUsed
+                rollTypeId, rollTier, rollDistance, subEntries
         );
     }
 
@@ -188,49 +215,79 @@ public record DungeonInstanceRecord(
                 structureY, clearSectionsBelow, clearSectionsAbove, zoneSize,
                 pendingDeletion, entranceClosed,
                 parentInstanceId, ownerPlayerId, grantedTicks,
-                rollTypeId, rollTier, rollDistance, subEntriesUsed
+                rollTypeId, rollTier, rollDistance, subEntries
         );
     }
 
     /**
-     * Spends {@code playerId}'s once-per-run wormhole entry on this parent instance
-     * (action plan 183, B7). Idempotent: a player already in the list is not added twice.
+     * Spends {@code playerId}'s wormhole entry <b>on {@code devicePos}</b> (action plan 187, C4).
+     * Idempotent: the same pair is never added twice, so a held right-click cannot bank entries.
      */
-    public DungeonInstanceRecord withSubEntryConsumed(UUID playerId) {
-        if (playerId == null || subEntriesUsed.contains(playerId)) {
+    public DungeonInstanceRecord withSubEntryConsumed(UUID playerId, BlockPos devicePos) {
+        if (playerId == null || devicePos == null) {
             return this;
         }
-        List<UUID> spent = new ArrayList<>(subEntriesUsed);
-        spent.add(playerId);
+        SubEntry entry = new SubEntry(playerId, devicePos.immutable());
+        if (subEntries.contains(entry)) {
+            return this;
+        }
+        List<SubEntry> spent = new ArrayList<>(subEntries);
+        spent.add(entry);
+        return withSubEntries(List.copyOf(spent));
+    }
+
+    /**
+     * Gives back the entry spent at {@code devicePos} - the two server-initiated failures of
+     * section 8.4. Only that device is refunded: the player's other devices are untouched.
+     */
+    public DungeonInstanceRecord withSubEntryRefunded(UUID playerId, BlockPos devicePos) {
+        if (playerId == null || devicePos == null) {
+            return this;
+        }
+        SubEntry entry = new SubEntry(playerId, devicePos.immutable());
+        if (!subEntries.contains(entry)) {
+            return this;
+        }
+        List<SubEntry> spent = new ArrayList<>(subEntries);
+        spent.remove(entry);
+        return withSubEntries(List.copyOf(spent));
+    }
+
+    /**
+     * Drops <b>every</b> entry {@code playerId} has spent on this instance, whatever the device.
+     *
+     * <p>Distinct from {@link #withSubEntryRefunded} on purpose: this is not a refund of one failed
+     * ride but the reset of a whole run, used when a player pays to re-enter the instance
+     * ({@code DungeonTpAcceptHandler.resetWormholeEntryForNewRun}). A new run buys every wormhole
+     * back, not just the last one used.</p>
+     */
+    public DungeonInstanceRecord withSubEntriesClearedFor(UUID playerId) {
+        if (playerId == null) {
+            return this;
+        }
+        List<SubEntry> kept = new ArrayList<>();
+        for (SubEntry entry : subEntries) {
+            if (!playerId.equals(entry.playerId())) {
+                kept.add(entry);
+            }
+        }
+        return kept.size() == subEntries.size() ? this : withSubEntries(List.copyOf(kept));
+    }
+
+    private DungeonInstanceRecord withSubEntries(List<SubEntry> entries) {
         return new DungeonInstanceRecord(
                 instanceId, portalId, dimensionId, slot, structurePos,
                 chunkMinX, chunkMinZ, chunkMaxX, chunkMaxZ,
                 structureY, clearSectionsBelow, clearSectionsAbove, zoneSize,
                 pendingDeletion, entranceClosed,
                 parentInstanceId, ownerPlayerId, grantedTicks,
-                rollTypeId, rollTier, rollDistance, List.copyOf(spent)
+                rollTypeId, rollTier, rollDistance, entries
         );
     }
 
-    /** Gives {@code playerId} their entry back - the two server-initiated failures of section 8.4. */
-    public DungeonInstanceRecord withSubEntryRefunded(UUID playerId) {
-        if (playerId == null || !subEntriesUsed.contains(playerId)) {
-            return this;
-        }
-        List<UUID> spent = new ArrayList<>(subEntriesUsed);
-        spent.remove(playerId);
-        return new DungeonInstanceRecord(
-                instanceId, portalId, dimensionId, slot, structurePos,
-                chunkMinX, chunkMinZ, chunkMaxX, chunkMaxZ,
-                structureY, clearSectionsBelow, clearSectionsAbove, zoneSize,
-                pendingDeletion, entranceClosed,
-                parentInstanceId, ownerPlayerId, grantedTicks,
-                rollTypeId, rollTier, rollDistance, List.copyOf(spent)
-        );
-    }
-
-    public boolean hasSpentSubEntry(UUID playerId) {
-        return playerId != null && subEntriesUsed.contains(playerId);
+    public boolean hasSpentSubEntry(UUID playerId, BlockPos devicePos) {
+        return playerId != null && devicePos != null
+                && subEntries.contains(new SubEntry(playerId, devicePos.immutable()));
     }
 
     /** @return true when this record describes a nested visit rather than an ordinary dungeon. */
@@ -298,12 +355,15 @@ public record DungeonInstanceRecord(
         if (rollDistance != 0) {
             tag.putInt(NBT_ROLL_DISTANCE, rollDistance);
         }
-        if (!subEntriesUsed.isEmpty()) {
+        if (!subEntries.isEmpty()) {
             ListTag spent = new ListTag();
-            for (UUID id : subEntriesUsed) {
-                spent.add(NbtUtils.createUUID(id));
+            for (SubEntry entry : subEntries) {
+                CompoundTag one = new CompoundTag();
+                one.putUUID(NBT_SUB_ENTRY_PLAYER, entry.playerId());
+                one.putLong(NBT_SUB_ENTRY_POS, entry.devicePos().asLong());
+                spent.add(one);
             }
-            tag.put(NBT_SUB_ENTRIES_USED, spent);
+            tag.put(NBT_SUB_ENTRIES_BY_PORTAL, spent);
         }
         return tag;
     }
@@ -316,11 +376,17 @@ public record DungeonInstanceRecord(
                 tag.getInt(NBT_STRUCTURE_Y),
                 tag.getInt(NBT_STRUCTURE_Z)
         );
-        List<UUID> spent = List.of();
-        if (tag.contains(NBT_SUB_ENTRIES_USED)) {
-            List<UUID> parsed = new ArrayList<>();
-            for (Tag entry : tag.getList(NBT_SUB_ENTRIES_USED, Tag.TAG_INT_ARRAY)) {
-                parsed.add(NbtUtils.loadUUID(entry));
+        // The pre-187 "SubEntriesUsed" key is deliberately not read: see NBT_SUB_ENTRIES_BY_PORTAL.
+        List<SubEntry> spent = List.of();
+        if (tag.contains(NBT_SUB_ENTRIES_BY_PORTAL)) {
+            List<SubEntry> parsed = new ArrayList<>();
+            for (Tag entry : tag.getList(NBT_SUB_ENTRIES_BY_PORTAL, Tag.TAG_COMPOUND)) {
+                CompoundTag one = (CompoundTag) entry;
+                if (one.hasUUID(NBT_SUB_ENTRY_PLAYER) && one.contains(NBT_SUB_ENTRY_POS)) {
+                    parsed.add(new SubEntry(
+                            one.getUUID(NBT_SUB_ENTRY_PLAYER),
+                            BlockPos.of(one.getLong(NBT_SUB_ENTRY_POS))));
+                }
             }
             spent = List.copyOf(parsed);
         }

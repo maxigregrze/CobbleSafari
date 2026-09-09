@@ -41,7 +41,19 @@ public final class SubDungeonManager {
 
     private SubDungeonManager() {}
 
-    public static final String SUB_DIMENSION_ID = "cobblesafari:dungeon_ultraspace";
+    /**
+     * The shared sub-dimension. Kept only as the default for a destination that names none; every
+     * <em>test</em> for "am I in a sub-dungeon" now goes through
+     * {@link DungeonDimensions#getDungeonByDimensionId} and {@code isSubDungeon()}, because five
+     * dimensions answer yes since action plan 187 (§ 3.6).
+     */
+    public static final String SHARED_SUB_DIMENSION_ID = "cobblesafari:dungeon_ultraspace";
+
+    /** @return true when {@code dimensionId} is one of the registered sub-dungeon dimensions. */
+    public static boolean isSubDungeonDimension(String dimensionId) {
+        DungeonConfig config = DungeonDimensions.getDungeonByDimensionId(dimensionId);
+        return config != null && config.isSubDungeon();
+    }
 
     /** Rate-limit action id for the device, distinct from the ride's input key. */
     private static final int ACTION_DEVICE = 1;
@@ -105,8 +117,9 @@ public final class SubDungeonManager {
             refuse(player, "cobblesafari.wormhole.refused.no_instance");
             return;
         }
-        // 5 - once per run.
-        if (parentRecord.hasSpentSubEntry(playerId)) {
+        // 5 - once per device (plan 187, C4). A megalopolis carrying three wormholes therefore
+        // grants three rides, and the count follows the structure rather than a config key.
+        if (parentRecord.hasSpentSubEntry(playerId, devicePos)) {
             refuse(player, "cobblesafari.wormhole.refused.already_used");
             return;
         }
@@ -137,14 +150,14 @@ public final class SubDungeonManager {
 
         // S14 - consume and persist BEFORE anything else, so two clicks in one tick cannot both
         // read "unused". The ride itself is what the entry buys; a failed ride does not refund it.
-        positions.updateInstance(parentRecord.withSubEntryConsumed(playerId));
+        positions.updateInstance(parentRecord.withSubEntryConsumed(playerId, devicePos));
 
         WarpRideManager.ParentContext context = new WarpRideManager.ParentContext(
                 parentScope.key(), parentInstanceId, devicePos, player.level().dimension());
         WarpRideManager.OpenResult result = WarpRideManager.open(player, context);
         if (result != WarpRideManager.OpenResult.OK) {
             // Server-side failure before the ride even started: give the entry back (section 8.4).
-            refundEntry(server, parentInstanceId, playerId);
+            refundEntry(server, parentInstanceId, playerId, devicePos);
             refuse(player, "cobblesafari.wormhole.generation_failed");
         }
     }
@@ -164,15 +177,35 @@ public final class SubDungeonManager {
         player.displayClientMessage(Component.translatable(key), true);
     }
 
-    /** Gives a once-per-run entry back. Used only by the two server-initiated failures. */
-    public static void refundEntry(MinecraftServer server, UUID parentInstanceId, UUID playerId) {
+    /**
+     * Gives one device's entry back. Used only by the two server-initiated failures, and scoped to
+     * the device it was spent on: the player's other wormholes stay available (plan 187, C4).
+     */
+    public static void refundEntry(MinecraftServer server, UUID parentInstanceId, UUID playerId,
+                                   BlockPos devicePos) {
         if (parentInstanceId == null) {
             return;
         }
         DungeonPositionSavedData positions = DungeonPositionSavedData.get(server);
         DungeonInstanceRecord record = positions.getInstance(parentInstanceId);
         if (record != null) {
-            positions.updateInstance(record.withSubEntryRefunded(playerId));
+            positions.updateInstance(record.withSubEntryRefunded(playerId, devicePos));
+        }
+    }
+
+    /**
+     * Clears every wormhole entry a player has spent on one instance, whatever the device. Used
+     * when they pay to re-enter it: a new run buys back all of its wormholes, not just the last
+     * one used (plan 187, C4).
+     */
+    public static void clearEntriesForNewRun(MinecraftServer server, UUID instanceId, UUID playerId) {
+        if (instanceId == null) {
+            return;
+        }
+        DungeonPositionSavedData positions = DungeonPositionSavedData.get(server);
+        DungeonInstanceRecord record = positions.getInstance(instanceId);
+        if (record != null) {
+            positions.updateInstance(record.withSubEntriesClearedFor(playerId));
         }
     }
 
@@ -197,6 +230,8 @@ public final class SubDungeonManager {
                 parent == null ? player.blockPosition() : parent.devicePos(),
                 parent == null ? player.level().dimension() : parent.parentDimension(),
                 destination.structurePool(),
+                destination.dungeonId(),
+                destination.effectiveBiome(),
                 destination.typeId(),
                 tier,
                 distance);
@@ -205,7 +240,7 @@ public final class SubDungeonManager {
 
     /** The abort path of section 8.4: the entry goes back, and the rider stays in the parent. */
     static void onGenerationFailed(MinecraftServer server, UUID playerId, SubDungeonRequest request) {
-        refundEntry(server, request.parentInstanceId(), playerId);
+        refundEntry(server, request.parentInstanceId(), playerId, request.devicePos());
         ServerPlayer player = server.getPlayerList().getPlayer(playerId);
         if (player != null) {
             player.sendSystemMessage(Component.translatable("cobblesafari.wormhole.generation_failed"));
@@ -220,8 +255,11 @@ public final class SubDungeonManager {
                                                   SubDungeonRequest request, DungeonConfig config,
                                                   int slot, BlockPos anchor,
                                                   int chunkMinX, int chunkMinZ, int chunkMaxX, int chunkMaxZ,
+                                                  int clearSectionsBelow, int clearSectionsAbove,
                                                   BlockPos exitPortal, Direction exitFacing) {
-        int subTimerTicks = SafariTimerConfig.getDimensionConfig(SUB_DIMENSION_ID)
+        // Aimed at the destination's own dimension rather than a constant: each of the five
+        // sub-dimensions therefore carries its own time budget, for free (plan 187, § 3.6).
+        int subTimerTicks = SafariTimerConfig.getDimensionConfig(config.getDimensionId())
                 .map(entry -> entry.getTimerDurationSeconds() * 20)
                 .orElse(config.getTimerDurationTicks());
 
@@ -233,7 +271,7 @@ public final class SubDungeonManager {
         DungeonInstanceRecord record = DungeonInstanceRecord.createSub(
                 config.getDimensionId(), slot, anchor,
                 chunkMinX, chunkMinZ, chunkMaxX, chunkMaxZ,
-                config.getClearSectionsBelow(), config.getClearSectionsAbove(), config.getZoneSize(),
+                clearSectionsBelow, clearSectionsAbove, config.getZoneSize(),
                 request.parentInstanceId(), player.getUUID(), granted,
                 request.typeId(), request.tier(), request.distance());
         DungeonPositionSavedData.get(server).putInstance(record);
@@ -366,7 +404,7 @@ public final class SubDungeonManager {
             return;                                          // a decorative portal: nothing to do
         }
         PlayerTimerData sub = TimerManager.session(player, subScope);
-        if (sub == null || !SUB_DIMENSION_ID.equals(subScope.dimensionId())) {
+        if (sub == null || !isSubDungeonDimension(subScope.dimensionId())) {
             return;
         }
         leave(server, player, subScope, true);
@@ -426,6 +464,19 @@ public final class SubDungeonManager {
 
         if (target != null && targetDimension != null) {
             ServerLevel level = server.getLevel(targetDimension);
+            // A return that lands below the destination's own guard is evacuated on arrival, and
+            // the player is thrown out of a run they still had credit for. That reads as a timer
+            // bug and is not one - it is a voidGuardY set above the geometry the player returns to.
+            // Say so, loudly, naming both numbers: the eviction itself is unavoidable from here.
+            DungeonConfig targetConfig =
+                    DungeonDimensions.getDungeonByDimensionId(targetDimension.location().toString());
+            if (targetConfig != null && target.getY() < targetConfig.getVoidGuardY()) {
+                CobbleSafari.LOGGER.error("[SubDungeon] return point {} for {} is BELOW that dimension's "
+                        + "voidGuardY of {}; the player will be evacuated on arrival. Lower the guard for {} "
+                        + "or move the device above it",
+                        target, targetDimension.location(), targetConfig.getVoidGuardY(),
+                        targetConfig.getId());
+            }
             if (level != null) {
                 player.teleportTo(level, target.getX() + 0.5, target.getY(), target.getZ() + 0.5,
                         player.getYRot(), player.getXRot());

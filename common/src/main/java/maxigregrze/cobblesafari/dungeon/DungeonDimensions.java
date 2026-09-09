@@ -8,7 +8,9 @@ import net.minecraft.world.level.Level;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 public class DungeonDimensions {
@@ -41,7 +43,36 @@ public class DungeonDimensions {
             ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, "dungeon_ultraspace")
     );
 
+    /**
+     * The four sub-dungeons that own their dimension (action plan 187, § 5.3).
+     *
+     * <p>They differ from {@link #DUNGEON_ULTRASPACE} in exactly one respect: their dimension has a
+     * generated floor, so they need their own biome source, their own sky and - above all - their
+     * own {@code voidGuardY}. Everything else about them is an ordinary sub-dungeon.</p>
+     */
+    public static final ResourceKey<Level> DUNGEON_ULTRA_JUNGLE = subDimension("dungeon_ultra_jungle");
+    public static final ResourceKey<Level> DUNGEON_ULTRA_DESERT = subDimension("dungeon_ultra_desert");
+    public static final ResourceKey<Level> DUNGEON_ULTRA_PLANT = subDimension("dungeon_ultra_plant");
+    public static final ResourceKey<Level> DUNGEON_ULTRA_CRATER = subDimension("dungeon_ultra_crater");
+
+    private static ResourceKey<Level> subDimension(String path) {
+        return ResourceKey.create(Registries.DIMENSION,
+                ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, path));
+    }
+
     private static final List<DungeonConfig> REGISTERED_DUNGEONS = new ArrayList<>();
+
+    /**
+     * Index of {@link #REGISTERED_DUNGEONS} by dimension id (action plan 187, decision § 3.1).
+     *
+     * <p>The void guard now reads a <em>value</em> off the config instead of a boolean, and it runs
+     * once per player per tick. Walking a stream for that - as {@code isDungeonDimension} and
+     * {@code getDungeonByDimension} both do - is a cost that no longer needs paying. The map is
+     * rebuilt wholesale by {@link #reindex()} on every mutation of the list, which happens at
+     * start-up and on addon registration only.</p>
+     */
+    private static final Map<String, DungeonConfig> BY_DIMENSION_ID = new HashMap<>();
+
     private static final Random RANDOM = new Random();
     private static int totalWeight = 0;
 
@@ -89,7 +120,17 @@ public class DungeonDimensions {
         ));
 
         // The wormhole's host (action plan 183, section 3.3). An ordinary dungeon in every
-        // respect; the only thing that distinguishes it is that its pool carries a wormhole room.
+        // respect; the only thing that distinguishes it is that its pool carries wormhole rooms.
+        //
+        // Action plan 187 § 4.1 turns it into the top of the tallest tower of a generated city.
+        // The structure is a single NBT, expressed as a one-element pool at depth 1 rather than as
+        // StructureType.SIMPLE: the SIMPLE path places the exit portal at a blind offset facing
+        // NORTH, while the jigsaw path reads the hoopa_ring_portal marker and its facing. Keeping
+        // the marker costs nothing and is worth more than the depth.
+        //
+        // The two altitudes are PROVISIONAL, like the four below (decision § 5.1): the city floor
+        // tops out at Y 3, its buildings are 32-48 tall, so the guard clears the rooftops and the
+        // anchor sits just above them.
         REGISTERED_DUNGEONS.add(new DungeonConfig(
                 "dungeon_megalopolis",
                 DUNGEON_MEGALOPOLIS,
@@ -98,11 +139,21 @@ public class DungeonDimensions {
                 900,
                 1,
                 DungeonConfig.StructureType.JIGSAW,
-                10,        // jigsaw depth
+                1,         // jigsaw depth: a single piece
                 512,       // zoneSize - the slot grid pitch
                 1,         // clearSectionsBelow
                 10         // clearSectionsAbove
-        ));
+        // Anchor 92, guard 58 - the same shape as the four sub-dungeons, one storey higher.
+        //
+        // The city floor is a single course of black concrete at Y 0 and its buildings reach about
+        // Y 48, so a guard at 58 clears the rooftops: a player who steps off the tower is pulled
+        // out above the skyline instead of landing on a roof they cannot leave. The anchor sits far
+        // enough above that the whole occupied structure - including the wormhole devices the rider
+        // returns to - stays above the line. That last point is the one that matters: a device
+        // below the guard evacuates every return from Ultra Space on arrival, which reads as a
+        // timer bug and is not one, so SubDungeonManager.leave logs an ERROR naming both numbers if
+        // the structure ever ends up shaped otherwise.
+        ).withFixedStructureY(92).withVoidGuardY(58).withWorldgenRestoration());
 
         // The sub-dungeon (action plan 183, section 3.4). structureId is deliberately empty: the
         // pool comes from the destination file, supplied by the caller at generation time.
@@ -119,9 +170,63 @@ public class DungeonDimensions {
                 512, 1, 10
         ).withFixedStructureY(64).asSubDungeon());
 
+        // The four sub-dungeons that own their dimension (action plan 187, § 5).
+        //
+        // The vertical layout is the whole design, and it is stated relative to the surface, which
+        // the flat generator tops out at SURFACE_Y:
+        //
+        //     anchor      = SURFACE_Y + 32   the start jigsaw, 32 courses up inside start_1.nbt,
+        //                                    so the structure's own floor lands ON the ground
+        //     voidGuardY  = SURFACE_Y + 16   halfway up it
+        //
+        // The structure therefore STRADDLES the guard. Its lower courses sit inside the surface and
+        // the decoration band and are never meant to be occupied - the guard is what evacuates
+        // anyone who drops into them - while everything above the guard is the dungeon proper. That
+        // is what buys the interlock with the terrain, and it is also why these four opt into
+        // worldgen restoration: the clear window has to come down through the ground to erase the
+        // buried half, so the ground must be rebuilt behind it.
+        //
+        // The altitudes are PROVISIONAL (decision § 5.1). Only jungle's differs, sitting high enough
+        // to meet the overworld's fixed cloud deck at Y 192.
+        registerUltraSubDungeon("dungeon_ultra_jungle", DUNGEON_ULTRA_JUNGLE, 192, 176);
+        registerUltraSubDungeon("dungeon_ultra_desert", DUNGEON_ULTRA_DESERT, 35, 19);
+        registerUltraSubDungeon("dungeon_ultra_plant", DUNGEON_ULTRA_PLANT, 35, 19);
+        registerUltraSubDungeon("dungeon_ultra_crater", DUNGEON_ULTRA_CRATER, 35, 19);
+
         recalculateTotalWeight();
-        CobbleSafari.LOGGER.info("Registered {} dungeon dimensions with total weight {}", 
+        reindex();
+        CobbleSafari.LOGGER.info("Registered {} dungeon dimensions with total weight {}",
                 REGISTERED_DUNGEONS.size(), totalWeight);
+    }
+
+    /**
+     * One Ultra Space sub-dungeon with its own dimension. {@code structureId} is deliberately empty
+     * for the same reason as {@code dungeon_ultraspace}: the pool comes from the destination file,
+     * supplied by the caller at generation time. Weight 0 is redundant with {@code asSubDungeon()},
+     * and deliberately so.
+     */
+    private static void registerUltraSubDungeon(String id, ResourceKey<Level> dimension,
+                                                int anchorY, int voidGuardY) {
+        REGISTERED_DUNGEONS.add(new DungeonConfig(
+                id,
+                dimension,
+                "",
+                0, 0, 0,
+                300,
+                0,
+                DungeonConfig.StructureType.JIGSAW,
+                5,
+                512, 1, 10      // clearSections* kept for the signature: C2 measures them instead
+        ).withFixedStructureY(anchorY).withVoidGuardY(voidGuardY)
+         .withWorldgenRestoration().asSubDungeon());
+    }
+
+    /** Rebuilds {@link #BY_DIMENSION_ID}. Called on every mutation of the registry. */
+    private static void reindex() {
+        BY_DIMENSION_ID.clear();
+        for (DungeonConfig dungeon : REGISTERED_DUNGEONS) {
+            BY_DIMENSION_ID.put(dungeon.getDimensionId(), dungeon);
+        }
     }
 
     private static void recalculateTotalWeight() {
@@ -182,8 +287,15 @@ public class DungeonDimensions {
     }
 
     public static boolean isDungeonDimension(String dimensionId) {
-        return REGISTERED_DUNGEONS.stream()
-                .anyMatch(d -> d.getDimensionId().equals(dimensionId));
+        return BY_DIMENSION_ID.containsKey(dimensionId);
+    }
+
+    /**
+     * The config registered for a dimension id, or {@code null}. Indexed rather than streamed
+     * because the void guard calls it once per player per tick (action plan 187, decision § 3.1).
+     */
+    public static DungeonConfig getDungeonByDimensionId(String dimensionId) {
+        return BY_DIMENSION_ID.get(dimensionId);
     }
 
     /**
@@ -197,8 +309,8 @@ public class DungeonDimensions {
      * {@code DungeonRegistrationAPI} after start-up answer correctly too.
      */
     public static boolean isInstancedDungeonDimension(String dimensionId) {
-        return REGISTERED_DUNGEONS.stream()
-                .anyMatch(d -> d.getDimensionId().equals(dimensionId) && !d.isExternallyManaged());
+        DungeonConfig config = BY_DIMENSION_ID.get(dimensionId);
+        return config != null && !config.isExternallyManaged();
     }
 
     public static DungeonConfig getDungeonByDimension(ResourceKey<Level> dimension) {
@@ -251,6 +363,7 @@ public class DungeonDimensions {
     public static void addDungeon(DungeonConfig config) {
         REGISTERED_DUNGEONS.add(config);
         recalculateTotalWeight();
+        reindex();
     }
 
     public static int getTotalWeight() {

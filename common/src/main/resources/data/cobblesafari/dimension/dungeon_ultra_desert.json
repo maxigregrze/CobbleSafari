@@ -1,0 +1,11 @@
+{
+  "type": "cobblesafari:dungeon_ultra_desert_type",
+  "generator": {
+    "type": "minecraft:noise",
+    "settings": "cobblesafari:ultra_desert",
+    "biome_source": {
+      "type": "minecraft:fixed",
+      "biome": "cobblesafari:dungeon_ultra_desert_biome"
+    }
+  }
+}
