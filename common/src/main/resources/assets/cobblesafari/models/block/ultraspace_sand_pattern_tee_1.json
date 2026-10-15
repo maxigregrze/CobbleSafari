@@ -1,6 +1,5 @@
 {
   "parent": "minecraft:block/block",
-  "ambientocclusion": false,
   "textures": {
     "top": "cobblesafari:block/ultrasand_tjunction",
     "side": "cobblesafari:block/ultrasand_1",

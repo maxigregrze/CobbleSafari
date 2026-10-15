@@ -4,18 +4,29 @@
   "structurePool": "cobblesafari:ultraspace/plant/start",
   "tint": "#fdeb26",
   "dimension": "cobblesafari:dungeon_ultra_plant",
-  "encounters": {
-    "0": [
-      "nihilego"
-    ],
-    "1": [
-      "poipole"
-    ],
-    "2": [
-      "blipbug"
-    ],
-    "3": [
-      "venipede"
+  "normalPool": {
+    "pokemon": [
+      "archaludon",
+      "magnezone",
+      "electivire",
+      "klinklang",
+      "eelektross",
+      "galvantula",
+      "probopass",
+      "ampharos"
     ]
+  },
+  "rewardPool": {
+    "pokemon": [
+      {
+        "pokemon": "xurkitree",
+        "weight": 70
+      },
+      {
+        "pokemon": "poipole",
+        "weight": 30
+      }
+    ],
+    "fallback": "poipole"
   }
 }

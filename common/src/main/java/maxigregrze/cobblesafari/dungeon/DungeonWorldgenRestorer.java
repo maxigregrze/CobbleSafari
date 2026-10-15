@@ -12,8 +12,10 @@ import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.level.chunk.ChunkGenerator;
+import net.minecraft.world.level.chunk.ImposterProtoChunk;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.chunk.status.ChunkStatus;
+import net.minecraft.world.level.NoiseColumn;
 import net.minecraft.world.level.levelgen.FlatLevelSource;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.NoiseBasedChunkGenerator;
@@ -181,20 +183,25 @@ public final class DungeonWorldgenRestorer {
     private static void stampTerrain(ServerLevel level, NoiseBasedChunkGenerator generator,
                                      LevelChunk chunk) {
         RandomState randomState = level.getChunkSource().randomState();
-        BlockState filler = generator.generatorSettings().value().defaultBlock();
-        int minY = level.getMinBuildHeight();
         int baseX = chunk.getPos().getMinBlockX();
         int baseZ = chunk.getPos().getMinBlockZ();
         BlockPos.MutableBlockPos cursor = new BlockPos.MutableBlockPos();
 
+        // The column the density function really produces, block by block (action plan 190, P3).
+        // Filling from the world bottom up to getBaseHeight assumed terrain solid all the way down,
+        // which a floating floor - the jungle's and the crater's - is not: it would have rebuilt a
+        // 150-block pillar under every cleared column.
         for (int dx = 0; dx < 16; dx++) {
             for (int dz = 0; dz < 16; dz++) {
                 int x = baseX + dx;
                 int z = baseZ + dz;
-                int height = generator.getBaseHeight(x, z, Heightmap.Types.OCEAN_FLOOR_WG, level, randomState);
-                for (int y = minY; y < height; y++) {
-                    cursor.set(x, y, z);
-                    chunk.setBlockState(cursor, filler, false);
+                NoiseColumn column = generator.getBaseColumn(x, z, level, randomState);
+                for (int y = level.getMinBuildHeight(); y < level.getMaxBuildHeight(); y++) {
+                    BlockState state = column.getBlock(y);
+                    if (!state.isAir()) {
+                        cursor.set(x, y, z);
+                        chunk.setBlockState(cursor, state, false);
+                    }
                 }
             }
         }
@@ -204,7 +211,11 @@ public final class DungeonWorldgenRestorer {
                 Heightmap.Types.OCEAN_FLOOR,
                 Heightmap.Types.WORLD_SURFACE));
 
-        generator.buildSurface(chunk,
+        // Through a write-enabled ImposterProtoChunk rather than the LevelChunk itself: a surface
+        // rule that places a fluid (the jungle's puddles) asks for post-processing, which a
+        // LevelChunk answers with one WARN per block - 31 000 lines for one jungle clear - and the
+        // imposter answers with nothing. The writes still land in the wrapped chunk.
+        generator.buildSurface(new ImposterProtoChunk(chunk, true),
                 new WorldGenerationContext(generator, level),
                 randomState,
                 level.structureManager(),

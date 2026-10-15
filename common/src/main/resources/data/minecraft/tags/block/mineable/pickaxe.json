@@ -115,7 +115,12 @@
     "cobblesafari:ultraspace_deepstone",
     "cobblesafari:ultraspace_bulb",
     "cobblesafari:ultraspace_stem",
+    "cobblesafari:ultraspace_deepeststone",
+    "cobblesafari:ultraspace_stalagmite",
     "cobblesafari:megapolis_light",
-    "cobblesafari:megapolis_stairs"
+    "cobblesafari:megapolis_stairs",
+    "cobblesafari:ultrawarpdive_positive",
+    "cobblesafari:ultrawarpdive_negative",
+    "cobblesafari:ultrawarpdive_rocks"
   ]
 }

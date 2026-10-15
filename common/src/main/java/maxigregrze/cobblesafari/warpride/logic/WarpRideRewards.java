@@ -17,7 +17,8 @@ import net.minecraft.util.Mth;
  * {@code perStep} are separate arrays precisely so that flattening a scale (all of the reward, none
  * of the distance) stays a data edit rather than a recompile.</p>
  *
- * <p>Level offset and perfect-IV count are <b>not</b> scaled: they are values, not odds.</p>
+ * <p>Level offset and perfect-IV count are <b>not</b> scaled: they are values, not odds. Nor is the
+ * reward-pool chance (action plan 190, E2): it is four fixed figures by design.</p>
  */
 public final class WarpRideRewards {
 
@@ -40,6 +41,7 @@ public final class WarpRideRewards {
     private final double[] secondMovePercentPerStep;
     private final double[] alphaPercentBase;
     private final double[] alphaPercentPerStep;
+    private final double[] rewardPoolPercent;
 
     @SuppressWarnings("java:S107")   // one immutable table; a builder here would only add indirection
     public WarpRideRewards(int stepLy, int maxSteps,
@@ -48,7 +50,8 @@ public final class WarpRideRewards {
                            double[] hiddenAbilityPercentBase, double[] hiddenAbilityPercentPerStep,
                            double[] bonusMovePercentBase, double[] bonusMovePercentPerStep,
                            double[] secondMovePercentBase, double[] secondMovePercentPerStep,
-                           double[] alphaPercentBase, double[] alphaPercentPerStep) {
+                           double[] alphaPercentBase, double[] alphaPercentPerStep,
+                           double[] rewardPoolPercent) {
         this.stepLy = Math.max(1, stepLy);
         this.maxSteps = Math.max(0, maxSteps);
         this.levelOffset = levelOffset.clone();
@@ -63,6 +66,7 @@ public final class WarpRideRewards {
         this.secondMovePercentPerStep = secondMovePercentPerStep.clone();
         this.alphaPercentBase = alphaPercentBase.clone();
         this.alphaPercentPerStep = alphaPercentPerStep.clone();
+        this.rewardPoolPercent = rewardPoolPercent.clone();
     }
 
     /**
@@ -132,6 +136,14 @@ public final class WarpRideRewards {
         return at(alphaPercentBase, alphaPercentPerStep, rank, p);
     }
 
+    /**
+     * Chance, in percent, that the encounter is drawn from the destination's reward pool rather than
+     * its normal one (action plan 190, E2). Not scaled by distance. A destination may override it.
+     */
+    public double rewardPoolPercent(int rank) {
+        return Mth.clamp(rewardPoolPercent[clampRank(rank)], 0.0, 100.0);
+    }
+
     private double at(double[] base, double[] perStep, int rank, double p) {
         int r = clampRank(rank);
         return Mth.clamp(base[r] + perStep[r] * p, 0.0, 100.0);
@@ -155,7 +167,9 @@ public final class WarpRideRewards {
                 new double[]{0.0, 3.3, 6.6, 10.0}, new double[]{0.0, 3.3, 6.6, 10.0},
                 // second bonus move: rank 3 only, 50 at p = 9
                 new double[]{0.0, 0.0, 0.0, 5.0}, new double[]{0.0, 0.0, 0.0, 5.0},
-                // alpha, never applied: 0 / 10 / 20 / 30 at p = 9
-                new double[]{0.0, 1.0, 2.0, 3.0}, new double[]{0.0, 1.0, 2.0, 3.0});
+                // alpha: 0 / 10 / 20 / 30 at p = 9
+                new double[]{0.0, 1.0, 2.0, 3.0}, new double[]{0.0, 1.0, 2.0, 3.0},
+                // reward pool: the Ultra Beast pool's share per rank, flat
+                new double[]{0.0, 15.0, 25.0, 50.0});
     }
 }

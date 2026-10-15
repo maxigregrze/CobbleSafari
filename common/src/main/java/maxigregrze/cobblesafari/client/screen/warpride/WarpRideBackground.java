@@ -1,19 +1,23 @@
 package maxigregrze.cobblesafari.client.screen.warpride;
 
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import maxigregrze.cobblesafari.CobbleSafari;
+import maxigregrze.cobblesafari.client.renderer.UltraWarpDiveModels;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.RandomSource;
+import org.joml.Quaternionf;
+
+import java.util.Arrays;
 
 /** The three background layers. Entirely client-side and incapable of influencing the ride. */
 public final class WarpRideBackground {
 
     public static final ResourceLocation BACKDROP =
             ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, "textures/gui/warpride/backdrop.png");
-    public static final ResourceLocation ROCK =
-            ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, "textures/gui/warpride/rock.png");
 
     private static final int STAR_COLOR = 0xDBD2F4;
     private static final int GROUND_COLOR = 0xFF141224;
@@ -28,14 +32,17 @@ public final class WarpRideBackground {
 
     private static final int PROP_COUNT = 3;   // ~75% fewer rocks than the original pool of 10
 
+    /** The rock model's height in model pixels: a rock of {@code size} px is size/32 px per pixel. */
+    private static final float ROCK_MODEL_PX = 32.0f;
+
     private static final class Particle {
         double angleDeg;
         double radiusFactor;
         double depth;
         float brightness;
         int size;
-        /** Rocks only: 0-3, a quarter-turn applied to the texture so it is not always upright. */
-        int rotationQuarter;
+        /** Rocks only: a uniformly random 3D orientation, drawn once and then frozen. */
+        final Quaternionf orientation = new Quaternionf();
     }
 
     private final RandomSource random = RandomSource.create();
@@ -83,10 +90,20 @@ public final class WarpRideBackground {
         p.angleDeg = base + slot * ROCK_ANGLE_STEP;
         p.radiusFactor = 0.9 + random.nextDouble() * 0.35;   // small spread around the edge offset
         p.depth = depth;
-        p.brightness = 0.25f + random.nextFloat() * 0.2f;    // desaturated and dark, on purpose
         p.size = 128 + random.nextInt(129);                  // 128-256 virtual px rocks
-        p.rotationQuarter = random.nextInt(4);               // normal / 90 / 180 / 270, equiprobable
+        randomOrientation(p.orientation);
         return p;
+    }
+
+    /** Shoemake's uniform random rotation: every orientation equally likely. */
+    private void randomOrientation(Quaternionf out) {
+        double u1 = random.nextDouble();
+        double u2 = random.nextDouble() * 2.0 * Math.PI;
+        double u3 = random.nextDouble() * 2.0 * Math.PI;
+        double a = Math.sqrt(1.0 - u1);
+        double b = Math.sqrt(u1);
+        out.set((float) (a * Math.sin(u2)), (float) (a * Math.cos(u2)),
+                (float) (b * Math.sin(u3)), (float) (b * Math.cos(u3)));
     }
 
     public void advance(WarpRideClientState state, double deltaSeconds) {
@@ -109,9 +126,8 @@ public final class WarpRideBackground {
                 p.angleDeg = fresh.angleDeg;
                 p.radiusFactor = fresh.radiusFactor;
                 p.depth = fresh.depth;
-                p.brightness = fresh.brightness;
                 p.size = fresh.size;
-                p.rotationQuarter = fresh.rotationQuarter;
+                p.orientation.set(fresh.orientation);
             }
         }
         tickTube(deltaSeconds);
@@ -188,39 +204,52 @@ public final class WarpRideBackground {
         graphics.pose().popPose();
     }
 
-    /** Layer 2, the rocks: side lanes only, half recede speed, desaturated so they read as scenery. */
-    public void renderProps(GuiGraphics graphics, WarpRideClientState state, int cx, int cy) {
-        for (Particle p : props) {
-            renderRock(graphics, state, p, cx, cy);
+    /**
+     * Layer 2, the rocks, in their own perspective pass (plan 189, section 7): side lanes only, half
+     * recede speed, a frozen random orientation, and the blue glint - full brightness, they glow.
+     */
+    public void renderRocks(GuiGraphics graphics, WarpRideClientState state) {
+        MultiBufferSource.BufferSource buffers = WarpRideRenderer.beginScene(graphics);
+        PoseStack pose = new PoseStack();
+        // Painter's order: the farthest rock first.
+        Particle[] order = props.clone();
+        Arrays.sort(order, (a, b) -> Double.compare(b.depth, a.depth));
+        for (Particle p : order) {
+            renderRock(pose, buffers, state, p);
         }
+        UltraWarpDiveModels.setGlintAlpha(1.0f);
+        WarpRideRenderer.endScene(buffers);
     }
 
-    private void renderRock(GuiGraphics graphics, WarpRideClientState state, Particle p, int cx, int cy) {
+    private void renderRock(PoseStack pose, MultiBufferSource.BufferSource buffers, WarpRideClientState state,
+                            Particle p) {
         if (p.depth < 0.0) {
             return;
         }
         double scale = WarpRideRenderer.depthScale(state, p.depth);
-        double radius = (state.ringFourRadius + ROCK_EDGE_OFFSET) * p.radiusFactor * scale;
-        double alpha = Math.min(1.0, scale * 2.5) * 0.85;
-        if (alpha <= 0.02) {
+        float alpha = (float) (Math.min(1.0, scale * 2.5) * 0.85);
+        if (alpha <= 0.02f) {
             return;
         }
-        int size = Math.max(1, (int) Math.round(p.size * scale));
+        // Unscaled position at the rider plane; the eye-space depth does the shrinking.
+        double radius = (state.ringFourRadius + ROCK_EDGE_OFFSET) * p.radiusFactor;
         double angle = Math.toRadians(p.angleDeg);
-        int x = cx + (int) Math.round(Math.cos(angle) * radius);
-        int y = cy + (int) Math.round(Math.sin(angle) * radius);
-        float shade = p.brightness;   // 0.25-0.45: desaturated and dark
-        WarpRideRenderer.beginAlphaBlit();
-        graphics.setColor(shade, shade, shade * 1.15f, (float) alpha);
-        graphics.pose().pushPose();
-        graphics.pose().translate(x, y, 0.0f);
-        if (p.rotationQuarter != 0) {
-            graphics.pose().mulPose(Axis.ZP.rotationDegrees(p.rotationQuarter * 90.0f));
-        }
-        graphics.blit(ROCK, -size / 2, -size / 2, 0.0f, 0.0f, size, size, size, size);
-        graphics.pose().popPose();
-        graphics.setColor(1.0f, 1.0f, 1.0f, 1.0f);
-        RenderSystem.disableBlend();
+        float blockPx = p.size / ROCK_MODEL_PX * 16.0f * WarpRideRenderer.PROP_SCALE;
+
+        pose.pushPose();
+        pose.translate((float) (Math.cos(angle) * radius), (float) (-Math.sin(angle) * radius),
+                WarpRideScene3D.zFor(scale));
+        pose.mulPose(p.orientation);
+        pose.scale(blockPx, blockPx, blockPx);
+        pose.translate(-0.5f, -0.5f, -0.5f);
+        UltraWarpDiveModels.putModel(pose.last(), WarpRideRenderer.translucentBuffer(buffers),
+                WarpRideRenderer.rocksModel(), alpha);
+        // The glint colour is a shader uniform read at flush: each rock flushes its own glint.
+        UltraWarpDiveModels.setGlintAlpha(alpha);
+        UltraWarpDiveModels.putModel(pose.last(), buffers.getBuffer(UltraWarpDiveModels.rockGlint()),
+                WarpRideRenderer.rocksModel(), 1.0f);
+        buffers.endBatch(UltraWarpDiveModels.rockGlint());
+        pose.popPose();
     }
 
     private static final int TUBE_PURPLE = 0x9A9AE0;

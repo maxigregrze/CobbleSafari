@@ -14,7 +14,6 @@ import net.minecraft.server.packs.resources.ResourceManager;
 
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -25,8 +24,13 @@ import java.util.Map;
  * hard-validated since the ride engine shipped. <b>{@code structurePool} joins them here</b>
  * (action plan 183, section 13.2, finding W12): this plan is the first to generate anything from
  * it, and a pool that fails to resolve mid-handoff would leave the rider in a locked screen with
- * their once-per-run entry already spent. Rejecting at load is the only place that cannot happen.
- * The species list stays warn-level: the species plan is its first consumer.</p>
+ * their once-per-run entry already spent. Rejecting at load is the only place that cannot happen.</p>
+ *
+ * <p>The encounter pools (action plan 190, E1) are hard on <b>shape</b> - a destination with no
+ * normal pool at all is rejected, since the encounter is what the ride pays for - and soft on
+ * <b>content</b>: an unreadable entry is dropped with a warning, and an entry whose species is
+ * missing or has no model is only <em>reported</em> (E4). Whether it can be spawned is decided at
+ * the roll, where species data is guaranteed current.</p>
  */
 public final class WarpRideDestinationLoader {
 
@@ -58,6 +62,8 @@ public final class WarpRideDestinationLoader {
                 skipped++;
             }
         }
+
+        reportUnavailableEntries();
 
         if (WarpRideDestinationRegistry.isEmpty()) {
             CobbleSafari.LOGGER.warn("[WarpRide] No destination registered; portals cannot be rolled "
@@ -153,10 +159,23 @@ public final class WarpRideDestinationLoader {
                     + "the biome is ignored - a dimension supplies its own", fileId);
         }
 
-        Map<Integer, List<String>> encounters = readEncounters(fileId, json);
+        // --- encounter pools (plan 190, E1) ---
+        if (json.has("encounters")) {
+            CobbleSafari.LOGGER.warn("[WarpRide] Destination {} still declares 'encounters', ignored since "
+                    + "plan 190: use 'normalPool' and 'rewardPool'", fileId);
+        }
+        WarpRideEncounterPool normalPool = readPool(fileId, json, "normalPool", false);
+        if (normalPool.isEmpty()) {
+            CobbleSafari.LOGGER.error("[WarpRide] Destination {} has no usable normalPool (no entry and no "
+                    + "fallback), rejecting: the encounter is what the ride pays for", fileId);
+            return false;
+        }
+        WarpRideEncounterPool rewardPool = readPool(fileId, json, "rewardPool", true);
+        double[] rewardPoolPercent = readRewardPoolPercent(fileId, json);
 
         WarpRideDestination destination = new WarpRideDestination(
-                destinationIdOf(fileId), typeId, weight, structurePool, tint, dimension, biome, encounters);
+                destinationIdOf(fileId), typeId, weight, structurePool, tint, dimension, biome,
+                normalPool, rewardPool, rewardPoolPercent);
 
         if (!WarpRideDestinationRegistry.register(destination)) {
             CobbleSafari.LOGGER.warn("[WarpRide] Destination {} duplicates typeId={} already "
@@ -188,32 +207,113 @@ public final class WarpRideDestinationLoader {
         return value.isEmpty() ? null : value;
     }
 
-    private static Map<Integer, List<String>> readEncounters(ResourceLocation fileId, JsonObject json) {
-        Map<Integer, List<String>> encounters = new LinkedHashMap<>();
-        if (!json.has("encounters") || !json.get("encounters").isJsonObject()) {
-            return encounters;
+    /**
+     * Reads one pool. A normal pool lists bare strings, all of weight 1; a reward pool lists
+     * {@code {"pokemon": ..., "weight": ...}} objects. Absent means {@link WarpRideEncounterPool#EMPTY}.
+     */
+    private static WarpRideEncounterPool readPool(ResourceLocation fileId, JsonObject json, String key,
+                                                  boolean weighted) {
+        if (!json.has(key)) {
+            return WarpRideEncounterPool.EMPTY;
         }
-        JsonObject obj = json.getAsJsonObject("encounters");
-        for (int rank = 0; rank < WarpRideDifficulty.RANK_COUNT; rank++) {
-            String key = Integer.toString(rank);
-            if (!obj.has(key) || !obj.get(key).isJsonArray()) {
-                continue;
-            }
-            JsonArray array = obj.getAsJsonArray(key);
-            List<String> species = new ArrayList<>(array.size());
-            for (JsonElement e : array) {
-                String value = e.getAsString();
-                if (!value.isBlank()) {
-                    species.add(value);
+        if (!json.get(key).isJsonObject()) {
+            CobbleSafari.LOGGER.warn("[WarpRide] Destination {} {} is not an object; ignored", fileId, key);
+            return WarpRideEncounterPool.EMPTY;
+        }
+        JsonObject pool = json.getAsJsonObject(key);
+        List<WarpRideEncounterPool.Entry> entries = new ArrayList<>();
+        if (pool.has("pokemon") && pool.get("pokemon").isJsonArray()) {
+            JsonArray array = pool.getAsJsonArray("pokemon");
+            for (int i = 0; i < array.size(); i++) {
+                WarpRideEncounterPool.Entry entry = weighted
+                        ? readWeightedEntry(array.get(i))
+                        : readPlainEntry(array.get(i));
+                if (entry == null) {
+                    CobbleSafari.LOGGER.warn("[WarpRide] Destination {} {}.pokemon[{}] is malformed{}; dropped",
+                            fileId, key, i, weighted ? " (expects a 'pokemon' string and a 'weight' >= 1)" : "");
+                } else {
+                    entries.add(entry);
                 }
             }
-            encounters.put(rank, List.copyOf(species));
         }
-        if (encounters.isEmpty()) {
-            CobbleSafari.LOGGER.warn("[WarpRide] Destination {} has no encounter list. Harmless until "
-                    + "the species plan consumes it", fileId);
+        return new WarpRideEncounterPool(entries, readOptionalString(pool, "fallback"));
+    }
+
+    private static WarpRideEncounterPool.Entry readPlainEntry(JsonElement element) {
+        if (!element.isJsonPrimitive()) {
+            return null;
         }
-        return encounters;
+        String value = element.getAsString().trim();
+        return value.isEmpty() ? null : new WarpRideEncounterPool.Entry(value, 1);
+    }
+
+    private static WarpRideEncounterPool.Entry readWeightedEntry(JsonElement element) {
+        if (!element.isJsonObject()) {
+            return null;
+        }
+        JsonObject obj = element.getAsJsonObject();
+        String value = readOptionalString(obj, "pokemon");
+        if (value == null || !obj.has("weight") || !obj.get("weight").isJsonPrimitive()
+                || !obj.get("weight").getAsJsonPrimitive().isNumber()) {
+            return null;
+        }
+        int weight = obj.get("weight").getAsInt();
+        return weight < 1 ? null : new WarpRideEncounterPool.Entry(value, weight);
+    }
+
+    /** The optional per-destination override of the reward-pool chance (plan 190, E2). */
+    private static double[] readRewardPoolPercent(ResourceLocation fileId, JsonObject json) {
+        if (!json.has("rewardPoolPercent")) {
+            return null;
+        }
+        if (!json.get("rewardPoolPercent").isJsonArray()
+                || json.getAsJsonArray("rewardPoolPercent").size() != WarpRideDifficulty.RANK_COUNT) {
+            CobbleSafari.LOGGER.warn("[WarpRide] Destination {} rewardPoolPercent must be {} numbers; "
+                    + "ignored, the difficulty.json row applies", fileId, WarpRideDifficulty.RANK_COUNT);
+            return null;
+        }
+        JsonArray array = json.getAsJsonArray("rewardPoolPercent");
+        double[] out = new double[WarpRideDifficulty.RANK_COUNT];
+        for (int rank = 0; rank < out.length; rank++) {
+            out[rank] = Math.clamp(array.get(rank).getAsDouble(), 0.0, 100.0);
+        }
+        return out;
+    }
+
+    /**
+     * One line per destination naming the entries that cannot be spawned right now, and why (plan
+     * 190, E4). Informational only - the roll re-checks - but it is what answers "why do I only ever
+     * get Poipole?" without reading code.
+     */
+    private static void reportUnavailableEntries() {
+        for (WarpRideDestination destination : WarpRideDestinationRegistry.all()) {
+            List<String> unavailable = new ArrayList<>();
+            collectUnavailable(destination.normalPool(), "normal", unavailable);
+            collectUnavailable(destination.rewardPool(), "reward", unavailable);
+            if (!unavailable.isEmpty()) {
+                CobbleSafari.LOGGER.info("[WarpRide] Destination {}: {} entr{} currently unavailable, "
+                                + "skipped at the roll: {}", destination.destinationId(), unavailable.size(),
+                        unavailable.size() == 1 ? "y" : "ies", String.join(", ", unavailable));
+            }
+        }
+    }
+
+    private static void collectUnavailable(WarpRideEncounterPool pool, String label, List<String> into) {
+        for (WarpRideEncounterPool.Entry entry : pool.entries()) {
+            describeUnavailable(entry.pokemon(), label, into);
+        }
+        if (pool.fallback() != null) {
+            describeUnavailable(pool.fallback(), label + " fallback", into);
+        }
+    }
+
+    private static void describeUnavailable(String pokemon, String label, List<String> into) {
+        WarpRideEncounterPool.Availability availability = WarpRideEncounterPool.availability(pokemon);
+        if (availability == WarpRideEncounterPool.Availability.NOT_FOUND) {
+            into.add(pokemon + " (" + label + ", not found)");
+        } else if (availability == WarpRideEncounterPool.Availability.NOT_IMPLEMENTED) {
+            into.add(pokemon + " (" + label + ", not implemented)");
+        }
     }
 
     /** Accepts {@code #RRGGBB} and {@code #AARRGGBB}, with or without the leading hash. */

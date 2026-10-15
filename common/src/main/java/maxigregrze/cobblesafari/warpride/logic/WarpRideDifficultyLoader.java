@@ -196,7 +196,8 @@ public final class WarpRideDifficultyLoader {
                 readPercentRow(fileId, r, "secondMovePercentBase", DEFAULT_SECOND_MOVE_BASE),
                 readPercentRow(fileId, r, "secondMovePercentPerStep", DEFAULT_SECOND_MOVE_PER_STEP),
                 readPercentRow(fileId, r, "alphaPercentBase", DEFAULT_ALPHA_BASE),
-                readPercentRow(fileId, r, "alphaPercentPerStep", DEFAULT_ALPHA_PER_STEP));
+                readPercentRow(fileId, r, "alphaPercentPerStep", DEFAULT_ALPHA_PER_STEP),
+                readPercentRow(fileId, r, "rewardPoolPercent", DEFAULT_REWARD_POOL_PERCENT));
     }
 
     // The shipped rows, spelled out here rather than read back off WarpRideRewards.defaults():
@@ -214,6 +215,7 @@ public final class WarpRideDifficultyLoader {
     private static final double[] DEFAULT_SECOND_MOVE_PER_STEP = {0.0, 0.0, 0.0, 5.0};
     private static final double[] DEFAULT_ALPHA_BASE = {0.0, 1.0, 2.0, 3.0};
     private static final double[] DEFAULT_ALPHA_PER_STEP = {0.0, 1.0, 2.0, 3.0};
+    private static final double[] DEFAULT_REWARD_POOL_PERCENT = {0.0, 15.0, 25.0, 50.0};
 
     private static int readBoundedInt(ResourceLocation fileId, JsonObject rewards, String key,
                                       int fallback, int minimum) {

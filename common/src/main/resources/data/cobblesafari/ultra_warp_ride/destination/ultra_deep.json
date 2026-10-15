@@ -4,18 +4,29 @@
   "structurePool": "cobblesafari:ultraspace/deep/start",
   "tint": "#25408e",
   "biome": "cobblesafari:dungeon_ultra_deep_biome",
-  "encounters": {
-    "0": [
-      "nihilego"
-    ],
-    "1": [
-      "poipole"
-    ],
-    "2": [
-      "minior"
-    ],
-    "3": [
-      "solrock"
+  "normalPool": {
+    "pokemon": [
+      "dragonite",
+      "kingdra",
+      "lanturn",
+      "lumineon",
+      "wailmer",
+      "wishiwashi",
+      "relicanth",
+      "dhelmise"
     ]
+  },
+  "rewardPool": {
+    "pokemon": [
+      {
+        "pokemon": "nihilego",
+        "weight": 70
+      },
+      {
+        "pokemon": "poipole",
+        "weight": 30
+      }
+    ],
+    "fallback": "poipole"
   }
 }

@@ -1,0 +1,19 @@
+{
+	"variants": {
+		"facing=north": {
+			"model": "cobblesafari:block/ultrawarpdive_positive"
+		},
+		"facing=east": {
+			"model": "cobblesafari:block/ultrawarpdive_positive",
+			"y": 90
+		},
+		"facing=south": {
+			"model": "cobblesafari:block/ultrawarpdive_positive",
+			"y": 180
+		},
+		"facing=west": {
+			"model": "cobblesafari:block/ultrawarpdive_positive",
+			"y": 270
+		}
+	}
+}

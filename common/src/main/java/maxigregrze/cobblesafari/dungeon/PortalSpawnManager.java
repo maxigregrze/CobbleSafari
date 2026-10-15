@@ -5,6 +5,7 @@ import maxigregrze.cobblesafari.api.DungeonRegistrationAPI;
 import maxigregrze.cobblesafari.api.PortalExpirationHandler;
 import maxigregrze.cobblesafari.block.dungeon.DungeonPortalBlock;
 import maxigregrze.cobblesafari.block.dungeon.DungeonPortalBlockEntity;
+import maxigregrze.cobblesafari.init.ModBlockTags;
 import maxigregrze.cobblesafari.init.ModBlocks;
 import maxigregrze.cobblesafari.data.DungeonPositionSavedData;
 import maxigregrze.cobblesafari.data.PortalSavedData;
@@ -21,6 +22,9 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.chunk.LevelChunk;
+import net.minecraft.world.level.chunk.LevelChunkSection;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -29,12 +33,16 @@ import java.util.Map;
 import java.util.Random;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Predicate;
 
 public class PortalSpawnManager {
 
     private static final Map<UUID, ActivePortal> ACTIVE_PORTALS = new ConcurrentHashMap<>();
     private static final Random RANDOM = new Random();
     private static final String LOG_CALLBACK_FAILED = "Portal spawn callback failed for dungeon {}";
+    /** How far below a candidate portal the ground is searched (plan 188, section 9.2). */
+    private static final int GROUND_SEARCH_DEPTH = 3;
+    private static final Predicate<BlockState> IS_REPELLENT = state -> state.is(ModBlockTags.PORTAL_REPELLENTS);
     private static long lastSpawnTick = 0;
     private static MinecraftServer serverInstance;
     private static volatile boolean suppressDungeonCleanup = false;
@@ -107,7 +115,8 @@ public class PortalSpawnManager {
                                 portalData.chunkMinZ(),
                                 portalData.chunkMaxX(),
                                 portalData.chunkMaxZ(),
-                                portalData.hasDungeonChunkBounds()
+                                portalData.hasDungeonChunkBounds(),
+                                portalData.lifetimeTicks()
                         ));
                         CobbleSafari.LOGGER.debug("Loaded portal {} from saved data at {}", portalData.portalId(), portalData.pos());
                     } else {
@@ -195,7 +204,7 @@ public class PortalSpawnManager {
                                 if (portalEntity.getSpawnTick() >= 0) {
                                     spawnTick = portalEntity.getSpawnTick();
                                 } else {
-                                    spawnTick = level.getGameTime() - (PortalSpawnConfig.getPortalLifetimeTicks() / 2);
+                                    spawnTick = level.getGameTime() - (portalEntity.getEffectiveLifetimeTicks() / 2);
                                 }
 
                                 ACTIVE_PORTALS.put(portalId, new ActivePortal(
@@ -203,7 +212,9 @@ public class PortalSpawnManager {
                                         pos,
                                         level.dimension(),
                                         spawnTick,
-                                        dungeonId
+                                        dungeonId,
+                                        null, null, 0, 0, 0, 0, false,
+                                        portalEntity.getLifetimeTicksOverride()
                                 ));
                                 foundPortals++;
                                 CobbleSafari.LOGGER.debug("Found existing portal {} at {} not in saved data, adding to active list",
@@ -227,7 +238,7 @@ public class PortalSpawnManager {
                     portal.dungeonDimensionId(), portal.dungeonStructurePos(),
                     portal.dungeonChunkMinX(), portal.dungeonChunkMinZ(),
                     portal.dungeonChunkMaxX(), portal.dungeonChunkMaxZ(),
-                    portal.hasDungeonChunkBounds());
+                    portal.hasDungeonChunkBounds(), portal.lifetimeTicks());
         }
         savedData.setDirty();
         CobbleSafari.LOGGER.debug("Saved {} portals to persistent storage", ACTIVE_PORTALS.size());
@@ -252,11 +263,12 @@ public class PortalSpawnManager {
     }
 
     public static void tick(MinecraftServer server) {
-        if (!PortalSpawnConfig.isEnabled()) return;
-
         long currentTick = server.overworld().getGameTime();
 
-        if (currentTick - lastSpawnTick >= PortalSpawnConfig.getSpawnIntervalTicks()) {
+        // "enabled" gates natural spawning only: existing portals (Portal Spawner ones included)
+        // keep expiring when it is off (plan 188, S0).
+        if (PortalSpawnConfig.isEnabled()
+                && currentTick - lastSpawnTick >= PortalSpawnConfig.getSpawnIntervalTicks()) {
             trySpawnRandomPortal(server);
             lastSpawnTick = currentTick;
         }
@@ -400,22 +412,31 @@ public class PortalSpawnManager {
         return null;
     }
 
+    /**
+     * Why {@code pos} cannot host a natural portal, or {@code null} if it can. Cheapest checks first.
+     * The portal floats one block above the surface, so the ground is searched below it rather than
+     * assumed at {@code pos.below()} (which is air in the normal case - plan 188, section 9).
+     */
     private static String isValidPortalPositionReason(ServerLevel level, BlockPos pos) {
-        BlockPos below = pos.below();
-        var belowState = level.getBlockState(below);
-
-        boolean isSolid = belowState.blocksMotion() || belowState.isFaceSturdy(level, below, net.minecraft.core.Direction.UP);
-        boolean isAir = belowState.isAir();
-
-        if (!isSolid && !isAir) {
-            return String.format("Block below (%s) is not solid or air: %s", below, belowState.getBlock().getName().getString());
+        BlockPos ground = findGround(level, pos);
+        if (ground == null) {
+            return String.format("No ground within %d blocks below %s", GROUND_SEARCH_DEPTH, pos);
+        }
+        BlockState groundState = level.getBlockState(ground);
+        if (!groundState.is(ModBlockTags.PORTAL_SPAWNABLE_ON)) {
+            return String.format("Ground (%s) is not in #cobblesafari:portal_spawnable_on: %s",
+                    ground, groundState.getBlock().getName().getString());
         }
 
-        String belowId = BuiltInRegistries.BLOCK.getKey(belowState.getBlock()).toString();
+        String groundId = BuiltInRegistries.BLOCK.getKey(groundState.getBlock()).toString();
         for (String bannedId : PortalSpawnConfig.getBannedBlocks()) {
-            if (belowId.equals(bannedId)) {
-                return String.format("Block below (%s) is banned: %s", below, bannedId);
+            if (groundId.equals(bannedId)) {
+                return String.format("Ground (%s) is banned: %s", ground, bannedId);
             }
+        }
+
+        if (PortalSpawnConfig.isBiomeBanned(level.getBiome(ground))) {
+            return String.format("Biome at %s is banned", ground);
         }
 
         for (int dy = 0; dy < 3; dy++) {
@@ -432,22 +453,114 @@ public class PortalSpawnManager {
             }
         }
 
+        int repellentRadius = PortalSpawnConfig.getRepellentRadius();
+        if (hasRepellentNearby(level, pos, repellentRadius)) {
+            return String.format("Portal repellent within %d blocks of %s", repellentRadius, pos);
+        }
+
         return null;
     }
 
+    /** First non-air block below the portal, searched {@link #GROUND_SEARCH_DEPTH} deep; fluids count. */
+    private static BlockPos findGround(ServerLevel level, BlockPos portalPos) {
+        BlockPos cursor = portalPos.below();
+        for (int i = 0; i < GROUND_SEARCH_DEPTH; i++) {
+            if (!level.getBlockState(cursor).isAir()) {
+                return cursor;
+            }
+            cursor = cursor.below();
+        }
+        return null;
+    }
+
+    /**
+     * Whether a {@code #cobblesafari:portal_repellents} block lies in the cube of {@code radius}
+     * around {@code center} (plan 188, P5). Only chunk sections whose palette may hold a repellent
+     * are walked block by block, and only already-loaded chunks are read: this never loads a chunk.
+     */
+    private static boolean hasRepellentNearby(ServerLevel level, BlockPos center, int radius) {
+        if (radius <= 0) {
+            return false;
+        }
+        int minX = center.getX() - radius;
+        int maxX = center.getX() + radius;
+        int minZ = center.getZ() - radius;
+        int maxZ = center.getZ() + radius;
+        int minY = Math.max(level.getMinBuildHeight(), center.getY() - radius);
+        int maxY = Math.min(level.getMaxBuildHeight() - 1, center.getY() + radius);
+        for (int cx = minX >> 4; cx <= maxX >> 4; cx++) {
+            for (int cz = minZ >> 4; cz <= maxZ >> 4; cz++) {
+                LevelChunk chunk = level.getChunkSource().getChunkNow(cx, cz);
+                if (chunk == null) {
+                    continue;
+                }
+                for (int sy = minY >> 4; sy <= maxY >> 4; sy++) {
+                    LevelChunkSection section = chunk.getSection(level.getSectionIndexFromSectionY(sy));
+                    if (section.hasOnlyAir() || !section.maybeHas(IS_REPELLENT)) {
+                        continue;
+                    }
+                    int x0 = Math.max(minX, cx << 4);
+                    int x1 = Math.min(maxX, (cx << 4) + 15);
+                    int y0 = Math.max(minY, sy << 4);
+                    int y1 = Math.min(maxY, (sy << 4) + 15);
+                    int z0 = Math.max(minZ, cz << 4);
+                    int z1 = Math.min(maxZ, (cz << 4) + 15);
+                    if (sectionHasRepellent(section, x0, x1, y0, y1, z0, z1)) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    private static boolean sectionHasRepellent(LevelChunkSection section,
+                                               int x0, int x1, int y0, int y1, int z0, int z1) {
+        for (int y = y0; y <= y1; y++) {
+            for (int z = z0; z <= z1; z++) {
+                for (int x = x0; x <= x1; x++) {
+                    if (IS_REPELLENT.test(section.getBlockState(x & 15, y & 15, z & 15))) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
     private static void spawnPortal(ServerLevel level, BlockPos pos, ServerPlayer nearestPlayer, DungeonConfig dungeonOrNull) {
+        Direction facing = Direction.fromYRot(RANDOM.nextFloat() * 360);
+        UUID portalId = spawnManagedPortal(level, pos, facing, dungeonOrNull, level.getGameTime(), -1, true);
+        if (portalId != null) {
+            CobbleSafari.LOGGER.info("Successfully spawned dungeon portal at {} near player {}",
+                    pos, nearestPlayer.getName().getString());
+        }
+    }
+
+    /**
+     * Places an ENTRANCE portal at {@code pos} and tracks it (plan 188, section 11.3).
+     *
+     * @param dungeonOrNull the destination, or {@code null} for the weighted random pool
+     * @param spawnTick game tick the portal is considered born at; may lie in the past (back-dated
+     *     Portal Spawner catch-up), the remaining lifetime then being shorter
+     * @param lifetimeTicks this portal's own lifetime, or a negative value for the global one
+     * @param notify whether nearby players get the (config-gated) "portal appeared" message
+     * @return the new portal id, or {@code null} if placement failed
+     */
+    public static @Nullable UUID spawnManagedPortal(ServerLevel level, BlockPos pos, Direction facing,
+                                                    @Nullable DungeonConfig dungeonOrNull, long spawnTick,
+                                                    int lifetimeTicks, boolean notify) {
         DungeonConfig dungeon = dungeonOrNull;
         if (dungeon == null) {
             dungeon = DungeonDimensions.getRandomDungeon();
         }
         if (dungeon == null) {
             CobbleSafari.LOGGER.error("No dungeon configuration available");
-            return;
+            return null;
         }
 
         CobbleSafari.LOGGER.info("Attempting to spawn portal at {} in dimension {}", pos, level.dimension().location());
 
-        Direction facing = Direction.fromYRot(RANDOM.nextFloat() * 360);
         BlockState portalState = ModBlocks.DUNGEON_PORTAL.defaultBlockState()
                 .setValue(DungeonPortalBlock.PORTAL_TYPE, DungeonPortalBlock.PortalType.ENTRANCE)
                 .setValue(DungeonPortalBlock.FACING, facing);
@@ -458,19 +571,23 @@ public class PortalSpawnManager {
         boolean setResult = level.setBlock(pos, portalState, 3);
         if (!setResult) {
             CobbleSafari.LOGGER.error("Failed to set block at {} - setBlock returned false", pos);
-            return;
+            return null;
         }
 
         var newState = level.getBlockState(pos);
         if (!newState.is(ModBlocks.DUNGEON_PORTAL)) {
             CobbleSafari.LOGGER.error("Block at {} is not DUNGEON_PORTAL after placement! Got: {}", pos, newState.getBlock().getName().getString());
-            return;
+            return null;
         }
 
+        int ownLifetime = Math.max(-1, lifetimeTicks);
         BlockEntity blockEntity = level.getBlockEntity(pos);
         if (blockEntity instanceof DungeonPortalBlockEntity portalEntity) {
             portalEntity.setDungeonDimensionId(dungeon.getId());
-            portalEntity.setSpawnTick(level.getGameTime());
+            portalEntity.setSpawnTick(spawnTick);
+            if (ownLifetime >= 0) {
+                portalEntity.setLifetimeTicksOverride(ownLifetime);
+            }
             CobbleSafari.LOGGER.debug("Portal block entity configured successfully");
         } else {
             CobbleSafari.LOGGER.warn("Block entity at {} is not DungeonPortalBlockEntity! Got: {}", pos, blockEntity != null ? blockEntity.getClass().getName() : "null");
@@ -487,11 +604,12 @@ public class PortalSpawnManager {
                 portalId,
                 pos,
                 level.dimension(),
-                level.getGameTime(),
+                spawnTick,
                 dungeon.getId(),
                 dungeon.getId(),
                 null,
-                0, 0, 0, 0, false
+                0, 0, 0, 0, false,
+                ownLifetime
         ));
 
         savePortals();
@@ -507,10 +625,20 @@ public class PortalSpawnManager {
             }
         }
 
-        notifyNearbyPlayers(level, pos);
+        if (notify) {
+            notifyNearbyPlayers(level, pos);
+        }
+        return portalId;
+    }
 
-        CobbleSafari.LOGGER.info("Successfully spawned dungeon portal at {} near player {}",
-                pos, nearestPlayer.getName().getString());
+    /**
+     * Removes the portal at {@code pos} as a <em>natural</em> expiry: its dungeon instance is
+     * detached, nobody is evicted (plan 182, A1). Used by the Portal Spawner (plan 188, S1).
+     */
+    public static void closePortalNaturally(ServerLevel level, BlockPos pos) {
+        if (level.getBlockEntity(pos) instanceof DungeonPortalBlockEntity portalEntity) {
+            withNaturalExpiry(portalEntity.getPortalId(), () -> level.removeBlock(pos, false));
+        }
     }
 
     private static void notifyNearbyPlayers(ServerLevel level, BlockPos portalPos) {
@@ -522,18 +650,17 @@ public class PortalSpawnManager {
 
         for (ServerPlayer player : level.players()) {
             if (player.blockPosition().closerThan(portalPos, radius)) {
-                player.sendSystemMessage(Component.translatable("cobblesafari.dungeon.portal.appeared",
-                        portalPos.getX(), portalPos.getY(), portalPos.getZ()));
+                player.sendSystemMessage(Component.translatable("cobblesafari.dungeon.portal.appeared_at",
+                        DungeonChatComponents.coordinates(player, level.dimension(), portalPos)));
             }
         }
     }
 
     private static void cleanupExpiredPortals(MinecraftServer server, long currentTick) {
-        int lifetime = PortalSpawnConfig.getPortalLifetimeTicks();
         List<UUID> expiredIds = null;
 
         for (ActivePortal portal : ACTIVE_PORTALS.values()) {
-            if (currentTick - portal.spawnTick() >= lifetime) {
+            if (currentTick - portal.spawnTick() >= portal.effectiveLifetimeTicks()) {
                 if (expiredIds == null) {
                     expiredIds = new ArrayList<>();
                 }
@@ -665,7 +792,8 @@ public class PortalSpawnManager {
                 dungeon != null ? dungeon.getId() : "random",
                 resolvedDungeonDimensionId,
                 null,
-                0, 0, 0, 0, false
+                0, 0, 0, 0, false,
+                -1
         ));
         savePortals();
 
@@ -714,7 +842,8 @@ public class PortalSpawnManager {
                 activeDungeonId,
                 renewedDungeonDimensionId,
                 null,
-                0, 0, 0, 0, false
+                0, 0, 0, 0, false,
+                -1
         ));
         savePortals();
 
@@ -830,7 +959,8 @@ public class PortalSpawnManager {
             ACTIVE_PORTALS.put(portalId, new ActivePortal(
                     old.id(), old.pos(), old.dimension(), old.spawnTick(), old.dungeonId(),
                     dungeonDimensionId, dungeonStructurePos,
-                    chunkMinX, chunkMinZ, chunkMaxX, chunkMaxZ, true
+                    chunkMinX, chunkMinZ, chunkMaxX, chunkMaxZ, true,
+                    old.lifetimeTicks()
             ));
             savePortals();
         }
@@ -921,11 +1051,17 @@ public class PortalSpawnManager {
             int dungeonChunkMinZ,
             int dungeonChunkMaxX,
             int dungeonChunkMaxZ,
-            boolean hasDungeonChunkBounds
+            boolean hasDungeonChunkBounds,
+            int lifetimeTicks
     ) {
         public ActivePortal(UUID id, BlockPos pos, net.minecraft.resources.ResourceKey<Level> dimension,
                             long spawnTick, String dungeonId) {
-            this(id, pos, dimension, spawnTick, dungeonId, null, null, 0, 0, 0, 0, false);
+            this(id, pos, dimension, spawnTick, dungeonId, null, null, 0, 0, 0, 0, false, -1);
+        }
+
+        /** This portal's own lifetime ({@code lifetimeTicks} >= 0), else the global one (plan 188, S0). */
+        public int effectiveLifetimeTicks() {
+            return lifetimeTicks >= 0 ? lifetimeTicks : PortalSpawnConfig.getPortalLifetimeTicks();
         }
     }
 }

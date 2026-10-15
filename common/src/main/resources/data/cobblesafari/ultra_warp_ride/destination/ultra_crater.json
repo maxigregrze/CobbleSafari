@@ -4,18 +4,29 @@
   "structurePool": "cobblesafari:ultraspace/crater/start",
   "tint": "#8a1d12",
   "dimension": "cobblesafari:dungeon_ultra_crater",
-  "encounters": {
-    "0": [
-      "stakataka"
-    ],
-    "1": [
-      "pheromosa"
-    ],
-    "2": [
-      "minior"
-    ],
-    "3": [
-      "solrock"
+  "normalPool": {
+    "pokemon": [
+      "metagross",
+      "clefable",
+      "lunatone",
+      "solrock",
+      "beheeyem",
+      "chimecho",
+      "sigilyph",
+      "gothitelle"
     ]
+  },
+  "rewardPool": {
+    "pokemon": [
+      {
+        "pokemon": "celesteela",
+        "weight": 70
+      },
+      {
+        "pokemon": "poipole",
+        "weight": 30
+      }
+    ],
+    "fallback": "poipole"
   }
 }

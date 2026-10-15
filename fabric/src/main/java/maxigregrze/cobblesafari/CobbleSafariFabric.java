@@ -25,6 +25,9 @@ import maxigregrze.cobblesafari.network.SaveAuspiciousPokeballGoldConfigPayload;
 import maxigregrze.cobblesafari.network.LostItemResetClaimsPayload;
 import maxigregrze.cobblesafari.network.AuspiciousPokeballResetClaimsPayload;
 import maxigregrze.cobblesafari.network.LostItemConfigServerHandler;
+import maxigregrze.cobblesafari.network.OpenPortalSpawnerConfigPayload;
+import maxigregrze.cobblesafari.network.PortalSpawnerConfigServerHandler;
+import maxigregrze.cobblesafari.network.SavePortalSpawnerConfigPayload;
 import maxigregrze.cobblesafari.network.AuspiciousPokeballConfigServerHandler;
 import maxigregrze.cobblesafari.network.AuspiciousPokeballGoldConfigServerHandler;
 import maxigregrze.cobblesafari.network.SaveRuneTextPayload;
@@ -117,6 +120,7 @@ public class CobbleSafariFabric implements ModInitializer {
         PayloadTypeRegistry.playS2C().register(CloseTpAcceptPayload.TYPE, CloseTpAcceptPayload.STREAM_CODEC);
         PayloadTypeRegistry.playS2C().register(OpenRuneEditorPayload.TYPE, OpenRuneEditorPayload.STREAM_CODEC);
         PayloadTypeRegistry.playS2C().register(OpenLostItemConfigPayload.TYPE, OpenLostItemConfigPayload.STREAM_CODEC);
+        PayloadTypeRegistry.playS2C().register(OpenPortalSpawnerConfigPayload.TYPE, OpenPortalSpawnerConfigPayload.STREAM_CODEC);
         PayloadTypeRegistry.playS2C().register(OpenAuspiciousPokeballConfigPayload.TYPE, OpenAuspiciousPokeballConfigPayload.STREAM_CODEC);
         PayloadTypeRegistry.playS2C().register(maxigregrze.cobblesafari.network.OpenCsBossTriggerConfigPayload.TYPE, maxigregrze.cobblesafari.network.OpenCsBossTriggerConfigPayload.STREAM_CODEC);
         PayloadTypeRegistry.playS2C().register(maxigregrze.cobblesafari.network.OpenCsBossMimicConfigPayload.TYPE, maxigregrze.cobblesafari.network.OpenCsBossMimicConfigPayload.STREAM_CODEC);
@@ -158,6 +162,7 @@ public class CobbleSafariFabric implements ModInitializer {
                 SaveRuneTextPayload.STREAM_CODEC
         );
         PayloadTypeRegistry.playC2S().register(SaveLostItemConfigPayload.TYPE, SaveLostItemConfigPayload.STREAM_CODEC);
+        PayloadTypeRegistry.playC2S().register(SavePortalSpawnerConfigPayload.TYPE, SavePortalSpawnerConfigPayload.STREAM_CODEC);
         PayloadTypeRegistry.playC2S().register(SaveAuspiciousPokeballConfigPayload.TYPE, SaveAuspiciousPokeballConfigPayload.STREAM_CODEC);
         PayloadTypeRegistry.playC2S().register(maxigregrze.cobblesafari.network.SaveCsBossTriggerConfigPayload.TYPE, maxigregrze.cobblesafari.network.SaveCsBossTriggerConfigPayload.STREAM_CODEC);
         PayloadTypeRegistry.playC2S().register(maxigregrze.cobblesafari.network.SaveCsBossMimicConfigPayload.TYPE, maxigregrze.cobblesafari.network.SaveCsBossMimicConfigPayload.STREAM_CODEC);
@@ -283,6 +288,17 @@ public class CobbleSafariFabric implements ModInitializer {
                     context.server().execute(() -> {
                         if (context.player() instanceof ServerPlayer sp) {
                             LostItemConfigServerHandler.handleSave(sp, payload);
+                        }
+                    });
+                }
+        );
+
+        ServerPlayNetworking.registerGlobalReceiver(
+                SavePortalSpawnerConfigPayload.TYPE,
+                (payload, context) -> {
+                    context.server().execute(() -> {
+                        if (context.player() instanceof ServerPlayer sp) {
+                            PortalSpawnerConfigServerHandler.handleSave(sp, payload);
                         }
                     });
                 }

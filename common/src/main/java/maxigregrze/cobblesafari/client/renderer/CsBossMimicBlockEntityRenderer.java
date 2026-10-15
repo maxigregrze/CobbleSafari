@@ -3,6 +3,7 @@ package maxigregrze.cobblesafari.client.renderer;
 import com.mojang.blaze3d.vertex.PoseStack;
 import maxigregrze.cobblesafari.block.csboss.CsBossMimicBlock;
 import maxigregrze.cobblesafari.block.csboss.CsBossMimicBlockEntity;
+import maxigregrze.cobblesafari.init.ModBlocks;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.block.BlockRenderDispatcher;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
@@ -44,6 +45,28 @@ public class CsBossMimicBlockEntityRenderer implements BlockEntityRenderer<CsBos
         if (resolved == null) {
             resolved = CsBossMimicBlock.targetBlock(blockEntity.getMimicBlockId()).defaultBlockState();
         }
-        this.blockRenderDispatcher.renderSingleBlock(resolved, poseStack, bufferSource, packedLight, packedOverlay);
+        // The Ultra Warp Dive rocks have no baked render at all (their block entity renderer draws
+        // them, glint included), so renderSingleBlock would show nothing; every other target keeps
+        // the ordinary path, block-entity-backed vanilla blocks included.
+        if (!resolved.is(ModBlocks.ULTRAWARPDIVE_ROCKS)) {
+            this.blockRenderDispatcher.renderSingleBlock(resolved, poseStack, bufferSource, packedLight, packedOverlay);
+        }
+        // The props' animated parts (negative core and ring, rocks + glint); no-op for other blocks.
+        if (blockEntity.getLevel() != null) {
+            float age = blockEntity.getLevel().getGameTime() + partialTick
+                    + (blockEntity.getBlockPos().hashCode() & 0xFF);
+            UltraWarpDiveModels.renderPlacedParts(resolved, poseStack, bufferSource, age);
+        }
+    }
+
+    /**
+     * A mimicked Ultra Warp Dive prop overflows its cell, like the real one. Only those opt out of
+     * culling: mimics come in whole walls, and every other target fits its cell.
+     */
+    @Override
+    public boolean shouldRenderOffScreen(CsBossMimicBlockEntity blockEntity) {
+        BlockState resolved = blockEntity.getResolvedMimicState();
+        return resolved != null
+                && (resolved.is(ModBlocks.ULTRAWARPDIVE_ROCKS) || resolved.is(ModBlocks.ULTRAWARPDIVE_NEGATIVE));
     }
 }

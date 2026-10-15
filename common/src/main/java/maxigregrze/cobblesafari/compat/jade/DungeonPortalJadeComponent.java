@@ -4,7 +4,6 @@ import maxigregrze.cobblesafari.CobbleSafari;
 import maxigregrze.cobblesafari.api.DungeonRegistrationAPI;
 import maxigregrze.cobblesafari.block.dungeon.DungeonPortalBlock;
 import maxigregrze.cobblesafari.block.dungeon.DungeonPortalBlockEntity;
-import maxigregrze.cobblesafari.dungeon.PortalSpawnConfig;
 import maxigregrze.cobblesafari.dungeon.PortalSpawnManager;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -73,7 +72,7 @@ public enum DungeonPortalJadeComponent implements IBlockComponentProvider, IServ
                 PortalSpawnManager.ActivePortal activePortal = PortalSpawnManager.getActivePortalById(portalEntity.getPortalId());
                 if (activePortal != null && portalEntity.getLevel() != null) {
                     long elapsed = portalEntity.getLevel().getGameTime() - activePortal.spawnTick();
-                    remaining = Math.max(0, PortalSpawnConfig.getPortalLifetimeTicks() - elapsed);
+                    remaining = Math.max(0, activePortal.effectiveLifetimeTicks() - elapsed);
                 }
             }
 

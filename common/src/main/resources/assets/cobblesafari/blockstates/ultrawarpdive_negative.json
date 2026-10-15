@@ -1,0 +1,19 @@
+{
+	"variants": {
+		"facing=north": {
+			"model": "cobblesafari:block/ultrawarpdive_negative_electricity"
+		},
+		"facing=east": {
+			"model": "cobblesafari:block/ultrawarpdive_negative_electricity",
+			"y": 90
+		},
+		"facing=south": {
+			"model": "cobblesafari:block/ultrawarpdive_negative_electricity",
+			"y": 180
+		},
+		"facing=west": {
+			"model": "cobblesafari:block/ultrawarpdive_negative_electricity",
+			"y": 270
+		}
+	}
+}

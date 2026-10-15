@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/orientable",
+  "textures": {
+    "top": "cobblesafari:block/ultramegalopolis_lighttop",
+    "front": "cobblesafari:block/ultramegalopolis_lightspot_facing",
+    "side": "cobblesafari:block/ultramegalopolis_lightspot_on"
+  }
+}

@@ -42,9 +42,11 @@ public final class PokeStatueConfigServerHandler {
         if (!(level.getBlockEntity(pos) instanceof AbstractPokeStatueBlockEntity be)) {
             return;
         }
-        // configure() re-clamps mode, scale and progress against this block's own variant.
+        // configure() re-clamps mode, scale, progress and speed against this block's own variant;
+        // the playback options only land on a Creative Statue, the regular one ignores them.
         be.configure(payload.species(), payload.mode(), payload.scale(),
-                payload.color(), payload.animation(), payload.progress());
+                payload.color(), payload.animation(), payload.progress(),
+                payload.fixed(), payload.speed(), payload.showDummy());
     }
 
     /** Per-block gate: the two statues have deliberately different access rules. */
@@ -61,7 +63,9 @@ public final class PokeStatueConfigServerHandler {
             if (state.getValue(PokeStatueBlock.GLAZED)) {
                 return false;
             }
-            if (!player.getMainHandItem().is(ModItems.TINKHAMMER)
+            // Creative players may configure without the Tinkhammer (plan 188, C4).
+            if (!player.isCreative()
+                    && !player.getMainHandItem().is(ModItems.TINKHAMMER)
                     && !player.getOffhandItem().is(ModItems.TINKHAMMER)) {
                 return false;
             }

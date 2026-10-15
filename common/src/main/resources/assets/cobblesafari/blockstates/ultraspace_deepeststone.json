@@ -1,0 +1,9 @@
+{
+  "variants": {
+    "": [
+      { "model": "cobblesafari:block/ultraspace_deepeststone_0", "weight": 1 },
+      { "model": "cobblesafari:block/ultraspace_deepeststone_1", "weight": 3 },
+      { "model": "cobblesafari:block/ultraspace_deepeststone_2", "weight": 1 }
+    ]
+  }
+}

@@ -4,18 +4,29 @@
   "structurePool": "cobblesafari:ultraspace/jungle/start",
   "tint": "#3d732c",
   "dimension": "cobblesafari:dungeon_ultra_jungle",
-  "encounters": {
-    "0": [
-      "pheromosa"
-    ],
-    "1": [
-      "poipole"
-    ],
-    "2": [
-      "blipbug"
-    ],
-    "3": [
-      "venipede"
+  "normalPool": {
+    "pokemon": [
+      "salamence",
+      "exeggutor alolan",
+      "tropius",
+      "jumpluff",
+      "toucannon",
+      "hawlucha",
+      "chatot",
+      "tangrowth"
     ]
+  },
+  "rewardPool": {
+    "pokemon": [
+      {
+        "pokemon": "buzzwole",
+        "weight": 70
+      },
+      {
+        "pokemon": "poipole",
+        "weight": 30
+      }
+    ],
+    "fallback": "poipole"
   }
 }

@@ -11,8 +11,15 @@ public class UltraWarpRideConfig {
 
     // --- track and projection ---
     public double waveSpacingLy = 16.0;
-    public double visibleDepthLy = 32.0;
-    public int ringCount = 4;
+    /** How far the client draws (plan 189: one ring step past the original 32 ly). */
+    public double visibleDepthLy = 40.0;
+    /**
+     * How far ahead the server generates. Deliberately decoupled from {@link #visibleDepthLy}: the
+     * generator reads the odometer at generation time, so generating earlier would shift
+     * difficulty and portal forcing - a mechanic change (plan 189, section 5.2).
+     */
+    public double generationDepthLy = 32.0;
+    public int ringCount = 5;
     public double projectionK = 9.0;
 
     // --- energy ---
@@ -62,7 +69,7 @@ public class UltraWarpRideConfig {
     // --- presentation ---
     public int virtualCanvasWidth = 1920;
     public int virtualCanvasHeight = 1080;
-    public double ringFourRadius = 400.0;
+    public double ringFourRadius = 480.0;
     public double fifthPlaneDepth = -8.0;
     public double flyPastMaxScale = 2.5;
     public int starCount = 200;
@@ -100,6 +107,6 @@ public class UltraWarpRideConfig {
     }
 
     public double spawnDepth() {
-        return visibleDepthLy;
+        return generationDepthLy;
     }
 }

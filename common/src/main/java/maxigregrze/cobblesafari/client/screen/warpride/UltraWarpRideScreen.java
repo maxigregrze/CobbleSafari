@@ -1,7 +1,6 @@
 package maxigregrze.cobblesafari.client.screen.warpride;
 
 import com.mojang.blaze3d.platform.InputConstants;
-import com.mojang.blaze3d.systems.RenderSystem;
 import maxigregrze.cobblesafari.init.ModSounds;
 import maxigregrze.cobblesafari.platform.Services;
 import maxigregrze.cobblesafari.warpride.network.WarpRidePayloads;
@@ -13,13 +12,18 @@ import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvent;
 
-/** The Ultra Warp Ride screen: the GUI scale is undone, then a fixed 1920x1080 canvas is fitted. */
+/**
+ * The Ultra Warp Ride screen: the GUI scale is undone, then a fixed 1920x1080 canvas is fitted. The
+ * rocks, portals, objects and rider are 3D models drawn in perspective passes (action plan 189).
+ */
 public class UltraWarpRideScreen extends Screen {
 
     private final WarpRideClientState state = new WarpRideClientState();
     private final WarpRideBackground background = new WarpRideBackground();
     private final WarpRideHud hud = new WarpRideHud();
-    private final WarpRidePauseOverlay pause = new WarpRidePauseOverlay();
+    private final WarpRideExitPrompt exitPrompt = new WarpRideExitPrompt();
+    /** The local player's look-alike in elytra flight; null only if there is no level or player. */
+    private WarpRideRiderProxy rider;
 
     private static final java.util.random.RandomGenerator RANDOM =
             java.util.concurrent.ThreadLocalRandom.current();
@@ -28,14 +32,10 @@ public class UltraWarpRideScreen extends Screen {
     private int countdownStep = -1;
     private long countdownShownUntil;
     private boolean readySent;
+    /** When the last ready went out, for the resend below. */
+    private long readySentNanos;
     private boolean closeSent;
     private long lastFrameNanos;
-
-    /** Last computed transform, so mouse coordinates can be mapped back into canvas units. */
-    private double lastFit = 1.0;
-    private double lastOffsetX;
-    private double lastOffsetY;
-    private double lastGuiScale = 1.0;
 
     public UltraWarpRideScreen() {
         super(Component.translatable("gui.cobblesafari.warpride.tutorial.title"));
@@ -133,31 +133,20 @@ public class UltraWarpRideScreen extends Screen {
     protected void init() {
         super.init();
         WarpRideRenderer.applyFilters();
+        WarpRideRenderer.cacheModels();
         state.applyTints(pendingTints);
         background.init(state);
-        hud.setLabels(readKeyLabels());
+        Minecraft mc = Minecraft.getInstance();
+        if (rider == null && mc.level != null && mc.player != null) {
+            rider = new WarpRideRiderProxy(mc.level, mc.player);
+        }
         lastFrameNanos = System.nanoTime();
     }
 
-    private WarpRideHud.WarpRideHudLabels readKeyLabels() {
-        var options = Minecraft.getInstance().options;
-        return new WarpRideHud.WarpRideHudLabels(
-                labelOf(options.keyLeft, "A"),
-                labelOf(options.keyUp, "W"),
-                labelOf(options.keyRight, "D"));
-    }
-
-    private static String labelOf(KeyMapping mapping, String fallback) {
-        if (mapping == null || mapping.isUnbound()) {
-            return fallback;
-        }
-        return mapping.getTranslatedKeyMessage().getString();
-    }
-
+    /** The ride never pauses, single-player included: Esc only arms the exit prompt (plan 189). */
     @Override
     public boolean isPauseScreen() {
-        // NOT a constant: returning the overlay's state is what pauses single-player but not multiplayer.
-        return pause.isOpen();
+        return false;
     }
 
     @Override
@@ -188,16 +177,13 @@ public class UltraWarpRideScreen extends Screen {
     @Override
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
         if (keyCode == InputConstants.KEY_ESCAPE) {
-            pause.toggle();
+            onEscape();
             return true;
         }
 
         if (showTutorial) {
-            // Any key dismisses the placeholder tutorial page.
+            // Any key but Esc dismisses the placeholder tutorial page.
             dismissTutorial();
-            return true;
-        }
-        if (pause.isOpen()) {
             return true;
         }
 
@@ -217,18 +203,22 @@ public class UltraWarpRideScreen extends Screen {
         return super.keyPressed(keyCode, scanCode, modifiers);
     }
 
+    /**
+     * Esc twice within three seconds leaves without saving; the attempt stays spent, because closing
+     * ends the session aborted on the server. Ignored while the warp or the hand-off hold is running,
+     * so a taken portal always completes. On the result screen, one Esc closes.
+     */
+    private void onEscape() {
+        if (handoffPending || state.phase == WarpRideClientState.PHASE_PORTAL_TAKEN) {
+            return;
+        }
+        if (state.phase == WarpRideClientState.PHASE_ENDED || exitPrompt.onEscape(System.nanoTime())) {
+            onClose();
+        }
+    }
+
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        if (pause.isOpen()) {
-            double[] canvas = toCanvas(mouseX, mouseY);
-            int result = pause.hit(canvas[0], canvas[1], state.canvasWidth, state.canvasHeight);
-            if (result == 1) {
-                pause.close();
-            } else if (result == 2) {
-                onClose();
-            }
-            return true;
-        }
         if (showTutorial) {
             dismissTutorial();
             return true;
@@ -271,7 +261,30 @@ public class UltraWarpRideScreen extends Screen {
         }
         showTutorial = false;
         readySent = true;
+        readySentNanos = System.nanoTime();
         Services.PLATFORM.sendPayloadToServer(new WarpRidePayloads.ReadyPayload(state.sessionId));
+    }
+
+    /** How long a ready may go unanswered before it is sent again. */
+    private static final long READY_RESEND_NANOS = 1_000_000_000L;
+
+    /**
+     * Resends the ready while the server still reports the tutorial phase (action plan 190, P4).
+     *
+     * <p>The ready was sent exactly once, and anything that dropped it - a rate limit, a packet
+     * arriving before the session existed server-side - left the ride on its tutorial page for good,
+     * with the player able only to quit. The server re-checks the phase and accepts one ready per
+     * session, so a resend is inert once the countdown has started.</p>
+     */
+    @Override
+    public void tick() {
+        super.tick();
+        if (readySent && state.sessionId != null
+                && state.phase == WarpRideClientState.PHASE_AWAITING_READY
+                && System.nanoTime() - readySentNanos >= READY_RESEND_NANOS) {
+            readySentNanos = System.nanoTime();
+            Services.PLATFORM.sendPayloadToServer(new WarpRidePayloads.ReadyPayload(state.sessionId));
+        }
     }
 
     private void sendInput(int input) {
@@ -298,10 +311,12 @@ public class UltraWarpRideScreen extends Screen {
             state.startLocalCooldown(state.inputCooldownMs);
             state.lane = Math.floorMod(state.lane + 1, WarpRideRenderer.LANE_COUNT);
             state.aimAtLane(state.lane, state.laneRotationMs);
+            state.startBank(1);
         } else {
             state.startLocalCooldown(state.inputCooldownMs);
             state.lane = Math.floorMod(state.lane - 1, WarpRideRenderer.LANE_COUNT);
             state.aimAtLane(state.lane, state.laneRotationMs);
+            state.startBank(-1);
         }
         Services.PLATFORM.sendPayloadToServer(new WarpRidePayloads.InputPayload(
                 state.sessionId, input, state.estimatedServerTick()));
@@ -316,7 +331,7 @@ public class UltraWarpRideScreen extends Screen {
         lastFrameNanos = now;
         boolean warping = state.phase == WarpRideClientState.PHASE_PORTAL_TAKEN;
         // The warp freezes the world; only sprite frame animations and the warp itself keep moving.
-        if (!warping && (!pause.isOpen() || !mc.isLocalServer())) {
+        if (!warping) {
             state.advance(delta);
             background.advance(state, delta);
         }
@@ -328,11 +343,10 @@ public class UltraWarpRideScreen extends Screen {
         double offsetX = (pw - state.canvasWidth * fit) / 2.0;
         double offsetY = (ph - state.canvasHeight * fit) / 2.0;
 
-        this.lastGuiScale = guiScale;
-        this.lastFit = fit;
-        this.lastOffsetX = offsetX;
-        this.lastOffsetY = offsetY;
         WarpRideRenderer.setViewport(fit, offsetX, offsetY, pw, ph);
+        if (rider != null && mc.player != null) {
+            rider.syncFrom(mc.player, mc.gameRenderer.getMainCamera().getPosition());
+        }
 
         graphics.pose().pushPose();
         // 1. Undo the GUI scale: from here on the screen draws in physical pixels.
@@ -341,11 +355,7 @@ public class UltraWarpRideScreen extends Screen {
         // Full framebuffer, before the canvas transform, so the background fills ultrawide too.
         background.renderBackdrop(graphics, pw, ph, state);
 
-        graphics.pose().pushPose();
-        graphics.pose().translate((float) offsetX, (float) offsetY, 0.0f);
-        graphics.pose().scale((float) fit, (float) fit, 1.0f);
-        background.renderProps(graphics, state, WarpRideRenderer.CENTER_X, WarpRideRenderer.CENTER_Y);
-        graphics.pose().popPose();
+        background.renderRocks(graphics, state);            // 3D pass: the projection spans the window
 
         background.renderTube(graphics, pw, ph, state);       // colour tube, in front of the rocks
         background.renderStars(graphics, state, pw, ph);      // starfield, fills the whole screen
@@ -355,48 +365,36 @@ public class UltraWarpRideScreen extends Screen {
         graphics.pose().scale((float) fit, (float) fit, 1.0f);
 
         WarpRideRenderer.renderTunnel(graphics, state);
-        WarpRideRenderer.renderObjects(graphics, state, false);   // still ahead: behind the rider
 
         if (warping) {
-            renderWarp(graphics, now);
+            renderWarp(graphics, now, partialTick);
         } else {
-            WarpRideRenderer.renderPlayer(graphics, state);
-            WarpRideRenderer.renderObjects(graphics, state, true);    // gone by: in front of the rider
-            hud.render(graphics, this.font, state);
+            WarpRideRenderer.renderScene(graphics, state, rider, partialTick); // portals, objects, rider
+            hud.render(graphics, state);                                       // aura, hit effect
             renderCountdown(graphics);
             renderPanicWarning(graphics);
             if (showTutorial) {
                 renderTutorial(graphics);
             }
         }
-        pause.render(graphics, this.font, state.canvasWidth, state.canvasHeight);
+        exitPrompt.render(graphics, this.font, state.canvasWidth, now);
 
         graphics.pose().popPose();
     }
 
     /** The portal-entry warp, world frozen: drift to the axis, shrink, fade to black, then recap. */
-    private void renderWarp(GuiGraphics graphics, long now) {
-        WarpRideRenderer.renderObjects(graphics, state, true);
-
+    private void renderWarp(GuiGraphics graphics, long now, float partialTick) {
         if (state.warpInDriftWait(now)) {
-            // Blending is armed per blit now; this pair only restores what renderObjects left behind.
-            WarpRideRenderer.beginAlphaBlit();
-            WarpRideRenderer.drawPortal(graphics, state, state.resultRank, state.resultTypeId,
-                    WarpRideRenderer.CENTER_X, WarpRideRenderer.CENTER_Y, WarpRideRenderer.PORTAL_SIZE, 1.0);
-            RenderSystem.disableBlend();
-            WarpRideRenderer.renderPlayer(graphics, state);   // still drifting to the axis
+            // Full-size portal; the rider is still drifting to the axis.
+            WarpRideRenderer.renderWarpScene(graphics, state, rider, 1.0,
+                    WarpRideRenderer.riderRadius(state), partialTick);
             return;
         }
 
         double warpP = state.warpProgress(now);
         if (warpP <= 1.0) {
             double shrink = 1.0 - warpP;
-            int size = (int) Math.round(WarpRideRenderer.PORTAL_SIZE * shrink);
-            WarpRideRenderer.beginAlphaBlit();
-            WarpRideRenderer.drawPortal(graphics, state, state.resultRank, state.resultTypeId,
-                    WarpRideRenderer.CENTER_X, WarpRideRenderer.CENTER_Y, size, 1.0);
-            RenderSystem.disableBlend();
-            WarpRideRenderer.renderWarpPlayer(graphics, shrink);
+            WarpRideRenderer.renderWarpScene(graphics, state, rider, shrink, 0.0, partialTick);
             WarpRideRenderer.renderWarpOverlay(graphics, warpP);
             return;
         }
@@ -459,10 +457,4 @@ public class UltraWarpRideScreen extends Screen {
         graphics.pose().popPose();
     }
 
-    /** Maps a GUI-scaled mouse position back into canvas units. */
-    private double[] toCanvas(double mouseX, double mouseY) {
-        double px = mouseX * lastGuiScale;
-        double py = mouseY * lastGuiScale;
-        return new double[]{(px - lastOffsetX) / lastFit, (py - lastOffsetY) / lastFit};
-    }
 }

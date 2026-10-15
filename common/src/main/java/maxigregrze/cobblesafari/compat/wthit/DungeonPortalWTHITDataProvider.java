@@ -3,7 +3,6 @@ package maxigregrze.cobblesafari.compat.wthit;
 import maxigregrze.cobblesafari.api.DungeonRegistrationAPI;
 import maxigregrze.cobblesafari.block.dungeon.DungeonPortalBlock;
 import maxigregrze.cobblesafari.block.dungeon.DungeonPortalBlockEntity;
-import maxigregrze.cobblesafari.dungeon.PortalSpawnConfig;
 import maxigregrze.cobblesafari.dungeon.PortalSpawnManager;
 import mcp.mobius.waila.api.IDataProvider;
 import mcp.mobius.waila.api.IDataWriter;
@@ -38,7 +37,7 @@ public class DungeonPortalWTHITDataProvider implements IDataProvider<DungeonPort
                 PortalSpawnManager.ActivePortal activePortal = PortalSpawnManager.getActivePortalById(portalEntity.getPortalId());
                 if (activePortal != null && portalEntity.getLevel() != null) {
                     long elapsed = portalEntity.getLevel().getGameTime() - activePortal.spawnTick();
-                    remaining = Math.max(0, PortalSpawnConfig.getPortalLifetimeTicks() - elapsed);
+                    remaining = Math.max(0, activePortal.effectiveLifetimeTicks() - elapsed);
                 }
             }
 

@@ -25,7 +25,9 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.Level;
 
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -55,8 +57,13 @@ public final class SubDungeonManager {
         return config != null && config.isSubDungeon();
     }
 
-    /** Rate-limit action id for the device, distinct from the ride's input key. */
-    private static final int ACTION_DEVICE = 1;
+    /**
+     * Rate-limit action id for the device. Under {@code SERVICE_WARPRIDE}, 0 is the ride's input and
+     * 1 its ready: this used to be 1 as well, so a device click stamped the ready's slot and a ready
+     * sent within 500 ms of it was silently dropped - the ride then sat on its tutorial page for good
+     * (action plan 190, P4).
+     */
+    private static final int ACTION_DEVICE = 2;
 
     /**
      * Ticks already debited from the parent for the visit in progress, per player. In memory only,
@@ -395,19 +402,51 @@ public final class SubDungeonManager {
      * then release - because the clear purges the session the teleport needed (plan 181, V5).
      */
     public static void returnThroughExit(ServerPlayer player) {
-        MinecraftServer server = player.getServer();
-        if (server == null) {
+        // Queued, never performed here (action plan 190, P5). The portal calls this from
+        // entityInside, which for a player runs INSIDE ServerGamePacketListenerImpl.handleMovePlayer:
+        // a dimension change there makes vanilla skip its "moved wrongly" check (isChangingDimension)
+        // and finish with absMoveTo(the client's position) - the sub-dungeon's coordinates, applied
+        // in the parent dimension. Back from the desert, that left the player at Y 14 in the
+        // Megalopolis, under its void guard, and the guard threw them out with time left on both runs.
+        PENDING_EXITS.add(player.getUUID());
+    }
+
+    /** Players who walked into an exit portal; their return runs on the next server tick. */
+    private static final Set<UUID> PENDING_EXITS = ConcurrentHashMap.newKeySet();
+
+    /**
+     * Performs the queued exit-portal returns. Runs at the head of the server tick, outside any
+     * packet handler, so the teleport is the last word on the player's position.
+     */
+    public static void runPendingExits(MinecraftServer server) {
+        if (PENDING_EXITS.isEmpty()) {
             return;
         }
-        TimerScope subScope = TimerManager.currentScope(player);
-        if (subScope == null || !subScope.isSession()) {
-            return;                                          // a decorative portal: nothing to do
+        for (UUID playerId : List.copyOf(PENDING_EXITS)) {
+            PENDING_EXITS.remove(playerId);
+            ServerPlayer player = server.getPlayerList().getPlayer(playerId);
+            if (player == null) {
+                continue;
+            }
+            TimerScope subScope = TimerManager.currentScope(player);
+            if (subScope == null || !subScope.isSession()) {
+                continue;                                    // a decorative portal: nothing to do
+            }
+            PlayerTimerData sub = TimerManager.session(player, subScope);
+            if (sub == null || !isSubDungeonDimension(subScope.dimensionId())) {
+                continue;
+            }
+            leave(server, player, subScope, true);
         }
-        PlayerTimerData sub = TimerManager.session(player, subScope);
-        if (sub == null || !isSubDungeonDimension(subScope.dimensionId())) {
-            return;
-        }
-        leave(server, player, subScope, true);
+    }
+
+    /** Discards encounter Pokemon whose instance is gone; see SubDungeonEncounter (plan 190, P6). */
+    public static void sweepOrphanedEncounters(MinecraftServer server) {
+        SubDungeonEncounter.sweepOrphanedEncounters(server);
+    }
+
+    public static void onServerStoppingExits() {
+        PENDING_EXITS.clear();
     }
 
     /**
@@ -478,10 +517,10 @@ public final class SubDungeonManager {
                         targetConfig.getId());
             }
             if (level != null) {
-                player.teleportTo(level, target.getX() + 0.5, target.getY(), target.getZ() + 0.5,
-                        player.getYRot(), player.getXRot());
-                player.resetFallDistance();
-                player.setDeltaMovement(net.minecraft.world.phys.Vec3.ZERO);
+                // Checked (plan 190, J3): a discarded player is disconnected by relocate rather than
+                // left in the sub-dimension believing they went home.
+                TimerManager.relocate(player, level, target.getX() + 0.5, target.getY(), target.getZ() + 0.5,
+                        "sub-dungeon departure from " + subScope.key());
             } else {
                 TimerManager.teleportToOverworldSpawn(player);
             }

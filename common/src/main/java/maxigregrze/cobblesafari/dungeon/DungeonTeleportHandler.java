@@ -351,22 +351,36 @@ public class DungeonTeleportHandler {
         // credit is spent rather than left dangling in the HUD (plan 182, A5). Read before the
         // teleport, while the session is still resolvable from where the player stands.
         boolean entranceClosed = isInsideClosedInstance(server, player);
-        if (entranceClosed && session != null) {
-            // Zero the credit, but leave isActive alone: changeDimension below fires
-            // ServerPlayerMixin -> pauseAllTimers, which deactivates AND syncs. Deactivating here
-            // instead makes pauseAllTimers skip the record ("already inactive"), so no packet is
-            // ever sent and the client's HUD stays frozen on screen outside the dungeon.
-            session.setRemainingTicks(0);
-            TimerManager.savePlayerData(player, session);
-        }
 
+        if (player.isRemoved()) {
+            // changeDimension would return without doing anything (plan 190, J5).
+            TimerManager.disconnectDesynced(player, "dungeon exit portal");
+            return;
+        }
         player.changeDimension(transition);
+
+        // Nothing is settled before the player is demonstrably out (plan 190, J3). The credit used
+        // to be zeroed first, so a teleport that silently failed left them inside with no time -
+        // and the expiry that followed could not move them either.
+        if (player.level() != targetLevel) {
+            CobbleSafari.LOGGER.error("Exit teleport failed for {}: still in {} (removed={}, reason={}); credit kept",
+                    player.getName().getString(), player.level().dimension().location(),
+                    player.isRemoved(), player.getRemovalReason());
+            if (player.isRemoved()) {
+                TimerManager.disconnectDesynced(player, "dungeon exit portal");
+            } else {
+                player.sendSystemMessage(Component.translatable("cobblesafari.dungeon.teleport.exit.failed"));
+            }
+            return;
+        }
 
         if (entranceClosed) {
             if (session != null) {
-                // Belt and braces: the HUD hides only on an active=false packet for the dimension
-                // it is showing, and this exit is the last chance to send one - the instance is
-                // about to be released and the session purged with it.
+                // The credit is spent only now that the exit has worked. changeDimension already
+                // paused and synced the session through ServerPlayerMixin; this second, explicit
+                // active=false packet is the one the HUD hides on, and the last chance to send one
+                // - the instance is about to be released and the session purged with it.
+                session.setRemainingTicks(0);
                 session.setActive(false);
                 TimerManager.savePlayerData(player, session);
                 TimerManager.syncToClient(player, session, false);

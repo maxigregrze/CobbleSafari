@@ -26,3 +26,6 @@ runs
 # Folders whose name starts with a dot (files like .gitignore are not ignored)
 .*/
 .private
+
+# My export script because it target my appdata folder with my name and all
+build_and_deploy.bat

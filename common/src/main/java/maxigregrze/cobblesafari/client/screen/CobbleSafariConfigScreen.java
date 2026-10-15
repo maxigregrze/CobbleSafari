@@ -1,22 +1,28 @@
 package maxigregrze.cobblesafari.client.screen;
 
+import com.mojang.blaze3d.systems.RenderSystem;
+import maxigregrze.cobblesafari.CobbleSafari;
+import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.EditBox;
+import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 
 /**
- * Shared base for CobbleSafari's plain (no custom texture) config GUIs.
+ * Shared base for CobbleSafari's command-block-like config GUIs.
  *
  * <p>It holds the single source of truth for the common layout so every config
  * screen has an identical feel: a 308-wide panel centered horizontally, a title
- * centered near the top, descriptive field labels in a consistent gray, and a
- * bottom-anchored row of action buttons.
+ * on a decorative Tinkaton title bar near the top, descriptive field labels in a
+ * consistent gray, and a bottom-anchored row of action buttons.
  *
  * <h2>Scrolling</h2>
  * The area between the title and the bottom action row is a <em>scroll
@@ -57,6 +63,21 @@ public abstract class CobbleSafariConfigScreen extends Screen {
     protected static final int LABEL_COLOR = 0xA0A0A0;
     protected static final int TITLE_COLOR = 0xFFFFFF;
 
+    // Title bar (plan 188, A2). The bar sits at BAR_Y so its shaft (texture rows 13-18) and the name
+    // plate (rows 1-14) are centred on the title text; everything stays above scrollViewTop().
+    private static final ResourceLocation BAR_LEFT = tinkatonGui("tinkatongui_left");
+    private static final ResourceLocation BAR_MIDDLE = tinkatonGui("tinkatongui_middle");
+    private static final ResourceLocation BAR_RIGHT = tinkatonGui("tinkatongui_right");
+    private static final ResourceLocation NAME_LEFT = tinkatonGui("tinkatongui_name_left");
+    private static final ResourceLocation NAME_MIDDLE = tinkatonGui("tinkatongui_name_middle");
+    private static final ResourceLocation NAME_RIGHT = tinkatonGui("tinkatongui_name_right");
+    private static final int BAR_HEIGHT = 32;
+    private static final int BAR_CAP_WIDTH = 32;
+    private static final int BAR_Y = TITLE_Y - 12;
+    private static final int NAME_HEIGHT = 16;
+    private static final int NAME_CAP_WIDTH = 5;
+    private static final int NAME_Y = TITLE_Y - 4;
+
     private static final int SCROLL_STEP = 18;
     private static final int SCROLLBAR_WIDTH = 4;
     private static final int SCROLLBAR_GAP = 4;
@@ -73,6 +94,10 @@ public abstract class CobbleSafariConfigScreen extends Screen {
 
     protected CobbleSafariConfigScreen(Component title) {
         super(title);
+    }
+
+    private static ResourceLocation tinkatonGui(String name) {
+        return ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, "textures/gui/tinkatongui/" + name + ".png");
     }
 
     // -- layout -----------------------------------------------------------
@@ -140,6 +165,16 @@ public abstract class CobbleSafariConfigScreen extends Screen {
 
     // -- factories / rendering --------------------------------------------
 
+    /**
+     * Resizing re-runs {@link #init()} after {@code clearWidgets()}: drop the scroll widgets too, or
+     * every resize would stack a second copy of them.
+     */
+    @Override
+    protected void clearWidgets() {
+        super.clearWidgets();
+        this.scrollWidgets.clear();
+    }
+
     /** Registers an in-flow widget that scrolls inside the viewport (not a child). */
     protected <T extends AbstractWidget> T addScroll(T widget) {
         this.scrollWidgets.add(widget);
@@ -162,8 +197,113 @@ public abstract class CobbleSafariConfigScreen extends Screen {
         }
     }
 
+    /**
+     * Draws the Tinkaton title bar (hammer head and handle end overhanging the field area, shaft
+     * stretched across it) and the name plate sized to the title text (plan 188, A2).
+     */
     protected void drawTitle(GuiGraphics g) {
-        g.drawCenteredString(this.font, this.title, this.width / 2, TITLE_Y, TITLE_COLOR);
+        int left = this.panelLeft();
+        RenderSystem.enableBlend();
+        g.blit(BAR_LEFT, left - BAR_CAP_WIDTH, BAR_Y, 0, 0, BAR_CAP_WIDTH, BAR_HEIGHT, BAR_CAP_WIDTH, BAR_HEIGHT);
+        g.blit(BAR_MIDDLE, left, BAR_Y, PANEL_WIDTH, BAR_HEIGHT, 0, 0, 1, BAR_HEIGHT, 1, BAR_HEIGHT);
+        g.blit(BAR_RIGHT, left + PANEL_WIDTH, BAR_Y, 0, 0, BAR_CAP_WIDTH, BAR_HEIGHT, BAR_CAP_WIDTH, BAR_HEIGHT);
+
+        int maxTextWidth = PANEL_WIDTH - 2 * NAME_CAP_WIDTH;
+        int textWidth = this.font.width(this.title);
+        int plateWidth = Math.min(textWidth, maxTextWidth);
+        int nameX = this.width / 2 - plateWidth / 2;
+        g.blit(NAME_LEFT, nameX - NAME_CAP_WIDTH, NAME_Y, 0, 0, NAME_CAP_WIDTH, NAME_HEIGHT, NAME_CAP_WIDTH, NAME_HEIGHT);
+        g.blit(NAME_MIDDLE, nameX, NAME_Y, plateWidth, NAME_HEIGHT, 0, 0, 1, NAME_HEIGHT, 1, NAME_HEIGHT);
+        g.blit(NAME_RIGHT, nameX + plateWidth, NAME_Y, 0, 0, NAME_CAP_WIDTH, NAME_HEIGHT, NAME_CAP_WIDTH, NAME_HEIGHT);
+        RenderSystem.disableBlend();
+
+        if (textWidth <= maxTextWidth) {
+            g.drawCenteredString(this.font, this.title, this.width / 2, TITLE_Y, TITLE_COLOR);
+            return;
+        }
+        // Over-long title: shrink it into the plate rather than overflow the bar.
+        float scale = (float) maxTextWidth / textWidth;
+        g.pose().pushPose();
+        g.pose().translate(this.width / 2f, TITLE_Y + this.font.lineHeight / 2f, 0);
+        g.pose().scale(scale, scale, 1f);
+        g.drawCenteredString(this.font, this.title, 0, -this.font.lineHeight / 2, TITLE_COLOR);
+        g.pose().popPose();
+    }
+
+    /**
+     * Adds a tickbox to the <b>title line</b> of the row starting at {@code rowY}, right-aligned to
+     * the panel, its caption just left of it (action plan 190, B7). It shares the line with the
+     * row's own label, drawn as usual at the left edge, so the option costs no vertical space.
+     *
+     * <p>Scrolls with the content like any in-flow widget. The caption plus the box is the click
+     * target, so the small box is not the only thing to aim at.</p>
+     *
+     * @param rowY     top of the field or button row whose title line receives the tickbox
+     * @param onToggle called with the new value after every click
+     */
+    protected TitleTickbox addTitleTickbox(int rowY, Component caption, boolean ticked,
+                                           Consumer<Boolean> onToggle) {
+        int width = this.font.width(caption) + TitleTickbox.GAP + TitleTickbox.SIZE;
+        int x = this.panelLeft() + PANEL_WIDTH - width;
+        int y = rowY - LABEL_TO_FIELD_GAP - this.font.lineHeight;
+        return addScroll(new TitleTickbox(this.font, x, y, width, this.font.lineHeight, caption, ticked, onToggle));
+    }
+
+    /** The widget behind {@link #addTitleTickbox}: caption on the left, a font-height box on the right. */
+    public static final class TitleTickbox extends AbstractWidget {
+
+        static final int SIZE = 9;
+        static final int GAP = 4;
+        private static final int BORDER_COLOR = 0xFFA0A0A0;
+        private static final int BORDER_HOVER_COLOR = 0xFFFFFFFF;
+        private static final int FILL_COLOR = 0xFF000000;
+        private static final int TICK_COLOR = 0xFFFFFFFF;
+
+        private final Font font;
+        private final Consumer<Boolean> onToggle;
+        private boolean ticked;
+
+        TitleTickbox(Font font, int x, int y, int width, int height, Component caption,
+                     boolean ticked, Consumer<Boolean> onToggle) {
+            super(x, y, width, height, caption);
+            this.font = font;
+            this.ticked = ticked;
+            this.onToggle = onToggle;
+        }
+
+        public boolean isTicked() {
+            return this.ticked;
+        }
+
+        /** Sets the value without calling the toggle callback (a reset, say). */
+        public void setTicked(boolean ticked) {
+            this.ticked = ticked;
+        }
+
+        @Override
+        public void onClick(double mouseX, double mouseY) {
+            this.ticked = !this.ticked;
+            this.onToggle.accept(this.ticked);
+        }
+
+        @Override
+        protected void renderWidget(GuiGraphics g, int mouseX, int mouseY, float partialTick) {
+            boolean hover = this.isHoveredOrFocused();
+            g.drawString(this.font, this.getMessage(), this.getX(), this.getY(),
+                    hover ? TITLE_COLOR : LABEL_COLOR, false);
+            int boxX = this.getX() + this.getWidth() - SIZE;
+            int boxY = this.getY() + (this.getHeight() - SIZE) / 2;
+            g.fill(boxX, boxY, boxX + SIZE, boxY + SIZE, hover ? BORDER_HOVER_COLOR : BORDER_COLOR);
+            g.fill(boxX + 1, boxY + 1, boxX + SIZE - 1, boxY + SIZE - 1, FILL_COLOR);
+            if (this.ticked) {
+                g.fill(boxX + 2, boxY + 2, boxX + SIZE - 2, boxY + SIZE - 2, TICK_COLOR);
+            }
+        }
+
+        @Override
+        protected void updateWidgetNarration(NarrationElementOutput output) {
+            this.defaultButtonNarrationText(output);
+        }
     }
 
     /** Draws a field's descriptive label in the standard gray, skipping hidden boxes. */

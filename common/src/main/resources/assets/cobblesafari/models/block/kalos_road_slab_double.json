@@ -1,6 +1,5 @@
 {
   "parent": "minecraft:block/block",
-  "ambientocclusion": false,
   "textures": {
     "all": "cobblesafari:block/kalos_road",
     "particle": "cobblesafari:block/kalos_road"

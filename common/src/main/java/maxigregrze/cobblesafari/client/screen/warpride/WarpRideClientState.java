@@ -142,6 +142,17 @@ public final class WarpRideClientState {
     private long tweenStartNanos;
     private long tweenDurationNanos;
 
+    /** Peak roll of the rider on a sidestep, and how long the input keeps it leaning. */
+    private static final double BANK_MAX_DEGREES = 22.0;
+    private static final long BANK_HOLD_NANOS = 180_000_000L;
+    /** How fast the roll closes on its target, per second: leans in and levels out smoothly. */
+    private static final double BANK_RATE = 14.0;
+
+    /** Presentation only: the rider's roll about the depth axis, +CCW (a left turn), in degrees. */
+    private double bankDegrees;
+    private int bankSide;
+    private long bankHoldUntilNanos;
+
     /** Wall-clock instants, in nanoseconds, for the presentation-only timers. */
     public long inputCooldownEndNanos;
     public long jumpStartNanos;
@@ -261,10 +272,30 @@ public final class WarpRideClientState {
             odometer += speed * deltaSeconds;
         }
         advanceTween();
+        advanceBank(deltaSeconds);
         odometer = ease(odometer, targetOdometer, deltaSeconds);
         energy = ease(energy, targetEnergy, deltaSeconds);
         speed = ease(speed, targetSpeed, deltaSeconds);
         pruneWaves();
+    }
+
+    /**
+     * Leans the rider into a sidestep: +1 for a left move (counter-clockwise, left wing down), -1
+     * for a right one. Held while inputs keep coming, so a run of taps stays banked instead of
+     * wobbling, then levels out on its own.
+     */
+    public void startBank(int side) {
+        this.bankSide = side;
+        this.bankHoldUntilNanos = System.nanoTime() + BANK_HOLD_NANOS;
+    }
+
+    public double bankDegrees() {
+        return bankDegrees;
+    }
+
+    private void advanceBank(double deltaSeconds) {
+        double target = System.nanoTime() < bankHoldUntilNanos ? bankSide * BANK_MAX_DEGREES : 0.0;
+        bankDegrees += (target - bankDegrees) * (1.0 - Math.exp(-BANK_RATE * deltaSeconds));
     }
 
     private double ease(double current, double target, double deltaSeconds) {

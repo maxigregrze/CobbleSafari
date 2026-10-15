@@ -45,10 +45,12 @@ public class ModBlockEntities {
     public static BlockEntityType<SafariEggNestBlockEntity> SAFARI_EGG_NEST;
     public static BlockEntityType<HoopaRingPortalBlockEntity> HOOPA_RING_PORTAL;
     public static BlockEntityType<DungeonPortalBlockEntity> DUNGEON_PORTAL;
+    public static BlockEntityType<maxigregrze.cobblesafari.block.dungeon.PortalSpawnerBlockEntity> PORTAL_SPAWNER;
     public static BlockEntityType<maxigregrze.cobblesafari.block.dungeon.UltraWormholeBlockEntity> ULTRA_WORMHOLE;
     public static BlockEntityType<VoidBlockEntity> VOID_BLOCK;
     public static BlockEntityType<LightningSpotBlockEntity> LIGHTNINGSPOT;
     public static BlockEntityType<GiratinaCoreBlockEntity> GIRATINA_CORE;
+    public static BlockEntityType<maxigregrze.cobblesafari.block.ultraspace.UltraWarpDiveBlockEntity> ULTRAWARPDIVE;
     public static BlockEntityType<DistortionPortalBlockEntity> DISTORTION_PORTAL;
     public static BlockEntityType<DistortionStoneBricksRuneBlockEntity> DISTORTION_STONEBRICKS_RUNE;
     public static BlockEntityType<LostNotesBlockEntity> LOST_NOTES;
@@ -105,6 +107,14 @@ public class ModBlockEntities {
                 BlockEntityType.Builder.of(DungeonPortalBlockEntity::new, ModBlocks.DUNGEON_PORTAL, ModBlocks.CREATIVE_DUNGEON_PORTAL).build(null)
         );
 
+        PORTAL_SPAWNER = Registry.register(
+                BuiltInRegistries.BLOCK_ENTITY_TYPE,
+                ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, "portal_spawner"),
+                BlockEntityType.Builder.of(
+                        maxigregrze.cobblesafari.block.dungeon.PortalSpawnerBlockEntity::new,
+                        ModBlocks.PORTAL_SPAWNER).build(null)
+        );
+
         VOID_BLOCK = Registry.register(
                 BuiltInRegistries.BLOCK_ENTITY_TYPE,
                 ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, "void_block"),
@@ -115,6 +125,15 @@ public class ModBlockEntities {
                 BuiltInRegistries.BLOCK_ENTITY_TYPE,
                 ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, "giratina_core"),
                 BlockEntityType.Builder.of(GiratinaCoreBlockEntity::new, ModBlocks.GIRATINA_CORE).build(null)
+        );
+
+        // Plan 189: one data-less type for both animated Ultra Warp Dive props.
+        ULTRAWARPDIVE = Registry.register(
+                BuiltInRegistries.BLOCK_ENTITY_TYPE,
+                ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, "ultrawarpdive"),
+                BlockEntityType.Builder.of(
+                        maxigregrze.cobblesafari.block.ultraspace.UltraWarpDiveBlockEntity::new,
+                        ModBlocks.ULTRAWARPDIVE_NEGATIVE, ModBlocks.ULTRAWARPDIVE_ROCKS).build(null)
         );
 
         DISTORTION_PORTAL = Registry.register(

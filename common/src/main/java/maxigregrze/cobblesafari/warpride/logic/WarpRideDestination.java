@@ -1,17 +1,23 @@
 package maxigregrze.cobblesafari.warpride.logic;
 
-import java.util.List;
-import java.util.Map;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * One Ultra Space destination. {@code typeId} is stable and unique ({@code >= 1}) and is what the
  * sub-instance record stores; {@code weight} is its share of a portal roll; {@code tint} is ARGB for
- * the portal sprite; {@code encounters} maps rank 0..3 to flat {@code "species form=x"} strings.
+ * the portal sprite.
+ *
+ * <p>The encounter comes from two pools (action plan 190, E1): {@code normalPool}, and
+ * {@code rewardPool} - the world's Ultra Beast - drawn with the per-rank chance of
+ * {@link #rewardPoolPercent(int, WarpRideRewards)}.</p>
  *
  * <p>{@code destinationId} is the human name, derived by the loader from the file name rather than
  * authored (action plan 184, Decision section 12.3): {@code typeId} is already the machine identity
  * and the file name is already the human one, so a {@code name} field would only be a second source
  * of truth to keep in sync. It exists for the server log, and reaches no client.</p>
+ *
+ * @param rewardPoolPercentOverride four per-rank percentages replacing the global
+ *                                  {@code difficulty.json} row, or {@code null} to use it
  */
 public record WarpRideDestination(
         String destinationId,
@@ -21,7 +27,9 @@ public record WarpRideDestination(
         int tint,
         String dimension,
         String biome,
-        Map<Integer, List<String>> encounters
+        WarpRideEncounterPool normalPool,
+        WarpRideEncounterPool rewardPool,
+        double @Nullable [] rewardPoolPercentOverride
 ) {
 
     /** Id of the registered sub-dungeon hosting this destination. */
@@ -45,9 +53,12 @@ public record WarpRideDestination(
         return hasOwnDimension() ? null : biome;
     }
 
-    public List<String> encountersForRank(int rank) {
-        List<String> list = encounters.get(rank);
-        return list == null ? List.of() : list;
+    /** Chance, in percent, that a rank-{@code rank} encounter is drawn from the reward pool. */
+    public double rewardPoolPercent(int rank, WarpRideRewards rewards) {
+        if (rewardPoolPercentOverride != null) {
+            return rewardPoolPercentOverride[Math.clamp(rank, 0, rewardPoolPercentOverride.length - 1)];
+        }
+        return rewards.rewardPoolPercent(rank);
     }
 
     /** The shared sub-dimension, used by every destination that does not name one. */

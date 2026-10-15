@@ -114,6 +114,9 @@ public final class SubDungeonGeneration {
         /** Biome-fill cursor: index into the footprint's chunk list, one chunk per tick (C7). */
         int fillCursor;
 
+        /** The spawned reward, tagged with the instance id once REGISTER creates it (P6). */
+        UUID encounterEntity;
+
         State(SubDungeonRequest request, DungeonConfig config, ServerLevel level) {
             this.request = request;
             this.config = config;
@@ -320,7 +323,7 @@ public final class SubDungeonGeneration {
                 }
             }
             case ENCOUNTER -> {
-                SubDungeonEncounter.resolve(state.level, player, state.markers, state.request);
+                state.encounterEntity = SubDungeonEncounter.resolve(state.level, player, state.markers, state.request);
                 state.phase = Phase.REGISTER;
             }
             case REGISTER -> {
@@ -335,6 +338,9 @@ public final class SubDungeonGeneration {
                     // clear pipeline: the slot is freed by completeClear, never here.
                     SubDungeonManager.onGenerationFailed(server, state.request.playerId(), state.request);
                 } else {
+                    // The reward belongs to this instance from now on: when the instance goes, so
+                    // does it, however late its entity loads (plan 190, P6).
+                    SubDungeonEncounter.bindToInstance(state.level, state.encounterEntity, record.instanceId());
                     // Only now does the exit portal learn which world it belongs to.
                     if (state.exitPortal != null
                             && state.level.getBlockEntity(state.exitPortal) instanceof UltraWormholeBlockEntity portal) {

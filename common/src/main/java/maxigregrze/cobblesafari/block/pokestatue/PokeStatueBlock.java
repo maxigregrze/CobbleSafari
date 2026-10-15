@@ -222,7 +222,19 @@ public class PokeStatueBlock extends AbstractPokeStatueBlock {
     @Override
     protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos,
                                                Player player, BlockHitResult hit) {
-        return InteractionResult.PASS;
+        // Creative shift-right-click with empty hands opens the config without the Tinkhammer
+        // (plan 188, C4). Vanilla only reaches here while sneaking when both hands are empty.
+        if (!player.isCreative() || !player.isShiftKeyDown()) {
+            return InteractionResult.PASS;
+        }
+        if (level.isClientSide()) {
+            return InteractionResult.SUCCESS;
+        }
+        if (state.getValue(GLAZED)) {
+            refuse(level, pos);
+            return InteractionResult.CONSUME;
+        }
+        return openConfig(level, pos, state, player) ? InteractionResult.CONSUME : InteractionResult.PASS;
     }
 
     /** Position of the data-bearing (lower) half for a clicked block. */

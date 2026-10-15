@@ -40,6 +40,7 @@ public class DungeonPortalBlockEntity extends BlockEntity {
     private static final String KEY_FIXED_DUNGEON_ID = "FixedDungeonId";
     private static final String KEY_PLAYER_ID = "PlayerId";
     private static final String KEY_ENTERED_PLAYERS = "EnteredPlayers";
+    private static final String KEY_LIFETIME_TICKS = "LifetimeTicks";
 
     private BlockPos linkedPortalPos;
     private ResourceKey<Level> linkedDimension;
@@ -48,6 +49,8 @@ public class DungeonPortalBlockEntity extends BlockEntity {
     private String dungeonDimensionId;
     private UUID portalId;
     private long spawnTick = -1;
+    /** Per-portal lifetime (plan 188, S0); -1 = the global portalLifetimeMinutes. */
+    private int lifetimeTicksOverride = -1;
     private BlockPos dungeonStructurePos;
     private BlockPos dungeonExitPortalPos;
     private int dungeonChunkMinX;
@@ -82,10 +85,11 @@ public class DungeonPortalBlockEntity extends BlockEntity {
         }
 
         long currentTick = level.getGameTime();
-        int lifetime = PortalSpawnConfig.getPortalLifetimeTicks();
+        int lifetime = blockEntity.getEffectiveLifetimeTicks();
         long elapsed = currentTick - blockEntity.spawnTick;
 
-        if (elapsed >= lifetime && PortalSpawnConfig.isEnabled()) {
+        // Expiry no longer depends on natural spawning being enabled (plan 188, S0).
+        if (elapsed >= lifetime) {
             // Self-expiry safety net: covers portals that expired while their chunk was unloaded
             // and portals whose tracking entry was lost (they would otherwise linger forever).
             PortalSpawnManager.expirePortalInPlace(serverLevel, pos, blockEntity);
@@ -136,9 +140,23 @@ public class DungeonPortalBlockEntity extends BlockEntity {
     public long getRemainingLifetimeTicks() {
         if (level == null || spawnTick < 0) return -1;
         long currentTick = level.getGameTime();
-        int lifetime = PortalSpawnConfig.getPortalLifetimeTicks();
+        int lifetime = getEffectiveLifetimeTicks();
         long elapsed = currentTick - spawnTick;
         return Math.max(0, lifetime - elapsed);
+    }
+
+    /** This portal's own lifetime, or the global one when it has none (plan 188, S0). */
+    public int getEffectiveLifetimeTicks() {
+        return lifetimeTicksOverride >= 0 ? lifetimeTicksOverride : PortalSpawnConfig.getPortalLifetimeTicks();
+    }
+
+    public int getLifetimeTicksOverride() {
+        return lifetimeTicksOverride;
+    }
+
+    public void setLifetimeTicksOverride(int lifetimeTicks) {
+        this.lifetimeTicksOverride = lifetimeTicks;
+        setChanged();
     }
 
     @Override
@@ -197,6 +215,9 @@ public class DungeonPortalBlockEntity extends BlockEntity {
 
         if (autoRenewPortal) {
             tag.putBoolean(KEY_AUTO_RENEW_PORTAL, true);
+        }
+        if (lifetimeTicksOverride >= 0) {
+            tag.putInt(KEY_LIFETIME_TICKS, lifetimeTicksOverride);
         }
         tag.putBoolean(KEY_RANDOM_DESTINATION_MODE, randomDestinationMode);
         if (fixedDungeonId != null) {
@@ -285,6 +306,7 @@ public class DungeonPortalBlockEntity extends BlockEntity {
         }
 
         autoRenewPortal = tag.contains(KEY_AUTO_RENEW_PORTAL) && tag.getBoolean(KEY_AUTO_RENEW_PORTAL);
+        lifetimeTicksOverride = tag.contains(KEY_LIFETIME_TICKS) ? tag.getInt(KEY_LIFETIME_TICKS) : -1;
         randomDestinationMode = !tag.contains(KEY_RANDOM_DESTINATION_MODE) || tag.getBoolean(KEY_RANDOM_DESTINATION_MODE);
         fixedDungeonId = tag.contains(KEY_FIXED_DUNGEON_ID) ? tag.getString(KEY_FIXED_DUNGEON_ID) : null;
 

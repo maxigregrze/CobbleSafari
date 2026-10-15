@@ -30,7 +30,8 @@ public class UltraWormholeBlockEntity extends BlockEntity {
 
     private static final double TRACKING_RADIUS = 16.0;
     private static final float TRACKING_SMOOTHING = 0.25f;
-    private static final float SPIN_Z_DEGREES_PER_TICK = 1.5f;
+    /** Shared with the warp ride screen, whose portals spin at the same rate (action plan 189). */
+    public static final float SPIN_Z_DEGREES_PER_TICK = 1.5f;
 
     /** Which destination this portal belongs to. Drives the tint; never interpreted server-side. */
     private int typeId;

@@ -24,6 +24,8 @@ public class PortalSavedData extends SavedData {
     private static final String KEY_DUNGEON_DIMENSION_ID = "DungeonDimensionId";
     private static final String KEY_DUNGEON_STRUCTURE_X = "DungeonStructureX";
     private static final String KEY_HAS_DUNGEON_CHUNK_BOUNDS = "HasDungeonChunkBounds";
+    /** Per-portal lifetime (plan 188, S0); absent = the global portalLifetimeMinutes. */
+    private static final String KEY_LIFETIME_TICKS = "LifetimeTicks";
 
     private final Map<UUID, PortalData> portals = new HashMap<>();
 
@@ -65,9 +67,11 @@ public class PortalSavedData extends SavedData {
                 int chunkMinZ = portalTag.getInt("ChunkMinZ");
                 int chunkMaxX = portalTag.getInt("ChunkMaxX");
                 int chunkMaxZ = portalTag.getInt("ChunkMaxZ");
+                int lifetimeTicks = portalTag.contains(KEY_LIFETIME_TICKS) ? portalTag.getInt(KEY_LIFETIME_TICKS) : -1;
 
                 data.portals.put(portalId, new PortalData(portalId, pos, dimension, spawnTick, dungeonId,
-                        dungeonDimensionId, dungeonStructurePos, chunkMinX, chunkMinZ, chunkMaxX, chunkMaxZ, hasBounds));
+                        dungeonDimensionId, dungeonStructurePos, chunkMinX, chunkMinZ, chunkMaxX, chunkMaxZ, hasBounds,
+                        lifetimeTicks));
             }
         }
 
@@ -103,6 +107,9 @@ public class PortalSavedData extends SavedData {
                 portalTag.putInt("ChunkMaxX", portal.chunkMaxX());
                 portalTag.putInt("ChunkMaxZ", portal.chunkMaxZ());
             }
+            if (portal.lifetimeTicks() >= 0) {
+                portalTag.putInt(KEY_LIFETIME_TICKS, portal.lifetimeTicks());
+            }
             portalList.add(portalTag);
         }
 
@@ -113,15 +120,17 @@ public class PortalSavedData extends SavedData {
 
     public void addPortal(UUID portalId, BlockPos pos, ResourceKey<Level> dimension, long spawnTick, String dungeonId) {
         portals.put(portalId, new PortalData(portalId, pos, dimension, spawnTick, dungeonId,
-                null, null, 0, 0, 0, 0, false));
+                null, null, 0, 0, 0, 0, false, -1));
         setDirty();
     }
 
     public void addPortal(UUID portalId, BlockPos pos, ResourceKey<Level> dimension, long spawnTick, String dungeonId,
                           String dungeonDimensionId, BlockPos dungeonStructurePos,
-                          int chunkMinX, int chunkMinZ, int chunkMaxX, int chunkMaxZ, boolean hasBounds) {
+                          int chunkMinX, int chunkMinZ, int chunkMaxX, int chunkMaxZ, boolean hasBounds,
+                          int lifetimeTicks) {
         portals.put(portalId, new PortalData(portalId, pos, dimension, spawnTick, dungeonId,
-                dungeonDimensionId, dungeonStructurePos, chunkMinX, chunkMinZ, chunkMaxX, chunkMaxZ, hasBounds));
+                dungeonDimensionId, dungeonStructurePos, chunkMinX, chunkMinZ, chunkMaxX, chunkMaxZ, hasBounds,
+                lifetimeTicks));
         setDirty();
     }
 
@@ -160,6 +169,7 @@ public class PortalSavedData extends SavedData {
             int chunkMinZ,
             int chunkMaxX,
             int chunkMaxZ,
-            boolean hasDungeonChunkBounds
+            boolean hasDungeonChunkBounds,
+            int lifetimeTicks
     ) {}
 }

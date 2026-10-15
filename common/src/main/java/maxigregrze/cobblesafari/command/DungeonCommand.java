@@ -6,11 +6,9 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import maxigregrze.cobblesafari.dungeon.DungeonConfig;
 import maxigregrze.cobblesafari.dungeon.DungeonDimensions;
 import maxigregrze.cobblesafari.data.DungeonInstanceRecord;
+import maxigregrze.cobblesafari.dungeon.DungeonChatComponents;
 import maxigregrze.cobblesafari.dungeon.PortalSpawnManager;
-import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.chat.ClickEvent;
-import net.minecraft.network.chat.HoverEvent;
 import java.util.UUID;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.arguments.EntityArgument;
@@ -127,33 +125,14 @@ public class DungeonCommand {
         }
     }
 
-    /**
-     * A position the operator can click to travel to. Runs {@code /execute in <dim> run tp @s ...}
-     * <b>as the player</b>, so it is gated by their own permissions: someone allowed to use
-     * CobbleSafari commands but not teleportation gets vanilla's "unknown command" reply rather
-     * than a silent no-op or an escalation.
-     */
+    /** A position the operator can click to travel to (see {@link DungeonChatComponents#teleportLink}). */
     private static Component clickablePos(String dimensionId, BlockPos pos) {
-        String command = String.format("/execute in %s run tp @s %d %d %d",
-                dimensionId, pos.getX(), pos.getY(), pos.getZ());
-        return Component.literal(String.format("%d %d %d", pos.getX(), pos.getY(), pos.getZ()))
-                .withStyle(style -> style
-                        .withColor(ChatFormatting.GREEN)
-                        .withUnderlined(true)
-                        .withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, command))
-                        .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
-                                Component.translatable("cobblesafari.command.dungeon.list.click_teleport"))));
+        return DungeonChatComponents.teleportLink(dimensionId, pos);
     }
 
     /** An instance id the operator can click to copy, mirroring {@code timer session list}. */
     private static Component clickableInstanceId(UUID instanceId) {
-        String id = instanceId.toString();
-        return Component.literal(id).withStyle(style -> style
-                .withColor(ChatFormatting.AQUA)
-                .withUnderlined(true)
-                .withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, id))
-                .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
-                        Component.translatable("cobblesafari.command.dungeon.list.click_copy"))));
+        return DungeonChatComponents.copyText(instanceId.toString());
     }
 
     /**

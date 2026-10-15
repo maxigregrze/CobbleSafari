@@ -69,6 +69,32 @@ public abstract class AbstractPokeStatueBlockEntity extends BlockEntity {
         // optional
     }
 
+    /**
+     * Hook for the Creative Statue's playback options (action plan 190, B7). The regular statue has
+     * none, so it ignores them and keeps the defaults below whatever a client sends.
+     */
+    protected void applyPlaybackOptions(boolean fixed, float speed, boolean showDummy) {
+        // optional
+    }
+
+    /** Whether the model holds one frame (the progress) rather than playing. Always, by default. */
+    public boolean isAnimationFixed() {
+        return true;
+    }
+
+    /** Playback speed when the animation is not fixed. */
+    public float getAnimationSpeed() {
+        return 1.0f;
+    }
+
+    /**
+     * Whether a species that exists but has no model is drawn as Cobblemon's substitute dummy.
+     * Always, by default; an empty species field shows the dummy whatever this says.
+     */
+    public boolean showsDummyWithoutModel() {
+        return true;
+    }
+
     // -- accessors ----------------------------------------------------------
 
     public String getSpecies() {
@@ -107,7 +133,9 @@ public abstract class AbstractPokeStatueBlockEntity extends BlockEntity {
      * {@code PokeStatueConfigServerHandler}; they are clamped again here so a direct caller cannot
      * store nonsense.
      */
-    public void configure(String species, int mode, float scale, int color, String animation, float progress) {
+    public void configure(String species, int mode, float scale, int color, String animation, float progress,
+                          boolean fixed, float speed, boolean showDummy) {
+        applyPlaybackOptions(fixed, speed, showDummy);
         this.species = truncate(species, MAX_SPECIES_LENGTH);
         this.mode = Math.clamp(mode, 0, variant().getModeCount() - 1);
         this.scale = sanitizeScale(scale, variant().getMaxScale());
@@ -142,7 +170,8 @@ public abstract class AbstractPokeStatueBlockEntity extends BlockEntity {
 
     public OpenPokeStatueConfigPayload createOpenPayload() {
         return new OpenPokeStatueConfigPayload(
-                worldPosition, variant().getId(), species, mode, scale, color, animation, progress);
+                worldPosition, variant().getId(), species, mode, scale, color, animation, progress,
+                isAnimationFixed(), getAnimationSpeed(), showsDummyWithoutModel());
     }
 
     /** Pushes the data to clients for every position that renders part of this statue. */

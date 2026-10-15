@@ -30,7 +30,9 @@
     "client.RotomPhoneScreenMixin",
     "client.MarksWidgetMixin",
     "client.MusicManagerAccessor",
-    "client.MusicManagerConstantMusicMixin"
+    "client.MusicManagerConstantMusicMixin",
+    "client.ElytraLayerWarpRideMixin",
+    "client.CapeLayerWarpRideMixin"
   ],
   "injectors": {
     "defaultRequire": 1

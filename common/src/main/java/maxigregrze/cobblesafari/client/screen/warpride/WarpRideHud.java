@@ -3,44 +3,26 @@ package maxigregrze.cobblesafari.client.screen.warpride;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.math.Axis;
 import maxigregrze.cobblesafari.CobbleSafari;
-import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.RandomSource;
 
-/** The HUD. The layout is fully symmetric on x = 960; every future addition should keep it that way. */
+/**
+ * The HUD. Since action plan 189 there is no text and no gauge during the ride: energy reads off
+ * the aura in front of the rider, and the hit effect is the only other layer.
+ */
 public final class WarpRideHud {
 
-    private static final int BAR_X = 480;
-    private static final int BAR_Y = 13;
-    private static final int BAR_W = 960;
-    private static final int BAR_H = 96;
-
-    private static final int KEY_Y = 971;
-    private static final int KEY_W = 192;
-    private static final int KEY_H = 96;
-    private static final int KEY_CW_X = 639;
-    private static final int KEY_JUMP_X = 864;
-    private static final int KEY_CCW_X = 1089;
-
-    private static final int ODOMETER_Y = 124;
-
-    static final ResourceLocation BAR_TEXTURE = ResourceLocation.fromNamespaceAndPath(
-            CobbleSafari.MOD_ID, "textures/gui/warpride/energy_bar.png");
-    // One plate per key rather than one shared plate: each carries its own arrow, so the row reads
-    // as clockwise / jump / counter-clockwise without relying on the labels alone.
-    static final ResourceLocation KEY_CLOCKWISE = ResourceLocation.fromNamespaceAndPath(
-            CobbleSafari.MOD_ID, "textures/gui/warpride/key_l.png");
-    static final ResourceLocation KEY_JUMP = ResourceLocation.fromNamespaceAndPath(
-            CobbleSafari.MOD_ID, "textures/gui/warpride/key_t.png");
-    static final ResourceLocation KEY_COUNTER_CLOCKWISE = ResourceLocation.fromNamespaceAndPath(
-            CobbleSafari.MOD_ID, "textures/gui/warpride/key_r.png");
     static final ResourceLocation BUZZ = ResourceLocation.fromNamespaceAndPath(
             CobbleSafari.MOD_ID, "textures/gui/warpride/buzz_effect.png");
 
-    /** How long a pickup flourish stays on the bar, in nanoseconds. */
+    /** How long a pickup flourish stays on the aura, in nanoseconds. */
     private static final long FLOURISH_NANOS = 1_400_000_000L;
+
+    /** At 100 % energy the aura is this many times the rider's on-screen size; linear down to 0. */
+    private static final double AURA_MAX_FACTOR = 1.5;
+    private static final double AURA_PICKUP_WHITE = 0.66;
+    private static final double AURA_FROZEN_WHITE = 0.50;
 
     /** Kept low and single-pulse (no strobe) for photosensitivity safety. */
     private static final int FLASH_COLOR = 0x9AD5DB;
@@ -61,17 +43,6 @@ public final class WarpRideHud {
     private long positiveFlourishUntil;
     private long negativeFlourishUntil;
 
-    private WarpRideHudLabels labels = WarpRideHudLabels.EMPTY;
-
-    /** The three key names, read from the player's own bindings. */
-    public record WarpRideHudLabels(String clockwise, String jump, String counterClockwise) {
-        public static final WarpRideHudLabels EMPTY = new WarpRideHudLabels("A", "W", "D");
-    }
-
-    public void setLabels(WarpRideHudLabels labels) {
-        this.labels = labels;
-    }
-
     public void onPositive() {
         positiveFlourishUntil = System.nanoTime() + FLOURISH_NANOS;
     }
@@ -89,15 +60,39 @@ public final class WarpRideHud {
         }
     }
 
-    public void render(GuiGraphics graphics, Font font, WarpRideClientState state) {
-        renderHitEffect(graphics, state);   // under the bar/keys so the HUD stays readable
-        renderEnergyBar(graphics, font, state);
-        renderOdometer(graphics, font, state);
-        renderKeys(graphics, font, state);
+    public void render(GuiGraphics graphics, WarpRideClientState state) {
+        renderEnergyAura(graphics, state);
+        renderHitEffect(graphics);
+    }
+
+    /**
+     * The energy aura (plan 189, section 9.2): the flat positive strip centred on the rider, so it
+     * follows jumps and drift, sized by energy. The old gauge's feedback moves onto it with the same
+     * priorities: red on a hit, a white flash on a pickup, a white veil while decay is frozen.
+     */
+    private void renderEnergyAura(GuiGraphics graphics, WarpRideClientState state) {
+        double ratio = Math.max(0.0, Math.min(1.0, state.energy / 100.0));
+        int size = (int) Math.round(WarpRideRenderer.RIDER_SCREEN_PX * AURA_MAX_FACTOR * ratio);
+        int centerY = WarpRideRenderer.CENTER_Y + (int) Math.round(WarpRideRenderer.riderRadius(state));
+
+        long now = System.nanoTime();
+        boolean neg = now < negativeFlourishUntil;
+        boolean pos = !neg && now < positiveFlourishUntil;
+        double white = 0.0;
+        if (pos) {
+            white = AURA_PICKUP_WHITE;
+        } else if (!neg && state.frozen) {
+            white = AURA_FROZEN_WHITE;
+        }
+        if (neg) {
+            WarpRideRenderer.drawAura(graphics, centerY, size, 1.0f, 0.55f, 0.5f, white);
+        } else {
+            WarpRideRenderer.drawAura(graphics, centerY, size, 1.0f, 1.0f, 1.0f, white);
+        }
     }
 
     /** The malus hit effect: a green wash plus 4-6 edge buzz sprites. One fade-out, no strobe. */
-    private void renderHitEffect(GuiGraphics graphics, WarpRideClientState state) {
+    private void renderHitEffect(GuiGraphics graphics) {
         long now = System.nanoTime();
         if (now >= hitEffectUntil) {
             return;
@@ -146,98 +141,6 @@ public final class WarpRideHud {
         // Bottom-centre of the texture at the origin, so it sits on the border and grows inward.
         graphics.blit(BUZZ, -BUZZ_SIZE / 2, -BUZZ_SIZE, 0.0f, 0.0f, BUZZ_SIZE, BUZZ_SIZE, BUZZ_SIZE, BUZZ_SIZE);
         graphics.setColor(1.0f, 1.0f, 1.0f, 1.0f);
-        graphics.pose().popPose();
-    }
-
-    /** The bar drains from both ends: a centred slice of energy_bar.png, cropped in as it empties. */
-    private void renderEnergyBar(GuiGraphics graphics, Font font, WarpRideClientState state) {
-        double ratio = Math.max(0.0, Math.min(1.0, state.energy / 100.0));
-        int fillW = (int) Math.round(BAR_W * ratio);
-
-        graphics.fill(BAR_X, BAR_Y, BAR_X + BAR_W, BAR_Y + BAR_H, 0x88101024);
-
-        if (fillW > 0) {
-            int uOff = (BAR_W - fillW) / 2;
-            long now = System.nanoTime();
-            boolean neg = now < negativeFlourishUntil;
-            boolean pos = !neg && now < positiveFlourishUntil;
-
-            // The bar texture, red-tinted on a hit: the centred fillW-wide slice, drawn at that width.
-            if (neg) {
-                graphics.setColor(1.0f, 0.55f, 0.5f, 1.0f);
-            }
-            WarpRideRenderer.beginAlphaBlit();   // the empty-track fill above turned blending off
-            graphics.blit(BAR_TEXTURE, BAR_X + uOff, BAR_Y, (float) uOff, 0.0f,
-                    fillW, BAR_H, BAR_W, BAR_H);
-            graphics.setColor(1.0f, 1.0f, 1.0f, 1.0f);
-
-            // A white overlay: 66 % just after gaining energy, 50 % while frozen, never over a hit's red.
-            double whiteAlpha = pos ? 0.66 : (!neg && state.frozen ? 0.50 : 0.0);
-            if (whiteAlpha > 0.0) {
-                int wa = ((int) Math.round(whiteAlpha * 255.0) << 24) | 0x00FFFFFF;
-                graphics.fill(BAR_X + uOff, BAR_Y, BAR_X + uOff + fillW, BAR_Y + BAR_H, wa);
-            }
-        }
-
-        String percent = Math.round(state.energy) + "%";
-        drawScaledCentered(graphics, font, percent, WarpRideRenderer.CENTER_X,
-                BAR_Y + BAR_H / 2 - 12, 3.0f, 0xFFFFFFFF);
-
-        RenderSystem.disableBlend();
-    }
-
-    private void renderOdometer(GuiGraphics graphics, Font font, WarpRideClientState state) {
-        String text = Component.translatable("gui.cobblesafari.warpride.hud.distance",
-                Long.toString(Math.round(state.odometer))).getString();
-        drawScaledCentered(graphics, font, text, WarpRideRenderer.CENTER_X, ODOMETER_Y, 2.0f, 0xFFBFA8FF);
-    }
-
-    private void renderKey(GuiGraphics graphics, Font font, ResourceLocation plate,
-                           int x, String label, boolean dimmed) {
-        // The label is drawn with drawString, which flushes and disables blending, so re-arm per plate.
-        WarpRideRenderer.beginAlphaBlit();
-        float alpha = dimmed ? 0.35f : 1.0f;
-        graphics.setColor(1.0f, 1.0f, 1.0f, alpha);
-        graphics.blit(plate, x, KEY_Y, 0.0f, 0.0f, KEY_W, KEY_H, KEY_W, KEY_H);
-        graphics.setColor(1.0f, 1.0f, 1.0f, 1.0f);
-        drawFittedCentered(graphics, font, label, x + KEY_W / 2, KEY_Y + KEY_H / 2 - 8,
-                KEY_W - 24, dimmed ? 0xFF6A6A7A : 0xFFFFFFFF);
-        RenderSystem.disableBlend();
-    }
-
-    private void renderKeys(GuiGraphics graphics, Font font, WarpRideClientState state) {
-        // Left to right the row reads as the keyboard does: keyLeft / keyUp / keyRight, i.e. A-W-D.
-        boolean dimmed = state.drifting || state.isOnCooldown()
-                || state.phase != WarpRideClientState.PHASE_RIDING;
-        renderKey(graphics, font, KEY_CLOCKWISE, KEY_CW_X, labels.clockwise(), dimmed);
-        renderKey(graphics, font, KEY_JUMP, KEY_JUMP_X, labels.jump(), dimmed);
-        renderKey(graphics, font, KEY_COUNTER_CLOCKWISE, KEY_CCW_X, labels.counterClockwise(), dimmed);
-    }
-
-    private static void drawScaledCentered(GuiGraphics graphics, Font font, String text,
-                                           int centerX, int y, float scale, int color) {
-        graphics.pose().pushPose();
-        graphics.pose().translate(centerX, y, 0.0f);
-        graphics.pose().scale(scale, scale, 1.0f);
-        graphics.drawString(font, text, -font.width(text) / 2, 0, color, true);
-        graphics.pose().popPose();
-    }
-
-    /** Shrink-to-fit, then truncate: a label must never spill out of its 192 px plate. */
-    private static void drawFittedCentered(GuiGraphics graphics, Font font, String text,
-                                           int centerX, int y, int maxWidth, int color) {
-        String shown = text;
-        float scale = 2.0f;
-        while (scale > 0.55f && font.width(shown) * scale > maxWidth) {
-            scale -= 0.1f;
-        }
-        if (font.width(shown) * scale > maxWidth) {
-            shown = font.plainSubstrByWidth(shown, (int) (maxWidth / scale)) + "…";
-        }
-        graphics.pose().pushPose();
-        graphics.pose().translate(centerX, y, 0.0f);
-        graphics.pose().scale(scale, scale, 1.0f);
-        graphics.drawString(font, shown, -font.width(shown) / 2, 0, color, true);
         graphics.pose().popPose();
     }
 }

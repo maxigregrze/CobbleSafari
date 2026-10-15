@@ -68,6 +68,7 @@ public abstract class ConnectedModelBlock extends Block implements NeighborDeriv
             Map<Integer, Map<ConnectedShape, VoxelShape>> layerSilhouetteCollisions,
             Collision collision,
             boolean emptyOcclusion,
+            boolean noAoShadow,
             @Nullable Direction.Axis skipRenderingAxis,
             boolean refreshOnPlace,
             @Nullable String descriptionId) {
@@ -93,6 +94,7 @@ public abstract class ConnectedModelBlock extends Block implements NeighborDeriv
             private final Map<Integer, Map<ConnectedShape, VoxelShape>> layerSilhouetteCollisions = new HashMap<>();
             private Collision collision = Collision.SHAPE;
             private boolean emptyOcclusion = false;
+            private boolean noAoShadow = false;
             private Direction.Axis skipRenderingAxis = null;
             private boolean refreshOnPlace = true;
             private String descriptionId = null;
@@ -159,6 +161,13 @@ public abstract class ConnectedModelBlock extends Block implements NeighborDeriv
             public Builder collision(Collision collision) { this.collision = collision; return this; }
             public Builder emptyOcclusion() { this.emptyOcclusion = true; return this; }
 
+            /**
+             * Reports full shade brightness, so ambient occlusion treats the block like glass. Needed
+             * when the collision is a full cube but the model is not: vanilla would then read a 0.2
+             * shade, darkening the block's own inset faces and the faces of everything around it.
+             */
+            public Builder noAoShadow() { this.noAoShadow = true; return this; }
+
             /** Two peers stop drawing the face they share along this axis. Null disables it. */
             public Builder skipRenderingAxis(Direction.Axis axis) { this.skipRenderingAxis = axis; return this; }
 
@@ -171,7 +180,7 @@ public abstract class ConnectedModelBlock extends Block implements NeighborDeriv
                 return new Settings(connectTag, stackTag, groundTag, shape, coreShape, armShape,
                         Map.copyOf(segmentShapes), Map.copyOf(silhouetteCollisions),
                         Map.copyOf(byLayer), collision,
-                        emptyOcclusion, skipRenderingAxis, refreshOnPlace, descriptionId);
+                        emptyOcclusion, noAoShadow, skipRenderingAxis, refreshOnPlace, descriptionId);
             }
         }
     }
@@ -326,6 +335,11 @@ public abstract class ConnectedModelBlock extends Block implements NeighborDeriv
     @Override
     protected VoxelShape getOcclusionShape(BlockState state, BlockGetter level, BlockPos pos) {
         return settings.emptyOcclusion() ? Shapes.empty() : super.getOcclusionShape(state, level, pos);
+    }
+
+    @Override
+    protected float getShadeBrightness(BlockState state, BlockGetter level, BlockPos pos) {
+        return settings.noAoShadow() ? 1.0F : super.getShadeBrightness(state, level, pos);
     }
 
     @Override

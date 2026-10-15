@@ -3,6 +3,7 @@ package maxigregrze.cobblesafari.network;
 import maxigregrze.cobblesafari.client.screen.AuspiciousPokeballConfigScreen;
 import maxigregrze.cobblesafari.client.screen.AuspiciousPokeballGoldConfigScreen;
 import maxigregrze.cobblesafari.client.screen.LostItemConfigScreen;
+import maxigregrze.cobblesafari.client.screen.PortalSpawnerConfigScreen;
 import maxigregrze.cobblesafari.client.screen.TpAcceptScreen;
 import maxigregrze.cobblesafari.client.screen.DistortionStoneBricksRuneScreen;
 import maxigregrze.cobblesafari.underground.UndergroundScreen;
@@ -102,6 +103,12 @@ public class ClientNetworking {
                         Minecraft.getInstance().setScreen(new LostItemConfigScreen(payload));
                     });
                 }
+        );
+
+        ClientPlayNetworking.registerGlobalReceiver(
+                OpenPortalSpawnerConfigPayload.TYPE,
+                (payload, context) -> context.client().execute(() ->
+                        Minecraft.getInstance().setScreen(new PortalSpawnerConfigScreen(payload)))
         );
 
         ClientPlayNetworking.registerGlobalReceiver(

@@ -20,7 +20,10 @@ public record OpenPokeStatueConfigPayload(
         float scale,
         int color,
         String animation,
-        float progress
+        float progress,
+        boolean fixed,
+        float speed,
+        boolean showDummy
 ) implements CustomPacketPayload {
 
     public static final CustomPacketPayload.Type<OpenPokeStatueConfigPayload> TYPE =
@@ -39,6 +42,9 @@ public record OpenPokeStatueConfigPayload(
                 buf.writeInt(p.color);
                 buf.writeUtf(p.animation, MAX_ANIMATION);
                 buf.writeFloat(p.progress);
+                buf.writeBoolean(p.fixed);
+                buf.writeFloat(p.speed);
+                buf.writeBoolean(p.showDummy);
             },
             buf -> new OpenPokeStatueConfigPayload(
                     buf.readBlockPos(),
@@ -48,7 +54,10 @@ public record OpenPokeStatueConfigPayload(
                     buf.readFloat(),
                     buf.readInt(),
                     buf.readUtf(MAX_ANIMATION),
-                    buf.readFloat()
+                    buf.readFloat(),
+                    buf.readBoolean(),
+                    buf.readFloat(),
+                    buf.readBoolean()
             )
     );
 

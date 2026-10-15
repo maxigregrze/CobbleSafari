@@ -5,9 +5,13 @@ import com.google.gson.GsonBuilder;
 import maxigregrze.cobblesafari.CobbleSafari;
 import maxigregrze.cobblesafari.platform.Services;
 
+import net.minecraft.core.Holder;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.biome.Biome;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -39,9 +43,14 @@ public class PortalSpawnConfig {
      * existing files; the migration keys off this version and never off the flag's value, so a choice
      * made by the server owner after the migration is preserved forever (action plan 175, § 7.1).
      */
-    private static final int CURRENT_CONFIG_VERSION = 1;
+    private static final int CURRENT_CONFIG_VERSION = 2;
+    private static final int MAX_REPELLENT_RADIUS = 64;
 
     private static PortalSpawnConfig INSTANCE;
+
+    /** Parsed {@link #bannedBiomes}, rebuilt on every load (static, so never serialized). */
+    private static Set<ResourceKey<Biome>> bannedBiomeIds = Set.of();
+    private static List<TagKey<Biome>> bannedBiomeTags = List.of();
 
     /**
      * 0 = file written before the Bell Tower dungeon existed. Must stay 0 at declaration and must not
@@ -53,13 +62,17 @@ public class PortalSpawnConfig {
     private int spawnIntervalSeconds = 600;
     private int portalLifetimeMinutes = 30;
     private int notificationRadiusBlocks = 80;
-    private Boolean enableNotification = true;
+    private Boolean enableNotification = false;
     private int spawnRadiusMin = 32;
     private int spawnRadiusMax = 80;
     private boolean enabled = true;
     private Float spawnChance = 1.0f;
     private List<String> allowedDimensions = new ArrayList<>(DEFAULT_ALLOWED_DIMENSIONS);
     private List<String> bannedBlocks = new ArrayList<>();
+    /** Biome ids ({@code minecraft:plains}) or biome tags ({@code #minecraft:is_ocean}) where no portal spawns. */
+    private List<String> bannedBiomes = new ArrayList<>();
+    /** Cube radius scanned for {@code #cobblesafari:portal_repellents} around a candidate portal; 0 = off. */
+    private int repellentRadius = 16;
     private List<DungeonDimensionEntry> dimensions = new ArrayList<>();
 
     public PortalSpawnConfig() {
@@ -70,27 +83,32 @@ public class PortalSpawnConfig {
     }
 
     /**
-     * One-shot migration. Configurations written before the Bell Tower dungeon existed carry
-     * {@code dungeon_jump: isEnabled = false}, a value that expressed the absence of the dungeon and
-     * not a server owner's choice. It is lifted once, then the file is stamped: a later manual
-     * disable is never overridden, because the condition tests the file version and not the flag.
+     * One-shot migrations, keyed off the file version and never off a flag's value, so a choice made
+     * by the server owner after a migration is preserved forever (action plan 175, section 7.1).
+     * <ul>
+     *   <li>v1: configurations written before the Bell Tower dungeon existed carry
+     *   {@code dungeon_jump: isEnabled = false}, a value that expressed the absence of the dungeon and
+     *   not a server owner's choice. It is lifted once.</li>
+     *   <li>v2: the portal notification becomes opt-in (action plan 188, P1).</li>
+     * </ul>
      */
     private static void migrateConfigVersion() {
         if (INSTANCE == null || INSTANCE.configVersion >= CURRENT_CONFIG_VERSION) {
             return;
         }
-        boolean flipped = false;
-        for (DungeonDimensionEntry entry : INSTANCE.dimensions) {
-            if (DUNGEON_JUMP_ID.equals(entry.getDimensionId()) && !entry.isEnabled()) {
-                entry.setEnabled(true);
-                flipped = true;
+        if (INSTANCE.configVersion < 1) {
+            for (DungeonDimensionEntry entry : INSTANCE.dimensions) {
+                if (DUNGEON_JUMP_ID.equals(entry.getDimensionId()) && !entry.isEnabled()) {
+                    entry.setEnabled(true);
+                    CobbleSafari.LOGGER.info("dungeon_spawn_config.json migrated to v1: {} enabled", DUNGEON_JUMP_ID);
+                }
             }
         }
-        INSTANCE.configVersion = CURRENT_CONFIG_VERSION;
-        if (flipped) {
-            CobbleSafari.LOGGER.info("dungeon_spawn_config.json migrated to v{}: {} enabled",
-                    CURRENT_CONFIG_VERSION, DUNGEON_JUMP_ID);
+        if (INSTANCE.configVersion < 2) {
+            INSTANCE.enableNotification = false;
+            CobbleSafari.LOGGER.info("dungeon_spawn_config.json migrated to v2: portal notification disabled by default");
         }
+        INSTANCE.configVersion = CURRENT_CONFIG_VERSION;
     }
 
     private static void migrateOldConfigPath() {
@@ -129,6 +147,10 @@ public class PortalSpawnConfig {
                 if (INSTANCE.bannedBlocks == null) {
                     INSTANCE.bannedBlocks = new ArrayList<>();
                 }
+                if (INSTANCE.bannedBiomes == null) {
+                    INSTANCE.bannedBiomes = new ArrayList<>();
+                }
+                INSTANCE.repellentRadius = Math.clamp(INSTANCE.repellentRadius, 0, MAX_REPELLENT_RADIUS);
                 clampSpawnChanceInInstance();
                 migrateConfigVersion();
                 addMissingDimensions();
@@ -144,6 +166,33 @@ public class PortalSpawnConfig {
             migrateConfigVersion();
             save();
         }
+        rebuildBannedBiomes();
+    }
+
+    /** Parses {@link #bannedBiomes} once into id and tag caches; unreadable entries are skipped. */
+    private static void rebuildBannedBiomes() {
+        Set<ResourceKey<Biome>> ids = new HashSet<>();
+        List<TagKey<Biome>> tags = new ArrayList<>();
+        List<String> raw = INSTANCE == null || INSTANCE.bannedBiomes == null ? List.of() : INSTANCE.bannedBiomes;
+        for (String entry : raw) {
+            if (entry == null || entry.isBlank()) {
+                continue;
+            }
+            String trimmed = entry.trim();
+            boolean isTag = trimmed.startsWith("#");
+            ResourceLocation id = ResourceLocation.tryParse(isTag ? trimmed.substring(1) : trimmed);
+            if (id == null) {
+                CobbleSafari.LOGGER.warn("Ignoring invalid bannedBiomes entry: {}", trimmed);
+                continue;
+            }
+            if (isTag) {
+                tags.add(TagKey.create(Registries.BIOME, id));
+            } else {
+                ids.add(ResourceKey.create(Registries.BIOME, id));
+            }
+        }
+        bannedBiomeIds = Set.copyOf(ids);
+        bannedBiomeTags = List.copyOf(tags);
     }
 
     private static void clampSpawnChanceInInstance() {
@@ -300,7 +349,7 @@ public class PortalSpawnConfig {
 
     public static boolean isNotificationEnabled() {
         Boolean v = getInstance().enableNotification;
-        return v == null || v;
+        return v != null && v;
     }
 
     public static int getSpawnRadiusMin() {
@@ -349,6 +398,21 @@ public class PortalSpawnConfig {
     public static List<String> getBannedBlocks() {
         List<String> list = getInstance().bannedBlocks;
         return list == null ? List.of() : List.copyOf(list);
+    }
+
+    /** Whether natural portals are banned from this biome (by id or tag, action plan 188, P3). */
+    public static boolean isBiomeBanned(Holder<Biome> biome) {
+        getInstance();
+        for (TagKey<Biome> tag : bannedBiomeTags) {
+            if (biome.is(tag)) {
+                return true;
+            }
+        }
+        return biome.unwrapKey().map(bannedBiomeIds::contains).orElse(false);
+    }
+
+    public static int getRepellentRadius() {
+        return Math.clamp(getInstance().repellentRadius, 0, MAX_REPELLENT_RADIUS);
     }
 
     /** Returns the loaded singleton, loading or creating defaults as needed. Never null. */

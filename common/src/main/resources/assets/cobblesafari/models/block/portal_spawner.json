@@ -1,0 +1,29 @@
+{
+	"format_version": "1.9.0",
+	"credit": "Made with Blockbench",
+	"texture_size": [32, 16],
+	"textures": {
+		"0": "cobblesafari:block/hooparing_shadow",
+		"particle": "cobblesafari:block/hooparing_shadow"
+	},
+	"elements": [
+		{
+			"from": [8, 0.1, 0],
+			"to": [32, 0.1, 16],
+			"rotation": {"angle": 0, "axis": "y", "origin": [8, 0.1, 0]},
+			"faces": {
+				"up": {"uv": [0, 0, 12, 16], "texture": "#0"},
+				"down": {"uv": [0, 0, 12, 16], "texture": "#0"}
+			}
+		},
+		{
+			"from": [-16, 0.1, 0],
+			"to": [8, 0.1, 16],
+			"rotation": {"angle": 0, "axis": "y", "origin": [8, 0.1, 16]},
+			"faces": {
+				"up": {"uv": [0, 0, 12, 16], "rotation": 180, "texture": "#0"},
+				"down": {"uv": [0, 0, 12, 16], "rotation": 180, "texture": "#0"}
+			}
+		}
+	]
+}

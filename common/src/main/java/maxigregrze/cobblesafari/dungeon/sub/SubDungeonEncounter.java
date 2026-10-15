@@ -17,6 +17,7 @@ import maxigregrze.cobblesafari.dungeon.DungeonDimensions;
 import maxigregrze.cobblesafari.warpride.logic.WarpRideDestination;
 import maxigregrze.cobblesafari.warpride.logic.WarpRideDestinationRegistry;
 import maxigregrze.cobblesafari.warpride.logic.WarpRideDifficultyLoader;
+import maxigregrze.cobblesafari.warpride.logic.WarpRideEncounterPool;
 import maxigregrze.cobblesafari.warpride.logic.WarpRideRewards;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
@@ -61,13 +62,28 @@ final class SubDungeonEncounter {
     private static final int LEVEL_CEILING = 100;
 
     /**
+     * Marks the reward as a sub-dungeon encounter (action plan 190, P6). Entity tags are saved with
+     * the entity, so the mark survives the chunk being unloaded and reloaded.
+     */
+    static final String ENCOUNTER_TAG = "cobblesafari_sub_encounter";
+    /** Carries the owning instance, added once the instance is registered: {@code prefix + uuid}. */
+    private static final String INSTANCE_TAG_PREFIX = "cobblesafari_sub_instance:";
+    /**
+     * How long a reward may go without an instance tag before it counts as orphaned: generation
+     * tags it one tick after the spawn, so anything still untagged after ten seconds lost its
+     * generation. Counted from the entity's tick count, which restarts at every load.
+     */
+    private static final int UNBOUND_GRACE_TICKS = 200;
+
+    /**
      * Draws one anchor uniformly at random, erases <b>every</b> anchor, and spawns on the drawn one.
      *
      * <p>The anchors are cleared <b>before</b> the species list is consulted, not after the spawn:
      * an empty list must not leave marker blocks standing in the structure.</p>
      */
-    static void resolve(ServerLevel level, ServerPlayer player, List<BlockPos> anchors,
-                        SubDungeonRequest request) {
+    @org.jetbrains.annotations.Nullable
+    static java.util.UUID resolve(ServerLevel level, ServerPlayer player, List<BlockPos> anchors,
+                                  SubDungeonRequest request) {
         // Only anchors the player can actually reach are eligible. A structure that straddles the
         // void guard carries some of its anchors in the buried half, below the line - a Pokemon
         // placed there would be walled into the terrain, and a player going after it would be
@@ -95,19 +111,102 @@ final class SubDungeonEncounter {
                         + "half of the structure players can occupy",
                         anchors.size(), request.structurePool(), guardY);
             }
-            return;
+            return null;
         }
 
         WarpRideDestination destination = WarpRideDestinationRegistry.byTypeId(request.typeId());
-        List<String> species = destination == null ? List.of() : destination.encountersForRank(request.tier());
-        if (species.isEmpty()) {
-            CobbleSafari.LOGGER.debug("[SubDungeon] destination {} rank {} has no species list; nothing spawned",
-                    request.typeId(), request.tier());
+        if (destination == null) {
+            CobbleSafari.LOGGER.warn("[SubDungeon] no destination with typeId {}; nothing spawned", request.typeId());
+            return null;
+        }
+        Pick pick = pickEncounter(destination, request.tier(), level.getRandom());
+        if (pick == null) {
+            CobbleSafari.LOGGER.warn("[SubDungeon] destination {} rank {}: neither pool has a usable entry or "
+                    + "fallback; nothing spawned", destination.destinationId(), request.tier());
+            return null;
+        }
+        return spawnReward(level, player, spot, pick, destination, request);
+    }
+
+    /** Ties a spawned reward to the instance it belongs to, once that instance exists (P6). */
+    static void bindToInstance(ServerLevel level, @org.jetbrains.annotations.Nullable java.util.UUID entityId,
+                               java.util.UUID instanceId) {
+        if (entityId == null) {
             return;
         }
+        net.minecraft.world.entity.Entity entity = level.getEntity(entityId);
+        if (entity != null) {
+            entity.addTag(INSTANCE_TAG_PREFIX + instanceId);
+        }
+    }
 
-        String picked = species.get(level.getRandom().nextInt(species.size()));
-        spawnReward(level, player, spot, picked, destination, request);
+    /**
+     * Discards every reward whose instance is gone (action plan 190, P6).
+     *
+     * <p>The region clear already discards the entities it can see, but it only sees <em>loaded</em>
+     * ones, and a chunk reaches full status before its entities finish loading - entity storage is
+     * read asynchronously. A clear that starts on chunks just reloaded (the boot sweep after a
+     * restart, or a region whose chunks unloaded once the player left) therefore missed the reward,
+     * which then loaded into the emptied region, kept by its persistence flag, for good. This is the
+     * invariant that does not depend on timing: a tagged reward with no live instance does not stay.
+     * Keyed on the instance id rather than on the footprint, because a reused slot puts the next
+     * instance's footprint right over the old reward.</p>
+     */
+    static void sweepOrphanedEncounters(net.minecraft.server.MinecraftServer server) {
+        maxigregrze.cobblesafari.data.DungeonPositionSavedData positions =
+                maxigregrze.cobblesafari.data.DungeonPositionSavedData.get(server);
+        for (ServerLevel level : server.getAllLevels()) {
+            if (!SubDungeonManager.isSubDungeonDimension(level.dimension().location().toString())) {
+                continue;
+            }
+            List<net.minecraft.world.entity.Entity> orphans = new ArrayList<>();
+            for (net.minecraft.world.entity.Entity entity : level.getAllEntities()) {
+                if (entity.getTags().contains(ENCOUNTER_TAG) && isOrphaned(entity, positions)) {
+                    orphans.add(entity);
+                }
+            }
+            for (net.minecraft.world.entity.Entity orphan : orphans) {
+                CobbleSafari.LOGGER.info("[SubDungeon] discarding orphaned encounter {} at {} in {}",
+                        orphan.getName().getString(), orphan.blockPosition(), level.dimension().location());
+                orphan.discard();
+            }
+        }
+    }
+
+    private static boolean isOrphaned(net.minecraft.world.entity.Entity entity,
+                                      maxigregrze.cobblesafari.data.DungeonPositionSavedData positions) {
+        for (String tag : entity.getTags()) {
+            if (tag.startsWith(INSTANCE_TAG_PREFIX)) {
+                try {
+                    return !positions.isInstanceLive(
+                            java.util.UUID.fromString(tag.substring(INSTANCE_TAG_PREFIX.length())));
+                } catch (IllegalArgumentException e) {
+                    return true;
+                }
+            }
+        }
+        return entity.tickCount > UNBOUND_GRACE_TICKS;
+    }
+
+    /** What was drawn, from which pool, and whether the pool's fallback had to answer. */
+    private record Pick(String pokemon, String pool, boolean fromFallback) {}
+
+    /**
+     * The two-pool draw (action plan 190, E3). The reward pool is tried with its per-rank chance;
+     * when it wins but has nothing usable - an Ultra Beast pool with no Ultra Beast installed and no
+     * usable fallback - the normal pool answers instead, so a lucky roll never costs the encounter.
+     */
+    private static Pick pickEncounter(WarpRideDestination destination, int rank, RandomSource random) {
+        WarpRideRewards rewards = WarpRideDifficultyLoader.get().rewards();
+        double rewardPercent = destination.rewardPoolPercent(rank, rewards);
+        if (!destination.rewardPool().isEmpty() && rollPercent(random, rewardPercent)) {
+            WarpRideEncounterPool.Draw draw = destination.rewardPool().draw(random);
+            if (draw != null) {
+                return new Pick(draw.pokemon(), "reward", draw.fromFallback());
+            }
+        }
+        WarpRideEncounterPool.Draw draw = destination.normalPool().draw(random);
+        return draw == null ? null : new Pick(draw.pokemon(), "normal", draw.fromFallback());
     }
 
     /** Pins one movement attribute to zero, if the entity carries it at all. */
@@ -127,9 +226,11 @@ final class SubDungeonEncounter {
      * {@code "nihilego level=70 shiny"} keeps both, and still receives the IVs, hidden ability and
      * moves it did not fix. The explicit beats the scale, and the scale beats the default.</p>
      */
-    private static void spawnReward(ServerLevel level, ServerPlayer player, BlockPos pos,
-                                    String speciesSpec, WarpRideDestination destination,
-                                    SubDungeonRequest request) {
+    @org.jetbrains.annotations.Nullable
+    private static java.util.UUID spawnReward(ServerLevel level, ServerPlayer player, BlockPos pos,
+                                              Pick pick, WarpRideDestination destination,
+                                              SubDungeonRequest request) {
+        String speciesSpec = pick.pokemon();
         try {
             RandomSource random = level.getRandom();
             WarpRideRewards rewards = WarpRideDifficultyLoader.get().rewards();
@@ -207,17 +308,20 @@ final class SubDungeonEncounter {
             zeroSpeed(entity, Attributes.MOVEMENT_SPEED);
             zeroSpeed(entity, Attributes.FLYING_SPEED);
             entity.setPersistenceRequired();
+            entity.addTag(ENCOUNTER_TAG);
 
             level.addFreshEntity(entity);
 
-            logOutcome(player, request, destination, pokemon, bonusMoves);
+            logOutcome(player, request, destination, pick, pokemon, bonusMoves);
             logProvenance(p, shinyPercent, shinyByRank, haPercent, haRolled,
                     alphaPercent, alphaRolled, median, targetLevel, bonusMoves, rewards, rank,
                     applied);
+            return entity.getUUID();
         } catch (Exception e) {
             // A malformed species line is a data error: log it and leave the room empty rather
             // than failing a generation the player has already paid a ride for.
             CobbleSafari.LOGGER.error("[SubDungeon] could not spawn '{}' at {}", speciesSpec, pos, e);
+            return null;
         }
     }
 
@@ -346,7 +450,7 @@ final class SubDungeonEncounter {
      * from the rank must still read as shiny.
      */
     private static void logOutcome(ServerPlayer player, SubDungeonRequest request,
-                                   WarpRideDestination destination, Pokemon pokemon,
+                                   WarpRideDestination destination, Pick pick, Pokemon pokemon,
                                    List<MoveTemplate> bonusMoves) {
         List<String> modifiers = new ArrayList<>();
         if (pokemon.getShiny()) {
@@ -366,13 +470,15 @@ final class SubDungeonEncounter {
 
         CobbleSafari.LOGGER.info(
                 "[WarpRide] {} has completed a warp dive ( distance = {} ; type = {} ; Rank = {} ) "
-                        + "and has rolled a Lvl {} {} that {}",
+                        + "and has rolled a Lvl {} {} ( {} pool{} ) that {}",
                 player.getName().getString(),
                 request.distance(),
                 destination == null ? "unknown" : destination.destinationId(),
                 request.tier(),
                 pokemon.getLevel(),
                 pokemon.getSpecies().getName(),
+                pick.pool(),
+                pick.fromFallback() ? ", fallback" : "",
                 joinModifiers(modifiers));
     }
 

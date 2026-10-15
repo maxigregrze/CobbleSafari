@@ -52,6 +52,21 @@ public class DimensionEvents {
     /** Play-time stats are flushed in batches of this many ticks rather than every tick (C4). */
     private static final int STAT_FLUSH_INTERVAL = 20;
 
+    /**
+     * Players whose login relocations wait for the next server tick, with the number of ticks
+     * already waited (action plan 190, J1).
+     *
+     * <p>Fabric fires its JOIN event from inside {@code PlayerList.placeNewPlayer}, before the
+     * player has been added to their level. A cross-dimension teleport from there registers them in
+     * the destination, after which {@code placeNewPlayer} adds the same object to the level it
+     * captured at the start: the player ends up registered in two levels, and their next entry into
+     * the first one makes vanilla discard them as a "duplicate". Every teleport then silently fails.
+     * One tick later the login is complete on both loaders.</p>
+     */
+    private static final Map<UUID, Integer> PENDING_JOIN_RELOCATIONS = new ConcurrentHashMap<>();
+    /** How long a relocation waits for its player to show up in their level before giving up. */
+    private static final int JOIN_RELOCATION_MAX_WAIT_TICKS = 20;
+
     public static void onServerStarted(MinecraftServer server) {
         TimerManager.setServer(server);
         maxigregrze.cobblesafari.dungeon.DungeonInstanceCleanup.resumePendingClears(server);
@@ -129,6 +144,8 @@ public class DimensionEvents {
 
     public static void onServerStopping(MinecraftServer server) {
         maxigregrze.cobblesafari.dungeon.sub.SubDungeonGeneration.onServerStopping();
+        PENDING_JOIN_RELOCATIONS.clear();
+        maxigregrze.cobblesafari.dungeon.sub.SubDungeonManager.onServerStoppingExits();
         TimerManager.saveAllData();
         TimerManager.clearServer();
         maxigregrze.cobblesafari.csmusic.DimensionalMusicManager.clearAll();
@@ -142,6 +159,9 @@ public class DimensionEvents {
             datapackReloadPending = false;
             reloadDatapackContent(server);
         }
+        runJoinRelocations(server);
+        // Exit-portal returns, deferred out of the movement packet handler (plan 190, P5).
+        maxigregrze.cobblesafari.dungeon.sub.SubDungeonManager.runPendingExits(server);
         TimerManager.tickAllTimers();
         DungeonRegionClearer.tick(server);
         PortalSpawnManager.tick(server);
@@ -163,6 +183,9 @@ public class DimensionEvents {
             // A sweep rather than hooks on the departure paths, so no exit can be forgotten - and
             // Feature B will add one.
             maxigregrze.cobblesafari.dungeon.DungeonInstanceCleanup.sweepDetachedInstances(server);
+            // Rewards whose instance is gone, including those whose entity loaded after the clear
+            // that should have taken them (plan 190, P6).
+            maxigregrze.cobblesafari.dungeon.sub.SubDungeonManager.sweepOrphanedEncounters(server);
             WonderTradeService.tickDailyScheduler(server);
             // Budgeted top-up (C6): gradually refills the Wonder Trade pool a few entries at a time instead
             // of generating the whole deficit in the single startup/daily-reset tick.
@@ -256,11 +279,8 @@ public class DimensionEvents {
 
     public static void onPlayerJoin(ServerPlayer player) {
         TimerManager.loadPlayerData(player);
-        // If the instance they logged out of was cleared while they were away, put them back where
-        // they came in rather than leaving them inside erased blocks (plan 182, A3).
-        TimerManager.handleDungeonReturnOnJoin(player);
-        UnionRoomDisconnectHandler.onPlayerLogin(player);
-        SafariResetManager.handleReconnectEvacuation(player);
+        // Everything below that can move the player waits for the next tick (plan 190, J1).
+        PENDING_JOIN_RELOCATIONS.put(player.getUUID(), 0);
         Services.PLATFORM.sendPayloadToPlayer(player,
                 new DimensionalBanSyncPayload(DimensionalBanConfig.data.dimensions));
         maxigregrze.cobblesafari.underground.UndergroundMinigame.syncRegistryToPlayer(player);
@@ -270,6 +290,44 @@ public class DimensionEvents {
         // A server killed mid-ride leaves the rider's protection in their saved NBT; this is the net.
         maxigregrze.cobblesafari.warpride.RiderBodyGuard.clearIfMarked(player);
         maxigregrze.cobblesafari.warpride.WarpRideManager.syncDestinations(player);
+    }
+
+    /**
+     * The login relocations deferred by {@link #onPlayerJoin}. Runs at the head of the server tick,
+     * before the timers and the presence sweep, so nothing evicts a player that a pending return is
+     * about to place.
+     */
+    private static void runJoinRelocations(MinecraftServer server) {
+        if (PENDING_JOIN_RELOCATIONS.isEmpty()) {
+            return;
+        }
+        for (Map.Entry<UUID, Integer> entry : Map.copyOf(PENDING_JOIN_RELOCATIONS).entrySet()) {
+            UUID playerId = entry.getKey();
+            ServerPlayer player = server.getPlayerList().getPlayer(playerId);
+            if (player == null) {
+                PENDING_JOIN_RELOCATIONS.remove(playerId);
+                continue;
+            }
+            // Only once the login has really put them in their level: moving a player who is not
+            // registered there is exactly the state this queue exists to avoid.
+            if (player.serverLevel().getEntity(playerId) != player) {
+                int waited = entry.getValue() + 1;
+                if (waited >= JOIN_RELOCATION_MAX_WAIT_TICKS) {
+                    PENDING_JOIN_RELOCATIONS.remove(playerId);
+                    CobbleSafari.LOGGER.warn("Login relocations for {} abandoned: not registered in {} after {} ticks",
+                            player.getName().getString(), player.level().dimension().location(), waited);
+                } else {
+                    PENDING_JOIN_RELOCATIONS.put(playerId, waited);
+                }
+                continue;
+            }
+            PENDING_JOIN_RELOCATIONS.remove(playerId);
+            // If the instance they logged out of was cleared while they were away, put them back where
+            // they came in rather than leaving them inside erased blocks (plan 182, A3).
+            TimerManager.handleDungeonReturnOnJoin(player);
+            UnionRoomDisconnectHandler.onPlayerLogin(player);
+            SafariResetManager.handleReconnectEvacuation(player);
+        }
     }
 
     public static void onPlayerDisconnect(ServerPlayer player) {

@@ -70,8 +70,12 @@ public final class PokeStatueModelRenderer {
      * @param fitScale render scale for a 1-block result. The rendered size in blocks is
      *                 {@code hitbox × scaleParam}, so fitting means {@code 1 / max(width, height)};
      *                 the form's {@code baseScale} cancels out and must not be reapplied.
+     * @param modelless the species exists in Cobblemon but no model is registered for it, so
+     *                  {@code getPoser} would quietly draw the substitute (Celesteela, for one).
+     *                  False for the substitute itself: an empty or unknown species string is not
+     *                  this case (action plan 190, B7).
      */
-    public record StatueSpecies(ResourceLocation species, Set<String> aspects, float fitScale) {}
+    public record StatueSpecies(ResourceLocation species, Set<String> aspects, float fitScale, boolean modelless) {}
 
     /** Resolves a species string, falling back to the substitute model. Never returns null. */
     public static StatueSpecies resolve(String species, Map<String, StatueSpecies> cache) {
@@ -89,7 +93,7 @@ public final class PokeStatueModelRenderer {
     }
 
     private static StatueSpecies resolveUncached(String specie) {
-        StatueSpecies fallback = new StatueSpecies(SUBSTITUTE, Set.of(), 1.0f);
+        StatueSpecies fallback = new StatueSpecies(SUBSTITUTE, Set.of(), 1.0f, false);
         if (specie.isBlank()) {
             return fallback;
         }
@@ -108,7 +112,10 @@ public final class PokeStatueModelRenderer {
             EntityDimensions box = species.getForm(info.aspects()).getHitbox();
             float largest = Math.max(box.width(), box.height());
             float fit = largest > 0.001f ? 1.0f / largest : 1.0f;
-            return new StatueSpecies(info.species(), info.aspects(), fit);
+            // VaryingModelRepository.getPoser falls back to the substitute exactly when the species
+            // has no variation entry, so that map is the test for "no model of its own".
+            boolean modelless = !VaryingModelRepository.INSTANCE.getVariations().containsKey(info.species());
+            return new StatueSpecies(info.species(), info.aspects(), fit, modelless);
         } catch (Exception e) {
             CobbleSafari.LOGGER.debug("[PokeStatue] could not size specie '{}'", specie, e);
             return fallback;
@@ -195,8 +202,42 @@ public final class PokeStatueModelRenderer {
 
     // -- posing -------------------------------------------------------------
 
-    /** A model state prepared once and reused every frame, since a statue never moves. */
-    public record FrozenPose(FloatingState state, ActiveAnimation animation, float seconds) {}
+    /**
+     * Rough length of the clock a playing statue runs on before wrapping: about an hour of world time.
+     * Short enough for the partial-tick float to keep sub-millisecond precision, long enough that the
+     * one seam it introduces is never seen.
+     */
+    private static final float PLAYBACK_WRAP_TARGET_SECONDS = 3600f;
+
+    /**
+     * A model state prepared once and reused every frame (action plan 190, B7).
+     *
+     * @param seconds   the held instant for a fixed statue
+     * @param period    the selected clip's length, or the idle window for a static posture
+     * @param wrap      where a playing statue's clock wraps: a whole number of periods, so the selected
+     *                  clip never sees the seam
+     * @param clipLoops whether the selected active animation loops on its own; a one-shot one is
+     *                  restarted every period by moving its start, never by rewinding the clock
+     */
+    public record FrozenPose(FloatingState state, ActiveAnimation animation, float seconds,
+                             float period, float wrap, boolean clipLoops) {
+
+        /** The held instant, for a fixed statue. */
+        public Playhead held() {
+            return new Playhead(seconds, 0f);
+        }
+    }
+
+    /**
+     * Where to sample a pose: {@code seconds} drives the state clock (pose idles, procedural parts,
+     * the selected clip), {@code clipStart} is the selected active animation's start on that clock.
+     */
+    public record Playhead(float seconds, float clipStart) {}
+
+    /** A whole number of periods close to {@link #PLAYBACK_WRAP_TARGET_SECONDS}. */
+    private static float wrapFor(float period) {
+        return period * Math.max(1, Math.round(PLAYBACK_WRAP_TARGET_SECONDS / period));
+    }
 
     /**
      * Builds the frozen state for a species / animation / progress triple.
@@ -227,10 +268,16 @@ public final class PokeStatueModelRenderer {
             // pose is enough: applyAnimations already runs it, with the right part visibility and
             // alongside the pose's procedural companions (wing flap, look-at). Adding it as an
             // active animation on top would be the exact double application described above.
-            float clockSeconds = clockFor(progress, effectiveDuration(clip.animation()));
+            float duration = effectiveDuration(clip.animation());
+            float clockSeconds = clockFor(progress, duration);
             setClock(state, clockSeconds);
             state.setPose(clip.poseName());
-            return new FrozenPose(state, null, clockSeconds);
+            float period = periodFor(duration);
+            // A looping pose clip wraps itself on its own length, like every other idle of the pose:
+            // the clock must run on so none of them is cut. A one-shot pose clip has no start of its
+            // own to move, so the only way to replay it is to wrap the clock on its length.
+            float wrap = clip.animation().getShouldLoop() ? wrapFor(period) : period;
+            return new FrozenPose(state, null, clockSeconds, period, wrap, true);
         }
 
         // Named route: namedAnimations, model-level animations, cry / faint. These are not part of
@@ -238,18 +285,60 @@ public final class PokeStatueModelRenderer {
         ActiveAnimation anim = named ? resolveNamed(model, state, animationName) : null;
         // A duration of 0 is legitimate: many bedrock clips are a single static posture (Ho-Oh's
         // air_fly is 58 bones of constant rotations). They still pose the model.
-        float clockSeconds = clockFor(progress, anim == null ? 0f : effectiveDuration(anim));
+        float duration = anim == null ? 0f : effectiveDuration(anim);
+        float clockSeconds = clockFor(progress, duration);
         setClock(state, clockSeconds);
         state.setPoseToFirstSuitable(PoseType.PORTRAIT);
+        float period = periodFor(duration);
         if (anim == null) {
-            return new FrozenPose(state, null, clockSeconds);
+            return new FrozenPose(state, null, clockSeconds, period, wrapFor(period), true);
         }
-        applyAnimation(state, anim);
-        return new FrozenPose(state, anim, clockSeconds);
+        applyAnimation(state, anim, 0f);
+        return new FrozenPose(state, anim, clockSeconds, period, wrapFor(period), loopsItself(anim));
+    }
+
+    /** Whether an active animation replays on its own once past its end. */
+    private static boolean loopsItself(ActiveAnimation anim) {
+        ActiveAnimation inner = anim instanceof PrimaryAnimation primary ? primary.getAnimation() : anim;
+        // Anything that is not a bedrock clip is procedural (MoLang curves of the clock): it has no
+        // end to fall off, so leaving its start alone is right.
+        return !(inner instanceof BedrockActiveAnimation bedrock) || bedrock.getAnimation().getShouldLoop();
     }
 
     private static float clockFor(float progress, float duration) {
-        return Mth.clamp(progress, 0f, 1f) * (duration > 0f ? duration : STATIC_WINDOW_SECONDS);
+        return Mth.clamp(progress, 0f, 1f) * periodFor(duration);
+    }
+
+    /** The span progress sweeps and playback loops over: the clip, or the idle window when static. */
+    private static float periodFor(float duration) {
+        return duration > 0f ? duration : STATIC_WINDOW_SECONDS;
+    }
+
+    /**
+     * Plays a prepared pose instead of holding it: moves its clock to {@code elapsedSeconds} and
+     * returns where to sample it (action plan 190, B7).
+     *
+     * <p><b>The clock is not wrapped on the selected clip.</b> A pose layers several idles of
+     * different lengths, plus procedural parts driven by the clock; each looping bedrock clip already
+     * wraps itself on its own {@code animation_length} ({@code BedrockAnimation.run}). Wrapping the
+     * shared clock on the selected clip's length snapped every other layer back to zero at each seam,
+     * which read as the animation stopping dead. The clock now runs continuously and wraps only on
+     * {@link FrozenPose#wrap()}, a whole number of periods about an hour long. A one-shot selected
+     * clip is replayed by moving its start to the current period instead ({@link Playhead#clipStart()}).</p>
+     *
+     * <p>{@code FloatingState} only lets the clock be <em>advanced</em> - {@code updatePartialTicks}
+     * adds to the partial ticks - so the whole clock is carried by the partial ticks with the age
+     * pinned at zero, and each frame adds the difference to the wanted instant. The advance also
+     * runs keyframe effects over the interval just played, as a living model's would; with no entity
+     * attached, as here, Cobblemon has nothing to emit them from.</p>
+     */
+    public static Playhead seek(FrozenPose pose, double elapsedSeconds) {
+        float seconds = (float) (elapsedSeconds % pose.wrap());
+        FloatingState state = pose.state();
+        state.updateAge(0);
+        state.updatePartialTicks(seconds * 20f - state.getPartialTicks());
+        float clipStart = pose.clipLoops() ? 0f : seconds - (seconds % pose.period());
+        return new Playhead(seconds, clipStart);
     }
 
     /**
@@ -289,7 +378,10 @@ public final class PokeStatueModelRenderer {
         if (anim.getDuration() > 0f) {
             return anim.getDuration();
         }
-        if (anim instanceof BedrockActiveAnimation bedrock) {
+        // A cry or an attack arrives wrapped in a PrimaryAnimation, which only copies the inner
+        // duration: look through it, or a clip with no declared length would read as static.
+        ActiveAnimation inner = anim instanceof PrimaryAnimation primary ? primary.getAnimation() : anim;
+        if (inner instanceof BedrockActiveAnimation bedrock) {
             return effectiveDuration(bedrock.getAnimation());
         }
         return 0f;
@@ -315,22 +407,31 @@ public final class PokeStatueModelRenderer {
     }
 
     /**
-     * (Re)installs the animation at its frozen instant. Called every frame: {@code applyAnimations}
-     * drops active animations whose {@code run} reports completion, which would otherwise make the
-     * cached state silently decay back to the default pose.
+     * (Re)installs the animation, started at {@code clipStart} on the state clock. Called every
+     * frame: {@code applyAnimations} drops active animations whose {@code run} reports completion,
+     * which would otherwise make the cached state silently decay back to the default pose.
+     *
+     * <p>{@code clipStart} is 0 for a held frame and for a looping clip: the clip is evaluated at
+     * {@code animationSeconds - startedSeconds} and the clock already sits at the wanted instant.
+     * Driving it by the clock rather than by the start is what lets the pose's own procedural idles -
+     * wing flap, look-at, tail sway - move with it as well.</p>
+     *
+     * <p>A primary animation (cry, attack) needs its <b>inner</b> clip restarted too:
+     * {@code addPrimaryAnimation} calls {@code start}, which stamps the inner clip with the current
+     * clock, and re-adding it every frame therefore pinned it to its first frame forever - whatever
+     * the progress, and with no playback at all.</p>
      */
-    public static void applyAnimation(FloatingState state, ActiveAnimation anim) {
+    public static void applyAnimation(FloatingState state, ActiveAnimation anim, float clipStart) {
         if (anim instanceof PrimaryAnimation primary) {
             state.addPrimaryAnimation(primary);
-            primary.setStarted(0f);
+            primary.setStarted(clipStart);
+            if (primary.getAnimation() instanceof BedrockActiveAnimation inner) {
+                inner.setStartedSeconds(clipStart);
+            }
         } else {
             state.setActiveAnimations(anim);
             if (anim instanceof BedrockActiveAnimation bedrock) {
-                // Start at zero: the clip is evaluated at animationSeconds - startedSeconds and the
-                // clock already sits at the wanted instant. Driving it this way rather than by
-                // offsetting the start is what lets the pose's own procedural idles - wing flap,
-                // look-at, tail sway - move with the progress value as well.
-                bedrock.setStartedSeconds(0f);
+                bedrock.setStartedSeconds(clipStart);
             }
         }
     }
@@ -340,12 +441,14 @@ public final class PokeStatueModelRenderer {
     /**
      * Draws the statue model at the current {@link PoseStack} origin.
      *
+     * @param playhead where to sample: {@link FrozenPose#held()} for a fixed statue, what
+     *                 {@link #seek} returned for a playing one.
      * @param scale   final render scale ({@code fitScale × user scale}).
      * @param style   greyscale flag, multiply tint and alpha.
      * @param bodyYaw yaw in degrees the model should face.
      */
     public static void render(PoseStack ps, MultiBufferSource buffer, int packedLight,
-                              StatueSpecies info, FrozenPose pose,
+                              StatueSpecies info, FrozenPose pose, Playhead playhead,
                               float scale, PokeStatueRenderStyle style, float bodyYaw) {
 
         ResourceLocation species = info.species();
@@ -372,7 +475,7 @@ public final class PokeStatueModelRenderer {
         model.setAlpha(1.0f);
 
         if (pose.animation() != null) {
-            applyAnimation(state, pose.animation());
+            applyAnimation(state, pose.animation(), playhead.clipStart());
         }
         int argb = packColor(style.rgb(), style.alpha());
 
@@ -386,7 +489,7 @@ public final class PokeStatueModelRenderer {
 
             // Both the pose idles and the chosen animation are sampled at the same instant, so the
             // statue reads as one coherent moment rather than a frozen bust with an animated arm.
-            model.applyAnimations(null, state, 0f, 0f, pose.seconds() * 20f, 0f, 0f);
+            model.applyAnimations(null, state, 0f, 0f, playhead.seconds() * 20f, 0f, 0f);
 
             RenderType renderType = style.translucent()
                     ? RenderType.entityTranslucent(drawn)

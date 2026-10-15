@@ -1,11 +1,25 @@
 {
   "type": "cobblesafari:dungeon_ultra_desert_type",
   "generator": {
-    "type": "minecraft:noise",
-    "settings": "cobblesafari:ultra_desert",
-    "biome_source": {
-      "type": "minecraft:fixed",
-      "biome": "cobblesafari:dungeon_ultra_desert_biome"
+    "type": "minecraft:flat",
+    "settings": {
+      "biome": "cobblesafari:dungeon_ultra_desert_biome",
+      "lakes": false,
+      "features": true,
+      "layers": [
+        {
+          "height": 1,
+          "block": "minecraft:bedrock"
+        },
+        {
+          "height": 1,
+          "block": "cobblesafari:ultraspace_sand"
+        }
+      ],
+      "structure_overrides": [
+        "cobblesafari:ultra_desert_decoration",
+        "cobblesafari:ultra_desert_decoration_b"
+      ]
     }
   }
 }

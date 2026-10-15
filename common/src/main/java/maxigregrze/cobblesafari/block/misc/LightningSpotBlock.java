@@ -39,6 +39,14 @@ public class LightningSpotBlock extends BaseEntityBlock {
     private static final int MIN_DELAY_TICKS = 600;
     private static final int DELAY_SPREAD_TICKS = 600;
 
+    /**
+     * The first wait after the block is placed, from a third of the usual minimum to half the usual
+     * maximum: 200 to 600 ticks, so a freshly generated structure does not keep its visitor waiting
+     * up to a minute for the first strike (action plan 190, B4).
+     */
+    private static final int FIRST_MIN_DELAY_TICKS = MIN_DELAY_TICKS / 3;
+    private static final int FIRST_DELAY_SPREAD_TICKS = (MIN_DELAY_TICKS + DELAY_SPREAD_TICKS) / 2 - FIRST_MIN_DELAY_TICKS;
+
     /** Trigger radius, in blocks. */
     private static final double TRIGGER_RADIUS = 32.0;
 
@@ -76,7 +84,9 @@ public class LightningSpotBlock extends BaseEntityBlock {
     @Override
     protected void onPlace(BlockState state, Level level, BlockPos pos, BlockState oldState, boolean movedByPiston) {
         if (!level.isClientSide() && !state.is(oldState.getBlock())) {
-            scheduleNext(level, pos);
+            // Only placement arms the short first wait: a scheduled tick survives a chunk reload,
+            // so reloading is never a fresh activation.
+            level.scheduleTick(pos, this, FIRST_MIN_DELAY_TICKS + level.getRandom().nextInt(FIRST_DELAY_SPREAD_TICKS));
         }
     }
 

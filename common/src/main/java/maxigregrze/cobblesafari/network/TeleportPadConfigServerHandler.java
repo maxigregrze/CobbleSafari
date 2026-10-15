@@ -131,7 +131,8 @@ public final class TeleportPadConfigServerHandler {
             return player.isCreative();
         }
         if (block == ModBlocks.SURVIVAL_TELEPORT_PAD) {
-            return player.getMainHandItem().is(ModItems.TINKHAMMER)
+            return player.isCreative()
+                    || player.getMainHandItem().is(ModItems.TINKHAMMER)
                     || player.getOffhandItem().is(ModItems.TINKHAMMER);
         }
         return false;

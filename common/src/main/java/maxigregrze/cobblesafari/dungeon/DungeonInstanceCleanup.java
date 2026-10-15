@@ -489,21 +489,27 @@ public final class DungeonInstanceCleanup {
         int minY = record.structureY() - (record.clearSectionsBelow() * 16);
         int maxY = record.structureY() + (record.clearSectionsAbove() * 16);
 
+        // Collect first, teleport after (same as PortalSpawnManager): the teleport removes the
+        // player from dungeonLevel.players(), which must not be iterated while that happens.
+        List<ServerPlayer> playersInRegion = new ArrayList<>();
         for (ServerPlayer player : dungeonLevel.players()) {
             BlockPos pos = player.blockPosition();
             if (pos.getX() >= blockMinX && pos.getX() <= blockMaxX
                     && pos.getZ() >= blockMinZ && pos.getZ() <= blockMaxZ
                     && pos.getY() >= minY && pos.getY() <= maxY) {
-                // Scope resolved "by record" (plan 181 § 3.5): a player at the edge of a region
-                // being erased is precisely the one whose position resolves least reliably.
-                // A bypassed player is evacuated too - this is not a permission check, these
-                // blocks are about to stop existing.
-                maxigregrze.cobblesafari.manager.TimerManager.expireSessionAndTeleport(
-                        player,
-                        maxigregrze.cobblesafari.data.TimerScope.of(record.dimensionId(), record.instanceId()),
-                        true
-                );
+                playersInRegion.add(player);
             }
+        }
+        for (ServerPlayer player : playersInRegion) {
+            // Scope resolved "by record" (plan 181 § 3.5): a player at the edge of a region
+            // being erased is precisely the one whose position resolves least reliably.
+            // A bypassed player is evacuated too - this is not a permission check, these
+            // blocks are about to stop existing.
+            TimerManager.expireSessionAndTeleport(
+                    player,
+                    TimerScope.of(record.dimensionId(), record.instanceId()),
+                    true
+            );
         }
     }
 

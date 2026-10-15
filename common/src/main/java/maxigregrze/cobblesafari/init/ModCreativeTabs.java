@@ -29,13 +29,15 @@ public class ModCreativeTabs {
 
     public static final CreativeModeTab CREATIVE_UTILITIES_TAB = CreativeModeTab.builder(CreativeModeTab.Row.TOP, 0)
             .title(Component.translatable("itemGroup.cobblesafari.creative_utilities"))
-            .icon(() -> new ItemStack(ModBlocks.CREATIVE_DUNGEON_PORTAL))
+            .icon(() -> new ItemStack(ModBlocks.PORTAL_SPAWNER_ITEM))
             .displayItems((params, output) -> {
                 output.accept(ModBlocks.CREATIVE_STATUE);
                 output.accept(ModBlocks.VOID_BLOCK);
                 output.accept(ModBlocks.LIQUID_BARRIER);
                 output.accept(ModBlocks.HOOPA_RING_PORTAL);
-                output.accept(ModBlocks.CREATIVE_DUNGEON_PORTAL);
+                // The Portal Spawner replaces the creative portal here (action plan 188, S1); the
+                // creative portal stays registered for existing worlds.
+                output.accept(ModBlocks.PORTAL_SPAWNER_ITEM);
                 // Ultra Wormhole (action plan 183). The device and the spawn anchor are structure
                 // authoring tools; the exit portal is decorative when placed by hand.
                 output.accept(ModBlocks.ULTRA_ENTRANCE_PORTAL);
@@ -473,8 +475,10 @@ public class ModCreativeTabs {
                 output.accept(ModBlocks.ULTRASPACE_CRYSTAL);
                 output.accept(ModBlocks.ULTRASPACE_CRYSTAL_BLOCK);
                 output.accept(ModBlocks.ULTRASPACE_DEEPSTONE);
+                output.accept(ModBlocks.ULTRASPACE_DEEPESTSTONE);
                 output.accept(ModBlocks.ULTRASPACE_BULB);
                 output.accept(ModBlocks.ULTRASPACE_STEM);
+                output.accept(ModBlocks.ULTRASPACE_STALAGMITE);
                 output.accept(ModBlocks.ULTRASPACE_FLESH);
                 output.accept(ModBlocks.ULTRASPACE_BUSH);
                 output.accept(ModBlocks.ULTRASPACE_LEAVES);
@@ -489,6 +493,10 @@ public class ModCreativeTabs {
                 output.accept(ModBlocks.MEGAPOLIS_LIGHT);
                 output.accept(ModBlocks.MEGAPOLIS_STAIRS);
                 output.accept(ModBlocks.LIGHTNINGSPOT);
+                // Ultra Warp Dive props (plan 189)
+                output.accept(ModBlocks.ULTRAWARPDIVE_POSITIVE);
+                output.accept(ModBlocks.ULTRAWARPDIVE_NEGATIVE);
+                output.accept(ModBlocks.ULTRAWARPDIVE_ROCKS);
             })
             .build();
 

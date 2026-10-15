@@ -57,6 +57,11 @@ public class TimerManager {
      */
     private static final Map<UUID, String> LAST_SCOPE_KEY = new ConcurrentHashMap<>();
 
+    /** Server tick of each player's last failed eviction (action plan 190, J4). */
+    private static final Map<UUID, Long> LAST_FAILED_EVICTION = new ConcurrentHashMap<>();
+    /** How long a failed eviction holds back the next attempt: five seconds. */
+    private static final int EVICTION_RETRY_TICKS = 100;
+
     private static MinecraftServer serverInstance;
 
     public static void setServer(MinecraftServer server) {
@@ -67,6 +72,7 @@ public class TimerManager {
         serverInstance = null;
         activeTimers.clear();
         LAST_SCOPE_KEY.clear();
+        LAST_FAILED_EVICTION.clear();
     }
 
     // --- Bypass (hoisted to player level, plan 181 § 3.3) ---------------------------------------
@@ -500,9 +506,11 @@ public class TimerManager {
                             DungeonDimensions.getDungeonByDimensionId(timerDimensionId);
                     if (timerDungeon != null) {
                         if (player.getY() < timerDungeon.getVoidGuardY()) {
-                            expireActiveTimerAndTeleport(player, data.scope(), data, true);
-                            CobbleSafari.LOGGER.info("Player {} detected in void in dungeon dimension {}, teleporting out",
-                                    player.getName().getString(), timerDimensionId);
+                            if (evictionAllowed(player)) {
+                                CobbleSafari.LOGGER.info("Player {} detected in void in dungeon dimension {}, teleporting out",
+                                        player.getName().getString(), timerDimensionId);
+                                expireActiveTimerAndTeleport(player, data.scope(), data, true);
+                            }
                             continue;
                         }
                     } else if (UnionRoomManager.DIMENSION_ID.equals(timerDimensionId) && player.getY() < 0) {
@@ -533,7 +541,7 @@ public class TimerManager {
                     maxigregrze.cobblesafari.dungeon.sub.SubDungeonManager.debitParentForTick(player, data);
                 }
 
-                if (data.isExpired() && player != null) {
+                if (data.isExpired() && player != null && evictionAllowed(player)) {
                     expireActiveTimerAndTeleport(player, data.scope(), data, true);
                 }
 
@@ -580,6 +588,19 @@ public class TimerManager {
                 continue;
             }
             String dimId = dimOpt.get();
+
+            // A discarded player cannot be moved, evacuated or expired: every rule below would fail
+            // against them, once per sweep. Catch the state here, before they ever try to leave
+            // (action plan 190, J5).
+            if (player.isRemoved()) {
+                disconnectDesynced(player, "presence sweep in " + dimId);
+                continue;
+            }
+            // A failed eviction is not retried on every sweep (J4): the state that caused it is
+            // either repaired by the disconnect above or will not change within a second.
+            if (!evictionAllowed(player)) {
+                continue;
+            }
 
             // The void guard is about physics, not permission or bookkeeping, so it runs before
             // everything else - including the bypass check, and regardless of whether the player
@@ -631,7 +652,14 @@ public class TimerManager {
             }
             LAST_SCOPE_KEY.put(player.getUUID(), scope.key());
             if (!held.isActive()) {
-                startSession(player, scope);
+                if (held.getRemainingTicks() <= 0) {
+                    // Re-arming an empty session only hands it to the expiry on the next tick - and
+                    // when that expiry cannot move the player, the pair became a once-a-second loop.
+                    // Evict once, through the expiry path, and let J4's back-off hold the retry.
+                    expireActiveTimerAndTeleport(player, scope, held, true);
+                } else {
+                    startSession(player, scope);
+                }
             }
             return;
         }
@@ -838,42 +866,110 @@ public class TimerManager {
         return SafariConfig.isEntryFeeEnabled();
     }
 
-    public static void teleportToOverworldSpawn(ServerPlayer player) {
-        if (serverInstance == null) return;
+    // --- Checked relocation (action plan 190, J3 / J5) -------------------------------------------
+
+    /**
+     * Moves a player and reports whether they actually arrived.
+     *
+     * <p>{@code ServerPlayer.changeDimension} - which {@code teleportTo} uses across dimensions -
+     * starts with {@code if (this.isRemoved()) return null;} and says nothing else. A player in that
+     * state can still walk around, since the connection keeps processing their movement, but no
+     * teleport will ever move them again. Every caller used to assume success, print its message and
+     * settle the credit, which is how one failure became a once-a-second "Time's up" loop.</p>
+     *
+     * @return true once the player stands in {@code level}
+     */
+    public static boolean relocate(ServerPlayer player, ServerLevel level, double x, double y, double z,
+                                   String context) {
+        if (player.isRemoved()) {
+            disconnectDesynced(player, context);
+            return false;
+        }
+        player.teleportTo(level, x, y, z, player.getYRot(), player.getXRot());
+        if (player.level() != level) {
+            CobbleSafari.LOGGER.error("Relocation failed ({}): {} is still in {} instead of {} (removed={}, reason={}, vehicle={})",
+                    context, player.getName().getString(), player.level().dimension().location(),
+                    level.dimension().location(), player.isRemoved(), player.getRemovalReason(),
+                    player.getVehicle());
+            if (player.isRemoved()) {
+                disconnectDesynced(player, context);
+            }
+            return false;
+        }
+        player.resetFallDistance();
+        player.setDeltaMovement(Vec3.ZERO);
+        return true;
+    }
+
+    /**
+     * A player the server has discarded while their connection is still open (J5). Nothing can move
+     * them any more: the only repair is a fresh player object, i.e. a reconnect. Their sessions are
+     * saved as they stand - never settled - so the time they had is still there when they return.
+     */
+    public static void disconnectDesynced(ServerPlayer player, String context) {
+        if (player.hasDisconnected()) {
+            return;
+        }
+        CobbleSafari.LOGGER.error("{} is discarded (reason {}) but still connected ({}); disconnecting so a reconnect "
+                        + "rebuilds their player entity. Their timer sessions are kept as they are",
+                player.getName().getString(), player.getRemovalReason(), context);
+        Map<String, PlayerTimerData> timers = activeTimers.get(player.getUUID());
+        if (timers != null) {
+            for (PlayerTimerData data : timers.values()) {
+                savePlayerData(player, data);
+            }
+        }
+        player.connection.disconnect(Component.translatable("cobblesafari.player.desync_reconnect"));
+    }
+
+    /**
+     * Whether an eviction of this player may be attempted now. One failed attempt holds the next
+     * ones back for {@link #EVICTION_RETRY_TICKS}, so a failure can never turn into a chat loop (J4).
+     */
+    private static boolean evictionAllowed(ServerPlayer player) {
+        Long last = LAST_FAILED_EVICTION.get(player.getUUID());
+        return last == null || serverInstance == null
+                || serverInstance.getTickCount() - last >= EVICTION_RETRY_TICKS;
+    }
+
+    private static void recordEvictionResult(ServerPlayer player, boolean arrived) {
+        if (arrived || serverInstance == null) {
+            LAST_FAILED_EVICTION.remove(player.getUUID());
+        } else {
+            LAST_FAILED_EVICTION.put(player.getUUID(), (long) serverInstance.getTickCount());
+        }
+    }
+
+    public static boolean teleportToOverworldSpawn(ServerPlayer player) {
+        if (serverInstance == null) return false;
 
         ServerLevel overworld = serverInstance.getLevel(Level.OVERWORLD);
-
-        if (overworld != null) {
-            BlockPos spawnPos = overworld.getSharedSpawnPos();
-
-            player.teleportTo(
-                    overworld,
-                    spawnPos.getX() + 0.5,
-                    spawnPos.getY(),
-                    spawnPos.getZ() + 0.5,
-                    player.getYRot(),
-                    player.getXRot()
-            );
-            player.resetFallDistance();
-            player.setDeltaMovement(net.minecraft.world.phys.Vec3.ZERO);
-
+        if (overworld == null) {
+            return false;
+        }
+        BlockPos spawnPos = overworld.getSharedSpawnPos();
+        boolean arrived = relocate(player, overworld,
+                spawnPos.getX() + 0.5, spawnPos.getY(), spawnPos.getZ() + 0.5, "overworld spawn");
+        if (arrived) {
             player.sendSystemMessage(Component.translatable("cobblesafari.timer.expired"));
             CobbleSafari.LOGGER.info("Player {} teleported to Overworld spawn (timer expired)",
                     player.getName().getString());
         }
+        return arrived;
     }
 
-    public static void teleportOnTimerExpired(ServerPlayer player, TimerScope scope, PlayerTimerData data) {
-        teleportOnTimerExpired(player, scope, data, true);
+    public static boolean teleportOnTimerExpired(ServerPlayer player, TimerScope scope, PlayerTimerData data) {
+        return teleportOnTimerExpired(player, scope, data, true);
     }
 
-    private static void teleportOnTimerExpired(ServerPlayer player, TimerScope scope, PlayerTimerData data, boolean notifyExpired) {
-        teleportOnTimerExpired(player, scope, data, notifyExpired, false);
+    private static boolean teleportOnTimerExpired(ServerPlayer player, TimerScope scope, PlayerTimerData data, boolean notifyExpired) {
+        return teleportOnTimerExpired(player, scope, data, notifyExpired, false);
     }
 
-    private static void teleportOnTimerExpired(ServerPlayer player, TimerScope scope, PlayerTimerData data, boolean notifyExpired,
-                                              boolean unionGracefulDeparture) {
-        if (serverInstance == null) return;
+    /** @return true once the player has actually left (plan 190, J3) */
+    private static boolean teleportOnTimerExpired(ServerPlayer player, TimerScope scope, PlayerTimerData data, boolean notifyExpired,
+                                                  boolean unionGracefulDeparture) {
+        if (serverInstance == null) return false;
 
         String dimensionId = scope.dimensionId();
         Optional<DimensionTimerEntry> config = SafariTimerConfig.getDimensionConfig(dimensionId);
@@ -888,7 +984,7 @@ public class TimerManager {
                 targetPos = targetLevel.getSharedSpawnPos();
             } else {
                 CobbleSafari.LOGGER.error("Overworld not found for timer expiration");
-                return;
+                return false;
             }
         } else {
             if (data.getOriginPos() != null && data.getOriginDimension() != null) {
@@ -901,7 +997,7 @@ public class TimerManager {
                     if (targetLevel != null) {
                         targetPos = targetLevel.getSharedSpawnPos();
                     } else {
-                        return;
+                        return false;
                     }
                 }
             } else {
@@ -910,21 +1006,31 @@ public class TimerManager {
                     targetPos = targetLevel.getSharedSpawnPos();
                 } else {
                     CobbleSafari.LOGGER.error("Overworld not found and no origin position stored");
-                    return;
+                    return false;
                 }
             }
         }
 
-        player.teleportTo(
-                targetLevel,
-                targetPos.getX() + 0.5,
-                targetPos.getY(),
-                targetPos.getZ() + 0.5,
-                player.getYRot(),
-                player.getXRot()
-        );
-        player.resetFallDistance();
-        player.setDeltaMovement(net.minecraft.world.phys.Vec3.ZERO);
+        boolean arrived = relocate(player, targetLevel,
+                targetPos.getX() + 0.5, targetPos.getY(), targetPos.getZ() + 0.5, "timer expiry of " + scope.key());
+        if (!arrived && !player.isRemoved()) {
+            // The origin refused them (another mod cancelling the change, a broken target): world
+            // spawn is the last place that is always valid. A discarded player was already
+            // disconnected by relocate, and a second attempt could only fail the same way.
+            ServerLevel overworld = serverInstance.getLevel(Level.OVERWORLD);
+            if (overworld != null && overworld != targetLevel) {
+                targetLevel = overworld;
+                targetPos = overworld.getSharedSpawnPos();
+                arrived = relocate(player, overworld,
+                        targetPos.getX() + 0.5, targetPos.getY(), targetPos.getZ() + 0.5,
+                        "timer expiry fallback of " + scope.key());
+            }
+        }
+        if (!arrived) {
+            // No message and no success line: telling a player "you have been kicked out" while they
+            // stand exactly where they were is what made the original loop read as a timer bug.
+            return false;
+        }
 
         if (DungeonDimensions.isDungeonDimension(dimensionId)) {
             DungeonTeleportHandler.clearPlayerData(player.getUUID());
@@ -939,6 +1045,7 @@ public class TimerManager {
         }
         CobbleSafari.LOGGER.info("Player {} teleported to {} at {} (timer expired, returnToSpawn: {})",
                 player.getName().getString(), targetLevel.dimension().location(), targetPos, returnToSpawn);
+        return true;
     }
 
     /**
@@ -978,7 +1085,8 @@ public class TimerManager {
             UnionRoomManager.onBeforeUnionRoomTimerExpire(player);
         }
         data.setRemainingTicks(0);
-        teleportOnTimerExpired(player, scope, data, notifyExpired, unionGracefulDeparture);
+        boolean arrived = teleportOnTimerExpired(player, scope, data, notifyExpired, unionGracefulDeparture);
+        recordEvictionResult(player, arrived);
         if (UnionRoomManager.DIMENSION_ID.equals(timerDimensionId)) {
             UnionRoomManager.onAfterUnionRoomTimerExpire(player);
         }
@@ -1208,22 +1316,12 @@ public class TimerManager {
             // get them out, which is what the rescue is for.
             CobbleSafari.LOGGER.warn("Death rescue for {} at scope {} with no timer record",
                     player.getName().getString(), scope.key());
-            player.setHealth(1.0F);
-            player.setAbsorptionAmount(0.0F);
-            player.resetFallDistance();
-            player.setDeltaMovement(Vec3.ZERO);
-            player.invulnerableTime = 20;
-            player.sendSystemMessage(Component.translatable("cobblesafari.timer.death_drained"));
+            reviveForRescue(player);
             teleportToOverworldSpawn(player);
             return;
         }
         String dimensionId = scope.dimensionId();
-        player.setHealth(1.0F);
-        player.setAbsorptionAmount(0.0F);
-        player.resetFallDistance();
-        player.setDeltaMovement(Vec3.ZERO);
-        player.invulnerableTime = 20;
-        player.sendSystemMessage(Component.translatable("cobblesafari.timer.death_drained"));
+        reviveForRescue(player);
 
         // Dying in a sub-dungeon returns to the PARENT with the debit applied, not to the
         // overworld (action plan 183, section 7.2). The entry stays consumed: spec v2 section 4.8
@@ -1243,6 +1341,21 @@ public class TimerManager {
         expireActiveTimerAndTeleport(player, scope, data, false);
         CobbleSafari.LOGGER.info("Death cancelled for {} in {}: timer expired (death rescue, same as void evac)",
                 player.getName().getString(), dimensionId);
+    }
+
+    /**
+     * Undoes the lethal state before the rescue teleport. Fire is cleared too: nothing in the
+     * dimension change does it, and a player who died burning would otherwise land at 1 HP still
+     * on fire and die for real where no timer protects them.
+     */
+    private static void reviveForRescue(ServerPlayer player) {
+        player.setHealth(1.0F);
+        player.setAbsorptionAmount(0.0F);
+        player.clearFire();
+        player.resetFallDistance();
+        player.setDeltaMovement(Vec3.ZERO);
+        player.invulnerableTime = 20;
+        player.sendSystemMessage(Component.translatable("cobblesafari.timer.death_drained"));
     }
 
     /** Always writes under the record's own scope - the only key that can be correct for it. */
@@ -1304,10 +1417,23 @@ public class TimerManager {
         if (data == null || data.getOriginPos() == null || data.getOriginDimension() == null) {
             return;
         }
-        TimerSavedData.get(serverInstance)
-                .setPendingReturn(player.getUUID(), data.getOriginPos(), data.getOriginDimension());
-        CobbleSafari.LOGGER.debug("Recorded pending dungeon return for {} (was in {})",
-                player.getName().getString(), scope.key());
+        // A nested visit's origin is the device inside the parent dungeon, which may be cleared too
+        // while they are away. Keep the parent run's own origin alongside it, now: the parent
+        // session is purged with its instance, and then nothing would remember it (plan 190, J2).
+        String parentKey = data.getParentScopeId();
+        BlockPos parentPos = null;
+        ResourceKey<Level> parentDimension = null;
+        if (parentKey != null) {
+            PlayerTimerData parent = session(player, TimerScope.parse(parentKey));
+            if (parent != null) {
+                parentPos = parent.getOriginPos();
+                parentDimension = parent.getOriginDimension();
+            }
+        }
+        TimerSavedData.get(serverInstance).setPendingReturn(player.getUUID(), new TimerSavedData.ReturnPoint(
+                data.getOriginPos(), data.getOriginDimension(), parentKey, parentPos, parentDimension));
+        CobbleSafari.LOGGER.debug("Recorded pending dungeon return for {} (was in {}, parent {})",
+                player.getName().getString(), scope.key(), parentKey);
     }
 
     /**
@@ -1329,20 +1455,42 @@ public class TimerManager {
             return;
         }
 
-        ServerLevel target = serverInstance.getLevel(point.dimension());
+        // A nested visit goes back into its parent only if that run is still there and still has
+        // time: the same three-way rule SubDungeonManager.leave applies on a live exit (plan 190, J2).
+        BlockPos targetPos = point.pos();
+        ResourceKey<Level> targetDimension = point.dimension();
+        TimerScope parentScope = point.parentScopeKey() == null ? null : TimerScope.parse(point.parentScopeKey());
+        PlayerTimerData parent = null;
+        if (parentScope != null) {
+            parent = isScopeLive(parentScope) ? session(player, parentScope) : null;
+            if (parent == null || parent.getRemainingTicks() <= 0) {
+                parent = null;
+                if (point.hasParentFallback()) {
+                    targetPos = point.parentPos();
+                    targetDimension = point.parentDimension();
+                } else {
+                    targetPos = null;
+                }
+            }
+        }
+
+        ServerLevel target = targetPos == null ? null : serverInstance.getLevel(targetDimension);
         if (target == null) {
             target = serverInstance.getLevel(Level.OVERWORLD);
+            targetPos = target == null ? null : target.getSharedSpawnPos();
         }
-        if (target != null) {
-            player.teleportTo(target,
-                    point.pos().getX() + 0.5, point.pos().getY(), point.pos().getZ() + 0.5,
-                    player.getYRot(), player.getXRot());
-            player.resetFallDistance();
-            player.setDeltaMovement(Vec3.ZERO);
-            player.sendSystemMessage(
-                    Component.translatable("cobblesafari.dungeon.returned_after_disconnect"));
-            CobbleSafari.LOGGER.info("Returned {} to {} after their dungeon instance was cleared offline",
-                    player.getName().getString(), point.pos());
+        if (target != null && targetPos != null) {
+            boolean arrived = relocate(player, target,
+                    targetPos.getX() + 0.5, targetPos.getY(), targetPos.getZ() + 0.5, "return after offline clear");
+            if (arrived) {
+                if (parent != null) {
+                    startSession(player, parentScope);
+                }
+                player.sendSystemMessage(
+                        Component.translatable("cobblesafari.dungeon.returned_after_disconnect"));
+                CobbleSafari.LOGGER.info("Returned {} to {} in {} after their dungeon instance was cleared offline",
+                        player.getName().getString(), targetPos, target.dimension().location());
+            }
         }
         savedData.clearPendingReturn(player.getUUID());
     }
@@ -1351,6 +1499,7 @@ public class TimerManager {
         UUID playerId = player.getUUID();
         Map<String, PlayerTimerData> playerTimers = activeTimers.remove(playerId);
         LAST_SCOPE_KEY.remove(playerId);
+        LAST_FAILED_EVICTION.remove(playerId);
 
         if (playerTimers != null) {
             for (PlayerTimerData data : playerTimers.values()) {

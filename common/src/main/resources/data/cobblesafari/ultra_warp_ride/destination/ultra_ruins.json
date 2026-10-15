@@ -4,18 +4,37 @@
   "structurePool": "cobblesafari:ultraspace/ruin/start",
   "tint": "#d7d7d7",
   "biome": "cobblesafari:dungeon_ultra_ruin_biome",
-  "encounters": {
-    "0": [
-      "stakataka"
-    ],
-    "1": [
-      "nihilego"
-    ],
-    "2": [
-      "minior"
-    ],
-    "3": [
-      "solrock"
+  "normalPool": {
+    "pokemon": [
+      "tyranitar",
+      "weezing galarian",
+      "garbodor",
+      "muk alolan",
+      "conkeldurr",
+      "golurk",
+      "chandelure",
+      "obstagoon"
     ]
+  },
+  "rewardPool": {
+    "pokemon": [
+      {
+        "pokemon": "guzzlord",
+        "weight": 10
+      },
+      {
+        "pokemon": "stakataka",
+        "weight": 30
+      },
+      {
+        "pokemon": "blacephalon",
+        "weight": 30
+      },
+      {
+        "pokemon": "poipole",
+        "weight": 30
+      }
+    ],
+    "fallback": "poipole"
   }
 }

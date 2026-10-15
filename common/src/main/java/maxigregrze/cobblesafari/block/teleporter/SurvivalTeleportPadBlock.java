@@ -20,7 +20,8 @@ import net.minecraft.world.phys.BlockHitResult;
 
 /**
  * Craftable teleport pad variant. Configured with a Tinkhammer (shift-right-click opens GUI,
- * right-click cycles mode and re-pairs). Empty-hand interaction is disabled.
+ * right-click cycles mode and re-pairs). Empty-hand interaction is disabled, except the creative
+ * shift-right-click that opens the GUI without the tool (plan 188, C4).
  */
 public class SurvivalTeleportPadBlock extends TeleportPadBlock {
 
@@ -72,6 +73,17 @@ public class SurvivalTeleportPadBlock extends TeleportPadBlock {
     @Override
     protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos,
                                                Player player, BlockHitResult hit) {
+        // Vanilla only reaches here while sneaking when both hands are empty.
+        if (!player.isCreative() || !player.isShiftKeyDown()) {
+            return InteractionResult.PASS;
+        }
+        if (level.isClientSide()) {
+            return InteractionResult.SUCCESS;
+        }
+        if (level.getBlockEntity(pos) instanceof TeleportPadBlockEntity be && player instanceof ServerPlayer sp) {
+            Services.PLATFORM.sendPayloadToPlayer(sp, be.createOpenPayload());
+            return InteractionResult.CONSUME;
+        }
         return InteractionResult.PASS;
     }
 }

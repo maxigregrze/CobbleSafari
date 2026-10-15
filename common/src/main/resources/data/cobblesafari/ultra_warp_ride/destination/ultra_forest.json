@@ -4,18 +4,29 @@
   "structurePool": "cobblesafari:ultraspace/forest/start",
   "tint": "#afbb56",
   "biome": "cobblesafari:dungeon_ultra_forest_biome",
-  "encounters": {
-    "0": [
-      "pheromosa"
-    ],
-    "1": [
-      "poipole"
-    ],
-    "2": [
-      "blipbug"
-    ],
-    "3": [
-      "venipede"
+  "normalPool": {
+    "pokemon": [
+      "kommoo",
+      "shiftry",
+      "scizor",
+      "leavanny",
+      "ninjask",
+      "kleavor",
+      "lurantis",
+      "kricketune"
     ]
+  },
+  "rewardPool": {
+    "pokemon": [
+      {
+        "pokemon": "kartana",
+        "weight": 70
+      },
+      {
+        "pokemon": "poipole",
+        "weight": 30
+      }
+    ],
+    "fallback": "poipole"
   }
 }

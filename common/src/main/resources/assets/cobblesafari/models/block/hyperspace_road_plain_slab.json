@@ -1,6 +1,5 @@
 {
   "parent": "minecraft:block/block",
-  "ambientocclusion": false,
   "textures": {
     "bottom": "cobblesafari:block/hyperspace_road_plain",
     "top": "cobblesafari:block/hyperspace_road_plain",

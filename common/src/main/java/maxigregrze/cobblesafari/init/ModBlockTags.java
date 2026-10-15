@@ -17,5 +17,12 @@ public final class ModBlockTags {
     public static final TagKey<Block> MAPLE_LEAF_PILES = TagKey.create(Registries.BLOCK,
             ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, "maple_leaf_piles"));
 
+    /** Ground a natural Hoopa portal may be placed above (action plan 188, P4). */
+    public static final TagKey<Block> PORTAL_SPAWNABLE_ON = TagKey.create(Registries.BLOCK,
+            ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, "portal_spawnable_on"));
+    /** Blocks that keep natural Hoopa portals out of {@code repellentRadius} (action plan 188, P5). */
+    public static final TagKey<Block> PORTAL_REPELLENTS = TagKey.create(Registries.BLOCK,
+            ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, "portal_repellents"));
+
     private ModBlockTags() {}
 }

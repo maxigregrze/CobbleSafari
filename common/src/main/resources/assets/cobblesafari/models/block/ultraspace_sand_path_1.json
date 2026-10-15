@@ -1,7 +1,7 @@
 {
   "parent": "minecraft:block/block",
-  "ambientocclusion": false,
   "textures": {
+    "top": "cobblesafari:block/ultrasand_0",
     "all": "cobblesafari:block/ultrasand_1",
     "particle": "cobblesafari:block/ultrasand_1"
   },
@@ -35,7 +35,7 @@
             16,
             16
           ],
-          "texture": "#all"
+          "texture": "#top"
         },
         "north": {
           "uv": [

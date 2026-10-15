@@ -112,6 +112,7 @@ import maxigregrze.cobblesafari.block.hyperspace.HyperspaceCeilingHangingSignBlo
 import maxigregrze.cobblesafari.block.hyperspace.HyperspaceWallHangingSignBlock;
 import maxigregrze.cobblesafari.block.hyperspace.HyperspaceScaffoldStairsBlock;
 import maxigregrze.cobblesafari.block.base.ShapedBlock;
+import maxigregrze.cobblesafari.block.base.RoadSlabBlock;
 import maxigregrze.cobblesafari.block.base.ConnectedModelBlock;
 import maxigregrze.cobblesafari.block.base.ConnectedShape;
 import maxigregrze.cobblesafari.block.base.LayeredSideConnectedModelBlock;
@@ -120,12 +121,14 @@ import maxigregrze.cobblesafari.block.base.BlockShapeUtils;
 import maxigregrze.cobblesafari.block.base.FaceAttachedModelBlock;
 import maxigregrze.cobblesafari.block.base.FullShapeStairBlock;
 import maxigregrze.cobblesafari.block.misc.LightningSpotBlock;
+import maxigregrze.cobblesafari.block.ultraspace.MegapolisLightSpotBlock;
 import maxigregrze.cobblesafari.block.ultraspace.UltraspaceBonsaiStemBlock;
 import maxigregrze.cobblesafari.block.ultraspace.UltraspaceBulbBlock;
 import maxigregrze.cobblesafari.block.ultraspace.UltraspaceLeavesBlock;
 import maxigregrze.cobblesafari.block.ultraspace.UltraspaceCrystallizedSandBlock;
 import maxigregrze.cobblesafari.block.ultraspace.UltraspaceSandBlock;
 import maxigregrze.cobblesafari.block.ultraspace.UltraspaceSandPathBlock;
+import maxigregrze.cobblesafari.block.ultraspace.UltraWarpDiveBlock;
 import maxigregrze.cobblesafari.block.base.VerticalConnectedModelBlock;
 import maxigregrze.cobblesafari.block.base.DaylightLit;
 import maxigregrze.cobblesafari.block.base.GroundedSideConnectedModelBlock;
@@ -166,6 +169,7 @@ import net.minecraft.util.ColorRGBA;
 import net.minecraft.world.level.block.AmethystBlock;
 import net.minecraft.world.level.block.AmethystClusterBlock;
 import net.minecraft.world.level.block.RotatedPillarBlock;
+import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.StairBlock;
 import net.minecraft.world.level.block.state.properties.BlockSetType;
@@ -317,6 +321,21 @@ public class ModBlocks {
                     .noOcclusion()
                     .noCollission()
             ));
+
+    /**
+     * Portal Spawner / "Portal's Shadow" (action plan 188, S1): creative-only, unbreakable in survival,
+     * dropless. Its item ({@link #PORTAL_SPAWNER_ITEM}) is registered in {@link #register()} because it
+     * carries its own name and tooltip.
+     */
+    public static final Block PORTAL_SPAWNER = registerBlockWithoutItem("portal_spawner",
+            new maxigregrze.cobblesafari.block.dungeon.PortalSpawnerBlock(BlockBehaviour.Properties.of()
+                    .strength(-1.0f, 3600000.0f)
+                    .pushReaction(PushReaction.BLOCK)
+                    .noLootTable()
+                    .noOcclusion()
+                    .noCollission()
+            ));
+    public static Item PORTAL_SPAWNER_ITEM;
 
     // --- Ultra Wormhole (action plan 183, B2) ------------------------------------------------
     // The device, hand-placed in a parent dungeon's wormhole room. Unbreakable and dropless: the
@@ -870,7 +889,9 @@ public class ModBlocks {
     public static final Block LOST_NOTES = registerBlock("lost_notes",
             new LostNotesBlock(BlockBehaviour.Properties.of()
                     .mapColor(MapColor.PLANT)
-                    .instabreak()
+                    .strength(-1.0f, 3600000.0f)
+                    .pushReaction(PushReaction.BLOCK)
+                    .noLootTable()
                     .sound(SoundType.GRASS)
                     .noOcclusion()
                     .noCollission()
@@ -879,7 +900,9 @@ public class ModBlocks {
     public static final Block LOST_ITEM = registerBlockWithoutItem("lost_item",
             new LostItemBlock(BlockBehaviour.Properties.of()
                     .mapColor(MapColor.STONE)
-                    .instabreak()
+                    .strength(-1.0f, 3600000.0f)
+                    .pushReaction(PushReaction.BLOCK)
+                    .noLootTable()
                     .sound(SoundType.STONE)
                     .noOcclusion()
                     .noCollission()
@@ -896,7 +919,9 @@ public class ModBlocks {
     public static final Block LOST_ITEM_VISUAL = registerBlockWithoutItem("lost_item_visual",
             new LostItemVisualBlock(BlockBehaviour.Properties.of()
                     .mapColor(MapColor.STONE)
-                    .instabreak()
+                    .strength(-1.0f, 3600000.0f)
+                    .pushReaction(PushReaction.BLOCK)
+                    .noLootTable()
                     .sound(SoundType.STONE)
                     .noOcclusion()
                     .noCollission()
@@ -965,7 +990,9 @@ public class ModBlocks {
     public static final Block AUSPICIOUS_POKEBALL = registerBlock("auspicious_pokeball",
             new AuspiciousPokeballBlock(BlockBehaviour.Properties.of()
                     .mapColor(MapColor.STONE)
-                    .instabreak()
+                    .strength(-1.0f, 3600000.0f)
+                    .pushReaction(PushReaction.BLOCK)
+                    .noLootTable()
                     .sound(SoundType.STONE)
                     .noOcclusion()
                     .noCollission()
@@ -975,7 +1002,9 @@ public class ModBlocks {
     public static final Block AUSPICIOUS_POKEBALL_DISPLAY = registerBlockWithoutItem("auspicious_pokeball_display",
             new Block(BlockBehaviour.Properties.of()
                     .mapColor(MapColor.STONE)
-                    .instabreak()
+                    .strength(-1.0f, 3600000.0f)
+                    .pushReaction(PushReaction.BLOCK)
+                    .noLootTable()
                     .sound(SoundType.STONE)
                     .noOcclusion()
                     .noCollission()
@@ -984,7 +1013,9 @@ public class ModBlocks {
     public static final Block AUSPICIOUS_POKEBALL_SMALL = registerBlock("auspiciouspokeball_small",
             new AuspiciousPokeballSmallBlock(BlockBehaviour.Properties.of()
                     .mapColor(MapColor.STONE)
-                    .instabreak()
+                    .strength(-1.0f, 3600000.0f)
+                    .pushReaction(PushReaction.BLOCK)
+                    .noLootTable()
                     .sound(SoundType.STONE)
                     .noOcclusion()
                     .noCollission()
@@ -994,7 +1025,9 @@ public class ModBlocks {
     public static final Block AUSPICIOUS_POKEBALL_SMALL_DISPLAY = registerBlockWithoutItem("auspiciouspokeball_small_display",
             new Block(BlockBehaviour.Properties.of()
                     .mapColor(MapColor.STONE)
-                    .instabreak()
+                    .strength(-1.0f, 3600000.0f)
+                    .pushReaction(PushReaction.BLOCK)
+                    .noLootTable()
                     .sound(SoundType.STONE)
                     .noOcclusion()
                     .noCollission()
@@ -1003,7 +1036,9 @@ public class ModBlocks {
     public static final Block AUSPICIOUS_POKEBALL_GOLD = registerBlock("auspiciouspokeball_gold",
             new AuspiciousPokeballGoldBlock(BlockBehaviour.Properties.of()
                     .mapColor(MapColor.STONE)
-                    .instabreak()
+                    .strength(-1.0f, 3600000.0f)
+                    .pushReaction(PushReaction.BLOCK)
+                    .noLootTable()
                     .sound(SoundType.STONE)
                     .noOcclusion()
                     .noCollission()
@@ -1013,7 +1048,9 @@ public class ModBlocks {
     public static final Block AUSPICIOUS_POKEBALL_GOLD_DISPLAY = registerBlockWithoutItem("auspiciouspokeball_gold_display",
             new Block(BlockBehaviour.Properties.of()
                     .mapColor(MapColor.STONE)
-                    .instabreak()
+                    .strength(-1.0f, 3600000.0f)
+                    .pushReaction(PushReaction.BLOCK)
+                    .noLootTable()
                     .sound(SoundType.STONE)
                     .noOcclusion()
                     .noCollission()
@@ -1940,15 +1977,15 @@ public class ModBlocks {
             new StairBlock(HYPERSPACE_FLOOR_PLAIN.defaultBlockState(), hsStone()));
     public static final Block HYPERSPACE_FLOOR_PLAIN_SLAB = registerBlock("hyperspace_floor_plain_slab", new SlabBlock(hsStone()));
 
-    // Road stairs/slabs: vanilla collision, but their models are authored 1px lower on Y so the
-    // visible surface lines up with the HYPERSPACE_ROAD block (top at y=15). noOcclusion to avoid
-    // neighbours culling against the lowered geometry.
+    // Road stairs/slabs: models authored 1px lower on Y so the visible surface lines up with the
+    // HYPERSPACE_ROAD block (top at y=15). Stairs keep vanilla collision; RoadSlabBlock follows the
+    // lowered surface. noOcclusion to avoid neighbours culling against the lowered geometry.
     public static final Block HYPERSPACE_ROAD_STAIRS = registerBlock("hyperspace_road_stairs",
             new StairBlock(HYPERSPACE_ROAD.defaultBlockState(), hsStone().noOcclusion()));
-    public static final Block HYPERSPACE_ROAD_SLAB = registerBlock("hyperspace_road_slab", new SlabBlock(hsStone().noOcclusion()));
+    public static final Block HYPERSPACE_ROAD_SLAB = registerBlock("hyperspace_road_slab", new RoadSlabBlock(hsStone().noOcclusion()));
     public static final Block HYPERSPACE_ROAD_PLAIN_STAIRS = registerBlock("hyperspace_road_plain_stairs",
             new StairBlock(HYPERSPACE_ROAD_PLAIN.defaultBlockState(), hsStone().noOcclusion()));
-    public static final Block HYPERSPACE_ROAD_PLAIN_SLAB = registerBlock("hyperspace_road_plain_slab", new SlabBlock(hsStone().noOcclusion()));
+    public static final Block HYPERSPACE_ROAD_PLAIN_SLAB = registerBlock("hyperspace_road_plain_slab", new RoadSlabBlock(hsStone().noOcclusion()));
 
     public static final Block HYPERSPACE_BARRIER = registerBlock("hyperspace_barrier",
             new HyperspaceBarrierBlock(hsIronHand()));
@@ -1962,11 +1999,13 @@ public class ModBlocks {
             new SideConnectedModelBlock(hsIronPick(), ConnectedModelBlock.Settings.builder()
                     .connectTag(HYPERSPACE_SCAFFOLDING_PLATFORM_CONNECTS)
                     .shape(HS_FULL_SHAPE)
+                    .noAoShadow()
                     .build()));
     public static final Block HYPERSPACE_SCAFFOLDING = registerBlock("hyperspace_scaffolding",
             new LayeredSideConnectedModelBlock(hsIronPick(), ConnectedModelBlock.Settings.builder()
                     .connectTag(HYPERSPACE_SCAFFOLDING_CONNECTS)
                     .shape(HS_FULL_SHAPE)
+                    .noAoShadow()
                     .build(), 3));
     public static final Block HYPERSPACE_PLATFORM = registerBlock("hyperspace_platform",
             new GroundedSideConnectedModelBlock(hsIronPick(), ConnectedModelBlock.Settings.builder()
@@ -2105,8 +2144,8 @@ public class ModBlocks {
             new LitSlabBlock(hsGlass().randomTicks().lightLevel(DaylightLit::lightLevel)));
     public static final Block KALOS_FLOOR_SLAB = registerBlock("kalos_floor_slab", new SlabBlock(hsStone()));
     public static final Block KALOS_FLOOR_PLAIN_SLAB = registerBlock("kalos_floor_plain_slab", new SlabBlock(hsStone()));
-    public static final Block KALOS_ROAD_SLAB = registerBlock("kalos_road_slab", new SlabBlock(hsStone().noOcclusion()));
-    public static final Block KALOS_ROAD_PLAIN_SLAB = registerBlock("kalos_road_plain_slab", new SlabBlock(hsStone().noOcclusion()));
+    public static final Block KALOS_ROAD_SLAB = registerBlock("kalos_road_slab", new RoadSlabBlock(hsStone().noOcclusion()));
+    public static final Block KALOS_ROAD_PLAIN_SLAB = registerBlock("kalos_road_plain_slab", new RoadSlabBlock(hsStone().noOcclusion()));
 
     // Connected windows (plan 163 - 5): first consumers of VerticalConnectedModelBlock.
     // Each family connects to itself only - mixing brick and plain in one column would
@@ -2324,6 +2363,19 @@ public class ModBlocks {
     private static final VoxelShape US_STEM_SHAPE = Block.box(4, 0, 4, 12, 16, 12);
     private static final VoxelShape US_BULB_SHAPE = Block.box(1, 0, 1, 15, 16, 15);
 
+    // Stalagmite: the union of the model's boxes - a flared 6x6 foot, a 4x4 base, a collar and the
+    // 2x2 spike - so the hitbox is the block itself rather than a box around it.
+    private static final VoxelShape US_STALAGMITE_FLOOR = Shapes.or(
+            Block.box(5, 0, 6, 11, 2, 10), Block.box(6, 0, 5, 10, 2, 11),
+            Block.box(6, 2, 6, 10, 5, 10),
+            Block.box(6, 5, 7, 10, 7, 9), Block.box(7, 5, 6, 9, 7, 10),
+            Block.box(7, 7, 7, 9, 11, 9));
+    private static final VoxelShape US_STALAGMITE_CEILING = Shapes.or(
+            Block.box(5, 14, 6, 11, 16, 10), Block.box(6, 14, 5, 10, 16, 11),
+            Block.box(6, 11, 6, 10, 14, 10),
+            Block.box(6, 9, 7, 10, 11, 9), Block.box(7, 9, 6, 9, 11, 10),
+            Block.box(7, 5, 7, 9, 9, 9));
+
     // Bonsai stem: a flat panel, authored for FACING=north and turned with the block by
     // rotateFloorShape() - without that the box stays put while the model spins.
     private static final VoxelShape US_STEM_PANEL_FLOOR = Block.box(0, 0, 6, 16, 11, 10);
@@ -2383,6 +2435,7 @@ public class ModBlocks {
                             .connectTag(ULTRASPACE_SAND_PATTERN_CONNECTS)
                             .shape(UltraspaceSandPathBlock.SHAPE)
                             .collision(ConnectedModelBlock.Collision.FULL)
+                            .noAoShadow()
                             .build()));
     public static final Block ULTRASPACE_SANDSTONE = registerBlock("ultraspace_sandstone",
             new Block(BlockBehaviour.Properties.of().mapColor(MapColor.SAND)
@@ -2393,24 +2446,39 @@ public class ModBlocks {
     // loot table, so nothing has to ship a file that says "nothing".
     public static final Block ULTRASPACE_SAND_CRYSTALIZED = registerBlock("ultraspace_sand_crystalized",
             new UltraspaceCrystallizedSandBlock(US_SAND_DUST,
-                    usSand().strength(0.6f).randomTicks().noLootTable()));
+                    usSand().strength(0.6f).randomTicks().noLootTable().lightLevel(state -> 9)));
     public static final Block ULTRASPACE_CRYSTAL = registerBlock("ultraspace_crystal",
             new AmethystClusterBlock(7.0f, 3.0f, BlockBehaviour.Properties.of()
                     .mapColor(MapColor.COLOR_PURPLE).forceSolidOn().noOcclusion().randomTicks()
-                    .sound(SoundType.AMETHYST_CLUSTER).strength(1.5f).lightLevel(state -> 5)
+                    .sound(SoundType.AMETHYST_CLUSTER).strength(1.5f).lightLevel(state -> 15)
                     .pushReaction(PushReaction.DESTROY)));
     public static final Block ULTRASPACE_CRYSTAL_BLOCK = registerBlock("ultraspace_crystal_block",
             new AmethystBlock(BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_PURPLE)
-                    .strength(1.5f).sound(SoundType.AMETHYST).requiresCorrectToolForDrops()));
+                    .strength(1.5f).sound(SoundType.AMETHYST).requiresCorrectToolForDrops()
+                    .lightLevel(state -> 15)));
 
     // --- deep rock ---------------------------------------------------------------
     public static final Block ULTRASPACE_DEEPSTONE = registerBlock("ultraspace_deepstone",
             new Block(usDeepstone()));
+    // Same block, same name, only the id differs: its blockstate rolls one of three textures,
+    // 20/60/20, where the original keeps its single one (plan 190, B2).
+    public static final Block ULTRASPACE_DEEPESTSTONE = registerBlock("ultraspace_deepeststone",
+            new Block(usDeepstone()));
+    // Bulb and stems glow at 10: the deep sea's only light besides what the structure places.
     public static final Block ULTRASPACE_BULB = registerBlock("ultraspace_bulb",
-            new UltraspaceBulbBlock(usDeepstone().noOcclusion(), US_BULB_SHAPE));
+            new UltraspaceBulbBlock(usDeepstone().noOcclusion().lightLevel(state -> 10), US_BULB_SHAPE));
     public static final Block ULTRASPACE_STEM = registerBlock("ultraspace_stem",
-            new GroundedModelBlock(usDeepstone().noOcclusion(), US_STEM_SHAPE,
+            new GroundedModelBlock(usDeepstone().noOcclusion().lightLevel(state -> 10), US_STEM_SHAPE,
                     GroundedModelBlock.Support.NONE));
+    // Floor or ceiling, never a wall; the ceiling form is the same model turned over (x:180), so
+    // its box is the floor box mirrored in Y (plan 190, B6).
+    public static final Block ULTRASPACE_STALAGMITE = registerBlock("ultraspace_stalagmite",
+            new FaceAttachedModelBlock(usDeepstone().noOcclusion(), FaceAttachedModelBlock.Settings.builder()
+                    .shapes(US_STALAGMITE_FLOOR, US_STALAGMITE_CEILING,
+                            US_STALAGMITE_FLOOR, US_STALAGMITE_FLOOR, US_STALAGMITE_FLOOR, US_STALAGMITE_FLOOR)
+                    .noWall()
+                    .requireFullBlockSupport()
+                    .build()));
 
     // --- flesh -------------------------------------------------------------------
     // speedFactor(0.4F) is exactly vanilla soul sand's slowdown, and costs no code. The block stays
@@ -2482,8 +2550,14 @@ public class ModBlocks {
                             .strength(0.8f).sound(SoundType.WOOL).noOcclusion()));
 
     // --- Megapolis ---------------------------------------------------------------
+    // A repeater-like redstone part since plan 190 (B5); the id is kept so existing .nbt load.
+    // Not a conductor, like a repeater: as a full cube it would relay the strong power it receives
+    // straight on to the next spot, which then lit in the same tick as this one - a chain advanced
+    // two at a time and a ring saturated instead of carrying its pulse round.
     public static final Block MEGAPOLIS_LIGHT = registerBlock("megapolis_light",
-            new Block(usMegapolisMetal().lightLevel(state -> 15)));
+            new MegapolisLightSpotBlock(usMegapolisMetal()
+                    .isRedstoneConductor((state, level, pos) -> false)
+                    .lightLevel(state -> state.getValue(MegapolisLightSpotBlock.POWERED) ? 15 : 0)));
     public static final Block MEGAPOLIS_STAIRS = registerBlock("megapolis_stairs",
             new StairBlock(MEGAPOLIS_LIGHT.defaultBlockState(), usMegapolisMetal().noOcclusion()));
 
@@ -2502,6 +2576,46 @@ public class ModBlocks {
                     // half of the guard that keeps ParticleEngine.crack away from its empty shape.
                     .noTerrainParticles()
                     .pushReaction(PushReaction.DESTROY)));
+
+    // --- Ultra Warp Dive props (plan 189) ----------------------------------------------
+    // The minigame's objects as decorative blocks, kept for future CSBoss attacks: creative-only
+    // (no loot), solid, glowing, floating. Shapes are in model pixels and overflow the cell on
+    // purpose - each stays within the one-block margin vanilla collides against.
+    public static final Block ULTRAWARPDIVE_POSITIVE = registerBlock("ultrawarpdive_positive",
+            new HorizontalModelBlock(ultraWarpDiveProps(SoundType.AMETHYST),
+                    HorizontalModelBlock.Settings.builder()
+                            .shape(Block.box(-8, -8, 7, 24, 24, 9))
+                            .authoredFacing(Direction.NORTH)
+                            .rotateShape()
+                            .emptyOcclusion()
+                            .build()));
+
+    public static final Block ULTRAWARPDIVE_NEGATIVE = registerBlock("ultrawarpdive_negative",
+            new UltraWarpDiveBlock(ultraWarpDiveProps(SoundType.AMETHYST),
+                    HorizontalModelBlock.Settings.builder()
+                            .shape(Block.box(-2, -2, -2, 18, 18, 18))
+                            .emptyOcclusion()
+                            .build(),
+                    RenderShape.MODEL));
+
+    public static final Block ULTRAWARPDIVE_ROCKS = registerBlock("ultrawarpdive_rocks",
+            new UltraWarpDiveBlock(ultraWarpDiveProps(SoundType.STONE),
+                    HorizontalModelBlock.Settings.builder()
+                            .shape(Block.box(1, -1, 1, 14, 17, 12))
+                            .authoredFacing(Direction.NORTH)
+                            .rotateShape()
+                            .emptyOcclusion()
+                            .build(),
+                    RenderShape.ENTITYBLOCK_ANIMATED));
+
+    private static BlockBehaviour.Properties ultraWarpDiveProps(SoundType sound) {
+        return BlockBehaviour.Properties.of()
+                .strength(1.5f, 6.0f)
+                .sound(sound)
+                .lightLevel(state -> 15)
+                .noOcclusion()
+                .noLootTable();
+    }
 
     // Sign items (one item spans the standing+wall pair); assigned in register().
     public static Item HYPERSPACE_SIGN_ITEM;
@@ -2673,6 +2787,10 @@ public class ModBlocks {
         Registry.register(BuiltInRegistries.ITEM,
                 ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, "secretbase_pc"),
                 new BasePCBlockItem(SECRETBASE_PC, new Item.Properties().rarity(Rarity.RARE)));
+
+        PORTAL_SPAWNER_ITEM = Registry.register(BuiltInRegistries.ITEM,
+                ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, "portal_spawner"),
+                new maxigregrze.cobblesafari.block.dungeon.PortalSpawnerBlockItem(PORTAL_SPAWNER, new Item.Properties()));
 
         // One item per Lost Item skin, each stamping its skin onto the placed block state.
         //

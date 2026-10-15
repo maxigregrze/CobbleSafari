@@ -218,6 +218,13 @@ public class CsTraderEntity extends AbstractVillager {
 
     @Override
     public void addAdditionalSaveData(CompoundTag tag) {
+        if (this.level().isClientSide()) {
+            // Client-side snapshots (EMF/ETF NBT properties, tooltip mods): vanilla path only -
+            // getOffers() throws on the client, and the client must never prune server state.
+            super.addAdditionalSaveData(tag);
+            writeIdentity(tag);
+            return;
+        }
         this.getOffers().removeIf(CsTraderEntity::isOfferInvalid);
 
         for (int i = 0; i < this.getInventory().getContainerSize(); i++) {
@@ -234,6 +241,10 @@ public class CsTraderEntity extends AbstractVillager {
             this.getOffers().clear();
             super.addAdditionalSaveData(tag);
         }
+        writeIdentity(tag);
+    }
+
+    private void writeIdentity(CompoundTag tag) {
         tag.putString(TRADE_TYPE_KEY, toLegacyTradeType(getTradeType()));
         tag.putString(TRADER_NAME_KEY, getTraderName());
         tag.putString(TRADER_VARIANT_KEY, getTradeType());

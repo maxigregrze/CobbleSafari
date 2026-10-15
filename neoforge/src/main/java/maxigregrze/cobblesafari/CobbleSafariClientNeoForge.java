@@ -9,6 +9,8 @@ import maxigregrze.cobblesafari.init.ModItems;
 import maxigregrze.cobblesafari.client.screen.AuspiciousPokeballConfigScreen;
 import maxigregrze.cobblesafari.client.screen.AuspiciousPokeballGoldConfigScreen;
 import maxigregrze.cobblesafari.client.screen.LostItemConfigScreen;
+import maxigregrze.cobblesafari.client.screen.PortalSpawnerConfigScreen;
+import maxigregrze.cobblesafari.network.OpenPortalSpawnerConfigPayload;
 import maxigregrze.cobblesafari.network.OpenAuspiciousPokeballConfigPayload;
 import maxigregrze.cobblesafari.network.OpenAuspiciousPokeballGoldConfigPayload;
 import maxigregrze.cobblesafari.network.OpenLostItemConfigPayload;
@@ -41,6 +43,7 @@ import maxigregrze.cobblesafari.underground.UndergroundMinigame;
 import maxigregrze.cobblesafari.underground.UndergroundScreen;
 import maxigregrze.cobblesafari.underground.network.UndergroundPayloads;
 import maxigregrze.cobblesafari.client.DungeonDistortionDimensionEffects;
+import maxigregrze.cobblesafari.client.UltraCraterDimensionEffects;
 import maxigregrze.cobblesafari.client.audio.CsMusicPlayer;
 import maxigregrze.cobblesafari.client.particle.MapleLeafParticle;
 import maxigregrze.cobblesafari.init.ModParticles;
@@ -116,6 +119,10 @@ public class CobbleSafariClientNeoForge {
                 ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, "dungeon_distortion"),
                 new DungeonDistortionDimensionEffects()
         );
+        event.register(
+                ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, "dungeon_ultra_crater"),
+                new UltraCraterDimensionEffects()
+        );
     }
 
     /** Drops the derived greyscale statue textures on a resource reload, releasing their GL handles. */
@@ -166,7 +173,13 @@ public class CobbleSafariClientNeoForge {
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.HOOPA_RING_PORTAL, RenderType.cutout());
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.DUNGEON_PORTAL, RenderType.cutout());
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.CREATIVE_DUNGEON_PORTAL, RenderType.cutout());
+            // Graded-alpha shadow texture (action plan 188, S1).
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.PORTAL_SPAWNER, RenderType.translucent());
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.DUNGEON_PORTAL_EFFECT, RenderType.translucent());
+            // Ultra Warp Dive props (plan 189): the positive's aura has graded alpha; the rocks are
+            // drawn by their block entity renderer only.
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.ULTRAWARPDIVE_POSITIVE, RenderType.translucent());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.ULTRAWARPDIVE_NEGATIVE, RenderType.cutout());
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.GIRATINA_CORE, RenderType.translucent());
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.GIRATINA_CORE_N, RenderType.translucent());
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.GIRATINA_CORE_NE, RenderType.translucent());
@@ -350,6 +363,8 @@ public class CobbleSafariClientNeoForge {
             BlockEntityRenderers.register(ModBlockEntities.DUNGEON_PORTAL, DungeonPortalBlockEntityRenderer::new);
             BlockEntityRenderers.register(ModBlockEntities.VOID_BLOCK, VoidBlockRenderer::new);
             BlockEntityRenderers.register(ModBlockEntities.GIRATINA_CORE, GiratinaCoreBlockEntityRenderer::new);
+            BlockEntityRenderers.register(ModBlockEntities.ULTRAWARPDIVE,
+                    maxigregrze.cobblesafari.client.renderer.UltraWarpDiveBlockEntityRenderer::new);
             BlockEntityRenderers.register(ModBlockEntities.DISTORTION_PORTAL, DistortionPortalBlockEntityRenderer::new);
             BlockEntityRenderers.register(ModBlockEntities.LOST_ITEM, LostItemBlockEntityRenderer::new);
             BlockEntityRenderers.register(ModBlockEntities.LIGHTNINGSPOT, LightningSpotBlockEntityRenderer::new);
@@ -369,6 +384,9 @@ public class CobbleSafariClientNeoForge {
             BlockEntityRenderers.register(ModBlockEntities.TELEPORT_PAD, maxigregrze.cobblesafari.client.renderer.TeleportPadBlockEntityRenderer::new);
             BlockEntityRenderers.register(ModBlockEntities.CSBOSS_MIMIC, maxigregrze.cobblesafari.client.renderer.CsBossMimicBlockEntityRenderer::new);
             BlockEntityRenderers.register(ModBlockEntities.HYPERSPACE_TRASHCAN, maxigregrze.cobblesafari.client.renderer.HyperspaceTrashcanBlockEntityRenderer::new);
+            // Sheets builds SIGN_MATERIALS / HANGING_SIGN_MATERIALS from WoodType.values() at class load,
+            // which happens before common setup registers HYPERSPACE - without this the sign material is null.
+            net.minecraft.client.renderer.Sheets.addWoodType(maxigregrze.cobblesafari.init.ModWoodTypes.HYPERSPACE);
             BlockEntityRenderers.register(ModBlockEntities.HYPERSPACE_SIGN, net.minecraft.client.renderer.blockentity.SignRenderer::new);
             BlockEntityRenderers.register(ModBlockEntities.HYPERSPACE_HANGING_SIGN, net.minecraft.client.renderer.blockentity.HangingSignRenderer::new);
         });
@@ -484,6 +502,7 @@ public class CobbleSafariClientNeoForge {
     @SubscribeEvent
     public static void onRegisterLayerDefinitions(EntityRenderersEvent.RegisterLayerDefinitions event) {
         event.registerLayerDefinition(BalloonEntityModel.LAYER_LOCATION, BalloonEntityModel::createBodyLayer);
+        event.registerLayerDefinition(CsTraderEntityRenderer.LAYER_LOCATION, CsTraderEntityRenderer::createBodyLayer);
     }
 
     public static void onClientTick(net.neoforged.neoforge.client.event.ClientTickEvent.Post event) {
@@ -583,6 +602,10 @@ public class CobbleSafariClientNeoForge {
         context.enqueueWork(() -> {
             Minecraft.getInstance().setScreen(new LostItemConfigScreen(payload));
         });
+    }
+
+    public static void handleOpenPortalSpawnerConfig(OpenPortalSpawnerConfigPayload payload, IPayloadContext context) {
+        context.enqueueWork(() -> Minecraft.getInstance().setScreen(new PortalSpawnerConfigScreen(payload)));
     }
 
     public static void handleOpenAuspiciousPokeballConfig(OpenAuspiciousPokeballConfigPayload payload, IPayloadContext context) {

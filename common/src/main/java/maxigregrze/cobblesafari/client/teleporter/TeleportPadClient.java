@@ -80,7 +80,8 @@ public final class TeleportPadClient {
     private static boolean opensConfigGui(LocalPlayer player, BlockState pad) {
         if (pad.is(ModBlocks.SURVIVAL_TELEPORT_PAD)) {
             return player.getMainHandItem().is(ModItems.TINKHAMMER)
-                    || player.getOffhandItem().is(ModItems.TINKHAMMER);
+                    || player.getOffhandItem().is(ModItems.TINKHAMMER)
+                    || (player.getAbilities().instabuild && player.getMainHandItem().isEmpty());
         }
         if (pad.is(ModBlocks.TELEPORT_PAD)) {
             return player.getAbilities().instabuild && player.getMainHandItem().isEmpty();

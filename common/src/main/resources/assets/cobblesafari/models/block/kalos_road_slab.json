@@ -1,6 +1,5 @@
 {
   "parent": "minecraft:block/block",
-  "ambientocclusion": false,
   "textures": {
     "bottom": "cobblesafari:block/kalos_road",
     "top": "cobblesafari:block/kalos_road",

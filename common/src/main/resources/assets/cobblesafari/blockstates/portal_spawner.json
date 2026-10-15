@@ -1,0 +1,19 @@
+{
+	"variants": {
+		"facing=north": {
+			"model": "cobblesafari:block/portal_spawner"
+		},
+		"facing=south": {
+			"model": "cobblesafari:block/portal_spawner",
+			"y": 180
+		},
+		"facing=west": {
+			"model": "cobblesafari:block/portal_spawner",
+			"y": 270
+		},
+		"facing=east": {
+			"model": "cobblesafari:block/portal_spawner",
+			"y": 90
+		}
+	}
+}

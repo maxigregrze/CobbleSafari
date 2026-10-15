@@ -25,6 +25,9 @@ import maxigregrze.cobblesafari.network.SaveAuspiciousPokeballGoldConfigPayload;
 import maxigregrze.cobblesafari.network.LostItemResetClaimsPayload;
 import maxigregrze.cobblesafari.network.AuspiciousPokeballResetClaimsPayload;
 import maxigregrze.cobblesafari.network.LostItemConfigServerHandler;
+import maxigregrze.cobblesafari.network.OpenPortalSpawnerConfigPayload;
+import maxigregrze.cobblesafari.network.PortalSpawnerConfigServerHandler;
+import maxigregrze.cobblesafari.network.SavePortalSpawnerConfigPayload;
 import maxigregrze.cobblesafari.network.AuspiciousPokeballConfigServerHandler;
 import maxigregrze.cobblesafari.network.AuspiciousPokeballGoldConfigServerHandler;
 import maxigregrze.cobblesafari.network.SaveRuneTextPayload;
@@ -174,6 +177,8 @@ public class CobbleSafariNeoForge {
                     CobbleSafariClientNeoForge::handleOpenLostNoteBook);
             registrar.playToClient(OpenLostItemConfigPayload.TYPE, OpenLostItemConfigPayload.STREAM_CODEC,
                     CobbleSafariClientNeoForge::handleOpenLostItemConfig);
+            registrar.playToClient(OpenPortalSpawnerConfigPayload.TYPE, OpenPortalSpawnerConfigPayload.STREAM_CODEC,
+                    CobbleSafariClientNeoForge::handleOpenPortalSpawnerConfig);
             registrar.playToClient(OpenAuspiciousPokeballConfigPayload.TYPE, OpenAuspiciousPokeballConfigPayload.STREAM_CODEC,
                     CobbleSafariClientNeoForge::handleOpenAuspiciousPokeballConfig);
             registrar.playToClient(OpenAuspiciousPokeballGoldConfigPayload.TYPE, OpenAuspiciousPokeballGoldConfigPayload.STREAM_CODEC,
@@ -220,6 +225,8 @@ public class CobbleSafariNeoForge {
             registrar.playToClient(OpenLostNoteBookPayload.TYPE, OpenLostNoteBookPayload.STREAM_CODEC,
                     (payload, context) -> {});
             registrar.playToClient(OpenLostItemConfigPayload.TYPE, OpenLostItemConfigPayload.STREAM_CODEC,
+                    (payload, context) -> {});
+            registrar.playToClient(OpenPortalSpawnerConfigPayload.TYPE, OpenPortalSpawnerConfigPayload.STREAM_CODEC,
                     (payload, context) -> {});
             registrar.playToClient(OpenAuspiciousPokeballConfigPayload.TYPE, OpenAuspiciousPokeballConfigPayload.STREAM_CODEC,
                     (payload, context) -> {});
@@ -286,6 +293,13 @@ public class CobbleSafariNeoForge {
                         }
                     });
                 });
+
+        registrar.playToServer(SavePortalSpawnerConfigPayload.TYPE, SavePortalSpawnerConfigPayload.STREAM_CODEC,
+                (payload, context) -> context.enqueueWork(() -> {
+                    if (context.player() instanceof ServerPlayer sp) {
+                        PortalSpawnerConfigServerHandler.handleSave(sp, payload);
+                    }
+                }));
 
         registrar.playToServer(SaveLostItemConfigPayload.TYPE, SaveLostItemConfigPayload.STREAM_CODEC,
                 (payload, context) -> {

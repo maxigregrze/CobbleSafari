@@ -42,20 +42,20 @@ public final class SafariHazardLib {
                                              double radius, double height, DamageSource source,
                                              float damage, int fireTicks) {
         double r2 = radius * radius;
-        for (ServerPlayer p : level.players()) {
-            if (p.isSpectator() || !p.isAlive()) {
-                continue;
-            }
+        // Resolve the targets through the entity index (a fresh list) rather than the level's live
+        // player list: a lethal hit inside a timed dimension is rescued synchronously from within
+        // hurt() (DimensionTimerDeathHandler), which removes the player from that list mid-loop.
+        AABB column = new AABB(cx - radius, baseY, cz - radius, cx + radius, baseY + height, cz + radius);
+        for (ServerPlayer p : level.getEntitiesOfClass(ServerPlayer.class, column,
+                p -> !p.isSpectator() && p.isAlive())) {
             double dx = p.getX() - cx;
             double dz = p.getZ() - cz;
             if (dx * dx + dz * dz > r2) {
                 continue;
             }
-            if (p.getY() + p.getBbHeight() < baseY || p.getY() > baseY + height) {
-                continue;
-            }
             p.hurt(source, damage);
-            if (fireTicks > 0) {
+            // A rescued player is no longer here and must not leave burning at 1 HP.
+            if (fireTicks > 0 && p.serverLevel() == level) {
                 p.setRemainingFireTicks(Math.max(p.getRemainingFireTicks(), fireTicks));
             }
         }

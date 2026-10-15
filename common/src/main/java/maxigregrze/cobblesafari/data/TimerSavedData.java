@@ -60,8 +60,21 @@ public class TimerSavedData extends SavedData {
      */
     private final Map<UUID, ReturnPoint> pendingReturns = new HashMap<>();
 
-    /** Where a disconnected dungeon occupant should reappear. */
-    public record ReturnPoint(BlockPos pos, ResourceKey<Level> dimension) {}
+    /**
+     * Where a disconnected dungeon occupant should reappear.
+     *
+     * <p>For a nested visit (action plan 190, J2) {@code pos} is the device inside the parent
+     * dungeon, which may itself be cleared while the player is away. The parent fields carry the
+     * fallback: the parent session's key and that session's own origin, recorded at disconnect
+     * because the parent session is purged with its instance. All three are null otherwise.</p>
+     */
+    public record ReturnPoint(BlockPos pos, ResourceKey<Level> dimension,
+                              String parentScopeKey, BlockPos parentPos, ResourceKey<Level> parentDimension) {
+
+        public boolean hasParentFallback() {
+            return parentPos != null && parentDimension != null;
+        }
+    }
 
     private static String originKey(UUID playerId, String dimensionId) {
         return playerId + "|" + dimensionId;
@@ -114,10 +127,20 @@ public class TimerSavedData extends SavedData {
             for (String key : returns.getAllKeys()) {
                 try {
                     CompoundTag entry = returns.getCompound(key);
+                    // The parent fields are optional: an entry written before plan 190 has none.
+                    String parentScopeKey = entry.contains("ParentScope") ? entry.getString("ParentScope") : null;
+                    BlockPos parentPos = null;
+                    ResourceKey<Level> parentDimension = null;
+                    if (entry.contains("ParentDim")) {
+                        parentPos = new BlockPos(entry.getInt("ParentX"), entry.getInt("ParentY"), entry.getInt("ParentZ"));
+                        parentDimension = ResourceKey.create(Registries.DIMENSION,
+                                ResourceLocation.parse(entry.getString("ParentDim")));
+                    }
                     data.pendingReturns.put(UUID.fromString(key), new ReturnPoint(
                             new BlockPos(entry.getInt("X"), entry.getInt("Y"), entry.getInt("Z")),
                             ResourceKey.create(Registries.DIMENSION,
-                                    ResourceLocation.parse(entry.getString("Dim")))));
+                                    ResourceLocation.parse(entry.getString("Dim"))),
+                            parentScopeKey, parentPos, parentDimension));
                 } catch (IllegalArgumentException e) {
                     CobbleSafari.LOGGER.warn("Skipping malformed pending dungeon return '{}'", key);
                 }
@@ -188,6 +211,15 @@ public class TimerSavedData extends SavedData {
             entry.putInt("Y", point.pos().getY());
             entry.putInt("Z", point.pos().getZ());
             entry.putString("Dim", point.dimension().location().toString());
+            if (point.parentScopeKey() != null) {
+                entry.putString("ParentScope", point.parentScopeKey());
+            }
+            if (point.hasParentFallback()) {
+                entry.putInt("ParentX", point.parentPos().getX());
+                entry.putInt("ParentY", point.parentPos().getY());
+                entry.putInt("ParentZ", point.parentPos().getZ());
+                entry.putString("ParentDim", point.parentDimension().location().toString());
+            }
             returnsTag.put(playerId.toString(), entry);
         });
         tag.put(KEY_PENDING_RETURN, returnsTag);
@@ -294,8 +326,8 @@ public class TimerSavedData extends SavedData {
         return legacyOrigins.remove(originKey(playerId, dimensionId));
     }
 
-    public void setPendingReturn(UUID playerId, BlockPos pos, ResourceKey<Level> dimension) {
-        pendingReturns.put(playerId, new ReturnPoint(pos, dimension));
+    public void setPendingReturn(UUID playerId, ReturnPoint point) {
+        pendingReturns.put(playerId, point);
         setDirty();
     }
 

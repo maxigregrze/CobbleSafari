@@ -21,6 +21,7 @@ import maxigregrze.cobblesafari.client.renderer.GiratinaCoreBlockEntityRenderer;
 import maxigregrze.cobblesafari.client.renderer.AuspiciousPokeballBlockEntityRenderer;
 import maxigregrze.cobblesafari.client.renderer.DistortionPortalBlockEntityRenderer;
 import maxigregrze.cobblesafari.client.DungeonDistortionDimensionEffects;
+import maxigregrze.cobblesafari.client.UltraCraterDimensionEffects;
 import maxigregrze.cobblesafari.mixin.client.DimensionSpecialEffectsAccessor;
 import maxigregrze.cobblesafari.client.renderer.LightningSpotBlockEntityRenderer;
 import maxigregrze.cobblesafari.client.renderer.LostItemBlockEntityRenderer;
@@ -99,6 +100,10 @@ public class CobbleSafariClientFabric implements ClientModInitializer {
                 ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, "dungeon_distortion"),
                 new DungeonDistortionDimensionEffects()
         );
+        DimensionSpecialEffectsAccessor.getEffects().put(
+                ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, "dungeon_ultra_crater"),
+                new UltraCraterDimensionEffects()
+        );
         registerTooltips();
         DonutItemClientSetup.registerItemProperties();
         registerClientNetworking();
@@ -110,6 +115,7 @@ public class CobbleSafariClientFabric implements ClientModInitializer {
         registerDungeonMusic();
         maxigregrze.cobblesafari.client.ClientBlockHooks.init();
         maxigregrze.cobblesafari.client.RotomPhoneModelLoadingPlugin.register();
+        maxigregrze.cobblesafari.client.UltraWarpDiveModelLoadingPlugin.register();
         KeyBindingHelper.registerKeyBinding(maxigregrze.cobblesafari.client.rotomphone.RotomPhoneKeybind.OPEN_PHONE);
         KeyBindingHelper.registerKeyBinding(maxigregrze.cobblesafari.client.objectives.ObjectivesKeybind.TOGGLE_HUD);
         maxigregrze.cobblesafari.client.hud.HudClientConfig.reload();
@@ -218,10 +224,16 @@ public class CobbleSafariClientFabric implements ClientModInitializer {
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.HOOPA_RING_PORTAL, RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.DUNGEON_PORTAL, RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.CREATIVE_DUNGEON_PORTAL, RenderType.cutout());
+        // Graded-alpha shadow texture (action plan 188, S1).
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.PORTAL_SPAWNER, RenderType.translucent());
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.DUNGEON_PORTAL_EFFECT, RenderType.translucent());
         // Translucent, not cutout: ultra_entrance_portal.png carries a graded alpha channel, and
         // cutout would round every texel to fully opaque or fully gone (action plan 183, B2).
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.ULTRA_ENTRANCE_PORTAL, RenderType.translucent());
+        // Ultra Warp Dive props (plan 189): the positive's aura has graded alpha; the rocks are drawn
+        // by their block entity renderer only.
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.ULTRAWARPDIVE_POSITIVE, RenderType.translucent());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.ULTRAWARPDIVE_NEGATIVE, RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.GIRATINA_CORE, RenderType.translucent());
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.GIRATINA_CORE_N, RenderType.translucent());
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.GIRATINA_CORE_NE, RenderType.translucent());
@@ -461,6 +473,8 @@ public class CobbleSafariClientFabric implements ClientModInitializer {
         BlockEntityRenderers.register(ModBlockEntities.DUNGEON_PORTAL, DungeonPortalBlockEntityRenderer::new);
         BlockEntityRenderers.register(ModBlockEntities.VOID_BLOCK, VoidBlockRenderer::new);
         BlockEntityRenderers.register(ModBlockEntities.GIRATINA_CORE, GiratinaCoreBlockEntityRenderer::new);
+        BlockEntityRenderers.register(ModBlockEntities.ULTRAWARPDIVE,
+                maxigregrze.cobblesafari.client.renderer.UltraWarpDiveBlockEntityRenderer::new);
         BlockEntityRenderers.register(ModBlockEntities.DISTORTION_PORTAL, DistortionPortalBlockEntityRenderer::new);
         BlockEntityRenderers.register(ModBlockEntities.LOST_ITEM, LostItemBlockEntityRenderer::new);
         BlockEntityRenderers.register(ModBlockEntities.LIGHTNINGSPOT, LightningSpotBlockEntityRenderer::new);
@@ -515,6 +529,7 @@ public class CobbleSafariClientFabric implements ClientModInitializer {
         EntityRendererRegistry.register(ModEntities.HYPERSPACE_CHEST_BOAT,
                 ctx -> new maxigregrze.cobblesafari.client.renderer.HyperspaceBoatRenderer(ctx, true));
         EntityModelLayerRegistry.registerModelLayer(BalloonEntityModel.LAYER_LOCATION, BalloonEntityModel::createBodyLayer);
+        EntityModelLayerRegistry.registerModelLayer(CsTraderEntityRenderer.LAYER_LOCATION, CsTraderEntityRenderer::createBodyLayer);
     }
 
     private void registerScreens() {

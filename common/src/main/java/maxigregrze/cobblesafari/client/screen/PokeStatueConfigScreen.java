@@ -1,6 +1,7 @@
 package maxigregrze.cobblesafari.client.screen;
 
 import maxigregrze.cobblesafari.block.pokestatue.AbstractPokeStatueBlockEntity;
+import maxigregrze.cobblesafari.block.pokestatue.CreativeStatueBlockEntity;
 import maxigregrze.cobblesafari.block.pokestatue.PokeStatueVariant;
 import maxigregrze.cobblesafari.client.renderer.PokeStatueModelRenderer;
 import maxigregrze.cobblesafari.network.OpenPokeStatueConfigPayload;
@@ -25,6 +26,11 @@ import java.util.Map;
  *
  * <p>Reset restores the values the screen was opened with; Confirm saves and closes; Esc closes
  * without saving (inherited from {@code Screen}).</p>
+ *
+ * <p>The Creative Statue adds two tickboxes on title lines (action plan 190, B7): <b>fixed</b> on
+ * the animation row - unticked, the statue plays its animation and the progress row becomes a speed
+ * row in the same stepper - and <b>dummy if no model</b> on the species row. Progress and speed are
+ * two values kept side by side; switching only changes which one the field shows.</p>
  */
 public class PokeStatueConfigScreen extends CobbleSafariConfigScreen {
 
@@ -42,6 +48,9 @@ public class PokeStatueConfigScreen extends CobbleSafariConfigScreen {
     private final int initialColor;
     private final String initialAnimation;
     private final float initialProgress;
+    private final boolean initialFixed;
+    private final float initialSpeed;
+    private final boolean initialShowDummy;
 
     private int mode;
     /** Selectable animations for the species currently typed; index 0 is always the default pose. */
@@ -56,6 +65,14 @@ public class PokeStatueConfigScreen extends CobbleSafariConfigScreen {
     private int modeRowY;
     private int animationRowY;
 
+    // Creative Statue playback options. Working values survive a resize, which re-runs init().
+    private boolean fixed;
+    private float progress;
+    private float speed;
+    private boolean showDummy;
+    private CobbleSafariConfigScreen.TitleTickbox fixedTickbox;
+    private CobbleSafariConfigScreen.TitleTickbox dummyTickbox;
+
     public PokeStatueConfigScreen(OpenPokeStatueConfigPayload initial) {
         super(Component.translatable("gui.cobblesafari.pokestatue.title"));
         this.pos = initial.pos();
@@ -66,7 +83,24 @@ public class PokeStatueConfigScreen extends CobbleSafariConfigScreen {
         this.initialColor = initial.color();
         this.initialAnimation = initial.animation();
         this.initialProgress = initial.progress();
+        this.initialFixed = initial.fixed();
+        this.initialSpeed = initial.speed();
+        this.initialShowDummy = initial.showDummy();
         this.mode = initial.mode();
+        this.fixed = initial.fixed();
+        this.progress = initial.progress();
+        this.speed = initial.speed();
+        this.showDummy = initial.showDummy();
+    }
+
+    /** The playback options exist only on the Creative Statue; the regular one stays as it was. */
+    private boolean hasPlaybackOptions() {
+        return this.variant == PokeStatueVariant.CREATIVE;
+    }
+
+    /** Whether the stepper currently edits the speed rather than the progress. */
+    private boolean editingSpeed() {
+        return hasPlaybackOptions() && !this.fixed;
     }
 
     @Override
@@ -77,6 +111,10 @@ public class PokeStatueConfigScreen extends CobbleSafariConfigScreen {
         this.speciesBox = makeEditBox(left, y, PANEL_WIDTH,
                 AbstractPokeStatueBlockEntity.MAX_SPECIES_LENGTH, this.initialSpecies);
         this.speciesBox.setResponder(s -> refreshAnimations(false));
+        if (hasPlaybackOptions()) {
+            this.dummyTickbox = addTitleTickbox(y, Component.translatable("gui.cobblesafari.pokestatue.show_dummy"),
+                    this.showDummy, ticked -> this.showDummy = ticked);
+        }
         y += this.fieldStride();
 
         this.modeRowY = y;
@@ -87,6 +125,10 @@ public class PokeStatueConfigScreen extends CobbleSafariConfigScreen {
         y += rowStride();
 
         this.animationRowY = y;
+        if (hasPlaybackOptions()) {
+            this.fixedTickbox = addTitleTickbox(y, Component.translatable("gui.cobblesafari.pokestatue.fixed"),
+                    this.fixed, this::setFixed);
+        }
         addScroll(Button.builder(Component.literal("<"), b -> cycleAnimation(-1))
                 .bounds(left, y, ARROW_WIDTH, BUTTON_HEIGHT).build());
         addScroll(Button.builder(Component.literal(">"), b -> cycleAnimation(1))
@@ -94,17 +136,19 @@ public class PokeStatueConfigScreen extends CobbleSafariConfigScreen {
         y += rowStride();
 
         // Progress stepper: « ‹ [field] › »  -- 20+20+4+220+4+20+20 = 308.
-        addScroll(Button.builder(Component.literal("«"), b -> nudgeProgress(-STEP_COARSE))
+        addScroll(Button.builder(Component.literal("«"), b -> nudgeStepper(-STEP_COARSE))
                 .bounds(left, y, ARROW_WIDTH, BUTTON_HEIGHT).build());
-        addScroll(Button.builder(Component.literal("‹"), b -> nudgeProgress(-STEP_FINE))
+        addScroll(Button.builder(Component.literal("‹"), b -> nudgeStepper(-STEP_FINE))
                 .bounds(left + ARROW_WIDTH, y, ARROW_WIDTH, BUTTON_HEIGHT).build());
         int fieldX = left + 2 * ARROW_WIDTH + STEP_GAP;
         int fieldWidth = PANEL_WIDTH - 4 * ARROW_WIDTH - 2 * STEP_GAP;
-        this.progressBox = makeEditBox(fieldX, y, fieldWidth, 4, formatProgress(this.initialProgress));
-        this.progressBox.setFilter(PokeStatueConfigScreen::isProgressDraft);
-        addScroll(Button.builder(Component.literal("›"), b -> nudgeProgress(STEP_FINE))
+        this.progressBox = makeEditBox(fieldX, y, fieldWidth, 4, "");
+        showStepperValue();
+        // Typed values land in whichever of the two the field currently shows.
+        this.progressBox.setResponder(s -> storeStepperValue());
+        addScroll(Button.builder(Component.literal("›"), b -> nudgeStepper(STEP_FINE))
                 .bounds(fieldX + fieldWidth + STEP_GAP, y, ARROW_WIDTH, BUTTON_HEIGHT).build());
-        addScroll(Button.builder(Component.literal("»"), b -> nudgeProgress(STEP_COARSE))
+        addScroll(Button.builder(Component.literal("»"), b -> nudgeStepper(STEP_COARSE))
                 .bounds(left + PANEL_WIDTH - ARROW_WIDTH, y, ARROW_WIDTH, BUTTON_HEIGHT).build());
         y += rowStride();
 
@@ -161,24 +205,53 @@ public class PokeStatueConfigScreen extends CobbleSafariConfigScreen {
         this.animationIndex = ((this.animationIndex + direction) % count + count) % count;
     }
 
-    // -- progress -----------------------------------------------------------
+    // -- progress / speed stepper -------------------------------------------
 
     /** Accepts partial input on the way to a valid value ("", "0", "0.", "0.4", "1"). */
     private static boolean isProgressDraft(String s) {
         return s.isEmpty() || s.matches("[01](\\.\\d{0,2})?");
     }
 
-    private void nudgeProgress(float delta) {
-        float next = AbstractPokeStatueBlockEntity.sanitizeProgress(parseProgress() + delta);
-        this.progressBox.setValue(formatProgress(next));
+    /** Fixed ticked: the field edits the progress. Unticked: the same field edits the speed. */
+    private void setFixed(boolean fixed) {
+        storeStepperValue();
+        this.fixed = fixed;
+        showStepperValue();
     }
 
-    private float parseProgress() {
-        try {
-            return AbstractPokeStatueBlockEntity.sanitizeProgress(Float.parseFloat(this.progressBox.getValue().trim()));
-        } catch (NumberFormatException e) {
-            return 0.0f;
+    /** Loads the value the field should show, with that value's filter. */
+    private void showStepperValue() {
+        // Filter first: setValue refuses a value the current filter rejects.
+        if (editingSpeed()) {
+            // A speed drafts like a scale ("0" to "5.00"), and is clamped the same way on parse.
+            this.progressBox.setFilter(this::isScaleDraft);
+        } else {
+            this.progressBox.setFilter(PokeStatueConfigScreen::isProgressDraft);
         }
+        this.progressBox.setValue(formatProgress(editingSpeed() ? this.speed : this.progress));
+    }
+
+    /** Keeps the shown value's working copy in step with the field. An unparsable draft is skipped. */
+    private void storeStepperValue() {
+        try {
+            float typed = Float.parseFloat(this.progressBox.getValue().trim());
+            if (editingSpeed()) {
+                this.speed = CreativeStatueBlockEntity.sanitizeSpeed(typed);
+            } else {
+                this.progress = AbstractPokeStatueBlockEntity.sanitizeProgress(typed);
+            }
+        } catch (NumberFormatException e) {
+            // "", "." - a draft on its way to a number; the last valid value stands.
+        }
+    }
+
+    private void nudgeStepper(float delta) {
+        if (editingSpeed()) {
+            this.speed = CreativeStatueBlockEntity.sanitizeSpeed(this.speed + delta);
+        } else {
+            this.progress = AbstractPokeStatueBlockEntity.sanitizeProgress(this.progress + delta);
+        }
+        showStepperValue();
     }
 
     private static String formatProgress(float value) {
@@ -235,7 +308,17 @@ public class PokeStatueConfigScreen extends CobbleSafariConfigScreen {
         this.mode = this.initialMode;
         this.scaleBox.setValue(formatScale(this.initialScale));
         this.colorBox.setValue(formatColor(this.initialColor));
-        this.progressBox.setValue(formatProgress(this.initialProgress));
+        this.progress = this.initialProgress;
+        this.speed = this.initialSpeed;
+        this.fixed = this.initialFixed;
+        this.showDummy = this.initialShowDummy;
+        if (this.fixedTickbox != null) {
+            this.fixedTickbox.setTicked(this.fixed);
+        }
+        if (this.dummyTickbox != null) {
+            this.dummyTickbox.setTicked(this.showDummy);
+        }
+        showStepperValue();
         refreshAnimations(true);
     }
 
@@ -248,7 +331,11 @@ public class PokeStatueConfigScreen extends CobbleSafariConfigScreen {
                 parseScale(),
                 parseColor(this.colorBox.getValue()),
                 currentAnimation(),
-                parseProgress()));
+                this.progress,
+                // The regular statue ignores these server-side; sent as its own defaults anyway.
+                !hasPlaybackOptions() || this.fixed,
+                this.speed,
+                !hasPlaybackOptions() || this.showDummy));
         this.onClose();
     }
 
@@ -262,7 +349,8 @@ public class PokeStatueConfigScreen extends CobbleSafariConfigScreen {
         drawFieldLabel(g, this.speciesBox, "gui.cobblesafari.pokestatue.species");
         drawFieldLabel(g, this.scaleBox, "gui.cobblesafari.pokestatue.scale");
         drawFieldLabel(g, this.colorBox, "gui.cobblesafari.pokestatue.color");
-        drawFieldLabel(g, this.progressBox, "gui.cobblesafari.pokestatue.progress");
+        drawFieldLabel(g, this.progressBox, editingSpeed()
+                ? "gui.cobblesafari.pokestatue.speed" : "gui.cobblesafari.pokestatue.progress");
 
         int left = this.panelLeft();
         drawSelector(g, left, this.modeRowY, this.variant.modeLabelKey(),

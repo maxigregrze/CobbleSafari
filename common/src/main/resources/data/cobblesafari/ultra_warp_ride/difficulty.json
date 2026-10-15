@@ -33,6 +33,8 @@
     "secondMovePercentPerStep":     [0, 0, 0, 5],
 
     "alphaPercentBase":             [0, 1, 2, 3],
-    "alphaPercentPerStep":          [0, 1, 2, 3]
+    "alphaPercentPerStep":          [0, 1, 2, 3],
+
+    "rewardPoolPercent":            [0, 15, 25, 50]
   }
 }

@@ -126,9 +126,10 @@ public class UltraWormholeBlock extends BaseEntityBlock {
      * Walking into the portal is what sends you home - there is nothing to right-click.
      *
      * <p>{@code entityInside} fires for any entity whose bounding box overlaps this block, with no
-     * collision required, which is exactly how a nether portal works. Re-entry within the same tick
-     * is harmless: {@link SubDungeonManager#returnThroughExit} reads the player's current scope, and
-     * by the second call they are already standing in the parent dimension, so it returns at once.</p>
+     * collision required, which is exactly how a nether portal works. The return itself is only
+     * <em>queued</em> here and runs on the next server tick (action plan 190, P5): this callback
+     * fires inside the movement packet handler, where a dimension change gets overwritten by the
+     * client's old coordinates. Repeated calls before then are harmless - the queue is a set.</p>
      */
     @Override
     protected void entityInside(BlockState state, Level level, BlockPos pos, Entity entity) {

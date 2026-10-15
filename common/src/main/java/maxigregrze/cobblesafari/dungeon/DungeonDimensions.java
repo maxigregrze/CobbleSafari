@@ -170,28 +170,26 @@ public class DungeonDimensions {
                 512, 1, 10
         ).withFixedStructureY(64).asSubDungeon());
 
-        // The four sub-dungeons that own their dimension (action plan 187, § 5).
+        // The four sub-dungeons that own their dimension (action plan 187, § 5; heights from the
+        // delivered .nbt, plan 190 § 4.4).
         //
-        // The vertical layout is the whole design, and it is stated relative to the surface, which
-        // the flat generator tops out at SURFACE_Y:
+        // /place jigsaw sinks a single-piece start by one course (JigsawPlacement.addPieces moves it
+        // by -groundLevelDelta), so the start jigsaw lands at anchor - 1 and:
         //
-        //     anchor      = SURFACE_Y + 32   the start jigsaw, 32 courses up inside start_1.nbt,
-        //                                    so the structure's own floor lands ON the ground
-        //     voidGuardY  = SURFACE_Y + 16   halfway up it
+        //     anchor = floor + 1 + jigsaw Y in the .nbt      floor = first free block above ground
         //
-        // The structure therefore STRADDLES the guard. Its lower courses sit inside the surface and
-        // the decoration band and are never meant to be occupied - the guard is what evacuates
-        // anyone who drops into them - while everything above the guard is the dungeon proper. That
-        // is what buys the interlock with the terrain, and it is also why these four opt into
-        // worldgen restoration: the clear window has to come down through the ground to erase the
-        // buried half, so the ground must be rebuilt behind it.
+        //   jungle  ground top 153, jigsaw 46 -> 201. Clouds (fixed at 192) cross the middle of the
+        //           76-high structure; the guard is the top of the jungle decoration.
+        //   desert  ground top 1,   jigsaw 10 -> 13.  Guard 3 below the jigsaw.
+        //   crater  ground top 163, jigsaw 12 -> 177. Clouds 16 above the jigsaw; guard 3 below it.
+        //   plant   unchanged from plan 187: it still straddles its guard by design.
         //
-        // The altitudes are PROVISIONAL (decision § 5.1). Only jungle's differs, sitting high enough
-        // to meet the overworld's fixed cloud deck at Y 192.
-        registerUltraSubDungeon("dungeon_ultra_jungle", DUNGEON_ULTRA_JUNGLE, 192, 176);
-        registerUltraSubDungeon("dungeon_ultra_desert", DUNGEON_ULTRA_DESERT, 35, 19);
+        // All four opt into worldgen restoration: the clear window runs to the bottom of the world,
+        // through the ground, so the ground must be rebuilt behind it.
+        registerUltraSubDungeon("dungeon_ultra_jungle", DUNGEON_ULTRA_JUNGLE, 201, 176);
+        registerUltraSubDungeon("dungeon_ultra_desert", DUNGEON_ULTRA_DESERT, 13, 9);
         registerUltraSubDungeon("dungeon_ultra_plant", DUNGEON_ULTRA_PLANT, 35, 19);
-        registerUltraSubDungeon("dungeon_ultra_crater", DUNGEON_ULTRA_CRATER, 35, 19);
+        registerUltraSubDungeon("dungeon_ultra_crater", DUNGEON_ULTRA_CRATER, 177, 173);
 
         recalculateTotalWeight();
         reindex();

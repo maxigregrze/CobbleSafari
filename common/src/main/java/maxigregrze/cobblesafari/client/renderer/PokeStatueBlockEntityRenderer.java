@@ -52,12 +52,16 @@ public class PokeStatueBlockEntityRenderer<T extends AbstractPokeStatueBlockEnti
     private final Map<String, PokeStatueModelRenderer.StatueSpecies> speciesCache = new HashMap<>();
     private final Map<BlockPos, CachedPose> poseCache = new HashMap<>();
 
-    /** A prepared model state plus the configuration it was built from. */
-    private record CachedPose(String species, String animation, float progress,
+    /**
+     * A prepared model state plus the configuration it was built from. A playing statue is built at
+     * progress 0 and keyed with {@code fixed = false}, so its progress value - kept, but not shown -
+     * never forces a rebuild.
+     */
+    private record CachedPose(String species, String animation, boolean fixed, float progress,
                               PokeStatueModelRenderer.StatueSpecies info,
                               PokeStatueModelRenderer.FrozenPose pose) {
-        boolean matches(String s, String a, float p) {
-            return species.equals(s) && animation.equals(a) && progress == p;
+        boolean matches(String s, String a, boolean f, float p) {
+            return species.equals(s) && animation.equals(a) && fixed == f && progress == p;
         }
     }
 
@@ -85,7 +89,7 @@ public class PokeStatueBlockEntityRenderer<T extends AbstractPokeStatueBlockEnti
             }
             return;
         }
-        renderPokemon(data, block, state, blockEntity.getBlockPos(), poseStack, bufferSource, packedLight);
+        renderPokemon(data, block, state, blockEntity.getBlockPos(), partialTick, poseStack, bufferSource, packedLight);
     }
 
     // -- pedestal (regular statue, lower half) ------------------------------
@@ -141,19 +145,32 @@ public class PokeStatueBlockEntityRenderer<T extends AbstractPokeStatueBlockEnti
     // -- the Pokémon --------------------------------------------------------
 
     private void renderPokemon(AbstractPokeStatueBlockEntity data, AbstractPokeStatueBlock block,
-                               BlockState state, BlockPos pos, PoseStack poseStack,
+                               BlockState state, BlockPos pos, float partialTick, PoseStack poseStack,
                                MultiBufferSource bufferSource, int packedLight) {
         CachedPose cached = cachedPose(data, pos);
+        // A species Cobblemon knows but cannot draw would come out as the substitute: draw nothing
+        // instead unless asked to. An empty field resolves to the substitute itself, not to this
+        // case, so it keeps its dummy (action plan 190, B7).
+        if (cached.info().modelless() && !data.showsDummyWithoutModel()) {
+            return;
+        }
         float scale = cached.info().fitScale() * data.getScale();
         if (scale <= 0.0001f) {
             return;
         }
         PokeStatueRenderStyle style = data.renderStyle();
 
+        PokeStatueModelRenderer.Playhead playhead = cached.pose().held();
+        if (!data.isAnimationFixed() && data.getLevel() != null) {
+            // World time, so a paused game pauses the statue and every client sees the same frame.
+            double elapsed = (data.getLevel().getGameTime() + partialTick) / 20.0 * data.getAnimationSpeed();
+            playhead = PokeStatueModelRenderer.seek(cached.pose(), elapsed);
+        }
+
         poseStack.pushPose();
         poseStack.translate(0.5, block.modelOriginY(), 0.5);
         PokeStatueModelRenderer.render(poseStack, bufferSource, packedLight,
-                cached.info(), cached.pose(), scale, style,
+                cached.info(), cached.pose(), playhead, scale, style,
                 state.getValue(AbstractPokeStatueBlock.FACING).toYRot());
         poseStack.popPose();
     }
@@ -165,9 +182,10 @@ public class PokeStatueBlockEntityRenderer<T extends AbstractPokeStatueBlockEnti
     private CachedPose cachedPose(AbstractPokeStatueBlockEntity data, BlockPos pos) {
         String species = data.getSpecies();
         String animation = data.getAnimation();
-        float progress = data.getProgress();
+        boolean fixed = data.isAnimationFixed();
+        float progress = fixed ? data.getProgress() : 0.0f;
         CachedPose cached = poseCache.get(pos);
-        if (cached != null && cached.matches(species, animation, progress)) {
+        if (cached != null && cached.matches(species, animation, fixed, progress)) {
             return cached;
         }
         if (poseCache.size() >= MAX_CACHED_POSES) {
@@ -175,7 +193,7 @@ public class PokeStatueBlockEntityRenderer<T extends AbstractPokeStatueBlockEnti
         }
         PokeStatueModelRenderer.StatueSpecies info =
                 PokeStatueModelRenderer.resolve(species, this.speciesCache);
-        CachedPose fresh = new CachedPose(species, animation, progress, info,
+        CachedPose fresh = new CachedPose(species, animation, fixed, progress, info,
                 PokeStatueModelRenderer.freeze(info, animation, progress));
         poseCache.put(pos.immutable(), fresh);
         return fresh;

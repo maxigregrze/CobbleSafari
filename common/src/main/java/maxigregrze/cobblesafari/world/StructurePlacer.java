@@ -122,10 +122,12 @@ public class StructurePlacer {
         CobbleSafari.LOGGER.info("Jigsaw: Executing command: /{}", command);
         
         var server = world.getServer();
+        java.util.concurrent.atomic.AtomicBoolean succeeded = new java.util.concurrent.atomic.AtomicBoolean();
         var source = server.createCommandSourceStack()
                 .withLevel(world)
                 .withPosition(net.minecraft.world.phys.Vec3.atCenterOf(pos))
-                .withPermission(4);
+                .withPermission(4)
+                .withCallback((success, result) -> succeeded.set(success));
 
         try {
             DungeonStructureBounds.beginCapture();
@@ -138,6 +140,15 @@ public class StructurePlacer {
             DungeonStructureBounds.endCapture();
         }
 
+        if (!succeeded.get()) {
+            // A rejected /place jigsaw does not throw: vanilla reports the error to the source and
+            // returns, and only a success reaches the callback. Answering true here sent the caller
+            // on to scan, abort and clear a whole zone for a structure that was never placed
+            // (action plan 190, P2).
+            CobbleSafari.LOGGER.error("Jigsaw: /place jigsaw was refused for pool {} at {} in {}; see the "
+                    + "command output above", poolId, pos, world.dimension().location());
+            return false;
+        }
         return true;
     }
 
@@ -155,15 +166,20 @@ public class StructurePlacer {
                 pos.getX(), pos.getY(), pos.getZ());
 
         var server = world.getServer();
+        java.util.concurrent.atomic.AtomicBoolean succeeded = new java.util.concurrent.atomic.AtomicBoolean();
         var source = server.createCommandSourceStack()
                 .withLevel(world)
                 .withPosition(net.minecraft.world.phys.Vec3.atCenterOf(pos))
-                .withPermission(4);
+                .withPermission(4)
+                .withCallback((success, result) -> succeeded.set(success));
 
         try {
             DungeonStructureBounds.beginCapture();
             server.getCommands().performPrefixedCommand(source, command);
-            return true;
+            if (!succeeded.get()) {
+                CobbleSafari.LOGGER.error("Jigsaw (strict): /place jigsaw was refused for pool {} at {}", poolId, pos);
+            }
+            return succeeded.get();
         } catch (Exception e) {
             CobbleSafari.LOGGER.error("Jigsaw (strict): command failed: {}", e.getMessage());
             return false;
