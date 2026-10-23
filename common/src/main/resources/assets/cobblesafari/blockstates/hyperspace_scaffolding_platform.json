@@ -1,62 +1,343 @@
 {
-  "variants": {
-    "north=false,east=false,south=false,west=false": {
-      "model": "cobblesafari:block/hyperspace_scaffolding_platform_none"
+  "multipart": [
+    {
+      "apply": {
+        "model": "cobblesafari:block/hyperspace_platform_top_base"
+      }
     },
-    "north=false,east=false,south=false,west=true": {
-      "model": "cobblesafari:block/hyperspace_scaffolding_platform_end",
-      "y": 270
+    {
+      "when": {
+        "north": "false",
+        "west": "false"
+      },
+      "apply": {
+        "model": "cobblesafari:block/hyperspace_platform_top_nw_outer"
+      }
     },
-    "north=false,east=false,south=true,west=false": {
-      "model": "cobblesafari:block/hyperspace_scaffolding_platform_end",
-      "y": 180
+    {
+      "when": {
+        "north": "true",
+        "west": "false"
+      },
+      "apply": {
+        "model": "cobblesafari:block/hyperspace_platform_top_nw_edge_v"
+      }
     },
-    "north=false,east=false,south=true,west=true": {
-      "model": "cobblesafari:block/hyperspace_scaffolding_platform_corner",
-      "y": 180
+    {
+      "when": {
+        "north": "false",
+        "west": "true"
+      },
+      "apply": {
+        "model": "cobblesafari:block/hyperspace_platform_top_nw_edge_h"
+      }
     },
-    "north=false,east=true,south=false,west=false": {
-      "model": "cobblesafari:block/hyperspace_scaffolding_platform_end",
-      "y": 90
+    {
+      "when": {
+        "north": "true",
+        "west": "true",
+        "north_west": "false"
+      },
+      "apply": {
+        "model": "cobblesafari:block/hyperspace_platform_top_nw_inner"
+      }
     },
-    "north=false,east=true,south=false,west=true": {
-      "model": "cobblesafari:block/hyperspace_scaffolding_platform_straight",
-      "y": 90
+    {
+      "when": {
+        "north": "false",
+        "east": "false"
+      },
+      "apply": {
+        "model": "cobblesafari:block/hyperspace_platform_top_ne_outer"
+      }
     },
-    "north=false,east=true,south=true,west=false": {
-      "model": "cobblesafari:block/hyperspace_scaffolding_platform_corner",
-      "y": 90
+    {
+      "when": {
+        "north": "true",
+        "east": "false"
+      },
+      "apply": {
+        "model": "cobblesafari:block/hyperspace_platform_top_ne_edge_v"
+      }
     },
-    "north=false,east=true,south=true,west=true": {
-      "model": "cobblesafari:block/hyperspace_scaffolding_platform_tee",
-      "y": 180
+    {
+      "when": {
+        "north": "false",
+        "east": "true"
+      },
+      "apply": {
+        "model": "cobblesafari:block/hyperspace_platform_top_ne_edge_h"
+      }
     },
-    "north=true,east=false,south=false,west=false": {
-      "model": "cobblesafari:block/hyperspace_scaffolding_platform_end"
+    {
+      "when": {
+        "north": "true",
+        "east": "true",
+        "north_east": "false"
+      },
+      "apply": {
+        "model": "cobblesafari:block/hyperspace_platform_top_ne_inner"
+      }
     },
-    "north=true,east=false,south=false,west=true": {
-      "model": "cobblesafari:block/hyperspace_scaffolding_platform_corner",
-      "y": 270
+    {
+      "when": {
+        "south": "false",
+        "west": "false"
+      },
+      "apply": {
+        "model": "cobblesafari:block/hyperspace_platform_top_sw_outer"
+      }
     },
-    "north=true,east=false,south=true,west=false": {
-      "model": "cobblesafari:block/hyperspace_scaffolding_platform_straight"
+    {
+      "when": {
+        "south": "true",
+        "west": "false"
+      },
+      "apply": {
+        "model": "cobblesafari:block/hyperspace_platform_top_sw_edge_v"
+      }
     },
-    "north=true,east=false,south=true,west=true": {
-      "model": "cobblesafari:block/hyperspace_scaffolding_platform_tee",
-      "y": 270
+    {
+      "when": {
+        "south": "false",
+        "west": "true"
+      },
+      "apply": {
+        "model": "cobblesafari:block/hyperspace_platform_top_sw_edge_h"
+      }
     },
-    "north=true,east=true,south=false,west=false": {
-      "model": "cobblesafari:block/hyperspace_scaffolding_platform_corner"
+    {
+      "when": {
+        "south": "true",
+        "west": "true",
+        "south_west": "false"
+      },
+      "apply": {
+        "model": "cobblesafari:block/hyperspace_platform_top_sw_inner"
+      }
     },
-    "north=true,east=true,south=false,west=true": {
-      "model": "cobblesafari:block/hyperspace_scaffolding_platform_tee"
+    {
+      "when": {
+        "south": "false",
+        "east": "false"
+      },
+      "apply": {
+        "model": "cobblesafari:block/hyperspace_platform_top_se_outer"
+      }
     },
-    "north=true,east=true,south=true,west=false": {
-      "model": "cobblesafari:block/hyperspace_scaffolding_platform_tee",
-      "y": 90
+    {
+      "when": {
+        "south": "true",
+        "east": "false"
+      },
+      "apply": {
+        "model": "cobblesafari:block/hyperspace_platform_top_se_edge_v"
+      }
     },
-    "north=true,east=true,south=true,west=true": {
-      "model": "cobblesafari:block/hyperspace_scaffolding_platform_cross"
+    {
+      "when": {
+        "south": "false",
+        "east": "true"
+      },
+      "apply": {
+        "model": "cobblesafari:block/hyperspace_platform_top_se_edge_h"
+      }
+    },
+    {
+      "when": {
+        "south": "true",
+        "east": "true",
+        "south_east": "false"
+      },
+      "apply": {
+        "model": "cobblesafari:block/hyperspace_platform_top_se_inner"
+      }
+    },
+    {
+      "when": {
+        "north": "false",
+        "east": "false",
+        "south": "false",
+        "west": "false"
+      },
+      "apply": {
+        "model": "cobblesafari:block/hyperspace_scaffolding_platform_none_frame"
+      }
+    },
+    {
+      "when": {
+        "north": "true",
+        "east": "false",
+        "south": "false",
+        "west": "false"
+      },
+      "apply": {
+        "model": "cobblesafari:block/hyperspace_scaffolding_platform_end_frame"
+      }
+    },
+    {
+      "when": {
+        "north": "false",
+        "east": "true",
+        "south": "false",
+        "west": "false"
+      },
+      "apply": {
+        "model": "cobblesafari:block/hyperspace_scaffolding_platform_end_frame",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "north": "false",
+        "east": "false",
+        "south": "true",
+        "west": "false"
+      },
+      "apply": {
+        "model": "cobblesafari:block/hyperspace_scaffolding_platform_end_frame",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "north": "false",
+        "east": "false",
+        "south": "false",
+        "west": "true"
+      },
+      "apply": {
+        "model": "cobblesafari:block/hyperspace_scaffolding_platform_end_frame",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "north": "true",
+        "east": "false",
+        "south": "true",
+        "west": "false"
+      },
+      "apply": {
+        "model": "cobblesafari:block/hyperspace_scaffolding_platform_straight_frame"
+      }
+    },
+    {
+      "when": {
+        "north": "false",
+        "east": "true",
+        "south": "false",
+        "west": "true"
+      },
+      "apply": {
+        "model": "cobblesafari:block/hyperspace_scaffolding_platform_straight_frame",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "north": "true",
+        "east": "true",
+        "south": "false",
+        "west": "false"
+      },
+      "apply": {
+        "model": "cobblesafari:block/hyperspace_scaffolding_platform_corner_frame"
+      }
+    },
+    {
+      "when": {
+        "north": "false",
+        "east": "true",
+        "south": "true",
+        "west": "false"
+      },
+      "apply": {
+        "model": "cobblesafari:block/hyperspace_scaffolding_platform_corner_frame",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "north": "false",
+        "east": "false",
+        "south": "true",
+        "west": "true"
+      },
+      "apply": {
+        "model": "cobblesafari:block/hyperspace_scaffolding_platform_corner_frame",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "north": "true",
+        "east": "false",
+        "south": "false",
+        "west": "true"
+      },
+      "apply": {
+        "model": "cobblesafari:block/hyperspace_scaffolding_platform_corner_frame",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "north": "true",
+        "east": "true",
+        "south": "false",
+        "west": "true"
+      },
+      "apply": {
+        "model": "cobblesafari:block/hyperspace_scaffolding_platform_tee_frame"
+      }
+    },
+    {
+      "when": {
+        "north": "true",
+        "east": "true",
+        "south": "true",
+        "west": "false"
+      },
+      "apply": {
+        "model": "cobblesafari:block/hyperspace_scaffolding_platform_tee_frame",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "north": "false",
+        "east": "true",
+        "south": "true",
+        "west": "true"
+      },
+      "apply": {
+        "model": "cobblesafari:block/hyperspace_scaffolding_platform_tee_frame",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "north": "true",
+        "east": "false",
+        "south": "true",
+        "west": "true"
+      },
+      "apply": {
+        "model": "cobblesafari:block/hyperspace_scaffolding_platform_tee_frame",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "north": "true",
+        "east": "true",
+        "south": "true",
+        "west": "true"
+      },
+      "apply": {
+        "model": "cobblesafari:block/hyperspace_scaffolding_platform_cross_frame"
+      }
     }
-  }
+  ]
 }

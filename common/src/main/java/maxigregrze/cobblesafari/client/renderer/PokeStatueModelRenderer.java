@@ -28,6 +28,8 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.EntityDimensions;
+import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -446,10 +448,13 @@ public final class PokeStatueModelRenderer {
      * @param scale   final render scale ({@code fitScale × user scale}).
      * @param style   greyscale flag, multiply tint and alpha.
      * @param bodyYaw yaw in degrees the model should face.
+     * @param locatorOrigin world position of the model origin when the locators must be filled for a
+     *                      particle emitter (plan 194, B2), {@code null} otherwise.
      */
     public static void render(PoseStack ps, MultiBufferSource buffer, int packedLight,
                               StatueSpecies info, FrozenPose pose, Playhead playhead,
-                              float scale, PokeStatueRenderStyle style, float bodyYaw) {
+                              float scale, PokeStatueRenderStyle style, float bodyYaw,
+                              @Nullable Vec3 locatorOrigin) {
 
         ResourceLocation species = info.species();
         FloatingState state = pose.state();
@@ -490,6 +495,9 @@ public final class PokeStatueModelRenderer {
             // Both the pose idles and the chosen animation are sampled at the same instant, so the
             // statue reads as one coherent moment rather than a frozen bust with an animated arm.
             model.applyAnimations(null, state, 0f, 0f, playhead.seconds() * 20f, 0f, 0f);
+            if (locatorOrigin != null) {
+                updateLocators(model, state, locatorOrigin, scale, bodyYaw);
+            }
 
             RenderType renderType = style.translucent()
                     ? RenderType.entityTranslucent(drawn)
@@ -508,6 +516,21 @@ public final class PokeStatueModelRenderer {
             model.setAlpha(1.0f);
             ps.popPose();
         }
+    }
+
+    /**
+     * Fills the state's locator matrices in world space, the model posed as it is drawn. Cobblemon's
+     * own {@code updateLocators} needs a Pokémon entity; {@code LocatorAccess.update} does not, so the
+     * render transforms are replayed on a fresh stack anchored at the world origin.
+     */
+    private static void updateLocators(PosableModel model, FloatingState state, Vec3 origin,
+                                       float scale, float bodyYaw) {
+        PoseStack world = new PoseStack();
+        world.translate(origin.x, origin.y, origin.z);
+        world.mulPose(Axis.YP.rotationDegrees(180.0f - bodyYaw));
+        world.scale(-scale, -scale, scale);
+        world.translate(0.0, -0.001, 0.0);
+        model.getLocatorAccess().update(world, null, scale, state.getLocatorStates(), true);
     }
 
     /** Packs a tint plus alpha into the colour int expected by {@code PosableModel.render}. */

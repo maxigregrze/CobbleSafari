@@ -5,6 +5,7 @@ import maxigregrze.cobblesafari.init.ModBlockEntities;
 import maxigregrze.cobblesafari.network.OpenLostItemConfigPayload;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.StringTag;
@@ -12,6 +13,10 @@ import net.minecraft.nbt.Tag;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -25,16 +30,22 @@ import java.util.UUID;
 
 public class LostItemBlockEntity extends BlockEntity {
 
+    /** The red Poke Ball every lost item shows until another ball is picked (action plan 193, section 6). */
+    public static final String DEFAULT_POKEBALL = "cobblemon:poke_ball";
+
     private static final String NBT_CLAIMED_PLAYERS = "ClaimedPlayers";
     private static final String NBT_POOL_BERRY = "PoolBerry";
     private static final String NBT_POOL_CANDY = "PoolCandy";
     private static final String NBT_POOL_BALLS = "PoolBalls";
     private static final String NBT_POOL_TREASURES = "PoolTreasures";
-    private static final String NBT_MIN_ROLL = "MinRoll";
-    private static final String NBT_MAX_ROLL = "MaxRoll";
-    private static final String NBT_LOOT_ITEM = "LootItem";
-    private static final String NBT_LOST_ITEM_LOOT_TABLE = "LostItemLootTable";
-    private static final String NBT_MODE = "Mode";
+    public static final String NBT_MIN_ROLL = "MinRoll";
+    public static final String NBT_MAX_ROLL = "MaxRoll";
+    /** Item id of the mode 2 stack, still written so an older build reads the item back (count 1). */
+    public static final String NBT_LOOT_ITEM = "LootItem";
+    public static final String NBT_LOOT_ITEM_STACK = "LootItemStack";
+    public static final String NBT_LOST_ITEM_LOOT_TABLE = "LostItemLootTable";
+    public static final String NBT_MODE = "Mode";
+    public static final String NBT_POKEBALL = "Pokeball";
 
     private final Set<UUID> claimedPlayers = new HashSet<>();
 
@@ -44,9 +55,10 @@ public class LostItemBlockEntity extends BlockEntity {
     private String poolTreasuresId;
     private int minRoll;
     private int maxRoll;
-    private String lootItemId;
+    private ItemStack lootItemStack = ItemStack.EMPTY;
     private String lostItemLootTableId;
     private int mode;
+    private String pokeballId = DEFAULT_POKEBALL;
 
     public LostItemBlockEntity(BlockPos pos, BlockState state) {
         super(ModBlockEntities.LOST_ITEM, pos, state);
@@ -60,9 +72,10 @@ public class LostItemBlockEntity extends BlockEntity {
         this.poolTreasuresId = MiscConfig.getLostItemPoolTreasuresId();
         this.minRoll = MiscConfig.getLostItemMinRoll();
         this.maxRoll = MiscConfig.getLostItemMaxRoll();
-        this.lootItemId = MiscConfig.getLostItemLootItemId();
+        this.lootItemStack = stackFromId(MiscConfig.getLostItemLootItemId());
         this.lostItemLootTableId = MiscConfig.getLostItemLootTableId();
         this.mode = MiscConfig.getLostItemMode();
+        this.pokeballId = DEFAULT_POKEBALL;
     }
 
     public boolean hasClaimed(UUID playerId) {
@@ -112,8 +125,14 @@ public class LostItemBlockEntity extends BlockEntity {
         return this.maxRoll;
     }
 
+    /** Registry id of the mode 2 stack, or an empty string when no valid item is configured. */
     public String getLootItemId() {
-        return this.lootItemId;
+        return this.lootItemStack.isEmpty() ? "" : BuiltInRegistries.ITEM.getKey(this.lootItemStack.getItem()).toString();
+    }
+
+    /** The stored mode 2 stack itself: callers must copy it before handing it out. */
+    public ItemStack getLootItemStack() {
+        return this.lootItemStack;
     }
 
     public String getLostItemLootTableId() {
@@ -122,6 +141,10 @@ public class LostItemBlockEntity extends BlockEntity {
 
     public int getMode() {
         return this.mode;
+    }
+
+    public String getPokeballId() {
+        return this.pokeballId;
     }
 
     public void setPoolBerryId(String poolBerryId) {
@@ -148,8 +171,8 @@ public class LostItemBlockEntity extends BlockEntity {
         this.maxRoll = maxRoll;
     }
 
-    public void setLootItemId(String lootItemId) {
-        this.lootItemId = lootItemId;
+    public void setLootItemStack(ItemStack stack) {
+        this.lootItemStack = stack.copy();
     }
 
     public void setLostItemLootTableId(String lostItemLootTableId) {
@@ -158,6 +181,10 @@ public class LostItemBlockEntity extends BlockEntity {
 
     public void setMode(int mode) {
         this.mode = mode;
+    }
+
+    public void setPokeballId(String pokeballId) {
+        this.pokeballId = pokeballId;
     }
 
     /**
@@ -180,12 +207,13 @@ public class LostItemBlockEntity extends BlockEntity {
         };
     }
 
-    public OpenLostItemConfigPayload createOpenPayload() {
-        // The skin lives on the block state, not here: read it back rather than keeping a second copy.
+    /** The skin lives on the block state, not here: read it back rather than keeping a second copy. */
+    public LostItemSkin getSkin() {
         BlockState state = this.getBlockState();
-        String skin = state.hasProperty(LostItemBlock.SKIN)
-                ? state.getValue(LostItemBlock.SKIN).getSerializedName()
-                : LostItemSkin.RUBBLES.getSerializedName();
+        return state.hasProperty(LostItemBlock.SKIN) ? state.getValue(LostItemBlock.SKIN) : LostItemSkin.RUBBLES;
+    }
+
+    public OpenLostItemConfigPayload createOpenPayload(HolderLookup.Provider registries) {
         return new OpenLostItemConfigPayload(
                 this.worldPosition,
                 this.poolBerryId,
@@ -195,9 +223,12 @@ public class LostItemBlockEntity extends BlockEntity {
                 this.minRoll,
                 this.maxRoll,
                 this.lostItemLootTableId,
-                this.lootItemId,
+                this.getLootItemId(),
                 this.mode,
-                skin
+                this.getSkin().getSerializedName(),
+                this.pokeballId,
+                Math.max(1, this.lootItemStack.getCount()),
+                LostItemStackText.writeComponents(this.lootItemStack, registries)
         );
     }
 
@@ -219,6 +250,43 @@ public class LostItemBlockEntity extends BlockEntity {
         }
     }
 
+    /**
+     * Every loot and look setting except the claim list and the skin (which lives on the block state).
+     * Shared with the Lost Item Template, which copies exactly this tag (action plan 193, section 5.1).
+     */
+    public void writeConfig(CompoundTag tag, HolderLookup.Provider registries) {
+        tag.putString(NBT_POOL_BERRY, this.poolBerryId);
+        tag.putString(NBT_POOL_CANDY, this.poolCandyId);
+        tag.putString(NBT_POOL_BALLS, this.poolBallsId);
+        tag.putString(NBT_POOL_TREASURES, this.poolTreasuresId);
+        tag.putInt(NBT_MIN_ROLL, this.minRoll);
+        tag.putInt(NBT_MAX_ROLL, this.maxRoll);
+        tag.putString(NBT_LOOT_ITEM, this.getLootItemId());
+        if (!this.lootItemStack.isEmpty()) {
+            tag.put(NBT_LOOT_ITEM_STACK, this.lootItemStack.save(registries));
+        }
+        tag.putString(NBT_LOST_ITEM_LOOT_TABLE, this.lostItemLootTableId);
+        tag.putInt(NBT_MODE, this.mode);
+        tag.putString(NBT_POKEBALL, this.pokeballId);
+    }
+
+    /** Reads {@link #writeConfig}; every missing key falls back to the placement defaults. */
+    public void readConfig(CompoundTag tag, HolderLookup.Provider registries) {
+        this.poolBerryId = tag.contains(NBT_POOL_BERRY) ? tag.getString(NBT_POOL_BERRY) : MiscConfig.getLostItemPoolBerryId();
+        this.poolCandyId = tag.contains(NBT_POOL_CANDY) ? tag.getString(NBT_POOL_CANDY) : MiscConfig.getLostItemPoolCandyId();
+        this.poolBallsId = tag.contains(NBT_POOL_BALLS) ? tag.getString(NBT_POOL_BALLS) : MiscConfig.getLostItemPoolBallsId();
+        this.poolTreasuresId = tag.contains(NBT_POOL_TREASURES) ? tag.getString(NBT_POOL_TREASURES) : MiscConfig.getLostItemPoolTreasuresId();
+        this.minRoll = tag.contains(NBT_MIN_ROLL) ? tag.getInt(NBT_MIN_ROLL) : MiscConfig.getLostItemMinRoll();
+        this.maxRoll = tag.contains(NBT_MAX_ROLL) ? tag.getInt(NBT_MAX_ROLL) : MiscConfig.getLostItemMaxRoll();
+        String lootItemId = tag.contains(NBT_LOOT_ITEM) ? tag.getString(NBT_LOOT_ITEM) : MiscConfig.getLostItemLootItemId();
+        this.lootItemStack = tag.contains(NBT_LOOT_ITEM_STACK, Tag.TAG_COMPOUND)
+                ? ItemStack.parse(registries, tag.getCompound(NBT_LOOT_ITEM_STACK)).orElseGet(() -> stackFromId(lootItemId))
+                : stackFromId(lootItemId);
+        this.lostItemLootTableId = tag.contains(NBT_LOST_ITEM_LOOT_TABLE) ? tag.getString(NBT_LOST_ITEM_LOOT_TABLE) : MiscConfig.getLostItemLootTableId();
+        this.mode = tag.contains(NBT_MODE) ? tag.getInt(NBT_MODE) : MiscConfig.getLostItemMode();
+        this.pokeballId = tag.contains(NBT_POKEBALL) ? tag.getString(NBT_POKEBALL) : DEFAULT_POKEBALL;
+    }
+
     @Override
     protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.saveAdditional(tag, registries);
@@ -227,16 +295,7 @@ public class LostItemBlockEntity extends BlockEntity {
             list.add(StringTag.valueOf(id.toString()));
         }
         tag.put(NBT_CLAIMED_PLAYERS, list);
-
-        tag.putString(NBT_POOL_BERRY, this.poolBerryId);
-        tag.putString(NBT_POOL_CANDY, this.poolCandyId);
-        tag.putString(NBT_POOL_BALLS, this.poolBallsId);
-        tag.putString(NBT_POOL_TREASURES, this.poolTreasuresId);
-        tag.putInt(NBT_MIN_ROLL, this.minRoll);
-        tag.putInt(NBT_MAX_ROLL, this.maxRoll);
-        tag.putString(NBT_LOOT_ITEM, this.lootItemId);
-        tag.putString(NBT_LOST_ITEM_LOOT_TABLE, this.lostItemLootTableId);
-        tag.putInt(NBT_MODE, this.mode);
+        this.writeConfig(tag, registries);
     }
 
     @Override
@@ -250,16 +309,17 @@ public class LostItemBlockEntity extends BlockEntity {
                 this.claimedPlayers.add(playerId);
             }
         }
+        this.readConfig(tag, registries);
+    }
 
-        this.poolBerryId = tag.contains(NBT_POOL_BERRY) ? tag.getString(NBT_POOL_BERRY) : MiscConfig.getLostItemPoolBerryId();
-        this.poolCandyId = tag.contains(NBT_POOL_CANDY) ? tag.getString(NBT_POOL_CANDY) : MiscConfig.getLostItemPoolCandyId();
-        this.poolBallsId = tag.contains(NBT_POOL_BALLS) ? tag.getString(NBT_POOL_BALLS) : MiscConfig.getLostItemPoolBallsId();
-        this.poolTreasuresId = tag.contains(NBT_POOL_TREASURES) ? tag.getString(NBT_POOL_TREASURES) : MiscConfig.getLostItemPoolTreasuresId();
-        this.minRoll = tag.contains(NBT_MIN_ROLL) ? tag.getInt(NBT_MIN_ROLL) : MiscConfig.getLostItemMinRoll();
-        this.maxRoll = tag.contains(NBT_MAX_ROLL) ? tag.getInt(NBT_MAX_ROLL) : MiscConfig.getLostItemMaxRoll();
-        this.lootItemId = tag.contains(NBT_LOOT_ITEM) ? tag.getString(NBT_LOOT_ITEM) : MiscConfig.getLostItemLootItemId();
-        this.lostItemLootTableId = tag.contains(NBT_LOST_ITEM_LOOT_TABLE) ? tag.getString(NBT_LOST_ITEM_LOOT_TABLE) : MiscConfig.getLostItemLootTableId();
-        this.mode = tag.contains(NBT_MODE) ? tag.getInt(NBT_MODE) : MiscConfig.getLostItemMode();
+    /** One unit of the item behind {@code rawId}; empty for a blank, unknown or air id. */
+    private static ItemStack stackFromId(String rawId) {
+        ResourceLocation loc = rawId == null ? null : ResourceLocation.tryParse(rawId.trim());
+        if (loc == null) {
+            return ItemStack.EMPTY;
+        }
+        Item item = BuiltInRegistries.ITEM.getOptional(loc).orElse(Items.AIR);
+        return item == Items.AIR ? ItemStack.EMPTY : new ItemStack(item, 1);
     }
 
     private static UUID parseUuid(String raw) {

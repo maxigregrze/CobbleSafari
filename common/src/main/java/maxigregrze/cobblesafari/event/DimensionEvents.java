@@ -285,6 +285,7 @@ public class DimensionEvents {
                 new DimensionalBanSyncPayload(DimensionalBanConfig.data.dimensions));
         maxigregrze.cobblesafari.underground.UndergroundMinigame.syncRegistryToPlayer(player);
         maxigregrze.cobblesafari.rotomphone.RotomPhoneConfigSync.syncToPlayer(player);
+        maxigregrze.cobblesafari.network.UltraLootConfigSyncPayload.syncToPlayer(player);
         maxigregrze.cobblesafari.rotomphone.ChatConversationSync.syncToPlayer(player);
         GtsService.onPlayerJoin(player);
         // A server killed mid-ride leaves the rider's protection in their saved NBT; this is the net.

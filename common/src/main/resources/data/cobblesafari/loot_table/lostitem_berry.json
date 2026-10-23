@@ -6,10 +6,353 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "cobblesafari:redchain_fragment",
-          "functions": [
-            { "function": "minecraft:set_count", "count": { "min": 1, "max": 3 } }
-          ]
+          "name": "cobblemon:aspear_berry",
+          "weight": 110
+        },
+        {
+          "type": "minecraft:item",
+          "name": "cobblemon:cheri_berry",
+          "weight": 110
+        },
+        {
+          "type": "minecraft:item",
+          "name": "cobblemon:chesto_berry",
+          "weight": 110
+        },
+        {
+          "type": "minecraft:item",
+          "name": "cobblemon:pecha_berry",
+          "weight": 110
+        },
+        {
+          "type": "minecraft:item",
+          "name": "cobblemon:rawst_berry",
+          "weight": 110
+        },
+        {
+          "type": "minecraft:item",
+          "name": "cobblemon:aguav_berry",
+          "weight": 73
+        },
+        {
+          "type": "minecraft:item",
+          "name": "cobblemon:bluk_berry",
+          "weight": 73
+        },
+        {
+          "type": "minecraft:item",
+          "name": "cobblemon:figy_berry",
+          "weight": 73
+        },
+        {
+          "type": "minecraft:item",
+          "name": "cobblemon:iapapa_berry",
+          "weight": 73
+        },
+        {
+          "type": "minecraft:item",
+          "name": "cobblemon:mago_berry",
+          "weight": 73
+        },
+        {
+          "type": "minecraft:item",
+          "name": "cobblemon:nanab_berry",
+          "weight": 73
+        },
+        {
+          "type": "minecraft:item",
+          "name": "cobblemon:pinap_berry",
+          "weight": 73
+        },
+        {
+          "type": "minecraft:item",
+          "name": "cobblemon:razz_berry",
+          "weight": 73
+        },
+        {
+          "type": "minecraft:item",
+          "name": "cobblemon:wepear_berry",
+          "weight": 73
+        },
+        {
+          "type": "minecraft:item",
+          "name": "cobblemon:wiki_berry",
+          "weight": 73
+        },
+        {
+          "type": "minecraft:item",
+          "name": "cobblemon:chople_berry",
+          "weight": 44
+        },
+        {
+          "type": "minecraft:item",
+          "name": "cobblemon:coba_berry",
+          "weight": 44
+        },
+        {
+          "type": "minecraft:item",
+          "name": "cobblemon:eggant_berry",
+          "weight": 44
+        },
+        {
+          "type": "minecraft:item",
+          "name": "cobblemon:kebia_berry",
+          "weight": 44
+        },
+        {
+          "type": "minecraft:item",
+          "name": "cobblemon:occa_berry",
+          "weight": 44
+        },
+        {
+          "type": "minecraft:item",
+          "name": "cobblemon:passho_berry",
+          "weight": 44
+        },
+        {
+          "type": "minecraft:item",
+          "name": "cobblemon:payapa_berry",
+          "weight": 44
+        },
+        {
+          "type": "minecraft:item",
+          "name": "cobblemon:rindo_berry",
+          "weight": 44
+        },
+        {
+          "type": "minecraft:item",
+          "name": "cobblemon:shuca_berry",
+          "weight": 44
+        },
+        {
+          "type": "minecraft:item",
+          "name": "cobblemon:wacan_berry",
+          "weight": 44
+        },
+        {
+          "type": "minecraft:item",
+          "name": "cobblemon:yache_berry",
+          "weight": 44
+        },
+        {
+          "type": "minecraft:item",
+          "name": "cobblemon:charti_berry",
+          "weight": 37
+        },
+        {
+          "type": "minecraft:item",
+          "name": "cobblemon:colbur_berry",
+          "weight": 37
+        },
+        {
+          "type": "minecraft:item",
+          "name": "cobblemon:cornn_berry",
+          "weight": 37
+        },
+        {
+          "type": "minecraft:item",
+          "name": "cobblemon:grepa_berry",
+          "weight": 37
+        },
+        {
+          "type": "minecraft:item",
+          "name": "cobblemon:haban_berry",
+          "weight": 37
+        },
+        {
+          "type": "minecraft:item",
+          "name": "cobblemon:hondew_berry",
+          "weight": 37
+        },
+        {
+          "type": "minecraft:item",
+          "name": "cobblemon:kasib_berry",
+          "weight": 37
+        },
+        {
+          "type": "minecraft:item",
+          "name": "cobblemon:kelpsy_berry",
+          "weight": 37
+        },
+        {
+          "type": "minecraft:item",
+          "name": "cobblemon:magost_berry",
+          "weight": 37
+        },
+        {
+          "type": "minecraft:item",
+          "name": "cobblemon:nomel_berry",
+          "weight": 37
+        },
+        {
+          "type": "minecraft:item",
+          "name": "cobblemon:pomeg_berry",
+          "weight": 37
+        },
+        {
+          "type": "minecraft:item",
+          "name": "cobblemon:qualot_berry",
+          "weight": 37
+        },
+        {
+          "type": "minecraft:item",
+          "name": "cobblemon:rabuta_berry",
+          "weight": 37
+        },
+        {
+          "type": "minecraft:item",
+          "name": "cobblemon:tamato_berry",
+          "weight": 37
+        },
+        {
+          "type": "minecraft:item",
+          "name": "cobblemon:tanga_berry",
+          "weight": 37
+        },
+        {
+          "type": "minecraft:item",
+          "name": "cobblemon:touga_berry",
+          "weight": 37
+        },
+        {
+          "type": "minecraft:item",
+          "name": "cobblemon:babiri_berry",
+          "weight": 31
+        },
+        {
+          "type": "minecraft:item",
+          "name": "cobblemon:chilan_berry",
+          "weight": 31
+        },
+        {
+          "type": "minecraft:item",
+          "name": "cobblemon:roseli_berry",
+          "weight": 31
+        },
+        {
+          "type": "minecraft:item",
+          "name": "cobblemon:belue_berry",
+          "weight": 28
+        },
+        {
+          "type": "minecraft:item",
+          "name": "cobblemon:durin_berry",
+          "weight": 28
+        },
+        {
+          "type": "minecraft:item",
+          "name": "cobblemon:leppa_berry",
+          "weight": 28
+        },
+        {
+          "type": "minecraft:item",
+          "name": "cobblemon:lum_berry",
+          "weight": 28
+        },
+        {
+          "type": "minecraft:item",
+          "name": "cobblemon:oran_berry",
+          "weight": 28
+        },
+        {
+          "type": "minecraft:item",
+          "name": "cobblemon:pamtre_berry",
+          "weight": 28
+        },
+        {
+          "type": "minecraft:item",
+          "name": "cobblemon:persim_berry",
+          "weight": 28
+        },
+        {
+          "type": "minecraft:item",
+          "name": "cobblemon:sitrus_berry",
+          "weight": 28
+        },
+        {
+          "type": "minecraft:item",
+          "name": "cobblemon:spelon_berry",
+          "weight": 28
+        },
+        {
+          "type": "minecraft:item",
+          "name": "cobblemon:watmel_berry",
+          "weight": 28
+        },
+        {
+          "type": "minecraft:item",
+          "name": "cobblemon:custap_berry",
+          "weight": 22
+        },
+        {
+          "type": "minecraft:item",
+          "name": "cobblemon:enigma_berry",
+          "weight": 22
+        },
+        {
+          "type": "minecraft:item",
+          "name": "cobblemon:hopo_berry",
+          "weight": 22
+        },
+        {
+          "type": "minecraft:item",
+          "name": "cobblemon:jaboca_berry",
+          "weight": 22
+        },
+        {
+          "type": "minecraft:item",
+          "name": "cobblemon:micle_berry",
+          "weight": 22
+        },
+        {
+          "type": "minecraft:item",
+          "name": "cobblemon:rowap_berry",
+          "weight": 22
+        },
+        {
+          "type": "minecraft:item",
+          "name": "cobblemon:apicot_berry",
+          "weight": 16
+        },
+        {
+          "type": "minecraft:item",
+          "name": "cobblemon:ganlon_berry",
+          "weight": 16
+        },
+        {
+          "type": "minecraft:item",
+          "name": "cobblemon:liechi_berry",
+          "weight": 16
+        },
+        {
+          "type": "minecraft:item",
+          "name": "cobblemon:petaya_berry",
+          "weight": 16
+        },
+        {
+          "type": "minecraft:item",
+          "name": "cobblemon:salac_berry",
+          "weight": 16
+        },
+        {
+          "type": "minecraft:item",
+          "name": "cobblemon:kee_berry",
+          "weight": 12
+        },
+        {
+          "type": "minecraft:item",
+          "name": "cobblemon:maranga_berry",
+          "weight": 12
+        },
+        {
+          "type": "minecraft:item",
+          "name": "cobblemon:lansat_berry",
+          "weight": 10
+        },
+        {
+          "type": "minecraft:item",
+          "name": "cobblemon:starf_berry",
+          "weight": 10
         }
       ]
     }

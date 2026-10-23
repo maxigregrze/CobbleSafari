@@ -27,18 +27,16 @@ import java.util.List;
  *
  * <p>Since action plan 189 the objects, portals and rider are 3D models drawn in perspective passes
  * ({@link WarpRideScene3D}) whose projection reproduces this class's {@link #depthScale} law to the
- * pixel: the 2D octagon and the 3D models stay aligned at every depth.</p>
+ * pixel; since action plan 191 the tube is a 3D pass too ({@link WarpRideTube}).</p>
  */
 public final class WarpRideRenderer {
 
     public static final int CENTER_X = 960;
     public static final int CENTER_Y = 540;
-    /** cos(22.5°): the octagon's flat face, which is the lane floor the rider sits on. */
+    /** cos(22.5°): the lane floor the rider and the lane objects sit on, inside the tube. */
     private static final double INRADIUS_FACTOR = 0.9238795325;
 
     public static final int LANE_COUNT = 8;
-
-    private static final int GRID_COLOR = 0xB8A7DD;
 
     /** The flat portal sprites (rank strip, portal_wrap) at the rider plane: the original size. */
     public static final int PORTAL_SPRITE_SIZE = 512;
@@ -116,9 +114,7 @@ public final class WarpRideRenderer {
         filtersApplied = true;
         // The HUD textures are in the list too: the canvas fit scale is fractional on most window
         // sizes, so they are never blitted at exactly 1:1 either.
-        for (ResourceLocation id : List.of(WarpRideBackground.BACKDROP, WarpRideHud.BUZZ)) {
-            setFilter(id, true);
-        }
+        setFilter(WarpRideHud.BUZZ, true);
         // Strips get linear only: mipmapping a vertical strip averages adjacent frames together.
         List<ResourceLocation> strips = new ArrayList<>(List.of(POSITIVE, PORTAL_WRAP));
         for (ResourceLocation id : PORTAL_RANKS) {
@@ -268,60 +264,44 @@ public final class WarpRideRenderer {
         return 90.0 + 45.0 * (objectLane - state.displayLane);
     }
 
-    /** How far the whole tunnel is swung, in degrees. Everything drawn radially shares this. */
-    private static double tunnelRotationDeg(WarpRideClientState state) {
-        return -45.0 * state.displayLane;
-    }
-
-    /** Depth of one of the decorative octagons, ring 1 being the farthest. */
+    /** Depth of one of the decorative rings, ring 1 being the farthest. Drives the opacity curve. */
     private static double ringDepth(WarpRideClientState state, int ring) {
         return state.visibleDepthLy * (state.ringCount - ring) / (double) state.ringCount;
     }
 
     /**
-     * The octagon is geometry, not a texture. The rings are decoration and mark no wave slot. Ring
-     * 1 is the step added by plan 189; every older ring keeps the alpha and thickness it had at its
-     * depth before (they used to be numbered one lower).
+     * The cloud tube (plan 191, V1), in its own perspective pass, behind every object.
+     *
+     * @param minDepth the start tunnel's exit during the intro (nothing nearer is drawn), else
+     *                 {@code Double.NEGATIVE_INFINITY}
      */
-    public static void renderTunnel(GuiGraphics graphics, WarpRideClientState state) {
-        double offset = tunnelRotationDeg(state);
-        for (int ring = 1; ring <= state.ringCount; ring++) {
-            double radius = state.ringFourRadius * depthScale(state, ringDepth(state, ring));
-            float alpha = ring == state.ringCount ? 0.85f : 0.18f + 0.12f * ring;
-            drawOctagon(graphics, radius, packAlpha(GRID_COLOR, alpha), Math.max(1, ring - 1), offset);
+    public static void renderTube(GuiGraphics graphics, WarpRideClientState state, double minDepth) {
+        if (minDepth >= state.visibleDepthLy) {
+            return;
         }
-        double outer = state.ringFourRadius;
-        double inner = state.ringFourRadius * depthScale(state, ringDepth(state, 1));
-        for (int i = 0; i < LANE_COUNT; i++) {
-            double angle = 90.0 + 45.0 * i + 22.5 + offset;
-            drawRadial(graphics, angle, inner, outer, packAlpha(GRID_COLOR, 0.35f), 2);
-        }
+        MultiBufferSource.BufferSource buffers = beginScene(graphics);
+        WarpRideTube.render(buffers, state, minDepth);
+        endScene(buffers);
     }
 
-    private static void drawOctagon(GuiGraphics graphics, double radius, int argb, int thickness,
-                                    double offsetDeg) {
-        double side = 2.0 * radius * Math.sin(Math.PI / LANE_COUNT);
-        double apothem = radius * INRADIUS_FACTOR;
-        for (int i = 0; i < LANE_COUNT; i++) {
-            double angle = 90.0 + 45.0 * i + offsetDeg;
-            graphics.pose().pushPose();
-            graphics.pose().translate(CENTER_X, CENTER_Y, 0.0f);
-            graphics.pose().mulPose(Axis.ZP.rotationDegrees((float) angle));
-            int half = (int) Math.round(side / 2.0);
-            int a = (int) Math.round(apothem);
-            graphics.fill(a - thickness, -half, a, half, argb);
-            graphics.pose().popPose();
-        }
+    /** The intro's start tunnel (plan 191, T1), in its own perspective pass, behind everything 3D. */
+    /**
+     * @param exitSeconds intro time at which the rider flies out of the tunnel's open end
+     * @return false once the tunnel is entirely behind the drawn range: no need to draw it again
+     */
+    public static boolean renderStartTunnel(GuiGraphics graphics, WarpRideStartTunnel tunnel,
+                                            WarpRideClientState state, double seconds, double exitSeconds) {
+        MultiBufferSource.BufferSource buffers = beginScene(graphics);
+        // The tunnel's mouth narrows onto the cloud tube's radius, so the two line up at the exit.
+        boolean visible = tunnel.render(buffers, new org.joml.Matrix4f(), seconds, exitSeconds,
+                WarpRideScene3D.zFor(1.0), (float) state.ringFourRadius);
+        endScene(buffers);
+        return visible;
     }
 
-    private static void drawRadial(GuiGraphics graphics, double angleDeg, double from, double to,
-                                   int argb, int thickness) {
-        graphics.pose().pushPose();
-        graphics.pose().translate(CENTER_X, CENTER_Y, 0.0f);
-        graphics.pose().mulPose(Axis.ZP.rotationDegrees((float) angleDeg));
-        graphics.fill((int) Math.round(from), -thickness / 2 - 1,
-                (int) Math.round(to), -thickness / 2 - 1 + thickness, argb);
-        graphics.pose().popPose();
+    /** The rider's centre in world units, which the intro camera orbits around. */
+    public static org.joml.Vector3f riderCenter(WarpRideClientState state) {
+        return new org.joml.Vector3f(0.0f, (float) -riderRadius(state), WarpRideScene3D.zFor(1.0));
     }
 
     // --- portals -------------------------------------------------------------------------------
@@ -390,8 +370,10 @@ public final class WarpRideRenderer {
      * and as it fades out past the plane it keeps that place - as the 2D ride always drew it.</p>
      */
     public static void renderScene(GuiGraphics graphics, WarpRideClientState state,
-                                   WarpRideRiderProxy rider, float partialTick) {
-        collectAhead(state, System.nanoTime());
+                                   WarpRideRiderProxy rider, float partialTick,
+                                   WarpRideCamera camera, WarpRideRiderEffects effects) {
+        long now = System.nanoTime();
+        collectAhead(state, now);
         MultiBufferSource.BufferSource buffers = beginScene(graphics);
         PoseStack pose = new PoseStack();
         for (AheadItem item : AHEAD) {
@@ -404,13 +386,17 @@ public final class WarpRideRenderer {
             drawVortex(pose, buffers, state, item.object().typeId(), scale, 1.0, (float) alpha);
             endScene(buffers);
             beginAlphaBlit();
+            // The 2D strip follows the camera feedback, or it would slide off its 3D vortex.
+            graphics.pose().pushPose();
+            camera.apply2D(graphics.pose(), now);
             drawPortalRank(graphics, item.object().rank(), (int) Math.round(PORTAL_SPRITE_SIZE * scale), alpha);
+            graphics.pose().popPose();
             RenderSystem.disableBlend();
             buffers = beginScene(graphics);
         }
         AHEAD.clear();
         if (rider != null) {
-            drawRider(pose, buffers, rider, riderRadius(state), 1.0, state.bankDegrees(), partialTick);
+            drawRider(pose, buffers, rider, riderRadius(state), 1.0, state.bankDegrees(), partialTick, effects);
         }
         renderPastObjects(pose, buffers, state);
         endScene(buffers);
@@ -532,8 +518,10 @@ public final class WarpRideRenderer {
      * The player in elytra flight, centred {@code radius} below the axis at the rider plane, rolled
      * by {@code bankDegrees} about the depth axis through its own centre (+ = counter-clockwise).
      */
-    private static void drawRider(PoseStack pose, MultiBufferSource buffers, WarpRideRiderProxy rider,
-                                  double radius, double sizeFactor, double bankDegrees, float partialTick) {
+    @SuppressWarnings("java:S107")
+    private static void drawRider(PoseStack pose, MultiBufferSource.BufferSource buffers, WarpRideRiderProxy rider,
+                                  double radius, double sizeFactor, double bankDegrees, float partialTick,
+                                  WarpRideRiderEffects effects) {
         float scale = (float) (RIDER_PX_PER_BLOCK * sizeFactor);
         if (scale <= 0.0f) {
             return;
@@ -549,7 +537,16 @@ public final class WarpRideRenderer {
         }
         pose.scale(scale, scale, scale);
         pose.translate(0.0f, RIDER_CENTER_Y, RIDER_CENTER_Z);
-        dispatcher.render(rider, 0.0, 0.0, 0.0, 0.0f, partialTick, pose, buffers, LightTexture.FULL_BRIGHT);
+        if (effects == null) {
+            dispatcher.render(rider, 0.0, 0.0, 0.0, 0.0f, partialTick, pose, buffers, LightTexture.FULL_BRIGHT);
+        } else {
+            // Everything queued so far is farther than the rider: draw it first, then the rider
+            // through its own buffers, where tint and glint are layered on (plan 191, E1).
+            buffers.endBatch();
+            dispatcher.render(rider, 0.0, 0.0, 0.0, 0.0f, partialTick, pose, effects.buffers(),
+                    LightTexture.FULL_BRIGHT);
+            effects.flush();
+        }
         pose.popPose();
         dispatcher.setRenderHitBoxes(hitBoxes);
         dispatcher.setRenderShadow(true);
@@ -562,8 +559,10 @@ public final class WarpRideRenderer {
      * {@code shrink} at the axis with its rank strip, then the rider at {@code riderRadius}, scaled
      * by {@code shrink} as well.
      */
+    @SuppressWarnings("java:S107")
     public static void renderWarpScene(GuiGraphics graphics, WarpRideClientState state, WarpRideRiderProxy rider,
-                                       double shrink, double riderRadius, float partialTick) {
+                                       double shrink, double riderRadius, float partialTick,
+                                       WarpRideRiderEffects effects) {
         MultiBufferSource.BufferSource buffers = beginScene(graphics);
         PoseStack pose = new PoseStack();
         drawVortex(pose, buffers, state, state.resultTypeId, 1.0, shrink, 1.0f);
@@ -576,7 +575,7 @@ public final class WarpRideRenderer {
         // The rider and the objects flying past are both nearer than the portal and its strip.
         buffers = beginScene(graphics);
         if (rider != null && shrink > 0.0) {
-            drawRider(pose, buffers, rider, riderRadius, shrink, state.bankDegrees(), partialTick);
+            drawRider(pose, buffers, rider, riderRadius, shrink, state.bankDegrees(), partialTick, effects);
         }
         renderPastObjects(pose, buffers, state);
         endScene(buffers);
@@ -657,8 +656,4 @@ public final class WarpRideRenderer {
         graphics.pose().popPose();
     }
 
-    private static int packAlpha(int rgb, float alpha) {
-        int a = (int) (Math.max(0.0f, Math.min(1.0f, alpha)) * 255.0f);
-        return (a << 24) | (rgb & 0x00FFFFFF);
-    }
 }

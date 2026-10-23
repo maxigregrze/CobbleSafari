@@ -1,5 +1,6 @@
 package maxigregrze.cobblesafari.client.renderer;
 
+import com.cobblemon.mod.common.client.render.models.blockbench.FloatingState;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
@@ -24,6 +25,7 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
+import net.minecraft.world.phys.Vec3;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -161,18 +163,29 @@ public class PokeStatueBlockEntityRenderer<T extends AbstractPokeStatueBlockEnti
         PokeStatueRenderStyle style = data.renderStyle();
 
         PokeStatueModelRenderer.Playhead playhead = cached.pose().held();
-        if (!data.isAnimationFixed() && data.getLevel() != null) {
+        boolean playing = !data.isAnimationFixed() && data.getLevel() != null;
+        if (playing) {
             // World time, so a paused game pauses the statue and every client sees the same frame.
             double elapsed = (data.getLevel().getGameTime() + partialTick) / 20.0 * data.getAnimationSpeed();
             playhead = PokeStatueModelRenderer.seek(cached.pose(), elapsed);
         }
+        // Particles follow the played clip only (plan 194, B2): a held statue never advances its clock.
+        boolean emitting = playing && data.isEmittingParticles();
+        Vec3 locatorOrigin = emitting
+                ? new Vec3(pos.getX() + 0.5, pos.getY() + block.modelOriginY(), pos.getZ() + 0.5)
+                : null;
 
         poseStack.pushPose();
         poseStack.translate(0.5, block.modelOriginY(), 0.5);
         PokeStatueModelRenderer.render(poseStack, bufferSource, packedLight,
                 cached.info(), cached.pose(), playhead, scale, style,
-                state.getValue(AbstractPokeStatueBlock.FACING).toYRot());
+                state.getValue(AbstractPokeStatueBlock.FACING).toYRot(), locatorOrigin);
         poseStack.popPose();
+
+        FloatingState modelState = cached.pose().state();
+        StatueParticleEmitter.update(data, emitting && modelState.getCurrentModel() != null, cached.pose(),
+                modelState.getCurrentModel(), modelState, cached.pose().animation(),
+                playhead.seconds(), playhead.clipStart());
     }
 
     /**

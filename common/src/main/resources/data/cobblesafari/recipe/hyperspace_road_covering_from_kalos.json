@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "KKK",
+    "KGK",
+    "KKK"
+  ],
+  "key": {
+    "K": {
+      "item": "cobblesafari:kalos_road_covering"
+    },
+    "G": {
+      "item": "minecraft:phantom_membrane"
+    }
+  },
+  "result": {
+    "id": "cobblesafari:hyperspace_road_covering",
+    "count": 8
+  }
+}

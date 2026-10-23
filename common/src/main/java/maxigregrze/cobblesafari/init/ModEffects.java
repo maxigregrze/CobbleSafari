@@ -25,7 +25,8 @@ public enum ModEffects {
     LEGENDARY_BOOST("legendary_boost", () -> new BasicStatusEffect(MobEffectCategory.BENEFICIAL, 0xFFD700)),
     MYTHICAL_BOOST("mythical_boost", () -> new BasicStatusEffect(MobEffectCategory.BENEFICIAL, 0xE6E6FA)),
     ROTO_FALL("roto_fall", () -> new BasicStatusEffect(MobEffectCategory.BENEFICIAL, 0x7AFFFF)),
-    RED_SHACKLED("red_shackled", RedShackledMobEffect::new);
+    RED_SHACKLED("red_shackled", RedShackledMobEffect::new),
+    GLUTTONOUS("gluttonous", maxigregrze.cobblesafari.effect.GluttonousMobEffect::new);
 
     public final Holder<MobEffect> holder;
     public final MobEffect effect;

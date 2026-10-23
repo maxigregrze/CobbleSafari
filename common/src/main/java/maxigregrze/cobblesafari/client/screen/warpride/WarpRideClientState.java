@@ -1,5 +1,6 @@
 package maxigregrze.cobblesafari.client.screen.warpride;
 
+import maxigregrze.cobblesafari.config.UltraWarpRideConfig;
 import maxigregrze.cobblesafari.warpride.network.WarpRidePayloads;
 
 import java.util.ArrayList;
@@ -19,7 +20,7 @@ public final class WarpRideClientState {
     private static final double EASE_RATE = 12.0;
 
     public static final int PHASE_AWAITING_READY = 0;
-    public static final int PHASE_COUNTDOWN = 1;
+    public static final int PHASE_INTRO = 1;
     public static final int PHASE_RIDING = 2;
     public static final int PHASE_PORTAL_TAKEN = 3;
     public static final int PHASE_ENDED = 4;
@@ -95,9 +96,10 @@ public final class WarpRideClientState {
     }
 
     public UUID sessionId;
-    public double baseSpeed = 32.0;
-    public double minSpeed = 16.0;
-    public double maxSpeed = 64.0;
+    public double minSpeed = 15.0;
+    public double maxSpeed = 57.0;
+    public double steeringBase = 0.02;
+    public double steeringPerEnergy = 0.0003;
     public double waveSpacingLy = 16.0;
     /** How deep objects are drawn, independent of the cadence and of the ring count. */
     public double visibleDepthLy = 32.0;
@@ -120,19 +122,33 @@ public final class WarpRideClientState {
     /** Seconds the player and portal shrink while portal_wrap plays. */
     public double warpAnimSeconds = 0.8;
     public double fadeToBlackSeconds = 0.4;
+    public int introTicks = 132;
+    public int introLaunchTick = 125;
+
+    /**
+     * After the launch the rider flies out of the start tunnel's open end; the camera, still
+     * blending in from behind, clears it about 0.16 s later. The energy aura waits that long, then
+     * grows in. (The tube, stars and rocks need no fade: they already exist beyond the exit.)
+     */
+    private static final long WORLD_FADE_DELAY_NANOS = 200_000_000L;
+    private static final long WORLD_FADE_NANOS = 400_000_000L;
+    /** Wall-clock start of the intro, 0 until the server reports it; realigned by the launch. */
+    private long introStartNanos;
+    /** Wall-clock instant of the launch, 0 until it happened. */
+    private long launchNanos;
 
     public int phase = PHASE_AWAITING_READY;
     public double odometer;
-    public double energy = 50.0;
-    public double speed = 32.0;
+    public double energy = 35.0;
+    public double speed = 29.7;
     public int lane;
     public boolean drifting;
     /** Whether energy decay is frozen (opening grace or post-hit); drives the bar tint. */
     public boolean frozen;
 
     private double targetOdometer;
-    private double targetEnergy = 50.0;
-    private double targetSpeed = 32.0;
+    private double targetEnergy = 35.0;
+    private double targetSpeed = 29.7;
 
     /** Continuous, unwrapped lane the tunnel is drawn at, so turns and jumps sweep, not snap. */
     public double displayLane;
@@ -177,9 +193,10 @@ public final class WarpRideClientState {
 
     public void applyOpen(WarpRidePayloads.OpenPayload p) {
         this.sessionId = p.sessionId();
-        this.baseSpeed = p.baseSpeed();
         this.minSpeed = p.minSpeed();
         this.maxSpeed = p.maxSpeed();
+        this.steeringBase = p.steeringBase();
+        this.steeringPerEnergy = p.steeringPerEnergy();
         this.waveSpacingLy = p.waveSpacingLy();
         this.visibleDepthLy = p.visibleDepthLy();
         this.ringCount = p.ringCount();
@@ -199,6 +216,12 @@ public final class WarpRideClientState {
         this.driftSeconds = p.driftSeconds();
         this.warpAnimSeconds = p.warpAnimSeconds();
         this.fadeToBlackSeconds = p.fadeToBlackSeconds();
+        this.introTicks = p.introTicks();
+        this.introLaunchTick = p.introLaunchTick();
+        this.introStartNanos = 0L;
+        this.launchNanos = 0L;
+        this.decorOdometer = 0.0;
+        this.decorSpeed = 0.0;
         this.displayLane = 0.0;
         this.tweenFrom = 0.0;
         this.tweenTo = 0.0;
@@ -227,9 +250,17 @@ public final class WarpRideClientState {
         this.drifting = p.drifting();         // snap
         this.frozen = p.frozen();             // snap
         this.phase = p.phase();               // snap
+        long nowNanos = System.nanoTime();
+        if (phase == PHASE_INTRO && introStartNanos == 0L) {
+            introStartNanos = nowNanos;
+        } else if (phase >= PHASE_RIDING && launchNanos == 0L) {
+            // The intro was missed (or its launch event lost): treat it as long finished.
+            introStartNanos = nowNanos - ticksToNanos(introTicks) - WORLD_FADE_DELAY_NANOS - WORLD_FADE_NANOS;
+            launchNanos = nowNanos - WORLD_FADE_DELAY_NANOS - WORLD_FADE_NANOS;
+        }
         // Only re-aim when the server disagrees with where we are heading, or every packet restarts it.
         if (Math.floorMod((int) Math.round(tweenTo), 8) != p.lane()) {
-            aimAtLane(p.lane(), laneRotationMs);
+            aimAtLane(p.lane(), laneRotationMs());
         }
         this.lastServerTick = p.serverTick();
         this.lastServerTickNanos = System.nanoTime();
@@ -267,8 +298,8 @@ public final class WarpRideClientState {
 
     /** Advances the predicted state and eases it toward the last authoritative snapshot. */
     public void advance(double deltaSeconds) {
-        // The countdown scrolls the track too; without integrating through it the intro reads as lag.
-        if (phase == PHASE_RIDING || phase == PHASE_COUNTDOWN) {
+        // The odometer holds at 0 through the intro, as on the server.
+        if (phase == PHASE_RIDING) {
             odometer += speed * deltaSeconds;
         }
         advanceTween();
@@ -276,7 +307,41 @@ public final class WarpRideClientState {
         odometer = ease(odometer, targetOdometer, deltaSeconds);
         energy = ease(energy, targetEnergy, deltaSeconds);
         speed = ease(speed, targetSpeed, deltaSeconds);
+        advanceDecor(deltaSeconds);
         pruneWaves();
+    }
+
+    // --- decorative motion (action plan 191, the intro's exit) ----------------------------------
+
+    /** How quickly the scenery slows from the intro's pace to the ride's after the exit, per second. */
+    private static final double DECOR_EASE_RATE = 2.5;
+
+    /**
+     * Distance the scenery - tube, stars, rocks - has travelled, in light-years. It is not the
+     * odometer: it runs through the intro at the start tunnel's pace, so the tube seen through the
+     * tunnel's exit already streams like a continuation of it, then eases down to the ride's speed
+     * once the rider is out. Purely decorative: nothing about the ride reads it.
+     */
+    private double decorOdometer;
+    private double decorSpeed;
+
+    private void advanceDecor(double deltaSeconds) {
+        if (introStartNanos == 0L) {
+            decorSpeed = 0.0;                                   // tutorial page: everything still
+        } else if (launchNanos == 0L) {
+            decorSpeed = WarpRideStartTunnel.introSpeedLy(projectionK);
+        } else {
+            decorSpeed += (speed - decorSpeed) * (1.0 - Math.exp(-DECOR_EASE_RATE * deltaSeconds));
+        }
+        decorOdometer += decorSpeed * deltaSeconds;
+    }
+
+    public double decorOdometer() {
+        return decorOdometer;
+    }
+
+    public double decorSpeed() {
+        return decorSpeed;
     }
 
     /**
@@ -402,8 +467,25 @@ public final class WarpRideClientState {
     }
 
     public double speedFromEnergy(double e) {
-        double clamped = Math.max(0.0, Math.min(100.0, e));
-        return baseSpeed * Math.pow(2.0, (clamped - 50.0) / 50.0);
+        return UltraWarpRideConfig.speedFromEnergy(e, minSpeed, maxSpeed);
+    }
+
+    /** The configured duration at 50 energy, stretched or shortened for the predicted energy. */
+    private int scaledMs(int msAtFifty) {
+        double factor = UltraWarpRideConfig.steeringFactor(energy, steeringBase, steeringPerEnergy);
+        return (int) Math.max(1L, Math.round(msAtFifty * factor));
+    }
+
+    public int inputCooldownMs() {
+        return scaledMs(inputCooldownMs);
+    }
+
+    public int jumpTransitMs() {
+        return scaledMs(jumpTransitMs);
+    }
+
+    public int laneRotationMs() {
+        return scaledMs(laneRotationMs);
     }
 
     public long estimatedServerTick() {
@@ -425,7 +507,7 @@ public final class WarpRideClientState {
     public void startLocalJump() {
         long now = System.nanoTime();
         this.jumpStartNanos = now;
-        this.jumpEndNanos = now + jumpTransitMs * 1_000_000L;
+        this.jumpEndNanos = now + jumpTransitMs() * 1_000_000L;
     }
 
     public boolean isJumping() {
@@ -443,6 +525,38 @@ public final class WarpRideClientState {
             return -1.0;
         }
         return (System.nanoTime() - jumpStartNanos) / (double) span;
+    }
+
+    // --- intro (action plan 191, I1) ------------------------------------------------------------
+
+    private static long ticksToNanos(int ticks) {
+        return ticks * 50_000_000L;
+    }
+
+    /** The server's launch tick: realigns the intro clock on it, whatever the latency was. */
+    public void onLaunch() {
+        long now = System.nanoTime();
+        launchNanos = now;
+        introStartNanos = now - ticksToNanos(introLaunchTick);
+    }
+
+    /** Seconds since the intro started; 0 before (the tutorial shows the intro's first frame). */
+    public double introSeconds(long now) {
+        return introStartNanos == 0L ? 0.0 : Math.max(0.0, (now - introStartNanos) / 1_000_000_000.0);
+    }
+
+    /** The intro clock in the source's frames (30 per second), which the camera keyframes use. */
+    public double introFrame(long now) {
+        return introSeconds(now) * 30.0;
+    }
+
+    /** 0 until the camera is out of the start tunnel, then up to 1: drives the energy aura's appearance. */
+    public float worldAlpha(long now) {
+        if (launchNanos == 0L) {
+            return 0.0f;
+        }
+        return (float) Math.max(0.0, Math.min(1.0,
+                (now - launchNanos - WORLD_FADE_DELAY_NANOS) / (double) WORLD_FADE_NANOS));
     }
 
     /** Freezes the world; on a drift take the shrink waits until the rider reaches the axis. */

@@ -162,6 +162,10 @@ public class CobbleSafariClientNeoForge {
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.ULTRASPACE_BONSAI_STEM, RenderType.cutout());
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.ULTRASPACE_BONSAI, RenderType.cutout());
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.ULTRASPACE_BUSH, RenderType.cutout());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.BUZZWOLE_PLANT, RenderType.cutout());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.PHEROMOSA_PLANT, RenderType.cutout());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.BUZZWOLE_PLANT_GROWN, RenderType.cutout());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.PHEROMOSA_PLANT_GROWN, RenderType.cutout());
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.ULTRASPACE_LEAVES, RenderType.cutout());
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.ULTRASPACE_CRYSTAL, RenderType.cutout());
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.ULTRASPACE_CABLE_STRAP, RenderType.cutout());
@@ -307,6 +311,16 @@ public class CobbleSafariClientNeoForge {
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.HYPERSPACE_BRICK2_WINDOW, RenderType.translucent());
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.HYPERSPACE_PLAIN_WINDOW, RenderType.translucent());
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.HYPERSPACE_CANOPY_STAIRS, RenderType.translucent());
+            // Plan 194
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.HYPERSPACE_HANDRAIL, RenderType.cutout());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.HYPERSPACE_FENCE, RenderType.cutout());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.HYPERSPACE_BENCH, RenderType.cutout());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.HYPERSPACE_POTTEDPLANT, RenderType.cutout());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.MEGAPOLIS_BARRICADE, RenderType.cutout());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.HYPERSPACE_CHIMNEY, RenderType.cutout());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.KALOS_CHIMNEY, RenderType.cutout());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.HYPERSPACE_CANOPY_RIDGE, RenderType.translucent());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.KALOS_CANOPY_RIDGE, RenderType.translucent());
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.HYPERSPACE_CANOPY_SLAB, RenderType.translucent());
 
             // Kalos family (plan 163)
@@ -392,11 +406,24 @@ public class CobbleSafariClientNeoForge {
         });
 
         event.enqueueWork(DonutItemClientSetup::registerItemProperties);
+        event.enqueueWork(() -> net.minecraft.client.renderer.item.ItemProperties.register(
+                maxigregrze.cobblesafari.init.ModItems.STAKATAKA_SHIELD,
+                ResourceLocation.withDefaultNamespace("blocking"),
+                maxigregrze.cobblesafari.client.renderer.StakatakaShieldRenderer::blockingProperty));
+        event.enqueueWork(() -> {
+            for (net.minecraft.world.item.Item canon : new net.minecraft.world.item.Item[] {
+                    maxigregrze.cobblesafari.init.ModItems.CELESTEELA_CANON, maxigregrze.cobblesafari.init.ModItems.KARTANA_CANON}) {
+                net.minecraft.client.renderer.item.ItemProperties.register(canon,
+                        ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, maxigregrze.cobblesafari.client.UltraLootItemProperties.CANON_EMPTY),
+                        maxigregrze.cobblesafari.client.UltraLootItemProperties::canonEmpty);
+            }
+        });
         event.enqueueWork(maxigregrze.cobblesafari.client.ClientBlockHooks::init);
 
         NeoForge.EVENT_BUS.addListener(CobbleSafariClientNeoForge::onRenderGuiLayer);
         NeoForge.EVENT_BUS.addListener(CobbleSafariClientNeoForge::onItemTooltip);
         NeoForge.EVENT_BUS.addListener(CobbleSafariClientNeoForge::onClientTick);
+        NeoForge.EVENT_BUS.addListener(CobbleSafariClientNeoForge::onRenderBlockHighlight);
 
         if (net.neoforged.fml.ModList.get().isLoaded("accessories")) {
             maxigregrze.cobblesafari.compat.accessories.AccessoriesClientCompat.init();
@@ -474,9 +501,17 @@ public class CobbleSafariClientNeoForge {
         event.registerEntityRenderer(ModEntities.BALLOON, BalloonEntityRenderer::new);
         event.registerEntityRenderer(ModEntities.BALLOON_SAFARI, BalloonSafariRenderer::new);
         event.registerEntityRenderer(ModEntities.THROWN_MUD_BALL, net.minecraft.client.renderer.entity.ThrownItemRenderer::new);
+        event.registerEntityRenderer(ModEntities.SEAT, net.minecraft.client.renderer.entity.NoopRenderer::new);
         event.registerEntityRenderer(ModEntities.THROWN_BAIT, net.minecraft.client.renderer.entity.ThrownItemRenderer::new);
         event.registerEntityRenderer(ModEntities.THROWN_BALM, net.minecraft.client.renderer.entity.ThrownItemRenderer::new);
         event.registerEntityRenderer(ModEntities.THROWN_RED_CHAIN, maxigregrze.cobblesafari.client.renderer.ThrownRedChainEntityRenderer::new);
+        event.registerEntityRenderer(ModEntities.POIPOLE_ARROW, maxigregrze.cobblesafari.client.renderer.NeedleDartRenderer::new);
+        event.registerEntityRenderer(ModEntities.BLACEPHALON_BOMB, net.minecraft.client.renderer.entity.ThrownItemRenderer::new);
+        event.registerEntityRenderer(ModEntities.XURKITREE_BOMB, net.minecraft.client.renderer.entity.ThrownItemRenderer::new);
+        event.registerEntityRenderer(ModEntities.CELESTEELA_PROJECTILE, ctx -> new maxigregrze.cobblesafari.client.renderer.BakedModelProjectileRenderer<>(
+                ctx, maxigregrze.cobblesafari.client.renderer.UltraLootModels.CELESTEELA_PROJECTILE, 2.0f));
+        event.registerEntityRenderer(ModEntities.PAPER_PLANE, ctx -> new maxigregrze.cobblesafari.client.renderer.BakedModelProjectileRenderer<>(
+                ctx, maxigregrze.cobblesafari.client.renderer.UltraLootModels.PAPER_PLANE, 1.5f, 180.0f));
         event.registerEntityRenderer(ModEntities.CSBOSS, maxigregrze.cobblesafari.client.renderer.CsBossEntityRenderer::new);
         event.registerEntityRenderer(ModEntities.CSBOSS_MINION, maxigregrze.cobblesafari.client.renderer.CsBossMinionEntityRenderer::new);
         event.registerEntityRenderer(ModEntities.CSBOSS_BULLET, maxigregrze.cobblesafari.client.renderer.CsBossBulletEntityRenderer::new);
@@ -505,6 +540,15 @@ public class CobbleSafariClientNeoForge {
         event.registerLayerDefinition(CsTraderEntityRenderer.LAYER_LOCATION, CsTraderEntityRenderer::createBodyLayer);
     }
 
+    /** Lost Items outside creative: no selection box, the block stays clickable. */
+    public static void onRenderBlockHighlight(net.neoforged.neoforge.client.event.RenderHighlightEvent.Block event) {
+        Minecraft mc = Minecraft.getInstance();
+        if (mc.level != null && maxigregrze.cobblesafari.client.ClientBlockHooks.hidesBlockOutline(
+                mc.level.getBlockState(event.getTarget().getBlockPos()))) {
+            event.setCanceled(true);
+        }
+    }
+
     public static void onClientTick(net.neoforged.neoforge.client.event.ClientTickEvent.Post event) {
         Minecraft mc = Minecraft.getInstance();
         CsMusicPlayer.onClientTick(mc);
@@ -514,6 +558,7 @@ public class CobbleSafariClientNeoForge {
         maxigregrze.cobblesafari.client.rotomphone.RotomPhoneKeybind.clientTick(mc);
         maxigregrze.cobblesafari.client.objectives.ObjectivesKeybind.clientTick(mc);
         maxigregrze.cobblesafari.client.objectives.ObjectivesHudController.clientTick(mc);
+        maxigregrze.cobblesafari.client.UltraLootClientTicker.onClientTick(mc);
     }
 
     public static void onRenderGuiLayer(RenderGuiLayerEvent.Post event) {

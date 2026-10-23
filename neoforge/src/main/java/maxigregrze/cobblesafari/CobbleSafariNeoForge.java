@@ -207,6 +207,9 @@ public class CobbleSafariNeoForge {
             registrar.playToClient(maxigregrze.cobblesafari.network.HudConfigRefreshPayload.TYPE,
                     maxigregrze.cobblesafari.network.HudConfigRefreshPayload.STREAM_CODEC,
                     CobbleSafariClientNeoForge::handleHudConfigRefresh);
+            registrar.playToClient(maxigregrze.cobblesafari.network.UltraLootConfigSyncPayload.TYPE,
+                    maxigregrze.cobblesafari.network.UltraLootConfigSyncPayload.STREAM_CODEC,
+                    (payload, context) -> context.enqueueWork(payload::apply));
             registrar.playToClient(maxigregrze.cobblesafari.network.RainbowFeatherUsedPayload.TYPE,
                     maxigregrze.cobblesafari.network.RainbowFeatherUsedPayload.STREAM_CODEC,
                     CobbleSafariClientNeoForge::handleRainbowFeatherUsed);
@@ -255,6 +258,9 @@ public class CobbleSafariNeoForge {
                     (payload, context) -> {});
             registrar.playToClient(maxigregrze.cobblesafari.network.HudConfigRefreshPayload.TYPE,
                     maxigregrze.cobblesafari.network.HudConfigRefreshPayload.STREAM_CODEC,
+                    (payload, context) -> {});
+            registrar.playToClient(maxigregrze.cobblesafari.network.UltraLootConfigSyncPayload.TYPE,
+                    maxigregrze.cobblesafari.network.UltraLootConfigSyncPayload.STREAM_CODEC,
                     (payload, context) -> {});
         }
 
@@ -712,6 +718,15 @@ public class CobbleSafariNeoForge {
     }
 
     private void onRightClickBlock(PlayerInteractEvent.RightClickBlock event) {
+        // Lost Item authoring gestures (action plan 193): vanilla never shows a sneak + item click to the block.
+        var lostItemResult = maxigregrze.cobblesafari.block.misc.LostItemInteractionHandler.onUseBlock(
+                event.getEntity(), event.getLevel(), event.getHand(), event.getHitVec());
+        if (lostItemResult != InteractionResult.PASS) {
+            event.setCanceled(true);
+            event.setCancellationResult(lostItemResult);
+            return;
+        }
+
         var cauldronResult = maxigregrze.cobblesafari.safari.MudBallCauldronHandler.onUseBlock(
                 event.getEntity(), event.getLevel(), event.getHand(), event.getHitVec());
         if (cauldronResult != InteractionResult.PASS) {
@@ -751,7 +766,8 @@ public class CobbleSafariNeoForge {
     }
 
     private void onLivingIncomingDamage(LivingIncomingDamageEvent event) {
-        if (!DimensionalBanEventHandler.onLivingHurt(event.getEntity(), event.getSource())) {
+        if (!DimensionalBanEventHandler.onLivingHurt(event.getEntity(), event.getSource())
+                || !maxigregrze.cobblesafari.event.UltraLootDamageHandler.onLivingHurt(event.getEntity(), event.getSource())) {
             event.setCanceled(true);
         }
     }

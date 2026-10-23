@@ -60,8 +60,19 @@ public final class WarpRideHud {
         }
     }
 
-    public void render(GuiGraphics graphics, WarpRideClientState state) {
-        renderEnergyAura(graphics, state);
+    /**
+     * @param camera the camera feedback, which the aura follows so it stays on the rider
+     * @param now    wall clock, for the aura's growth at launch (action plan 191, I1)
+     */
+    public void render(GuiGraphics graphics, WarpRideClientState state, WarpRideCamera camera, long now) {
+        // The aura appears with the launch: from nothing to its size in the first 0.3 s.
+        double growth = Math.min(1.0, state.worldAlpha(now) * 2.0);
+        if (growth > 0.0) {
+            graphics.pose().pushPose();
+            camera.apply2D(graphics.pose(), now);
+            renderEnergyAura(graphics, state, growth);
+            graphics.pose().popPose();
+        }
         renderHitEffect(graphics);
     }
 
@@ -70,9 +81,9 @@ public final class WarpRideHud {
      * follows jumps and drift, sized by energy. The old gauge's feedback moves onto it with the same
      * priorities: red on a hit, a white flash on a pickup, a white veil while decay is frozen.
      */
-    private void renderEnergyAura(GuiGraphics graphics, WarpRideClientState state) {
+    private void renderEnergyAura(GuiGraphics graphics, WarpRideClientState state, double growth) {
         double ratio = Math.max(0.0, Math.min(1.0, state.energy / 100.0));
-        int size = (int) Math.round(WarpRideRenderer.RIDER_SCREEN_PX * AURA_MAX_FACTOR * ratio);
+        int size = (int) Math.round(WarpRideRenderer.RIDER_SCREEN_PX * AURA_MAX_FACTOR * ratio * growth);
         int centerY = WarpRideRenderer.CENTER_Y + (int) Math.round(WarpRideRenderer.riderRadius(state));
 
         long now = System.nanoTime();

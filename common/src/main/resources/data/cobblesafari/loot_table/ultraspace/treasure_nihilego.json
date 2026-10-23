@@ -1,0 +1,69 @@
+{
+  "type": "minecraft:chest",
+  "pools": [
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:loot_table",
+          "value": "cobblesafari:lostitem_treasure",
+          "weight": 75
+        },
+        {
+          "type": "minecraft:loot_table",
+          "weight": 25,
+          "value": {
+            "type": "minecraft:chest",
+            "pools": [
+              {
+                "rolls": 1,
+                "entries": [
+                  {
+                    "type": "minecraft:item",
+                    "name": "cobblesafari:poipole_arrow",
+                    "weight": 4,
+                    "functions": [
+                      {
+                        "function": "minecraft:set_count",
+                        "count": {
+                          "type": "minecraft:uniform",
+                          "min": 8,
+                          "max": 16
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "type": "minecraft:item",
+                    "name": "cobblesafari:recon_armor_helmet",
+                    "weight": 1
+                  },
+                  {
+                    "type": "minecraft:item",
+                    "name": "cobblesafari:recon_armor_chestplate",
+                    "weight": 1
+                  },
+                  {
+                    "type": "minecraft:item",
+                    "name": "cobblesafari:recon_armor_leggings",
+                    "weight": 1
+                  },
+                  {
+                    "type": "minecraft:item",
+                    "name": "cobblesafari:recon_armor_boots",
+                    "weight": 1
+                  },
+                  {
+                    "type": "minecraft:item",
+                    "name": "cobblesafari:nihilego_hat",
+                    "weight": 4
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

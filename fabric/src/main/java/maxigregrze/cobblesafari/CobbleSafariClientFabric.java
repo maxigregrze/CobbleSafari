@@ -106,6 +106,19 @@ public class CobbleSafariClientFabric implements ClientModInitializer {
         );
         registerTooltips();
         DonutItemClientSetup.registerItemProperties();
+        net.minecraft.client.renderer.item.ItemProperties.register(maxigregrze.cobblesafari.init.ModItems.STAKATAKA_SHIELD,
+                ResourceLocation.withDefaultNamespace("blocking"),
+                maxigregrze.cobblesafari.client.renderer.StakatakaShieldRenderer::blockingProperty);
+        for (net.minecraft.world.item.Item canon : new net.minecraft.world.item.Item[] {
+                maxigregrze.cobblesafari.init.ModItems.CELESTEELA_CANON, maxigregrze.cobblesafari.init.ModItems.KARTANA_CANON}) {
+            net.minecraft.client.renderer.item.ItemProperties.register(canon,
+                    ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, maxigregrze.cobblesafari.client.UltraLootItemProperties.CANON_EMPTY),
+                    maxigregrze.cobblesafari.client.UltraLootItemProperties::canonEmpty);
+        }
+        net.fabricmc.fabric.api.client.rendering.v1.BuiltinItemRendererRegistry.INSTANCE.register(
+                maxigregrze.cobblesafari.init.ModItems.STAKATAKA_SHIELD,
+                (stack, mode, pose, buffers, light, overlay) ->
+                        maxigregrze.cobblesafari.client.renderer.StakatakaShieldRenderer.render(stack, pose, buffers, light, overlay));
         registerClientNetworking();
         registerHud();
         registerBlockRenderLayers();
@@ -114,8 +127,14 @@ public class CobbleSafariClientFabric implements ClientModInitializer {
         registerScreens();
         registerDungeonMusic();
         maxigregrze.cobblesafari.client.ClientBlockHooks.init();
+        // Returning false skips vanilla's outline for that block (Lost Items outside creative).
+        net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents.BLOCK_OUTLINE.register((context, outline) ->
+                !maxigregrze.cobblesafari.client.ClientBlockHooks.hidesBlockOutline(outline.blockState()));
         maxigregrze.cobblesafari.client.RotomPhoneModelLoadingPlugin.register();
         maxigregrze.cobblesafari.client.UltraWarpDiveModelLoadingPlugin.register();
+        maxigregrze.cobblesafari.client.UltraLootModelLoadingPlugin.register();
+        maxigregrze.cobblesafari.client.LostItemModelLoadingPlugin.register();
+        maxigregrze.cobblesafari.client.UltraLootFabricClient.register();
         KeyBindingHelper.registerKeyBinding(maxigregrze.cobblesafari.client.rotomphone.RotomPhoneKeybind.OPEN_PHONE);
         KeyBindingHelper.registerKeyBinding(maxigregrze.cobblesafari.client.objectives.ObjectivesKeybind.TOGGLE_HUD);
         maxigregrze.cobblesafari.client.hud.HudClientConfig.reload();
@@ -132,6 +151,7 @@ public class CobbleSafariClientFabric implements ClientModInitializer {
             maxigregrze.cobblesafari.client.rotomphone.RotomPhoneKeybind.clientTick(client);
             maxigregrze.cobblesafari.client.objectives.ObjectivesKeybind.clientTick(client);
             maxigregrze.cobblesafari.client.objectives.ObjectivesHudController.clientTick(client);
+            maxigregrze.cobblesafari.client.UltraLootClientTicker.onClientTick(client);
         });
     }
 
@@ -183,6 +203,10 @@ public class CobbleSafariClientFabric implements ClientModInitializer {
                 });
 
         ClientPlayNetworking.registerGlobalReceiver(
+                maxigregrze.cobblesafari.network.UltraLootConfigSyncPayload.TYPE,
+                (payload, context) -> context.client().execute(payload::apply));
+
+        ClientPlayNetworking.registerGlobalReceiver(
                 maxigregrze.cobblesafari.network.HudConfigRefreshPayload.TYPE, (payload, context) -> {
                     context.client().execute(maxigregrze.cobblesafari.client.hud.HudClientConfig::reload);
                 });
@@ -213,6 +237,8 @@ public class CobbleSafariClientFabric implements ClientModInitializer {
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.ULTRASPACE_BONSAI_STEM, RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.ULTRASPACE_BONSAI, RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.ULTRASPACE_BUSH, RenderType.cutout());
+        BlockRenderLayerMap.INSTANCE.putBlocks(RenderType.cutout(), ModBlocks.BUZZWOLE_PLANT, ModBlocks.PHEROMOSA_PLANT,
+                ModBlocks.BUZZWOLE_PLANT_GROWN, ModBlocks.PHEROMOSA_PLANT_GROWN);
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.ULTRASPACE_LEAVES, RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.ULTRASPACE_CRYSTAL, RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.ULTRASPACE_CABLE_STRAP, RenderType.cutout());
@@ -361,6 +387,16 @@ public class CobbleSafariClientFabric implements ClientModInitializer {
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.HYPERSPACE_BRICK2_WINDOW, RenderType.translucent());
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.HYPERSPACE_PLAIN_WINDOW, RenderType.translucent());
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.HYPERSPACE_CANOPY_STAIRS, RenderType.translucent());
+        // Plan 194
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.HYPERSPACE_HANDRAIL, RenderType.cutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.HYPERSPACE_FENCE, RenderType.cutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.HYPERSPACE_BENCH, RenderType.cutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.HYPERSPACE_POTTEDPLANT, RenderType.cutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.MEGAPOLIS_BARRICADE, RenderType.cutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.HYPERSPACE_CHIMNEY, RenderType.cutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.KALOS_CHIMNEY, RenderType.cutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.HYPERSPACE_CANOPY_RIDGE, RenderType.translucent());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.KALOS_CANOPY_RIDGE, RenderType.translucent());
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.HYPERSPACE_CANOPY_SLAB, RenderType.translucent());
 
         // Kalos family (plan 163)
@@ -501,9 +537,17 @@ public class CobbleSafariClientFabric implements ClientModInitializer {
         EntityRendererRegistry.register(ModEntities.BALLOON, BalloonEntityRenderer::new);
         EntityRendererRegistry.register(ModEntities.BALLOON_SAFARI, BalloonSafariRenderer::new);
         EntityRendererRegistry.register(ModEntities.THROWN_MUD_BALL, net.minecraft.client.renderer.entity.ThrownItemRenderer::new);
+        EntityRendererRegistry.register(ModEntities.SEAT, net.minecraft.client.renderer.entity.NoopRenderer::new);
         EntityRendererRegistry.register(ModEntities.THROWN_BAIT, net.minecraft.client.renderer.entity.ThrownItemRenderer::new);
         EntityRendererRegistry.register(ModEntities.THROWN_BALM, net.minecraft.client.renderer.entity.ThrownItemRenderer::new);
         EntityRendererRegistry.register(ModEntities.THROWN_RED_CHAIN, maxigregrze.cobblesafari.client.renderer.ThrownRedChainEntityRenderer::new);
+        EntityRendererRegistry.register(ModEntities.POIPOLE_ARROW, maxigregrze.cobblesafari.client.renderer.NeedleDartRenderer::new);
+        EntityRendererRegistry.register(ModEntities.BLACEPHALON_BOMB, net.minecraft.client.renderer.entity.ThrownItemRenderer::new);
+        EntityRendererRegistry.register(ModEntities.XURKITREE_BOMB, net.minecraft.client.renderer.entity.ThrownItemRenderer::new);
+        EntityRendererRegistry.register(ModEntities.CELESTEELA_PROJECTILE, ctx -> new maxigregrze.cobblesafari.client.renderer.BakedModelProjectileRenderer<>(
+                ctx, maxigregrze.cobblesafari.client.renderer.UltraLootModels.CELESTEELA_PROJECTILE, 2.0f));
+        EntityRendererRegistry.register(ModEntities.PAPER_PLANE, ctx -> new maxigregrze.cobblesafari.client.renderer.BakedModelProjectileRenderer<>(
+                ctx, maxigregrze.cobblesafari.client.renderer.UltraLootModels.PAPER_PLANE, 1.5f, 180.0f));
         EntityRendererRegistry.register(ModEntities.CSBOSS, maxigregrze.cobblesafari.client.renderer.CsBossEntityRenderer::new);
         EntityRendererRegistry.register(ModEntities.CSBOSS_MINION, maxigregrze.cobblesafari.client.renderer.CsBossMinionEntityRenderer::new);
         EntityRendererRegistry.register(ModEntities.CSBOSS_BULLET, maxigregrze.cobblesafari.client.renderer.CsBossBulletEntityRenderer::new);

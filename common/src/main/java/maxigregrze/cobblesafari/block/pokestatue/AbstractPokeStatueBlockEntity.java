@@ -73,7 +73,7 @@ public abstract class AbstractPokeStatueBlockEntity extends BlockEntity {
      * Hook for the Creative Statue's playback options (action plan 190, B7). The regular statue has
      * none, so it ignores them and keeps the defaults below whatever a client sends.
      */
-    protected void applyPlaybackOptions(boolean fixed, float speed, boolean showDummy) {
+    protected void applyPlaybackOptions(boolean fixed, float speed, boolean showDummy, boolean particles) {
         // optional
     }
 
@@ -93,6 +93,14 @@ public abstract class AbstractPokeStatueBlockEntity extends BlockEntity {
      */
     public boolean showsDummyWithoutModel() {
         return true;
+    }
+
+    /**
+     * Whether a playing model emits its animation particles (action plan 194, B2). Never, by
+     * default: only the Creative Statue plays.
+     */
+    public boolean isEmittingParticles() {
+        return false;
     }
 
     // -- accessors ----------------------------------------------------------
@@ -134,8 +142,8 @@ public abstract class AbstractPokeStatueBlockEntity extends BlockEntity {
      * store nonsense.
      */
     public void configure(String species, int mode, float scale, int color, String animation, float progress,
-                          boolean fixed, float speed, boolean showDummy) {
-        applyPlaybackOptions(fixed, speed, showDummy);
+                          boolean fixed, float speed, boolean showDummy, boolean particles) {
+        applyPlaybackOptions(fixed, speed, showDummy, particles);
         this.species = truncate(species, MAX_SPECIES_LENGTH);
         this.mode = Math.clamp(mode, 0, variant().getModeCount() - 1);
         this.scale = sanitizeScale(scale, variant().getMaxScale());
@@ -171,7 +179,7 @@ public abstract class AbstractPokeStatueBlockEntity extends BlockEntity {
     public OpenPokeStatueConfigPayload createOpenPayload() {
         return new OpenPokeStatueConfigPayload(
                 worldPosition, variant().getId(), species, mode, scale, color, animation, progress,
-                isAnimationFixed(), getAnimationSpeed(), showsDummyWithoutModel());
+                isAnimationFixed(), getAnimationSpeed(), showsDummyWithoutModel(), isEmittingParticles());
     }
 
     /** Pushes the data to clients for every position that renders part of this statue. */

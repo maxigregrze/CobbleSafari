@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/outer_stairs",
+  "textures": {
+    "bottom": "cobblesafari:block/kalos_tile",
+    "top": "cobblesafari:block/kalos_tile",
+    "side": "cobblesafari:block/kalos_tile"
+  }
+}

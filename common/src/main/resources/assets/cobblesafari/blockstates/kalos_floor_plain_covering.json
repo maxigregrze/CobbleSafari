@@ -1,0 +1,15 @@
+{
+  "variants": {
+    "": [
+      {
+        "model": "cobblesafari:block/kalos_floor_plain_covering_1"
+      },
+      {
+        "model": "cobblesafari:block/kalos_floor_plain_covering_2"
+      },
+      {
+        "model": "cobblesafari:block/kalos_floor_plain_covering_3"
+      }
+    ]
+  }
+}

@@ -1,16 +1,26 @@
 {
-  "version": 1,
-  "noBonusDistance": 4000,
+  "version": 2,
+  "noBonusDistance": 5100,
   "bands": [
-    { "fromDistance": 0,    "rankWeights": [1.00, 0.00, 0.00, 0.00], "portalChance": 0.06, "bonusChance": 0.90, "negativeWeights": [0.30, 0.55, 0.15, 0.00] },
-    { "fromDistance": 1000, "rankWeights": [0.78, 0.20, 0.02, 0.00], "portalChance": 0.07, "bonusChance": 0.80, "negativeWeights": [0.20, 0.55, 0.25, 0.00] },
-    { "fromDistance": 1500, "rankWeights": [0.66, 0.30, 0.04, 0.00], "portalChance": 0.07, "bonusChance": 0.70, "negativeWeights": [0.15, 0.50, 0.35, 0.00] },
-    { "fromDistance": 2000, "rankWeights": [0.52, 0.40, 0.08, 0.00], "portalChance": 0.08, "bonusChance": 0.55, "negativeWeights": [0.10, 0.45, 0.40, 0.05] },
-    { "fromDistance": 2500, "rankWeights": [0.33, 0.50, 0.16, 0.01], "portalChance": 0.08, "bonusChance": 0.40, "negativeWeights": [0.05, 0.40, 0.45, 0.10] },
-    { "fromDistance": 3000, "rankWeights": [0.32, 0.50, 0.16, 0.02], "portalChance": 0.09, "bonusChance": 0.30, "negativeWeights": [0.05, 0.35, 0.45, 0.15] },
-    { "fromDistance": 3500, "rankWeights": [0.31, 0.50, 0.16, 0.03], "portalChance": 0.09, "bonusChance": 0.15, "negativeWeights": [0.00, 0.30, 0.50, 0.20] },
-    { "fromDistance": 4000, "rankWeights": [0.30, 0.50, 0.16, 0.04], "portalChance": 0.10, "bonusChance": 0.00, "negativeWeights": [0.00, 0.20, 0.50, 0.30] },
-    { "fromDistance": 4500, "rankWeights": [0.29, 0.50, 0.16, 0.05], "portalChance": 0.10, "bonusChance": 0.00, "negativeWeights": [0.00, 0.10, 0.45, 0.45] }
+    { "fromDistance": 0,    "rankWeights": [1.00, 0.00, 0.00, 0.00], "portalChance": 0.06, "bonusChance": 0.80, "negativeWeights": [1.00, 0.00, 0.00, 0.00] },
+    { "fromDistance": 300,  "rankWeights": [1.00, 0.00, 0.00, 0.00], "portalChance": 0.06, "bonusChance": 0.80, "bonusChanceTo": 0.40, "negativeWeights": [0.80, 0.20, 0.00, 0.00] },
+    { "fromDistance": 600,  "rankWeights": [1.00, 0.00, 0.00, 0.00], "portalChance": 0.06, "bonusChance": 0.40, "bonusChanceTo": 0.30, "negativeWeights": [0.75, 0.25, 0.00, 0.00], "negativeWeightsTo": [0.70, 0.30, 0.00, 0.00] },
+    { "fromDistance": 1000, "rankWeights": [0.78, 0.20, 0.02, 0.00], "portalChance": 0.07, "bonusChance": 0.30, "negativeWeights": [0.65, 0.35, 0.00, 0.00] },
+    { "fromDistance": 1500, "rankWeights": [0.66, 0.30, 0.04, 0.00], "portalChance": 0.07, "bonusChance": 0.25, "negativeWeights": [0.60, 0.40, 0.00, 0.00] },
+    { "fromDistance": 2000, "rankWeights": [0.52, 0.40, 0.08, 0.00], "portalChance": 0.08, "bonusChance": 0.20, "negativeWeights": [0.00, 0.00, 1.00, 0.00] },
+    { "fromDistance": 2100, "rankWeights": [0.52, 0.40, 0.08, 0.00], "portalChance": 0.08, "bonusChance": 0.20, "negativeWeights": [0.55, 0.45, 0.00, 0.00] },
+    { "fromDistance": 2500, "rankWeights": [0.33, 0.50, 0.16, 0.01], "portalChance": 0.08, "bonusChance": 0.20, "negativeWeights": [0.00, 0.00, 1.00, 0.00] },
+    { "fromDistance": 2600, "rankWeights": [0.33, 0.50, 0.16, 0.01], "portalChance": 0.08, "bonusChance": 0.15, "negativeWeights": [0.50, 0.50, 0.00, 0.00] },
+    { "fromDistance": 3000, "rankWeights": [0.32, 0.50, 0.16, 0.02], "portalChance": 0.09, "bonusChance": 0.12, "negativeWeights": [0.00, 0.00, 1.00, 0.00] },
+    { "fromDistance": 3100, "rankWeights": [0.32, 0.50, 0.16, 0.02], "portalChance": 0.09, "bonusChance": 0.12, "negativeWeights": [0.45, 0.55, 0.00, 0.00] },
+    { "fromDistance": 3500, "rankWeights": [0.31, 0.50, 0.16, 0.03], "portalChance": 0.09, "bonusChance": 0.10, "negativeWeights": [0.00, 0.00, 1.00, 0.00] },
+    { "fromDistance": 3600, "rankWeights": [0.31, 0.50, 0.16, 0.03], "portalChance": 0.09, "bonusChance": 0.10, "negativeWeights": [0.40, 0.60, 0.00, 0.00] },
+    { "fromDistance": 4000, "rankWeights": [0.30, 0.50, 0.16, 0.04], "portalChance": 0.10, "bonusChance": 0.08, "negativeWeights": [0.00, 0.00, 1.00, 0.00] },
+    { "fromDistance": 4100, "rankWeights": [0.30, 0.50, 0.16, 0.04], "portalChance": 0.10, "bonusChance": 0.08, "negativeWeights": [0.35, 0.65, 0.00, 0.00] },
+    { "fromDistance": 4500, "rankWeights": [0.29, 0.50, 0.16, 0.05], "portalChance": 0.10, "bonusChance": 0.05, "negativeWeights": [0.00, 0.00, 1.00, 0.00] },
+    { "fromDistance": 4600, "rankWeights": [0.29, 0.50, 0.16, 0.05], "portalChance": 0.10, "bonusChance": 0.05, "negativeWeights": [0.30, 0.70, 0.00, 0.00] },
+    { "fromDistance": 5000, "rankWeights": [0.29, 0.50, 0.16, 0.05], "portalChance": 0.10, "bonusChance": 0.05, "negativeWeights": [0.00, 0.00, 1.00, 0.00] },
+    { "fromDistance": 5100, "rankWeights": [0.29, 0.50, 0.16, 0.05], "portalChance": 0.10, "bonusChance": 0.00, "negativeWeights": [0.25, 0.75, 0.00, 0.00] }
   ],
 
   "rewards": {

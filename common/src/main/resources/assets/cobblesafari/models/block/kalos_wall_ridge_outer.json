@@ -1,0 +1,8 @@
+{
+  "parent": "cobblesafari:block/template_ridge_outer",
+  "textures": {
+    "top": "cobblesafari:block/kalos_wall",
+    "bottom": "cobblesafari:block/kalos_wall",
+    "side": "cobblesafari:block/kalos_wall"
+  }
+}

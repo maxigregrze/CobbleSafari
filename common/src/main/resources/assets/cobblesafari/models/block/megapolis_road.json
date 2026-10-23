@@ -1,0 +1,8 @@
+{
+  "parent": "cobblesafari:block/ultraspace_sand_path_0",
+  "textures": {
+    "top": "cobblesafari:block/ultramegalopolis_road",
+    "all": "cobblesafari:block/ultramegalopolis_road",
+    "particle": "cobblesafari:block/ultramegalopolis_road"
+  }
+}

@@ -5,6 +5,7 @@ import maxigregrze.cobblesafari.block.dungeon.DungeonPortalBlock;
 import maxigregrze.cobblesafari.block.incubator.IncubatorBlock;
 import maxigregrze.cobblesafari.block.pokestatue.CreativeStatueBlock;
 import maxigregrze.cobblesafari.block.pokestatue.PokeStatueBlock;
+import maxigregrze.cobblesafari.block.ultraspace.UltraCropBlock;
 import snownee.jade.api.IWailaClientRegistration;
 import snownee.jade.api.IWailaCommonRegistration;
 import snownee.jade.api.IWailaPlugin;
@@ -28,5 +29,6 @@ public class CobbleSafariJadePlugin implements IWailaPlugin {
         registration.registerBlockComponent(BasePCJadeComponent.INSTANCE, BasePCBlock.class);
         registration.registerBlockComponent(PokeStatueJadeComponent.INSTANCE, PokeStatueBlock.class);
         registration.registerBlockComponent(PokeStatueJadeComponent.INSTANCE, CreativeStatueBlock.class);
+        registration.registerBlockComponent(UltraCropJadeComponent.INSTANCE, UltraCropBlock.class);
     }
 }

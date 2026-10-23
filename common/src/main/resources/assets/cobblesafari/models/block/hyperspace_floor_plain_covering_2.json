@@ -1,0 +1,7 @@
+{
+  "parent": "cobblesafari:block/template_covering",
+  "textures": {
+    "top": "cobblesafari:block/hyperspace_floor_plain_2",
+    "side": "cobblesafari:block/hyperspace_floor_plain_2"
+  }
+}

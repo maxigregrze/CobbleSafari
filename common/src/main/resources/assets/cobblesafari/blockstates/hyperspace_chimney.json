@@ -1,0 +1,72 @@
+{
+  "variants": {
+    "facing=north,stacks=true": [
+      {
+        "model": "cobblesafari:block/hyperspace_chimney_1"
+      },
+      {
+        "model": "cobblesafari:block/hyperspace_chimney_2"
+      },
+      {
+        "model": "cobblesafari:block/hyperspace_chimney_3"
+      }
+    ],
+    "facing=north,stacks=false": {
+      "model": "cobblesafari:block/hyperspace_chimney_base"
+    },
+    "facing=east,stacks=true": [
+      {
+        "model": "cobblesafari:block/hyperspace_chimney_1",
+        "y": 90
+      },
+      {
+        "model": "cobblesafari:block/hyperspace_chimney_2",
+        "y": 90
+      },
+      {
+        "model": "cobblesafari:block/hyperspace_chimney_3",
+        "y": 90
+      }
+    ],
+    "facing=east,stacks=false": {
+      "model": "cobblesafari:block/hyperspace_chimney_base",
+      "y": 90
+    },
+    "facing=south,stacks=true": [
+      {
+        "model": "cobblesafari:block/hyperspace_chimney_1",
+        "y": 180
+      },
+      {
+        "model": "cobblesafari:block/hyperspace_chimney_2",
+        "y": 180
+      },
+      {
+        "model": "cobblesafari:block/hyperspace_chimney_3",
+        "y": 180
+      }
+    ],
+    "facing=south,stacks=false": {
+      "model": "cobblesafari:block/hyperspace_chimney_base",
+      "y": 180
+    },
+    "facing=west,stacks=true": [
+      {
+        "model": "cobblesafari:block/hyperspace_chimney_1",
+        "y": 270
+      },
+      {
+        "model": "cobblesafari:block/hyperspace_chimney_2",
+        "y": 270
+      },
+      {
+        "model": "cobblesafari:block/hyperspace_chimney_3",
+        "y": 270
+      }
+    ],
+    "facing=west,stacks=false": {
+      "model": "cobblesafari:block/hyperspace_chimney_base",
+      "y": 270
+    }
+  }
+}

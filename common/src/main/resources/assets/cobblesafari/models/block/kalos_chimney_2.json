@@ -1,0 +1,7 @@
+{
+  "parent": "cobblesafari:block/hyperspace_chimney_2",
+  "textures": {
+    "0": "cobblesafari:block/kalos_chimney",
+    "particle": "cobblesafari:block/kalos_chimney"
+  }
+}

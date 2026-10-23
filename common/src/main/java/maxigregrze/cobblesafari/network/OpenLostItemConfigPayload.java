@@ -18,7 +18,10 @@ public record OpenLostItemConfigPayload(
         String lostItemLootTableId,
         String lootItemId,
         int mode,
-        String skin
+        String skin,
+        String pokeball,
+        int lootItemCount,
+        String lootItemComponents
 ) implements CustomPacketPayload {
 
     public static final CustomPacketPayload.Type<OpenLostItemConfigPayload> TYPE =
@@ -26,6 +29,8 @@ public record OpenLostItemConfigPayload(
 
     private static final int MAX_STR = 512;
     private static final int MAX_SKIN = 32;
+    /** FriendlyByteBuf's default string limit: a written book or a heavily enchanted stack still fits. */
+    private static final int MAX_DATA = 32767;
 
     public static final StreamCodec<FriendlyByteBuf, OpenLostItemConfigPayload> STREAM_CODEC = StreamCodec.of(
             (buf, p) -> {
@@ -40,6 +45,9 @@ public record OpenLostItemConfigPayload(
                 buf.writeUtf(p.lootItemId, MAX_STR);
                 buf.writeInt(p.mode);
                 buf.writeUtf(p.skin, MAX_SKIN);
+                buf.writeUtf(p.pokeball, MAX_STR);
+                buf.writeInt(p.lootItemCount);
+                buf.writeUtf(p.lootItemComponents, MAX_DATA);
             },
             buf -> new OpenLostItemConfigPayload(
                     buf.readBlockPos(),
@@ -52,7 +60,10 @@ public record OpenLostItemConfigPayload(
                     buf.readUtf(MAX_STR),
                     buf.readUtf(MAX_STR),
                     buf.readInt(),
-                    buf.readUtf(MAX_SKIN)
+                    buf.readUtf(MAX_SKIN),
+                    buf.readUtf(MAX_STR),
+                    buf.readInt(),
+                    buf.readUtf(MAX_DATA)
             )
     );
 

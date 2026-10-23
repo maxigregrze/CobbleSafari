@@ -31,7 +31,8 @@ public final class WaveGenerator {
      * @param forcePortal          the drift guarantee, which overrides the spacing minimum
      */
     public Wave generate(int index, double distance, int wavesSinceLastPortal, boolean forcePortal) {
-        WarpRideDifficulty.Band band = WarpRideDifficultyLoader.get().bandFor(distance);
+        WarpRideDifficulty difficulty = WarpRideDifficultyLoader.get();
+        WarpRideDifficulty.Band band = difficulty.bandFor(distance);
         List<WaveObject> objects = new ArrayList<>(4);
 
         boolean spacingAllows = wavesSinceLastPortal >= cfg.minPortalSpacingWaves;
@@ -53,13 +54,13 @@ public final class WaveGenerator {
 
         boolean[] laneTaken = new boolean[LANE_COUNT];
 
-        if (random.nextDouble() < band.bonusChance) {
+        if (random.nextDouble() < difficulty.bonusChanceAt(distance)) {
             int lane = random.nextInt(LANE_COUNT);
             laneTaken[lane] = true;
             objects.add(WaveObject.positive(lane));
         }
 
-        int requested = band.rollNegativeCount(random);
+        int requested = difficulty.rollNegativeCount(random, distance);
         int negatives = Math.min(requested, WarpRideDifficulty.MAX_NEGATIVES_PER_WAVE);
         if (requested > negatives && !clampWarned) {
             clampWarned = true;

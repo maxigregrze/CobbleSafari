@@ -1,0 +1,83 @@
+{
+  "parent": "minecraft:block/block",
+  "format_version": "1.9.0",
+  "credit": "Made with Blockbench",
+  "texture_size": [
+    32,
+    32
+  ],
+  "textures": {
+    "0": "cobblesafari:block/hyperspace_platform_top_a",
+    "particle": "cobblesafari:block/hyperspace_platform_top_a"
+  },
+  "elements": [
+    {
+      "from": [
+        -0.01,
+        12.99,
+        -0.01
+      ],
+      "to": [
+        16.01,
+        16.01,
+        16.01
+      ],
+      "rotation": {
+        "angle": 0,
+        "axis": "y",
+        "origin": [
+          0,
+          13,
+          0
+        ]
+      },
+      "faces": {
+        "north": {
+          "uv": [
+            8,
+            8,
+            16,
+            9.5
+          ],
+          "texture": "#0"
+        },
+        "east": {
+          "uv": [
+            8,
+            8,
+            16,
+            9.5
+          ],
+          "texture": "#0"
+        },
+        "south": {
+          "uv": [
+            8,
+            8,
+            16,
+            9.5
+          ],
+          "texture": "#0"
+        },
+        "west": {
+          "uv": [
+            8,
+            8,
+            16,
+            9.5
+          ],
+          "texture": "#0"
+        },
+        "down": {
+          "uv": [
+            0,
+            8,
+            8,
+            0
+          ],
+          "texture": "#0"
+        }
+      }
+    }
+  ]
+}

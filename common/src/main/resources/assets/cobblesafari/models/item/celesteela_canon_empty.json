@@ -1,0 +1,7 @@
+{
+  "parent": "cobblesafari:item/celesteela_canon",
+  "textures": {
+    "0": "cobblesafari:item/celesteela_canon_empty",
+    "particle": "cobblesafari:item/celesteela_canon_empty"
+  }
+}

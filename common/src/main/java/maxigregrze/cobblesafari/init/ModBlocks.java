@@ -119,6 +119,8 @@ import maxigregrze.cobblesafari.block.base.LayeredSideConnectedModelBlock;
 import maxigregrze.cobblesafari.block.base.SideConnectedModelBlock;
 import maxigregrze.cobblesafari.block.base.BlockShapeUtils;
 import maxigregrze.cobblesafari.block.base.FaceAttachedModelBlock;
+import maxigregrze.cobblesafari.block.ultraspace.UltraCropBlock;
+import maxigregrze.cobblesafari.block.ultraspace.UltraGrownPlantBlock;
 import maxigregrze.cobblesafari.block.base.FullShapeStairBlock;
 import maxigregrze.cobblesafari.block.misc.LightningSpotBlock;
 import maxigregrze.cobblesafari.block.ultraspace.MegapolisLightSpotBlock;
@@ -131,10 +133,20 @@ import maxigregrze.cobblesafari.block.ultraspace.UltraspaceSandPathBlock;
 import maxigregrze.cobblesafari.block.ultraspace.UltraWarpDiveBlock;
 import maxigregrze.cobblesafari.block.base.VerticalConnectedModelBlock;
 import maxigregrze.cobblesafari.block.base.DaylightLit;
-import maxigregrze.cobblesafari.block.base.GroundedSideConnectedModelBlock;
 import maxigregrze.cobblesafari.block.base.LitCubeBlock;
 import maxigregrze.cobblesafari.block.base.LitSlabBlock;
 import maxigregrze.cobblesafari.block.base.LitStairBlock;
+import maxigregrze.cobblesafari.block.base.CoveringBlock;
+import maxigregrze.cobblesafari.block.base.DiagonalSideConnectedModelBlock;
+import maxigregrze.cobblesafari.block.base.GroundedDiagonalSideConnectedModelBlock;
+import maxigregrze.cobblesafari.block.base.LitRidgeBlock;
+import maxigregrze.cobblesafari.block.base.LoweredPathBlock;
+import maxigregrze.cobblesafari.block.base.RidgeBlock;
+import maxigregrze.cobblesafari.block.hyperspace.HyperspaceBenchBlock;
+import maxigregrze.cobblesafari.block.hyperspace.HyperspaceChimneyBlock;
+import maxigregrze.cobblesafari.block.hyperspace.HyperspaceFenceBlock;
+import maxigregrze.cobblesafari.block.hyperspace.HyperspaceHandrailBlock;
+import maxigregrze.cobblesafari.block.ultraspace.MegapolisBarricadeBlock;
 import maxigregrze.cobblesafari.block.base.LitVerticalConnectedModelBlock;
 import maxigregrze.cobblesafari.block.hyperspace.HyperspaceTriBlock;
 import maxigregrze.cobblesafari.block.hyperspace.HyperspaceTriPart;
@@ -915,6 +927,7 @@ public class ModBlocks {
     public static Item LOST_ITEM_CLASSIC_ITEM;
     public static Item LOST_ITEM_BURIED_ITEM;
     public static Item LOST_ITEM_RUBBLES_ITEM;
+    public static Item LOST_ITEM_FLOATING_ITEM;
 
     public static final Block LOST_ITEM_VISUAL = registerBlockWithoutItem("lost_item_visual",
             new LostItemVisualBlock(BlockBehaviour.Properties.of()
@@ -1995,8 +2008,9 @@ public class ModBlocks {
             new HyperspaceFlagSmallBlock(hsPaneLight(), HS_FLAG_SMALL_SHAPE, HS_FLAG_ARM_TOP));
     public static final Block HYPERSPACE_IRONRAILS = registerBlock("hyperspace_ironrails",
             new HyperspaceDirectionalBlock(hsIronHand(), HS_IRONRAILS_SHAPE, true, true));
+    // Plan 194 - 15: both platforms also read their diagonals, for the 8-neighbour top overlay.
     public static final Block HYPERSPACE_SCAFFOLDING_PLATFORM = registerBlock("hyperspace_scaffolding_platform",
-            new SideConnectedModelBlock(hsIronPick(), ConnectedModelBlock.Settings.builder()
+            new DiagonalSideConnectedModelBlock(hsIronPick(), ConnectedModelBlock.Settings.builder()
                     .connectTag(HYPERSPACE_SCAFFOLDING_PLATFORM_CONNECTS)
                     .shape(HS_FULL_SHAPE)
                     .noAoShadow()
@@ -2008,7 +2022,7 @@ public class ModBlocks {
                     .noAoShadow()
                     .build(), 3));
     public static final Block HYPERSPACE_PLATFORM = registerBlock("hyperspace_platform",
-            new GroundedSideConnectedModelBlock(hsIronPick(), ConnectedModelBlock.Settings.builder()
+            new GroundedDiagonalSideConnectedModelBlock(hsIronPick(), ConnectedModelBlock.Settings.builder()
                     .connectTag(HYPERSPACE_PLATFORM_CONNECTS)
                     .groundTag(HYPERSPACE_PLATFORM_GROUND)
                     .shape(HS_PLATFORM_FLOATING_SHAPE)
@@ -2052,6 +2066,7 @@ public class ModBlocks {
                             .rotateShape()
                             .support(HorizontalModelBlock.Support.GROUND)
                             .emptyOcclusion()
+                            .seat(9)
                             .build()));
     // Table: custom model, but counts as a full block for collision while letting light pass through.
     public static final Block HYPERSPACE_TABLE = registerBlock("hyperspace_table",
@@ -2060,6 +2075,32 @@ public class ModBlocks {
                             .collision(HorizontalModelBlock.Collision.FULL)
                             .emptyOcclusion()
                             .build()));
+
+    // --- Kalosian furniture (plan 194) ---------------------------------------------------------
+    // Railing that corners like a stair; iron-bars material.
+    public static final Block HYPERSPACE_HANDRAIL = registerBlock("hyperspace_handrail",
+            new HyperspaceHandrailBlock(hsIronPick()));
+    // Wall-connecting fence: stone-wall material and collision, model-shaped selection.
+    public static final Block HYPERSPACE_FENCE = registerBlock("hyperspace_fence",
+            new HyperspaceFenceBlock(hsStone().noOcclusion()));
+    // Bench: joins its side neighbours; a seat like the chair, same material.
+    public static final Block HYPERSPACE_BENCH = registerBlock("hyperspace_bench",
+            new HyperspaceBenchBlock(hsPlanks().noOcclusion(),
+                    HorizontalModelBlock.Settings.builder()
+                            .shape(Shapes.or(
+                                    Block.box(0, 0, 1.75, 16, 8.5, 14.75),
+                                    Block.box(0, 6.5, 0, 16, 19.5, 3.5)))
+                            // Drawn the other way round from the chair: at FACING=south the model
+                            // stands as authored, its back to the north.
+                            .authoredFacing(Direction.SOUTH)
+                            .rotateShape()
+                            .support(HorizontalModelBlock.Support.GROUND)
+                            .emptyOcclusion()
+                            .seat(9)
+                            .build()));
+    // Potted plant: the hitbox is the pot alone, the foliage above it has none.
+    public static final Block HYPERSPACE_POTTEDPLANT = registerBlock("hyperspace_pottedplant",
+            new ShapedBlock(hsPot(), Block.box(4, 0, 4, 12, 15, 12)));
 
     // --- Nature blocks (plan 140) ---
     // Dandelion-like flower: two-layer cross model, the colored layer tinted by the biome foliage
@@ -2207,6 +2248,73 @@ public class ModBlocks {
             new SlabBlock(hsGlassTransparent()));
     public static final Block KALOS_WINDOW_TOPPER_TRANS = registerBlock("kalos_window_topper_trans",
             new Block(hsGlassTransparent()));
+    // --- Roof tiles, ridges, coverings, slab roofs (plan 194) ----------------------------------
+    public static final Block HYPERSPACE_TILE = registerBlock("hyperspace_tile", new Block(hsStone()));
+    public static final Block HYPERSPACE_TILE_STAIRS = registerBlock("hyperspace_tile_stairs",
+            new StairBlock(HYPERSPACE_TILE.defaultBlockState(), hsStone()));
+    public static final Block HYPERSPACE_TILE_SLAB = registerBlock("hyperspace_tile_slab", new SlabBlock(hsStone()));
+    public static final Block KALOS_TILE = registerBlock("kalos_tile", new Block(hsStone()));
+    public static final Block KALOS_TILE_STAIRS = registerBlock("kalos_tile_stairs",
+            new StairBlock(KALOS_TILE.defaultBlockState(), hsStone()));
+    public static final Block KALOS_TILE_SLAB = registerBlock("kalos_tile_slab", new SlabBlock(hsStone()));
+
+    // Ridges: the high step of a stair without its slab. Same material as the block they are cut
+    // from; the canopy ones keep the canopy glass (and the Kalos one its night light).
+    public static final Block HYPERSPACE_FLOOR_RIDGE = registerBlock("hyperspace_floor_ridge",
+            new RidgeBlock(HYPERSPACE_FLOOR.defaultBlockState(), hsStone()));
+    public static final Block HYPERSPACE_WALL_RIDGE = registerBlock("hyperspace_wall_ridge",
+            new RidgeBlock(HYPERSPACE_WALL.defaultBlockState(), hsStone()));
+    public static final Block HYPERSPACE_WALL_PLAIN_RIDGE = registerBlock("hyperspace_wall_plain_ridge",
+            new RidgeBlock(HYPERSPACE_WALL_PLAIN.defaultBlockState(), hsStone()));
+    public static final Block HYPERSPACE_WALL_BRICKS_RIDGE = registerBlock("hyperspace_wall_bricks_ridge",
+            new RidgeBlock(HYPERSPACE_WALL_BRICKS.defaultBlockState(), hsStone()));
+    public static final Block HYPERSPACE_WALL_BOTTOM_RIDGE = registerBlock("hyperspace_wall_bottom_ridge",
+            new RidgeBlock(HYPERSPACE_WALL_BOTTOM.defaultBlockState(), hsStone()));
+    public static final Block HYPERSPACE_CANOPY_RIDGE = registerBlock("hyperspace_canopy_ridge",
+            new RidgeBlock(HYPERSPACE_WALL.defaultBlockState(), hsGlass()));
+    public static final Block HYPERSPACE_TILE_RIDGE = registerBlock("hyperspace_tile_ridge",
+            new RidgeBlock(HYPERSPACE_TILE.defaultBlockState(), hsStone()));
+    public static final Block KALOS_FLOOR_RIDGE = registerBlock("kalos_floor_ridge",
+            new RidgeBlock(KALOS_FLOOR.defaultBlockState(), hsStone()));
+    public static final Block KALOS_WALL_RIDGE = registerBlock("kalos_wall_ridge",
+            new RidgeBlock(KALOS_WALL.defaultBlockState(), hsStone()));
+    public static final Block KALOS_WALL_PLAIN_RIDGE = registerBlock("kalos_wall_plain_ridge",
+            new RidgeBlock(KALOS_WALL_PLAIN.defaultBlockState(), hsStone()));
+    public static final Block KALOS_WALL_BRICKS_RIDGE = registerBlock("kalos_wall_bricks_ridge",
+            new RidgeBlock(KALOS_WALL_BRICKS.defaultBlockState(), hsStone()));
+    public static final Block KALOS_WALL_BOTTOM_RIDGE = registerBlock("kalos_wall_bottom_ridge",
+            new RidgeBlock(KALOS_WALL_BOTTOM.defaultBlockState(), hsStone()));
+    public static final Block KALOS_CANOPY_RIDGE = registerBlock("kalos_canopy_ridge",
+            new LitRidgeBlock(KALOS_WALL.defaultBlockState(),
+                    hsGlass().randomTicks().lightLevel(DaylightLit::lightLevel)));
+    public static final Block KALOS_TILE_RIDGE = registerBlock("kalos_tile_ridge",
+            new RidgeBlock(KALOS_TILE.defaultBlockState(), hsStone()));
+
+    // Coverings: a carpet cut from the block it is named after.
+    public static final Block HYPERSPACE_ROAD_COVERING = registerBlock("hyperspace_road_covering", new CoveringBlock(hsCovering()));
+    public static final Block HYPERSPACE_WALL_COVERING = registerBlock("hyperspace_wall_covering", new CoveringBlock(hsCovering()));
+    public static final Block HYPERSPACE_WALL_BRICKS_COVERING = registerBlock("hyperspace_wall_bricks_covering", new CoveringBlock(hsCovering()));
+    public static final Block HYPERSPACE_FLOOR_COVERING = registerBlock("hyperspace_floor_covering", new CoveringBlock(hsCovering()));
+    public static final Block HYPERSPACE_FLOOR_PLAIN_COVERING = registerBlock("hyperspace_floor_plain_covering", new CoveringBlock(hsCovering()));
+    public static final Block HYPERSPACE_TILE_COVERING = registerBlock("hyperspace_tile_covering", new CoveringBlock(hsCovering()));
+    public static final Block KALOS_ROAD_COVERING = registerBlock("kalos_road_covering", new CoveringBlock(hsCovering()));
+    public static final Block KALOS_WALL_COVERING = registerBlock("kalos_wall_covering", new CoveringBlock(hsCovering()));
+    public static final Block KALOS_WALL_BRICKS_COVERING = registerBlock("kalos_wall_bricks_covering", new CoveringBlock(hsCovering()));
+    public static final Block KALOS_FLOOR_COVERING = registerBlock("kalos_floor_covering", new CoveringBlock(hsCovering()));
+    public static final Block KALOS_FLOOR_PLAIN_COVERING = registerBlock("kalos_floor_plain_covering", new CoveringBlock(hsCovering()));
+    public static final Block KALOS_TILE_COVERING = registerBlock("kalos_tile_covering", new CoveringBlock(hsCovering()));
+
+    // Chimneys: oriented stone block, one of three stack layouts picked at random by the blockstate;
+    // a pickaxe chips the stacks off (and back). The hitbox is what every layout shares - body and
+    // cap - plus the envelope of the stacks while they are there.
+    public static final Block HYPERSPACE_CHIMNEY = registerBlock("hyperspace_chimney",
+            new HyperspaceChimneyBlock(hsStone().noOcclusion(), chimneySettings()));
+    public static final Block KALOS_CHIMNEY = registerBlock("kalos_chimney",
+            new HyperspaceChimneyBlock(hsStone().noOcclusion(), chimneySettings()));
+
+    // Slab roof: a plain wall capped with the top face of the Kalosian slab.
+    public static final Block HYPERSPACE_SLAB_ROOF = registerBlock("hyperspace_slab_roof", new Block(hsStone()));
+    public static final Block KALOS_SLAB_ROOF = registerBlock("kalos_slab_roof", new Block(hsStone()));
     // Crate: full cube, planks material, axe; reuses the flowerpot texture by design (distinct model).
     public static final Block HYPERSPACE_CRATE = registerBlock("hyperspace_crate",
             new Block(hsPlanks().noOcclusion()));
@@ -2354,6 +2462,7 @@ public class ModBlocks {
     // the blockstate JSON as a weighted model array - no state property, no Java roll.
 
     private static final TagKey<Block> ULTRASPACE_SAND_PATTERN_CONNECTS = blockTag("ultraspace_sand_pattern_connects");
+    private static final TagKey<Block> MEGAPOLIS_ROAD_PATTERN_CONNECTS = blockTag("megapolis_road_pattern_connects");
     private static final TagKey<Block> ULTRASPACE_PLANTABLE = blockTag("ultraspace_plantable");
 
     /** Average tint of ultrasand_0.png - the puff of dust a falling sand block leaves. */
@@ -2516,6 +2625,26 @@ public class ModBlocks {
                             .requireFullBlockSupport()
                             .build()));
 
+    // --- Ultra Beast fruit plants (action plan 192, section 12) -----------------
+    // The crop is never in an inventory (its seeds are its item); the grown plant is a decorative
+    // block with its own item. Young crops have no collision; from stage 5 the grown plant's box.
+    private static final int BEEFY_PLANT_HEIGHT = 9;
+    private static final int BEAUTY_PLANT_HEIGHT = 13;
+    private static final TagKey<Block> BEEFY_PLANT_SUPPORTS = blockTag("beefy_plant_supports");
+    private static final TagKey<Block> BEAUTY_PLANT_SUPPORTS = blockTag("beauty_plant_supports");
+    public static final Block BUZZWOLE_PLANT_GROWN = registerBlock("buzzwole_plant_grown",
+            new UltraGrownPlantBlock(usPlant(), UltraGrownPlantBlock.settingsFor(BEEFY_PLANT_HEIGHT),
+                    BEEFY_PLANT_SUPPORTS, false));
+    public static final Block PHEROMOSA_PLANT_GROWN = registerBlock("pheromosa_plant_grown",
+            new UltraGrownPlantBlock(usPlant(), UltraGrownPlantBlock.settingsFor(BEAUTY_PLANT_HEIGHT),
+                    BEAUTY_PLANT_SUPPORTS, true));
+    public static final Block BUZZWOLE_PLANT = registerBlockWithoutItem("buzzwole_plant",
+            new UltraCropBlock(usPlant().randomTicks(), () -> ModItems.BUZZWOLE_SEEDS, () -> ModItems.BUZZWOLE_FRUIT,
+                    () -> BUZZWOLE_PLANT_GROWN, Block.box(3, 0, 3, 13, BEEFY_PLANT_HEIGHT, 13), false));
+    public static final Block PHEROMOSA_PLANT = registerBlockWithoutItem("pheromosa_plant",
+            new UltraCropBlock(usPlant().randomTicks(), () -> ModItems.PHEROMOSA_SEEDS, () -> ModItems.PHEROMOSA_FRUIT,
+                    () -> PHEROMOSA_PLANT_GROWN, Block.box(3, 0, 3, 13, BEAUTY_PLANT_HEIGHT, 13), true));
+
     // --- cabling -----------------------------------------------------------------
     public static final Block ULTRASPACE_CABLE = registerBlock("ultraspace_cable",
             new RotatedPillarBlock(BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_GRAY)
@@ -2560,6 +2689,28 @@ public class ModBlocks {
                     .lightLevel(state -> state.getValue(MegapolisLightSpotBlock.POWERED) ? 15 : 0)));
     public static final Block MEGAPOLIS_STAIRS = registerBlock("megapolis_stairs",
             new StairBlock(MEGAPOLIS_LIGHT.defaultBlockState(), usMegapolisMetal().noOcclusion()));
+
+    // Plan 194: steel barricade that pricks like a cactus, cladding, roads and a fake door.
+    public static final Block MEGAPOLIS_BARRICADE = registerBlock("megapolis_barricade",
+            new MegapolisBarricadeBlock(BlockBehaviour.Properties.of().mapColor(MapColor.METAL)
+                    .strength(25.0f, 1200.0f).sound(SoundType.METAL)
+                    .requiresCorrectToolForDrops().noOcclusion()));
+    public static final Block MEGAPOLIS_WALL = registerBlock("megapolis_wall", new Block(usMegapolisMetal()));
+    public static final Block MEGAPOLIS_ORNED_WALL = registerBlock("megapolis_orned_wall", new Block(usMegapolisMetal()));
+    public static final Block MEGAPOLIS_BLOCK = registerBlock("megapolis_block", new Block(usMegapolisMetal()));
+    // The Strange Sand path and pattern without the hoe cascade.
+    public static final Block MEGAPOLIS_ROAD = registerBlock("megapolis_road",
+            new LoweredPathBlock(usMegapolisMetal().noOcclusion()));
+    public static final Block MEGAPOLIS_ROAD_PATTERN = registerBlock("megapolis_road_pattern",
+            new SideConnectedModelBlock(usMegapolisMetal().noOcclusion(),
+                    ConnectedModelBlock.Settings.builder()
+                            .connectTag(MEGAPOLIS_ROAD_PATTERN_CONNECTS)
+                            .shape(LoweredPathBlock.SHAPE)
+                            .collision(ConnectedModelBlock.Collision.FULL)
+                            .noAoShadow()
+                            .build()));
+    public static final Block MEGAPOLIS_DOOR = registerBlock("megapolis_door",
+            new HyperspaceDoubleBlock(usMegapolisMetal()));
 
     // --- lightning marker --------------------------------------------------------
     // Lives in block/misc, not block/ultraspace: nothing about it is Ultra Space specific.
@@ -2659,6 +2810,29 @@ public class ModBlocks {
     private static BlockBehaviour.Properties hsStone() {
         return BlockBehaviour.Properties.of().mapColor(MapColor.STONE).strength(1.5f, 6.0f)
                 .sound(SoundType.STONE).requiresCorrectToolForDrops();
+    }
+
+    private static HorizontalModelBlock.Settings chimneySettings() {
+        return HorizontalModelBlock.Settings.builder()
+                .shape(Shapes.or(
+                        Block.box(0, 0, 5, 16, 16, 11),
+                        Block.box(0, 16, 4, 16, 19, 12),
+                        Block.box(0.5, 19, 5, 15.5, 30, 11)))
+                .authoredFacing(Direction.NORTH)
+                .rotateShape()
+                .emptyOcclusion()
+                .build();
+    }
+
+    /** Plant pot: the vanilla decorated pot (breaks at once, pottery sound). */
+    private static BlockBehaviour.Properties hsPot() {
+        return BlockBehaviour.Properties.of().mapColor(MapColor.TERRACOTTA_RED).strength(0.0f, 0.0f)
+                .sound(SoundType.DECORATED_POT).pushReaction(PushReaction.DESTROY).noOcclusion();
+    }
+
+    /** Covering: the stone of the block it is cut from, carpet-like (no occlusion, popped by pistons). */
+    private static BlockBehaviour.Properties hsCovering() {
+        return hsStone().noOcclusion().pushReaction(PushReaction.DESTROY);
     }
 
     private static BlockBehaviour.Properties hsSign() {
@@ -2809,6 +2983,9 @@ public class ModBlocks {
         LOST_ITEM_RUBBLES_ITEM = Registry.register(BuiltInRegistries.ITEM,
                 ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, "lost_item"),
                 new LostItemBlockItem(LOST_ITEM, new Item.Properties(), LostItemSkin.RUBBLES));
+        LOST_ITEM_FLOATING_ITEM = Registry.register(BuiltInRegistries.ITEM,
+                ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, "lost_item_floating"),
+                new LostItemBlockItem(LOST_ITEM, new Item.Properties(), LostItemSkin.FLOATING));
 
         Registry.register(BuiltInRegistries.ITEM,
                 ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, "incubator"),

@@ -54,7 +54,7 @@ public class ModSounds {
     public static final SoundEvent SILENT = SoundEvent.createVariableRangeEvent(
             ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, "entity.generic.silent"));
 
-    // --- Ultra Warp Ride. Call sites are final; the .ogg files are placeholders. ---
+    // --- Ultra Warp Ride: the four sound effects of the source minigame (plan 191, section 12). ---
 
     public static final SoundEvent WARPRIDE_POSITIVE = SoundEvent.createVariableRangeEvent(
             ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, "warpride.positive"));
@@ -62,17 +62,11 @@ public class ModSounds {
     public static final SoundEvent WARPRIDE_NEGATIVE = SoundEvent.createVariableRangeEvent(
             ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, "warpride.negative"));
 
-    public static final SoundEvent WARPRIDE_JUMP = SoundEvent.createVariableRangeEvent(
-            ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, "warpride.jump"));
-
     public static final SoundEvent WARPRIDE_PORTAL = SoundEvent.createVariableRangeEvent(
             ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, "warpride.portal"));
 
-    public static final SoundEvent WARPRIDE_WARNING = SoundEvent.createVariableRangeEvent(
-            ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, "warpride.warning"));
-
-    public static final SoundEvent WARPRIDE_COUNTDOWN = SoundEvent.createVariableRangeEvent(
-            ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, "warpride.countdown"));
+    public static final SoundEvent WARPRIDE_LAUNCH = SoundEvent.createVariableRangeEvent(
+            ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, "warpride.launch"));
 
     private ModSounds() {}
 }

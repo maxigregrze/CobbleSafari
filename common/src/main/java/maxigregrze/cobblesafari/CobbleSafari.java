@@ -124,6 +124,15 @@ public class CobbleSafari {
         PowerSalvageLootHandler.register();
         PowerFriendshipCatchHandler.register();
         PartyBattlePowerEffects.register();
+        // Ultra Space loot projectiles fire from dispensers like their vanilla counterparts (plan 192).
+        net.minecraft.world.level.block.DispenserBlock.registerProjectileBehavior(ModItems.POIPOLE_ARROW);
+        net.minecraft.world.level.block.DispenserBlock.registerProjectileBehavior(ModItems.BLACEPHALON_BOMB);
+        net.minecraft.world.level.block.DispenserBlock.registerProjectileBehavior(ModItems.XURKITREE_BOMB);
+        // Compost chances for Fabric / vanilla; NeoForge reads data/neoforge/data_maps/item/compostables.json.
+        net.minecraft.world.level.block.ComposterBlock.COMPOSTABLES.put(ModItems.BUZZWOLE_SEEDS, 0.3f);
+        net.minecraft.world.level.block.ComposterBlock.COMPOSTABLES.put(ModItems.PHEROMOSA_SEEDS, 0.3f);
+        net.minecraft.world.level.block.ComposterBlock.COMPOSTABLES.put(maxigregrze.cobblesafari.init.ModBlocks.BUZZWOLE_PLANT_GROWN.asItem(), 0.65f);
+        net.minecraft.world.level.block.ComposterBlock.COMPOSTABLES.put(maxigregrze.cobblesafari.init.ModBlocks.PHEROMOSA_PLANT_GROWN.asItem(), 0.65f);
         maxigregrze.cobblesafari.csmusic.BattleMusicTracker.register();
 
         LOGGER.info("CobbleSafari initialized successfully!");

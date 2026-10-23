@@ -1,0 +1,23 @@
+{
+  "parent": "cobblesafari:block/buzzwole_plant_grown",
+  "display": {
+    "gui": {
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "translation": [
+        0,
+        0,
+        0
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ]
+    }
+  },
+  "gui_light": "front"
+}

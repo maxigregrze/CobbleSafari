@@ -1,0 +1,16 @@
+{
+  "values": {
+    "cobblesafari:buzzwole_seeds": {
+      "chance": 0.3
+    },
+    "cobblesafari:pheromosa_seeds": {
+      "chance": 0.3
+    },
+    "cobblesafari:buzzwole_plant_grown": {
+      "chance": 0.65
+    },
+    "cobblesafari:pheromosa_plant_grown": {
+      "chance": 0.65
+    }
+  }
+}

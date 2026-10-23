@@ -11,6 +11,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.levelgen.Heightmap;
+import net.minecraft.world.phys.AABB;
 
 import java.util.Random;
 
@@ -19,6 +20,7 @@ public class BalloonSpawnHandler {
     private static final Random RANDOM = new Random();
     private static final double BASE_SPAWN_CHANCE = 0.001;
     private static final int BALLOON_SAFARI_BASE_MULTIPLIER = 4;
+    private static final int NEARBY_RANGE_MULTIPLIER = 2;
 
     private BalloonSpawnHandler() {}
 
@@ -50,8 +52,20 @@ public class BalloonSpawnHandler {
         }
 
         if (RANDOM.nextDouble() > spawnChance) return;
+        int maxNearby = MiscConfig.getBalloonMaxNearby();
+        if (maxNearby > 0 && countNearbyBalloons(player) >= maxNearby) return;
 
         trySpawnBalloon(player, isSafari);
+    }
+
+    /** Balloons still holding loot around the player; the Safari variant is a subclass, so it is counted too. */
+    private static int countNearbyBalloons(ServerPlayer player) {
+        ServerLevel level = player.serverLevel();
+        int range = MiscConfig.getBalloonSpawnRadius() * NEARBY_RANGE_MULTIPLIER;
+        AABB area = new AABB(
+                player.getX() - range, level.getMinBuildHeight(), player.getZ() - range,
+                player.getX() + range, level.getMaxBuildHeight() + 10.0, player.getZ() + range);
+        return level.getEntitiesOfClass(BalloonEntity.class, area, balloon -> !balloon.hasDroppedLoot()).size();
     }
 
     private static boolean canSeeSky(ServerPlayer player) {

@@ -28,6 +28,8 @@ public class MiscConfig {
     private int balloonSpawnRadius = 32;
     private int balloonHeightAboveGround = 32;
     private int balloonLifetimeTicks = 6000;
+    /** Unlooted balloons allowed within twice the spawn radius of a player before new spawns are skipped. 0 = no cap. */
+    private int balloonMaxNearby = 3;
     private boolean balloonEnabled = true;
 
     /**
@@ -51,6 +53,9 @@ public class MiscConfig {
      * everything, csboss battle music included. Unnamespaced ids resolve to {@code cobblesafari:}.
      */
     private String ultraWarpDiveCSMusic = "ultrawarpridemusic";
+
+    /** Full Ultra Recon set glides like an elytra (action plan 192, section 10.5). */
+    private boolean enableUltraReconElytra = true;
 
     /**
      * Ultra Wormhole parent-clock rules (action plan 183, section 13.1). The ride's <i>physics</i>
@@ -255,6 +260,12 @@ public class MiscConfig {
         return Math.max(20, INSTANCE.balloonLifetimeTicks);
     }
 
+    /** Nearby-balloon spawn cap; 0 disables it. */
+    public static int getBalloonMaxNearby() {
+        if (INSTANCE == null) return 3;
+        return Math.max(0, INSTANCE.balloonMaxNearby);
+    }
+
     public static boolean isBalloonEnabled() {
         if (INSTANCE == null) return true;
         return INSTANCE.balloonEnabled;
@@ -350,6 +361,11 @@ public class MiscConfig {
             return "ultrawarpridemusic";
         }
         return INSTANCE.ultraWarpDiveCSMusic;
+    }
+
+    /** Whether the full Ultra Recon set acts as an elytra. */
+    public static boolean isUltraReconElytraEnabled() {
+        return INSTANCE == null || INSTANCE.enableUltraReconElytra;
     }
 
     public void ensureLostItemDefaults() {

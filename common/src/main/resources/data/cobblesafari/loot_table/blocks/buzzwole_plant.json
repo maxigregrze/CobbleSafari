@@ -1,0 +1,68 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "cobblesafari:buzzwole_seeds"
+        }
+      ],
+      "conditions": [
+        {
+          "condition": "minecraft:block_state_property",
+          "block": "cobblesafari:buzzwole_plant",
+          "properties": {
+            "age": {
+              "min": 0,
+              "max": 3
+            }
+          }
+        }
+      ]
+    },
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "cobblesafari:buzzwole_plant_grown"
+        }
+      ],
+      "conditions": [
+        {
+          "condition": "minecraft:block_state_property",
+          "block": "cobblesafari:buzzwole_plant",
+          "properties": {
+            "age": {
+              "min": 4,
+              "max": 7
+            }
+          }
+        }
+      ]
+    },
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "cobblesafari:buzzwole_fruit"
+        }
+      ],
+      "conditions": [
+        {
+          "condition": "minecraft:block_state_property",
+          "block": "cobblesafari:buzzwole_plant",
+          "properties": {
+            "age": {
+              "min": 7,
+              "max": 7
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

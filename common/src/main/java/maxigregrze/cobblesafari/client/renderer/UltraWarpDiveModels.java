@@ -65,41 +65,53 @@ public final class UltraWarpDiveModels {
     };
     private static final RandomSource QUAD_RANDOM = RandomSource.create();
 
-    /** Lets the rocks' glint fade with the rock in the warp ride screen; 1 in the world. */
-    private static float glintAlpha = 1.0f;
-
     private static Function<ResourceLocation, BakedModel> standaloneLookup;
 
     /**
-     * The vanilla armour glint, tinted through {@code ColorModulator}: the glint shader ignores the
-     * vertex colour, but multiplies its texture by the shader colour read at draw time.
+     * The vanilla glint, tinted through {@code ColorModulator}: the glint shader ignores the vertex
+     * colour, but multiplies its texture by the shader colour read at draw time.
+     *
+     * <p>Built on {@code entityGlintDirect()}, <b>not</b> {@code armorEntityGlint()} (action plan 191,
+     * G1). The armour glint carries {@code VIEW_OFFSET_Z_LAYERING}, which nudges the armour and its
+     * glint towards the eye together; the rock is drawn with no such offset, so the glint's
+     * equal-depth test failed on every pixel and nothing was ever drawn, in the world or the ride.</p>
      */
-    // RenderType is abstract without abstract members: an empty anonymous subclass is enough.
-    private static final RenderType ROCK_GLINT = new RenderType(
-            "cobblesafari_ultrawarpdive_rock_glint", DefaultVertexFormat.POSITION_TEX,
-            VertexFormat.Mode.QUADS, 1536, false, false,
-            () -> {
-                RenderType.armorEntityGlint().setupRenderState();
-                RenderSystem.setTextureMatrix(glintTextureMatrix());
-                // The glint is additive: dimming its colour is what fades it out.
-                RenderSystem.setShaderColor(GLINT_R * glintAlpha, GLINT_G * glintAlpha, GLINT_B * glintAlpha, 1.0f);
-            },
-            () -> {
-                RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
-                RenderType.armorEntityGlint().clearRenderState();
-            }) {
-    };
+    private static final float[] ROCK_GLINT_COLOR = new float[3];
+    private static final RenderType ROCK_GLINT = tintedGlint("cobblesafari_ultrawarpdive_rock_glint",
+            RenderType.entityGlintDirect(), GLINT_UV_SCALE, ROCK_GLINT_COLOR);
 
     private UltraWarpDiveModels() {}
 
-    /** Vanilla's scrolling glint matrix ({@code RenderStateShard#setupGlintTexturing}), at block-item scale. */
-    private static Matrix4f glintTextureMatrix() {
+    /**
+     * A copy of a vanilla glint type whose colour is read from {@code rgb} each time it is drawn,
+     * and whose texture scrolls at {@code uvScale}. The glint is additive: a darker colour is a
+     * fainter glint. Pick the base whose layering matches what the glint covers: the armour glint
+     * over armour-layer render types, the direct entity glint over everything else.
+     */
+    // RenderType is abstract without abstract members: an empty anonymous subclass is enough.
+    public static RenderType tintedGlint(String name, RenderType base, float uvScale, float[] rgb) {
+        return new RenderType(name, DefaultVertexFormat.POSITION_TEX, VertexFormat.Mode.QUADS, 1536,
+                false, false,
+                () -> {
+                    base.setupRenderState();
+                    RenderSystem.setTextureMatrix(glintTextureMatrix(uvScale));
+                    RenderSystem.setShaderColor(rgb[0], rgb[1], rgb[2], 1.0f);
+                },
+                () -> {
+                    RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
+                    base.clearRenderState();
+                }) {
+        };
+    }
+
+    /** Vanilla's scrolling glint matrix ({@code RenderStateShard#setupGlintTexturing}). */
+    private static Matrix4f glintTextureMatrix(float uvScale) {
         long time = (long) (Util.getMillis() * Minecraft.getInstance().options.glintSpeed().get() * 8.0);
         float u = (time % 110_000L) / 110_000.0f;
         float v = (time % 30_000L) / 30_000.0f;
         return new Matrix4f().translation(-u, v, 0.0f)
                 .rotateZ((float) (Math.PI / 18.0))
-                .scale(GLINT_UV_SCALE);
+                .scale(uvScale);
     }
 
     /** Set once by each loader's client init, which alone knows how standalone models are keyed. */
@@ -136,7 +148,14 @@ public final class UltraWarpDiveModels {
     }
 
     public static void setGlintAlpha(float alpha) {
-        glintAlpha = Mth.clamp(alpha, 0.0f, 1.0f);
+        float a = Mth.clamp(alpha, 0.0f, 1.0f);
+        ROCK_GLINT_COLOR[0] = GLINT_R * a;
+        ROCK_GLINT_COLOR[1] = GLINT_G * a;
+        ROCK_GLINT_COLOR[2] = GLINT_B * a;
+    }
+
+    static {
+        setGlintAlpha(1.0f);
     }
 
     /** The blockstate rotation (north 0, east 90, south 180, west 270, clockwise from above). */

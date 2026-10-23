@@ -10,6 +10,11 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.SimpleMenuProvider;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.item.Item;
+import maxigregrze.cobblesafari.item.NeoForgeReconChestplateItem;
+import maxigregrze.cobblesafari.item.NeoForgeStakatakaShieldItem;
+import net.minecraft.core.Holder;
+import net.minecraft.world.item.ArmorMaterial;
 import net.neoforged.fml.ModList;
 import net.neoforged.fml.loading.FMLLoader;
 import net.neoforged.fml.loading.FMLPaths;
@@ -73,5 +78,15 @@ public class NeoForgePlatformHelper implements IPlatformHelper {
                 ),
                 buf -> UndergroundOpenData.STREAM_CODEC.encode(buf, data)
         );
+    }
+
+    @Override
+    public Item createStakatakaShield(Item.Properties properties) {
+        return new NeoForgeStakatakaShieldItem(properties);
+    }
+
+    @Override
+    public Item createReconChestplate(Holder<ArmorMaterial> material, Item.Properties properties) {
+        return new NeoForgeReconChestplateItem(material, properties);
     }
 }

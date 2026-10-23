@@ -1,22 +1,23 @@
 package maxigregrze.cobblesafari.network;
 
+import com.cobblemon.mod.common.api.pokeball.PokeBalls;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.logging.LogUtils;
 import maxigregrze.cobblesafari.block.misc.LostItemBlock;
 import maxigregrze.cobblesafari.block.misc.LostItemBlockEntity;
 import maxigregrze.cobblesafari.block.misc.LostItemSkin;
-import net.minecraft.core.BlockPos;
+import maxigregrze.cobblesafari.block.misc.LostItemStackText;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.ComponentUtils;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.loot.LootTable;
 
 import java.util.function.BiConsumer;
@@ -30,6 +31,10 @@ public final class LostItemConfigServerHandler {
     private static final String FIELD_LOOT_ITEM_MODE2 = "gui.cobblesafari.lost_item.field.loot_item";
     private static final String TYPE_LOOT_TABLE = "gui.cobblesafari.lost_item.type.loot_table";
     private static final String TYPE_ITEM = "gui.cobblesafari.lost_item.type.item";
+    private static final String FIELD_LOOT_ITEM_COUNT = "gui.cobblesafari.lost_item.field.loot_item_count";
+    private static final String TYPE_LOOT_ITEM_COUNT = "gui.cobblesafari.lost_item.type.loot_item_count";
+    private static final String FIELD_POKEBALL = "gui.cobblesafari.lost_item.field.pokeball";
+    private static final String TYPE_POKEBALL = "gui.cobblesafari.lost_item.type.pokeball";
 
     private LostItemConfigServerHandler() {
     }
@@ -64,7 +69,8 @@ public final class LostItemConfigServerHandler {
 
         // Applied before the mode switch on purpose: every applyMode* branch can bail out on a
         // validation failure, and losing the skin because a loot table id was misspelled would be a trap.
-        applySkin(player, payload.pos(), LostItemSkin.byName(payload.skin()));
+        LostItemBlock.applySkin(player.level(), payload.pos(), LostItemSkin.byName(payload.skin()));
+        applyPokeball(player, be, payload.pokeball().trim());
 
         int mode = payload.mode();
         if (mode < 0 || mode > 2) {
@@ -74,19 +80,8 @@ public final class LostItemConfigServerHandler {
         switch (mode) {
             case 0 -> applyMode0(serverLevel, player, be, payload);
             case 1 -> applyMode1(serverLevel, player, be, payload.lostItemLootTableId().trim());
-            case 2 -> applyMode2(player, be, payload.lootItemId().trim());
+            case 2 -> applyMode2(player, be, payload.lootItemId().trim(), payload.lootItemCountStr().trim(), payload.lootItemComponents());
             default -> applyMode0(serverLevel, player, be, payload);
-        }
-    }
-
-    /**
-     * Rewrites the {@code skin} block state property; no-op when it already matches. Changing a property
-     * without changing the block keeps the block entity, so claims and loot config survive untouched.
-     */
-    private static void applySkin(ServerPlayer player, BlockPos pos, LostItemSkin skin) {
-        BlockState state = player.level().getBlockState(pos);
-        if (state.getBlock() instanceof LostItemBlock && state.getValue(LostItemBlock.SKIN) != skin) {
-            player.level().setBlock(pos, state.setValue(LostItemBlock.SKIN, skin), Block.UPDATE_ALL);
         }
     }
 
@@ -126,22 +121,54 @@ public final class LostItemConfigServerHandler {
         be.syncConfigToClients();
     }
 
-    private static void applyMode2(ServerPlayer player, LostItemBlockEntity be, String raw) {
-        if (raw.isEmpty()) {
-            sendInvalid(player, raw, FIELD_LOOT_ITEM_MODE2, TYPE_ITEM);
-            return;
-        }
+    /** Purely visual, so applied before the mode switch like the skin (action plan 193, section 8.4). */
+    private static void applyPokeball(ServerPlayer player, LostItemBlockEntity be, String raw) {
         ResourceLocation loc = ResourceLocation.tryParse(raw);
-        if (loc == null || !BuiltInRegistries.ITEM.containsKey(loc)) {
-            sendInvalid(player, raw, FIELD_LOOT_ITEM_MODE2, TYPE_ITEM);
+        if (loc == null || PokeBalls.getPokeBall(loc) == null) {
+            sendInvalid(player, raw, FIELD_POKEBALL, TYPE_POKEBALL);
             return;
         }
-        Item item = BuiltInRegistries.ITEM.get(loc);
-        if (item == Items.AIR) {
-            sendInvalid(player, raw, FIELD_LOOT_ITEM_MODE2, TYPE_ITEM);
+        if (!raw.equals(be.getPokeballId())) {
+            be.setPokeballId(loc.toString());
+            be.syncConfigToClients();
+        }
+    }
+
+    /**
+     * Rebuilds the mode 2 stack from its three GUI fields; nothing is stored unless all three are valid.
+     * The fields are the source of truth: a stack set by shift-click comes back identical when saved as is.
+     */
+    private static void applyMode2(ServerPlayer player, LostItemBlockEntity be, String rawId, String rawCount, String rawData) {
+        if (rawId.isEmpty()) {
+            sendInvalid(player, rawId, FIELD_LOOT_ITEM_MODE2, TYPE_ITEM);
             return;
         }
-        be.setLootItemId(raw);
+        ResourceLocation loc = ResourceLocation.tryParse(rawId);
+        if (loc == null || !BuiltInRegistries.ITEM.containsKey(loc) || BuiltInRegistries.ITEM.get(loc) == Items.AIR) {
+            sendInvalid(player, rawId, FIELD_LOOT_ITEM_MODE2, TYPE_ITEM);
+            return;
+        }
+        int count;
+        try {
+            count = Integer.parseInt(rawCount);
+        } catch (NumberFormatException ex) {
+            sendInvalid(player, rawCount, FIELD_LOOT_ITEM_COUNT, TYPE_LOOT_ITEM_COUNT);
+            return;
+        }
+        ItemStack stack;
+        try {
+            stack = LostItemStackText.parse(rawId, rawData, Math.max(1, count), player.registryAccess());
+        } catch (CommandSyntaxException ex) {
+            player.sendSystemMessage(Component.translatable("gui.cobblesafari.lost_item.loot_item_data_invalid",
+                    ComponentUtils.fromMessage(ex.getRawMessage())));
+            return;
+        }
+        // Bounded after parsing: a max_stack_size component in the data changes the limit.
+        if (count < 1 || count > stack.getMaxStackSize()) {
+            sendInvalid(player, rawCount, FIELD_LOOT_ITEM_COUNT, TYPE_LOOT_ITEM_COUNT);
+            return;
+        }
+        be.setLootItemStack(stack);
         be.setMode(2);
         be.syncConfigToClients();
     }

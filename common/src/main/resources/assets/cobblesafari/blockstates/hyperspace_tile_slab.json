@@ -1,0 +1,13 @@
+{
+  "variants": {
+    "type=bottom": {
+      "model": "cobblesafari:block/hyperspace_tile_slab"
+    },
+    "type=top": {
+      "model": "cobblesafari:block/hyperspace_tile_slab_top"
+    },
+    "type=double": {
+      "model": "cobblesafari:block/hyperspace_tile_slab_double"
+    }
+  }
+}

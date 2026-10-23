@@ -1,0 +1,110 @@
+{
+	"variants": {
+		"face=floor,facing=north,sunken=false": {
+			"model": "cobblesafari:block/pheromosa_plant_grown"
+		},
+		"face=floor,facing=north,sunken=true": {
+			"model": "cobblesafari:block/pheromosa_plant_grown_sunken"
+		},
+		"face=floor,facing=east,sunken=false": {
+			"model": "cobblesafari:block/pheromosa_plant_grown",
+			"y": 90
+		},
+		"face=floor,facing=east,sunken=true": {
+			"model": "cobblesafari:block/pheromosa_plant_grown_sunken",
+			"y": 90
+		},
+		"face=floor,facing=south,sunken=false": {
+			"model": "cobblesafari:block/pheromosa_plant_grown",
+			"y": 180
+		},
+		"face=floor,facing=south,sunken=true": {
+			"model": "cobblesafari:block/pheromosa_plant_grown_sunken",
+			"y": 180
+		},
+		"face=floor,facing=west,sunken=false": {
+			"model": "cobblesafari:block/pheromosa_plant_grown",
+			"y": 270
+		},
+		"face=floor,facing=west,sunken=true": {
+			"model": "cobblesafari:block/pheromosa_plant_grown_sunken",
+			"y": 270
+		},
+		"face=ceiling,facing=north,sunken=false": {
+			"model": "cobblesafari:block/pheromosa_plant_grown",
+			"x": 180
+		},
+		"face=ceiling,facing=north,sunken=true": {
+			"model": "cobblesafari:block/pheromosa_plant_grown",
+			"x": 180
+		},
+		"face=ceiling,facing=east,sunken=false": {
+			"model": "cobblesafari:block/pheromosa_plant_grown",
+			"x": 180,
+			"y": 90
+		},
+		"face=ceiling,facing=east,sunken=true": {
+			"model": "cobblesafari:block/pheromosa_plant_grown",
+			"x": 180,
+			"y": 90
+		},
+		"face=ceiling,facing=south,sunken=false": {
+			"model": "cobblesafari:block/pheromosa_plant_grown",
+			"x": 180,
+			"y": 180
+		},
+		"face=ceiling,facing=south,sunken=true": {
+			"model": "cobblesafari:block/pheromosa_plant_grown",
+			"x": 180,
+			"y": 180
+		},
+		"face=ceiling,facing=west,sunken=false": {
+			"model": "cobblesafari:block/pheromosa_plant_grown",
+			"x": 180,
+			"y": 270
+		},
+		"face=ceiling,facing=west,sunken=true": {
+			"model": "cobblesafari:block/pheromosa_plant_grown",
+			"x": 180,
+			"y": 270
+		},
+		"face=wall,facing=north,sunken=false": {
+			"model": "cobblesafari:block/pheromosa_plant_grown",
+			"x": 90
+		},
+		"face=wall,facing=north,sunken=true": {
+			"model": "cobblesafari:block/pheromosa_plant_grown",
+			"x": 90
+		},
+		"face=wall,facing=east,sunken=false": {
+			"model": "cobblesafari:block/pheromosa_plant_grown",
+			"x": 90,
+			"y": 90
+		},
+		"face=wall,facing=east,sunken=true": {
+			"model": "cobblesafari:block/pheromosa_plant_grown",
+			"x": 90,
+			"y": 90
+		},
+		"face=wall,facing=south,sunken=false": {
+			"model": "cobblesafari:block/pheromosa_plant_grown",
+			"x": 90,
+			"y": 180
+		},
+		"face=wall,facing=south,sunken=true": {
+			"model": "cobblesafari:block/pheromosa_plant_grown",
+			"x": 90,
+			"y": 180
+		},
+		"face=wall,facing=west,sunken=false": {
+			"model": "cobblesafari:block/pheromosa_plant_grown",
+			"x": 90,
+			"y": 270
+		},
+		"face=wall,facing=west,sunken=true": {
+			"model": "cobblesafari:block/pheromosa_plant_grown",
+			"x": 90,
+			"y": 270
+		}
+	}
+}

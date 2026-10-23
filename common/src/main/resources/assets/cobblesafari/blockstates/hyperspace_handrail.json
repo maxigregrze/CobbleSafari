@@ -1,0 +1,79 @@
+{
+  "variants": {
+    "facing=north,shape=straight": {
+      "model": "cobblesafari:block/hyperspace_handrail"
+    },
+    "facing=north,shape=inner_left": {
+      "model": "cobblesafari:block/hyperspace_handrail_inner",
+      "y": 270
+    },
+    "facing=north,shape=inner_right": {
+      "model": "cobblesafari:block/hyperspace_handrail_inner"
+    },
+    "facing=north,shape=outer_left": {
+      "model": "cobblesafari:block/hyperspace_handrail_outer",
+      "y": 270
+    },
+    "facing=north,shape=outer_right": {
+      "model": "cobblesafari:block/hyperspace_handrail_outer"
+    },
+    "facing=east,shape=straight": {
+      "model": "cobblesafari:block/hyperspace_handrail",
+      "y": 90
+    },
+    "facing=east,shape=inner_left": {
+      "model": "cobblesafari:block/hyperspace_handrail_inner"
+    },
+    "facing=east,shape=inner_right": {
+      "model": "cobblesafari:block/hyperspace_handrail_inner",
+      "y": 90
+    },
+    "facing=east,shape=outer_left": {
+      "model": "cobblesafari:block/hyperspace_handrail_outer"
+    },
+    "facing=east,shape=outer_right": {
+      "model": "cobblesafari:block/hyperspace_handrail_outer",
+      "y": 90
+    },
+    "facing=south,shape=straight": {
+      "model": "cobblesafari:block/hyperspace_handrail",
+      "y": 180
+    },
+    "facing=south,shape=inner_left": {
+      "model": "cobblesafari:block/hyperspace_handrail_inner",
+      "y": 90
+    },
+    "facing=south,shape=inner_right": {
+      "model": "cobblesafari:block/hyperspace_handrail_inner",
+      "y": 180
+    },
+    "facing=south,shape=outer_left": {
+      "model": "cobblesafari:block/hyperspace_handrail_outer",
+      "y": 90
+    },
+    "facing=south,shape=outer_right": {
+      "model": "cobblesafari:block/hyperspace_handrail_outer",
+      "y": 180
+    },
+    "facing=west,shape=straight": {
+      "model": "cobblesafari:block/hyperspace_handrail",
+      "y": 270
+    },
+    "facing=west,shape=inner_left": {
+      "model": "cobblesafari:block/hyperspace_handrail_inner",
+      "y": 180
+    },
+    "facing=west,shape=inner_right": {
+      "model": "cobblesafari:block/hyperspace_handrail_inner",
+      "y": 270
+    },
+    "facing=west,shape=outer_left": {
+      "model": "cobblesafari:block/hyperspace_handrail_outer",
+      "y": 180
+    },
+    "facing=west,shape=outer_right": {
+      "model": "cobblesafari:block/hyperspace_handrail_outer",
+      "y": 270
+    }
+  }
+}

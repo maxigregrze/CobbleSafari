@@ -1,0 +1,9 @@
+{
+  "replace": false,
+  "values": [
+    "cobblesafari:buzzwole_plant",
+    "cobblesafari:pheromosa_plant",
+    "cobblesafari:buzzwole_plant_grown",
+    "cobblesafari:pheromosa_plant_grown"
+  ]
+}

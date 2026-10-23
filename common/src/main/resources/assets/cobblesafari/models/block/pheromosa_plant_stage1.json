@@ -1,0 +1,7 @@
+{
+	"parent": "cobblesafari:block/pheromosa_plant_1to4",
+	"textures": {
+		"0": "cobblesafari:block/pheromosa_plant_1",
+		"particle": "cobblesafari:block/pheromosa_plant_1"
+	}
+}

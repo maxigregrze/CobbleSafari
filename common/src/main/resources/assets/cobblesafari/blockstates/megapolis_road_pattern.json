@@ -1,0 +1,62 @@
+{
+  "variants": {
+    "north=false,east=false,south=false,west=false": {
+      "model": "cobblesafari:block/megapolis_road_pattern_none"
+    },
+    "north=false,east=false,south=false,west=true": {
+      "model": "cobblesafari:block/megapolis_road_pattern_end",
+      "y": 270
+    },
+    "north=false,east=false,south=true,west=false": {
+      "model": "cobblesafari:block/megapolis_road_pattern_end",
+      "y": 180
+    },
+    "north=false,east=false,south=true,west=true": {
+      "model": "cobblesafari:block/megapolis_road_pattern_corner",
+      "y": 180
+    },
+    "north=false,east=true,south=false,west=false": {
+      "model": "cobblesafari:block/megapolis_road_pattern_end",
+      "y": 90
+    },
+    "north=false,east=true,south=false,west=true": {
+      "model": "cobblesafari:block/megapolis_road_pattern_straight",
+      "y": 90
+    },
+    "north=false,east=true,south=true,west=false": {
+      "model": "cobblesafari:block/megapolis_road_pattern_corner",
+      "y": 90
+    },
+    "north=false,east=true,south=true,west=true": {
+      "model": "cobblesafari:block/megapolis_road_pattern_tee",
+      "y": 180
+    },
+    "north=true,east=false,south=false,west=false": {
+      "model": "cobblesafari:block/megapolis_road_pattern_end"
+    },
+    "north=true,east=false,south=false,west=true": {
+      "model": "cobblesafari:block/megapolis_road_pattern_corner",
+      "y": 270
+    },
+    "north=true,east=false,south=true,west=false": {
+      "model": "cobblesafari:block/megapolis_road_pattern_straight"
+    },
+    "north=true,east=false,south=true,west=true": {
+      "model": "cobblesafari:block/megapolis_road_pattern_tee",
+      "y": 270
+    },
+    "north=true,east=true,south=false,west=false": {
+      "model": "cobblesafari:block/megapolis_road_pattern_corner"
+    },
+    "north=true,east=true,south=false,west=true": {
+      "model": "cobblesafari:block/megapolis_road_pattern_tee"
+    },
+    "north=true,east=true,south=true,west=false": {
+      "model": "cobblesafari:block/megapolis_road_pattern_tee",
+      "y": 90
+    },
+    "north=true,east=true,south=true,west=true": {
+      "model": "cobblesafari:block/megapolis_road_pattern_cross"
+    }
+  }
+}

@@ -1,120 +1,561 @@
 {
-  "variants": {
-    "north=false,east=false,south=false,west=false,bottom=false": {
-      "model": "cobblesafari:block/hyperspace_platform_none"
+  "multipart": [
+    {
+      "apply": {
+        "model": "cobblesafari:block/hyperspace_platform_top_base"
+      }
     },
-    "north=false,east=false,south=false,west=false,bottom=true": {
-      "model": "cobblesafari:block/hyperspace_platform_none_bottom"
+    {
+      "when": {
+        "north": "false",
+        "west": "false"
+      },
+      "apply": {
+        "model": "cobblesafari:block/hyperspace_platform_top_nw_outer"
+      }
     },
-    "north=false,east=false,south=false,west=true,bottom=false": {
-      "model": "cobblesafari:block/hyperspace_platform_end",
-      "y": 270
+    {
+      "when": {
+        "north": "true",
+        "west": "false"
+      },
+      "apply": {
+        "model": "cobblesafari:block/hyperspace_platform_top_nw_edge_v"
+      }
     },
-    "north=false,east=false,south=false,west=true,bottom=true": {
-      "model": "cobblesafari:block/hyperspace_platform_end_bottom",
-      "y": 270
+    {
+      "when": {
+        "north": "false",
+        "west": "true"
+      },
+      "apply": {
+        "model": "cobblesafari:block/hyperspace_platform_top_nw_edge_h"
+      }
     },
-    "north=false,east=false,south=true,west=false,bottom=false": {
-      "model": "cobblesafari:block/hyperspace_platform_end",
-      "y": 180
+    {
+      "when": {
+        "north": "true",
+        "west": "true",
+        "north_west": "false"
+      },
+      "apply": {
+        "model": "cobblesafari:block/hyperspace_platform_top_nw_inner"
+      }
     },
-    "north=false,east=false,south=true,west=false,bottom=true": {
-      "model": "cobblesafari:block/hyperspace_platform_end_bottom",
-      "y": 180
+    {
+      "when": {
+        "north": "false",
+        "east": "false"
+      },
+      "apply": {
+        "model": "cobblesafari:block/hyperspace_platform_top_ne_outer"
+      }
     },
-    "north=false,east=false,south=true,west=true,bottom=false": {
-      "model": "cobblesafari:block/hyperspace_platform_corner",
-      "y": 180
+    {
+      "when": {
+        "north": "true",
+        "east": "false"
+      },
+      "apply": {
+        "model": "cobblesafari:block/hyperspace_platform_top_ne_edge_v"
+      }
     },
-    "north=false,east=false,south=true,west=true,bottom=true": {
-      "model": "cobblesafari:block/hyperspace_platform_corner_bottom",
-      "y": 180
+    {
+      "when": {
+        "north": "false",
+        "east": "true"
+      },
+      "apply": {
+        "model": "cobblesafari:block/hyperspace_platform_top_ne_edge_h"
+      }
     },
-    "north=false,east=true,south=false,west=false,bottom=false": {
-      "model": "cobblesafari:block/hyperspace_platform_end",
-      "y": 90
+    {
+      "when": {
+        "north": "true",
+        "east": "true",
+        "north_east": "false"
+      },
+      "apply": {
+        "model": "cobblesafari:block/hyperspace_platform_top_ne_inner"
+      }
     },
-    "north=false,east=true,south=false,west=false,bottom=true": {
-      "model": "cobblesafari:block/hyperspace_platform_end_bottom",
-      "y": 90
+    {
+      "when": {
+        "south": "false",
+        "west": "false"
+      },
+      "apply": {
+        "model": "cobblesafari:block/hyperspace_platform_top_sw_outer"
+      }
     },
-    "north=false,east=true,south=false,west=true,bottom=false": {
-      "model": "cobblesafari:block/hyperspace_platform_straight",
-      "y": 90
+    {
+      "when": {
+        "south": "true",
+        "west": "false"
+      },
+      "apply": {
+        "model": "cobblesafari:block/hyperspace_platform_top_sw_edge_v"
+      }
     },
-    "north=false,east=true,south=false,west=true,bottom=true": {
-      "model": "cobblesafari:block/hyperspace_platform_straight_bottom",
-      "y": 90
+    {
+      "when": {
+        "south": "false",
+        "west": "true"
+      },
+      "apply": {
+        "model": "cobblesafari:block/hyperspace_platform_top_sw_edge_h"
+      }
     },
-    "north=false,east=true,south=true,west=false,bottom=false": {
-      "model": "cobblesafari:block/hyperspace_platform_corner",
-      "y": 90
+    {
+      "when": {
+        "south": "true",
+        "west": "true",
+        "south_west": "false"
+      },
+      "apply": {
+        "model": "cobblesafari:block/hyperspace_platform_top_sw_inner"
+      }
     },
-    "north=false,east=true,south=true,west=false,bottom=true": {
-      "model": "cobblesafari:block/hyperspace_platform_corner_bottom",
-      "y": 90
+    {
+      "when": {
+        "south": "false",
+        "east": "false"
+      },
+      "apply": {
+        "model": "cobblesafari:block/hyperspace_platform_top_se_outer"
+      }
     },
-    "north=false,east=true,south=true,west=true,bottom=false": {
-      "model": "cobblesafari:block/hyperspace_platform_tee",
-      "y": 180
+    {
+      "when": {
+        "south": "true",
+        "east": "false"
+      },
+      "apply": {
+        "model": "cobblesafari:block/hyperspace_platform_top_se_edge_v"
+      }
     },
-    "north=false,east=true,south=true,west=true,bottom=true": {
-      "model": "cobblesafari:block/hyperspace_platform_tee_bottom",
-      "y": 180
+    {
+      "when": {
+        "south": "false",
+        "east": "true"
+      },
+      "apply": {
+        "model": "cobblesafari:block/hyperspace_platform_top_se_edge_h"
+      }
     },
-    "north=true,east=false,south=false,west=false,bottom=false": {
-      "model": "cobblesafari:block/hyperspace_platform_end"
+    {
+      "when": {
+        "south": "true",
+        "east": "true",
+        "south_east": "false"
+      },
+      "apply": {
+        "model": "cobblesafari:block/hyperspace_platform_top_se_inner"
+      }
     },
-    "north=true,east=false,south=false,west=false,bottom=true": {
-      "model": "cobblesafari:block/hyperspace_platform_end_bottom"
+    {
+      "when": {
+        "north": "false",
+        "east": "false",
+        "south": "false",
+        "west": "false",
+        "bottom": "false"
+      },
+      "apply": {
+        "model": "cobblesafari:block/hyperspace_platform_none_frame"
+      }
     },
-    "north=true,east=false,south=false,west=true,bottom=false": {
-      "model": "cobblesafari:block/hyperspace_platform_corner",
-      "y": 270
+    {
+      "when": {
+        "north": "false",
+        "east": "false",
+        "south": "false",
+        "west": "false",
+        "bottom": "true"
+      },
+      "apply": {
+        "model": "cobblesafari:block/hyperspace_platform_none_bottom_frame"
+      }
     },
-    "north=true,east=false,south=false,west=true,bottom=true": {
-      "model": "cobblesafari:block/hyperspace_platform_corner_bottom",
-      "y": 270
+    {
+      "when": {
+        "north": "true",
+        "east": "false",
+        "south": "false",
+        "west": "false",
+        "bottom": "false"
+      },
+      "apply": {
+        "model": "cobblesafari:block/hyperspace_platform_end_frame"
+      }
     },
-    "north=true,east=false,south=true,west=false,bottom=false": {
-      "model": "cobblesafari:block/hyperspace_platform_straight"
+    {
+      "when": {
+        "north": "true",
+        "east": "false",
+        "south": "false",
+        "west": "false",
+        "bottom": "true"
+      },
+      "apply": {
+        "model": "cobblesafari:block/hyperspace_platform_end_bottom_frame"
+      }
     },
-    "north=true,east=false,south=true,west=false,bottom=true": {
-      "model": "cobblesafari:block/hyperspace_platform_straight_bottom"
+    {
+      "when": {
+        "north": "false",
+        "east": "true",
+        "south": "false",
+        "west": "false",
+        "bottom": "false"
+      },
+      "apply": {
+        "model": "cobblesafari:block/hyperspace_platform_end_frame",
+        "y": 90
+      }
     },
-    "north=true,east=false,south=true,west=true,bottom=false": {
-      "model": "cobblesafari:block/hyperspace_platform_tee",
-      "y": 270
+    {
+      "when": {
+        "north": "false",
+        "east": "true",
+        "south": "false",
+        "west": "false",
+        "bottom": "true"
+      },
+      "apply": {
+        "model": "cobblesafari:block/hyperspace_platform_end_bottom_frame",
+        "y": 90
+      }
     },
-    "north=true,east=false,south=true,west=true,bottom=true": {
-      "model": "cobblesafari:block/hyperspace_platform_tee_bottom",
-      "y": 270
+    {
+      "when": {
+        "north": "false",
+        "east": "false",
+        "south": "true",
+        "west": "false",
+        "bottom": "false"
+      },
+      "apply": {
+        "model": "cobblesafari:block/hyperspace_platform_end_frame",
+        "y": 180
+      }
     },
-    "north=true,east=true,south=false,west=false,bottom=false": {
-      "model": "cobblesafari:block/hyperspace_platform_corner"
+    {
+      "when": {
+        "north": "false",
+        "east": "false",
+        "south": "true",
+        "west": "false",
+        "bottom": "true"
+      },
+      "apply": {
+        "model": "cobblesafari:block/hyperspace_platform_end_bottom_frame",
+        "y": 180
+      }
     },
-    "north=true,east=true,south=false,west=false,bottom=true": {
-      "model": "cobblesafari:block/hyperspace_platform_corner_bottom"
+    {
+      "when": {
+        "north": "false",
+        "east": "false",
+        "south": "false",
+        "west": "true",
+        "bottom": "false"
+      },
+      "apply": {
+        "model": "cobblesafari:block/hyperspace_platform_end_frame",
+        "y": 270
+      }
     },
-    "north=true,east=true,south=false,west=true,bottom=false": {
-      "model": "cobblesafari:block/hyperspace_platform_tee"
+    {
+      "when": {
+        "north": "false",
+        "east": "false",
+        "south": "false",
+        "west": "true",
+        "bottom": "true"
+      },
+      "apply": {
+        "model": "cobblesafari:block/hyperspace_platform_end_bottom_frame",
+        "y": 270
+      }
     },
-    "north=true,east=true,south=false,west=true,bottom=true": {
-      "model": "cobblesafari:block/hyperspace_platform_tee_bottom"
+    {
+      "when": {
+        "north": "true",
+        "east": "false",
+        "south": "true",
+        "west": "false",
+        "bottom": "false"
+      },
+      "apply": {
+        "model": "cobblesafari:block/hyperspace_platform_straight_frame"
+      }
     },
-    "north=true,east=true,south=true,west=false,bottom=false": {
-      "model": "cobblesafari:block/hyperspace_platform_tee",
-      "y": 90
+    {
+      "when": {
+        "north": "true",
+        "east": "false",
+        "south": "true",
+        "west": "false",
+        "bottom": "true"
+      },
+      "apply": {
+        "model": "cobblesafari:block/hyperspace_platform_straight_bottom_frame"
+      }
     },
-    "north=true,east=true,south=true,west=false,bottom=true": {
-      "model": "cobblesafari:block/hyperspace_platform_tee_bottom",
-      "y": 90
+    {
+      "when": {
+        "north": "false",
+        "east": "true",
+        "south": "false",
+        "west": "true",
+        "bottom": "false"
+      },
+      "apply": {
+        "model": "cobblesafari:block/hyperspace_platform_straight_frame",
+        "y": 90
+      }
     },
-    "north=true,east=true,south=true,west=true,bottom=false": {
-      "model": "cobblesafari:block/hyperspace_platform_cross"
+    {
+      "when": {
+        "north": "false",
+        "east": "true",
+        "south": "false",
+        "west": "true",
+        "bottom": "true"
+      },
+      "apply": {
+        "model": "cobblesafari:block/hyperspace_platform_straight_bottom_frame",
+        "y": 90
+      }
     },
-    "north=true,east=true,south=true,west=true,bottom=true": {
-      "model": "cobblesafari:block/hyperspace_platform_cross_bottom"
+    {
+      "when": {
+        "north": "true",
+        "east": "true",
+        "south": "false",
+        "west": "false",
+        "bottom": "false"
+      },
+      "apply": {
+        "model": "cobblesafari:block/hyperspace_platform_corner_frame"
+      }
+    },
+    {
+      "when": {
+        "north": "true",
+        "east": "true",
+        "south": "false",
+        "west": "false",
+        "bottom": "true"
+      },
+      "apply": {
+        "model": "cobblesafari:block/hyperspace_platform_corner_bottom_frame"
+      }
+    },
+    {
+      "when": {
+        "north": "false",
+        "east": "true",
+        "south": "true",
+        "west": "false",
+        "bottom": "false"
+      },
+      "apply": {
+        "model": "cobblesafari:block/hyperspace_platform_corner_frame",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "north": "false",
+        "east": "true",
+        "south": "true",
+        "west": "false",
+        "bottom": "true"
+      },
+      "apply": {
+        "model": "cobblesafari:block/hyperspace_platform_corner_bottom_frame",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "north": "false",
+        "east": "false",
+        "south": "true",
+        "west": "true",
+        "bottom": "false"
+      },
+      "apply": {
+        "model": "cobblesafari:block/hyperspace_platform_corner_frame",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "north": "false",
+        "east": "false",
+        "south": "true",
+        "west": "true",
+        "bottom": "true"
+      },
+      "apply": {
+        "model": "cobblesafari:block/hyperspace_platform_corner_bottom_frame",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "north": "true",
+        "east": "false",
+        "south": "false",
+        "west": "true",
+        "bottom": "false"
+      },
+      "apply": {
+        "model": "cobblesafari:block/hyperspace_platform_corner_frame",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "north": "true",
+        "east": "false",
+        "south": "false",
+        "west": "true",
+        "bottom": "true"
+      },
+      "apply": {
+        "model": "cobblesafari:block/hyperspace_platform_corner_bottom_frame",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "north": "true",
+        "east": "true",
+        "south": "false",
+        "west": "true",
+        "bottom": "false"
+      },
+      "apply": {
+        "model": "cobblesafari:block/hyperspace_platform_tee_frame"
+      }
+    },
+    {
+      "when": {
+        "north": "true",
+        "east": "true",
+        "south": "false",
+        "west": "true",
+        "bottom": "true"
+      },
+      "apply": {
+        "model": "cobblesafari:block/hyperspace_platform_tee_bottom_frame"
+      }
+    },
+    {
+      "when": {
+        "north": "true",
+        "east": "true",
+        "south": "true",
+        "west": "false",
+        "bottom": "false"
+      },
+      "apply": {
+        "model": "cobblesafari:block/hyperspace_platform_tee_frame",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "north": "true",
+        "east": "true",
+        "south": "true",
+        "west": "false",
+        "bottom": "true"
+      },
+      "apply": {
+        "model": "cobblesafari:block/hyperspace_platform_tee_bottom_frame",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "north": "false",
+        "east": "true",
+        "south": "true",
+        "west": "true",
+        "bottom": "false"
+      },
+      "apply": {
+        "model": "cobblesafari:block/hyperspace_platform_tee_frame",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "north": "false",
+        "east": "true",
+        "south": "true",
+        "west": "true",
+        "bottom": "true"
+      },
+      "apply": {
+        "model": "cobblesafari:block/hyperspace_platform_tee_bottom_frame",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "north": "true",
+        "east": "false",
+        "south": "true",
+        "west": "true",
+        "bottom": "false"
+      },
+      "apply": {
+        "model": "cobblesafari:block/hyperspace_platform_tee_frame",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "north": "true",
+        "east": "false",
+        "south": "true",
+        "west": "true",
+        "bottom": "true"
+      },
+      "apply": {
+        "model": "cobblesafari:block/hyperspace_platform_tee_bottom_frame",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "north": "true",
+        "east": "true",
+        "south": "true",
+        "west": "true",
+        "bottom": "false"
+      },
+      "apply": {
+        "model": "cobblesafari:block/hyperspace_platform_cross_frame"
+      }
+    },
+    {
+      "when": {
+        "north": "true",
+        "east": "true",
+        "south": "true",
+        "west": "true",
+        "bottom": "true"
+      },
+      "apply": {
+        "model": "cobblesafari:block/hyperspace_platform_cross_bottom_frame"
+      }
     }
-  }
+  ]
 }

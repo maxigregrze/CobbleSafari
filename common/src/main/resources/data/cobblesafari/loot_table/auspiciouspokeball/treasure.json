@@ -5,77 +5,100 @@
       "rolls": 1,
       "entries": [
         {
-          "type": "minecraft:group",
-          "weight": 39,
-          "children": [
-            { "type": "minecraft:item", "name": "cobblemon:relic_coin", "weight": 1 },
-            { "type": "minecraft:item", "name": "cobblemon:relic_coin", "weight": 1 },
-            { "type": "minecraft:item", "name": "cobblemon:upgrade", "weight": 1 },
-            { "type": "minecraft:item", "name": "cobblemon:dubious_disc", "weight": 1 },
-            { "type": "minecraft:item", "name": "cobblemon:relic_coin", "weight": 1 }
-          ]
+          "type": "minecraft:loot_table",
+          "value": "cobblesafari:lostitem_treasure",
+          "weight": 50
         },
         {
-          "type": "minecraft:group",
-          "weight": 30,
-          "children": [
-            { "type": "minecraft:item", "name": "cobblemon:relic_coin", "weight": 1 },
-            { "type": "minecraft:item", "name": "cobblemon:relic_coin", "weight": 1 },
-            { "type": "minecraft:item", "name": "cobblemon:upgrade", "weight": 1 },
-            { "type": "minecraft:item", "name": "cobblemon:dubious_disc", "weight": 1 },
-            { "type": "minecraft:item", "name": "cobblemon:galarica_wreath", "weight": 1 },
-            { "type": "minecraft:item", "name": "cobblemon:galarica_cuff", "weight": 1 },
-            { "type": "minecraft:item", "name": "cobblemon:relic_coin", "weight": 1 }
-          ]
-        },
-        {
-          "type": "minecraft:group",
-          "weight": 20,
-          "children": [
-            { "type": "minecraft:item", "name": "cobblemon:relic_coin", "weight": 1 },
-            { "type": "minecraft:item", "name": "cobblemon:relic_coin", "weight": 1 },
-            { "type": "minecraft:item", "name": "cobblemon:upgrade", "weight": 1 },
-            { "type": "minecraft:item", "name": "cobblemon:dubious_disc", "weight": 1 },
-            { "type": "minecraft:item", "name": "cobblemon:galarica_wreath", "weight": 1 },
-            { "type": "minecraft:item", "name": "cobblemon:galarica_cuff", "weight": 1 },
-            { "type": "minecraft:item", "name": "cobblemon:relic_coin", "weight": 1 }
-          ]
-        },
-        {
-          "type": "minecraft:group",
-          "weight": 10,
-          "children": [
-            { "type": "minecraft:item", "name": "cobblemon:relic_coin", "weight": 1 },
-            { "type": "minecraft:item", "name": "cobblemon:relic_coin", "weight": 1 },
-            { "type": "minecraft:item", "name": "cobblemon:relic_coin", "weight": 1 },
-            { "type": "minecraft:item", "name": "cobblemon:relic_coin", "weight": 1 },
-            { "type": "minecraft:item", "name": "cobblemon:upgrade", "weight": 1 },
-            { "type": "minecraft:item", "name": "cobblemon:dubious_disc", "weight": 1 },
-            { "type": "minecraft:item", "name": "cobblemon:galarica_wreath", "weight": 1 },
-            { "type": "minecraft:item", "name": "cobblemon:galarica_cuff", "weight": 1 },
-            { "type": "minecraft:item", "name": "cobblemon:prism_scale", "weight": 1 },
-            { "type": "minecraft:item", "name": "cobblemon:black_augurite", "weight": 1 },
-            { "type": "minecraft:item", "name": "cobblemon:relic_coin", "weight": 1 }
-          ]
-        },
-        {
-          "type": "minecraft:group",
-          "weight": 1,
-          "children": [
-            { "type": "minecraft:item", "name": "cobblemon:relic_coin", "weight": 1 },
-            { "type": "minecraft:item", "name": "cobblemon:relic_coin", "weight": 1 },
-            { "type": "minecraft:item", "name": "cobblemon:relic_coin", "weight": 1 },
-            { "type": "minecraft:item", "name": "cobblemon:relic_coin", "weight": 1 },
-            { "type": "minecraft:item", "name": "cobblemon:upgrade", "weight": 1 },
-            { "type": "minecraft:item", "name": "cobblemon:dubious_disc", "weight": 1 },
-            { "type": "minecraft:item", "name": "cobblemon:galarica_wreath", "weight": 1 },
-            { "type": "minecraft:item", "name": "cobblemon:galarica_cuff", "weight": 1 },
-            { "type": "minecraft:item", "name": "cobblemon:prism_scale", "weight": 1 },
-            { "type": "minecraft:item", "name": "cobblemon:black_augurite", "weight": 1 },
-            { "type": "minecraft:item", "name": "cobblemon:malicious_armor", "weight": 1 },
-            { "type": "minecraft:item", "name": "cobblemon:auspicious_armor", "weight": 1 },
-            { "type": "minecraft:item", "name": "cobblemon:relic_coin", "weight": 1 }
-          ]
+          "type": "minecraft:loot_table",
+          "weight": 50,
+          "value": {
+            "type": "minecraft:chest",
+            "pools": [
+              {
+                "rolls": 1,
+                "entries": [
+                  {
+                    "type": "minecraft:item",
+                    "name": "cobblesafari:donut_mix",
+                    "weight": 45,
+                    "functions": [
+                      {
+                        "function": "minecraft:set_count",
+                        "count": {
+                          "type": "minecraft:uniform",
+                          "min": 3,
+                          "max": 5
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "type": "minecraft:item",
+                    "name": "cobblesafari:butter_luminosian",
+                    "weight": 15
+                  },
+                  {
+                    "type": "minecraft:item",
+                    "name": "cobblesafari:butter_great",
+                    "weight": 20
+                  },
+                  {
+                    "type": "minecraft:item",
+                    "name": "cobblesafari:butter_amazing",
+                    "weight": 10
+                  },
+                  {
+                    "type": "minecraft:item",
+                    "name": "cobblesafari:butter_supreme",
+                    "weight": 5
+                  },
+                  {
+                    "type": "minecraft:loot_table",
+                    "weight": 5,
+                    "value": {
+                      "type": "minecraft:chest",
+                      "pools": [
+                        {
+                          "rolls": 1,
+                          "entries": [
+                            {
+                              "type": "minecraft:item",
+                              "name": "cobblesafari:butter_hyperspace"
+                            },
+                            {
+                              "type": "minecraft:item",
+                              "name": "cobblesafari:ingredient_dungeon_portal"
+                            },
+                            {
+                              "type": "minecraft:item",
+                              "name": "cobblesafari:ingredient_dungeon_paris"
+                            },
+                            {
+                              "type": "minecraft:item",
+                              "name": "cobblesafari:ingredient_dungeon_distortion"
+                            },
+                            {
+                              "type": "minecraft:item",
+                              "name": "cobblesafari:ingredient_dungeon_underground"
+                            },
+                            {
+                              "type": "minecraft:item",
+                              "name": "cobblesafari:ingredient_dungeon_jump"
+                            },
+                            {
+                              "type": "minecraft:item",
+                              "name": "cobblesafari:ingredient_dungeon_ultraspace"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  }
+                ]
+              }
+            ]
+          }
         }
       ]
     }

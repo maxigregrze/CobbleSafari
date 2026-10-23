@@ -1,0 +1,8 @@
+{
+	"parent": "cobblesafari:block/buzzwole_plant_1to4",
+	"textures": {
+		"0": "cobblesafari:block/buzzwole_plant_4",
+		"particle": "cobblesafari:block/buzzwole_plant_4",
+		"1": "cobblesafari:block/buzzwole_plant_4_alt"
+	}
+}

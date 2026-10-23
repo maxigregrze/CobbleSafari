@@ -1,0 +1,31 @@
+{
+  "textures": {
+    "base": "cobblesafari:block/hyperspace_platform_top",
+    "particle": "cobblesafari:block/hyperspace_platform_top"
+  },
+  "elements": [
+    {
+      "from": [
+        -0.01,
+        16.01,
+        -0.01
+      ],
+      "to": [
+        16.01,
+        16.01,
+        16.01
+      ],
+      "faces": {
+        "up": {
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ],
+          "texture": "#base"
+        }
+      }
+    }
+  ]
+}

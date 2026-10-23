@@ -3,12 +3,14 @@ package maxigregrze.cobblesafari.block.base;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * A {@link SideConnectedModelBlock} that also knows whether something solid sits directly beneath
@@ -41,12 +43,18 @@ public class GroundedSideConnectedModelBlock extends SideConnectedModelBlock {
 
     @Override
     protected BlockState computeState(BlockState state, BlockGetter level, BlockPos pos) {
+        return super.computeState(state, level, pos).setValue(BOTTOM, isGrounded(level, pos, settings.groundTag()));
+    }
+
+    /**
+     * Whether something holds {@code pos} up. Shared with {@link GroundedDiagonalSideConnectedModelBlock},
+     * which cannot inherit it.
+     */
+    static boolean isGrounded(BlockGetter level, BlockPos pos, @Nullable TagKey<Block> groundTag) {
         BlockPos below = pos.below();
         BlockState under = ApparentState.at(level, below);
         // A tagged block counts even when its collision is not a sturdy face: the scaffolding tube
         // is hollow so you can drop through it, yet a platform resting on one should still skirt.
-        boolean grounded = under.isFaceSturdy(level, below, Direction.UP)
-                || (settings.groundTag() != null && under.is(settings.groundTag()));
-        return super.computeState(state, level, pos).setValue(BOTTOM, grounded);
+        return under.isFaceSturdy(level, below, Direction.UP) || (groundTag != null && under.is(groundTag));
     }
 }

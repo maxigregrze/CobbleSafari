@@ -105,6 +105,7 @@ public class ResetCommand {
         maxigregrze.cobblesafari.wondertrade.WonderTradeDataLoader.load(source.getServer());
         maxigregrze.cobblesafari.wondertrade.WonderTradeService.runAutofillIfNeeded(source.getServer());
         maxigregrze.cobblesafari.gts.GtsDataLoader.load(source.getServer());
+        maxigregrze.cobblesafari.network.UltraLootConfigSyncPayload.syncToAll(source.getServer());
 
         if (source.getEntity() instanceof ServerPlayer executor) {
             Services.PLATFORM.sendPayloadToPlayer(executor, new HudConfigRefreshPayload());

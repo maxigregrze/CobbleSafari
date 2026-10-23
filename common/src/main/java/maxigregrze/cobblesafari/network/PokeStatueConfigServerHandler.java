@@ -46,7 +46,7 @@ public final class PokeStatueConfigServerHandler {
         // the playback options only land on a Creative Statue, the regular one ignores them.
         be.configure(payload.species(), payload.mode(), payload.scale(),
                 payload.color(), payload.animation(), payload.progress(),
-                payload.fixed(), payload.speed(), payload.showDummy());
+                payload.fixed(), payload.speed(), payload.showDummy(), payload.particles());
     }
 
     /** Per-block gate: the two statues have deliberately different access rules. */

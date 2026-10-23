@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "KKK",
+    "KGK",
+    "KKK"
+  ],
+  "key": {
+    "K": {
+      "item": "cobblesafari:kalos_wall_plain_ridge"
+    },
+    "G": {
+      "item": "minecraft:phantom_membrane"
+    }
+  },
+  "result": {
+    "id": "cobblesafari:hyperspace_wall_plain_ridge",
+    "count": 8
+  }
+}

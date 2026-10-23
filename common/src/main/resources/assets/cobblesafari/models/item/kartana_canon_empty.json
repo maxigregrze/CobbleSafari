@@ -1,0 +1,7 @@
+{
+  "parent": "cobblesafari:item/kartana_canon",
+  "textures": {
+    "0": "cobblesafari:item/kartana_canon_empty",
+    "particle": "cobblesafari:item/kartana_canon_empty"
+  }
+}

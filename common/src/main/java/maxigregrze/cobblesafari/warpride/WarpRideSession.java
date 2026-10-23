@@ -1,7 +1,6 @@
 package maxigregrze.cobblesafari.warpride;
 
 import maxigregrze.cobblesafari.config.UltraWarpRideConfig;
-import maxigregrze.cobblesafari.warpride.logic.SpeedEnvelope;
 import maxigregrze.cobblesafari.warpride.logic.Wave;
 import maxigregrze.cobblesafari.warpride.logic.WaveGenerator;
 import maxigregrze.cobblesafari.warpride.logic.WaveObject;
@@ -22,19 +21,19 @@ public final class WarpRideSession {
     /** Enough slots to look back over the whole lag budget with room to spare. */
     private static final int LANE_HISTORY_SIZE = 16;
 
-    private static final int COUNTDOWN_TICKS = 60;
 
     private final UUID sessionId;
     private final UUID ownerId;
     private final RandomSource random;
     private final UltraWarpRideConfig cfg;
     private final WaveGenerator generator;
-    private final SpeedEnvelope envelope = new SpeedEnvelope();
 
     private WarpRidePhase phase = WarpRidePhase.AWAITING_READY;
 
     private double odometer;
     private double energy;
+    /** Energy cannot exceed this; it only rises, when a bonus overflows it (plan 191, section 3.1). */
+    private double energyCeiling;
 
     /**
      * Parent-dungeon credit remaining, in ticks, pushed in from outside every tick. A plain int is
@@ -52,7 +51,8 @@ public final class WarpRideSession {
 
     private final int[] laneHistory = new int[LANE_HISTORY_SIZE];
 
-    private long countdownEndTick;
+    private long introStartTick;
+    private boolean launchAnnounced;
     private long inputCooldownUntil;
     private long decayFrozenUntil;
     private long lastActivityTick;
@@ -86,13 +86,15 @@ public final class WarpRideSession {
     /** Sentinel: this ride is not nested in a dungeon run, so no parent clock applies. */
     public static final int NO_PARENT = -1;
 
-    /** One impact resolved this tick; {@code energyAfter} is the authoritative energy after it. */
-    public record ImpactEvent(int waveIndex, int lane, boolean positive, double energyAfter) {}
+    /**
+     * One impact resolved this tick; {@code energyAfter} is the authoritative energy after it, and
+     * {@code ceilingRaised} marks a bonus that pushed the energy ceiling up.
+     */
+    public record ImpactEvent(int waveIndex, int lane, boolean positive, double energyAfter,
+                              boolean ceilingRaised) {}
 
     private final List<ImpactEvent> pendingImpacts = new ArrayList<>();
 
-    /** Countdown steps still to announce: 3, 2, 1, then GO. */
-    private int lastCountdownStep = Integer.MAX_VALUE;
 
     private final Vec3 anchor;
     private boolean bodyRestored;
@@ -110,14 +112,16 @@ public final class WarpRideSession {
         this.generator = new WaveGenerator(random, cfg);
         this.anchor = anchor;
         this.energy = cfg.startEnergy;
+        this.energyCeiling = Math.max(cfg.startEnergy, cfg.startCeiling);
         this.speed = speedFromEnergy(cfg.startEnergy);
         this.lane = 0;
         this.lastActivityTick = nowTick;
         java.util.Arrays.fill(laneHistory, 0);
 
-        // Deterministic: the start speed is constant through the countdown and the opening grace.
+        // Deterministic: the odometer holds at 0 through the intro, and the start speed is constant
+        // through the opening grace, so this many light-years cover its first seconds.
         double startSpeed = speedFromEnergy(cfg.startEnergy);
-        this.noObjectBeforeTrackPos = startSpeed * (COUNTDOWN_TICKS / 20.0 + cfg.startGraceSeconds);
+        this.noObjectBeforeTrackPos = startSpeed * cfg.startGraceSeconds;
     }
 
     public UUID getSessionId() {
@@ -225,18 +229,13 @@ public final class WarpRideSession {
         return out;
     }
 
-    /** @return the countdown step to announce this tick (3, 2, 1 or 0 for GO), or -1 for none */
-    public int pollCountdownStep(long now) {
-        if (phase != WarpRidePhase.COUNTDOWN) {
-            return -1;
+    /** @return true exactly once, on the intro tick that launches the rider (sound, aura burst) */
+    public boolean pollLaunch(long now) {
+        if (phase != WarpRidePhase.INTRO || launchAnnounced || now - introStartTick < cfg.introLaunchTick) {
+            return false;
         }
-        long remaining = Math.max(0L, countdownEndTick - now);
-        int step = (int) Math.ceil(remaining / 20.0);
-        if (step >= lastCountdownStep) {
-            return -1;
-        }
-        lastCountdownStep = step;
-        return step;
+        launchAnnounced = true;
+        return true;
     }
 
     public List<Wave> drainPendingWaves() {
@@ -253,10 +252,10 @@ public final class WarpRideSession {
         if (phase != WarpRidePhase.AWAITING_READY) {
             return false;
         }
-        phase = WarpRidePhase.COUNTDOWN;
-        countdownEndTick = now + COUNTDOWN_TICKS;
+        phase = WarpRidePhase.INTRO;
+        introStartTick = now;
         lastActivityTick = now;
-        // Seed the visible track so the countdown has something to scroll.
+        // Seed the track ahead, so the first riding tick already has its waves on screen.
         ensureWaveLead();
         return true;
     }
@@ -299,9 +298,9 @@ public final class WarpRideSession {
             }
         }
 
-        // A turn is nearly free; a jump costs its (short) transit.
+        // A turn is nearly free; a jump costs its transit. Both stretch at low energy (section 3.3).
         inputCooldownUntil = effective
-                + (input == 2 ? cfg.jumpTransitTicks() : cfg.inputCooldownTicks());
+                + (input == 2 ? cfg.jumpTransitTicks(energy) : cfg.inputCooldownTicks(energy));
         this.lane = newLane;
         rewriteLaneHistory(effective, now, newLane);
         return true;
@@ -319,10 +318,10 @@ public final class WarpRideSession {
 
     public void tick(long now) {
         switch (phase) {
-            case COUNTDOWN -> {
+            case INTRO -> {
+                // The odometer holds at 0 and nothing decays: the ride's distance starts at launch.
                 lastActivityTick = now;
-                tickCountdown(now);
-                if (now >= countdownEndTick) {
+                if (now - introStartTick >= cfg.introTicks) {
                     phase = WarpRidePhase.RIDING;
                     decayFrozenUntil = now + cfg.openingGraceTicks();
                     lastActivityTick = now;
@@ -339,19 +338,6 @@ public final class WarpRideSession {
         }
     }
 
-    /** The countdown scrolls the track, but any wave reaching the plane resolves with no effect. */
-    private void tickCountdown(long now) {
-        odometer += speed / 20.0;
-        ensureWaveLead();
-        for (Wave wave : waves) {
-            if (!wave.hasCrossed() && wave.depth(odometer) <= 0.0) {
-                wave.markCrossed(now);
-                wave.markResolved();
-            }
-        }
-        pruneWaves();
-    }
-
     private void tickRiding(long now) {
         laneHistory[(int) Math.floorMod(now, LANE_HISTORY_SIZE)] = lane;
 
@@ -364,8 +350,8 @@ public final class WarpRideSession {
             energy = Math.max(0.0, energy - perSecond / 20.0);
         }
 
-        double target = speedFromEnergy(energy);
-        speed = envelope.apply(now, target);
+        // As in the source, speed follows energy and nothing else: no stall, no ramp.
+        speed = speedFromEnergy(energy);
         odometer += speed / 20.0;
 
         ensureWaveLead();
@@ -384,8 +370,7 @@ public final class WarpRideSession {
     }
 
     private double speedFromEnergy(double e) {
-        double clamped = Math.max(0.0, Math.min(100.0, e));
-        return cfg.baseSpeed * Math.pow(2.0, (clamped - 50.0) / 50.0);
+        return cfg.speedFromEnergy(e);
     }
 
     /** Keeps at least the visible set plus two of lead, so nothing ever pops in at ring 1. */
@@ -522,26 +507,27 @@ public final class WarpRideSession {
         return Math.max(1L, Math.round(cfg.portalHoldWaves * secondsPerWave * 20.0));
     }
 
-    /** One wave's worth of real time at the current speed, so hold and ramp scale with energy. */
-    private long oneWaveTicks() {
-        double secondsPerWave = cfg.waveSpacingLy / Math.max(1.0, speedFromEnergy(energy));
-        return Math.max(1L, Math.round(secondsPerWave * 20.0));
-    }
-
+    /**
+     * A bonus that would overflow the ceiling raises the ceiling by one step instead, so climbing
+     * past the start ceiling is slow, and a long run can still reach the top (section 3.1).
+     */
     private void applyPositive(long now, int waveIndex, int lane) {
-        energy = Math.min(100.0, energy + cfg.bonusEnergy);
+        energy += cfg.bonusEnergy;
+        boolean ceilingRaised = false;
+        if (energy > energyCeiling) {
+            double raised = Math.min(cfg.maxCeiling, energyCeiling + cfg.ceilingStep);
+            ceilingRaised = raised > energyCeiling;
+            energyCeiling = raised;
+        }
+        energy = Math.min(energy, energyCeiling);
         freezeDecay(now);
-        envelope.onPositive(now, speed, Math.round(cfg.rampMs / 50.0));
-        pendingImpacts.add(new ImpactEvent(waveIndex, lane, true, energy));
+        pendingImpacts.add(new ImpactEvent(waveIndex, lane, true, energy, ceilingRaised));
     }
 
     private void applyNegative(long now, int waveIndex, int lane) {
         energy = Math.max(0.0, energy + cfg.malusEnergy);
         freezeDecay(now);
-        // Slow for one wave, then ramp back over one, both scaled to the current energy level.
-        long wave = oneWaveTicks();
-        envelope.onNegative(now, cfg.malusSpeed, wave, wave);
-        pendingImpacts.add(new ImpactEvent(waveIndex, lane, false, energy));
+        pendingImpacts.add(new ImpactEvent(waveIndex, lane, false, energy, false));
     }
 
     /** {@code max()}, never an assignment: an impact must never shorten a freeze already in flight. */
@@ -562,7 +548,6 @@ public final class WarpRideSession {
     /** Zero energy. A soft fail: the ride continues, the rider loses agency over its outcome. */
     private void enterDrift(long now) {
         drifting = true;
-        envelope.clear();
         lastActivityTick = now;
         driftThreeQuarterTick = now + Math.round(0.75 * cfg.driftSeconds * 20.0);
         forcedDriftPortal = false;

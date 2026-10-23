@@ -17,7 +17,9 @@ public enum LostItemSkin implements StringRepresentable {
      * as-is rather than renamed. Everything this mod controls - the block state value, the item id and
      * every lang key - spells it correctly. The model prefix is the one place the two diverge.
      */
-    BURIED("buried", "lost_item_buried", "lost_item_burried");
+    BURIED("buried", "lost_item_buried", "lost_item_burried"),
+    /** Animated ball and aura drawn by the block entity renderer (action plan 193, section 7). */
+    FLOATING("floating", "lost_item_floating", "lost_item_floating");
 
     private final String name;
     private final String itemName;

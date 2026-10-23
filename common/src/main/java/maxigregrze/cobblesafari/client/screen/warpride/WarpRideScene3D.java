@@ -35,11 +35,23 @@ public final class WarpRideScene3D {
     private static final Vector3f LIGHT_0 = new Vector3f(0.3f, 1.0f, 0.8f).normalize();
     private static final Vector3f LIGHT_1 = new Vector3f(-0.3f, 1.0f, 0.8f).normalize();
 
+    /** The view every pass starts from: identity is the chase camera (action plan 191, C1). */
+    private static final Matrix4f VIEW = new Matrix4f();
+
     private WarpRideScene3D() {}
 
+    /** Sets the view for the frame's passes; {@code null} restores the plain chase view. */
+    public static void setView(Matrix4f view) {
+        if (view == null) {
+            VIEW.identity();
+        } else {
+            VIEW.set(view);
+        }
+    }
+
     /**
-     * Perspective projection, identity model-view, fresh depth buffer. The caller must flush its
-     * {@code GuiGraphics} first: both share the same buffer source.
+     * Perspective projection, the frame's view as model-view, fresh depth buffer. The caller must
+     * flush its {@code GuiGraphics} first: both share the same buffer source.
      */
     public static void begin(int physicalWidth, int physicalHeight, double fit) {
         RenderSystem.backupProjectionMatrix();
@@ -50,7 +62,7 @@ public final class WarpRideScene3D {
         RenderSystem.setProjectionMatrix(projection, VertexSorting.DISTANCE_TO_ORIGIN);
         Matrix4fStack modelView = RenderSystem.getModelViewStack();
         modelView.pushMatrix();
-        modelView.identity();
+        modelView.set(VIEW);
         RenderSystem.applyModelViewMatrix();
         RenderSystem.clear(GlConst.GL_DEPTH_BUFFER_BIT, Minecraft.ON_OSX);
         FogRenderer.setupNoFog();

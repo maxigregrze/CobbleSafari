@@ -8,7 +8,18 @@ import maxigregrze.cobblesafari.item.CreativeEggItem;
 import maxigregrze.cobblesafari.item.CreativeFlagItem;
 import maxigregrze.cobblesafari.item.GtsTicketItem;
 import maxigregrze.cobblesafari.item.IncenseItem;
+import maxigregrze.cobblesafari.item.LostItemTemplateItem;
 import maxigregrze.cobblesafari.item.LuckyMiningHelmetItem;
+import maxigregrze.cobblesafari.item.ultraloot.BlacephalonBombItem;
+import maxigregrze.cobblesafari.item.ultraloot.NeedleDartItem;
+import maxigregrze.cobblesafari.item.ultraloot.UltraCanonItem;
+import maxigregrze.cobblesafari.item.ultraloot.GlutonArmorItem;
+import maxigregrze.cobblesafari.item.ultraloot.NihilegoHatItem;
+import maxigregrze.cobblesafari.item.ultraloot.ReconArmorItem;
+import maxigregrze.cobblesafari.item.ultraloot.StakatakaShieldItem;
+import maxigregrze.cobblesafari.entity.projectile.CelesteelaProjectileEntity;
+import maxigregrze.cobblesafari.entity.projectile.PaperPlaneEntity;
+import maxigregrze.cobblesafari.item.ultraloot.XurkitreeBombItem;
 import maxigregrze.cobblesafari.item.MudBallItem;
 import maxigregrze.cobblesafari.item.PhoenixAshesItem;
 import maxigregrze.cobblesafari.item.RotomAppUnlockItem;
@@ -46,6 +57,9 @@ import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ArmorMaterial;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.ItemNameBlockItem;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.DiggerItem;
 import net.minecraft.world.item.Tiers;
@@ -127,6 +141,9 @@ public class ModItems {
     public static final Item TICKET_WONDERTRADE = new WonderTradeTicketItem(new Item.Properties());
     public static final Item TICKET_GTS = new GtsTicketItem(new Item.Properties());
 
+    /** Copies a Lost Item's configuration from one block to another (action plan 193, section 5). */
+    public static final Item LOST_ITEM_TEMPLATE = new LostItemTemplateItem(new Item.Properties().stacksTo(1));
+
     public static final Item FLAG_REGULAR = new Item(new Item.Properties().stacksTo(1));
     public static final Item FLAG_BRONZE = new Item(new Item.Properties().stacksTo(1));
     public static final Item FLAG_SILVER = new Item(new Item.Properties().stacksTo(1));
@@ -183,6 +200,37 @@ public class ModItems {
     public static final Item RED_CHAIN_CORE = new RedChainCoreItem(new Item.Properties().stacksTo(64));
     public static final Item RED_CHAIN = new RedChainItem(new Item.Properties().stacksTo(16));
 
+    // Ultra Space loot (action plan 192).
+    public static final Item POIPOLE_ARROW = new NeedleDartItem(new Item.Properties());
+    public static final Item BLACEPHALON_BOMB = new BlacephalonBombItem(new Item.Properties().stacksTo(16));
+    public static final Item XURKITREE_BOMB = new XurkitreeBombItem(new Item.Properties().stacksTo(16));
+    /** Half a bow's durability (384). */
+    private static final int CANON_DURABILITY = 192;
+    public static final Item CELESTEELA_CANON = new UltraCanonItem(new Item.Properties().durability(CANON_DURABILITY),
+            Items.GUNPOWDER, CelesteelaProjectileEntity::new, 1.5f, "celesteela_canon");
+    public static final Item KARTANA_CANON = new UltraCanonItem(new Item.Properties().durability(CANON_DURABILITY),
+            Items.PAPER, PaperPlaneEntity::new, PaperPlaneEntity.LAUNCH_SPEED, "kartana_canon");
+    // Ultra Beast fruit plants (section 12): seeds plant the crop; fruits eat like golden apples
+    // (always edible) with their own buffs.
+    // Seeds are built in register(): ModItems can be initialised while ModBlocks is still filling its
+    // static fields, and a static seed would then capture a null crop block.
+    public static Item BUZZWOLE_SEEDS;
+    public static Item PHEROMOSA_SEEDS;
+    public static final Item BUZZWOLE_FRUIT = new Item(new Item.Properties().rarity(Rarity.RARE).food(
+            new FoodProperties.Builder().nutrition(7).saturationModifier(1.2f).alwaysEdible()
+                    .effect(new MobEffectInstance(MobEffects.DAMAGE_BOOST, 1200, 1), 1.0f)
+                    .effect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, 600, 1), 1.0f)
+                    .effect(new MobEffectInstance(MobEffects.DIG_SPEED, 1200, 0), 1.0f)
+                    .build()));
+    public static final Item PHEROMOSA_FRUIT = new Item(new Item.Properties().rarity(Rarity.RARE).food(
+            new FoodProperties.Builder().nutrition(3).saturationModifier(0.3f).alwaysEdible()
+                    .effect(new MobEffectInstance(MobEffects.INVISIBILITY, 2400, 0), 1.0f)
+                    .effect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, 1800, 1), 1.0f)
+                    .effect(new MobEffectInstance(MobEffects.JUMP, 600, 2), 1.0f)
+                    .build()));
+    public static final Item STAKATAKA_SHIELD = Services.PLATFORM.createStakatakaShield(
+            new Item.Properties().durability(StakatakaShieldItem.MAX_DURABILITY));
+
     /** Ho-Oh's Rainbow Feather: a boosted Totem of Undying, consumed from either hand (plan 178, § 3). */
     public static final Item RAINBOW_FEATHER = new Item(new Item.Properties().stacksTo(1).rarity(Rarity.EPIC));
 
@@ -232,6 +280,8 @@ public class ModItems {
     public static final Item INGREDIENT_DUNGEON_PARIS = new DungeonIngredientItem(new Item.Properties().stacksTo(1).rarity(Rarity.RARE));
     public static final Item INGREDIENT_DUNGEON_DISTORTION = new DungeonIngredientItem(new Item.Properties().stacksTo(1).rarity(Rarity.RARE));
     public static final Item INGREDIENT_DUNGEON_UNDERGROUND = new DungeonIngredientItem(new Item.Properties().stacksTo(1).rarity(Rarity.RARE));
+    public static final Item INGREDIENT_DUNGEON_JUMP = new DungeonIngredientItem(new Item.Properties().stacksTo(1).rarity(Rarity.RARE));
+    public static final Item INGREDIENT_DUNGEON_ULTRASPACE = new DungeonIngredientItem(new Item.Properties().stacksTo(1).rarity(Rarity.RARE));
     public static final Item DONUT_DUNGEON_PORTAL = new DungeonDonutItem(new Item.Properties().stacksTo(1).rarity(Rarity.EPIC), null);
     public static final Item DONUT_DUNGEON_PARIS = new DungeonDonutItem(new Item.Properties().stacksTo(1).rarity(Rarity.EPIC), null);
     public static final Item DONUT_DUNGEON_DISTORTION = new DungeonDonutItem(
@@ -240,6 +290,17 @@ public class ModItems {
             new Item.Properties().stacksTo(1).rarity(Rarity.EPIC), "cobblesafari:dungeon_underground");
 
     public static Item LUCKY_MINING_HELMET;
+
+    // Ultra Space loot armor (action plan 192): materials only exist once the registry is open.
+    public static Item NIHILEGO_HAT;
+    public static Item RECON_ARMOR_HELMET;
+    public static Item RECON_ARMOR_CHESTPLATE;
+    public static Item RECON_ARMOR_LEGGINGS;
+    public static Item RECON_ARMOR_BOOTS;
+    public static Item GLUTON_ARMOR_HELMET;
+    public static Item GLUTON_ARMOR_CHESTPLATE;
+    public static Item GLUTON_ARMOR_LEGGINGS;
+    public static Item GLUTON_ARMOR_BOOTS;
 
     public static final List<Item> BATCH_ITEMS = new ArrayList<>();
 
@@ -291,6 +352,57 @@ public class ModItems {
         } catch (Exception e) {
             CobbleSafari.LOGGER.error("[RotomPhone] Failed to read bundled skin {}", file, e);
         }
+    }
+
+    private static Holder<ArmorMaterial> registerUltraLootMaterial(String id, Map<ArmorItem.Type, Integer> defense,
+            int enchantmentValue, Holder<net.minecraft.sounds.SoundEvent> equipSound, float toughness) {
+        ResourceLocation key = ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, id);
+        // No repair ingredient: these pieces only mend by combining two in a crafting grid (plan 192, 2.3).
+        return Registry.registerForHolder(BuiltInRegistries.ARMOR_MATERIAL, key, new ArmorMaterial(
+                defense, enchantmentValue, equipSound, () -> Ingredient.EMPTY,
+                List.of(new ArmorMaterial.Layer(key)), toughness, 0.0f));
+    }
+
+    private static Item.Properties armorProperties(ArmorItem.Type type, int durabilityMultiplier) {
+        return new Item.Properties().durability(type.getDurability(durabilityMultiplier));
+    }
+
+    /** Nihilhat (turtle helmet values), Ultra Recon and Glutton sets - action plan 192, sections 9 to 11. */
+    private static void registerUltraLootArmor() {
+        Holder<ArmorMaterial> nihilego = registerUltraLootMaterial("nihilego_hat",
+                Map.of(ArmorItem.Type.HELMET, 2), 9, SoundEvents.ARMOR_EQUIP_TURTLE, 0.0f);
+        Holder<ArmorMaterial> recon = registerUltraLootMaterial("recon_armor",
+                Map.of(ArmorItem.Type.HELMET, 3, ArmorItem.Type.CHESTPLATE, 8,
+                        ArmorItem.Type.LEGGINGS, 6, ArmorItem.Type.BOOTS, 3),
+                10, SoundEvents.ARMOR_EQUIP_DIAMOND, 2.0f);
+        Holder<ArmorMaterial> gluton = registerUltraLootMaterial("gluton_armor",
+                Map.of(ArmorItem.Type.HELMET, 2, ArmorItem.Type.CHESTPLATE, 6,
+                        ArmorItem.Type.LEGGINGS, 5, ArmorItem.Type.BOOTS, 2),
+                9, SoundEvents.ARMOR_EQUIP_IRON, 0.0f);
+
+        final int turtleDurability = 25;
+        final int ironDurability = 15;
+        final int netheriteDurability = 37;
+        NIHILEGO_HAT = registerItem("nihilego_hat",
+                new NihilegoHatItem(nihilego, armorProperties(ArmorItem.Type.HELMET, turtleDurability)));
+
+        RECON_ARMOR_HELMET = registerItem("recon_armor_helmet", new ReconArmorItem(recon, ArmorItem.Type.HELMET,
+                armorProperties(ArmorItem.Type.HELMET, ironDurability)));
+        RECON_ARMOR_CHESTPLATE = registerItem("recon_armor_chestplate", Services.PLATFORM.createReconChestplate(recon,
+                armorProperties(ArmorItem.Type.CHESTPLATE, ironDurability)));
+        RECON_ARMOR_LEGGINGS = registerItem("recon_armor_leggings", new ReconArmorItem(recon, ArmorItem.Type.LEGGINGS,
+                armorProperties(ArmorItem.Type.LEGGINGS, ironDurability)));
+        RECON_ARMOR_BOOTS = registerItem("recon_armor_boots", new ReconArmorItem(recon, ArmorItem.Type.BOOTS,
+                armorProperties(ArmorItem.Type.BOOTS, ironDurability)));
+
+        GLUTON_ARMOR_HELMET = registerItem("gluton_armor_helmet", new GlutonArmorItem(gluton, ArmorItem.Type.HELMET,
+                armorProperties(ArmorItem.Type.HELMET, netheriteDurability)));
+        GLUTON_ARMOR_CHESTPLATE = registerItem("gluton_armor_chestplate", new GlutonArmorItem(gluton,
+                ArmorItem.Type.CHESTPLATE, armorProperties(ArmorItem.Type.CHESTPLATE, netheriteDurability)));
+        GLUTON_ARMOR_LEGGINGS = registerItem("gluton_armor_leggings", new GlutonArmorItem(gluton,
+                ArmorItem.Type.LEGGINGS, armorProperties(ArmorItem.Type.LEGGINGS, netheriteDurability)));
+        GLUTON_ARMOR_BOOTS = registerItem("gluton_armor_boots", new GlutonArmorItem(gluton, ArmorItem.Type.BOOTS,
+                armorProperties(ArmorItem.Type.BOOTS, netheriteDurability)));
     }
 
     public static void register() {
@@ -357,6 +469,7 @@ public class ModItems {
         registerItem("ticket_dungeon", TICKET_DUNGEON);
         registerItem("ticket_wondertrade", TICKET_WONDERTRADE);
         registerItem("ticket_gts", TICKET_GTS);
+        registerItem("lost_item_template", LOST_ITEM_TEMPLATE);
 
         registerItem("fossil_random", FOSSIL_RANDOM);
         registerItem("fossil_perfect", FOSSIL_PERFECT);
@@ -402,6 +515,16 @@ public class ModItems {
         registerItem("redchain_fragment", REDCHAIN_FRAGMENT);
         registerItem("red_chain_core", RED_CHAIN_CORE);
         registerItem("red_chain", RED_CHAIN);
+        registerItem("poipole_arrow", POIPOLE_ARROW);
+        registerItem("blacephalon_bomb", BLACEPHALON_BOMB);
+        registerItem("xurkitree_bomb", XURKITREE_BOMB);
+        registerItem("celesteela_canon", CELESTEELA_CANON);
+        registerItem("kartana_canon", KARTANA_CANON);
+        registerItem("stakataka_shield", STAKATAKA_SHIELD);
+        BUZZWOLE_SEEDS = registerItem("buzzwole_seeds", new ItemNameBlockItem(ModBlocks.BUZZWOLE_PLANT, new Item.Properties()));
+        PHEROMOSA_SEEDS = registerItem("pheromosa_seeds", new ItemNameBlockItem(ModBlocks.PHEROMOSA_PLANT, new Item.Properties()));
+        registerItem("buzzwole_fruit", BUZZWOLE_FRUIT);
+        registerItem("pheromosa_fruit", PHEROMOSA_FRUIT);
 
         registerItem("rainbow_feather", RAINBOW_FEATHER);
         registerItem("hooh_ashes", HOOH_ASHES);
@@ -436,6 +559,8 @@ public class ModItems {
         registerItem("ingredient_dungeon_paris", INGREDIENT_DUNGEON_PARIS);
         registerItem("ingredient_dungeon_distortion", INGREDIENT_DUNGEON_DISTORTION);
         registerItem("ingredient_dungeon_underground", INGREDIENT_DUNGEON_UNDERGROUND);
+        registerItem("ingredient_dungeon_jump", INGREDIENT_DUNGEON_JUMP);
+        registerItem("ingredient_dungeon_ultraspace", INGREDIENT_DUNGEON_ULTRASPACE);
         registerItem("donut_dungeon_portal", DONUT_DUNGEON_PORTAL);
         registerItem("donut_dungeon_paris", DONUT_DUNGEON_PARIS);
         registerItem("donut_dungeon_distortion", DONUT_DUNGEON_DISTORTION);
@@ -461,6 +586,7 @@ public class ModItems {
 
         LUCKY_MINING_HELMET = registerItem(ID_LUCKY_MINING_HELMET,
                 new LuckyMiningHelmetItem(luckyHelmetMaterial, new Item.Properties().stacksTo(1)));
+        registerUltraLootArmor();
 
         BATCH_ITEMS.add(AURORA_DIAL);
         BATCH_ITEMS.add(BLOOD_DIAL);
@@ -530,6 +656,8 @@ public class ModItems {
         BATCH_ITEMS.add(INGREDIENT_DUNGEON_PARIS);
         BATCH_ITEMS.add(INGREDIENT_DUNGEON_DISTORTION);
         BATCH_ITEMS.add(INGREDIENT_DUNGEON_UNDERGROUND);
+        BATCH_ITEMS.add(INGREDIENT_DUNGEON_JUMP);
+        BATCH_ITEMS.add(INGREDIENT_DUNGEON_ULTRASPACE);
         BATCH_ITEMS.add(DONUT_DUNGEON_PORTAL);
         BATCH_ITEMS.add(DONUT_DUNGEON_PARIS);
         BATCH_ITEMS.add(DONUT_DUNGEON_DISTORTION);

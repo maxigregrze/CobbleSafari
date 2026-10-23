@@ -51,6 +51,8 @@ public class ModCreativeTabs {
                 output.accept(ModBlocks.LOST_ITEM_RUBBLES_ITEM);
                 output.accept(ModBlocks.LOST_ITEM_CLASSIC_ITEM);
                 output.accept(ModBlocks.LOST_ITEM_BURIED_ITEM);
+                output.accept(ModBlocks.LOST_ITEM_FLOATING_ITEM);
+                output.accept(ModItems.LOST_ITEM_TEMPLATE);
                 output.accept(ModItems.EGG_CREATIVE);
                 output.accept(ModBlocks.AUSPICIOUS_POKEBALL);
                 output.accept(ModBlocks.AUSPICIOUS_POKEBALL_SMALL);
@@ -115,6 +117,27 @@ public class ModCreativeTabs {
                 output.accept(ModItems.REDCHAIN_FRAGMENT);
                 output.accept(ModItems.RED_CHAIN_CORE);
                 output.accept(ModItems.RED_CHAIN);
+                output.accept(ModItems.POIPOLE_ARROW);
+                output.accept(ModItems.BLACEPHALON_BOMB);
+                output.accept(ModItems.XURKITREE_BOMB);
+                output.accept(ModItems.CELESTEELA_CANON);
+                output.accept(ModItems.KARTANA_CANON);
+                output.accept(ModItems.STAKATAKA_SHIELD);
+                output.accept(ModItems.NIHILEGO_HAT);
+                output.accept(ModItems.RECON_ARMOR_HELMET);
+                output.accept(ModItems.RECON_ARMOR_CHESTPLATE);
+                output.accept(ModItems.RECON_ARMOR_LEGGINGS);
+                output.accept(ModItems.RECON_ARMOR_BOOTS);
+                output.accept(ModItems.GLUTON_ARMOR_HELMET);
+                output.accept(ModItems.GLUTON_ARMOR_CHESTPLATE);
+                output.accept(ModItems.GLUTON_ARMOR_LEGGINGS);
+                output.accept(ModItems.GLUTON_ARMOR_BOOTS);
+                output.accept(ModItems.BUZZWOLE_SEEDS);
+                output.accept(ModItems.BUZZWOLE_FRUIT);
+                output.accept(ModBlocks.BUZZWOLE_PLANT_GROWN);
+                output.accept(ModItems.PHEROMOSA_SEEDS);
+                output.accept(ModItems.PHEROMOSA_FRUIT);
+                output.accept(ModBlocks.PHEROMOSA_PLANT_GROWN);
                 output.accept(ModItems.RAINBOW_FEATHER);
                 output.accept(ModItems.HOOH_ASHES);
                 output.accept(ModItems.HYPERBERRY_ENIGMA);
@@ -141,6 +164,8 @@ public class ModCreativeTabs {
                 output.accept(ModItems.INGREDIENT_DUNGEON_UNDERGROUND);
                 output.accept(ModItems.INGREDIENT_DUNGEON_DISTORTION);
                 output.accept(ModItems.INGREDIENT_DUNGEON_PARIS);
+                output.accept(ModItems.INGREDIENT_DUNGEON_JUMP);
+                output.accept(ModItems.INGREDIENT_DUNGEON_ULTRASPACE);
                 output.accept(ModItems.DONUT_DUNGEON_PORTAL);
                 output.accept(ModItems.DONUT_DUNGEON_UNDERGROUND);
                 output.accept(ModItems.DONUT_DUNGEON_DISTORTION);
@@ -365,6 +390,25 @@ public class ModCreativeTabs {
                 output.accept(ModBlocks.HYPERSPACE_CANOPY_STAIRS);
                 output.accept(ModBlocks.HYPERSPACE_CANOPY_SLAB);
                 output.accept(ModBlocks.HYPERSPACE_BRICK_STAIRS);
+                // Roof tiles, ridges, coverings, slab roof (plan 194)
+                output.accept(ModBlocks.HYPERSPACE_TILE);
+                output.accept(ModBlocks.HYPERSPACE_TILE_STAIRS);
+                output.accept(ModBlocks.HYPERSPACE_TILE_SLAB);
+                output.accept(ModBlocks.HYPERSPACE_FLOOR_RIDGE);
+                output.accept(ModBlocks.HYPERSPACE_WALL_RIDGE);
+                output.accept(ModBlocks.HYPERSPACE_WALL_PLAIN_RIDGE);
+                output.accept(ModBlocks.HYPERSPACE_WALL_BRICKS_RIDGE);
+                output.accept(ModBlocks.HYPERSPACE_WALL_BOTTOM_RIDGE);
+                output.accept(ModBlocks.HYPERSPACE_CANOPY_RIDGE);
+                output.accept(ModBlocks.HYPERSPACE_TILE_RIDGE);
+                output.accept(ModBlocks.HYPERSPACE_ROAD_COVERING);
+                output.accept(ModBlocks.HYPERSPACE_WALL_COVERING);
+                output.accept(ModBlocks.HYPERSPACE_WALL_BRICKS_COVERING);
+                output.accept(ModBlocks.HYPERSPACE_FLOOR_COVERING);
+                output.accept(ModBlocks.HYPERSPACE_FLOOR_PLAIN_COVERING);
+                output.accept(ModBlocks.HYPERSPACE_TILE_COVERING);
+                output.accept(ModBlocks.HYPERSPACE_SLAB_ROOF);
+                output.accept(ModBlocks.HYPERSPACE_CHIMNEY);
 
                 // Kalos family (plan 163) - mirrors the hyperspace structural blocks above.
                 // Same display names on purpose; the texture is what tells them apart.
@@ -404,6 +448,24 @@ public class ModCreativeTabs {
                 output.accept(ModBlocks.KALOS_CANOPY_STAIRS_TRANS);
                 output.accept(ModBlocks.KALOS_CANOPY_SLAB_TRANS);
                 output.accept(ModBlocks.KALOS_WINDOW_TOPPER_TRANS);
+                output.accept(ModBlocks.KALOS_TILE);
+                output.accept(ModBlocks.KALOS_TILE_STAIRS);
+                output.accept(ModBlocks.KALOS_TILE_SLAB);
+                output.accept(ModBlocks.KALOS_FLOOR_RIDGE);
+                output.accept(ModBlocks.KALOS_WALL_RIDGE);
+                output.accept(ModBlocks.KALOS_WALL_PLAIN_RIDGE);
+                output.accept(ModBlocks.KALOS_WALL_BRICKS_RIDGE);
+                output.accept(ModBlocks.KALOS_WALL_BOTTOM_RIDGE);
+                output.accept(ModBlocks.KALOS_CANOPY_RIDGE);
+                output.accept(ModBlocks.KALOS_TILE_RIDGE);
+                output.accept(ModBlocks.KALOS_ROAD_COVERING);
+                output.accept(ModBlocks.KALOS_WALL_COVERING);
+                output.accept(ModBlocks.KALOS_WALL_BRICKS_COVERING);
+                output.accept(ModBlocks.KALOS_FLOOR_COVERING);
+                output.accept(ModBlocks.KALOS_FLOOR_PLAIN_COVERING);
+                output.accept(ModBlocks.KALOS_TILE_COVERING);
+                output.accept(ModBlocks.KALOS_SLAB_ROOF);
+                output.accept(ModBlocks.KALOS_CHIMNEY);
                 output.accept(ModBlocks.HYPERSPACE_BARRIER);
                 output.accept(ModBlocks.HYPERSPACE_CONE);
                 output.accept(ModBlocks.HYPERSPACE_FLAG_SMALL);
@@ -423,6 +485,10 @@ public class ModCreativeTabs {
                 output.accept(ModBlocks.HYPERSPACE_TRASHCAN);
                 output.accept(ModBlocks.HYPERSPACE_CHAIR);
                 output.accept(ModBlocks.HYPERSPACE_TABLE);
+                output.accept(ModBlocks.HYPERSPACE_HANDRAIL);
+                output.accept(ModBlocks.HYPERSPACE_FENCE);
+                output.accept(ModBlocks.HYPERSPACE_BENCH);
+                output.accept(ModBlocks.HYPERSPACE_POTTEDPLANT);
                 // Nature blocks (plan 140)
                 output.accept(ModBlocks.HYPERSPACE_LOG);
                 output.accept(ModBlocks.HYPERSPACE_LEAVES);
@@ -492,6 +558,13 @@ public class ModCreativeTabs {
                 output.accept(ModBlocks.ULTRASPACE_VINES_BLOCK);
                 output.accept(ModBlocks.MEGAPOLIS_LIGHT);
                 output.accept(ModBlocks.MEGAPOLIS_STAIRS);
+                output.accept(ModBlocks.MEGAPOLIS_BARRICADE);
+                output.accept(ModBlocks.MEGAPOLIS_WALL);
+                output.accept(ModBlocks.MEGAPOLIS_ORNED_WALL);
+                output.accept(ModBlocks.MEGAPOLIS_BLOCK);
+                output.accept(ModBlocks.MEGAPOLIS_ROAD);
+                output.accept(ModBlocks.MEGAPOLIS_ROAD_PATTERN);
+                output.accept(ModBlocks.MEGAPOLIS_DOOR);
                 output.accept(ModBlocks.LIGHTNINGSPOT);
                 // Ultra Warp Dive props (plan 189)
                 output.accept(ModBlocks.ULTRAWARPDIVE_POSITIVE);

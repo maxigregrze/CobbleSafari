@@ -24,11 +24,14 @@ public class CreativeStatueBlockEntity extends AbstractPokeStatueBlockEntity {
     private static final String KEY_FIXED = "AnimationFixed";
     private static final String KEY_SPEED = "AnimationSpeed";
     private static final String KEY_SHOW_DUMMY = "ShowDummy";
+    private static final String KEY_PARTICLES = "EmitParticles";
 
     /** On by default, and on for every statue saved before the option existed: same look as before. */
     private boolean animationFixed = true;
     private float animationSpeed = DEFAULT_SPEED;
     private boolean showDummyWithoutModel = false;
+    /** On by default, and on for statues saved before the option existed (plan 194, B2). */
+    private boolean emitParticles = true;
 
     public CreativeStatueBlockEntity(BlockPos pos, BlockState state) {
         super(ModBlockEntities.CREATIVE_STATUE, pos, state);
@@ -51,10 +54,11 @@ public class CreativeStatueBlockEntity extends AbstractPokeStatueBlockEntity {
     // -- playback options ---------------------------------------------------
 
     @Override
-    protected void applyPlaybackOptions(boolean fixed, float speed, boolean showDummy) {
+    protected void applyPlaybackOptions(boolean fixed, float speed, boolean showDummy, boolean particles) {
         this.animationFixed = fixed;
         this.animationSpeed = sanitizeSpeed(speed);
         this.showDummyWithoutModel = showDummy;
+        this.emitParticles = particles;
     }
 
     @Override
@@ -72,6 +76,11 @@ public class CreativeStatueBlockEntity extends AbstractPokeStatueBlockEntity {
         return showDummyWithoutModel;
     }
 
+    @Override
+    public boolean isEmittingParticles() {
+        return emitParticles;
+    }
+
     public static float sanitizeSpeed(float value) {
         if (!Float.isFinite(value)) {
             return DEFAULT_SPEED;
@@ -87,6 +96,7 @@ public class CreativeStatueBlockEntity extends AbstractPokeStatueBlockEntity {
         tag.putBoolean(KEY_FIXED, animationFixed);
         tag.putFloat(KEY_SPEED, animationSpeed);
         tag.putBoolean(KEY_SHOW_DUMMY, showDummyWithoutModel);
+        tag.putBoolean(KEY_PARTICLES, emitParticles);
     }
 
     @Override
@@ -95,5 +105,6 @@ public class CreativeStatueBlockEntity extends AbstractPokeStatueBlockEntity {
         this.animationFixed = !tag.contains(KEY_FIXED) || tag.getBoolean(KEY_FIXED);
         this.animationSpeed = tag.contains(KEY_SPEED) ? sanitizeSpeed(tag.getFloat(KEY_SPEED)) : DEFAULT_SPEED;
         this.showDummyWithoutModel = tag.getBoolean(KEY_SHOW_DUMMY);
+        this.emitParticles = !tag.contains(KEY_PARTICLES) || tag.getBoolean(KEY_PARTICLES);
     }
 }

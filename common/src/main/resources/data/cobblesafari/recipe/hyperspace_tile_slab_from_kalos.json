@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "KKK",
+    "KGK",
+    "KKK"
+  ],
+  "key": {
+    "K": {
+      "item": "cobblesafari:kalos_tile_slab"
+    },
+    "G": {
+      "item": "minecraft:phantom_membrane"
+    }
+  },
+  "result": {
+    "id": "cobblesafari:hyperspace_tile_slab",
+    "count": 8
+  }
+}

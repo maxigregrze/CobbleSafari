@@ -1,0 +1,12 @@
+{
+  "sources": [
+    {
+      "type": "minecraft:single",
+      "resource": "cobblesafari:entity/projectiles/celesteela_projectile"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "cobblesafari:entity/projectiles/paper_plane"
+    }
+  ]
+}

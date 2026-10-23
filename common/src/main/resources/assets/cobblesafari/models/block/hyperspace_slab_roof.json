@@ -1,0 +1,55 @@
+{
+  "parent": "minecraft:block/block",
+  "textures": {
+    "top": "cobblesafari:block/hyperspace_slab",
+    "side": "cobblesafari:block/hyperspace_wall_bricks",
+    "bottom": "cobblesafari:block/hyperspace_wall_bricks",
+    "particle": "cobblesafari:block/hyperspace_wall_bricks"
+  },
+  "elements": [
+    {
+      "from": [
+        0,
+        0,
+        0
+      ],
+      "to": [
+        16,
+        16,
+        16
+      ],
+      "faces": {
+        "north": {
+          "texture": "#side",
+          "cullface": "north"
+        },
+        "south": {
+          "texture": "#side",
+          "cullface": "south"
+        },
+        "east": {
+          "texture": "#side",
+          "cullface": "east"
+        },
+        "west": {
+          "texture": "#side",
+          "cullface": "west"
+        },
+        "down": {
+          "texture": "#bottom",
+          "cullface": "down"
+        },
+        "up": {
+          "uv": [
+            0,
+            0,
+            16,
+            8
+          ],
+          "texture": "#top",
+          "cullface": "up"
+        }
+      }
+    }
+  ]
+}

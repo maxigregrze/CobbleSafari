@@ -51,6 +51,7 @@ public class PokeStatueConfigScreen extends CobbleSafariConfigScreen {
     private final boolean initialFixed;
     private final float initialSpeed;
     private final boolean initialShowDummy;
+    private final boolean initialParticles;
 
     private int mode;
     /** Selectable animations for the species currently typed; index 0 is always the default pose. */
@@ -70,8 +71,11 @@ public class PokeStatueConfigScreen extends CobbleSafariConfigScreen {
     private float progress;
     private float speed;
     private boolean showDummy;
+    private boolean particles;
     private CobbleSafariConfigScreen.TitleTickbox fixedTickbox;
     private CobbleSafariConfigScreen.TitleTickbox dummyTickbox;
+    /** Only meaningful while the model plays, so only shown then (plan 194, B2). */
+    private CobbleSafariConfigScreen.TitleTickbox particlesTickbox;
 
     public PokeStatueConfigScreen(OpenPokeStatueConfigPayload initial) {
         super(Component.translatable("gui.cobblesafari.pokestatue.title"));
@@ -86,11 +90,13 @@ public class PokeStatueConfigScreen extends CobbleSafariConfigScreen {
         this.initialFixed = initial.fixed();
         this.initialSpeed = initial.speed();
         this.initialShowDummy = initial.showDummy();
+        this.initialParticles = initial.particles();
         this.mode = initial.mode();
         this.fixed = initial.fixed();
         this.progress = initial.progress();
         this.speed = initial.speed();
         this.showDummy = initial.showDummy();
+        this.particles = initial.particles();
     }
 
     /** The playback options exist only on the Creative Statue; the regular one stays as it was. */
@@ -135,6 +141,11 @@ public class PokeStatueConfigScreen extends CobbleSafariConfigScreen {
                 .bounds(left + PANEL_WIDTH - ARROW_WIDTH, y, ARROW_WIDTH, BUTTON_HEIGHT).build());
         y += rowStride();
 
+        if (hasPlaybackOptions()) {
+            this.particlesTickbox = addTitleTickbox(y, Component.translatable("gui.cobblesafari.pokestatue.particles"),
+                    this.particles, ticked -> this.particles = ticked);
+            this.particlesTickbox.visible = editingSpeed();
+        }
         // Progress stepper: « ‹ [field] › »  -- 20+20+4+220+4+20+20 = 308.
         addScroll(Button.builder(Component.literal("«"), b -> nudgeStepper(-STEP_COARSE))
                 .bounds(left, y, ARROW_WIDTH, BUTTON_HEIGHT).build());
@@ -216,6 +227,9 @@ public class PokeStatueConfigScreen extends CobbleSafariConfigScreen {
     private void setFixed(boolean fixed) {
         storeStepperValue();
         this.fixed = fixed;
+        if (this.particlesTickbox != null) {
+            this.particlesTickbox.visible = editingSpeed();
+        }
         showStepperValue();
     }
 
@@ -312,8 +326,13 @@ public class PokeStatueConfigScreen extends CobbleSafariConfigScreen {
         this.speed = this.initialSpeed;
         this.fixed = this.initialFixed;
         this.showDummy = this.initialShowDummy;
+        this.particles = this.initialParticles;
         if (this.fixedTickbox != null) {
             this.fixedTickbox.setTicked(this.fixed);
+        }
+        if (this.particlesTickbox != null) {
+            this.particlesTickbox.setTicked(this.particles);
+            this.particlesTickbox.visible = editingSpeed();
         }
         if (this.dummyTickbox != null) {
             this.dummyTickbox.setTicked(this.showDummy);
@@ -335,7 +354,8 @@ public class PokeStatueConfigScreen extends CobbleSafariConfigScreen {
                 // The regular statue ignores these server-side; sent as its own defaults anyway.
                 !hasPlaybackOptions() || this.fixed,
                 this.speed,
-                !hasPlaybackOptions() || this.showDummy));
+                !hasPlaybackOptions() || this.showDummy,
+                hasPlaybackOptions() && this.particles));
         this.onClose();
     }
 

@@ -243,22 +243,16 @@
     ]
   },
   "warpride.positive": {
-    "sounds": []
+    "sounds": [{ "name": "cobblesafari:warpride/boost", "volume": 0.6 }]
   },
   "warpride.negative": {
-    "sounds": []
-  },
-  "warpride.jump": {
-    "sounds": []
+    "sounds": [{ "name": "cobblesafari:warpride/hit", "volume": 0.6 }]
   },
   "warpride.portal": {
-    "sounds": []
+    "sounds": [{ "name": "cobblesafari:warpride/wormhole_entry", "volume": 0.6 }]
   },
-  "warpride.warning": {
-    "sounds": []
-  },
-  "warpride.countdown": {
-    "sounds": []
+  "warpride.launch": {
+    "sounds": [{ "name": "cobblesafari:warpride/launch", "volume": 0.6 }]
   },
   "music.megalopolis.intro": {
     "sounds": [

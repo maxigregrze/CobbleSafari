@@ -18,7 +18,8 @@
     "JigsawStructureMixin",
     "SinglePoolElementAccessor",
     "PokemonMixin",
-    "PokemonEntityMixin"
+    "PokemonEntityMixin",
+    "LivingEntityGluttonousEatMixin"
   ],
   "client": [
     "client.GuiMixin",

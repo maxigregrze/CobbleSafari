@@ -143,6 +143,7 @@ public class CobbleSafariFabric implements ModInitializer {
         PayloadTypeRegistry.playS2C().register(maxigregrze.cobblesafari.network.RotomPhoneNotificationPayload.TYPE, maxigregrze.cobblesafari.network.RotomPhoneNotificationPayload.STREAM_CODEC);
         PayloadTypeRegistry.playS2C().register(maxigregrze.cobblesafari.network.ObjectivesHudSyncPayload.TYPE, maxigregrze.cobblesafari.network.ObjectivesHudSyncPayload.STREAM_CODEC);
         PayloadTypeRegistry.playS2C().register(maxigregrze.cobblesafari.network.HudConfigRefreshPayload.TYPE, maxigregrze.cobblesafari.network.HudConfigRefreshPayload.STREAM_CODEC);
+        PayloadTypeRegistry.playS2C().register(maxigregrze.cobblesafari.network.UltraLootConfigSyncPayload.TYPE, maxigregrze.cobblesafari.network.UltraLootConfigSyncPayload.STREAM_CODEC);
 
         PayloadTypeRegistry.playC2S().register(maxigregrze.cobblesafari.network.RotomPhoneActionPayload.TYPE, maxigregrze.cobblesafari.network.RotomPhoneActionPayload.STREAM_CODEC);
         PayloadTypeRegistry.playC2S().register(maxigregrze.cobblesafari.network.UnionAppPayload.TYPE, maxigregrze.cobblesafari.network.UnionAppPayload.STREAM_CODEC);
@@ -558,6 +559,12 @@ public class CobbleSafariFabric implements ModInitializer {
             return DimensionalBanEventHandler.onUseItem(player, world, hand);
         });
         UseBlockCallback.EVENT.register((player, world, hand, hitResult) -> {
+            // Lost Item authoring gestures (action plan 193): vanilla never shows a sneak + item click to the block.
+            InteractionResult lostItemResult = maxigregrze.cobblesafari.block.misc.LostItemInteractionHandler.onUseBlock(
+                    player, world, hand, hitResult);
+            if (lostItemResult != InteractionResult.PASS) {
+                return lostItemResult;
+            }
             InteractionResult cauldronResult = maxigregrze.cobblesafari.safari.MudBallCauldronHandler.onUseBlock(player, world, hand, hitResult);
             if (cauldronResult != InteractionResult.PASS) {
                 return cauldronResult;
@@ -576,8 +583,19 @@ public class CobbleSafariFabric implements ModInitializer {
         PlayerBlockBreakEvents.BEFORE.register((world, player, pos, state, entity) -> {
             return DimensionalBanEventHandler.onBlockBreakTry(world.dimension(), player, pos);
         });
+        // Full Ultra Recon set glides like an elytra (action plan 192, section 10.4).
+        net.fabricmc.fabric.api.entity.event.v1.EntityElytraEvents.CUSTOM.register((entity, tickElytra) -> {
+            if (!maxigregrze.cobblesafari.item.ultraloot.ReconArmorLogic.canGlide(entity)) {
+                return false;
+            }
+            if (tickElytra) {
+                maxigregrze.cobblesafari.item.ultraloot.ReconArmorLogic.flightTick(entity, entity.getFallFlyingTicks());
+            }
+            return true;
+        });
         ServerLivingEntityEvents.ALLOW_DAMAGE.register((entity, source, amount) ->
-                DimensionalBanEventHandler.onLivingHurt(entity, source));
+                DimensionalBanEventHandler.onLivingHurt(entity, source)
+                        && maxigregrze.cobblesafari.event.UltraLootDamageHandler.onLivingHurt(entity, source));
         ServerLivingEntityEvents.ALLOW_DEATH.register((entity, damageSource, damageAmount) -> {
             if (!(entity instanceof ServerPlayer player)) {
                 return true;

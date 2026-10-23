@@ -12,9 +12,8 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.world.level.block.state.BlockState;
 
 public class AuspiciousPokeballBlockEntityRenderer implements BlockEntityRenderer<AuspiciousPokeballBlockEntity> {
-    private static final float ROTATION_DEGREES_PER_TICK = 2.0f;
-    /** Amplitude du bob vertical (blocs) ; periode lente */
-    private static final float BOB_PHASE_PER_TICK = 0.04f;
+    /** Amplitude du bob vertical (blocs) ; vitesse et periode dans FloatingBallAnimation */
+    private static final float BOB_AMPLITUDE = 0.5f;
 
     private final BlockRenderDispatcher blockRenderDispatcher;
 
@@ -32,9 +31,9 @@ public class AuspiciousPokeballBlockEntityRenderer implements BlockEntityRendere
         BlockState renderState = blockEntity.getBlockState().is(ModBlocks.AUSPICIOUS_POKEBALL_SMALL)
                 ? ModBlocks.AUSPICIOUS_POKEBALL_SMALL_DISPLAY.defaultBlockState()
                 : blockEntity.displayRenderBlock().defaultBlockState();
-        double t = blockEntity.getLevel() != null ? blockEntity.getLevel().getGameTime() + (double) partialTick : partialTick;
-        float yaw = (float) ((t * ROTATION_DEGREES_PER_TICK) % 360.0);
-        float bob = (float) (Math.sin(t * BOB_PHASE_PER_TICK) * 0.5);
+        double t = FloatingBallAnimation.time(blockEntity, partialTick);
+        float yaw = FloatingBallAnimation.yawDegrees(t);
+        float bob = FloatingBallAnimation.bobWave(t) * BOB_AMPLITUDE;
 
         poseStack.pushPose();
         poseStack.translate(0.5, 0.5 + bob, 0.5);

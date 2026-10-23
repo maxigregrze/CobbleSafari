@@ -1,0 +1,94 @@
+{
+	"format_version": "1.9.0",
+	"credit": "Made with Blockbench",
+	"textures": {
+		"0": "cobblesafari:block/buzzwole_plant_5",
+		"1": "cobblesafari:block/buzzwole_plant_5_alt",
+		"particle": "cobblesafari:block/buzzwole_plant_5"
+	},
+	"elements": [
+		{
+			"from": [
+				8,
+				-1,
+				0
+			],
+			"to": [
+				8,
+				15,
+				16
+			],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [
+					8,
+					-1,
+					0
+				]
+			},
+			"faces": {
+				"east": {
+					"uv": [
+						0,
+						0,
+						16,
+						16
+					],
+					"texture": "#1"
+				},
+				"west": {
+					"uv": [
+						0,
+						0,
+						16,
+						16
+					],
+					"texture": "#1"
+				}
+			}
+		},
+		{
+			"from": [
+				0,
+				-1,
+				8
+			],
+			"to": [
+				16,
+				15,
+				8
+			],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [
+					0,
+					-1,
+					8
+				]
+			},
+			"faces": {
+				"north": {
+					"uv": [
+						0,
+						0,
+						16,
+						16
+					],
+					"texture": "#0"
+				},
+				"south": {
+					"uv": [
+						0,
+						0,
+						16,
+						16
+					],
+					"texture": "#0"
+				}
+			}
+		}
+	],
+	"parent": "minecraft:block/block"
+}

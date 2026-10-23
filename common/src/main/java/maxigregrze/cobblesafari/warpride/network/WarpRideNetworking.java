@@ -32,8 +32,11 @@ public final class WarpRideNetworking {
         if (server == null) {
             return;
         }
-        // onReady() refuses anything but AWAITING_READY, so a replayed ready is inert.
-        session.onReady(server.getTickCount());
+        // onReady() refuses anything but AWAITING_READY, so a replayed ready is inert - and starts
+        // the music only once.
+        if (session.onReady(server.getTickCount())) {
+            WarpRideManager.onRideStarted(player);
+        }
     }
 
     public static void handleInput(ServerPlayer player, WarpRidePayloads.InputPayload payload) {

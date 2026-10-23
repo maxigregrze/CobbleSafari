@@ -36,7 +36,8 @@ public final class WarpRidePayloads {
     public static final int EVENT_DRIFT = 2;
     public static final int EVENT_PORTAL_TAKEN = 3;
     public static final int EVENT_RIDE_ENDED = 4;
-    public static final int EVENT_COUNTDOWN = 5;
+    /** The intro reached its launch tick: launch sound, aura burst, and the client's intro clock resync. */
+    public static final int EVENT_LAUNCH = 5;
     /** The parent clock crossed its panic threshold: energy now drains ten times faster. */
     public static final int EVENT_PANIC = 6;
     /**
@@ -63,7 +64,7 @@ public final class WarpRidePayloads {
     /** One {@code typeId} to tint (ARGB) pair. Species lists and structure pools stay server-side. */
     public record TintData(int typeId, int tint) {}
 
-    /** Tutorial dismissed; start the countdown. Accepted once, only in {@code AWAITING_READY}. */
+    /** Tutorial dismissed; start the intro. Accepted once, only in {@code AWAITING_READY}. */
     public record ReadyPayload(UUID sessionId) implements CustomPacketPayload {
         public static final CustomPacketPayload.Type<ReadyPayload> TYPE =
                 new CustomPacketPayload.Type<>(id("warpride_ready"));
@@ -119,7 +120,6 @@ public final class WarpRidePayloads {
     public record OpenPayload(
             UUID sessionId,
             boolean showTutorial,
-            double baseSpeed,
             double minSpeed,
             double maxSpeed,
             double waveSpacingLy,
@@ -140,7 +140,11 @@ public final class WarpRidePayloads {
             double portalHoldWaves,
             double driftSeconds,
             double warpAnimSeconds,
-            double fadeToBlackSeconds
+            double fadeToBlackSeconds,
+            double steeringBase,
+            double steeringPerEnergy,
+            int introTicks,
+            int introLaunchTick
     ) implements CustomPacketPayload {
         public static final CustomPacketPayload.Type<OpenPayload> TYPE =
                 new CustomPacketPayload.Type<>(id("warpride_open"));
@@ -149,7 +153,6 @@ public final class WarpRidePayloads {
                 (buf, p) -> {
                     UUID_CODEC.encode(buf, p.sessionId());
                     buf.writeBoolean(p.showTutorial());
-                    buf.writeDouble(p.baseSpeed());
                     buf.writeDouble(p.minSpeed());
                     buf.writeDouble(p.maxSpeed());
                     buf.writeDouble(p.waveSpacingLy());
@@ -171,6 +174,10 @@ public final class WarpRidePayloads {
                     buf.writeDouble(p.driftSeconds());
                     buf.writeDouble(p.warpAnimSeconds());
                     buf.writeDouble(p.fadeToBlackSeconds());
+                    buf.writeDouble(p.steeringBase());
+                    buf.writeDouble(p.steeringPerEnergy());
+                    buf.writeVarInt(p.introTicks());
+                    buf.writeVarInt(p.introLaunchTick());
                 },
                 buf -> new OpenPayload(
                         UUID_CODEC.decode(buf),
@@ -179,7 +186,6 @@ public final class WarpRidePayloads {
                         buf.readDouble(),
                         buf.readDouble(),
                         buf.readDouble(),
-                        buf.readDouble(),
                         buf.readVarInt(),
                         buf.readDouble(),
                         buf.readDouble(),
@@ -196,7 +202,11 @@ public final class WarpRidePayloads {
                         buf.readDouble(),
                         buf.readDouble(),
                         buf.readDouble(),
-                        buf.readDouble()));
+                        buf.readDouble(),
+                        buf.readDouble(),
+                        buf.readDouble(),
+                        buf.readVarInt(),
+                        buf.readVarInt()));
 
         @Override
         public Type<? extends CustomPacketPayload> type() {
@@ -330,7 +340,7 @@ public final class WarpRidePayloads {
     /**
      * @param event     one of the {@code EVENT_*} constants
      * @param waveIndex the wave concerned, or -1
-     * @param a         portal rank, end reason, or countdown step
+     * @param a         portal rank, end reason, or impacted lane
      * @param b         portal typeId, or 0
      * @param value     the odometer at the event, for the result screen
      */

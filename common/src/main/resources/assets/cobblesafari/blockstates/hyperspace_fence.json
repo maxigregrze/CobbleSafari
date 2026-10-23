@@ -1,0 +1,41 @@
+{
+  "multipart": [
+    {
+      "apply": {
+        "model": "cobblesafari:block/hyperspace_fence_post"
+      }
+    },
+    {
+      "when": {
+        "north": "low|tall"
+      },
+      "apply": {
+        "model": "cobblesafari:block/hyperspace_fence_side_north"
+      }
+    },
+    {
+      "when": {
+        "east": "low|tall"
+      },
+      "apply": {
+        "model": "cobblesafari:block/hyperspace_fence_side_east"
+      }
+    },
+    {
+      "when": {
+        "south": "low|tall"
+      },
+      "apply": {
+        "model": "cobblesafari:block/hyperspace_fence_side_south"
+      }
+    },
+    {
+      "when": {
+        "west": "low|tall"
+      },
+      "apply": {
+        "model": "cobblesafari:block/hyperspace_fence_side_west"
+      }
+    }
+  ]
+}

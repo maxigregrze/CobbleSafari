@@ -7,6 +7,7 @@ import maxigregrze.cobblesafari.entity.CsTraderEntity;
 import maxigregrze.cobblesafari.entity.HikerEntity;
 import maxigregrze.cobblesafari.entity.HyperspaceBoatEntity;
 import maxigregrze.cobblesafari.entity.HyperspaceChestBoatEntity;
+import maxigregrze.cobblesafari.entity.SeatEntity;
 import maxigregrze.cobblesafari.entity.csboss.CsBossBulletEntity;
 import maxigregrze.cobblesafari.entity.csboss.CsBossEntity;
 import maxigregrze.cobblesafari.entity.csboss.CsBossMinionEntity;
@@ -29,6 +30,11 @@ import maxigregrze.cobblesafari.entity.projectile.ThrownBaitEntity;
 import maxigregrze.cobblesafari.entity.projectile.ThrownBalmEntity;
 import maxigregrze.cobblesafari.entity.projectile.ThrownMudBallEntity;
 import maxigregrze.cobblesafari.entity.projectile.ThrownRedChainEntity;
+import maxigregrze.cobblesafari.entity.projectile.BlacephalonBombEntity;
+import maxigregrze.cobblesafari.entity.projectile.CelesteelaProjectileEntity;
+import maxigregrze.cobblesafari.entity.projectile.PaperPlaneEntity;
+import maxigregrze.cobblesafari.entity.projectile.NeedleDartEntity;
+import maxigregrze.cobblesafari.entity.projectile.XurkitreeBombEntity;
 import maxigregrze.cobblesafari.entity.safari.SafariBallisticMeteorEntity;
 import maxigregrze.cobblesafari.entity.safari.SafariShadowHazardEntity;
 import net.minecraft.core.Registry;
@@ -156,6 +162,57 @@ public class ModEntities {
                     .clientTrackingRange(8)
                     .updateInterval(10)
                     .build(CobbleSafari.MOD_ID + ":thrown_red_chain")
+    );
+
+    // Ultra Space loot projectiles (action plan 192).
+    public static final EntityType<NeedleDartEntity> POIPOLE_ARROW = Registry.register(
+            BuiltInRegistries.ENTITY_TYPE,
+            ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, "poipole_arrow"),
+            EntityType.Builder.<NeedleDartEntity>of(NeedleDartEntity::new, MobCategory.MISC)
+                    .sized(0.5f, 0.5f)
+                    .clientTrackingRange(4)
+                    .updateInterval(20)
+                    .build(CobbleSafari.MOD_ID + ":poipole_arrow")
+    );
+
+    public static final EntityType<BlacephalonBombEntity> BLACEPHALON_BOMB = Registry.register(
+            BuiltInRegistries.ENTITY_TYPE,
+            ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, "blacephalon_bomb"),
+            EntityType.Builder.<BlacephalonBombEntity>of(BlacephalonBombEntity::new, MobCategory.MISC)
+                    .sized(0.25f, 0.25f)
+                    .clientTrackingRange(4)
+                    .updateInterval(10)
+                    .build(CobbleSafari.MOD_ID + ":blacephalon_bomb")
+    );
+
+    public static final EntityType<XurkitreeBombEntity> XURKITREE_BOMB = Registry.register(
+            BuiltInRegistries.ENTITY_TYPE,
+            ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, "xurkitree_bomb"),
+            EntityType.Builder.<XurkitreeBombEntity>of(XurkitreeBombEntity::new, MobCategory.MISC)
+                    .sized(0.25f, 0.25f)
+                    .clientTrackingRange(4)
+                    .updateInterval(10)
+                    .build(CobbleSafari.MOD_ID + ":xurkitree_bomb")
+    );
+
+    public static final EntityType<CelesteelaProjectileEntity> CELESTEELA_PROJECTILE = Registry.register(
+            BuiltInRegistries.ENTITY_TYPE,
+            ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, "celesteela_projectile"),
+            EntityType.Builder.<CelesteelaProjectileEntity>of(CelesteelaProjectileEntity::new, MobCategory.MISC)
+                    .sized(0.25f, 0.25f)
+                    .clientTrackingRange(6)
+                    .updateInterval(2)
+                    .build(CobbleSafari.MOD_ID + ":celesteela_projectile")
+    );
+
+    public static final EntityType<PaperPlaneEntity> PAPER_PLANE = Registry.register(
+            BuiltInRegistries.ENTITY_TYPE,
+            ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, "paper_plane"),
+            EntityType.Builder.<PaperPlaneEntity>of(PaperPlaneEntity::new, MobCategory.MISC)
+                    .sized(0.4f, 0.2f)
+                    .clientTrackingRange(6)
+                    .updateInterval(2)
+                    .build(CobbleSafari.MOD_ID + ":paper_plane")
     );
 
     public static final EntityType<CsBossEntity> CSBOSS = Registry.register(
@@ -392,6 +449,18 @@ public class ModEntities {
                     .fireImmune()
                     .noSave()
                     .build(CobbleSafari.MOD_ID + ":safari_ballistic_meteor")
+    );
+
+    // Invisible mount behind chairs and benches (plan 194 - 13). Never saved.
+    public static final EntityType<SeatEntity> SEAT = Registry.register(
+            BuiltInRegistries.ENTITY_TYPE,
+            ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, "seat"),
+            EntityType.Builder.<SeatEntity>of(SeatEntity::new, MobCategory.MISC)
+                    .sized(0.001f, 0.001f)
+                    .clientTrackingRange(10)
+                    .noSummon()
+                    .noSave()
+                    .build(CobbleSafari.MOD_ID + ":seat")
     );
 
     public static AttributeSupplier.Builder getCsBossAttributes() {

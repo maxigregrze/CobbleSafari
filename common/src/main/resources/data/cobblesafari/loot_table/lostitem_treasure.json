@@ -5,77 +5,553 @@
       "rolls": 1,
       "entries": [
         {
-          "type": "minecraft:group",
-          "weight": 39,
-          "children": [
-            { "type": "minecraft:item", "name": "cobblemon:relic_coin", "weight": 1 },
-            { "type": "minecraft:item", "name": "cobblemon:relic_coin", "weight": 1 },
-            { "type": "minecraft:item", "name": "cobblemon:upgrade", "weight": 1 },
-            { "type": "minecraft:item", "name": "cobblemon:dubious_disc", "weight": 1 },
-            { "type": "minecraft:item", "name": "cobblemon:relic_coin", "weight": 1 }
+          "type": "minecraft:item",
+          "name": "cobblemon:relic_coin",
+          "weight": 25,
+          "functions": [
+            {
+              "function": "minecraft:set_count",
+              "count": {
+                "type": "minecraft:uniform",
+                "min": 1,
+                "max": 9
+              }
+            }
           ]
         },
         {
-          "type": "minecraft:group",
-          "weight": 30,
-          "children": [
-            { "type": "minecraft:item", "name": "cobblemon:relic_coin", "weight": 1 },
-            { "type": "minecraft:item", "name": "cobblemon:relic_coin", "weight": 1 },
-            { "type": "minecraft:item", "name": "cobblemon:upgrade", "weight": 1 },
-            { "type": "minecraft:item", "name": "cobblemon:dubious_disc", "weight": 1 },
-            { "type": "minecraft:item", "name": "cobblemon:galarica_wreath", "weight": 1 },
-            { "type": "minecraft:item", "name": "cobblemon:galarica_cuff", "weight": 1 },
-            { "type": "minecraft:item", "name": "cobblemon:relic_coin", "weight": 1 }
-          ]
+          "type": "minecraft:loot_table",
+          "weight": 15,
+          "value": {
+            "type": "minecraft:chest",
+            "pools": [
+              {
+                "rolls": 1,
+                "entries": [
+                  {
+                    "type": "minecraft:item",
+                    "name": "cobblemon:dawn_stone"
+                  },
+                  {
+                    "type": "minecraft:item",
+                    "name": "cobblemon:dusk_stone"
+                  },
+                  {
+                    "type": "minecraft:item",
+                    "name": "cobblemon:fire_stone"
+                  },
+                  {
+                    "type": "minecraft:item",
+                    "name": "cobblemon:ice_stone"
+                  },
+                  {
+                    "type": "minecraft:item",
+                    "name": "cobblemon:leaf_stone"
+                  },
+                  {
+                    "type": "minecraft:item",
+                    "name": "cobblemon:moon_stone"
+                  },
+                  {
+                    "type": "minecraft:item",
+                    "name": "cobblemon:shiny_stone"
+                  },
+                  {
+                    "type": "minecraft:item",
+                    "name": "cobblemon:sun_stone"
+                  },
+                  {
+                    "type": "minecraft:item",
+                    "name": "cobblemon:thunder_stone"
+                  },
+                  {
+                    "type": "minecraft:item",
+                    "name": "cobblemon:water_stone"
+                  },
+                  {
+                    "type": "minecraft:item",
+                    "name": "cobblemon:link_cable"
+                  },
+                  {
+                    "type": "minecraft:item",
+                    "name": "cobblemon:dragon_scale"
+                  },
+                  {
+                    "type": "minecraft:item",
+                    "name": "cobblemon:kings_rock"
+                  },
+                  {
+                    "type": "minecraft:item",
+                    "name": "cobblemon:metal_coat"
+                  },
+                  {
+                    "type": "minecraft:item",
+                    "name": "cobblemon:upgrade"
+                  },
+                  {
+                    "type": "minecraft:item",
+                    "name": "cobblemon:dubious_disc"
+                  },
+                  {
+                    "type": "minecraft:item",
+                    "name": "cobblemon:deep_sea_scale"
+                  },
+                  {
+                    "type": "minecraft:item",
+                    "name": "cobblemon:deep_sea_tooth"
+                  },
+                  {
+                    "type": "minecraft:item",
+                    "name": "cobblemon:electirizer"
+                  },
+                  {
+                    "type": "minecraft:item",
+                    "name": "cobblemon:magmarizer"
+                  },
+                  {
+                    "type": "minecraft:item",
+                    "name": "cobblemon:oval_stone"
+                  },
+                  {
+                    "type": "minecraft:item",
+                    "name": "cobblemon:protector"
+                  },
+                  {
+                    "type": "minecraft:item",
+                    "name": "cobblemon:reaper_cloth"
+                  },
+                  {
+                    "type": "minecraft:item",
+                    "name": "cobblemon:prism_scale"
+                  },
+                  {
+                    "type": "minecraft:item",
+                    "name": "cobblemon:sachet"
+                  },
+                  {
+                    "type": "minecraft:item",
+                    "name": "cobblemon:whipped_dream"
+                  },
+                  {
+                    "type": "minecraft:item",
+                    "name": "cobblemon:strawberry_sweet"
+                  },
+                  {
+                    "type": "minecraft:item",
+                    "name": "cobblemon:love_sweet"
+                  },
+                  {
+                    "type": "minecraft:item",
+                    "name": "cobblemon:berry_sweet"
+                  },
+                  {
+                    "type": "minecraft:item",
+                    "name": "cobblemon:clover_sweet"
+                  },
+                  {
+                    "type": "minecraft:item",
+                    "name": "cobblemon:flower_sweet"
+                  },
+                  {
+                    "type": "minecraft:item",
+                    "name": "cobblemon:star_sweet"
+                  },
+                  {
+                    "type": "minecraft:item",
+                    "name": "cobblemon:ribbon_sweet"
+                  },
+                  {
+                    "type": "minecraft:item",
+                    "name": "cobblemon:cracked_pot"
+                  },
+                  {
+                    "type": "minecraft:item",
+                    "name": "cobblemon:chipped_pot"
+                  },
+                  {
+                    "type": "minecraft:item",
+                    "name": "cobblemon:masterpiece_teacup"
+                  },
+                  {
+                    "type": "minecraft:item",
+                    "name": "cobblemon:unremarkable_teacup"
+                  },
+                  {
+                    "type": "minecraft:item",
+                    "name": "cobblemon:sweet_apple"
+                  },
+                  {
+                    "type": "minecraft:item",
+                    "name": "cobblemon:tart_apple"
+                  },
+                  {
+                    "type": "minecraft:item",
+                    "name": "cobblemon:syrupy_apple"
+                  },
+                  {
+                    "type": "minecraft:item",
+                    "name": "cobblemon:galarica_cuff"
+                  },
+                  {
+                    "type": "minecraft:item",
+                    "name": "cobblemon:galarica_wreath"
+                  },
+                  {
+                    "type": "minecraft:item",
+                    "name": "cobblemon:black_augurite"
+                  },
+                  {
+                    "type": "minecraft:item",
+                    "name": "cobblemon:peat_block"
+                  },
+                  {
+                    "type": "minecraft:item",
+                    "name": "cobblemon:razor_claw"
+                  },
+                  {
+                    "type": "minecraft:item",
+                    "name": "cobblemon:razor_fang"
+                  },
+                  {
+                    "type": "minecraft:item",
+                    "name": "cobblemon:auspicious_armor"
+                  },
+                  {
+                    "type": "minecraft:item",
+                    "name": "cobblemon:malicious_armor"
+                  },
+                  {
+                    "type": "minecraft:item",
+                    "name": "cobblemon:shell_helmet"
+                  },
+                  {
+                    "type": "minecraft:item",
+                    "name": "cobblemon:metal_alloy"
+                  },
+                  {
+                    "type": "minecraft:item",
+                    "name": "cobblemon:scroll_of_darkness"
+                  },
+                  {
+                    "type": "minecraft:item",
+                    "name": "cobblemon:scroll_of_waters"
+                  }
+                ]
+              }
+            ]
+          }
         },
         {
-          "type": "minecraft:group",
+          "type": "minecraft:loot_table",
           "weight": 20,
-          "children": [
-            { "type": "minecraft:item", "name": "cobblemon:relic_coin", "weight": 1 },
-            { "type": "minecraft:item", "name": "cobblemon:relic_coin", "weight": 1 },
-            { "type": "minecraft:item", "name": "cobblemon:relic_coin", "weight": 1 },
-            { "type": "minecraft:item", "name": "cobblemon:upgrade", "weight": 1 },
-            { "type": "minecraft:item", "name": "cobblemon:dubious_disc", "weight": 1 },
-            { "type": "minecraft:item", "name": "cobblemon:galarica_wreath", "weight": 1 },
-            { "type": "minecraft:item", "name": "cobblemon:galarica_cuff", "weight": 1 },
-            { "type": "minecraft:item", "name": "cobblemon:relic_coin", "weight": 1 }
-          ]
+          "value": {
+            "type": "minecraft:chest",
+            "pools": [
+              {
+                "rolls": 1,
+                "entries": [
+                  {
+                    "type": "minecraft:item",
+                    "name": "cobblemon:potion"
+                  },
+                  {
+                    "type": "minecraft:item",
+                    "name": "cobblemon:super_potion"
+                  },
+                  {
+                    "type": "minecraft:item",
+                    "name": "cobblemon:hyper_potion"
+                  },
+                  {
+                    "type": "minecraft:item",
+                    "name": "cobblemon:max_potion"
+                  },
+                  {
+                    "type": "minecraft:item",
+                    "name": "cobblemon:full_restore"
+                  },
+                  {
+                    "type": "minecraft:item",
+                    "name": "cobblemon:antidote"
+                  },
+                  {
+                    "type": "minecraft:item",
+                    "name": "cobblemon:awakening"
+                  },
+                  {
+                    "type": "minecraft:item",
+                    "name": "cobblemon:burn_heal"
+                  },
+                  {
+                    "type": "minecraft:item",
+                    "name": "cobblemon:ice_heal"
+                  },
+                  {
+                    "type": "minecraft:item",
+                    "name": "cobblemon:paralyze_heal"
+                  },
+                  {
+                    "type": "minecraft:item",
+                    "name": "cobblemon:full_heal"
+                  },
+                  {
+                    "type": "minecraft:item",
+                    "name": "cobblemon:ether"
+                  },
+                  {
+                    "type": "minecraft:item",
+                    "name": "cobblemon:max_ether"
+                  },
+                  {
+                    "type": "minecraft:item",
+                    "name": "cobblemon:elixir"
+                  },
+                  {
+                    "type": "minecraft:item",
+                    "name": "cobblemon:max_elixir"
+                  },
+                  {
+                    "type": "minecraft:item",
+                    "name": "cobblemon:revive"
+                  },
+                  {
+                    "type": "minecraft:item",
+                    "name": "cobblemon:max_revive"
+                  }
+                ]
+              }
+            ]
+          }
         },
         {
-          "type": "minecraft:group",
+          "type": "minecraft:loot_table",
           "weight": 10,
-          "children": [
-            { "type": "minecraft:item", "name": "cobblemon:relic_coin", "weight": 1 },
-            { "type": "minecraft:item", "name": "cobblemon:relic_coin", "weight": 1 },
-            { "type": "minecraft:item", "name": "cobblemon:relic_coin", "weight": 1 },
-            { "type": "minecraft:item", "name": "cobblemon:relic_coin", "weight": 1 },
-            { "type": "minecraft:item", "name": "cobblemon:relic_coin", "weight": 1 },
-            { "type": "minecraft:item", "name": "cobblemon:upgrade", "weight": 1 },
-            { "type": "minecraft:item", "name": "cobblemon:dubious_disc", "weight": 1 },
-            { "type": "minecraft:item", "name": "cobblemon:galarica_wreath", "weight": 1 },
-            { "type": "minecraft:item", "name": "cobblemon:galarica_cuff", "weight": 1 },
-            { "type": "minecraft:item", "name": "cobblemon:prism_scale", "weight": 1 },
-            { "type": "minecraft:item", "name": "cobblemon:black_augurite", "weight": 1 },
-            { "type": "minecraft:item", "name": "cobblemon:relic_coin", "weight": 1 }
-          ]
+          "value": {
+            "type": "minecraft:chest",
+            "pools": [
+              {
+                "rolls": 1,
+                "entries": [
+                  {
+                    "type": "minecraft:item",
+                    "name": "cobblemon:hp_up"
+                  },
+                  {
+                    "type": "minecraft:item",
+                    "name": "cobblemon:protein"
+                  },
+                  {
+                    "type": "minecraft:item",
+                    "name": "cobblemon:iron"
+                  },
+                  {
+                    "type": "minecraft:item",
+                    "name": "cobblemon:calcium"
+                  },
+                  {
+                    "type": "minecraft:item",
+                    "name": "cobblemon:zinc"
+                  },
+                  {
+                    "type": "minecraft:item",
+                    "name": "cobblemon:carbos"
+                  },
+                  {
+                    "type": "minecraft:item",
+                    "name": "cobblemon:pp_up"
+                  },
+                  {
+                    "type": "minecraft:item",
+                    "name": "cobblemon:pp_max"
+                  },
+                  {
+                    "type": "minecraft:item",
+                    "name": "cobblemon:x_attack"
+                  },
+                  {
+                    "type": "minecraft:item",
+                    "name": "cobblemon:x_defence"
+                  },
+                  {
+                    "type": "minecraft:item",
+                    "name": "cobblemon:x_special_attack"
+                  },
+                  {
+                    "type": "minecraft:item",
+                    "name": "cobblemon:x_special_defence"
+                  },
+                  {
+                    "type": "minecraft:item",
+                    "name": "cobblemon:x_speed"
+                  },
+                  {
+                    "type": "minecraft:item",
+                    "name": "cobblemon:x_accuracy"
+                  },
+                  {
+                    "type": "minecraft:item",
+                    "name": "cobblemon:dire_hit"
+                  },
+                  {
+                    "type": "minecraft:item",
+                    "name": "cobblemon:guard_spec"
+                  },
+                  {
+                    "type": "minecraft:item",
+                    "name": "cobblemon:health_feather"
+                  },
+                  {
+                    "type": "minecraft:item",
+                    "name": "cobblemon:muscle_feather"
+                  },
+                  {
+                    "type": "minecraft:item",
+                    "name": "cobblemon:resist_feather"
+                  },
+                  {
+                    "type": "minecraft:item",
+                    "name": "cobblemon:genius_feather"
+                  },
+                  {
+                    "type": "minecraft:item",
+                    "name": "cobblemon:clever_feather"
+                  },
+                  {
+                    "type": "minecraft:item",
+                    "name": "cobblemon:swift_feather"
+                  }
+                ]
+              }
+            ]
+          }
         },
         {
-          "type": "minecraft:group",
-          "weight": 1,
-          "children": [
-            { "type": "minecraft:item", "name": "cobblemon:relic_coin", "weight": 1 },
-            { "type": "minecraft:item", "name": "cobblemon:relic_coin", "weight": 1 },
-            { "type": "minecraft:item", "name": "cobblemon:relic_coin", "weight": 1 },
-            { "type": "minecraft:item", "name": "cobblemon:relic_coin", "weight": 1 },
-            { "type": "minecraft:item", "name": "cobblemon:upgrade", "weight": 1 },
-            { "type": "minecraft:item", "name": "cobblemon:dubious_disc", "weight": 1 },
-            { "type": "minecraft:item", "name": "cobblemon:galarica_wreath", "weight": 1 },
-            { "type": "minecraft:item", "name": "cobblemon:galarica_cuff", "weight": 1 },
-            { "type": "minecraft:item", "name": "cobblemon:prism_scale", "weight": 1 },
-            { "type": "minecraft:item", "name": "cobblemon:black_augurite", "weight": 1 },
-            { "type": "minecraft:item", "name": "cobblemon:relic_coin", "weight": 1 }
-          ]
+          "type": "minecraft:loot_table",
+          "weight": 10,
+          "value": {
+            "type": "minecraft:chest",
+            "pools": [
+              {
+                "rolls": 1,
+                "entries": [
+                  {
+                    "type": "minecraft:item",
+                    "name": "cobblemon:normal_gem"
+                  },
+                  {
+                    "type": "minecraft:item",
+                    "name": "cobblemon:fire_gem"
+                  },
+                  {
+                    "type": "minecraft:item",
+                    "name": "cobblemon:water_gem"
+                  },
+                  {
+                    "type": "minecraft:item",
+                    "name": "cobblemon:grass_gem"
+                  },
+                  {
+                    "type": "minecraft:item",
+                    "name": "cobblemon:electric_gem"
+                  },
+                  {
+                    "type": "minecraft:item",
+                    "name": "cobblemon:rock_gem"
+                  },
+                  {
+                    "type": "minecraft:item",
+                    "name": "cobblemon:ground_gem"
+                  },
+                  {
+                    "type": "minecraft:item",
+                    "name": "cobblemon:bug_gem"
+                  },
+                  {
+                    "type": "minecraft:item",
+                    "name": "cobblemon:poison_gem"
+                  },
+                  {
+                    "type": "minecraft:item",
+                    "name": "cobblemon:ghost_gem"
+                  },
+                  {
+                    "type": "minecraft:item",
+                    "name": "cobblemon:psychic_gem"
+                  },
+                  {
+                    "type": "minecraft:item",
+                    "name": "cobblemon:dark_gem"
+                  },
+                  {
+                    "type": "minecraft:item",
+                    "name": "cobblemon:fairy_gem"
+                  },
+                  {
+                    "type": "minecraft:item",
+                    "name": "cobblemon:dragon_gem"
+                  },
+                  {
+                    "type": "minecraft:item",
+                    "name": "cobblemon:ice_gem"
+                  },
+                  {
+                    "type": "minecraft:item",
+                    "name": "cobblemon:fighting_gem"
+                  },
+                  {
+                    "type": "minecraft:item",
+                    "name": "cobblemon:flying_gem"
+                  },
+                  {
+                    "type": "minecraft:item",
+                    "name": "cobblemon:steel_gem"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "type": "minecraft:loot_table",
+          "weight": 20,
+          "value": {
+            "type": "minecraft:chest",
+            "pools": [
+              {
+                "rolls": 1,
+                "entries": [
+                  {
+                    "type": "minecraft:item",
+                    "name": "cobblemon:black_apricorn"
+                  },
+                  {
+                    "type": "minecraft:item",
+                    "name": "cobblemon:blue_apricorn"
+                  },
+                  {
+                    "type": "minecraft:item",
+                    "name": "cobblemon:green_apricorn"
+                  },
+                  {
+                    "type": "minecraft:item",
+                    "name": "cobblemon:pink_apricorn"
+                  },
+                  {
+                    "type": "minecraft:item",
+                    "name": "cobblemon:red_apricorn"
+                  },
+                  {
+                    "type": "minecraft:item",
+                    "name": "cobblemon:white_apricorn"
+                  },
+                  {
+                    "type": "minecraft:item",
+                    "name": "cobblemon:yellow_apricorn"
+                  }
+                ]
+              }
+            ]
+          }
         }
       ]
     }

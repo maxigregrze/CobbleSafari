@@ -1,0 +1,8 @@
+{
+  "parent": "cobblesafari:block/template_ridge_inner",
+  "textures": {
+    "top": "cobblesafari:block/kalos_window_stairs_light",
+    "bottom": "cobblesafari:block/kalos_window_stairs_light",
+    "side": "cobblesafari:block/kalos_window_stairs_light"
+  }
+}

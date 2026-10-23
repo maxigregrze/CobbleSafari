@@ -7,7 +7,6 @@ import maxigregrze.cobblesafari.platform.Services;
 import maxigregrze.cobblesafari.power.PowerItemRewardEffects;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
@@ -20,7 +19,6 @@ import net.minecraft.world.entity.player.Player;
 import maxigregrze.cobblesafari.init.ModBlocks;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
@@ -74,6 +72,10 @@ public class LostItemBlock extends BaseEntityBlock {
     private static final VoxelShape WALL_SOUTH_SHAPE = Block.box(2, 2, 0, 14, 14, 4);
     private static final VoxelShape WALL_EAST_SHAPE = Block.box(0, 2, 2, 4, 14, 14);
     private static final VoxelShape WALL_WEST_SHAPE = Block.box(12, 2, 2, 16, 14, 14);
+    /** The floating ball hovers well above the ground plate: tall shapes keep it targetable (plan 193, section 7.5). */
+    private static final VoxelShape FLOATING_VERTICAL_SHAPE = Block.box(4, 0, 4, 12, 16, 12);
+    private static final VoxelShape FLOATING_WALL_NS_SHAPE = Block.box(4, 4, 0, 12, 12, 16);
+    private static final VoxelShape FLOATING_WALL_EW_SHAPE = Block.box(0, 4, 4, 16, 12, 12);
 
     public LostItemBlock(Properties properties) {
         super(properties);
@@ -119,6 +121,9 @@ public class LostItemBlock extends BaseEntityBlock {
 
     @Override
     public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+        if (state.getValue(SKIN) == LostItemSkin.FLOATING) {
+            return floatingShape(state);
+        }
         return switch (state.getValue(FACE)) {
             case FLOOR -> FLOOR_SHAPE;
             case CEILING -> CEILING_SHAPE;
@@ -130,6 +135,13 @@ public class LostItemBlock extends BaseEntityBlock {
                 default -> WALL_NORTH_SHAPE;
             };
         };
+    }
+
+    private static VoxelShape floatingShape(BlockState state) {
+        if (state.getValue(FACE) != AttachFace.WALL) {
+            return FLOATING_VERTICAL_SHAPE;
+        }
+        return state.getValue(FACING).getAxis() == Direction.Axis.Z ? FLOATING_WALL_NS_SHAPE : FLOATING_WALL_EW_SHAPE;
     }
 
     @Override
@@ -170,7 +182,7 @@ public class LostItemBlock extends BaseEntityBlock {
         }
 
         if (player.isCreative() && player.isShiftKeyDown()) {
-            Services.PLATFORM.sendPayloadToPlayer(serverPlayer, blockEntity.createOpenPayload());
+            Services.PLATFORM.sendPayloadToPlayer(serverPlayer, blockEntity.createOpenPayload(serverLevel.registryAccess()));
             return InteractionResult.CONSUME;
         }
 
@@ -205,22 +217,13 @@ public class LostItemBlock extends BaseEntityBlock {
     }
 
     private static void giveFixedItem(ServerLevel level, BlockPos pos, ServerPlayer player, LostItemBlockEntity be) {
-        String rawId = be.getLootItemId().trim();
-        if (rawId.isEmpty()) {
-            LOGGER.error("[LostItem] Mode 2: empty LOOT_ITEM id at {}", pos);
+        ItemStack stack = be.getLootItemStack();
+        if (stack.isEmpty()) {
+            LOGGER.error("[LostItem] Mode 2: no valid item configured at {}", pos);
             return;
         }
-        ResourceLocation loc = ResourceLocation.tryParse(rawId);
-        if (loc == null || !BuiltInRegistries.ITEM.containsKey(loc)) {
-            LOGGER.error("[LostItem] Mode 2: invalid item id \"{}\"", rawId);
-            return;
-        }
-        var item = BuiltInRegistries.ITEM.get(loc);
-        if (item == Items.AIR) {
-            LOGGER.error("[LostItem] Mode 2: cannot give air for id \"{}\"", rawId);
-            return;
-        }
-        giveStack(level, pos, player, new ItemStack(item, 1));
+        // Inventory.add consumes the stack it is given: hand out a copy, never the stored one.
+        giveStack(level, pos, player, stack.copy());
     }
 
     private static void giveFromLootTable(ServerLevel level, BlockPos pos, ServerPlayer player, LootParams params, String tableIdRaw) {
@@ -355,7 +358,20 @@ public class LostItemBlock extends BaseEntityBlock {
             case CLASSIC -> ModBlocks.LOST_ITEM_CLASSIC_ITEM;
             case BURIED -> ModBlocks.LOST_ITEM_BURIED_ITEM;
             case RUBBLES -> ModBlocks.LOST_ITEM_RUBBLES_ITEM;
+            case FLOATING -> ModBlocks.LOST_ITEM_FLOATING_ITEM;
         };
+    }
+
+    /**
+     * Rewrites the {@code skin} block state property; no-op when it already matches. Changing a property
+     * without changing the block keeps the block entity, so claims and loot config survive untouched.
+     * Shared by the config screen and the Lost Item Template (action plan 193, section 5.3).
+     */
+    public static void applySkin(Level level, BlockPos pos, LostItemSkin skin) {
+        BlockState state = level.getBlockState(pos);
+        if (state.getBlock() instanceof LostItemBlock && state.getValue(SKIN) != skin) {
+            level.setBlock(pos, state.setValue(SKIN, skin), Block.UPDATE_ALL);
+        }
     }
 
     @Override

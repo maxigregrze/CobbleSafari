@@ -127,16 +127,37 @@ public final class WarpRideDifficultyLoader {
             double portalChance = b.has("portalChance") ? b.get("portalChance").getAsDouble() : 0.0;
             double bonusChance = b.has("bonusChance") ? b.get("bonusChance").getAsDouble() : 0.0;
 
-            if (from >= noBonusDistance && bonusChance > 0.0) {
-                CobbleSafari.LOGGER.warn("[WarpRide] {} band #{} (fromDistance={}) sits at or past "
-                        + "noBonusDistance={} but still has bonusChance={}. The energy ratchet of "
-                        + "plan 180 § 3.8 is the only thing that ends a ride: forcing it to 0",
-                        fileId, i, from, noBonusDistance, bonusChance);
-                bonusChance = 0.0;
+            // Optional end values, interpolated up to the next band (plan 191, section 4.4).
+            double bonusChanceTo = b.has("bonusChanceTo") ? b.get("bonusChanceTo").getAsDouble() : bonusChance;
+            double[] negativeWeightsTo = negativeWeights;
+            if (b.has("negativeWeightsTo")) {
+                negativeWeightsTo = readWeights(b, "negativeWeightsTo",
+                        WarpRideDifficulty.MAX_NEGATIVES_PER_WAVE + 1);
+                if (negativeWeightsTo == null || !sumsToOne(negativeWeightsTo)) {
+                    CobbleSafari.LOGGER.warn("[WarpRide] {} band #{} (fromDistance={}) has a malformed "
+                            + "negativeWeightsTo, or one not summing to 1.0; rejecting the file", fileId, i, from);
+                    return null;
+                }
+            }
+            boolean lastBand = i == bandsJson.size() - 1;
+            if (lastBand && (b.has("bonusChanceTo") || b.has("negativeWeightsTo"))) {
+                CobbleSafari.LOGGER.warn("[WarpRide] {} band #{} (fromDistance={}) is the last band, so its "
+                        + "...To values have no end distance to reach; ignoring them", fileId, i, from);
+                bonusChanceTo = bonusChance;
+                negativeWeightsTo = negativeWeights;
             }
 
-            bands.add(new WarpRideDifficulty.Band(from, rankWeights,
-                    clamp01(portalChance), clamp01(bonusChance), negativeWeights));
+            if (from >= noBonusDistance && (bonusChance > 0.0 || bonusChanceTo > 0.0)) {
+                CobbleSafari.LOGGER.warn("[WarpRide] {} band #{} (fromDistance={}) sits at or past "
+                        + "noBonusDistance={} but still has bonusChance={} / bonusChanceTo={}. The energy "
+                        + "ratchet of plan 180 § 3.8 is the only thing that ends a ride: forcing both to 0",
+                        fileId, i, from, noBonusDistance, bonusChance, bonusChanceTo);
+                bonusChance = 0.0;
+                bonusChanceTo = 0.0;
+            }
+
+            bands.add(new WarpRideDifficulty.Band(from, rankWeights, clamp01(portalChance),
+                    clamp01(bonusChance), clamp01(bonusChanceTo), negativeWeights, negativeWeightsTo));
         }
 
         if (bands.isEmpty()) {

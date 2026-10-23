@@ -101,7 +101,6 @@ public final class WarpRideManager {
         Services.PLATFORM.sendPayloadToPlayer(player, new WarpRidePayloads.OpenPayload(
                 sessionId,
                 true,
-                cfg.baseSpeed,
                 cfg.minSpeed,
                 cfg.maxSpeed,
                 cfg.waveSpacingLy,
@@ -122,11 +121,14 @@ public final class WarpRideManager {
                 cfg.portalHoldWaves,
                 cfg.driftSeconds,
                 cfg.warpAnimSeconds,
-                cfg.fadeToBlackSeconds));
+                cfg.fadeToBlackSeconds,
+                cfg.steeringBase,
+                cfg.steeringPerEnergy,
+                cfg.introTicks,
+                cfg.introLaunchTick));
 
         syncDestinations(player);
-        // The mini-game's own music takes top priority for the whole session.
-        maxigregrze.cobblesafari.csmusic.DimensionalMusicManager.onWarpRideStart(player, resolveWarpMusicId());
+        // No music yet: it starts with the intro, never over the tutorial page (see onRideStarted).
         CobbleSafari.LOGGER.info("[WarpRide] Opened a ride for {} (session {})",
                 player.getName().getString(), sessionId);
         return OpenResult.OK;
@@ -162,6 +164,14 @@ public final class WarpRideManager {
     public static void endHandoffSuccess(MinecraftServer server, UUID playerId) {
         HANDOFF.remove(playerId);
         endSession(server, playerId, WarpRidePayloads.END_REASON_HANDOFF);
+    }
+
+    /**
+     * The tutorial was dismissed and the intro begins: only now does the mini-game's own music take
+     * top priority, so the "press to start" page plays over whatever was already playing.
+     */
+    public static void onRideStarted(ServerPlayer player) {
+        maxigregrze.cobblesafari.csmusic.DimensionalMusicManager.onWarpRideStart(player, resolveWarpMusicId());
     }
 
     /** The mini-game music id from config, qualified to {@code cobblesafari:} when unnamespaced. */
@@ -216,9 +226,8 @@ public final class WarpRideManager {
             pushWaves(player, session);
             pushImpacts(player, session);
 
-            int step = session.pollCountdownStep(now);
-            if (step >= 0) {
-                sendEvent(player, session, WarpRidePayloads.EVENT_COUNTDOWN, -1, step, 0, 0.0);
+            if (session.pollLaunch(now)) {
+                sendEvent(player, session, WarpRidePayloads.EVENT_LAUNCH, -1, 0, 0, 0.0);
             }
 
             if (session.getPhase() == WarpRidePhase.PORTAL_TAKEN && before != WarpRidePhase.PORTAL_TAKEN) {
@@ -336,9 +345,10 @@ public final class WarpRideManager {
 
     private static void pushImpacts(ServerPlayer player, WarpRideSession session) {
         for (WarpRideSession.ImpactEvent impact : session.drainPendingImpacts()) {
+            // b = 1 marks a bonus that raised the energy ceiling (the source's "maxup" aura).
             sendEvent(player, session,
                     impact.positive() ? WarpRidePayloads.EVENT_POSITIVE : WarpRidePayloads.EVENT_NEGATIVE,
-                    impact.waveIndex(), impact.lane(), 0, impact.energyAfter());
+                    impact.waveIndex(), impact.lane(), impact.ceilingRaised() ? 1 : 0, impact.energyAfter());
         }
     }
 

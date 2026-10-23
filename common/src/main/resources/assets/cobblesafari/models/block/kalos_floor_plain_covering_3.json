@@ -1,0 +1,7 @@
+{
+  "parent": "cobblesafari:block/template_covering",
+  "textures": {
+    "top": "cobblesafari:block/kalos_floor_plain_3",
+    "side": "cobblesafari:block/kalos_floor_plain_3"
+  }
+}

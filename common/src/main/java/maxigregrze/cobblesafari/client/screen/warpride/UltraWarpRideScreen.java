@@ -14,7 +14,9 @@ import net.minecraft.sounds.SoundEvent;
 
 /**
  * The Ultra Warp Ride screen: the GUI scale is undone, then a fixed 1920x1080 canvas is fitted. The
- * rocks, portals, objects and rider are 3D models drawn in perspective passes (action plan 189).
+ * rocks, portals, objects and rider are 3D models drawn in perspective passes (action plan 189);
+ * the start tunnel, the tube and the space behind them are procedural, and an intro with its own
+ * camera replaces the countdown (action plan 191).
  */
 public class UltraWarpRideScreen extends Screen {
 
@@ -22,6 +24,12 @@ public class UltraWarpRideScreen extends Screen {
     private final WarpRideBackground background = new WarpRideBackground();
     private final WarpRideHud hud = new WarpRideHud();
     private final WarpRideExitPrompt exitPrompt = new WarpRideExitPrompt();
+    private final WarpRideCamera camera = new WarpRideCamera();
+    private final WarpRideStartTunnel startTunnel = new WarpRideStartTunnel();
+    /** Set once the rider has left the start tunnel far enough behind that it draws nothing. */
+    private boolean startTunnelPassed;
+    /** Tint and glint on the rider; null once the screen has released its buffers. */
+    private WarpRideRiderEffects riderEffects = new WarpRideRiderEffects();
     /** The local player's look-alike in elytra flight; null only if there is no level or player. */
     private WarpRideRiderProxy rider;
 
@@ -29,8 +37,6 @@ public class UltraWarpRideScreen extends Screen {
             java.util.concurrent.ThreadLocalRandom.current();
 
     private boolean showTutorial = true;
-    private int countdownStep = -1;
-    private long countdownShownUntil;
     private boolean readySent;
     /** When the last ready went out, for the resend below. */
     private long readySentNanos;
@@ -84,24 +90,33 @@ public class UltraWarpRideScreen extends Screen {
             case WarpRidePayloads.EVENT_POSITIVE -> {
                 hud.onPositive();
                 state.consumeObject(payload.waveIndex(), payload.a());
+                // b = 1: this bonus raised the energy ceiling, the source's "maxup" aura.
+                if (riderEffects != null) {
+                    riderEffects.onPositive(payload.b() == 1);
+                }
+                camera.onPositive();
                 playSound(ModSounds.WARPRIDE_POSITIVE);
             }
             case WarpRidePayloads.EVENT_NEGATIVE -> {
                 hud.onNegative();
                 state.consumeObject(payload.waveIndex(), payload.a());
+                if (riderEffects != null) {
+                    riderEffects.onNegative();
+                }
+                camera.onNegative();
                 playSound(ModSounds.WARPRIDE_NEGATIVE);
             }
-            case WarpRidePayloads.EVENT_DRIFT -> playSound(ModSounds.WARPRIDE_WARNING);
-            case WarpRidePayloads.EVENT_PANIC -> {
-                // The energy bar draining ten times faster with no explanation reads as a bug, so
-                // this warning has to be unmissable (action plan 183, section 8.2).
-                panicWarningUntil = System.nanoTime() + 4_000_000_000L;
-                playSound(ModSounds.WARPRIDE_WARNING);
-            }
-            case WarpRidePayloads.EVENT_COUNTDOWN -> {
-                countdownStep = payload.a();
-                countdownShownUntil = System.nanoTime() + 950_000_000L;
-                playSound(ModSounds.WARPRIDE_COUNTDOWN);
+            case WarpRidePayloads.EVENT_PANIC ->
+                    // The energy bar draining ten times faster with no explanation reads as a bug, so
+                    // this warning has to be unmissable (action plan 183, section 8.2). Silent since
+                    // plan 191: the source has no such sound.
+                    panicWarningUntil = System.nanoTime() + 4_000_000_000L;
+            case WarpRidePayloads.EVENT_LAUNCH -> {
+                state.onLaunch();
+                if (riderEffects != null) {
+                    riderEffects.onLaunch();
+                }
+                playSound(ModSounds.WARPRIDE_LAUNCH);
             }
             case WarpRidePayloads.EVENT_HANDOFF -> handoffPending = true;
             case WarpRidePayloads.EVENT_PORTAL_TAKEN -> {
@@ -134,6 +149,8 @@ public class UltraWarpRideScreen extends Screen {
         super.init();
         WarpRideRenderer.applyFilters();
         WarpRideRenderer.cacheModels();
+        // Built here, behind the tutorial page, rather than as a hitch on the first riding frame.
+        WarpRideCloudTextures.ensure();
         state.applyTints(pendingTints);
         background.init(state);
         Minecraft mc = Minecraft.getInstance();
@@ -163,6 +180,11 @@ public class UltraWarpRideScreen extends Screen {
     @Override
     public void removed() {
         sendClose();
+        if (riderEffects != null) {
+            riderEffects.close();
+            riderEffects = null;
+        }
+        WarpRideScene3D.setView(null);
         super.removed();
     }
 
@@ -274,7 +296,7 @@ public class UltraWarpRideScreen extends Screen {
      * <p>The ready was sent exactly once, and anything that dropped it - a rate limit, a packet
      * arriving before the session existed server-side - left the ride on its tutorial page for good,
      * with the player able only to quit. The server re-checks the phase and accepts one ready per
-     * session, so a resend is inert once the countdown has started.</p>
+     * session, so a resend is inert once the intro has started.</p>
      */
     @Override
     public void tick() {
@@ -298,24 +320,25 @@ public class UltraWarpRideScreen extends Screen {
             return;
         }
         // Predict locally so the ride feels immediate; the next snapshot corrects the lane if wrong.
+        // Every duration follows the predicted energy, as the server's lock does (plan 191, 3.3).
         if (input == WarpRidePayloads.INPUT_JUMP) {
-            state.startLocalCooldown(state.jumpTransitMs);
+            int jumpMs = state.jumpTransitMs();
+            state.startLocalCooldown(jumpMs);
             state.startLocalJump();
             // Taking a portal sends the rider into the axis, so it neither swaps lane nor spins.
             if (!takingPortal) {
                 state.lane = state.lane ^ 4;
-                state.aimAtJump(RANDOM.nextBoolean(), state.jumpTransitMs);
+                state.aimAtJump(RANDOM.nextBoolean(), jumpMs);
             }
-            playSound(ModSounds.WARPRIDE_JUMP);
         } else if (input == WarpRidePayloads.INPUT_LEFT) {
-            state.startLocalCooldown(state.inputCooldownMs);
+            state.startLocalCooldown(state.inputCooldownMs());
             state.lane = Math.floorMod(state.lane + 1, WarpRideRenderer.LANE_COUNT);
-            state.aimAtLane(state.lane, state.laneRotationMs);
+            state.aimAtLane(state.lane, state.laneRotationMs());
             state.startBank(1);
         } else {
-            state.startLocalCooldown(state.inputCooldownMs);
+            state.startLocalCooldown(state.inputCooldownMs());
             state.lane = Math.floorMod(state.lane - 1, WarpRideRenderer.LANE_COUNT);
-            state.aimAtLane(state.lane, state.laneRotationMs);
+            state.aimAtLane(state.lane, state.laneRotationMs());
             state.startBank(-1);
         }
         Services.PLATFORM.sendPayloadToServer(new WarpRidePayloads.InputPayload(
@@ -335,6 +358,19 @@ public class UltraWarpRideScreen extends Screen {
             state.advance(delta);
             background.advance(state, delta);
         }
+        camera.advance(delta);
+        if (riderEffects != null) {
+            riderEffects.update(now, state);
+        }
+        // The intro's orbit until it hands over, then the chase view with its feedback (plan 191, C1).
+        org.joml.Matrix4f introView = WarpRideCamera.introView(state.introFrame(now),
+                WarpRideRenderer.riderCenter(state));
+        WarpRideScene3D.setView(introView != null ? introView : camera.rideView(now));
+        // While the start tunnel is still in sight, the ride's world exists only beyond its exit.
+        double exitDepth = startTunnelPassed
+                ? Double.NEGATIVE_INFINITY
+                : WarpRideStartTunnel.exitDepthLy(state.introSeconds(now), state.introLaunchTick / 20.0,
+                        state.projectionK);
 
         double guiScale = mc.getWindow().getGuiScale();
         int pw = mc.getWindow().getWidth();
@@ -353,25 +389,28 @@ public class UltraWarpRideScreen extends Screen {
         graphics.pose().scale((float) (1.0 / guiScale), (float) (1.0 / guiScale), 1.0f);
 
         // Full framebuffer, before the canvas transform, so the background fills ultrawide too.
-        background.renderBackdrop(graphics, pw, ph, state);
-
-        background.renderRocks(graphics, state);            // 3D pass: the projection spans the window
-
-        background.renderTube(graphics, pw, ph, state);       // colour tube, in front of the rocks
-        background.renderStars(graphics, state, pw, ph);      // starfield, fills the whole screen
+        background.renderBackdrop(graphics, pw, ph, state);                 // procedural space
+        background.renderStars(graphics, state, pw, ph, 1.0f);              // starfield, whole screen
+        // The ride's world - rocks, cloud tube - is drawn first, cut at the start tunnel's exit; the
+        // tunnel then paints over it, its opaque walls hiding all but what shows through the open
+        // end. At the launch the rider flies out into a tube that was already there, streaming at
+        // the tunnel's pace (WarpRideClientState#decorOdometer), and the tunnel falls behind.
+        background.renderRocks(graphics, state, exitDepth);   // 3D passes: the projection spans the window
+        WarpRideRenderer.renderTube(graphics, state, exitDepth);
+        if (!startTunnelPassed) {
+            startTunnelPassed = !WarpRideRenderer.renderStartTunnel(graphics, startTunnel, state,
+                    state.introSeconds(now), state.introLaunchTick / 20.0);
+        }
 
         // 2. Fit the fixed virtual canvas, uniformly and centred.
         graphics.pose().translate((float) offsetX, (float) offsetY, 0.0f);
         graphics.pose().scale((float) fit, (float) fit, 1.0f);
 
-        WarpRideRenderer.renderTunnel(graphics, state);
-
         if (warping) {
             renderWarp(graphics, now, partialTick);
         } else {
-            WarpRideRenderer.renderScene(graphics, state, rider, partialTick); // portals, objects, rider
-            hud.render(graphics, state);                                       // aura, hit effect
-            renderCountdown(graphics);
+            WarpRideRenderer.renderScene(graphics, state, rider, partialTick, camera, riderEffects);
+            hud.render(graphics, state, camera, now);                          // aura, hit effect
             renderPanicWarning(graphics);
             if (showTutorial) {
                 renderTutorial(graphics);
@@ -387,14 +426,14 @@ public class UltraWarpRideScreen extends Screen {
         if (state.warpInDriftWait(now)) {
             // Full-size portal; the rider is still drifting to the axis.
             WarpRideRenderer.renderWarpScene(graphics, state, rider, 1.0,
-                    WarpRideRenderer.riderRadius(state), partialTick);
+                    WarpRideRenderer.riderRadius(state), partialTick, riderEffects);
             return;
         }
 
         double warpP = state.warpProgress(now);
         if (warpP <= 1.0) {
             double shrink = 1.0 - warpP;
-            WarpRideRenderer.renderWarpScene(graphics, state, rider, shrink, 0.0, partialTick);
+            WarpRideRenderer.renderWarpScene(graphics, state, rider, shrink, 0.0, partialTick, riderEffects);
             WarpRideRenderer.renderWarpOverlay(graphics, warpP);
             return;
         }
@@ -417,16 +456,6 @@ public class UltraWarpRideScreen extends Screen {
         }
         centered(graphics, Component.translatable("cobblesafari.wormhole.panic_warning").getString(),
                 240, 3.0f, 0xFFFF5555);
-    }
-
-    private void renderCountdown(GuiGraphics graphics) {
-        if (countdownStep < 0 || System.nanoTime() > countdownShownUntil) {
-            return;
-        }
-        String text = countdownStep == 0
-                ? Component.translatable("gui.cobblesafari.warpride.countdown.go").getString()
-                : Integer.toString(countdownStep);
-        centered(graphics, text, 470, 9.0f, 0xFFFFF0B0);
     }
 
     /** Placeholder page. The phase, its payload and the once-only guard are the real deliverable. */

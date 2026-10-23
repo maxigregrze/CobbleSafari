@@ -1,10 +1,14 @@
 package maxigregrze.cobblesafari.block.base;
 
 import com.mojang.serialization.MapCodec;
+import maxigregrze.cobblesafari.entity.SeatEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
@@ -15,6 +19,7 @@ import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
@@ -51,7 +56,8 @@ public class HorizontalModelBlock extends HorizontalDirectionalBlock {
             Support support,
             Collision collision,
             boolean emptyOcclusion,
-            @Nullable String descriptionId) {
+            @Nullable String descriptionId,
+            @Nullable Double seatHeight) {
 
         public static Builder builder() {
             return new Builder();
@@ -72,6 +78,7 @@ public class HorizontalModelBlock extends HorizontalDirectionalBlock {
             private Collision collision = Collision.SHAPE;
             private boolean emptyOcclusion = false;
             private String descriptionId = null;
+            private Double seatHeight = null;
 
             public Builder shape(VoxelShape shape) { this.shape = shape; return this; }
             /** Collision box, when it must be narrower than the selection box (defaults to {@link #shape}). */
@@ -83,15 +90,17 @@ public class HorizontalModelBlock extends HorizontalDirectionalBlock {
             public Builder collision(Collision collision) { this.collision = collision; return this; }
             public Builder emptyOcclusion() { this.emptyOcclusion = true; return this; }
             public Builder descriptionId(String id) { this.descriptionId = id; return this; }
+            /** Makes the block a seat: an empty-handed right-click sits the player {@code heightPx} above its floor. */
+            public Builder seat(double heightPx) { this.seatHeight = heightPx; return this; }
 
             public Settings build() {
                 return new Settings(shape, collisionShape, authoredFacing, rotateShape, defaultFacing,
-                        support, collision, emptyOcclusion, descriptionId);
+                        support, collision, emptyOcclusion, descriptionId, seatHeight);
             }
         }
     }
 
-    private final Settings settings;
+    protected final Settings settings;
     private final VoxelShape baseShape;
     @Nullable
     private final Map<Direction, VoxelShape> rotatedShapes;
@@ -164,6 +173,35 @@ public class HorizontalModelBlock extends HorizontalDirectionalBlock {
             return Blocks.AIR.defaultBlockState();
         }
         return super.updateShape(state, direction, neighborState, level, pos, neighborPos);
+    }
+
+    /**
+     * The way a sitter looks. Seat models are drawn with their backrest on the north side, so they
+     * face south as authored; that front turns with FACING exactly like the model does.
+     */
+    public Direction seatFront(BlockState state) {
+        Direction front = Direction.SOUTH;
+        Direction turned = settings.authoredFacing();
+        Direction facing = state.getValue(FACING);
+        while (turned != facing) {
+            turned = turned.getClockWise();
+            front = front.getClockWise();
+        }
+        return front;
+    }
+
+    /** True when the block was built with {@link Settings.Builder#seat}. */
+    public boolean isSeat() {
+        return settings.seatHeight() != null;
+    }
+
+    @Override
+    protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player,
+                                               BlockHitResult hit) {
+        if (settings.seatHeight() != null) {
+            return SeatEntity.trySit(level, pos, state, player, settings.seatHeight());
+        }
+        return super.useWithoutItem(state, level, pos, player, hit);
     }
 
     @Override
