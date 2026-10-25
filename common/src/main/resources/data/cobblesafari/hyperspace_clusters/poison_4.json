@@ -1,0 +1,204 @@
+{
+  "star": 4,
+  "type": "poison",
+  "clusters": [
+    {
+      "id": "trubbish",
+      "weight": 8,
+      "members": [
+        {
+          "pokemon": "garbodor",
+          "rarity": 20,
+          "level": "41-43",
+          "alphaLevel": "50-52"
+        },
+        {
+          "pokemon": "trubbish",
+          "rarity": 80,
+          "level": "37-39",
+          "alphaLevel": "46-48"
+        }
+      ]
+    },
+    {
+      "id": "skrelp",
+      "weight": 7,
+      "members": [
+        {
+          "pokemon": "dragalge",
+          "rarity": 20,
+          "level": "48-50",
+          "alphaLevel": "57-59"
+        },
+        {
+          "pokemon": "skrelp",
+          "rarity": 80,
+          "level": "38-40",
+          "alphaLevel": "47-49"
+        }
+      ]
+    },
+    {
+      "id": "whirlipede",
+      "weight": 3,
+      "members": [
+        {
+          "pokemon": "scolipede",
+          "rarity": 20,
+          "level": "39-41",
+          "alphaLevel": "48-50"
+        },
+        {
+          "pokemon": "whirlipede",
+          "rarity": 80,
+          "level": "37-39",
+          "alphaLevel": "46-48"
+        }
+      ]
+    },
+    {
+      "id": "ivysaur",
+      "weight": 1,
+      "members": [
+        {
+          "pokemon": "venusaur",
+          "rarity": 20,
+          "level": "41-43",
+          "alphaLevel": "50-52"
+        },
+        {
+          "pokemon": "ivysaur",
+          "rarity": 80,
+          "level": "36-38",
+          "alphaLevel": "45-47"
+        }
+      ]
+    },
+    {
+      "id": "roselia",
+      "weight": 2,
+      "members": [
+        {
+          "pokemon": "roserade",
+          "rarity": 20,
+          "level": "38-40",
+          "alphaLevel": "47-49"
+        },
+        {
+          "pokemon": "roselia",
+          "rarity": 80,
+          "level": "36-38",
+          "alphaLevel": "45-47"
+        }
+      ]
+    },
+    {
+      "id": "golbat",
+      "weight": 2,
+      "members": [
+        {
+          "pokemon": "crobat",
+          "rarity": 20,
+          "level": "39-41",
+          "alphaLevel": "48-50"
+        },
+        {
+          "pokemon": "golbat",
+          "rarity": 80,
+          "level": "37-39",
+          "alphaLevel": "46-48"
+        }
+      ]
+    },
+    {
+      "id": "shroodle",
+      "weight": 1,
+      "members": [
+        {
+          "pokemon": "grafaiai",
+          "rarity": 20,
+          "level": "39-41",
+          "alphaLevel": "48-50"
+        },
+        {
+          "pokemon": "shroodle",
+          "rarity": 80,
+          "level": "36-38",
+          "alphaLevel": "45-47"
+        }
+      ]
+    },
+    {
+      "id": "weepinbell",
+      "weight": 1,
+      "members": [
+        {
+          "pokemon": "victreebel",
+          "rarity": 20,
+          "level": "40-42",
+          "alphaLevel": "49-51"
+        },
+        {
+          "pokemon": "weepinbell",
+          "rarity": 80,
+          "level": "37-39",
+          "alphaLevel": "46-48"
+        }
+      ]
+    },
+    {
+      "id": "gulpin",
+      "weight": 2,
+      "members": [
+        {
+          "pokemon": "swalot",
+          "rarity": 20,
+          "level": "38-40",
+          "alphaLevel": "47-49"
+        },
+        {
+          "pokemon": "gulpin",
+          "rarity": 80,
+          "level": "35-37",
+          "alphaLevel": "44-46"
+        }
+      ]
+    },
+    {
+      "id": "glimmet",
+      "weight": 2,
+      "members": [
+        {
+          "pokemon": "glimmora",
+          "rarity": 20,
+          "level": "41-43",
+          "alphaLevel": "50-52"
+        },
+        {
+          "pokemon": "glimmet",
+          "rarity": 80,
+          "level": "36-38",
+          "alphaLevel": "45-47"
+        }
+      ]
+    },
+    {
+      "id": "kakuna",
+      "weight": 1,
+      "members": [
+        {
+          "pokemon": "beedrill",
+          "rarity": 20,
+          "level": "35-37",
+          "alphaLevel": "44-46"
+        },
+        {
+          "pokemon": "kakuna",
+          "rarity": 80,
+          "level": "34-36",
+          "alphaLevel": "43-45"
+        }
+      ]
+    }
+  ]
+}

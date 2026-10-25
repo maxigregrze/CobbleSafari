@@ -187,11 +187,13 @@ public final class DimensionalObjectivesDataLoader {
         }
 
         List<Integer> allowedTypes = readTypeIndices(json);
+        boolean typesFromInstance = readStringList(json, "allowedTypes").stream()
+                .anyMatch(DimensionalObjectivesDefinition.TaskPoolEntry.INSTANCE_SENTINEL::equalsIgnoreCase);
 
         ResourceLocation taskReward = optionalLootTable(json, "taskReward", source);
 
         return new DimensionalObjectivesDefinition.TaskPoolEntry(
-                type, weight, countMin, countMax, allowedSpecies, allowedTypes, taskReward);
+                type, weight, countMin, countMax, allowedSpecies, allowedTypes, typesFromInstance, taskReward);
     }
 
     private static int clampCount(int v) {

@@ -91,6 +91,8 @@ import maxigregrze.cobblesafari.block.trap.TeleportTrapBlock;
 import maxigregrze.cobblesafari.block.trap.WindTrapBlock;
 import maxigregrze.cobblesafari.block.underground.UndergroundTimberBlock;
 import maxigregrze.cobblesafari.block.hyperspace.HyperspaceBarrierBlock;
+import maxigregrze.cobblesafari.block.hyperspace.ObstacleBlock;
+import maxigregrze.cobblesafari.dungeon.hyperspace.obstacle.ObstacleKind;
 import maxigregrze.cobblesafari.block.base.ModelBushBlock;
 import maxigregrze.cobblesafari.block.hyperspace.HyperspaceDirectionalBlock;
 import maxigregrze.cobblesafari.block.hyperspace.HyperspaceFlagLargeBlock;
@@ -144,6 +146,9 @@ import maxigregrze.cobblesafari.block.base.LoweredPathBlock;
 import maxigregrze.cobblesafari.block.base.RidgeBlock;
 import maxigregrze.cobblesafari.block.hyperspace.HyperspaceBenchBlock;
 import maxigregrze.cobblesafari.block.hyperspace.HyperspaceChimneyBlock;
+import maxigregrze.cobblesafari.block.hyperspace.HyperspaceFountainBlock;
+import maxigregrze.cobblesafari.block.hyperspace.HyperspacePlanterBlock;
+import maxigregrze.cobblesafari.block.hyperspace.HyperspacePosterBlock;
 import maxigregrze.cobblesafari.block.hyperspace.HyperspaceFenceBlock;
 import maxigregrze.cobblesafari.block.hyperspace.HyperspaceHandrailBlock;
 import maxigregrze.cobblesafari.block.ultraspace.MegapolisBarricadeBlock;
@@ -182,8 +187,10 @@ import net.minecraft.world.level.block.AmethystBlock;
 import net.minecraft.world.level.block.AmethystClusterBlock;
 import net.minecraft.world.level.block.RotatedPillarBlock;
 import net.minecraft.world.level.block.RenderShape;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.StairBlock;
+import net.minecraft.world.level.block.WallBlock;
 import net.minecraft.world.level.block.state.properties.BlockSetType;
 import net.minecraft.world.level.block.state.properties.NoteBlockInstrument;
 import net.minecraft.world.level.block.state.properties.WoodType;
@@ -1831,6 +1838,15 @@ public class ModBlocks {
     private static final VoxelShape HS_FULL_SHAPE = Block.box(0, 0, 0, 16, 16, 16);
     private static final VoxelShape HS_LAMP_SHAPE = Block.box(6, 0, 6, 10, 16, 10);
     private static final VoxelShape HS_BUSH_SHAPE = Block.box(2, 0, 2, 14, 14, 14);
+    // The cone's seven tiers, from the 14px foot to the 6px tip two blocks up.
+    private static final VoxelShape HS_BUSH_CONE_SHAPE = Shapes.or(
+            Block.box(1, 0, 1, 15, 1, 15), Block.box(0, 1, 0, 16, 6, 16), Block.box(1, 6, 1, 15, 11, 15),
+            Block.box(2, 11, 2, 14, 17, 14), Block.box(3, 17, 3, 13, 23, 13), Block.box(4, 23, 4, 12, 28, 12),
+            Block.box(5, 28, 5, 11, 32, 11));
+    /** Posters: paper, so the page-turn sound for everything. */
+    private static final SoundType HS_POSTER_SOUND = new SoundType(1.0F, 1.0F,
+            SoundEvents.BOOK_PAGE_TURN, SoundEvents.BOOK_PAGE_TURN, SoundEvents.BOOK_PAGE_TURN,
+            SoundEvents.BOOK_PAGE_TURN, SoundEvents.BOOK_PAGE_TURN);
 
     // Hyperspace flags (small + large). Both are wall-mounted and authored for facing=south, i.e.
     // with the wall plate on the z=0 side exactly like their models. The "arm" is the plate plus
@@ -1909,6 +1925,7 @@ public class ModBlocks {
     private static final TagKey<Block> HYPERSPACE_SCAFFOLDING_CONNECTS = blockTag("hyperspace_scaffolding_connects");
     private static final TagKey<Block> HYPERSPACE_SCAFFOLDING_PLATFORM_CONNECTS = blockTag("hyperspace_scaffolding_platform_connects");
     private static final TagKey<Block> HYPERSPACE_PLATFORM_CONNECTS = blockTag("hyperspace_platform_connects");
+    private static final TagKey<Block> HYPERSPACE_PLANTER_CONNECTS = blockTag("hyperspace_planter_connects");
     private static final TagKey<Block> HYPERSPACE_PLATFORM_GROUND = blockTag("hyperspace_platform_ground");
     private static final TagKey<Block> HYPERSPACE_SCAFFOLDING_TUBE_CONNECTS = blockTag("hyperspace_scaffolding_tube_connects");
     private static final TagKey<Block> HYPERSPACE_PILLAR_CONNECTS = blockTag("hyperspace_pillar_connects");
@@ -2040,8 +2057,9 @@ public class ModBlocks {
             new HyperspaceQuadBlock(hsIronBlock().noOcclusion()
                     .lightLevel(s -> s.getValue(HyperspaceQuadBlock.PART) == HyperspaceQuadPart.CENTERTOP ? 15 : 0),
                     false, true, HS_LAMP_SHAPE));
+    // Full hitbox, open sides: only its top and bottom count as solid, so walls and bars do not join it.
     public static final Block HYPERSPACE_FLOWERPOT = registerBlock("hyperspace_flowerpot",
-            new ShapedBlock(hsPlanks().noOcclusion(), HS_FULL_SHAPE));
+            new ShapedBlock(hsPlanks().noOcclusion(), HS_FULL_SHAPE, HS_FULL_SHAPE, BlockShapeUtils.CAPPED_SUPPORT));
     public static final Block HYPERSPACE_LADDER = registerBlock("hyperspace_ladder",
             new HyperspaceLadderBlock(hsIronHand()));
     public static final Block HYPERSPACE_RAMP = registerBlock("hyperspace_ramp",
@@ -2069,10 +2087,12 @@ public class ModBlocks {
                             .seat(9)
                             .build()));
     // Table: custom model, but counts as a full block for collision while letting light pass through.
+    // Only its top and bottom are solid: things stand on it, walls and bars do not join its legs.
     public static final Block HYPERSPACE_TABLE = registerBlock("hyperspace_table",
             new HorizontalModelBlock(hsPlanks().noOcclusion(),
                     HorizontalModelBlock.Settings.builder()
                             .collision(HorizontalModelBlock.Collision.FULL)
+                            .supportShape(BlockShapeUtils.CAPPED_SUPPORT)
                             .emptyOcclusion()
                             .build()));
 
@@ -2101,6 +2121,30 @@ public class ModBlocks {
     // Potted plant: the hitbox is the pot alone, the foliage above it has none.
     public static final Block HYPERSPACE_POTTEDPLANT = registerBlock("hyperspace_pottedplant",
             new ShapedBlock(hsPot(), Block.box(4, 0, 4, 12, 15, 12)));
+    // Soil box whose rim opens towards the planters on its 8 sides; dirt for whatever grows in it.
+    public static final Block HYPERSPACE_PLANTER = registerBlock("hyperspace_planter",
+            new HyperspacePlanterBlock(hsStone().noOcclusion(), planterSettings()));
+    // Decorative water basin, wider than its cell; water drawn translucent, murmurs.
+    public static final Block HYPERSPACE_FOUNTAIN = registerBlock("hyperspace_fountain",
+            new HyperspaceFountainBlock(hsStone().noOcclusion()));
+    // Z-A obstacles (plan 196, section 8): unbreakable by hand, cleared by a Pokemon move.
+    public static final Block OBSTACLE_BOULDER = registerBlock("obstacle_boulder",
+            new ObstacleBlock(obstacleProperties(MapColor.STONE, SoundType.STONE), ObstacleKind.BOULDER));
+    public static final Block OBSTACLE_BRAMBLES = registerBlock("obstacle_brambles",
+            new ObstacleBlock(obstacleProperties(MapColor.PLANT, SoundType.SWEET_BERRY_BUSH), ObstacleKind.BRAMBLES));
+    public static final Block OBSTACLE_SLUDGE = registerBlock("obstacle_sludge",
+            new ObstacleBlock(obstacleProperties(MapColor.COLOR_PURPLE, SoundType.MUD), ObstacleKind.SLUDGE));
+    // Paper on a wall: one of four layouts, breaks at once, page-turn sounds.
+    public static final Block HYPERSPACE_POSTERS = registerBlock("hyperspace_posters",
+            new HyperspacePosterBlock(BlockBehaviour.Properties.of().mapColor(MapColor.WOOL)
+                    .instabreak().noCollission().noOcclusion().sound(HS_POSTER_SOUND)
+                    .pushReaction(PushReaction.DESTROY),
+                    HorizontalModelBlock.Settings.builder()
+                            .authoredFacing(Direction.SOUTH)
+                            .support(HorizontalModelBlock.Support.WALL)
+                            .collision(HorizontalModelBlock.Collision.NONE)
+                            .emptyOcclusion()
+                            .build()));
 
     // --- Nature blocks (plan 140) ---
     // Dandelion-like flower: two-layer cross model, the colored layer tinted by the biome foliage
@@ -2119,6 +2163,11 @@ public class ModBlocks {
             new ModelBushBlock(hsLeafy(), HS_BUSH_SHAPE));
     public static final Block HYPERSPACE_BUSH_FLOWERED = registerBlock("hyperspace_bush_flowered",
             new ModelBushBlock(hsLeafy(), HS_BUSH_SHAPE));
+    // Clipped bushes (plan 194): same plant rules and tint as the bush, a full cube and a two-cell cone.
+    public static final Block HYPERSPACE_BUSH_CUBE = registerBlock("hyperspace_bush_cube",
+            new ModelBushBlock(hsLeafy(), Shapes.block()));
+    public static final Block HYPERSPACE_BUSH_CONE = registerBlock("hyperspace_bush_cone",
+            new ModelBushBlock(hsLeafy(), HS_BUSH_CONE_SHAPE));
     // Hollow "tube" scaffolding variant (iron, pickaxe): full-cube selection, hollow collision.
     public static final Block HYPERSPACE_SCAFFOLDING_TUBE = registerBlock("hyperspace_scaffolding_tube",
             new LayeredSideConnectedModelBlock(hsIronPick(), ConnectedModelBlock.Settings.builder()
@@ -2311,6 +2360,16 @@ public class ModBlocks {
             new HyperspaceChimneyBlock(hsStone().noOcclusion(), chimneySettings()));
     public static final Block KALOS_CHIMNEY = registerBlock("kalos_chimney",
             new HyperspaceChimneyBlock(hsStone().noOcclusion(), chimneySettings()));
+    public static final Block KALOS_PLANTER = registerBlock("kalos_planter",
+            new HyperspacePlanterBlock(hsStone().noOcclusion(), planterSettings()));
+    public static final Block KALOS_FOUNTAIN = registerBlock("kalos_fountain",
+            new HyperspaceFountainBlock(hsStone().noOcclusion()));
+
+    // Connected walls (vanilla WallBlock) cut from the brick and ornate wall blocks.
+    public static final Block HYPERSPACE_WALL_BRICKS_WALL = registerBlock("hyperspace_wall_bricks_wall", new WallBlock(hsStone()));
+    public static final Block HYPERSPACE_WALL_BOTTOM_WALL = registerBlock("hyperspace_wall_bottom_wall", new WallBlock(hsStone()));
+    public static final Block KALOS_WALL_BRICKS_WALL = registerBlock("kalos_wall_bricks_wall", new WallBlock(hsStone()));
+    public static final Block KALOS_WALL_BOTTOM_WALL = registerBlock("kalos_wall_bottom_wall", new WallBlock(hsStone()));
 
     // Slab roof: a plain wall capped with the top face of the Kalosian slab.
     public static final Block HYPERSPACE_SLAB_ROOF = registerBlock("hyperspace_slab_roof", new Block(hsStone()));
@@ -2711,6 +2770,8 @@ public class ModBlocks {
                             .build()));
     public static final Block MEGAPOLIS_DOOR = registerBlock("megapolis_door",
             new HyperspaceDoubleBlock(usMegapolisMetal()));
+    public static final Block MEGAPOLIS_DOOR_ALT = registerBlock("megapolis_door_alt",
+            new HyperspaceDoubleBlock(usMegapolisMetal()));
 
     // --- lightning marker --------------------------------------------------------
     // Lives in block/misc, not block/ultraspace: nothing about it is Ultra Space specific.
@@ -2807,9 +2868,20 @@ public class ModBlocks {
                 .strength(5.0f, 6.0f).sound(SoundType.METAL);
     }
 
+    private static BlockBehaviour.Properties obstacleProperties(MapColor color, SoundType sound) {
+        return BlockBehaviour.Properties.of().mapColor(color).strength(-1.0f, 3600000.0f)
+                .sound(sound).noOcclusion().noLootTable().pushReaction(PushReaction.BLOCK);
+    }
+
     private static BlockBehaviour.Properties hsStone() {
         return BlockBehaviour.Properties.of().mapColor(MapColor.STONE).strength(1.5f, 6.0f)
                 .sound(SoundType.STONE).requiresCorrectToolForDrops();
+    }
+
+    private static ConnectedModelBlock.Settings planterSettings() {
+        return ConnectedModelBlock.Settings.builder()
+                .connectTag(HYPERSPACE_PLANTER_CONNECTS)
+                .build();
     }
 
     private static HorizontalModelBlock.Settings chimneySettings() {

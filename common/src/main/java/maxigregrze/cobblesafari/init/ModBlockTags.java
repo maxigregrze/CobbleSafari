@@ -24,5 +24,9 @@ public final class ModBlockTags {
     public static final TagKey<Block> PORTAL_REPELLENTS = TagKey.create(Registries.BLOCK,
             ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, "portal_repellents"));
 
+    /** Slightly-low floors (15 px roads) a creative teleport pad may sit on, drawn 1 px lower. */
+    public static final TagKey<Block> TELEPORT_PAD_LOW_SUPPORTS = TagKey.create(Registries.BLOCK,
+            ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, "teleport_pad_low_supports"));
+
     private ModBlockTags() {}
 }

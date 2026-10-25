@@ -1,0 +1,126 @@
+{
+  "star": 2,
+  "type": "normal",
+  "clusters": [
+    {
+      "id": "patrat",
+      "weight": 6,
+      "members": [
+        {
+          "pokemon": "watchog",
+          "rarity": 20,
+          "level": "21-23",
+          "alphaLevel": "30-32"
+        },
+        {
+          "pokemon": "patrat",
+          "rarity": 80,
+          "level": "17-19",
+          "alphaLevel": "26-28"
+        }
+      ]
+    },
+    {
+      "id": "bunnelby",
+      "weight": 1,
+      "members": [
+        {
+          "pokemon": "bunnelby",
+          "rarity": 100,
+          "level": "17-19",
+          "alphaLevel": "26-28"
+        }
+      ]
+    },
+    {
+      "id": "buneary",
+      "weight": 6,
+      "members": [
+        {
+          "pokemon": "buneary",
+          "rarity": 100,
+          "level": "17-19",
+          "alphaLevel": "26-28"
+        }
+      ]
+    },
+    {
+      "id": "starly",
+      "weight": 3,
+      "members": [
+        {
+          "pokemon": "staravia",
+          "rarity": 20,
+          "level": "18-20",
+          "alphaLevel": "27-29"
+        },
+        {
+          "pokemon": "starly",
+          "rarity": 80,
+          "level": "15-17",
+          "alphaLevel": "24-26"
+        }
+      ]
+    },
+    {
+      "id": "pidgey",
+      "weight": 3,
+      "members": [
+        {
+          "pokemon": "pidgey",
+          "rarity": 100,
+          "level": "16-18",
+          "alphaLevel": "25-27"
+        }
+      ]
+    },
+    {
+      "id": "fletchling",
+      "weight": 2,
+      "members": [
+        {
+          "pokemon": "fletchling",
+          "rarity": 100,
+          "level": "16-18",
+          "alphaLevel": "25-27"
+        }
+      ]
+    },
+    {
+      "id": "eevee",
+      "weight": 3,
+      "members": [
+        {
+          "pokemon": "eevee",
+          "rarity": 100,
+          "level": "17-19",
+          "alphaLevel": "26-28"
+        }
+      ]
+    },
+    {
+      "id": "zangoose",
+      "weight": 3,
+      "members": [
+        {
+          "pokemon": "zangoose",
+          "rarity": 100,
+          "level": "23-25",
+          "alphaLevel": "32-34"
+        }
+      ]
+    },
+    {
+      "id": "farfetchd",
+      "weight": 3,
+      "members": [
+        {
+          "pokemon": "farfetchd",
+          "rarity": 100,
+          "level": "18-20",
+          "alphaLevel": "27-29"
+        }
+      ]
+    }
+  ]
+}

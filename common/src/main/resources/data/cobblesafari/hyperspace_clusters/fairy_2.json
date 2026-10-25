@@ -1,0 +1,180 @@
+{
+  "star": 2,
+  "type": "fairy",
+  "clusters": [
+    {
+      "id": "klefki",
+      "weight": 2,
+      "members": [
+        {
+          "pokemon": "klefki",
+          "rarity": 100,
+          "level": "25-27",
+          "alphaLevel": "34-36"
+        }
+      ]
+    },
+    {
+      "id": "carbink",
+      "weight": 4,
+      "members": [
+        {
+          "pokemon": "carbink",
+          "rarity": 100,
+          "level": "21-23",
+          "alphaLevel": "30-32"
+        }
+      ]
+    },
+    {
+      "id": "flabebe_flower_red",
+      "weight": 2,
+      "members": [
+        {
+          "pokemon": "flabebe flower=red",
+          "rarity": 100,
+          "level": "16-18",
+          "alphaLevel": "25-27"
+        }
+      ]
+    },
+    {
+      "id": "flabebe_flower_yellow",
+      "weight": 2,
+      "members": [
+        {
+          "pokemon": "flabebe flower=yellow",
+          "rarity": 100,
+          "level": "16-18",
+          "alphaLevel": "25-27"
+        }
+      ]
+    },
+    {
+      "id": "swirlix",
+      "weight": 4,
+      "members": [
+        {
+          "pokemon": "swirlix",
+          "rarity": 100,
+          "level": "17-19",
+          "alphaLevel": "26-28"
+        }
+      ]
+    },
+    {
+      "id": "flabebe_flower_orange",
+      "weight": 2,
+      "members": [
+        {
+          "pokemon": "flabebe flower=orange",
+          "rarity": 100,
+          "level": "16-18",
+          "alphaLevel": "25-27"
+        }
+      ]
+    },
+    {
+      "id": "spritzee",
+      "weight": 4,
+      "members": [
+        {
+          "pokemon": "spritzee",
+          "rarity": 100,
+          "level": "18-20",
+          "alphaLevel": "27-29"
+        }
+      ]
+    },
+    {
+      "id": "cleffa",
+      "weight": 3,
+      "members": [
+        {
+          "pokemon": "clefairy",
+          "rarity": 20,
+          "level": "22-24",
+          "alphaLevel": "31-33"
+        },
+        {
+          "pokemon": "cleffa",
+          "rarity": 80,
+          "level": "17-19",
+          "alphaLevel": "26-28"
+        }
+      ]
+    },
+    {
+      "id": "flabebe_flower_blue",
+      "weight": 2,
+      "members": [
+        {
+          "pokemon": "flabebe flower=blue",
+          "rarity": 100,
+          "level": "16-18",
+          "alphaLevel": "25-27"
+        }
+      ]
+    },
+    {
+      "id": "fidough",
+      "weight": 4,
+      "members": [
+        {
+          "pokemon": "fidough",
+          "rarity": 100,
+          "level": "18-20",
+          "alphaLevel": "27-29"
+        }
+      ]
+    },
+    {
+      "id": "cleffa_2",
+      "weight": 1,
+      "members": [
+        {
+          "pokemon": "cleffa",
+          "rarity": 100,
+          "level": "17-19",
+          "alphaLevel": "26-28"
+        }
+      ]
+    },
+    {
+      "id": "flabebe_flower_white",
+      "weight": 2,
+      "members": [
+        {
+          "pokemon": "flabebe flower=white",
+          "rarity": 100,
+          "level": "16-18",
+          "alphaLevel": "25-27"
+        }
+      ]
+    },
+    {
+      "id": "mimejr",
+      "weight": 2,
+      "members": [
+        {
+          "pokemon": "mimejr",
+          "rarity": 100,
+          "level": "20-22",
+          "alphaLevel": "29-31"
+        }
+      ]
+    },
+    {
+      "id": "igglybuff",
+      "weight": 1,
+      "members": [
+        {
+          "pokemon": "igglybuff",
+          "rarity": 100,
+          "level": "17-19",
+          "alphaLevel": "26-28"
+        }
+      ]
+    }
+  ]
+}

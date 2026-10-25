@@ -37,6 +37,12 @@ public class DungeonDimensions {
             ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, "dungeon_megalopolis")
     );
 
+    /** Hyperspace Lumiose (action plan 196): a void End-sky dimension holding one jigsaw structure. */
+    public static final ResourceKey<Level> DUNGEON_PARIS = ResourceKey.create(
+            Registries.DIMENSION,
+            ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, "dungeon_paris")
+    );
+
     /** The sub-dungeon (action plan 183, B1). Registered like any other, excluded in two places. */
     public static final ResourceKey<Level> DUNGEON_ULTRASPACE = ResourceKey.create(
             Registries.DIMENSION,
@@ -154,6 +160,22 @@ public class DungeonDimensions {
         // timer bug and is not one, so SubDungeonManager.leave logs an ERROR naming both numbers if
         // the structure ever ends up shaped otherwise.
         ).withFixedStructureY(92).withVoidGuardY(58).withWorldgenRestoration());
+
+        // Hyperspace Lumiose (action plan 196, section 5.2). Anchor and depth are PROVISIONAL until
+        // the six structures are delivered: measure them on the .nbt like plan 190 did.
+        REGISTERED_DUNGEONS.add(new DungeonConfig(
+                "dungeon_paris",
+                DUNGEON_PARIS,
+                "cobblesafari:hyperspace/start",
+                0, 0, 0,   // spawn offsets unused for a JIGSAW dungeon
+                900,
+                1,
+                DungeonConfig.StructureType.JIGSAW,
+                7,         // jigsaw depth
+                512,       // zoneSize - the slot grid pitch
+                1,         // clearSectionsBelow
+                10         // clearSectionsAbove
+        ).withFixedStructureY(64));
 
         // The sub-dungeon (action plan 183, section 3.4). structureId is deliberately empty: the
         // pool comes from the destination file, supplied by the caller at generation time.

@@ -1,0 +1,120 @@
+{
+  "star": 3,
+  "type": "psychic",
+  "clusters": [
+    {
+      "id": "mimejr",
+      "weight": 2,
+      "members": [
+        {
+          "pokemon": "mrmime",
+          "rarity": 20,
+          "level": "33-35",
+          "alphaLevel": "42-44"
+        },
+        {
+          "pokemon": "mimejr",
+          "rarity": 80,
+          "level": "23-25",
+          "alphaLevel": "32-34"
+        }
+      ]
+    },
+    {
+      "id": "abra",
+      "weight": 5,
+      "members": [
+        {
+          "pokemon": "kadabra",
+          "rarity": 20,
+          "level": "23-25",
+          "alphaLevel": "32-34"
+        },
+        {
+          "pokemon": "abra",
+          "rarity": 80,
+          "level": "20-22",
+          "alphaLevel": "29-31"
+        }
+      ]
+    },
+    {
+      "id": "beldum",
+      "weight": 5,
+      "members": [
+        {
+          "pokemon": "beldum",
+          "rarity": 100,
+          "level": "21-23",
+          "alphaLevel": "30-32"
+        }
+      ]
+    },
+    {
+      "id": "meditite",
+      "weight": 6,
+      "members": [
+        {
+          "pokemon": "medicham",
+          "rarity": 20,
+          "level": "37-39",
+          "alphaLevel": "46-48"
+        },
+        {
+          "pokemon": "meditite",
+          "rarity": 80,
+          "level": "24-26",
+          "alphaLevel": "33-35"
+        }
+      ]
+    },
+    {
+      "id": "ralts",
+      "weight": 5,
+      "members": [
+        {
+          "pokemon": "kirlia",
+          "rarity": 20,
+          "level": "24-26",
+          "alphaLevel": "33-35"
+        },
+        {
+          "pokemon": "ralts",
+          "rarity": 80,
+          "level": "21-23",
+          "alphaLevel": "30-32"
+        }
+      ]
+    },
+    {
+      "id": "slowpoke_galarian",
+      "weight": 3,
+      "members": [
+        {
+          "pokemon": "slowpoke galarian",
+          "rarity": 100,
+          "level": "24-26",
+          "alphaLevel": "33-35"
+        }
+      ]
+    },
+    {
+      "id": "chingling",
+      "weight": 4,
+      "members": [
+        {
+          "pokemon": "chimecho",
+          "rarity": 20,
+          "level": "24-26",
+          "alphaLevel": "33-35"
+        },
+        {
+          "pokemon": "chingling",
+          "rarity": 80,
+          "level": "21-23",
+          "alphaLevel": "30-32"
+        }
+      ]
+    }
+  ]
+}

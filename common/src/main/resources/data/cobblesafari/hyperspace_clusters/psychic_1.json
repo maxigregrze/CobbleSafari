@@ -1,0 +1,102 @@
+{
+  "star": 1,
+  "type": "psychic",
+  "clusters": [
+    {
+      "id": "munna",
+      "weight": 2,
+      "members": [
+        {
+          "pokemon": "munna",
+          "rarity": 100,
+          "level": "15-17",
+          "alphaLevel": "24-26"
+        }
+      ]
+    },
+    {
+      "id": "meditite",
+      "weight": 6,
+      "members": [
+        {
+          "pokemon": "meditite",
+          "rarity": 100,
+          "level": "19-21",
+          "alphaLevel": "28-30"
+        }
+      ]
+    },
+    {
+      "id": "espurr",
+      "weight": 6,
+      "members": [
+        {
+          "pokemon": "espurr",
+          "rarity": 100,
+          "level": "15-17",
+          "alphaLevel": "24-26"
+        }
+      ]
+    },
+    {
+      "id": "abra",
+      "weight": 6,
+      "members": [
+        {
+          "pokemon": "abra",
+          "rarity": 100,
+          "level": "13-15",
+          "alphaLevel": "22-24"
+        }
+      ]
+    },
+    {
+      "id": "inkay",
+      "weight": 2,
+      "members": [
+        {
+          "pokemon": "inkay",
+          "rarity": 100,
+          "level": "17-19",
+          "alphaLevel": "26-28"
+        }
+      ]
+    },
+    {
+      "id": "chingling",
+      "weight": 3,
+      "members": [
+        {
+          "pokemon": "chingling",
+          "rarity": 100,
+          "level": "14-16",
+          "alphaLevel": "23-25"
+        }
+      ]
+    },
+    {
+      "id": "spoink",
+      "weight": 3,
+      "members": [
+        {
+          "pokemon": "spoink",
+          "rarity": 100,
+          "level": "17-19",
+          "alphaLevel": "26-28"
+        }
+      ]
+    },
+    {
+      "id": "mimejr",
+      "weight": 2,
+      "members": [
+        {
+          "pokemon": "mimejr",
+          "rarity": 100,
+          "level": "17-19",
+          "alphaLevel": "26-28"
+        }
+      ]
+    }
+  ]
+}

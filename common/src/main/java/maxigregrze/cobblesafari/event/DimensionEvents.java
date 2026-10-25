@@ -94,6 +94,8 @@ public class DimensionEvents {
         maxigregrze.cobblesafari.csmusic.CsMusicTriggerDataLoader.load(server);
         maxigregrze.cobblesafari.csmusic.CsMusicAreaStore.loadAll(server);
         maxigregrze.cobblesafari.objectives.DimensionalObjectivesDataLoader.load(server);
+        maxigregrze.cobblesafari.dungeon.hyperspace.HyperspaceClusterDataLoader.load(server);
+        maxigregrze.cobblesafari.dungeon.hyperspace.obstacle.ObstacleRuleDataLoader.load(server);
         maxigregrze.cobblesafari.warpride.logic.WarpRideDifficultyLoader.load(server);
         maxigregrze.cobblesafari.warpride.logic.WarpRideDestinationLoader.load(server);
         // The initial resource load also fires the loaders' reload hook; swallow that flag so the
@@ -136,6 +138,8 @@ public class DimensionEvents {
         // Clients hold a copy of their pool's entries; a pool whose membership just changed must be
         // re-sent or they would keep sequencing the old list.
         maxigregrze.cobblesafari.csmusic.DimensionalMusicManager.invalidateAll();
+        maxigregrze.cobblesafari.dungeon.hyperspace.HyperspaceClusterDataLoader.load(server);
+        maxigregrze.cobblesafari.dungeon.hyperspace.obstacle.ObstacleRuleDataLoader.load(server);
         maxigregrze.cobblesafari.warpride.logic.WarpRideDifficultyLoader.load(server);
         maxigregrze.cobblesafari.warpride.logic.WarpRideDestinationLoader.load(server);
         // Clients hold the typeId -> tint map to draw portal sprites, so a changed colour must be re-sent.

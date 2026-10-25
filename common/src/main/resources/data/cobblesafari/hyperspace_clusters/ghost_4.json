@@ -1,0 +1,114 @@
+{
+  "star": 4,
+  "type": "ghost",
+  "clusters": [
+    {
+      "id": "haunter",
+      "weight": 6,
+      "members": [
+        {
+          "pokemon": "gengar",
+          "rarity": 20,
+          "level": "41-43",
+          "alphaLevel": "50-52"
+        },
+        {
+          "pokemon": "haunter",
+          "rarity": 80,
+          "level": "38-40",
+          "alphaLevel": "47-49"
+        }
+      ]
+    },
+    {
+      "id": "lampent",
+      "weight": 6,
+      "members": [
+        {
+          "pokemon": "chandelure",
+          "rarity": 20,
+          "level": "46-48",
+          "alphaLevel": "55-57"
+        },
+        {
+          "pokemon": "lampent",
+          "rarity": 80,
+          "level": "42-44",
+          "alphaLevel": "51-53"
+        }
+      ]
+    },
+    {
+      "id": "phantump",
+      "weight": 6,
+      "members": [
+        {
+          "pokemon": "trevenant",
+          "rarity": 20,
+          "level": "40-42",
+          "alphaLevel": "49-51"
+        },
+        {
+          "pokemon": "phantump",
+          "rarity": 80,
+          "level": "36-38",
+          "alphaLevel": "45-47"
+        }
+      ]
+    },
+    {
+      "id": "pumpkaboo",
+      "weight": 6,
+      "members": [
+        {
+          "pokemon": "gourgeist",
+          "rarity": 20,
+          "level": "39-41",
+          "alphaLevel": "48-50"
+        },
+        {
+          "pokemon": "pumpkaboo",
+          "rarity": 80,
+          "level": "36-38",
+          "alphaLevel": "45-47"
+        }
+      ]
+    },
+    {
+      "id": "yamask",
+      "weight": 3,
+      "members": [
+        {
+          "pokemon": "cofagrigus",
+          "rarity": 20,
+          "level": "40-42",
+          "alphaLevel": "49-51"
+        },
+        {
+          "pokemon": "yamask",
+          "rarity": 80,
+          "level": "36-38",
+          "alphaLevel": "45-47"
+        }
+      ]
+    },
+    {
+      "id": "greavard",
+      "weight": 3,
+      "members": [
+        {
+          "pokemon": "houndstone",
+          "rarity": 20,
+          "level": "39-41",
+          "alphaLevel": "48-50"
+        },
+        {
+          "pokemon": "greavard",
+          "rarity": 80,
+          "level": "36-38",
+          "alphaLevel": "45-47"
+        }
+      ]
+    }
+  ]
+}

@@ -1,6 +1,7 @@
 package maxigregrze.cobblesafari.block.base;
 
 import net.minecraft.core.Direction;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
@@ -34,6 +35,14 @@ public final class BlockShapeUtils {
      * One 90° step of the horizontal rotation used by the legacy cardinal blocks.
      * In [0,1] space: {@code box(minZ, minY, 1-maxX, maxZ, maxY, 1-minX)}.
      */
+    /**
+     * Support shape for a block whose hitbox fills the cell but whose sides must not count as solid
+     * (furniture, planters): a plate on the top and one on the bottom. Things still stand on it or
+     * hang under it, while walls, bars and panes - which test the side faces - stop connecting.
+     */
+    public static final VoxelShape CAPPED_SUPPORT = Shapes.or(
+            Block.box(0, 15, 0, 16, 16, 16), Block.box(0, 0, 0, 16, 1, 16));
+
     public static VoxelShape rotateClockwise90(VoxelShape shape) {
         VoxelShape[] acc = {Shapes.empty()};
         shape.forAllBoxes((minX, minY, minZ, maxX, maxY, maxZ) ->

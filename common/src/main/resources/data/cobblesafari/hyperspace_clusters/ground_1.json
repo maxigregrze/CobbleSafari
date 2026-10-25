@@ -1,0 +1,90 @@
+{
+  "star": 1,
+  "type": "ground",
+  "clusters": [
+    {
+      "id": "hippopotas",
+      "weight": 6,
+      "members": [
+        {
+          "pokemon": "hippopotas",
+          "rarity": 100,
+          "level": "18-20",
+          "alphaLevel": "27-29"
+        }
+      ]
+    },
+    {
+      "id": "drilbur",
+      "weight": 6,
+      "members": [
+        {
+          "pokemon": "drilbur",
+          "rarity": 100,
+          "level": "17-19",
+          "alphaLevel": "26-28"
+        }
+      ]
+    },
+    {
+      "id": "sandile",
+      "weight": 4,
+      "members": [
+        {
+          "pokemon": "sandile",
+          "rarity": 100,
+          "level": "16-18",
+          "alphaLevel": "25-27"
+        }
+      ]
+    },
+    {
+      "id": "numel",
+      "weight": 5,
+      "members": [
+        {
+          "pokemon": "numel",
+          "rarity": 100,
+          "level": "17-19",
+          "alphaLevel": "26-28"
+        }
+      ]
+    },
+    {
+      "id": "cubone",
+      "weight": 5,
+      "members": [
+        {
+          "pokemon": "cubone",
+          "rarity": 100,
+          "level": "16-18",
+          "alphaLevel": "25-27"
+        }
+      ]
+    },
+    {
+      "id": "onix",
+      "weight": 1,
+      "members": [
+        {
+          "pokemon": "onix",
+          "rarity": 100,
+          "level": "20-22",
+          "alphaLevel": "29-31"
+        }
+      ]
+    },
+    {
+      "id": "sandygast",
+      "weight": 3,
+      "members": [
+        {
+          "pokemon": "sandygast",
+          "rarity": 100,
+          "level": "22-24",
+          "alphaLevel": "31-33"
+        }
+      ]
+    }
+  ]
+}

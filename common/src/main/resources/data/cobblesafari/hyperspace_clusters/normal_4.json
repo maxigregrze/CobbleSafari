@@ -1,0 +1,120 @@
+{
+  "star": 4,
+  "type": "normal",
+  "clusters": [
+    {
+      "id": "kangaskhan",
+      "weight": 5,
+      "members": [
+        {
+          "pokemon": "kangaskhan",
+          "rarity": 100,
+          "level": "39-41",
+          "alphaLevel": "48-50"
+        }
+      ]
+    },
+    {
+      "id": "drampa",
+      "weight": 4,
+      "members": [
+        {
+          "pokemon": "drampa",
+          "rarity": 100,
+          "level": "40-42",
+          "alphaLevel": "49-51"
+        }
+      ]
+    },
+    {
+      "id": "furfrou",
+      "weight": 5,
+      "members": [
+        {
+          "pokemon": "furfrou",
+          "rarity": 100,
+          "level": "37-39",
+          "alphaLevel": "46-48"
+        }
+      ]
+    },
+    {
+      "id": "pidgeotto",
+      "weight": 7,
+      "members": [
+        {
+          "pokemon": "pidgeot",
+          "rarity": 20,
+          "level": "41-43",
+          "alphaLevel": "50-52"
+        },
+        {
+          "pokemon": "pidgeotto",
+          "rarity": 80,
+          "level": "36-38",
+          "alphaLevel": "45-47"
+        }
+      ]
+    },
+    {
+      "id": "kecleon",
+      "weight": 2,
+      "members": [
+        {
+          "pokemon": "kecleon",
+          "rarity": 100,
+          "level": "38-40",
+          "alphaLevel": "47-49"
+        }
+      ]
+    },
+    {
+      "id": "staravia",
+      "weight": 2,
+      "members": [
+        {
+          "pokemon": "staraptor",
+          "rarity": 20,
+          "level": "40-42",
+          "alphaLevel": "49-51"
+        },
+        {
+          "pokemon": "staravia",
+          "rarity": 80,
+          "level": "35-37",
+          "alphaLevel": "44-46"
+        }
+      ]
+    },
+    {
+      "id": "cyclizar",
+      "weight": 3,
+      "members": [
+        {
+          "pokemon": "cyclizar",
+          "rarity": 100,
+          "level": "38-40",
+          "alphaLevel": "47-49"
+        }
+      ]
+    },
+    {
+      "id": "helioptile",
+      "weight": 2,
+      "members": [
+        {
+          "pokemon": "heliolisk",
+          "rarity": 20,
+          "level": "39-41",
+          "alphaLevel": "48-50"
+        },
+        {
+          "pokemon": "helioptile",
+          "rarity": 80,
+          "level": "36-38",
+          "alphaLevel": "45-47"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,78 @@
+{
+  "star": 1,
+  "type": "fighting",
+  "clusters": [
+    {
+      "id": "clobbopus",
+      "weight": 3,
+      "members": [
+        {
+          "pokemon": "clobbopus",
+          "rarity": 100,
+          "level": "21-23",
+          "alphaLevel": "30-32"
+        }
+      ]
+    },
+    {
+      "id": "pancham",
+      "weight": 6,
+      "members": [
+        {
+          "pokemon": "pancham",
+          "rarity": 100,
+          "level": "17-19",
+          "alphaLevel": "26-28"
+        }
+      ]
+    },
+    {
+      "id": "meditite",
+      "weight": 6,
+      "members": [
+        {
+          "pokemon": "meditite",
+          "rarity": 100,
+          "level": "19-21",
+          "alphaLevel": "28-30"
+        }
+      ]
+    },
+    {
+      "id": "machop",
+      "weight": 6,
+      "members": [
+        {
+          "pokemon": "machop",
+          "rarity": 100,
+          "level": "16-18",
+          "alphaLevel": "25-27"
+        }
+      ]
+    },
+    {
+      "id": "mankey",
+      "weight": 3,
+      "members": [
+        {
+          "pokemon": "mankey",
+          "rarity": 100,
+          "level": "16-18",
+          "alphaLevel": "25-27"
+        }
+      ]
+    },
+    {
+      "id": "crabrawler",
+      "weight": 3,
+      "members": [
+        {
+          "pokemon": "crabrawler",
+          "rarity": 100,
+          "level": "16-18",
+          "alphaLevel": "25-27"
+        }
+      ]
+    }
+  ]
+}

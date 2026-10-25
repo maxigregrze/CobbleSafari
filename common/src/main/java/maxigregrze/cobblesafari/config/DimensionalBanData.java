@@ -103,6 +103,10 @@ public class DimensionalBanData {
         dimensions.put("cobblesafari:dungeon_ultra_desert", defaultDungeonRestrictions());
         dimensions.put("cobblesafari:dungeon_ultra_plant", defaultDungeonRestrictions());
         dimensions.put("cobblesafari:dungeon_ultra_crater", defaultDungeonRestrictions());
+
+        // Action plan 196, § 5.5 - Hyperspace Lumiose takes the Megalopolis profile. Obstacles are
+        // cleared programmatically, so allowBlockBreaking = false does not stand in their way.
+        dimensions.put("cobblesafari:dungeon_paris", defaultDungeonRestrictions());
     }
 
     /**

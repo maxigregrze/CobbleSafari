@@ -1,0 +1,150 @@
+{
+  "schemaVersion": 1,
+  "dimensionId": "cobblesafari:dungeon_paris",
+  "isInstanciated": true,
+  "enableFinalCompletionAuspiciousReward": false,
+  "auspiciousPokeballRewardDisplayName": "cobblesafari.dimensional_objectives.auspicious_pokeball_reward_display_name",
+  "fallbackCompletionReward": "cobblesafari:dimensional_objectives/fallback",
+  "enableFinalCompletionReward": true,
+  "finalCompletionReward": "cobblesafari:dimensional_objectives/paris_final",
+  "tasks": [
+    {
+      "taskId": "task_loot",
+      "weight": 12,
+      "countRange": [
+        2,
+        5
+      ],
+      "taskReward": "cobblesafari:dimensional_objectives/paris_task"
+    },
+    {
+      "taskId": "task_loot_floating",
+      "weight": 12,
+      "countRange": [
+        2,
+        5
+      ],
+      "taskReward": "cobblesafari:dimensional_objectives/paris_task"
+    },
+    {
+      "taskId": "task_catch_base",
+      "weight": 14,
+      "countRange": [
+        3,
+        8
+      ],
+      "taskReward": "cobblesafari:dimensional_objectives/paris_task"
+    },
+    {
+      "taskId": "task_catch_specie",
+      "weight": 10,
+      "countRange": [
+        1,
+        3
+      ],
+      "allowedSpecies": [
+        "instance"
+      ],
+      "taskReward": "cobblesafari:dimensional_objectives/paris_task"
+    },
+    {
+      "taskId": "task_catch_type",
+      "weight": 10,
+      "countRange": [
+        2,
+        5
+      ],
+      "allowedTypes": [
+        "instance"
+      ],
+      "taskReward": "cobblesafari:dimensional_objectives/paris_task"
+    },
+    {
+      "taskId": "task_catch_unique",
+      "weight": 8,
+      "countRange": [
+        3,
+        3
+      ],
+      "taskReward": "cobblesafari:dimensional_objectives/paris_task"
+    },
+    {
+      "taskId": "task_catch_unique",
+      "weight": 5,
+      "countRange": [
+        6,
+        6
+      ],
+      "taskReward": "cobblesafari:dimensional_objectives/paris_task"
+    },
+    {
+      "taskId": "task_catch_unique",
+      "weight": 2,
+      "countRange": [
+        9,
+        9
+      ],
+      "taskReward": "cobblesafari:dimensional_objectives/paris_task"
+    },
+    {
+      "taskId": "task_catch_alpha",
+      "weight": 9,
+      "taskReward": "cobblesafari:dimensional_objectives/paris_task"
+    },
+    {
+      "taskId": "task_catch_shiny",
+      "weight": 2,
+      "taskReward": "cobblesafari:dimensional_objectives/paris_task"
+    },
+    {
+      "taskId": "task_catch_alphashiny",
+      "weight": 1,
+      "taskReward": "cobblesafari:dimensional_objectives/paris_task"
+    },
+    {
+      "taskId": "task_catch_unaware",
+      "weight": 8,
+      "countRange": [
+        1,
+        3
+      ],
+      "taskReward": "cobblesafari:dimensional_objectives/paris_task"
+    },
+    {
+      "taskId": "task_catch_battle",
+      "weight": 8,
+      "countRange": [
+        2,
+        4
+      ],
+      "taskReward": "cobblesafari:dimensional_objectives/paris_task"
+    },
+    {
+      "taskId": "task_destroy_boulder",
+      "weight": 6,
+      "countRange": [
+        2,
+        4
+      ],
+      "taskReward": "cobblesafari:dimensional_objectives/paris_task"
+    },
+    {
+      "taskId": "task_destroy_brambles",
+      "weight": 6,
+      "countRange": [
+        2,
+        4
+      ],
+      "taskReward": "cobblesafari:dimensional_objectives/paris_task"
+    },
+    {
+      "taskId": "task_destroy_sludge",
+      "weight": 6,
+      "countRange": [
+        2,
+        4
+      ],
+      "taskReward": "cobblesafari:dimensional_objectives/paris_task"
+    }
+  ]
+}

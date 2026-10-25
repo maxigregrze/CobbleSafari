@@ -410,6 +410,12 @@ public final class TeleportPadManager {
         if (level.getBlockState(below).getBlock() instanceof TeleportPadBlock) {
             return below;
         }
+        // Standing on a 15 px road puts the feet in the road's cell, one below the pad.
+        BlockPos above = feet.above();
+        if (TeleportPadBlock.isLowSupport(level.getBlockState(feet))
+                && level.getBlockState(above).getBlock() instanceof TeleportPadBlock) {
+            return above;
+        }
         return null;
     }
 }

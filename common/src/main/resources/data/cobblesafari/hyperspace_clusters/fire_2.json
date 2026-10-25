@@ -1,0 +1,126 @@
+{
+  "star": 2,
+  "type": "fire",
+  "clusters": [
+    {
+      "id": "litleo",
+      "weight": 4,
+      "members": [
+        {
+          "pokemon": "litleo",
+          "rarity": 100,
+          "level": "20-22",
+          "alphaLevel": "29-31"
+        }
+      ]
+    },
+    {
+      "id": "numel",
+      "weight": 5,
+      "members": [
+        {
+          "pokemon": "numel",
+          "rarity": 100,
+          "level": "20-22",
+          "alphaLevel": "29-31"
+        }
+      ]
+    },
+    {
+      "id": "charmander",
+      "weight": 1,
+      "members": [
+        {
+          "pokemon": "charmander",
+          "rarity": 100,
+          "level": "16-18",
+          "alphaLevel": "25-27"
+        }
+      ]
+    },
+    {
+      "id": "pansear",
+      "weight": 4,
+      "members": [
+        {
+          "pokemon": "pansear",
+          "rarity": 100,
+          "level": "17-19",
+          "alphaLevel": "26-28"
+        }
+      ]
+    },
+    {
+      "id": "tepig",
+      "weight": 1,
+      "members": [
+        {
+          "pokemon": "tepig",
+          "rarity": 100,
+          "level": "16-18",
+          "alphaLevel": "25-27"
+        }
+      ]
+    },
+    {
+      "id": "houndour",
+      "weight": 4,
+      "members": [
+        {
+          "pokemon": "houndour",
+          "rarity": 100,
+          "level": "18-20",
+          "alphaLevel": "27-29"
+        }
+      ]
+    },
+    {
+      "id": "fennekin",
+      "weight": 1,
+      "members": [
+        {
+          "pokemon": "fennekin",
+          "rarity": 100,
+          "level": "16-18",
+          "alphaLevel": "25-27"
+        }
+      ]
+    },
+    {
+      "id": "torchic",
+      "weight": 1,
+      "members": [
+        {
+          "pokemon": "torchic",
+          "rarity": 100,
+          "level": "16-18",
+          "alphaLevel": "25-27"
+        }
+      ]
+    },
+    {
+      "id": "charcadet",
+      "weight": 6,
+      "members": [
+        {
+          "pokemon": "charcadet",
+          "rarity": 100,
+          "level": "19-21",
+          "alphaLevel": "28-30"
+        }
+      ]
+    },
+    {
+      "id": "litwick",
+      "weight": 3,
+      "members": [
+        {
+          "pokemon": "litwick",
+          "rarity": 100,
+          "level": "22-24",
+          "alphaLevel": "31-33"
+        }
+      ]
+    }
+  ]
+}

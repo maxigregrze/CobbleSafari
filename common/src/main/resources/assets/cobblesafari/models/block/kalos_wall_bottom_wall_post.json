@@ -1,0 +1,7 @@
+{
+  "parent": "cobblesafari:block/template_column_wall_post",
+  "textures": {
+    "wall": "cobblesafari:block/kalos_wall_bottom",
+    "end": "cobblesafari:block/kalos_wall_plain"
+  }
+}

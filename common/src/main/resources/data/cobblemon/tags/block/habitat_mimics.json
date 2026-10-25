@@ -1,0 +1,27 @@
+{
+  "replace": false,
+  "values": [
+    "cobblesafari:hyperspace_floor",
+    "cobblesafari:hyperspace_floor_plain",
+    "cobblesafari:hyperspace_road",
+    "cobblesafari:hyperspace_road_plain",
+    "cobblesafari:hyperspace_wall",
+    "cobblesafari:hyperspace_wall_plain",
+    "cobblesafari:hyperspace_wall_bottom",
+    "cobblesafari:hyperspace_wall_bottom_grate",
+    "cobblesafari:hyperspace_wall_bricks",
+    "cobblesafari:hyperspace_champfer",
+    "cobblesafari:hyperspace_tile",
+    "cobblesafari:kalos_floor",
+    "cobblesafari:kalos_floor_plain",
+    "cobblesafari:kalos_road",
+    "cobblesafari:kalos_road_plain",
+    "cobblesafari:kalos_wall",
+    "cobblesafari:kalos_wall_plain",
+    "cobblesafari:kalos_wall_bottom",
+    "cobblesafari:kalos_wall_bottom_grate",
+    "cobblesafari:kalos_wall_bricks",
+    "cobblesafari:kalos_champfer",
+    "cobblesafari:kalos_tile"
+  ]
+}

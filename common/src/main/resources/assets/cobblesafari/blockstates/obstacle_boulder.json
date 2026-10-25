@@ -1,0 +1,24 @@
+{
+  "variants": {
+    "cleared=false": [
+      {
+        "model": "cobblesafari:block/obstacle_boulder"
+      },
+      {
+        "model": "cobblesafari:block/obstacle_boulder",
+        "y": 90
+      },
+      {
+        "model": "cobblesafari:block/obstacle_boulder",
+        "y": 180
+      },
+      {
+        "model": "cobblesafari:block/obstacle_boulder",
+        "y": 270
+      }
+    ],
+    "cleared=true": {
+      "model": "cobblesafari:block/obstacle_boulder"
+    }
+  }
+}

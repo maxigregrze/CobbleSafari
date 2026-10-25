@@ -1,0 +1,24 @@
+{
+  "variants": {
+    "cleared=false": [
+      {
+        "model": "cobblesafari:block/obstacle_brambles"
+      },
+      {
+        "model": "cobblesafari:block/obstacle_brambles",
+        "y": 90
+      },
+      {
+        "model": "cobblesafari:block/obstacle_brambles",
+        "y": 180
+      },
+      {
+        "model": "cobblesafari:block/obstacle_brambles",
+        "y": 270
+      }
+    ],
+    "cleared=true": {
+      "model": "cobblesafari:block/obstacle_brambles"
+    }
+  }
+}

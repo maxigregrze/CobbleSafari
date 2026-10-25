@@ -1,6 +1,7 @@
 package maxigregrze.cobblesafari.block.teleporter;
 
 import com.mojang.serialization.MapCodec;
+import maxigregrze.cobblesafari.init.ModBlockTags;
 import maxigregrze.cobblesafari.platform.Services;
 import maxigregrze.cobblesafari.teleporter.TeleportPadManager;
 import net.minecraft.core.BlockPos;
@@ -38,7 +39,8 @@ import org.jetbrains.annotations.Nullable;
 /**
  * Paired teleporter pad. Floor-standing thin slab; the {@code MODE} drives the destination
  * direction (up / down / forward) and the {@code FACING} the L-shape / line orientation.
- * Must be placed on a sturdy block. Configured creative-only (shift-click); used by jumping.
+ * Must be placed on a sturdy block, or - creative pad only - on a {@link ModBlockTags#TELEPORT_PAD_LOW_SUPPORTS}
+ * road, where it sits 1 px lower to rest on the 15 px top. Configured creative-only (shift-click); used by jumping.
  */
 public class TeleportPadBlock extends BaseEntityBlock {
 
@@ -48,6 +50,8 @@ public class TeleportPadBlock extends BaseEntityBlock {
     public static final MapCodec<TeleportPadBlock> CODEC = simpleCodec(TeleportPadBlock::new);
 
     private static final VoxelShape SHAPE = Block.box(0, 0, 0, 16, 1, 16);
+    /** On a low support: the pad drops into the road's missing top pixel. */
+    private static final VoxelShape SHAPE_LOWERED = Block.box(0, -1, 0, 16, 0, 16);
 
     public TeleportPadBlock(Properties properties) {
         super(properties);
@@ -97,7 +101,23 @@ public class TeleportPadBlock extends BaseEntityBlock {
     @Override
     public boolean canSurvive(BlockState state, LevelReader level, BlockPos pos) {
         BlockPos below = pos.below();
-        return level.getBlockState(below).isFaceSturdy(level, below, Direction.UP);
+        BlockState belowState = level.getBlockState(below);
+        return belowState.isFaceSturdy(level, below, Direction.UP)
+                || (acceptsLowSupports() && isLowSupport(belowState));
+    }
+
+    /** Whether this pad may stand on a low support; the survival pad keeps the sturdy-face rule. */
+    protected boolean acceptsLowSupports() {
+        return true;
+    }
+
+    public static boolean isLowSupport(BlockState state) {
+        return state.is(ModBlockTags.TELEPORT_PAD_LOW_SUPPORTS);
+    }
+
+    /** True when the pad at {@code pos} rests on a low support and is drawn 1 px lower. */
+    public static boolean isLowered(BlockGetter level, BlockPos pos) {
+        return isLowSupport(level.getBlockState(pos.below()));
     }
 
     @Override
@@ -118,7 +138,7 @@ public class TeleportPadBlock extends BaseEntityBlock {
 
     @Override
     protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
-        return SHAPE;
+        return isLowered(level, pos) ? SHAPE_LOWERED : SHAPE;
     }
 
     @Override

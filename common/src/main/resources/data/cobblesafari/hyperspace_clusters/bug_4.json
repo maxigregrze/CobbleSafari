@@ -1,0 +1,132 @@
+{
+  "star": 4,
+  "type": "bug",
+  "clusters": [
+    {
+      "id": "kakuna",
+      "weight": 5,
+      "members": [
+        {
+          "pokemon": "beedrill",
+          "rarity": 20,
+          "level": "35-37",
+          "alphaLevel": "44-46"
+        },
+        {
+          "pokemon": "kakuna",
+          "rarity": 80,
+          "level": "34-36",
+          "alphaLevel": "43-45"
+        }
+      ]
+    },
+    {
+      "id": "pinsir",
+      "weight": 4,
+      "members": [
+        {
+          "pokemon": "pinsir",
+          "rarity": 100,
+          "level": "39-41",
+          "alphaLevel": "48-50"
+        }
+      ]
+    },
+    {
+      "id": "heracross",
+      "weight": 4,
+      "members": [
+        {
+          "pokemon": "heracross",
+          "rarity": 100,
+          "level": "39-41",
+          "alphaLevel": "48-50"
+        }
+      ]
+    },
+    {
+      "id": "scyther",
+      "weight": 1,
+      "members": [
+        {
+          "pokemon": "scyther",
+          "rarity": 80,
+          "level": "37-39",
+          "alphaLevel": "46-48"
+        },
+        {
+          "pokemon": "scizor",
+          "rarity": 20,
+          "level": "40-42",
+          "alphaLevel": "49-51"
+        }
+      ]
+    },
+    {
+      "id": "whirlipede",
+      "weight": 3,
+      "members": [
+        {
+          "pokemon": "scolipede",
+          "rarity": 20,
+          "level": "39-41",
+          "alphaLevel": "48-50"
+        },
+        {
+          "pokemon": "whirlipede",
+          "rarity": 80,
+          "level": "37-39",
+          "alphaLevel": "46-48"
+        }
+      ]
+    },
+    {
+      "id": "scyther_2",
+      "weight": 4,
+      "members": [
+        {
+          "pokemon": "scyther",
+          "rarity": 100,
+          "level": "37-39",
+          "alphaLevel": "46-48"
+        }
+      ]
+    },
+    {
+      "id": "scyther_3",
+      "weight": 5,
+      "members": [
+        {
+          "pokemon": "kleavor",
+          "rarity": 20,
+          "level": "40-42",
+          "alphaLevel": "49-51"
+        },
+        {
+          "pokemon": "scyther",
+          "rarity": 80,
+          "level": "37-39",
+          "alphaLevel": "46-48"
+        }
+      ]
+    },
+    {
+      "id": "scyther_4",
+      "weight": 3,
+      "members": [
+        {
+          "pokemon": "scizor",
+          "rarity": 20,
+          "level": "40-42",
+          "alphaLevel": "49-51"
+        },
+        {
+          "pokemon": "scyther",
+          "rarity": 80,
+          "level": "37-39",
+          "alphaLevel": "46-48"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,150 @@
+{
+  "star": 5,
+  "type": "normal",
+  "clusters": [
+    {
+      "id": "porygon",
+      "weight": 1,
+      "members": [
+        {
+          "pokemon": "porygon",
+          "rarity": 80,
+          "level": "50-52",
+          "alphaLevel": "59-61"
+        },
+        {
+          "pokemon": "porygon2",
+          "rarity": 20,
+          "level": "52-54",
+          "alphaLevel": "61-63"
+        }
+      ]
+    },
+    {
+      "id": "porygon_2",
+      "weight": 1,
+      "members": [
+        {
+          "pokemon": "porygon",
+          "rarity": 80,
+          "level": "50-52",
+          "alphaLevel": "59-61"
+        },
+        {
+          "pokemon": "porygonz",
+          "rarity": 20,
+          "level": "54-56",
+          "alphaLevel": "63-65"
+        }
+      ]
+    },
+    {
+      "id": "vaporeon",
+      "weight": 1,
+      "members": [
+        {
+          "pokemon": "eevee",
+          "rarity": 20,
+          "level": "51-53",
+          "alphaLevel": "60-62"
+        },
+        {
+          "pokemon": "vaporeon",
+          "rarity": 80,
+          "level": "52-54",
+          "alphaLevel": "61-63"
+        }
+      ]
+    },
+    {
+      "id": "jolteon",
+      "weight": 1,
+      "members": [
+        {
+          "pokemon": "eevee",
+          "rarity": 20,
+          "level": "51-53",
+          "alphaLevel": "60-62"
+        },
+        {
+          "pokemon": "jolteon",
+          "rarity": 80,
+          "level": "52-54",
+          "alphaLevel": "61-63"
+        }
+      ]
+    },
+    {
+      "id": "espeon",
+      "weight": 1,
+      "members": [
+        {
+          "pokemon": "espeon",
+          "rarity": 50,
+          "level": "52-54",
+          "alphaLevel": "61-63"
+        },
+        {
+          "pokemon": "umbreon",
+          "rarity": 50,
+          "level": "52-54",
+          "alphaLevel": "61-63"
+        }
+      ]
+    },
+    {
+      "id": "flareon",
+      "weight": 1,
+      "members": [
+        {
+          "pokemon": "eevee",
+          "rarity": 20,
+          "level": "51-53",
+          "alphaLevel": "60-62"
+        },
+        {
+          "pokemon": "flareon",
+          "rarity": 80,
+          "level": "52-54",
+          "alphaLevel": "61-63"
+        }
+      ]
+    },
+    {
+      "id": "sylveon",
+      "weight": 1,
+      "members": [
+        {
+          "pokemon": "eevee",
+          "rarity": 20,
+          "level": "51-53",
+          "alphaLevel": "60-62"
+        },
+        {
+          "pokemon": "sylveon",
+          "rarity": 80,
+          "level": "52-54",
+          "alphaLevel": "61-63"
+        }
+      ]
+    },
+    {
+      "id": "leafeon",
+      "weight": 1,
+      "members": [
+        {
+          "pokemon": "leafeon",
+          "rarity": 50,
+          "level": "52-54",
+          "alphaLevel": "61-63"
+        },
+        {
+          "pokemon": "glaceon",
+          "rarity": 50,
+          "level": "52-54",
+          "alphaLevel": "61-63"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/leaves",
+  "textures": {
+    "all": "cobblesafari:block/hyperspace_bush"
+  }
+}

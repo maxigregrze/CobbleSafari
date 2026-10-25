@@ -1,0 +1,120 @@
+{
+  "star": 4,
+  "type": "flying",
+  "clusters": [
+    {
+      "id": "noibat",
+      "weight": 6,
+      "members": [
+        {
+          "pokemon": "noivern",
+          "rarity": 20,
+          "level": "48-50",
+          "alphaLevel": "57-59"
+        },
+        {
+          "pokemon": "noibat",
+          "rarity": 80,
+          "level": "38-40",
+          "alphaLevel": "47-49"
+        }
+      ]
+    },
+    {
+      "id": "pidgeotto",
+      "weight": 5,
+      "members": [
+        {
+          "pokemon": "pidgeot",
+          "rarity": 20,
+          "level": "41-43",
+          "alphaLevel": "50-52"
+        },
+        {
+          "pokemon": "pidgeotto",
+          "rarity": 80,
+          "level": "36-38",
+          "alphaLevel": "45-47"
+        }
+      ]
+    },
+    {
+      "id": "fletchinder",
+      "weight": 6,
+      "members": [
+        {
+          "pokemon": "talonflame",
+          "rarity": 20,
+          "level": "41-43",
+          "alphaLevel": "50-52"
+        },
+        {
+          "pokemon": "fletchinder",
+          "rarity": 80,
+          "level": "36-38",
+          "alphaLevel": "45-47"
+        }
+      ]
+    },
+    {
+      "id": "skarmory",
+      "weight": 7,
+      "members": [
+        {
+          "pokemon": "skarmory",
+          "rarity": 100,
+          "level": "37-39",
+          "alphaLevel": "46-48"
+        }
+      ]
+    },
+    {
+      "id": "charmeleon",
+      "weight": 1,
+      "members": [
+        {
+          "pokemon": "charizard",
+          "rarity": 20,
+          "level": "41-43",
+          "alphaLevel": "50-52"
+        },
+        {
+          "pokemon": "charmeleon",
+          "rarity": 80,
+          "level": "36-38",
+          "alphaLevel": "45-47"
+        }
+      ]
+    },
+    {
+      "id": "flamigo",
+      "weight": 3,
+      "members": [
+        {
+          "pokemon": "flamigo",
+          "rarity": 100,
+          "level": "37-39",
+          "alphaLevel": "46-48"
+        }
+      ]
+    },
+    {
+      "id": "corvisquire",
+      "weight": 2,
+      "members": [
+        {
+          "pokemon": "corviknight",
+          "rarity": 20,
+          "level": "41-43",
+          "alphaLevel": "50-52"
+        },
+        {
+          "pokemon": "corvisquire",
+          "rarity": 80,
+          "level": "36-38",
+          "alphaLevel": "45-47"
+        }
+      ]
+    }
+  ]
+}

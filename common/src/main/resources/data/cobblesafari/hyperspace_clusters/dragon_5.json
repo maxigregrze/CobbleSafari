@@ -1,0 +1,60 @@
+{
+  "star": 5,
+  "type": "dragon",
+  "clusters": [
+    {
+      "id": "sliggoo_hisuian",
+      "weight": 1,
+      "members": [
+        {
+          "pokemon": "goodra hisuian",
+          "rarity": 20,
+          "level": "56-58",
+          "alphaLevel": "65-67"
+        },
+        {
+          "pokemon": "sliggoo hisuian",
+          "rarity": 80,
+          "level": "55-57",
+          "alphaLevel": "64-66"
+        }
+      ]
+    },
+    {
+      "id": "frigibax",
+      "weight": 1,
+      "members": [
+        {
+          "pokemon": "arctibax",
+          "rarity": 20,
+          "level": "54-56",
+          "alphaLevel": "63-65"
+        },
+        {
+          "pokemon": "frigibax",
+          "rarity": 80,
+          "level": "52-54",
+          "alphaLevel": "61-63"
+        }
+      ]
+    },
+    {
+      "id": "arctibax",
+      "weight": 1,
+      "members": [
+        {
+          "pokemon": "baxcalibur",
+          "rarity": 20,
+          "level": "57-59",
+          "alphaLevel": "66-68"
+        },
+        {
+          "pokemon": "arctibax",
+          "rarity": 80,
+          "level": "54-56",
+          "alphaLevel": "63-65"
+        }
+      ]
+    }
+  ]
+}

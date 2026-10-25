@@ -1,0 +1,24 @@
+{
+  "variants": {
+    "cleared=false": [
+      {
+        "model": "cobblesafari:block/obstacle_sludge"
+      },
+      {
+        "model": "cobblesafari:block/obstacle_sludge",
+        "y": 90
+      },
+      {
+        "model": "cobblesafari:block/obstacle_sludge",
+        "y": 180
+      },
+      {
+        "model": "cobblesafari:block/obstacle_sludge",
+        "y": 270
+      }
+    ],
+    "cleared=true": {
+      "model": "cobblesafari:block/obstacle_sludge"
+    }
+  }
+}

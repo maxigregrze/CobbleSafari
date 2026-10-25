@@ -1,0 +1,60 @@
+{
+  "star": 5,
+  "type": "water",
+  "clusters": [
+    {
+      "id": "mudkip",
+      "weight": 1,
+      "members": [
+        {
+          "pokemon": "swampert",
+          "rarity": 20,
+          "level": "54-56",
+          "alphaLevel": "63-65"
+        },
+        {
+          "pokemon": "mudkip",
+          "rarity": 80,
+          "level": "50-52",
+          "alphaLevel": "59-61"
+        }
+      ]
+    },
+    {
+      "id": "squirtle",
+      "weight": 1,
+      "members": [
+        {
+          "pokemon": "blastoise",
+          "rarity": 20,
+          "level": "54-56",
+          "alphaLevel": "63-65"
+        },
+        {
+          "pokemon": "squirtle",
+          "rarity": 80,
+          "level": "50-52",
+          "alphaLevel": "59-61"
+        }
+      ]
+    },
+    {
+      "id": "froakie",
+      "weight": 1,
+      "members": [
+        {
+          "pokemon": "greninja",
+          "rarity": 20,
+          "level": "54-56",
+          "alphaLevel": "63-65"
+        },
+        {
+          "pokemon": "froakie",
+          "rarity": 80,
+          "level": "50-52",
+          "alphaLevel": "59-61"
+        }
+      ]
+    }
+  ]
+}

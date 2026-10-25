@@ -1,0 +1,192 @@
+{
+  "star": 4,
+  "type": "electric",
+  "clusters": [
+    {
+      "id": "pikachu",
+      "weight": 5,
+      "members": [
+        {
+          "pokemon": "raichu",
+          "rarity": 20,
+          "level": "39-41",
+          "alphaLevel": "48-50"
+        },
+        {
+          "pokemon": "pikachu",
+          "rarity": 80,
+          "level": "36-38",
+          "alphaLevel": "45-47"
+        }
+      ]
+    },
+    {
+      "id": "pikachu_2",
+      "weight": 1,
+      "members": [
+        {
+          "pokemon": "raichu alolan",
+          "rarity": 20,
+          "level": "39-41",
+          "alphaLevel": "48-50"
+        },
+        {
+          "pokemon": "pikachu",
+          "rarity": 80,
+          "level": "36-38",
+          "alphaLevel": "45-47"
+        }
+      ]
+    },
+    {
+      "id": "eevee",
+      "weight": 2,
+      "members": [
+        {
+          "pokemon": "jolteon",
+          "rarity": 20,
+          "level": "36-38",
+          "alphaLevel": "45-47"
+        },
+        {
+          "pokemon": "eevee",
+          "rarity": 80,
+          "level": "35-37",
+          "alphaLevel": "44-46"
+        }
+      ]
+    },
+    {
+      "id": "flaaffy",
+      "weight": 5,
+      "members": [
+        {
+          "pokemon": "ampharos",
+          "rarity": 20,
+          "level": "39-41",
+          "alphaLevel": "48-50"
+        },
+        {
+          "pokemon": "flaaffy",
+          "rarity": 80,
+          "level": "36-38",
+          "alphaLevel": "45-47"
+        }
+      ]
+    },
+    {
+      "id": "eelektrik",
+      "weight": 6,
+      "members": [
+        {
+          "pokemon": "eelektross",
+          "rarity": 20,
+          "level": "44-46",
+          "alphaLevel": "53-55"
+        },
+        {
+          "pokemon": "eelektrik",
+          "rarity": 80,
+          "level": "42-44",
+          "alphaLevel": "51-53"
+        }
+      ]
+    },
+    {
+      "id": "helioptile",
+      "weight": 5,
+      "members": [
+        {
+          "pokemon": "heliolisk",
+          "rarity": 20,
+          "level": "39-41",
+          "alphaLevel": "48-50"
+        },
+        {
+          "pokemon": "helioptile",
+          "rarity": 80,
+          "level": "36-38",
+          "alphaLevel": "45-47"
+        }
+      ]
+    },
+    {
+      "id": "toxel",
+      "weight": 3,
+      "members": [
+        {
+          "pokemon": "toxtricity punk_form=amped",
+          "rarity": 10,
+          "level": "39-41",
+          "alphaLevel": "48-50"
+        },
+        {
+          "pokemon": "toxtricity punk_form=low_key",
+          "rarity": 10,
+          "level": "39-41",
+          "alphaLevel": "48-50"
+        },
+        {
+          "pokemon": "toxel",
+          "rarity": 80,
+          "level": "36-38",
+          "alphaLevel": "45-47"
+        }
+      ]
+    },
+    {
+      "id": "toxel_2",
+      "weight": 1,
+      "members": [
+        {
+          "pokemon": "toxtricity punk_form=amped",
+          "rarity": 20,
+          "level": "39-41",
+          "alphaLevel": "48-50"
+        },
+        {
+          "pokemon": "toxel",
+          "rarity": 80,
+          "level": "36-38",
+          "alphaLevel": "45-47"
+        }
+      ]
+    },
+    {
+      "id": "toxel_3",
+      "weight": 1,
+      "members": [
+        {
+          "pokemon": "toxtricity punk_form=low_key",
+          "rarity": 20,
+          "level": "39-41",
+          "alphaLevel": "48-50"
+        },
+        {
+          "pokemon": "toxel",
+          "rarity": 80,
+          "level": "36-38",
+          "alphaLevel": "45-47"
+        }
+      ]
+    },
+    {
+      "id": "raichu",
+      "weight": 1,
+      "members": [
+        {
+          "pokemon": "raichu alolan",
+          "rarity": 20,
+          "level": "39-41",
+          "alphaLevel": "48-50"
+        },
+        {
+          "pokemon": "raichu",
+          "rarity": 80,
+          "level": "39-41",
+          "alphaLevel": "48-50"
+        }
+      ]
+    }
+  ]
+}

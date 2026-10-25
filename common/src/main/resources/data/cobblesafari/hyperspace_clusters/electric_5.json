@@ -1,0 +1,54 @@
+{
+  "star": 5,
+  "type": "electric",
+  "clusters": [
+    {
+      "id": "rotom",
+      "weight": 1,
+      "members": [
+        {
+          "pokemon": "rotom",
+          "rarity": 100,
+          "level": "52-54",
+          "alphaLevel": "61-63"
+        }
+      ]
+    },
+    {
+      "id": "rotom_appliance_heat",
+      "weight": 1,
+      "members": [
+        {
+          "pokemon": "rotom appliance=heat",
+          "rarity": 20,
+          "level": "54-56",
+          "alphaLevel": "63-65"
+        },
+        {
+          "pokemon": "rotom appliance=wash",
+          "rarity": 20,
+          "level": "54-56",
+          "alphaLevel": "63-65"
+        },
+        {
+          "pokemon": "rotom appliance=fan",
+          "rarity": 20,
+          "level": "54-56",
+          "alphaLevel": "63-65"
+        },
+        {
+          "pokemon": "rotom appliance=frost",
+          "rarity": 20,
+          "level": "54-56",
+          "alphaLevel": "63-65"
+        },
+        {
+          "pokemon": "rotom appliance=mow",
+          "rarity": 20,
+          "level": "54-56",
+          "alphaLevel": "63-65"
+        }
+      ]
+    }
+  ]
+}

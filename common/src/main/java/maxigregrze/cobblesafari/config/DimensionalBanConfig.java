@@ -22,7 +22,7 @@ import java.util.Map;
  * Manual edits are respected after first load.
  */
 public class DimensionalBanConfig {
-    public static final int CONFIG_VERSION = 4;
+    public static final int CONFIG_VERSION = 5;
 
     /**
      * Version that relifts the {@code cobblesafari:dungeon_jump} restrictions. The entry predates the
@@ -45,6 +45,9 @@ public class DimensionalBanConfig {
      */
     private static final int VERSION_ULTRA_SUB_DIMENSIONS = 4;
 
+    /** Version that creates the {@code dungeon_paris} entry (action plan 196, § 5.5). Same guarantee. */
+    private static final int VERSION_PARIS = 5;
+
     private static final String KEY_CONFIG_VERSION = "CONFIG_VERSION";
     private static final String KEY_DIMENSIONS = "dimensions";
     private static final String DUNGEON_JUMP_DIMENSION_ID = "cobblesafari:dungeon_jump";
@@ -53,6 +56,7 @@ public class DimensionalBanConfig {
     private static final String[] ULTRA_SUB_DIMENSION_IDS = {
             "cobblesafari:dungeon_ultra_jungle", "cobblesafari:dungeon_ultra_desert",
             "cobblesafari:dungeon_ultra_plant", "cobblesafari:dungeon_ultra_crater" };
+    private static final String[] PARIS_DIMENSION_IDS = { "cobblesafari:dungeon_paris" };
 
     private static final Path CONFIG_DIR = Services.PLATFORM.getConfigDir().resolve("cobblesafari");
     private static final Path CONFIG_PATH = CONFIG_DIR.resolve("dimensional_restrictions_config.json");
@@ -138,13 +142,15 @@ public class DimensionalBanConfig {
                     loadedVersion, VERSION_ULTRA_DIMENSIONS, ULTRA_DIMENSION_IDS, data);
             boolean ultraSubMigrated = seedMissingDimensions(
                     loadedVersion, VERSION_ULTRA_SUB_DIMENSIONS, ULTRA_SUB_DIMENSION_IDS, data);
-            ultraMigrated = ultraMigrated || ultraSubMigrated;
+            boolean parisMigrated = seedMissingDimensions(
+                    loadedVersion, VERSION_PARIS, PARIS_DIMENSION_IDS, data);
+            ultraMigrated = ultraMigrated || ultraSubMigrated || parisMigrated;
             CobbleSafari.LOGGER.info("CobbleSafari >> dimensional_restrictions_config.json loaded successfully from {}", CONFIG_PATH);
             if (mountingMigrated || jumpMigrated || ultraMigrated) {
                 save();
                 if (ultraMigrated) {
                     CobbleSafari.LOGGER.info(
-                            "CobbleSafari >> dimensional_restrictions_config.json migrated from v{} to v{}: entries created for the Ultra dimensions",
+                            "CobbleSafari >> dimensional_restrictions_config.json migrated from v{} to v{}: entries created for the new dungeon dimensions",
                             loadedVersion, CONFIG_VERSION);
                 }
                 if (mountingMigrated) {

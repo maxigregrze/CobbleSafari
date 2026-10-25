@@ -1,0 +1,84 @@
+{
+  "star": 3,
+  "type": "ghost",
+  "clusters": [
+    {
+      "id": "shuppet",
+      "weight": 3,
+      "members": [
+        {
+          "pokemon": "banette",
+          "rarity": 20,
+          "level": "37-39",
+          "alphaLevel": "46-48"
+        },
+        {
+          "pokemon": "shuppet",
+          "rarity": 80,
+          "level": "24-26",
+          "alphaLevel": "33-35"
+        }
+      ]
+    },
+    {
+      "id": "litwick",
+      "weight": 3,
+      "members": [
+        {
+          "pokemon": "lampent",
+          "rarity": 20,
+          "level": "41-43",
+          "alphaLevel": "50-52"
+        },
+        {
+          "pokemon": "litwick",
+          "rarity": 80,
+          "level": "25-27",
+          "alphaLevel": "34-36"
+        }
+      ]
+    },
+    {
+      "id": "gastly",
+      "weight": 1,
+      "members": [
+        {
+          "pokemon": "haunter",
+          "rarity": 20,
+          "level": "26-28",
+          "alphaLevel": "35-37"
+        },
+        {
+          "pokemon": "gastly",
+          "rarity": 80,
+          "level": "22-24",
+          "alphaLevel": "31-33"
+        }
+      ]
+    },
+    {
+      "id": "mimikyu",
+      "weight": 1,
+      "members": [
+        {
+          "pokemon": "mimikyu",
+          "rarity": 100,
+          "level": "24-26",
+          "alphaLevel": "33-35"
+        }
+      ]
+    },
+    {
+      "id": "yamask_galarian",
+      "weight": 1,
+      "members": [
+        {
+          "pokemon": "yamask galarian",
+          "rarity": 100,
+          "level": "24-26",
+          "alphaLevel": "33-35"
+        }
+      ]
+    }
+  ]
+}

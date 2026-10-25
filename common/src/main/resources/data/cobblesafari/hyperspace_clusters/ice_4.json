@@ -1,0 +1,180 @@
+{
+  "star": 4,
+  "type": "ice",
+  "clusters": [
+    {
+      "id": "snover",
+      "weight": 4,
+      "members": [
+        {
+          "pokemon": "abomasnow",
+          "rarity": 20,
+          "level": "42-44",
+          "alphaLevel": "51-53"
+        },
+        {
+          "pokemon": "snover",
+          "rarity": 80,
+          "level": "37-39",
+          "alphaLevel": "46-48"
+        }
+      ]
+    },
+    {
+      "id": "vanillish",
+      "weight": 4,
+      "members": [
+        {
+          "pokemon": "vanilluxe",
+          "rarity": 20,
+          "level": "47-49",
+          "alphaLevel": "56-58"
+        },
+        {
+          "pokemon": "vanillish",
+          "rarity": 80,
+          "level": "41-43",
+          "alphaLevel": "50-52"
+        }
+      ]
+    },
+    {
+      "id": "bergmite",
+      "weight": 3,
+      "members": [
+        {
+          "pokemon": "avalugg",
+          "rarity": 20,
+          "level": "41-43",
+          "alphaLevel": "50-52"
+        },
+        {
+          "pokemon": "bergmite",
+          "rarity": 80,
+          "level": "37-39",
+          "alphaLevel": "46-48"
+        }
+      ]
+    },
+    {
+      "id": "snorunt",
+      "weight": 3,
+      "members": [
+        {
+          "pokemon": "glalie",
+          "rarity": 20,
+          "level": "42-44",
+          "alphaLevel": "51-53"
+        },
+        {
+          "pokemon": "snorunt",
+          "rarity": 80,
+          "level": "37-39",
+          "alphaLevel": "46-48"
+        }
+      ]
+    },
+    {
+      "id": "eevee",
+      "weight": 2,
+      "members": [
+        {
+          "pokemon": "glaceon",
+          "rarity": 20,
+          "level": "37-39",
+          "alphaLevel": "46-48"
+        },
+        {
+          "pokemon": "eevee",
+          "rarity": 80,
+          "level": "35-37",
+          "alphaLevel": "44-46"
+        }
+      ]
+    },
+    {
+      "id": "snorunt_2",
+      "weight": 3,
+      "members": [
+        {
+          "pokemon": "froslass",
+          "rarity": 20,
+          "level": "42-44",
+          "alphaLevel": "51-53"
+        },
+        {
+          "pokemon": "snorunt",
+          "rarity": 80,
+          "level": "37-39",
+          "alphaLevel": "46-48"
+        }
+      ]
+    },
+    {
+      "id": "amaura",
+      "weight": 2,
+      "members": [
+        {
+          "pokemon": "amaura",
+          "rarity": 100,
+          "level": "37-39",
+          "alphaLevel": "46-48"
+        }
+      ]
+    },
+    {
+      "id": "froslass",
+      "weight": 1,
+      "members": [
+        {
+          "pokemon": "froslass",
+          "rarity": 50,
+          "level": "42-44",
+          "alphaLevel": "51-53"
+        },
+        {
+          "pokemon": "glalie",
+          "rarity": 50,
+          "level": "42-44",
+          "alphaLevel": "51-53"
+        }
+      ]
+    },
+    {
+      "id": "crabrawler",
+      "weight": 3,
+      "members": [
+        {
+          "pokemon": "crabominable",
+          "rarity": 20,
+          "level": "38-40",
+          "alphaLevel": "47-49"
+        },
+        {
+          "pokemon": "crabrawler",
+          "rarity": 80,
+          "level": "35-37",
+          "alphaLevel": "44-46"
+        }
+      ]
+    },
+    {
+      "id": "mrmime_galarian",
+      "weight": 2,
+      "members": [
+        {
+          "pokemon": "mrrime",
+          "rarity": 20,
+          "level": "42-44",
+          "alphaLevel": "51-53"
+        },
+        {
+          "pokemon": "mrmime galarian",
+          "rarity": 80,
+          "level": "40-42",
+          "alphaLevel": "49-51"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/cube_all",
+  "textures": {
+    "all": "cobblesafari:block/ultramegalopolis_door_top_bis"
+  }
+}

@@ -10,8 +10,8 @@
       "aliases": [
         "kalos"
       ],
-      "minTrades": 52,
-      "maxTrades": 52,
+      "minTrades": 57,
+      "maxTrades": 57,
       "trades": [
         {
           "sourceItem1": "cobblesafari:sphere_red_s",
@@ -576,6 +576,60 @@
           "resultQty": 4,
           "maxUses": 48,
           "priceShiftMax": 1
+        },
+        {
+          "sourceItem1": "cobblesafari:sphere_green_s",
+          "sourceQty1": 8,
+          "sourceItem2": "cobblesafari:sphere_pale_s",
+          "sourceQty2": 4,
+          "resultItems": [
+            "cobblesafari:kalos_planter"
+          ],
+          "resultQty": 4,
+          "maxUses": 48,
+          "priceShiftMax": 1
+        },
+        {
+          "sourceItem1": "cobblesafari:sphere_blue_s",
+          "sourceQty1": 8,
+          "sourceItem2": "cobblesafari:sphere_prism_s",
+          "sourceQty2": 4,
+          "resultItems": [
+            "cobblesafari:kalos_fountain"
+          ],
+          "resultQty": 1,
+          "maxUses": 16,
+          "priceShiftMax": 1
+        },
+        {
+          "sourceItem1": "cobblesafari:sphere_red_s",
+          "sourceQty1": 6,
+          "sourceItem2": "cobblesafari:sphere_pale_s",
+          "sourceQty2": 4,
+          "resultItems": [
+            "cobblesafari:hyperspace_posters"
+          ],
+          "resultQty": 8,
+          "maxUses": 48,
+          "priceShiftMax": 1
+        },
+        {
+          "sourceItem1": "cobblesafari:sphere_green_s",
+          "sourceQty1": 8,
+          "resultItems": [
+            "cobblesafari:kalos_wall_bricks_wall"
+          ],
+          "resultQty": 16,
+          "maxUses": 64
+        },
+        {
+          "sourceItem1": "cobblesafari:sphere_green_s",
+          "sourceQty1": 8,
+          "resultItems": [
+            "cobblesafari:kalos_wall_bottom_wall"
+          ],
+          "resultQty": 16,
+          "maxUses": 64
         }
       ]
     },

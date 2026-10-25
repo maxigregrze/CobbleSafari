@@ -57,6 +57,9 @@ public class MiscConfig {
     /** Full Ultra Recon set glides like an elytra (action plan 192, section 10.5). */
     private boolean enableUltraReconElytra = true;
 
+    /** Seconds before a cleared Z-A obstacle comes back (action plan 196, section 8.7). Min 1. */
+    private int obstacleRespawnSeconds = 300;
+
     /**
      * Ultra Wormhole parent-clock rules (action plan 183, section 13.1). The ride's <i>physics</i>
      * stay in {@code UltraWarpRideConfig}'s Java fields - they only make sense tuned together, by
@@ -154,6 +157,9 @@ public class MiscConfig {
             d.poolCandyId = "cobblesafari:auspiciouspokeball/candy_gold";
             d.poolBallsId = "cobblesafari:auspiciouspokeball/ball_gold";
             d.poolTreasuresId = "cobblesafari:auspiciouspokeball/treasure_gold";
+            // The golden ball is the rare one: 3 to 6 items instead of the shared 1 to 3.
+            d.minRoll = 3;
+            d.maxRoll = 6;
             return d;
         }
     }
@@ -366,6 +372,14 @@ public class MiscConfig {
     /** Whether the full Ultra Recon set acts as an elytra. */
     public static boolean isUltraReconElytraEnabled() {
         return INSTANCE == null || INSTANCE.enableUltraReconElytra;
+    }
+
+    /** Respawn delay of a cleared obstacle, in seconds. Clamped to at least 1. */
+    public static int getObstacleRespawnSeconds() {
+        if (INSTANCE == null) {
+            return 300;
+        }
+        return Math.max(1, INSTANCE.obstacleRespawnSeconds);
     }
 
     public void ensureLostItemDefaults() {

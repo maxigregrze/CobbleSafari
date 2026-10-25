@@ -1,0 +1,54 @@
+{
+  "star": 5,
+  "type": "rock",
+  "clusters": [
+    {
+      "id": "aerodactyl",
+      "weight": 1,
+      "members": [
+        {
+          "pokemon": "aerodactyl",
+          "rarity": 100,
+          "level": "53-55",
+          "alphaLevel": "62-64"
+        }
+      ]
+    },
+    {
+      "id": "tyrunt",
+      "weight": 1,
+      "members": [
+        {
+          "pokemon": "tyrantrum",
+          "rarity": 20,
+          "level": "55-57",
+          "alphaLevel": "64-66"
+        },
+        {
+          "pokemon": "tyrunt",
+          "rarity": 80,
+          "level": "52-54",
+          "alphaLevel": "61-63"
+        }
+      ]
+    },
+    {
+      "id": "amaura",
+      "weight": 1,
+      "members": [
+        {
+          "pokemon": "aurorus",
+          "rarity": 20,
+          "level": "55-57",
+          "alphaLevel": "64-66"
+        },
+        {
+          "pokemon": "amaura",
+          "rarity": 80,
+          "level": "52-54",
+          "alphaLevel": "61-63"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,84 @@
+{
+  "star": 3,
+  "type": "dragon",
+  "clusters": [
+    {
+      "id": "dratini",
+      "weight": 9,
+      "members": [
+        {
+          "pokemon": "dratini",
+          "rarity": 100,
+          "level": "23-25",
+          "alphaLevel": "32-34"
+        }
+      ]
+    },
+    {
+      "id": "bagon",
+      "weight": 5,
+      "members": [
+        {
+          "pokemon": "bagon",
+          "rarity": 100,
+          "level": "23-25",
+          "alphaLevel": "32-34"
+        }
+      ]
+    },
+    {
+      "id": "gible",
+      "weight": 5,
+      "members": [
+        {
+          "pokemon": "gible",
+          "rarity": 100,
+          "level": "22-24",
+          "alphaLevel": "31-33"
+        }
+      ]
+    },
+    {
+      "id": "goomy",
+      "weight": 5,
+      "members": [
+        {
+          "pokemon": "goomy",
+          "rarity": 100,
+          "level": "25-27",
+          "alphaLevel": "34-36"
+        }
+      ]
+    },
+    {
+      "id": "swablu",
+      "weight": 3,
+      "members": [
+        {
+          "pokemon": "altaria",
+          "rarity": 20,
+          "level": "35-37",
+          "alphaLevel": "44-46"
+        },
+        {
+          "pokemon": "swablu",
+          "rarity": 80,
+          "level": "24-26",
+          "alphaLevel": "33-35"
+        }
+      ]
+    },
+    {
+      "id": "noibat",
+      "weight": 3,
+      "members": [
+        {
+          "pokemon": "noibat",
+          "rarity": 100,
+          "level": "26-28",
+          "alphaLevel": "35-37"
+        }
+      ]
+    }
+  ]
+}

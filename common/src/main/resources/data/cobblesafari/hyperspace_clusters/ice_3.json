@@ -1,0 +1,108 @@
+{
+  "star": 3,
+  "type": "ice",
+  "clusters": [
+    {
+      "id": "delibird",
+      "weight": 4,
+      "members": [
+        {
+          "pokemon": "delibird",
+          "rarity": 100,
+          "level": "25-27",
+          "alphaLevel": "34-36"
+        }
+      ]
+    },
+    {
+      "id": "snorunt",
+      "weight": 5,
+      "members": [
+        {
+          "pokemon": "snorunt",
+          "rarity": 100,
+          "level": "25-27",
+          "alphaLevel": "34-36"
+        }
+      ]
+    },
+    {
+      "id": "bergmite",
+      "weight": 5,
+      "members": [
+        {
+          "pokemon": "bergmite",
+          "rarity": 100,
+          "level": "24-26",
+          "alphaLevel": "33-35"
+        }
+      ]
+    },
+    {
+      "id": "snover",
+      "weight": 4,
+      "members": [
+        {
+          "pokemon": "snover",
+          "rarity": 100,
+          "level": "25-27",
+          "alphaLevel": "34-36"
+        }
+      ]
+    },
+    {
+      "id": "vanillite",
+      "weight": 2,
+      "members": [
+        {
+          "pokemon": "vanillite",
+          "rarity": 100,
+          "level": "24-26",
+          "alphaLevel": "33-35"
+        }
+      ]
+    },
+    {
+      "id": "vanillite_2",
+      "weight": 3,
+      "members": [
+        {
+          "pokemon": "vanillish",
+          "rarity": 20,
+          "level": "35-37",
+          "alphaLevel": "44-46"
+        },
+        {
+          "pokemon": "vanillite",
+          "rarity": 80,
+          "level": "24-26",
+          "alphaLevel": "33-35"
+        }
+      ]
+    },
+    {
+      "id": "mrmime_galarian",
+      "weight": 4,
+      "members": [
+        {
+          "pokemon": "mrmime galarian",
+          "rarity": 100,
+          "level": "33-35",
+          "alphaLevel": "42-44"
+        }
+      ]
+    },
+    {
+      "id": "cryogonal",
+      "weight": 3,
+      "members": [
+        {
+          "pokemon": "cryogonal",
+          "rarity": 100,
+          "level": "26-28",
+          "alphaLevel": "35-37"
+        }
+      ]
+    }
+  ]
+}

@@ -726,6 +726,26 @@ public class DungeonTeleportHandler {
         return true;
     }
 
+    /** Action plan 196, § 3.5: the instance record exists now, and its chunks are still loaded. */
+    private static void resolveHyperspaceZone(MinecraftServer server, GenerationState state,
+                                              DungeonPortalBlockEntity portalEntity) {
+        try {
+            DungeonInstanceRecord record = DungeonPositionSavedData
+                    .get(server).findInstance(portalEntity.getPortalId(), state.structurePos, state.config.getDimensionId());
+            if (record == null) {
+                CobbleSafari.LOGGER.warn("[Hyperspace] no instance record for portal {} - zone not resolved",
+                        portalEntity.getPortalId());
+                return;
+            }
+            maxigregrze.cobblesafari.dungeon.hyperspace.HyperspaceZoneResolver.resolve(
+                    state.dungeonLevel, record.instanceId(),
+                    portalEntity.getDungeonChunkMinX(), portalEntity.getDungeonChunkMinZ(),
+                    portalEntity.getDungeonChunkMaxX(), portalEntity.getDungeonChunkMaxZ());
+        } catch (Exception e) {
+            CobbleSafari.LOGGER.error("[Hyperspace] zone resolution failed for portal {}", portalEntity.getPortalId(), e);
+        }
+    }
+
     public static DungeonPrepResult completeFinalization(ServerPlayer player, DungeonPortalBlockEntity portalEntity, DungeonValidationResult validation) {
         GenerationState state = GENERATION_STATES.get(portalEntity.getPortalId());
         if (state == null) return null;
@@ -809,6 +829,10 @@ public class DungeonTeleportHandler {
                     portalEntity.getDungeonChunkMaxZ(),
                     state.slot
             );
+
+            if (state.config.getDimensionKey().equals(DungeonDimensions.DUNGEON_PARIS)) {
+                resolveHyperspaceZone(server, state, portalEntity);
+            }
         }
 
         BlockPos playerSpawnPos;

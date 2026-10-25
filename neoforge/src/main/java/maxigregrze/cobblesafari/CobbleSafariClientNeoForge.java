@@ -319,6 +319,16 @@ public class CobbleSafariClientNeoForge {
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.MEGAPOLIS_BARRICADE, RenderType.cutout());
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.HYPERSPACE_CHIMNEY, RenderType.cutout());
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.KALOS_CHIMNEY, RenderType.cutout());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.HYPERSPACE_PLANTER, RenderType.cutout());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.KALOS_PLANTER, RenderType.cutout());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.HYPERSPACE_POSTERS, RenderType.cutout());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.HYPERSPACE_BUSH_CUBE, RenderType.cutout());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.HYPERSPACE_BUSH_CONE, RenderType.cutout());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.HYPERSPACE_FOUNTAIN, RenderType.translucent());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.OBSTACLE_BOULDER, RenderType.cutout());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.OBSTACLE_BRAMBLES, RenderType.cutout());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.OBSTACLE_SLUDGE, RenderType.cutout());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.KALOS_FOUNTAIN, RenderType.translucent());
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.HYPERSPACE_CANOPY_RIDGE, RenderType.translucent());
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.KALOS_CANOPY_RIDGE, RenderType.translucent());
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.HYPERSPACE_CANOPY_SLAB, RenderType.translucent());
@@ -438,13 +448,23 @@ public class CobbleSafariClientNeoForge {
         event.registerSpriteSet(ModParticles.YELLOW_MAPLE_LEAVES, MapleLeafParticle.Provider::new);
     }
 
+    /** Vanilla's default water colour (the plains / ocean value), for items and colourless contexts. */
+    private static final int HS_DEFAULT_WATER_COLOR = 0x3F76E4;
+
     @SubscribeEvent
     public static void onRegisterBlockColors(net.neoforged.neoforge.client.event.RegisterColorHandlersEvent.Block event) {
         event.register(
                 (state, level, pos, tintIndex) -> (level != null && pos != null)
                         ? net.minecraft.client.renderer.BiomeColors.getAverageGrassColor(level, pos)
                         : net.minecraft.world.level.GrassColor.getDefaultColor(),
-                ModBlocks.HYPERSPACE_FLOWERPOT);
+                ModBlocks.HYPERSPACE_FLOWERPOT, ModBlocks.HYPERSPACE_PLANTER, ModBlocks.KALOS_PLANTER);
+        // Fountain water (tintindex 0): the biome's water colour, like the vanilla fluid renderer.
+        event.register(
+                (state, level, pos, tintIndex) -> tintIndex != 0 ? -1
+                        : (level != null && pos != null)
+                                ? net.minecraft.client.renderer.BiomeColors.getAverageWaterColor(level, pos)
+                                : HS_DEFAULT_WATER_COLOR,
+                ModBlocks.HYPERSPACE_FOUNTAIN, ModBlocks.KALOS_FOUNTAIN);
         // Foliage-tinted nature blocks (tintindex 0 only): flowers (colored layer) and bushes.
         // The flower's untinted petal layer is tintindex 1, so leave any non-zero index untinted.
         event.register(
@@ -452,7 +472,8 @@ public class CobbleSafariClientNeoForge {
                         : (level != null && pos != null)
                                 ? net.minecraft.client.renderer.BiomeColors.getAverageFoliageColor(level, pos)
                                 : net.minecraft.world.level.FoliageColor.getDefaultColor(),
-                ModBlocks.HYPERSPACE_FLOWERS, ModBlocks.HYPERSPACE_BUSH, ModBlocks.HYPERSPACE_BUSH_FLOWERED);
+                ModBlocks.HYPERSPACE_FLOWERS, ModBlocks.HYPERSPACE_BUSH, ModBlocks.HYPERSPACE_BUSH_FLOWERED,
+                ModBlocks.HYPERSPACE_BUSH_CUBE, ModBlocks.HYPERSPACE_BUSH_CONE);
         // Dyeable Hyperspace flags: tint the colored layer (tintindex 0) to the applied DyeColor
         // (banner / leather / collar / beacon colour). The overlay layer and any undyed flag stay untinted.
         event.register(
@@ -480,10 +501,14 @@ public class CobbleSafariClientNeoForge {
     public static void onRegisterItemColors(net.neoforged.neoforge.client.event.RegisterColorHandlersEvent.Item event) {
         event.register(
                 (stack, tintIndex) -> net.minecraft.world.level.GrassColor.get(0.5D, 1.0D),
-                ModBlocks.HYPERSPACE_FLOWERPOT);
+                ModBlocks.HYPERSPACE_FLOWERPOT, ModBlocks.HYPERSPACE_PLANTER, ModBlocks.KALOS_PLANTER);
+        event.register(
+                (stack, tintIndex) -> tintIndex != 0 ? -1 : HS_DEFAULT_WATER_COLOR,
+                ModBlocks.HYPERSPACE_FOUNTAIN, ModBlocks.KALOS_FOUNTAIN);
         event.register(
                 (stack, tintIndex) -> tintIndex != 0 ? -1 : net.minecraft.world.level.FoliageColor.getDefaultColor(),
-                ModBlocks.HYPERSPACE_FLOWERS, ModBlocks.HYPERSPACE_BUSH, ModBlocks.HYPERSPACE_BUSH_FLOWERED);
+                ModBlocks.HYPERSPACE_FLOWERS, ModBlocks.HYPERSPACE_BUSH, ModBlocks.HYPERSPACE_BUSH_FLOWERED,
+                ModBlocks.HYPERSPACE_BUSH_CUBE, ModBlocks.HYPERSPACE_BUSH_CONE);
         // Dynamic skin-unlock disc: layer0 tinted to the target skin's color.
         event.register(
                 (stack, tintIndex) -> maxigregrze.cobblesafari.item.RotomSkinUnlockItem.computeTint(stack, tintIndex),

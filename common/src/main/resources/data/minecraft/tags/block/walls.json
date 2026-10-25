@@ -1,6 +1,10 @@
 {
   "replace": false,
   "values": [
-    "cobblesafari:hyperspace_fence"
+    "cobblesafari:hyperspace_fence",
+    "cobblesafari:hyperspace_wall_bricks_wall",
+    "cobblesafari:hyperspace_wall_bottom_wall",
+    "cobblesafari:kalos_wall_bricks_wall",
+    "cobblesafari:kalos_wall_bottom_wall"
   ]
 }

@@ -1,0 +1,150 @@
+{
+  "star": 2,
+  "type": "water",
+  "clusters": [
+    {
+      "id": "panpour",
+      "weight": 4,
+      "members": [
+        {
+          "pokemon": "panpour",
+          "rarity": 100,
+          "level": "17-19",
+          "alphaLevel": "26-28"
+        }
+      ]
+    },
+    {
+      "id": "staryu",
+      "weight": 4,
+      "members": [
+        {
+          "pokemon": "staryu",
+          "rarity": 100,
+          "level": "21-23",
+          "alphaLevel": "30-32"
+        }
+      ]
+    },
+    {
+      "id": "squirtle",
+      "weight": 1,
+      "members": [
+        {
+          "pokemon": "squirtle",
+          "rarity": 100,
+          "level": "16-18",
+          "alphaLevel": "25-27"
+        }
+      ]
+    },
+    {
+      "id": "binacle",
+      "weight": 4,
+      "members": [
+        {
+          "pokemon": "binacle",
+          "rarity": 100,
+          "level": "21-23",
+          "alphaLevel": "30-32"
+        }
+      ]
+    },
+    {
+      "id": "carvanha",
+      "weight": 4,
+      "members": [
+        {
+          "pokemon": "carvanha",
+          "rarity": 100,
+          "level": "19-21",
+          "alphaLevel": "28-30"
+        }
+      ]
+    },
+    {
+      "id": "totodile",
+      "weight": 1,
+      "members": [
+        {
+          "pokemon": "totodile",
+          "rarity": 100,
+          "level": "16-18",
+          "alphaLevel": "25-27"
+        }
+      ]
+    },
+    {
+      "id": "froakie",
+      "weight": 1,
+      "members": [
+        {
+          "pokemon": "froakie",
+          "rarity": 100,
+          "level": "16-18",
+          "alphaLevel": "25-27"
+        }
+      ]
+    },
+    {
+      "id": "mudkip",
+      "weight": 1,
+      "members": [
+        {
+          "pokemon": "mudkip",
+          "rarity": 100,
+          "level": "16-18",
+          "alphaLevel": "25-27"
+        }
+      ]
+    },
+    {
+      "id": "qwilfish",
+      "weight": 5,
+      "members": [
+        {
+          "pokemon": "qwilfish",
+          "rarity": 100,
+          "level": "19-21",
+          "alphaLevel": "28-30"
+        }
+      ]
+    },
+    {
+      "id": "clauncher",
+      "weight": 3,
+      "members": [
+        {
+          "pokemon": "clauncher",
+          "rarity": 100,
+          "level": "20-22",
+          "alphaLevel": "29-31"
+        }
+      ]
+    },
+    {
+      "id": "feebas",
+      "weight": 1,
+      "members": [
+        {
+          "pokemon": "feebas",
+          "rarity": 100,
+          "level": "20-22",
+          "alphaLevel": "29-31"
+        }
+      ]
+    },
+    {
+      "id": "magikarp",
+      "weight": 1,
+      "members": [
+        {
+          "pokemon": "magikarp",
+          "rarity": 100,
+          "level": "17-19",
+          "alphaLevel": "26-28"
+        }
+      ]
+    }
+  ]
+}

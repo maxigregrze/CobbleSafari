@@ -1,0 +1,108 @@
+{
+  "star": 1,
+  "type": "ghost",
+  "clusters": [
+    {
+      "id": "gastly",
+      "weight": 4,
+      "members": [
+        {
+          "pokemon": "haunter",
+          "rarity": 20,
+          "level": "25-27",
+          "alphaLevel": "34-36"
+        },
+        {
+          "pokemon": "gastly",
+          "rarity": 80,
+          "level": "15-17",
+          "alphaLevel": "24-26"
+        }
+      ]
+    },
+    {
+      "id": "shuppet",
+      "weight": 5,
+      "members": [
+        {
+          "pokemon": "shuppet",
+          "rarity": 100,
+          "level": "19-21",
+          "alphaLevel": "28-30"
+        }
+      ]
+    },
+    {
+      "id": "phantump",
+      "weight": 4,
+      "members": [
+        {
+          "pokemon": "phantump",
+          "rarity": 100,
+          "level": "17-19",
+          "alphaLevel": "26-28"
+        }
+      ]
+    },
+    {
+      "id": "sableye",
+      "weight": 3,
+      "members": [
+        {
+          "pokemon": "sableye",
+          "rarity": 100,
+          "level": "22-24",
+          "alphaLevel": "31-33"
+        }
+      ]
+    },
+    {
+      "id": "litwick",
+      "weight": 4,
+      "members": [
+        {
+          "pokemon": "litwick",
+          "rarity": 100,
+          "level": "21-23",
+          "alphaLevel": "30-32"
+        }
+      ]
+    },
+    {
+      "id": "yamask",
+      "weight": 4,
+      "members": [
+        {
+          "pokemon": "yamask",
+          "rarity": 100,
+          "level": "18-20",
+          "alphaLevel": "27-29"
+        }
+      ]
+    },
+    {
+      "id": "pumpkaboo",
+      "weight": 2,
+      "members": [
+        {
+          "pokemon": "pumpkaboo",
+          "rarity": 100,
+          "level": "17-19",
+          "alphaLevel": "26-28"
+        }
+      ]
+    },
+    {
+      "id": "greavard",
+      "weight": 4,
+      "members": [
+        {
+          "pokemon": "greavard",
+          "rarity": 100,
+          "level": "17-19",
+          "alphaLevel": "26-28"
+        }
+      ]
+    }
+  ]
+}

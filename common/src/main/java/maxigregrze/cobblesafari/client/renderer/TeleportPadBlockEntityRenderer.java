@@ -3,6 +3,7 @@ package maxigregrze.cobblesafari.client.renderer;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
+import maxigregrze.cobblesafari.block.teleporter.TeleportPadBlock;
 import maxigregrze.cobblesafari.block.teleporter.TeleportPadBlockEntity;
 import maxigregrze.cobblesafari.init.ModBlocks;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -54,6 +55,14 @@ public class TeleportPadBlockEntityRenderer implements BlockEntityRenderer<Telep
         RandomSource random = RandomSource.create();
         random.setSeed(42L);
 
+        // On a 15 px road the pad drops 1 px to rest on it (TeleportPadBlock.isLowered).
+        boolean lowered = blockEntity.getLevel() != null
+                && TeleportPadBlock.isLowered(blockEntity.getLevel(), blockEntity.getBlockPos());
+        if (lowered) {
+            poseStack.pushPose();
+            poseStack.translate(0.0, -1.0 / 16.0, 0.0);
+        }
+
         // FRONT pad linked to a laterally off-axis partner (±leeway window): yaw the model
         // around its vertical centre axis so the arrow points exactly at the partner pad.
         // TOP/BOTTOM and perfectly-aligned/unlinked pads keep right == 0 ⇒ no rotation.
@@ -79,6 +88,9 @@ public class TeleportPadBlockEntityRenderer implements BlockEntityRenderer<Telep
         }
 
         if (rotate) {
+            poseStack.popPose();
+        }
+        if (lowered) {
             poseStack.popPose();
         }
     }

@@ -1,0 +1,8 @@
+{
+  "parent": "cobblesafari:block/hyperspace_planter_post_nw",
+  "textures": {
+    "0": "cobblesafari:block/kalos_floor",
+    "1": "cobblesafari:block/kalos_planter",
+    "particle": "cobblesafari:block/kalos_floor"
+  }
+}

@@ -1,0 +1,84 @@
+{
+  "star": 3,
+  "type": "steel",
+  "clusters": [
+    {
+      "id": "skarmory",
+      "weight": 6,
+      "members": [
+        {
+          "pokemon": "skarmory",
+          "rarity": 100,
+          "level": "25-27",
+          "alphaLevel": "34-36"
+        }
+      ]
+    },
+    {
+      "id": "aron",
+      "weight": 6,
+      "members": [
+        {
+          "pokemon": "lairon",
+          "rarity": 20,
+          "level": "32-34",
+          "alphaLevel": "41-43"
+        },
+        {
+          "pokemon": "aron",
+          "rarity": 80,
+          "level": "23-25",
+          "alphaLevel": "32-34"
+        }
+      ]
+    },
+    {
+      "id": "honedge",
+      "weight": 6,
+      "members": [
+        {
+          "pokemon": "doublade",
+          "rarity": 20,
+          "level": "35-37",
+          "alphaLevel": "44-46"
+        },
+        {
+          "pokemon": "honedge",
+          "rarity": 80,
+          "level": "24-26",
+          "alphaLevel": "33-35"
+        }
+      ]
+    },
+    {
+      "id": "mawile",
+      "weight": 6,
+      "members": [
+        {
+          "pokemon": "mawile",
+          "rarity": 100,
+          "level": "26-28",
+          "alphaLevel": "35-37"
+        }
+      ]
+    },
+    {
+      "id": "tinkatink",
+      "weight": 6,
+      "members": [
+        {
+          "pokemon": "tinkatuff",
+          "rarity": 20,
+          "level": "26-28",
+          "alphaLevel": "35-37"
+        },
+        {
+          "pokemon": "tinkatink",
+          "rarity": 80,
+          "level": "22-24",
+          "alphaLevel": "31-33"
+        }
+      ]
+    }
+  ]
+}

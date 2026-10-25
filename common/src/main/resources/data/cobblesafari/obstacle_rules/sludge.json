@@ -1,0 +1,9 @@
+{
+  "obstacle": "cobblesafari:obstacle_sludge",
+  "types": [
+    "water"
+  ],
+  "moves": [],
+  "message": "cobblesafari.obstacle.no_move.sludge",
+  "lootTable": "cobblesafari:obstacles/obstacle_sludge"
+}

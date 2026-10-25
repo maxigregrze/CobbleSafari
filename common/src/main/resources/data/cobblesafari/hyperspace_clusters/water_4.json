@@ -1,0 +1,234 @@
+{
+  "star": 4,
+  "type": "water",
+  "clusters": [
+    {
+      "id": "wartortle",
+      "weight": 1,
+      "members": [
+        {
+          "pokemon": "blastoise",
+          "rarity": 20,
+          "level": "41-43",
+          "alphaLevel": "50-52"
+        },
+        {
+          "pokemon": "wartortle",
+          "rarity": 80,
+          "level": "36-38",
+          "alphaLevel": "45-47"
+        }
+      ]
+    },
+    {
+      "id": "panpour",
+      "weight": 5,
+      "members": [
+        {
+          "pokemon": "simipour",
+          "rarity": 20,
+          "level": "37-39",
+          "alphaLevel": "46-48"
+        },
+        {
+          "pokemon": "panpour",
+          "rarity": 80,
+          "level": "35-37",
+          "alphaLevel": "44-46"
+        }
+      ]
+    },
+    {
+      "id": "binacle",
+      "weight": 5,
+      "members": [
+        {
+          "pokemon": "barbaracle",
+          "rarity": 20,
+          "level": "44-46",
+          "alphaLevel": "53-55"
+        },
+        {
+          "pokemon": "binacle",
+          "rarity": 80,
+          "level": "33-35",
+          "alphaLevel": "42-44"
+        }
+      ]
+    },
+    {
+      "id": "croconaw",
+      "weight": 1,
+      "members": [
+        {
+          "pokemon": "feraligatr",
+          "rarity": 20,
+          "level": "40-42",
+          "alphaLevel": "49-51"
+        },
+        {
+          "pokemon": "croconaw",
+          "rarity": 80,
+          "level": "36-38",
+          "alphaLevel": "45-47"
+        }
+      ]
+    },
+    {
+      "id": "staryu",
+      "weight": 4,
+      "members": [
+        {
+          "pokemon": "starmie",
+          "rarity": 20,
+          "level": "39-41",
+          "alphaLevel": "48-50"
+        },
+        {
+          "pokemon": "staryu",
+          "rarity": 80,
+          "level": "37-39",
+          "alphaLevel": "46-48"
+        }
+      ]
+    },
+    {
+      "id": "frogadier",
+      "weight": 1,
+      "members": [
+        {
+          "pokemon": "greninja",
+          "rarity": 20,
+          "level": "41-43",
+          "alphaLevel": "50-52"
+        },
+        {
+          "pokemon": "frogadier",
+          "rarity": 80,
+          "level": "36-38",
+          "alphaLevel": "45-47"
+        }
+      ]
+    },
+    {
+      "id": "slowpoke",
+      "weight": 2,
+      "members": [
+        {
+          "pokemon": "slowbro",
+          "rarity": 20,
+          "level": "41-43",
+          "alphaLevel": "50-52"
+        },
+        {
+          "pokemon": "slowpoke",
+          "rarity": 80,
+          "level": "37-39",
+          "alphaLevel": "46-48"
+        }
+      ]
+    },
+    {
+      "id": "slowpoke_2",
+      "weight": 2,
+      "members": [
+        {
+          "pokemon": "slowking",
+          "rarity": 20,
+          "level": "41-43",
+          "alphaLevel": "50-52"
+        },
+        {
+          "pokemon": "slowpoke",
+          "rarity": 80,
+          "level": "37-39",
+          "alphaLevel": "46-48"
+        }
+      ]
+    },
+    {
+      "id": "eevee",
+      "weight": 2,
+      "members": [
+        {
+          "pokemon": "vaporeon",
+          "rarity": 20,
+          "level": "36-38",
+          "alphaLevel": "45-47"
+        },
+        {
+          "pokemon": "eevee",
+          "rarity": 80,
+          "level": "35-37",
+          "alphaLevel": "44-46"
+        }
+      ]
+    },
+    {
+      "id": "magikarp",
+      "weight": 2,
+      "members": [
+        {
+          "pokemon": "gyarados",
+          "rarity": 20,
+          "level": "37-39",
+          "alphaLevel": "46-48"
+        },
+        {
+          "pokemon": "magikarp",
+          "rarity": 80,
+          "level": "35-37",
+          "alphaLevel": "44-46"
+        }
+      ]
+    },
+    {
+      "id": "marshtomp",
+      "weight": 1,
+      "members": [
+        {
+          "pokemon": "swampert",
+          "rarity": 20,
+          "level": "41-43",
+          "alphaLevel": "50-52"
+        },
+        {
+          "pokemon": "marshtomp",
+          "rarity": 80,
+          "level": "36-38",
+          "alphaLevel": "45-47"
+        }
+      ]
+    },
+    {
+      "id": "dondozo",
+      "weight": 4,
+      "members": [
+        {
+          "pokemon": "dondozo",
+          "rarity": 31,
+          "level": "38-40",
+          "alphaLevel": "47-49"
+        },
+        {
+          "pokemon": "tatsugiri tatsugiri_texture=curly",
+          "rarity": 23,
+          "level": "38-40",
+          "alphaLevel": "47-49"
+        },
+        {
+          "pokemon": "tatsugiri tatsugiri_texture=stretchy",
+          "rarity": 23,
+          "level": "38-40",
+          "alphaLevel": "47-49"
+        },
+        {
+          "pokemon": "tatsugiri tatsugiri_texture=droopy",
+          "rarity": 23,
+          "level": "38-40",
+          "alphaLevel": "47-49"
+        }
+      ]
+    }
+  ]
+}

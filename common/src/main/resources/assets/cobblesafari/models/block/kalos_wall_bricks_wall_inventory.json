@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/wall_inventory",
+  "textures": {
+    "wall": "cobblesafari:block/kalos_wall_bricks"
+  }
+}

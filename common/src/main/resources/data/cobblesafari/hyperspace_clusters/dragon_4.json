@@ -1,0 +1,138 @@
+{
+  "star": 4,
+  "type": "dragon",
+  "clusters": [
+    {
+      "id": "dratini",
+      "weight": 4,
+      "members": [
+        {
+          "pokemon": "dragonair",
+          "rarity": 20,
+          "level": "39-41",
+          "alphaLevel": "48-50"
+        },
+        {
+          "pokemon": "dratini",
+          "rarity": 80,
+          "level": "36-38",
+          "alphaLevel": "45-47"
+        }
+      ]
+    },
+    {
+      "id": "bagon",
+      "weight": 4,
+      "members": [
+        {
+          "pokemon": "shelgon",
+          "rarity": 20,
+          "level": "39-41",
+          "alphaLevel": "48-50"
+        },
+        {
+          "pokemon": "bagon",
+          "rarity": 80,
+          "level": "36-38",
+          "alphaLevel": "45-47"
+        }
+      ]
+    },
+    {
+      "id": "gible",
+      "weight": 4,
+      "members": [
+        {
+          "pokemon": "gabite",
+          "rarity": 20,
+          "level": "38-40",
+          "alphaLevel": "47-49"
+        },
+        {
+          "pokemon": "gible",
+          "rarity": 80,
+          "level": "35-37",
+          "alphaLevel": "44-46"
+        }
+      ]
+    },
+    {
+      "id": "goomy",
+      "weight": 4,
+      "members": [
+        {
+          "pokemon": "sliggoo",
+          "rarity": 20,
+          "level": "42-44",
+          "alphaLevel": "51-53"
+        },
+        {
+          "pokemon": "goomy",
+          "rarity": 80,
+          "level": "37-39",
+          "alphaLevel": "46-48"
+        }
+      ]
+    },
+    {
+      "id": "noibat",
+      "weight": 3,
+      "members": [
+        {
+          "pokemon": "noivern",
+          "rarity": 20,
+          "level": "48-50",
+          "alphaLevel": "57-59"
+        },
+        {
+          "pokemon": "noibat",
+          "rarity": 80,
+          "level": "38-40",
+          "alphaLevel": "47-49"
+        }
+      ]
+    },
+    {
+      "id": "skrelp",
+      "weight": 3,
+      "members": [
+        {
+          "pokemon": "dragalge",
+          "rarity": 20,
+          "level": "48-50",
+          "alphaLevel": "57-59"
+        },
+        {
+          "pokemon": "skrelp",
+          "rarity": 80,
+          "level": "38-40",
+          "alphaLevel": "47-49"
+        }
+      ]
+    },
+    {
+      "id": "drampa",
+      "weight": 3,
+      "members": [
+        {
+          "pokemon": "drampa",
+          "rarity": 100,
+          "level": "40-42",
+          "alphaLevel": "49-51"
+        }
+      ]
+    },
+    {
+      "id": "cyclizar",
+      "weight": 5,
+      "members": [
+        {
+          "pokemon": "cyclizar",
+          "rarity": 100,
+          "level": "38-40",
+          "alphaLevel": "47-49"
+        }
+      ]
+    }
+  ]
+}

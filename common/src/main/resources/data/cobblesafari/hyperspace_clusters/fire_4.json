@@ -1,0 +1,216 @@
+{
+  "star": 4,
+  "type": "fire",
+  "clusters": [
+    {
+      "id": "charmeleon",
+      "weight": 1,
+      "members": [
+        {
+          "pokemon": "charizard",
+          "rarity": 20,
+          "level": "41-43",
+          "alphaLevel": "50-52"
+        },
+        {
+          "pokemon": "charmeleon",
+          "rarity": 80,
+          "level": "36-38",
+          "alphaLevel": "45-47"
+        }
+      ]
+    },
+    {
+      "id": "pansear",
+      "weight": 5,
+      "members": [
+        {
+          "pokemon": "simisear",
+          "rarity": 20,
+          "level": "37-39",
+          "alphaLevel": "46-48"
+        },
+        {
+          "pokemon": "pansear",
+          "rarity": 80,
+          "level": "35-37",
+          "alphaLevel": "44-46"
+        }
+      ]
+    },
+    {
+      "id": "lampent",
+      "weight": 5,
+      "members": [
+        {
+          "pokemon": "chandelure",
+          "rarity": 20,
+          "level": "46-48",
+          "alphaLevel": "55-57"
+        },
+        {
+          "pokemon": "lampent",
+          "rarity": 80,
+          "level": "42-44",
+          "alphaLevel": "51-53"
+        }
+      ]
+    },
+    {
+      "id": "pignite",
+      "weight": 1,
+      "members": [
+        {
+          "pokemon": "emboar",
+          "rarity": 20,
+          "level": "41-43",
+          "alphaLevel": "50-52"
+        },
+        {
+          "pokemon": "pignite",
+          "rarity": 80,
+          "level": "36-38",
+          "alphaLevel": "45-47"
+        }
+      ]
+    },
+    {
+      "id": "fletchinder",
+      "weight": 4,
+      "members": [
+        {
+          "pokemon": "talonflame",
+          "rarity": 20,
+          "level": "41-43",
+          "alphaLevel": "50-52"
+        },
+        {
+          "pokemon": "fletchinder",
+          "rarity": 80,
+          "level": "36-38",
+          "alphaLevel": "45-47"
+        }
+      ]
+    },
+    {
+      "id": "braixen",
+      "weight": 1,
+      "members": [
+        {
+          "pokemon": "delphox",
+          "rarity": 20,
+          "level": "41-43",
+          "alphaLevel": "50-52"
+        },
+        {
+          "pokemon": "braixen",
+          "rarity": 80,
+          "level": "36-38",
+          "alphaLevel": "45-47"
+        }
+      ]
+    },
+    {
+      "id": "litleo",
+      "weight": 2,
+      "members": [
+        {
+          "pokemon": "pyroar",
+          "rarity": 20,
+          "level": "41-43",
+          "alphaLevel": "50-52"
+        },
+        {
+          "pokemon": "litleo",
+          "rarity": 80,
+          "level": "36-38",
+          "alphaLevel": "45-47"
+        }
+      ]
+    },
+    {
+      "id": "combusken",
+      "weight": 1,
+      "members": [
+        {
+          "pokemon": "blaziken",
+          "rarity": 20,
+          "level": "41-43",
+          "alphaLevel": "50-52"
+        },
+        {
+          "pokemon": "combusken",
+          "rarity": 80,
+          "level": "36-38",
+          "alphaLevel": "45-47"
+        }
+      ]
+    },
+    {
+      "id": "numel",
+      "weight": 2,
+      "members": [
+        {
+          "pokemon": "camerupt",
+          "rarity": 20,
+          "level": "40-42",
+          "alphaLevel": "49-51"
+        },
+        {
+          "pokemon": "numel",
+          "rarity": 80,
+          "level": "36-38",
+          "alphaLevel": "45-47"
+        }
+      ]
+    },
+    {
+      "id": "cubone",
+      "weight": 4,
+      "members": [
+        {
+          "pokemon": "marowak alolan",
+          "rarity": 20,
+          "level": "39-41",
+          "alphaLevel": "48-50"
+        },
+        {
+          "pokemon": "cubone",
+          "rarity": 80,
+          "level": "36-38",
+          "alphaLevel": "45-47"
+        }
+      ]
+    },
+    {
+      "id": "pyroar",
+      "weight": 2,
+      "members": [
+        {
+          "pokemon": "pyroar",
+          "rarity": 20,
+          "level": "41-43",
+          "alphaLevel": "50-52"
+        }
+      ]
+    },
+    {
+      "id": "eevee",
+      "weight": 2,
+      "members": [
+        {
+          "pokemon": "flareon",
+          "rarity": 20,
+          "level": "36-38",
+          "alphaLevel": "45-47"
+        },
+        {
+          "pokemon": "eevee",
+          "rarity": 80,
+          "level": "35-37",
+          "alphaLevel": "44-46"
+        }
+      ]
+    }
+  ]
+}

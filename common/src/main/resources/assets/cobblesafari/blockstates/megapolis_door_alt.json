@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "half=lower": {
+      "model": "cobblesafari:block/megapolis_door_alt_bottom"
+    },
+    "half=upper": {
+      "model": "cobblesafari:block/megapolis_door_alt_top"
+    }
+  }
+}

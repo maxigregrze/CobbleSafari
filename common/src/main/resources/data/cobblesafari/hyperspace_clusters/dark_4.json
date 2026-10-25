@@ -1,0 +1,180 @@
+{
+  "star": 4,
+  "type": "dark",
+  "clusters": [
+    {
+      "id": "eevee",
+      "weight": 2,
+      "members": [
+        {
+          "pokemon": "umbreon",
+          "rarity": 20,
+          "level": "37-39",
+          "alphaLevel": "46-48"
+        },
+        {
+          "pokemon": "eevee",
+          "rarity": 80,
+          "level": "35-37",
+          "alphaLevel": "44-46"
+        }
+      ]
+    },
+    {
+      "id": "scraggy",
+      "weight": 5,
+      "members": [
+        {
+          "pokemon": "scrafty",
+          "rarity": 20,
+          "level": "42-44",
+          "alphaLevel": "51-53"
+        },
+        {
+          "pokemon": "scraggy",
+          "rarity": 80,
+          "level": "37-39",
+          "alphaLevel": "46-48"
+        }
+      ]
+    },
+    {
+      "id": "pancham",
+      "weight": 5,
+      "members": [
+        {
+          "pokemon": "pangoro",
+          "rarity": 20,
+          "level": "40-42",
+          "alphaLevel": "49-51"
+        },
+        {
+          "pokemon": "pancham",
+          "rarity": 80,
+          "level": "36-38",
+          "alphaLevel": "45-47"
+        }
+      ]
+    },
+    {
+      "id": "pupitar",
+      "weight": 1,
+      "members": [
+        {
+          "pokemon": "tyranitar",
+          "rarity": 20,
+          "level": "55-57",
+          "alphaLevel": "64-66"
+        },
+        {
+          "pokemon": "pupitar",
+          "rarity": 80,
+          "level": "39-41",
+          "alphaLevel": "48-50"
+        }
+      ]
+    },
+    {
+      "id": "inkay",
+      "weight": 3,
+      "members": [
+        {
+          "pokemon": "malamar",
+          "rarity": 20,
+          "level": "39-41",
+          "alphaLevel": "48-50"
+        },
+        {
+          "pokemon": "inkay",
+          "rarity": 80,
+          "level": "36-38",
+          "alphaLevel": "45-47"
+        }
+      ]
+    },
+    {
+      "id": "krokorok",
+      "weight": 3,
+      "members": [
+        {
+          "pokemon": "krookodile",
+          "rarity": 20,
+          "level": "42-44",
+          "alphaLevel": "51-53"
+        },
+        {
+          "pokemon": "krokorok",
+          "rarity": 80,
+          "level": "39-41",
+          "alphaLevel": "48-50"
+        }
+      ]
+    },
+    {
+      "id": "absol",
+      "weight": 5,
+      "members": [
+        {
+          "pokemon": "absol",
+          "rarity": 100,
+          "level": "38-40",
+          "alphaLevel": "47-49"
+        }
+      ]
+    },
+    {
+      "id": "frogadier",
+      "weight": 1,
+      "members": [
+        {
+          "pokemon": "greninja",
+          "rarity": 20,
+          "level": "41-43",
+          "alphaLevel": "50-52"
+        },
+        {
+          "pokemon": "frogadier",
+          "rarity": 80,
+          "level": "36-38",
+          "alphaLevel": "45-47"
+        }
+      ]
+    },
+    {
+      "id": "maschiff",
+      "weight": 3,
+      "members": [
+        {
+          "pokemon": "mabosstiff",
+          "rarity": 20,
+          "level": "39-41",
+          "alphaLevel": "48-50"
+        },
+        {
+          "pokemon": "maschiff",
+          "rarity": 80,
+          "level": "36-38",
+          "alphaLevel": "45-47"
+        }
+      ]
+    },
+    {
+      "id": "meowth_alolan",
+      "weight": 2,
+      "members": [
+        {
+          "pokemon": "persian alolan",
+          "rarity": 20,
+          "level": "39-41",
+          "alphaLevel": "48-50"
+        },
+        {
+          "pokemon": "meowth alolan",
+          "rarity": 80,
+          "level": "36-38",
+          "alphaLevel": "45-47"
+        }
+      ]
+    }
+  ]
+}

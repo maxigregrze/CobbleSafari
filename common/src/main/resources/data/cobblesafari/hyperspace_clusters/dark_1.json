@@ -1,0 +1,102 @@
+{
+  "star": 1,
+  "type": "dark",
+  "clusters": [
+    {
+      "id": "maschiff",
+      "weight": 2,
+      "members": [
+        {
+          "pokemon": "maschiff",
+          "rarity": 100,
+          "level": "17-19",
+          "alphaLevel": "26-28"
+        }
+      ]
+    },
+    {
+      "id": "sandile",
+      "weight": 5,
+      "members": [
+        {
+          "pokemon": "sandile",
+          "rarity": 100,
+          "level": "16-18",
+          "alphaLevel": "25-27"
+        }
+      ]
+    },
+    {
+      "id": "sableye",
+      "weight": 5,
+      "members": [
+        {
+          "pokemon": "sableye",
+          "rarity": 100,
+          "level": "22-24",
+          "alphaLevel": "31-33"
+        }
+      ]
+    },
+    {
+      "id": "houndour",
+      "weight": 5,
+      "members": [
+        {
+          "pokemon": "houndour",
+          "rarity": 100,
+          "level": "15-17",
+          "alphaLevel": "24-26"
+        }
+      ]
+    },
+    {
+      "id": "scraggy",
+      "weight": 5,
+      "members": [
+        {
+          "pokemon": "scraggy",
+          "rarity": 100,
+          "level": "20-22",
+          "alphaLevel": "29-31"
+        }
+      ]
+    },
+    {
+      "id": "meowth_alolan",
+      "weight": 2,
+      "members": [
+        {
+          "pokemon": "meowth alolan",
+          "rarity": 100,
+          "level": "17-19",
+          "alphaLevel": "26-28"
+        }
+      ]
+    },
+    {
+      "id": "purrloin",
+      "weight": 3,
+      "members": [
+        {
+          "pokemon": "purrloin",
+          "rarity": 100,
+          "level": "14-16",
+          "alphaLevel": "23-25"
+        }
+      ]
+    },
+    {
+      "id": "nickit",
+      "weight": 3,
+      "members": [
+        {
+          "pokemon": "nickit",
+          "rarity": 100,
+          "level": "14-16",
+          "alphaLevel": "23-25"
+        }
+      ]
+    }
+  ]
+}

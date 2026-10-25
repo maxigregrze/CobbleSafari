@@ -30,6 +30,11 @@ public class SurvivalTeleportPadBlock extends TeleportPadBlock {
     }
 
     @Override
+    protected boolean acceptsLowSupports() {
+        return false;
+    }
+
+    @Override
     protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos,
                                               Player player, InteractionHand hand, BlockHitResult hit) {
         return tinkhammerInteract(stack, state, level, pos, player, hit);

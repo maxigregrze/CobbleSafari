@@ -1,0 +1,228 @@
+{
+  "star": 4,
+  "type": "psychic",
+  "clusters": [
+    {
+      "id": "kadabra",
+      "weight": 3,
+      "members": [
+        {
+          "pokemon": "alakazam",
+          "rarity": 20,
+          "level": "38-40",
+          "alphaLevel": "47-49"
+        },
+        {
+          "pokemon": "kadabra",
+          "rarity": 80,
+          "level": "36-38",
+          "alphaLevel": "45-47"
+        }
+      ]
+    },
+    {
+      "id": "inkay",
+      "weight": 4,
+      "members": [
+        {
+          "pokemon": "malamar",
+          "rarity": 20,
+          "level": "39-41",
+          "alphaLevel": "48-50"
+        },
+        {
+          "pokemon": "inkay",
+          "rarity": 80,
+          "level": "36-38",
+          "alphaLevel": "45-47"
+        }
+      ]
+    },
+    {
+      "id": "espurr",
+      "weight": 5,
+      "members": [
+        {
+          "pokemon": "meowstic gender=male",
+          "rarity": 10,
+          "level": "38-40",
+          "alphaLevel": "47-49"
+        },
+        {
+          "pokemon": "meowstic gender=female",
+          "rarity": 10,
+          "level": "38-40",
+          "alphaLevel": "47-49"
+        },
+        {
+          "pokemon": "espurr",
+          "rarity": 80,
+          "level": "35-37",
+          "alphaLevel": "44-46"
+        }
+      ]
+    },
+    {
+      "id": "kirlia",
+      "weight": 4,
+      "members": [
+        {
+          "pokemon": "gardevoir",
+          "rarity": 20,
+          "level": "39-41",
+          "alphaLevel": "48-50"
+        },
+        {
+          "pokemon": "kirlia",
+          "rarity": 80,
+          "level": "37-39",
+          "alphaLevel": "46-48"
+        }
+      ]
+    },
+    {
+      "id": "kirlia_2",
+      "weight": 2,
+      "members": [
+        {
+          "pokemon": "gallade",
+          "rarity": 20,
+          "level": "39-41",
+          "alphaLevel": "48-50"
+        },
+        {
+          "pokemon": "kirlia",
+          "rarity": 80,
+          "level": "37-39",
+          "alphaLevel": "46-48"
+        }
+      ]
+    },
+    {
+      "id": "eevee",
+      "weight": 2,
+      "members": [
+        {
+          "pokemon": "espeon",
+          "rarity": 20,
+          "level": "37-39",
+          "alphaLevel": "46-48"
+        },
+        {
+          "pokemon": "eevee",
+          "rarity": 80,
+          "level": "35-37",
+          "alphaLevel": "44-46"
+        }
+      ]
+    },
+    {
+      "id": "braixen",
+      "weight": 1,
+      "members": [
+        {
+          "pokemon": "delphox",
+          "rarity": 20,
+          "level": "41-43",
+          "alphaLevel": "50-52"
+        },
+        {
+          "pokemon": "braixen",
+          "rarity": 80,
+          "level": "36-38",
+          "alphaLevel": "45-47"
+        }
+      ]
+    },
+    {
+      "id": "slowpoke",
+      "weight": 1,
+      "members": [
+        {
+          "pokemon": "slowking",
+          "rarity": 20,
+          "level": "41-43",
+          "alphaLevel": "50-52"
+        },
+        {
+          "pokemon": "slowpoke",
+          "rarity": 80,
+          "level": "37-39",
+          "alphaLevel": "46-48"
+        }
+      ]
+    },
+    {
+      "id": "slowpoke_2",
+      "weight": 1,
+      "members": [
+        {
+          "pokemon": "slowbro",
+          "rarity": 20,
+          "level": "41-43",
+          "alphaLevel": "50-52"
+        },
+        {
+          "pokemon": "slowpoke",
+          "rarity": 80,
+          "level": "37-39",
+          "alphaLevel": "46-48"
+        }
+      ]
+    },
+    {
+      "id": "staryu",
+      "weight": 2,
+      "members": [
+        {
+          "pokemon": "starmie",
+          "rarity": 20,
+          "level": "39-41",
+          "alphaLevel": "48-50"
+        },
+        {
+          "pokemon": "staryu",
+          "rarity": 80,
+          "level": "37-39",
+          "alphaLevel": "46-48"
+        }
+      ]
+    },
+    {
+      "id": "spoink",
+      "weight": 2,
+      "members": [
+        {
+          "pokemon": "grumpig",
+          "rarity": 20,
+          "level": "40-42",
+          "alphaLevel": "49-51"
+        },
+        {
+          "pokemon": "spoink",
+          "rarity": 80,
+          "level": "36-38",
+          "alphaLevel": "45-47"
+        }
+      ]
+    },
+    {
+      "id": "munna",
+      "weight": 3,
+      "members": [
+        {
+          "pokemon": "musharna",
+          "rarity": 20,
+          "level": "38-40",
+          "alphaLevel": "47-49"
+        },
+        {
+          "pokemon": "munna",
+          "rarity": 80,
+          "level": "35-37",
+          "alphaLevel": "44-46"
+        }
+      ]
+    }
+  ]
+}

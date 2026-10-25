@@ -1,0 +1,264 @@
+{
+  "star": 3,
+  "type": "fairy",
+  "clusters": [
+    {
+      "id": "mawile",
+      "weight": 4,
+      "members": [
+        {
+          "pokemon": "mawile",
+          "rarity": 100,
+          "level": "26-28",
+          "alphaLevel": "35-37"
+        }
+      ]
+    },
+    {
+      "id": "spritzee",
+      "weight": 5,
+      "members": [
+        {
+          "pokemon": "aromatisse",
+          "rarity": 20,
+          "level": "26-28",
+          "alphaLevel": "35-37"
+        },
+        {
+          "pokemon": "spritzee",
+          "rarity": 80,
+          "level": "22-24",
+          "alphaLevel": "31-33"
+        }
+      ]
+    },
+    {
+      "id": "flabebe_flower_blue",
+      "weight": 2,
+      "members": [
+        {
+          "pokemon": "floette flower=blue",
+          "rarity": 35,
+          "level": "24-26",
+          "alphaLevel": "33-35"
+        },
+        {
+          "pokemon": "flabebe flower=blue",
+          "rarity": 65,
+          "level": "20-22",
+          "alphaLevel": "29-31"
+        }
+      ]
+    },
+    {
+      "id": "flabebe_flower_white",
+      "weight": 2,
+      "members": [
+        {
+          "pokemon": "floette flower=white",
+          "rarity": 35,
+          "level": "24-26",
+          "alphaLevel": "33-35"
+        },
+        {
+          "pokemon": "flabebe flower=white",
+          "rarity": 65,
+          "level": "20-22",
+          "alphaLevel": "29-31"
+        }
+      ]
+    },
+    {
+      "id": "dedenne",
+      "weight": 4,
+      "members": [
+        {
+          "pokemon": "dedenne",
+          "rarity": 100,
+          "level": "28-30",
+          "alphaLevel": "37-39"
+        }
+      ]
+    },
+    {
+      "id": "flabebe_flower_red",
+      "weight": 2,
+      "members": [
+        {
+          "pokemon": "floette flower=red",
+          "rarity": 35,
+          "level": "24-26",
+          "alphaLevel": "33-35"
+        },
+        {
+          "pokemon": "flabebe flower=red",
+          "rarity": 65,
+          "level": "20-22",
+          "alphaLevel": "29-31"
+        }
+      ]
+    },
+    {
+      "id": "flabebe_flower_yellow",
+      "weight": 2,
+      "members": [
+        {
+          "pokemon": "floette flower=yellow",
+          "rarity": 35,
+          "level": "24-26",
+          "alphaLevel": "33-35"
+        },
+        {
+          "pokemon": "flabebe flower=yellow",
+          "rarity": 65,
+          "level": "20-22",
+          "alphaLevel": "29-31"
+        }
+      ]
+    },
+    {
+      "id": "flabebe_flower_orange",
+      "weight": 2,
+      "members": [
+        {
+          "pokemon": "floette flower=orange",
+          "rarity": 35,
+          "level": "24-26",
+          "alphaLevel": "33-35"
+        },
+        {
+          "pokemon": "flabebe flower=orange",
+          "rarity": 65,
+          "level": "20-22",
+          "alphaLevel": "29-31"
+        }
+      ]
+    },
+    {
+      "id": "floette_flower_blue",
+      "weight": 4,
+      "members": [
+        {
+          "pokemon": "florges flower=blue",
+          "rarity": 35,
+          "level": "28-30",
+          "alphaLevel": "37-39"
+        },
+        {
+          "pokemon": "floette flower=blue",
+          "rarity": 65,
+          "level": "24-26",
+          "alphaLevel": "33-35"
+        }
+      ]
+    },
+    {
+      "id": "floette_flower_white",
+      "weight": 4,
+      "members": [
+        {
+          "pokemon": "florges flower=white",
+          "rarity": 35,
+          "level": "28-30",
+          "alphaLevel": "37-39"
+        },
+        {
+          "pokemon": "floette flower=white",
+          "rarity": 65,
+          "level": "24-26",
+          "alphaLevel": "33-35"
+        }
+      ]
+    },
+    {
+      "id": "floette_flower_red",
+      "weight": 4,
+      "members": [
+        {
+          "pokemon": "florges flower=red",
+          "rarity": 35,
+          "level": "28-30",
+          "alphaLevel": "37-39"
+        },
+        {
+          "pokemon": "floette flower=red",
+          "rarity": 65,
+          "level": "24-26",
+          "alphaLevel": "33-35"
+        }
+      ]
+    },
+    {
+      "id": "floette_flower_yellow",
+      "weight": 4,
+      "members": [
+        {
+          "pokemon": "florges flower=yellow",
+          "rarity": 35,
+          "level": "28-30",
+          "alphaLevel": "37-39"
+        },
+        {
+          "pokemon": "floette flower=yellow",
+          "rarity": 65,
+          "level": "24-26",
+          "alphaLevel": "33-35"
+        }
+      ]
+    },
+    {
+      "id": "floette_flower_orange",
+      "weight": 4,
+      "members": [
+        {
+          "pokemon": "florges flower=orange",
+          "rarity": 35,
+          "level": "28-30",
+          "alphaLevel": "37-39"
+        },
+        {
+          "pokemon": "floette flower=orange",
+          "rarity": 65,
+          "level": "24-26",
+          "alphaLevel": "33-35"
+        }
+      ]
+    },
+    {
+      "id": "igglybuff",
+      "weight": 3,
+      "members": [
+        {
+          "pokemon": "jigglypuff",
+          "rarity": 20,
+          "level": "24-26",
+          "alphaLevel": "33-35"
+        },
+        {
+          "pokemon": "igglybuff",
+          "rarity": 80,
+          "level": "21-23",
+          "alphaLevel": "30-32"
+        }
+      ]
+    },
+    {
+      "id": "fidough",
+      "weight": 3,
+      "members": [
+        {
+          "pokemon": "dachsbun",
+          "rarity": 20,
+          "level": "27-29",
+          "alphaLevel": "36-38"
+        },
+        {
+          "pokemon": "fidough",
+          "rarity": 80,
+          "level": "22-24",
+          "alphaLevel": "31-33"
+        }
+      ]
+    }
+  ]
+}

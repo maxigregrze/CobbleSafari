@@ -1,0 +1,88 @@
+{
+  "parent": "minecraft:block/block",
+  "textures": {
+    "0": "cobblesafari:block/hyperspace_floor",
+    "1": "cobblesafari:block/hyperspace_planter",
+    "2": "minecraft:block/grass_block_top",
+    "particle": "cobblesafari:block/hyperspace_floor"
+  },
+  "elements": [
+    {
+      "from": [
+        -2,
+        16,
+        16
+      ],
+      "to": [
+        0,
+        20,
+        18
+      ],
+      "rotation": {
+        "angle": 0,
+        "axis": "y",
+        "origin": [
+          -2,
+          16,
+          16
+        ]
+      },
+      "faces": {
+        "north": {
+          "uv": [
+            4,
+            8,
+            6,
+            12
+          ],
+          "texture": "#1"
+        },
+        "east": {
+          "uv": [
+            4,
+            8,
+            6,
+            12
+          ],
+          "texture": "#1"
+        },
+        "south": {
+          "uv": [
+            4,
+            8,
+            6,
+            12
+          ],
+          "texture": "#1"
+        },
+        "west": {
+          "uv": [
+            4,
+            8,
+            6,
+            12
+          ],
+          "texture": "#1"
+        },
+        "up": {
+          "uv": [
+            10,
+            4,
+            12,
+            6
+          ],
+          "texture": "#1"
+        },
+        "down": {
+          "uv": [
+            10,
+            4,
+            12,
+            6
+          ],
+          "texture": "#1"
+        }
+      }
+    }
+  ]
+}

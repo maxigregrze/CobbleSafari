@@ -1,0 +1,114 @@
+{
+  "star": 4,
+  "type": "rock",
+  "clusters": [
+    {
+      "id": "lairon",
+      "weight": 5,
+      "members": [
+        {
+          "pokemon": "aggron",
+          "rarity": 20,
+          "level": "42-44",
+          "alphaLevel": "51-53"
+        },
+        {
+          "pokemon": "lairon",
+          "rarity": 80,
+          "level": "40-42",
+          "alphaLevel": "49-51"
+        }
+      ]
+    },
+    {
+      "id": "binacle",
+      "weight": 4,
+      "members": [
+        {
+          "pokemon": "barbaracle",
+          "rarity": 20,
+          "level": "42-44",
+          "alphaLevel": "51-53"
+        },
+        {
+          "pokemon": "binacle",
+          "rarity": 80,
+          "level": "37-39",
+          "alphaLevel": "46-48"
+        }
+      ]
+    },
+    {
+      "id": "larvitar",
+      "weight": 6,
+      "members": [
+        {
+          "pokemon": "pupitar",
+          "rarity": 20,
+          "level": "39-41",
+          "alphaLevel": "48-50"
+        },
+        {
+          "pokemon": "larvitar",
+          "rarity": 80,
+          "level": "36-38",
+          "alphaLevel": "45-47"
+        }
+      ]
+    },
+    {
+      "id": "bergmite",
+      "weight": 1,
+      "members": [
+        {
+          "pokemon": "avalugg",
+          "rarity": 20,
+          "level": "41-43",
+          "alphaLevel": "50-52"
+        },
+        {
+          "pokemon": "bergmite",
+          "rarity": 80,
+          "level": "37-39",
+          "alphaLevel": "46-48"
+        }
+      ]
+    },
+    {
+      "id": "naclstack",
+      "weight": 3,
+      "members": [
+        {
+          "pokemon": "garganacl",
+          "rarity": 20,
+          "level": "41-43",
+          "alphaLevel": "50-52"
+        },
+        {
+          "pokemon": "naclstack",
+          "rarity": 80,
+          "level": "38-40",
+          "alphaLevel": "47-49"
+        }
+      ]
+    },
+    {
+      "id": "glimmet",
+      "weight": 2,
+      "members": [
+        {
+          "pokemon": "glimmora",
+          "rarity": 20,
+          "level": "41-43",
+          "alphaLevel": "50-52"
+        },
+        {
+          "pokemon": "glimmet",
+          "rarity": 80,
+          "level": "36-38",
+          "alphaLevel": "45-47"
+        }
+      ]
+    }
+  ]
+}

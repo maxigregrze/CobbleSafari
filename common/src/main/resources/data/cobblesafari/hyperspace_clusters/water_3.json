@@ -1,0 +1,144 @@
+{
+  "star": 3,
+  "type": "water",
+  "clusters": [
+    {
+      "id": "carvanha",
+      "weight": 7,
+      "members": [
+        {
+          "pokemon": "sharpedo",
+          "rarity": 20,
+          "level": "30-32",
+          "alphaLevel": "39-41"
+        },
+        {
+          "pokemon": "carvanha",
+          "rarity": 80,
+          "level": "23-25",
+          "alphaLevel": "32-34"
+        }
+      ]
+    },
+    {
+      "id": "clauncher",
+      "weight": 7,
+      "members": [
+        {
+          "pokemon": "clawitzer",
+          "rarity": 20,
+          "level": "37-39",
+          "alphaLevel": "46-48"
+        },
+        {
+          "pokemon": "clauncher",
+          "rarity": 80,
+          "level": "24-26",
+          "alphaLevel": "33-35"
+        }
+      ]
+    },
+    {
+      "id": "slowpoke",
+      "weight": 3,
+      "members": [
+        {
+          "pokemon": "slowpoke",
+          "rarity": 100,
+          "level": "24-26",
+          "alphaLevel": "33-35"
+        }
+      ]
+    },
+    {
+      "id": "squirtle",
+      "weight": 1,
+      "members": [
+        {
+          "pokemon": "wartortle",
+          "rarity": 20,
+          "level": "23-25",
+          "alphaLevel": "32-34"
+        },
+        {
+          "pokemon": "squirtle",
+          "rarity": 80,
+          "level": "20-22",
+          "alphaLevel": "29-31"
+        }
+      ]
+    },
+    {
+      "id": "totodile",
+      "weight": 1,
+      "members": [
+        {
+          "pokemon": "croconaw",
+          "rarity": 20,
+          "level": "24-26",
+          "alphaLevel": "33-35"
+        },
+        {
+          "pokemon": "totodile",
+          "rarity": 80,
+          "level": "20-22",
+          "alphaLevel": "29-31"
+        }
+      ]
+    },
+    {
+      "id": "froakie",
+      "weight": 1,
+      "members": [
+        {
+          "pokemon": "frogadier",
+          "rarity": 20,
+          "level": "23-25",
+          "alphaLevel": "32-34"
+        },
+        {
+          "pokemon": "froakie",
+          "rarity": 80,
+          "level": "20-22",
+          "alphaLevel": "29-31"
+        }
+      ]
+    },
+    {
+      "id": "mudkip",
+      "weight": 1,
+      "members": [
+        {
+          "pokemon": "marshtomp",
+          "rarity": 20,
+          "level": "23-25",
+          "alphaLevel": "32-34"
+        },
+        {
+          "pokemon": "mudkip",
+          "rarity": 80,
+          "level": "20-22",
+          "alphaLevel": "29-31"
+        }
+      ]
+    },
+    {
+      "id": "wimpod",
+      "weight": 3,
+      "members": [
+        {
+          "pokemon": "golisopod",
+          "rarity": 20,
+          "level": "30-32",
+          "alphaLevel": "39-41"
+        },
+        {
+          "pokemon": "wimpod",
+          "rarity": 80,
+          "level": "23-25",
+          "alphaLevel": "32-34"
+        }
+      ]
+    }
+  ]
+}

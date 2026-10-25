@@ -1,0 +1,138 @@
+{
+  "star": 3,
+  "type": "rock",
+  "clusters": [
+    {
+      "id": "onix",
+      "weight": 7,
+      "members": [
+        {
+          "pokemon": "onix",
+          "rarity": 100,
+          "level": "24-26",
+          "alphaLevel": "33-35"
+        }
+      ]
+    },
+    {
+      "id": "carbink",
+      "weight": 5,
+      "members": [
+        {
+          "pokemon": "carbink",
+          "rarity": 100,
+          "level": "24-26",
+          "alphaLevel": "33-35"
+        }
+      ]
+    },
+    {
+      "id": "larvitar",
+      "weight": 3,
+      "members": [
+        {
+          "pokemon": "larvitar",
+          "rarity": 100,
+          "level": "23-25",
+          "alphaLevel": "32-34"
+        }
+      ]
+    },
+    {
+      "id": "binacle",
+      "weight": 4,
+      "members": [
+        {
+          "pokemon": "binacle",
+          "rarity": 100,
+          "level": "24-26",
+          "alphaLevel": "33-35"
+        }
+      ]
+    },
+    {
+      "id": "tyrunt",
+      "weight": 2,
+      "members": [
+        {
+          "pokemon": "tyrunt",
+          "rarity": 100,
+          "level": "24-26",
+          "alphaLevel": "33-35"
+        }
+      ]
+    },
+    {
+      "id": "aron",
+      "weight": 1,
+      "members": [
+        {
+          "pokemon": "lairon",
+          "rarity": 20,
+          "level": "32-34",
+          "alphaLevel": "41-43"
+        },
+        {
+          "pokemon": "aron",
+          "rarity": 80,
+          "level": "23-25",
+          "alphaLevel": "32-34"
+        }
+      ]
+    },
+    {
+      "id": "amaura",
+      "weight": 2,
+      "members": [
+        {
+          "pokemon": "amaura",
+          "rarity": 100,
+          "level": "24-26",
+          "alphaLevel": "33-35"
+        }
+      ]
+    },
+    {
+      "id": "nacli",
+      "weight": 3,
+      "members": [
+        {
+          "pokemon": "nacli",
+          "rarity": 100,
+          "level": "22-24",
+          "alphaLevel": "31-33"
+        }
+      ]
+    },
+    {
+      "id": "nacli_2",
+      "weight": 2,
+      "members": [
+        {
+          "pokemon": "naclstack",
+          "rarity": 20,
+          "level": "26-28",
+          "alphaLevel": "35-37"
+        },
+        {
+          "pokemon": "nacli",
+          "rarity": 80,
+          "level": "22-24",
+          "alphaLevel": "31-33"
+        }
+      ]
+    },
+    {
+      "id": "glimmet",
+      "weight": 1,
+      "members": [
+        {
+          "pokemon": "glimmet",
+          "rarity": 100,
+          "level": "24-26",
+          "alphaLevel": "33-35"
+        }
+      ]
+    }
+  ]
+}

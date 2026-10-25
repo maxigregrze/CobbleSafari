@@ -1,0 +1,150 @@
+{
+  "star": 3,
+  "type": "grass",
+  "clusters": [
+    {
+      "id": "bellsprout",
+      "weight": 5,
+      "members": [
+        {
+          "pokemon": "weepinbell",
+          "rarity": 20,
+          "level": "25-27",
+          "alphaLevel": "34-36"
+        },
+        {
+          "pokemon": "bellsprout",
+          "rarity": 80,
+          "level": "21-23",
+          "alphaLevel": "30-32"
+        }
+      ]
+    },
+    {
+      "id": "skiddo",
+      "weight": 6,
+      "members": [
+        {
+          "pokemon": "gogoat",
+          "rarity": 20,
+          "level": "32-34",
+          "alphaLevel": "41-43"
+        },
+        {
+          "pokemon": "skiddo",
+          "rarity": 80,
+          "level": "23-25",
+          "alphaLevel": "32-34"
+        }
+      ]
+    },
+    {
+      "id": "budew",
+      "weight": 6,
+      "members": [
+        {
+          "pokemon": "roselia",
+          "rarity": 20,
+          "level": "22-24",
+          "alphaLevel": "31-33"
+        },
+        {
+          "pokemon": "budew",
+          "rarity": 80,
+          "level": "20-22",
+          "alphaLevel": "29-31"
+        }
+      ]
+    },
+    {
+      "id": "bulbasaur",
+      "weight": 1,
+      "members": [
+        {
+          "pokemon": "ivysaur",
+          "rarity": 20,
+          "level": "23-25",
+          "alphaLevel": "32-34"
+        },
+        {
+          "pokemon": "bulbasaur",
+          "rarity": 80,
+          "level": "20-22",
+          "alphaLevel": "29-31"
+        }
+      ]
+    },
+    {
+      "id": "chikorita",
+      "weight": 1,
+      "members": [
+        {
+          "pokemon": "bayleef",
+          "rarity": 20,
+          "level": "23-25",
+          "alphaLevel": "32-34"
+        },
+        {
+          "pokemon": "chikorita",
+          "rarity": 80,
+          "level": "20-22",
+          "alphaLevel": "29-31"
+        }
+      ]
+    },
+    {
+      "id": "chespin",
+      "weight": 1,
+      "members": [
+        {
+          "pokemon": "quilladin",
+          "rarity": 20,
+          "level": "23-25",
+          "alphaLevel": "32-34"
+        },
+        {
+          "pokemon": "chespin",
+          "rarity": 80,
+          "level": "20-22",
+          "alphaLevel": "29-31"
+        }
+      ]
+    },
+    {
+      "id": "capsakid",
+      "weight": 3,
+      "members": [
+        {
+          "pokemon": "scovillain",
+          "rarity": 20,
+          "level": "26-28",
+          "alphaLevel": "35-37"
+        },
+        {
+          "pokemon": "capsakid",
+          "rarity": 80,
+          "level": "21-23",
+          "alphaLevel": "30-32"
+        }
+      ]
+    },
+    {
+      "id": "treecko",
+      "weight": 1,
+      "members": [
+        {
+          "pokemon": "grovyle",
+          "rarity": 20,
+          "level": "23-25",
+          "alphaLevel": "32-34"
+        },
+        {
+          "pokemon": "treecko",
+          "rarity": 80,
+          "level": "20-22",
+          "alphaLevel": "29-31"
+        }
+      ]
+    }
+  ]
+}

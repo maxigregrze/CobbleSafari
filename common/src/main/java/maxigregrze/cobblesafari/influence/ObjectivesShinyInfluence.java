@@ -9,9 +9,10 @@ import net.minecraft.world.entity.Entity;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Forces one guaranteed shiny spawn for a {@code task_catch_shiny} objective, but only while the
- * player is inside the objective's dimension/instance. Bound to the assignment, so
- * it pauses when the player leaves and is discarded when the assignment is removed.
+ * Forces one guaranteed shiny / alpha / shiny alpha spawn for a {@code task_catch_shiny},
+ * {@code task_catch_alpha} or {@code task_catch_alphashiny} objective, but only while the player is
+ * inside the objective's dimension/instance. Bound to the assignment, so it pauses when the player
+ * leaves and is discarded when the assignment is removed.
  */
 public class ObjectivesShinyInfluence implements SpawningInfluence {
 
@@ -24,7 +25,7 @@ public class ObjectivesShinyInfluence implements SpawningInfluence {
     @Override
     public void affectSpawn(@NotNull SpawnAction<?> action, @NotNull Entity entity) {
         if (entity instanceof PokemonEntity pe) {
-            ObjectivesManager.tryConsumeShinyGuarantee(player, pe);
+            ObjectivesManager.tryConsumeSpawnGuarantee(player, pe);
         }
     }
 }

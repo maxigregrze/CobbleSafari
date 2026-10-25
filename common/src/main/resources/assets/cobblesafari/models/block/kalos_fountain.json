@@ -1,0 +1,7 @@
+{
+  "parent": "cobblesafari:block/hyperspace_fountain",
+  "textures": {
+    "0": "cobblesafari:block/kalos_fountain",
+    "particle": "cobblesafari:block/kalos_fountain"
+  }
+}

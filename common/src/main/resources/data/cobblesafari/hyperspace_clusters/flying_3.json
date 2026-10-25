@@ -1,0 +1,150 @@
+{
+  "star": 3,
+  "type": "flying",
+  "clusters": [
+    {
+      "id": "swablu",
+      "weight": 5,
+      "members": [
+        {
+          "pokemon": "altaria",
+          "rarity": 20,
+          "level": "35-37",
+          "alphaLevel": "44-46"
+        },
+        {
+          "pokemon": "swablu",
+          "rarity": 80,
+          "level": "24-26",
+          "alphaLevel": "33-35"
+        }
+      ]
+    },
+    {
+      "id": "hawlucha",
+      "weight": 6,
+      "members": [
+        {
+          "pokemon": "hawlucha",
+          "rarity": 100,
+          "level": "31-33",
+          "alphaLevel": "40-42"
+        }
+      ]
+    },
+    {
+      "id": "noibat",
+      "weight": 6,
+      "members": [
+        {
+          "pokemon": "noibat",
+          "rarity": 100,
+          "level": "26-28",
+          "alphaLevel": "35-37"
+        }
+      ]
+    },
+    {
+      "id": "pidgey",
+      "weight": 2,
+      "members": [
+        {
+          "pokemon": "pidgeotto",
+          "rarity": 20,
+          "level": "24-26",
+          "alphaLevel": "33-35"
+        },
+        {
+          "pokemon": "pidgey",
+          "rarity": 80,
+          "level": "20-22",
+          "alphaLevel": "29-31"
+        }
+      ]
+    },
+    {
+      "id": "fletchling",
+      "weight": 3,
+      "members": [
+        {
+          "pokemon": "fletchinder",
+          "rarity": 20,
+          "level": "23-25",
+          "alphaLevel": "32-34"
+        },
+        {
+          "pokemon": "fletchling",
+          "rarity": 80,
+          "level": "20-22",
+          "alphaLevel": "29-31"
+        }
+      ]
+    },
+    {
+      "id": "emolga",
+      "weight": 2,
+      "members": [
+        {
+          "pokemon": "emolga",
+          "rarity": 100,
+          "level": "24-26",
+          "alphaLevel": "33-35"
+        }
+      ]
+    },
+    {
+      "id": "starly",
+      "weight": 1,
+      "members": [
+        {
+          "pokemon": "staravia",
+          "rarity": 20,
+          "level": "22-24",
+          "alphaLevel": "31-33"
+        },
+        {
+          "pokemon": "starly",
+          "rarity": 80,
+          "level": "20-22",
+          "alphaLevel": "29-31"
+        }
+      ]
+    },
+    {
+      "id": "zubat",
+      "weight": 2,
+      "members": [
+        {
+          "pokemon": "golbat",
+          "rarity": 20,
+          "level": "25-27",
+          "alphaLevel": "34-36"
+        },
+        {
+          "pokemon": "zubat",
+          "rarity": 80,
+          "level": "21-23",
+          "alphaLevel": "30-32"
+        }
+      ]
+    },
+    {
+      "id": "rookidee",
+      "weight": 3,
+      "members": [
+        {
+          "pokemon": "corvisquire",
+          "rarity": 20,
+          "level": "24-26",
+          "alphaLevel": "33-35"
+        },
+        {
+          "pokemon": "rookidee",
+          "rarity": 80,
+          "level": "20-22",
+          "alphaLevel": "29-31"
+        }
+      ]
+    }
+  ]
+}

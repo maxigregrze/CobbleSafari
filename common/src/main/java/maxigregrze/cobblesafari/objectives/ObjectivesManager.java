@@ -14,13 +14,18 @@ import com.cobblemon.mod.common.pokemon.Pokemon;
 import com.cobblemon.mod.common.pokemon.Species;
 import kotlin.Unit;
 import maxigregrze.cobblesafari.CobbleSafari;
+import maxigregrze.cobblesafari.compat.CobblemonFishingInterop;
 import maxigregrze.cobblesafari.config.MiscConfig;
 import maxigregrze.cobblesafari.data.DungeonInstanceRecord;
 import maxigregrze.cobblesafari.data.DungeonPositionSavedData;
+import maxigregrze.cobblesafari.data.HyperspaceZoneSavedData;
+import maxigregrze.cobblesafari.dungeon.hyperspace.HyperspaceZone;
 import maxigregrze.cobblesafari.data.ObjectivesSavedData;
 import maxigregrze.cobblesafari.network.ObjectivesHudSyncPayload;
 import maxigregrze.cobblesafari.platform.Services;
 import maxigregrze.cobblesafari.power.PowerVariantRegistry;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
@@ -50,8 +55,7 @@ public final class ObjectivesManager {
     /** Distortion dungeon dimension, for the "Shadow Hunter" advancement. */
     private static final ResourceLocation DISTORTION_DIM =
             ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, "dungeon_distortion");
-    /** Hidden trigger window (ticks) for a task_catch_shiny guarantee. */
-    private static final int SHINY_WINDOW_TICKS = 2400;
+    private static final String STAR = "★";
 
     /** Last known assignment key per player (absent ⇒ no objectives context). */
     private static final Map<UUID, String> CURRENT_KEY = new ConcurrentHashMap<>();
@@ -85,6 +89,7 @@ public final class ObjectivesManager {
             }
             return Unit.INSTANCE;
         });
+        CatchContextTracker.register();
         CobblemonEvents.BATTLE_VICTORY.subscribe(Priority.NORMAL, event -> {
             try {
                 onBattleVictory(event);
@@ -183,6 +188,7 @@ public final class ObjectivesManager {
                 return;
             }
             data.put(player.getUUID(), assignment);
+            announceHyperspaceZone(player, assignment);
         }
         sync(player, assignment);
     }
@@ -259,11 +265,23 @@ public final class ObjectivesManager {
             return null;
         }
         try {
+            HyperspaceZone zone = instanceId == null ? null
+                    : HyperspaceZoneSavedData.get(player.getServer()).get(instanceId);
+            // An entry aimed at the instance's roll cannot be satisfied without one (plan 196, § 7.4).
+            List<DimensionalObjectivesDefinition.TaskPoolEntry> pool = new ArrayList<>();
+            for (DimensionalObjectivesDefinition.TaskPoolEntry entry : def.tasks()) {
+                if (zone != null || !entry.needsInstanceContext()) {
+                    pool.add(entry);
+                }
+            }
+            if (pool.isEmpty()) {
+                return null;
+            }
             RandomSource rng = player.serverLevel().getRandom();
             long now = player.serverLevel().getGameTime();
             List<ObjectiveTask> tasks = new ArrayList<>(OBJECTIVE_COUNT);
             for (int i = 0; i < OBJECTIVE_COUNT; i++) {
-                ObjectiveTask rolled = rollOne(def, rng, now);
+                ObjectiveTask rolled = rollOne(pool, zone, rng, now);
                 if (rolled == null) {
                     return null;
                 }
@@ -276,8 +294,9 @@ public final class ObjectivesManager {
         }
     }
 
-    private static ObjectiveTask rollOne(DimensionalObjectivesDefinition def, RandomSource rng, long now) {
-        DimensionalObjectivesDefinition.TaskPoolEntry entry = pickWeighted(def.tasks(), rng);
+    private static ObjectiveTask rollOne(List<DimensionalObjectivesDefinition.TaskPoolEntry> pool,
+                                         HyperspaceZone zone, RandomSource rng, long now) {
+        DimensionalObjectivesDefinition.TaskPoolEntry entry = pickWeighted(pool, rng);
         if (entry == null || entry.type() == null) {
             return null;
         }
@@ -286,13 +305,14 @@ public final class ObjectivesManager {
         int count = type.usesCount()
                 ? entry.countMin() + rng.nextInt(entry.countMax() - entry.countMin() + 1)
                 : 1;
-        String species = type.usesSpecies() ? rollSpecies(entry, rng) : "";
-        int typeIndex = type.usesType() ? entry.allowedTypes().get(rng.nextInt(entry.allowedTypes().size())) : -1;
+        String species = type.usesSpecies() ? rollSpecies(entry, zone, rng) : "";
+        int typeIndex = type.usesType() ? rollTypeIndex(entry, zone, rng) : -1;
         String reward = entry.taskReward() != null ? entry.taskReward().toString() : "";
 
         ObjectiveTask task = new ObjectiveTask(type.id(), count, species, typeIndex, reward);
-        if (type == TaskType.TASK_CATCH_SHINY) {
-            task.armShinyGuarantee(now + rng.nextInt(SHINY_WINDOW_TICKS));
+        if (guaranteesSpawn(type)) {
+            // Armed at once: the next Pokemon to spawn for the player in this instance (plan 196, section 7.8).
+            task.armSpawnGuarantee(now);
         }
         return task;
     }
@@ -317,8 +337,13 @@ public final class ObjectivesManager {
         return pool.get(pool.size() - 1);
     }
 
-    private static String rollSpecies(DimensionalObjectivesDefinition.TaskPoolEntry entry, RandomSource rng) {
+    private static String rollSpecies(DimensionalObjectivesDefinition.TaskPoolEntry entry,
+                                      HyperspaceZone zone, RandomSource rng) {
         String chosen = entry.allowedSpecies().get(rng.nextInt(entry.allowedSpecies().size()));
+        if (DimensionalObjectivesDefinition.TaskPoolEntry.INSTANCE_SENTINEL.equalsIgnoreCase(chosen)) {
+            List<String> targets = zone == null ? List.of() : zone.targetSpecies();
+            return targets.isEmpty() ? "" : targets.get(rng.nextInt(targets.size()));
+        }
         if ("random".equalsIgnoreCase(chosen)) {
             List<Species> implemented = new ArrayList<>(PokemonSpecies.INSTANCE.getImplemented());
             if (implemented.isEmpty()) {
@@ -327,6 +352,34 @@ public final class ObjectivesManager {
             return implemented.get(rng.nextInt(implemented.size())).getResourceIdentifier().toString();
         }
         return normalizeSpeciesId(chosen);
+    }
+
+    private static int rollTypeIndex(DimensionalObjectivesDefinition.TaskPoolEntry entry,
+                                     HyperspaceZone zone, RandomSource rng) {
+        if (entry.typesFromInstance() && zone != null && !zone.types().isEmpty()) {
+            return DimensionalObjectivesDataLoader.typeIndexFromName(zone.types().get(rng.nextInt(zone.types().size())));
+        }
+        return entry.allowedTypes().get(rng.nextInt(entry.allowedTypes().size()));
+    }
+
+    /** "Hyperspace Lumiose ★★★ — Fire / Water", once per freshly rolled assignment (plan 196, § 3.7). */
+    private static void announceHyperspaceZone(ServerPlayer player, ObjectiveAssignment assignment) {
+        if (assignment.instanceId() == null) {
+            return;
+        }
+        HyperspaceZone zone = HyperspaceZoneSavedData.get(player.getServer()).get(assignment.instanceId());
+        if (zone == null) {
+            return;
+        }
+        MutableComponent types = Component.empty();
+        for (int i = 0; i < zone.types().size(); i++) {
+            if (i > 0) {
+                types.append(" / ");
+            }
+            types.append(Component.translatable("cobblemon.type." + zone.types().get(i)));
+        }
+        player.sendSystemMessage(Component.translatable("cobblesafari.hyperspace.zone_info",
+                STAR.repeat(zone.star()), types));
     }
 
     private static String normalizeSpeciesId(String raw) {
@@ -399,31 +452,45 @@ public final class ObjectivesManager {
         ObjectivesSavedData.get(server).removeKeyForAll(key);
     }
 
-    // --- Shiny guarantee consumption ------------------------------------------
+    // --- Spawn guarantee consumption ------------------------------------------
 
-    public static void tryConsumeShinyGuarantee(ServerPlayer player, PokemonEntity pe) {
+    private static boolean guaranteesSpawn(TaskType type) {
+        return type == TaskType.TASK_CATCH_SHINY || type == TaskType.TASK_CATCH_ALPHA
+                || type == TaskType.TASK_CATCH_ALPHASHINY;
+    }
+
+    /**
+     * Spends at most one pending guarantee on a fresh spawn. Bound to the active assignment, so it
+     * only ever fires inside its own instance and simply waits while the player is elsewhere.
+     */
+    public static void tryConsumeSpawnGuarantee(ServerPlayer player, PokemonEntity pe) {
         try {
-            consumeShinyGuaranteeInternal(player, pe);
+            consumeSpawnGuaranteeInternal(player, pe);
         } catch (Exception e) {
-            logOnce("tryConsumeShinyGuarantee", e);
+            logOnce("tryConsumeSpawnGuarantee", e);
         }
     }
 
-    private static void consumeShinyGuaranteeInternal(ServerPlayer player, PokemonEntity pe) {
+    private static void consumeSpawnGuaranteeInternal(ServerPlayer player, PokemonEntity pe) {
         ObjectiveAssignment assignment = activeAssignment(player);
         if (assignment == null) {
             return;
         }
         long now = player.serverLevel().getGameTime();
         for (ObjectiveTask task : assignment.tasks()) {
-            if (task.type() == TaskType.TASK_CATCH_SHINY
-                    && task.isShinyGuaranteePending()
-                    && now >= task.shinyTriggerGameTime()) {
-                pe.getPokemon().setShiny(true);
-                task.consumeShinyGuarantee();
-                ObjectivesSavedData.get(player.getServer()).setDirty();
-                return;
+            if (task.isComplete() || task.type() == null || !guaranteesSpawn(task.type())
+                    || !task.isSpawnGuaranteePending() || now < task.spawnGuaranteeTriggerGameTime()) {
+                continue;
             }
+            if (task.type() != TaskType.TASK_CATCH_ALPHA) {
+                pe.getPokemon().setShiny(true);
+            }
+            if (task.type() != TaskType.TASK_CATCH_SHINY && !pe.getPokemon().isAlpha()) {
+                CobblemonFishingInterop.alterAlphaAttempt(pe);
+            }
+            task.consumeSpawnGuarantee();
+            ObjectivesSavedData.get(player.getServer()).setDirty();
+            return;
         }
     }
 
@@ -434,10 +501,12 @@ public final class ObjectivesManager {
         Pokemon mon = event.getPokemon();
         String species = mon.getSpecies().getResourceIdentifier().toString();
         boolean shiny = mon.getShiny();
-        runEvent(player, task -> captureMutation(task, mon, species, shiny));
+        Boolean inBattle = CatchContextTracker.consume(mon.getUuid());
+        runEvent(player, task -> captureMutation(task, mon, species, shiny, inBattle));
     }
 
-    private static MutationResult captureMutation(ObjectiveTask task, Pokemon mon, String species, boolean shiny) {
+    private static MutationResult captureMutation(ObjectiveTask task, Pokemon mon, String species, boolean shiny,
+                                                  Boolean inBattle) {
         return switch (task.type()) {
             case TASK_CATCH_BASE -> new MutationResult(true, task.addProgress(1));
             case TASK_CATCH_SPECIE -> speciesMatches(species, task.speciesId())
@@ -451,6 +520,10 @@ public final class ObjectivesManager {
                     ? new MutationResult(true, task.markBinaryComplete()) : MutationResult.NONE;
             case TASK_CATCH_ALPHASHINY -> (mon.isAlpha() && shiny)
                     ? new MutationResult(true, task.markBinaryComplete()) : MutationResult.NONE;
+            case TASK_CATCH_UNAWARE -> Boolean.FALSE.equals(inBattle)
+                    ? new MutationResult(true, task.addProgress(1)) : MutationResult.NONE;
+            case TASK_CATCH_BATTLE -> Boolean.TRUE.equals(inBattle)
+                    ? new MutationResult(true, task.addProgress(1)) : MutationResult.NONE;
             default -> MutationResult.NONE;
         };
     }
@@ -544,6 +617,15 @@ public final class ObjectivesManager {
 
     public static void onPokeballOpened(ServerPlayer player) {
         simpleEvent(player, TaskType.TASK_LOOT, 1, false);
+    }
+
+    public static void onFloatingBallOpened(ServerPlayer player) {
+        simpleEvent(player, TaskType.TASK_LOOT_FLOATING, 1, false);
+    }
+
+    /** One progress per use, however many obstacles the diamond cleared (plan 196, § 8.6). */
+    public static void onObstacleCleared(ServerPlayer player, TaskType task) {
+        simpleEvent(player, task, 1, false);
     }
 
     public static void onBossStart(ServerPlayer player) {

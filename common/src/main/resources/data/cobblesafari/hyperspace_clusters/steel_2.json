@@ -1,0 +1,78 @@
+{
+  "star": 2,
+  "type": "steel",
+  "clusters": [
+    {
+      "id": "aron",
+      "weight": 6,
+      "members": [
+        {
+          "pokemon": "aron",
+          "rarity": 100,
+          "level": "20-22",
+          "alphaLevel": "29-31"
+        }
+      ]
+    },
+    {
+      "id": "beldum",
+      "weight": 6,
+      "members": [
+        {
+          "pokemon": "beldum",
+          "rarity": 100,
+          "level": "17-19",
+          "alphaLevel": "26-28"
+        }
+      ]
+    },
+    {
+      "id": "honedge",
+      "weight": 5,
+      "members": [
+        {
+          "pokemon": "honedge",
+          "rarity": 100,
+          "level": "20-22",
+          "alphaLevel": "29-31"
+        }
+      ]
+    },
+    {
+      "id": "klefki",
+      "weight": 6,
+      "members": [
+        {
+          "pokemon": "klefki",
+          "rarity": 100,
+          "level": "24-26",
+          "alphaLevel": "33-35"
+        }
+      ]
+    },
+    {
+      "id": "tinkatink",
+      "weight": 4,
+      "members": [
+        {
+          "pokemon": "tinkatink",
+          "rarity": 100,
+          "level": "18-20",
+          "alphaLevel": "27-29"
+        }
+      ]
+    },
+    {
+      "id": "meowth_galarian",
+      "weight": 3,
+      "members": [
+        {
+          "pokemon": "meowth galarian",
+          "rarity": 100,
+          "level": "19-21",
+          "alphaLevel": "28-30"
+        }
+      ]
+    }
+  ]
+}

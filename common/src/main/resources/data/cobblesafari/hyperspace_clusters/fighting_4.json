@@ -1,0 +1,198 @@
+{
+  "star": 4,
+  "type": "fighting",
+  "clusters": [
+    {
+      "id": "machoke",
+      "weight": 5,
+      "members": [
+        {
+          "pokemon": "machamp",
+          "rarity": 20,
+          "level": "42-44",
+          "alphaLevel": "51-53"
+        },
+        {
+          "pokemon": "machoke",
+          "rarity": 80,
+          "level": "39-41",
+          "alphaLevel": "48-50"
+        }
+      ]
+    },
+    {
+      "id": "pancham",
+      "weight": 5,
+      "members": [
+        {
+          "pokemon": "pangoro",
+          "rarity": 20,
+          "level": "40-42",
+          "alphaLevel": "49-51"
+        },
+        {
+          "pokemon": "pancham",
+          "rarity": 80,
+          "level": "36-38",
+          "alphaLevel": "45-47"
+        }
+      ]
+    },
+    {
+      "id": "scraggy",
+      "weight": 4,
+      "members": [
+        {
+          "pokemon": "scrafty",
+          "rarity": 20,
+          "level": "42-44",
+          "alphaLevel": "51-53"
+        },
+        {
+          "pokemon": "scraggy",
+          "rarity": 80,
+          "level": "37-39",
+          "alphaLevel": "46-48"
+        }
+      ]
+    },
+    {
+      "id": "heracross",
+      "weight": 4,
+      "members": [
+        {
+          "pokemon": "heracross",
+          "rarity": 100,
+          "level": "39-41",
+          "alphaLevel": "48-50"
+        }
+      ]
+    },
+    {
+      "id": "riolu",
+      "weight": 3,
+      "members": [
+        {
+          "pokemon": "lucario",
+          "rarity": 20,
+          "level": "40-42",
+          "alphaLevel": "49-51"
+        },
+        {
+          "pokemon": "riolu",
+          "rarity": 80,
+          "level": "34-36",
+          "alphaLevel": "43-45"
+        }
+      ]
+    },
+    {
+      "id": "pignite",
+      "weight": 1,
+      "members": [
+        {
+          "pokemon": "emboar",
+          "rarity": 20,
+          "level": "41-43",
+          "alphaLevel": "50-52"
+        },
+        {
+          "pokemon": "pignite",
+          "rarity": 80,
+          "level": "36-38",
+          "alphaLevel": "45-47"
+        }
+      ]
+    },
+    {
+      "id": "quilladin",
+      "weight": 1,
+      "members": [
+        {
+          "pokemon": "chesnaught",
+          "rarity": 20,
+          "level": "41-43",
+          "alphaLevel": "50-52"
+        },
+        {
+          "pokemon": "quilladin",
+          "rarity": 80,
+          "level": "36-38",
+          "alphaLevel": "45-47"
+        }
+      ]
+    },
+    {
+      "id": "combusken",
+      "weight": 1,
+      "members": [
+        {
+          "pokemon": "blaziken",
+          "rarity": 20,
+          "level": "41-43",
+          "alphaLevel": "50-52"
+        },
+        {
+          "pokemon": "combusken",
+          "rarity": 80,
+          "level": "36-38",
+          "alphaLevel": "45-47"
+        }
+      ]
+    },
+    {
+      "id": "crabrawler",
+      "weight": 3,
+      "members": [
+        {
+          "pokemon": "crabominable",
+          "rarity": 20,
+          "level": "38-40",
+          "alphaLevel": "47-49"
+        },
+        {
+          "pokemon": "crabrawler",
+          "rarity": 80,
+          "level": "35-37",
+          "alphaLevel": "44-46"
+        }
+      ]
+    },
+    {
+      "id": "kirlia",
+      "weight": 2,
+      "members": [
+        {
+          "pokemon": "gallade",
+          "rarity": 20,
+          "level": "39-41",
+          "alphaLevel": "48-50"
+        },
+        {
+          "pokemon": "kirlia",
+          "rarity": 80,
+          "level": "37-39",
+          "alphaLevel": "46-48"
+        }
+      ]
+    },
+    {
+      "id": "clobbopus",
+      "weight": 1,
+      "members": [
+        {
+          "pokemon": "grapploct",
+          "rarity": 20,
+          "level": "41-43",
+          "alphaLevel": "50-52"
+        },
+        {
+          "pokemon": "clobbopus",
+          "rarity": 80,
+          "level": "37-39",
+          "alphaLevel": "46-48"
+        }
+      ]
+    }
+  ]
+}

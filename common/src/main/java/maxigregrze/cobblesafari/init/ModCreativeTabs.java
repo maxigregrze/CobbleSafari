@@ -52,6 +52,9 @@ public class ModCreativeTabs {
                 output.accept(ModBlocks.LOST_ITEM_CLASSIC_ITEM);
                 output.accept(ModBlocks.LOST_ITEM_BURIED_ITEM);
                 output.accept(ModBlocks.LOST_ITEM_FLOATING_ITEM);
+                output.accept(ModBlocks.OBSTACLE_BOULDER);
+                output.accept(ModBlocks.OBSTACLE_BRAMBLES);
+                output.accept(ModBlocks.OBSTACLE_SLUDGE);
                 output.accept(ModItems.LOST_ITEM_TEMPLATE);
                 output.accept(ModItems.EGG_CREATIVE);
                 output.accept(ModBlocks.AUSPICIOUS_POKEBALL);
@@ -409,6 +412,10 @@ public class ModCreativeTabs {
                 output.accept(ModBlocks.HYPERSPACE_TILE_COVERING);
                 output.accept(ModBlocks.HYPERSPACE_SLAB_ROOF);
                 output.accept(ModBlocks.HYPERSPACE_CHIMNEY);
+                output.accept(ModBlocks.HYPERSPACE_WALL_BRICKS_WALL);
+                output.accept(ModBlocks.HYPERSPACE_WALL_BOTTOM_WALL);
+                output.accept(ModBlocks.HYPERSPACE_PLANTER);
+                output.accept(ModBlocks.HYPERSPACE_FOUNTAIN);
 
                 // Kalos family (plan 163) - mirrors the hyperspace structural blocks above.
                 // Same display names on purpose; the texture is what tells them apart.
@@ -466,6 +473,10 @@ public class ModCreativeTabs {
                 output.accept(ModBlocks.KALOS_TILE_COVERING);
                 output.accept(ModBlocks.KALOS_SLAB_ROOF);
                 output.accept(ModBlocks.KALOS_CHIMNEY);
+                output.accept(ModBlocks.KALOS_WALL_BRICKS_WALL);
+                output.accept(ModBlocks.KALOS_WALL_BOTTOM_WALL);
+                output.accept(ModBlocks.KALOS_PLANTER);
+                output.accept(ModBlocks.KALOS_FOUNTAIN);
                 output.accept(ModBlocks.HYPERSPACE_BARRIER);
                 output.accept(ModBlocks.HYPERSPACE_CONE);
                 output.accept(ModBlocks.HYPERSPACE_FLAG_SMALL);
@@ -489,6 +500,7 @@ public class ModCreativeTabs {
                 output.accept(ModBlocks.HYPERSPACE_FENCE);
                 output.accept(ModBlocks.HYPERSPACE_BENCH);
                 output.accept(ModBlocks.HYPERSPACE_POTTEDPLANT);
+                output.accept(ModBlocks.HYPERSPACE_POSTERS);
                 // Nature blocks (plan 140)
                 output.accept(ModBlocks.HYPERSPACE_LOG);
                 output.accept(ModBlocks.HYPERSPACE_LEAVES);
@@ -505,6 +517,8 @@ public class ModCreativeTabs {
                 output.accept(ModBlocks.YELLOW_MAPLE_LEAVES_PILE);
                 output.accept(ModBlocks.HYPERSPACE_BUSH);
                 output.accept(ModBlocks.HYPERSPACE_BUSH_FLOWERED);
+                output.accept(ModBlocks.HYPERSPACE_BUSH_CUBE);
+                output.accept(ModBlocks.HYPERSPACE_BUSH_CONE);
                 output.accept(ModBlocks.HYPERSPACE_FLOWERS);
                 output.accept(ModBlocks.HYPERSPACE_SCAFFOLDING_TUBE);
                 output.accept(ModBlocks.HYPERSPACE_CRATE);
@@ -565,6 +579,7 @@ public class ModCreativeTabs {
                 output.accept(ModBlocks.MEGAPOLIS_ROAD);
                 output.accept(ModBlocks.MEGAPOLIS_ROAD_PATTERN);
                 output.accept(ModBlocks.MEGAPOLIS_DOOR);
+                output.accept(ModBlocks.MEGAPOLIS_DOOR_ALT);
                 output.accept(ModBlocks.LIGHTNINGSPOT);
                 // Ultra Warp Dive props (plan 189)
                 output.accept(ModBlocks.ULTRAWARPDIVE_POSITIVE);

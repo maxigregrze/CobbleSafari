@@ -1,0 +1,18 @@
+{
+  "star": 5,
+  "type": "ghost",
+  "clusters": [
+    {
+      "id": "gimmighoul",
+      "weight": 1,
+      "members": [
+        {
+          "pokemon": "gimmighoul",
+          "rarity": 100,
+          "level": "62-64",
+          "alphaLevel": "71-73"
+        }
+      ]
+    }
+  ]
+}

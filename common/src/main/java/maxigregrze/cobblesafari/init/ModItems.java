@@ -283,7 +283,8 @@ public class ModItems {
     public static final Item INGREDIENT_DUNGEON_JUMP = new DungeonIngredientItem(new Item.Properties().stacksTo(1).rarity(Rarity.RARE));
     public static final Item INGREDIENT_DUNGEON_ULTRASPACE = new DungeonIngredientItem(new Item.Properties().stacksTo(1).rarity(Rarity.RARE));
     public static final Item DONUT_DUNGEON_PORTAL = new DungeonDonutItem(new Item.Properties().stacksTo(1).rarity(Rarity.EPIC), null);
-    public static final Item DONUT_DUNGEON_PARIS = new DungeonDonutItem(new Item.Properties().stacksTo(1).rarity(Rarity.EPIC), null);
+    public static final Item DONUT_DUNGEON_PARIS = new DungeonDonutItem(
+            new Item.Properties().stacksTo(1).rarity(Rarity.EPIC), "cobblesafari:dungeon_paris");
     public static final Item DONUT_DUNGEON_DISTORTION = new DungeonDonutItem(
             new Item.Properties().stacksTo(1).rarity(Rarity.EPIC), "cobblesafari:dungeon_distortion");
     public static final Item DONUT_DUNGEON_UNDERGROUND = new DungeonDonutItem(

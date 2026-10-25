@@ -1,0 +1,60 @@
+{
+  "star": 5,
+  "type": "grass",
+  "clusters": [
+    {
+      "id": "treecko",
+      "weight": 1,
+      "members": [
+        {
+          "pokemon": "sceptile",
+          "rarity": 20,
+          "level": "54-56",
+          "alphaLevel": "63-65"
+        },
+        {
+          "pokemon": "treecko",
+          "rarity": 80,
+          "level": "50-52",
+          "alphaLevel": "59-61"
+        }
+      ]
+    },
+    {
+      "id": "bulbasaur",
+      "weight": 1,
+      "members": [
+        {
+          "pokemon": "venusaur",
+          "rarity": 20,
+          "level": "54-56",
+          "alphaLevel": "63-65"
+        },
+        {
+          "pokemon": "bulbasaur",
+          "rarity": 80,
+          "level": "50-52",
+          "alphaLevel": "59-61"
+        }
+      ]
+    },
+    {
+      "id": "chespin",
+      "weight": 1,
+      "members": [
+        {
+          "pokemon": "chesnaught",
+          "rarity": 20,
+          "level": "54-56",
+          "alphaLevel": "63-65"
+        },
+        {
+          "pokemon": "chespin",
+          "rarity": 80,
+          "level": "50-52",
+          "alphaLevel": "59-61"
+        }
+      ]
+    }
+  ]
+}

@@ -58,7 +58,7 @@ public final class UltraEncounterModifiers {
         // Wired anyway - it costs a line, it is correct in advance, and its absence beside the
         // guarantee above would be an unexplainable asymmetry. It returns void, so unlike the
         // other three it contributes nothing to the provenance line.
-        ObjectivesManager.tryConsumeShinyGuarantee(player, entity);
+        ObjectivesManager.tryConsumeSpawnGuarantee(player, entity);
         return new Applied(hiddenAbility, levelDelta, guaranteedShiny);
     }
 }

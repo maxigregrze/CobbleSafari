@@ -439,6 +439,7 @@ public final class DungeonInstanceCleanup {
         
         maxigregrze.cobblesafari.objectives.ObjectivesManager.purgeInstance(
                 server, record.dimensionId(), record.instanceId());
+        maxigregrze.cobblesafari.data.HyperspaceZoneSavedData.get(server).remove(record.instanceId());
 
         // Order matters (plan 181 § 7): evacuate FIRST, purge the timer sessions after. The
         // evacuation reads each player's session to send them back to their own entry point, so

@@ -1,0 +1,60 @@
+{
+  "star": 5,
+  "type": "poison",
+  "clusters": [
+    {
+      "id": "slowpoke_galarian",
+      "weight": 1,
+      "members": [
+        {
+          "pokemon": "slowbro galarian",
+          "rarity": 20,
+          "level": "55-57",
+          "alphaLevel": "64-66"
+        },
+        {
+          "pokemon": "slowpoke galarian",
+          "rarity": 80,
+          "level": "52-54",
+          "alphaLevel": "61-63"
+        }
+      ]
+    },
+    {
+      "id": "slowpoke_galarian_2",
+      "weight": 1,
+      "members": [
+        {
+          "pokemon": "slowking galarian",
+          "rarity": 20,
+          "level": "55-57",
+          "alphaLevel": "64-66"
+        },
+        {
+          "pokemon": "slowpoke galarian",
+          "rarity": 80,
+          "level": "52-54",
+          "alphaLevel": "61-63"
+        }
+      ]
+    },
+    {
+      "id": "qwilfish_hisuian",
+      "weight": 1,
+      "members": [
+        {
+          "pokemon": "overqwil",
+          "rarity": 20,
+          "level": "53-55",
+          "alphaLevel": "62-64"
+        },
+        {
+          "pokemon": "qwilfish hisuian",
+          "rarity": 80,
+          "level": "51-53",
+          "alphaLevel": "60-62"
+        }
+      ]
+    }
+  ]
+}

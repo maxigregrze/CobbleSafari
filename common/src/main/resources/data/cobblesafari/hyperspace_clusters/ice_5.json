@@ -1,0 +1,60 @@
+{
+  "star": 5,
+  "type": "ice",
+  "clusters": [
+    {
+      "id": "bergmite",
+      "weight": 1,
+      "members": [
+        {
+          "pokemon": "avalugg hisuian",
+          "rarity": 20,
+          "level": "55-57",
+          "alphaLevel": "64-66"
+        },
+        {
+          "pokemon": "bergmite",
+          "rarity": 80,
+          "level": "52-54",
+          "alphaLevel": "61-63"
+        }
+      ]
+    },
+    {
+      "id": "frigibax",
+      "weight": 1,
+      "members": [
+        {
+          "pokemon": "arctibax",
+          "rarity": 20,
+          "level": "54-56",
+          "alphaLevel": "63-65"
+        },
+        {
+          "pokemon": "frigibax",
+          "rarity": 80,
+          "level": "52-54",
+          "alphaLevel": "61-63"
+        }
+      ]
+    },
+    {
+      "id": "arctibax",
+      "weight": 1,
+      "members": [
+        {
+          "pokemon": "baxcalibur",
+          "rarity": 20,
+          "level": "57-59",
+          "alphaLevel": "66-68"
+        },
+        {
+          "pokemon": "arctibax",
+          "rarity": 80,
+          "level": "54-56",
+          "alphaLevel": "63-65"
+        }
+      ]
+    }
+  ]
+}

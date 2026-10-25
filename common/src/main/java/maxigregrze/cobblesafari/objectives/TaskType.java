@@ -27,7 +27,14 @@ public enum TaskType {
     // Alpha mechanic, live since Cobblemon 1.8.
     TASK_CATCH_ALPHA("task_catch_alpha", false, false, false, false, false),
     TASK_CATCH_ALPHASHINY("task_catch_alphashiny", false, false, false, false, false),
-    TASK_FIGHT_ALPHA("task_fight_alpha", false, false, false, false, false);
+    TASK_FIGHT_ALPHA("task_fight_alpha", false, false, false, false, false),
+    // Hyperspace Lumiose wild zone tasks (action plan 196, § 7.2).
+    TASK_LOOT_FLOATING("task_loot_floating", true, false, false, false, false),
+    TASK_CATCH_UNAWARE("task_catch_unaware", true, false, false, false, false),
+    TASK_CATCH_BATTLE("task_catch_battle", true, false, false, false, false),
+    TASK_DESTROY_BOULDER("task_destroy_boulder", true, false, false, false, false),
+    TASK_DESTROY_BRAMBLES("task_destroy_brambles", true, false, false, false, false),
+    TASK_DESTROY_SLUDGE("task_destroy_sludge", true, false, false, false, false);
 
     private final String id;
     private final boolean usesCount;

@@ -1,0 +1,204 @@
+{
+  "star": 4,
+  "type": "fairy",
+  "clusters": [
+    {
+      "id": "clefairy",
+      "weight": 6,
+      "members": [
+        {
+          "pokemon": "clefable",
+          "rarity": 20,
+          "level": "40-42",
+          "alphaLevel": "49-51"
+        },
+        {
+          "pokemon": "clefairy",
+          "rarity": 80,
+          "level": "37-39",
+          "alphaLevel": "46-48"
+        }
+      ]
+    },
+    {
+      "id": "swirlix",
+      "weight": 7,
+      "members": [
+        {
+          "pokemon": "slurpuff",
+          "rarity": 20,
+          "level": "38-40",
+          "alphaLevel": "47-49"
+        },
+        {
+          "pokemon": "swirlix",
+          "rarity": 80,
+          "level": "35-37",
+          "alphaLevel": "44-46"
+        }
+      ]
+    },
+    {
+      "id": "eevee",
+      "weight": 2,
+      "members": [
+        {
+          "pokemon": "sylveon",
+          "rarity": 20,
+          "level": "37-39",
+          "alphaLevel": "46-48"
+        },
+        {
+          "pokemon": "eevee",
+          "rarity": 80,
+          "level": "35-37",
+          "alphaLevel": "44-46"
+        }
+      ]
+    },
+    {
+      "id": "kirlia",
+      "weight": 5,
+      "members": [
+        {
+          "pokemon": "gardevoir",
+          "rarity": 20,
+          "level": "39-41",
+          "alphaLevel": "48-50"
+        },
+        {
+          "pokemon": "kirlia",
+          "rarity": 80,
+          "level": "37-39",
+          "alphaLevel": "46-48"
+        }
+      ]
+    },
+    {
+      "id": "floette_flower_blue",
+      "weight": 1,
+      "members": [
+        {
+          "pokemon": "florges flower=blue",
+          "rarity": 35,
+          "level": "39-41",
+          "alphaLevel": "48-50"
+        },
+        {
+          "pokemon": "floette flower=blue",
+          "rarity": 65,
+          "level": "37-39",
+          "alphaLevel": "46-48"
+        }
+      ]
+    },
+    {
+      "id": "floette_flower_white",
+      "weight": 1,
+      "members": [
+        {
+          "pokemon": "florges flower=white",
+          "rarity": 35,
+          "level": "39-41",
+          "alphaLevel": "48-50"
+        },
+        {
+          "pokemon": "floette flower=white",
+          "rarity": 65,
+          "level": "37-39",
+          "alphaLevel": "46-48"
+        }
+      ]
+    },
+    {
+      "id": "floette_flower_red",
+      "weight": 1,
+      "members": [
+        {
+          "pokemon": "florges flower=red",
+          "rarity": 35,
+          "level": "39-41",
+          "alphaLevel": "48-50"
+        },
+        {
+          "pokemon": "floette flower=red",
+          "rarity": 65,
+          "level": "37-39",
+          "alphaLevel": "46-48"
+        }
+      ]
+    },
+    {
+      "id": "floette_flower_yellow",
+      "weight": 1,
+      "members": [
+        {
+          "pokemon": "florges flower=yellow",
+          "rarity": 35,
+          "level": "39-41",
+          "alphaLevel": "48-50"
+        },
+        {
+          "pokemon": "floette flower=yellow",
+          "rarity": 65,
+          "level": "37-39",
+          "alphaLevel": "46-48"
+        }
+      ]
+    },
+    {
+      "id": "floette_flower_orange",
+      "weight": 1,
+      "members": [
+        {
+          "pokemon": "florges flower=orange",
+          "rarity": 35,
+          "level": "39-41",
+          "alphaLevel": "48-50"
+        },
+        {
+          "pokemon": "floette flower=orange",
+          "rarity": 65,
+          "level": "37-39",
+          "alphaLevel": "46-48"
+        }
+      ]
+    },
+    {
+      "id": "jigglypuff",
+      "weight": 3,
+      "members": [
+        {
+          "pokemon": "wigglytuff",
+          "rarity": 20,
+          "level": "39-41",
+          "alphaLevel": "48-50"
+        },
+        {
+          "pokemon": "jigglypuff",
+          "rarity": 80,
+          "level": "37-39",
+          "alphaLevel": "46-48"
+        }
+      ]
+    },
+    {
+      "id": "tinkatuff",
+      "weight": 2,
+      "members": [
+        {
+          "pokemon": "tinkaton",
+          "rarity": 20,
+          "level": "41-43",
+          "alphaLevel": "50-52"
+        },
+        {
+          "pokemon": "tinkatuff",
+          "rarity": 80,
+          "level": "38-40",
+          "alphaLevel": "47-49"
+        }
+      ]
+    }
+  ]
+}

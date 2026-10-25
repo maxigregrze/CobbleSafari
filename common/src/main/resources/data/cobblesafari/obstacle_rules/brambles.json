@@ -1,0 +1,37 @@
+{
+  "obstacle": "cobblesafari:obstacle_brambles",
+  "types": [
+    "fire",
+    "flying"
+  ],
+  "moves": [
+    "aerialace",
+    "aircutter",
+    "airslash",
+    "aquacutter",
+    "behemothblade",
+    "bitterblade",
+    "ceaselessedge",
+    "crosspoison",
+    "cut",
+    "furycutter",
+    "kowtowcleave",
+    "leafblade",
+    "mightycleave",
+    "nightslash",
+    "populationbomb",
+    "psyblade",
+    "psychocut",
+    "razorleaf",
+    "razorshell",
+    "sacredsword",
+    "secretsword",
+    "slash",
+    "solarblade",
+    "stoneaxe",
+    "tachyoncutter",
+    "xscissor"
+  ],
+  "message": "cobblesafari.obstacle.no_move.brambles",
+  "lootTable": "cobblesafari:obstacles/obstacle_brambles"
+}

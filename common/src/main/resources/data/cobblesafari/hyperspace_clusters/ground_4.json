@@ -1,0 +1,168 @@
+{
+  "star": 4,
+  "type": "ground",
+  "clusters": [
+    {
+      "id": "numel",
+      "weight": 5,
+      "members": [
+        {
+          "pokemon": "camerupt",
+          "rarity": 20,
+          "level": "40-42",
+          "alphaLevel": "49-51"
+        },
+        {
+          "pokemon": "numel",
+          "rarity": 80,
+          "level": "36-38",
+          "alphaLevel": "45-47"
+        }
+      ]
+    },
+    {
+      "id": "hippopotas",
+      "weight": 6,
+      "members": [
+        {
+          "pokemon": "hippowdon",
+          "rarity": 20,
+          "level": "40-42",
+          "alphaLevel": "49-51"
+        },
+        {
+          "pokemon": "hippopotas",
+          "rarity": 80,
+          "level": "36-38",
+          "alphaLevel": "45-47"
+        }
+      ]
+    },
+    {
+      "id": "drilbur",
+      "weight": 5,
+      "members": [
+        {
+          "pokemon": "excadrill",
+          "rarity": 20,
+          "level": "40-42",
+          "alphaLevel": "49-51"
+        },
+        {
+          "pokemon": "drilbur",
+          "rarity": 80,
+          "level": "36-38",
+          "alphaLevel": "45-47"
+        }
+      ]
+    },
+    {
+      "id": "krokorok",
+      "weight": 6,
+      "members": [
+        {
+          "pokemon": "krookodile",
+          "rarity": 20,
+          "level": "42-44",
+          "alphaLevel": "51-53"
+        },
+        {
+          "pokemon": "krokorok",
+          "rarity": 80,
+          "level": "39-41",
+          "alphaLevel": "48-50"
+        }
+      ]
+    },
+    {
+      "id": "marshtomp",
+      "weight": 1,
+      "members": [
+        {
+          "pokemon": "swampert",
+          "rarity": 20,
+          "level": "41-43",
+          "alphaLevel": "50-52"
+        },
+        {
+          "pokemon": "marshtomp",
+          "rarity": 80,
+          "level": "36-38",
+          "alphaLevel": "45-47"
+        }
+      ]
+    },
+    {
+      "id": "cubone",
+      "weight": 2,
+      "members": [
+        {
+          "pokemon": "marowak",
+          "rarity": 20,
+          "level": "39-41",
+          "alphaLevel": "48-50"
+        },
+        {
+          "pokemon": "cubone",
+          "rarity": 80,
+          "level": "36-38",
+          "alphaLevel": "45-47"
+        }
+      ]
+    },
+    {
+      "id": "sandygast",
+      "weight": 2,
+      "members": [
+        {
+          "pokemon": "palossand",
+          "rarity": 20,
+          "level": "42-44",
+          "alphaLevel": "51-53"
+        },
+        {
+          "pokemon": "sandygast",
+          "rarity": 80,
+          "level": "37-39",
+          "alphaLevel": "46-48"
+        }
+      ]
+    },
+    {
+      "id": "golett",
+      "weight": 1,
+      "members": [
+        {
+          "pokemon": "golurk",
+          "rarity": 20,
+          "level": "43-45",
+          "alphaLevel": "52-54"
+        },
+        {
+          "pokemon": "golett",
+          "rarity": 80,
+          "level": "37-39",
+          "alphaLevel": "46-48"
+        }
+      ]
+    },
+    {
+      "id": "stunfisk_galarian",
+      "weight": 1,
+      "members": [
+        {
+          "pokemon": "stunfisk",
+          "rarity": 20,
+          "level": "37-39",
+          "alphaLevel": "46-48"
+        },
+        {
+          "pokemon": "stunfisk galarian",
+          "rarity": 80,
+          "level": "37-39",
+          "alphaLevel": "46-48"
+        }
+      ]
+    }
+  ]
+}

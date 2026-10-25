@@ -1,0 +1,96 @@
+{
+  "star": 3,
+  "type": "electric",
+  "clusters": [
+    {
+      "id": "mareep",
+      "weight": 4,
+      "members": [
+        {
+          "pokemon": "flaaffy",
+          "rarity": 20,
+          "level": "22-24",
+          "alphaLevel": "31-33"
+        },
+        {
+          "pokemon": "mareep",
+          "rarity": 80,
+          "level": "20-22",
+          "alphaLevel": "29-31"
+        }
+      ]
+    },
+    {
+      "id": "tynamo",
+      "weight": 4,
+      "members": [
+        {
+          "pokemon": "eelektrik",
+          "rarity": 20,
+          "level": "39-41",
+          "alphaLevel": "48-50"
+        },
+        {
+          "pokemon": "tynamo",
+          "rarity": 80,
+          "level": "24-26",
+          "alphaLevel": "33-35"
+        }
+      ]
+    },
+    {
+      "id": "dedenne",
+      "weight": 6,
+      "members": [
+        {
+          "pokemon": "dedenne",
+          "rarity": 100,
+          "level": "28-30",
+          "alphaLevel": "37-39"
+        }
+      ]
+    },
+    {
+      "id": "emolga",
+      "weight": 6,
+      "members": [
+        {
+          "pokemon": "emolga",
+          "rarity": 100,
+          "level": "24-26",
+          "alphaLevel": "33-35"
+        }
+      ]
+    },
+    {
+      "id": "electrike",
+      "weight": 4,
+      "members": [
+        {
+          "pokemon": "manectric",
+          "rarity": 20,
+          "level": "27-29",
+          "alphaLevel": "36-38"
+        },
+        {
+          "pokemon": "electrike",
+          "rarity": 80,
+          "level": "22-24",
+          "alphaLevel": "31-33"
+        }
+      ]
+    },
+    {
+      "id": "morpeko",
+      "weight": 6,
+      "members": [
+        {
+          "pokemon": "morpeko",
+          "rarity": 100,
+          "level": "24-26",
+          "alphaLevel": "33-35"
+        }
+      ]
+    }
+  ]
+}

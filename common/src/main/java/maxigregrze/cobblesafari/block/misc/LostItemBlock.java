@@ -195,7 +195,12 @@ public class LostItemBlock extends BaseEntityBlock {
 
         blockEntity.tryClaim(playerId);
         giveOrDropFromLootTable(serverLevel, pos, serverPlayer, blockEntity);
-        maxigregrze.cobblesafari.objectives.ObjectivesManager.onPokeballOpened(serverPlayer);
+        // A floating ball and a sparkling item on the ground are two distinct Z-A tasks (plan 196, § 7.3).
+        if (state.getValue(SKIN) == LostItemSkin.FLOATING) {
+            maxigregrze.cobblesafari.objectives.ObjectivesManager.onFloatingBallOpened(serverPlayer);
+        } else {
+            maxigregrze.cobblesafari.objectives.ObjectivesManager.onPokeballOpened(serverPlayer);
+        }
         return InteractionResult.CONSUME;
     }
 

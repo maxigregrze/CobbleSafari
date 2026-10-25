@@ -29,7 +29,8 @@ public class VoidBlockRenderer implements BlockEntityRenderer<VoidBlockEntity> {
         poseStack.pushPose();
 
         if (ShaderCompatHelper.isIrisShaderActive()) {
-            renderShaderCompat(poseStack, bufferSource, packedOverlay);
+            ShaderCompatHelper.renderAsEndPortal(
+                    () -> renderShaderCompat(poseStack, bufferSource, packedOverlay));
         } else {
             renderVanilla(poseStack, bufferSource);
         }

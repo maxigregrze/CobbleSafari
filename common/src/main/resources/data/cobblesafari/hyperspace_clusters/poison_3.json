@@ -1,0 +1,150 @@
+{
+  "star": 3,
+  "type": "poison",
+  "clusters": [
+    {
+      "id": "ekans",
+      "weight": 5,
+      "members": [
+        {
+          "pokemon": "arbok",
+          "rarity": 20,
+          "level": "25-27",
+          "alphaLevel": "34-36"
+        },
+        {
+          "pokemon": "ekans",
+          "rarity": 80,
+          "level": "21-23",
+          "alphaLevel": "30-32"
+        }
+      ]
+    },
+    {
+      "id": "bellsprout",
+      "weight": 5,
+      "members": [
+        {
+          "pokemon": "weepinbell",
+          "rarity": 20,
+          "level": "25-27",
+          "alphaLevel": "34-36"
+        },
+        {
+          "pokemon": "bellsprout",
+          "rarity": 80,
+          "level": "21-23",
+          "alphaLevel": "30-32"
+        }
+      ]
+    },
+    {
+      "id": "budew",
+      "weight": 6,
+      "members": [
+        {
+          "pokemon": "roselia",
+          "rarity": 20,
+          "level": "22-24",
+          "alphaLevel": "31-33"
+        },
+        {
+          "pokemon": "budew",
+          "rarity": 80,
+          "level": "20-22",
+          "alphaLevel": "29-31"
+        }
+      ]
+    },
+    {
+      "id": "bulbasaur",
+      "weight": 1,
+      "members": [
+        {
+          "pokemon": "ivysaur",
+          "rarity": 20,
+          "level": "23-25",
+          "alphaLevel": "32-34"
+        },
+        {
+          "pokemon": "bulbasaur",
+          "rarity": 80,
+          "level": "20-22",
+          "alphaLevel": "29-31"
+        }
+      ]
+    },
+    {
+      "id": "spinarak",
+      "weight": 2,
+      "members": [
+        {
+          "pokemon": "ariados",
+          "rarity": 20,
+          "level": "25-27",
+          "alphaLevel": "34-36"
+        },
+        {
+          "pokemon": "spinarak",
+          "rarity": 80,
+          "level": "21-23",
+          "alphaLevel": "30-32"
+        }
+      ]
+    },
+    {
+      "id": "seviper",
+      "weight": 3,
+      "members": [
+        {
+          "pokemon": "seviper",
+          "rarity": 50,
+          "level": "26-28",
+          "alphaLevel": "35-37"
+        },
+        {
+          "pokemon": "arbok",
+          "rarity": 50,
+          "level": "25-27",
+          "alphaLevel": "34-36"
+        }
+      ]
+    },
+    {
+      "id": "skrelp",
+      "weight": 4,
+      "members": [
+        {
+          "pokemon": "skrelp",
+          "rarity": 100,
+          "level": "26-28",
+          "alphaLevel": "35-37"
+        }
+      ]
+    },
+    {
+      "id": "glimmet",
+      "weight": 3,
+      "members": [
+        {
+          "pokemon": "glimmet",
+          "rarity": 100,
+          "level": "24-26",
+          "alphaLevel": "33-35"
+        }
+      ]
+    },
+    {
+      "id": "qwilfish_hisuian",
+      "weight": 1,
+      "members": [
+        {
+          "pokemon": "qwilfish hisuian",
+          "rarity": 100,
+          "level": "23-25",
+          "alphaLevel": "32-34"
+        }
+      ]
+    }
+  ]
+}

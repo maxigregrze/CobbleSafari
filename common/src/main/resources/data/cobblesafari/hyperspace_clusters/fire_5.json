@@ -1,0 +1,60 @@
+{
+  "star": 5,
+  "type": "fire",
+  "clusters": [
+    {
+      "id": "torchic",
+      "weight": 1,
+      "members": [
+        {
+          "pokemon": "blaziken",
+          "rarity": 20,
+          "level": "54-56",
+          "alphaLevel": "63-65"
+        },
+        {
+          "pokemon": "torchic",
+          "rarity": 80,
+          "level": "50-52",
+          "alphaLevel": "59-61"
+        }
+      ]
+    },
+    {
+      "id": "charmander",
+      "weight": 1,
+      "members": [
+        {
+          "pokemon": "charizard",
+          "rarity": 20,
+          "level": "54-56",
+          "alphaLevel": "63-65"
+        },
+        {
+          "pokemon": "charmander",
+          "rarity": 80,
+          "level": "50-52",
+          "alphaLevel": "59-61"
+        }
+      ]
+    },
+    {
+      "id": "fennekin",
+      "weight": 1,
+      "members": [
+        {
+          "pokemon": "delphox",
+          "rarity": 20,
+          "level": "54-56",
+          "alphaLevel": "63-65"
+        },
+        {
+          "pokemon": "fennekin",
+          "rarity": 80,
+          "level": "50-52",
+          "alphaLevel": "59-61"
+        }
+      ]
+    }
+  ]
+}

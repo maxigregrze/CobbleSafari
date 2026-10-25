@@ -1,0 +1,168 @@
+{
+  "star": 4,
+  "type": "steel",
+  "clusters": [
+    {
+      "id": "onix",
+      "weight": 6,
+      "members": [
+        {
+          "pokemon": "steelix",
+          "rarity": 20,
+          "level": "38-40",
+          "alphaLevel": "47-49"
+        },
+        {
+          "pokemon": "onix",
+          "rarity": 80,
+          "level": "37-39",
+          "alphaLevel": "46-48"
+        }
+      ]
+    },
+    {
+      "id": "lairon",
+      "weight": 6,
+      "members": [
+        {
+          "pokemon": "aggron",
+          "rarity": 20,
+          "level": "42-44",
+          "alphaLevel": "51-53"
+        },
+        {
+          "pokemon": "lairon",
+          "rarity": 80,
+          "level": "40-42",
+          "alphaLevel": "49-51"
+        }
+      ]
+    },
+    {
+      "id": "beldum",
+      "weight": 5,
+      "members": [
+        {
+          "pokemon": "metang",
+          "rarity": 20,
+          "level": "37-39",
+          "alphaLevel": "46-48"
+        },
+        {
+          "pokemon": "beldum",
+          "rarity": 80,
+          "level": "35-37",
+          "alphaLevel": "44-46"
+        }
+      ]
+    },
+    {
+      "id": "drilbur",
+      "weight": 3,
+      "members": [
+        {
+          "pokemon": "excadrill",
+          "rarity": 20,
+          "level": "40-42",
+          "alphaLevel": "49-51"
+        },
+        {
+          "pokemon": "drilbur",
+          "rarity": 80,
+          "level": "36-38",
+          "alphaLevel": "45-47"
+        }
+      ]
+    },
+    {
+      "id": "scyther",
+      "weight": 3,
+      "members": [
+        {
+          "pokemon": "scizor",
+          "rarity": 20,
+          "level": "40-42",
+          "alphaLevel": "49-51"
+        },
+        {
+          "pokemon": "scyther",
+          "rarity": 80,
+          "level": "37-39",
+          "alphaLevel": "46-48"
+        }
+      ]
+    },
+    {
+      "id": "doublade",
+      "weight": 1,
+      "members": [
+        {
+          "pokemon": "aegislash",
+          "rarity": 20,
+          "level": "40-42",
+          "alphaLevel": "49-51"
+        },
+        {
+          "pokemon": "doublade",
+          "rarity": 80,
+          "level": "41-43",
+          "alphaLevel": "50-52"
+        }
+      ]
+    },
+    {
+      "id": "tinkatuff",
+      "weight": 3,
+      "members": [
+        {
+          "pokemon": "tinkaton",
+          "rarity": 20,
+          "level": "41-43",
+          "alphaLevel": "50-52"
+        },
+        {
+          "pokemon": "tinkatuff",
+          "rarity": 80,
+          "level": "38-40",
+          "alphaLevel": "47-49"
+        }
+      ]
+    },
+    {
+      "id": "riolu",
+      "weight": 1,
+      "members": [
+        {
+          "pokemon": "lucario",
+          "rarity": 20,
+          "level": "40-42",
+          "alphaLevel": "49-51"
+        },
+        {
+          "pokemon": "riolu",
+          "rarity": 80,
+          "level": "34-36",
+          "alphaLevel": "43-45"
+        }
+      ]
+    },
+    {
+      "id": "meowth_galarian",
+      "weight": 2,
+      "members": [
+        {
+          "pokemon": "perrserker",
+          "rarity": 20,
+          "level": "39-41",
+          "alphaLevel": "48-50"
+        },
+        {
+          "pokemon": "meowth galarian",
+          "rarity": 80,
+          "level": "36-38",
+          "alphaLevel": "45-47"
+        }
+      ]
+    }
+  ]
+}

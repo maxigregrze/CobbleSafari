@@ -395,6 +395,16 @@ public class CobbleSafariClientFabric implements ClientModInitializer {
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.MEGAPOLIS_BARRICADE, RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.HYPERSPACE_CHIMNEY, RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.KALOS_CHIMNEY, RenderType.cutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.HYPERSPACE_PLANTER, RenderType.cutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.KALOS_PLANTER, RenderType.cutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.HYPERSPACE_POSTERS, RenderType.cutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.HYPERSPACE_BUSH_CUBE, RenderType.cutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.HYPERSPACE_BUSH_CONE, RenderType.cutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.HYPERSPACE_FOUNTAIN, RenderType.translucent());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.OBSTACLE_BOULDER, RenderType.cutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.OBSTACLE_BRAMBLES, RenderType.cutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.OBSTACLE_SLUDGE, RenderType.cutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.KALOS_FOUNTAIN, RenderType.translucent());
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.HYPERSPACE_CANOPY_RIDGE, RenderType.translucent());
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.KALOS_CANOPY_RIDGE, RenderType.translucent());
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.HYPERSPACE_CANOPY_SLAB, RenderType.translucent());
@@ -455,15 +465,28 @@ public class CobbleSafariClientFabric implements ClientModInitializer {
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.KALOS_MANHOLE, RenderType.cutout());
     }
 
+    /** Vanilla's default water colour (the plains / ocean value), for items and colourless contexts. */
+    private static final int HS_DEFAULT_WATER_COLOR = 0x3F76E4;
+
     private void registerColors() {
         net.fabricmc.fabric.api.client.rendering.v1.ColorProviderRegistry.BLOCK.register(
                 (state, level, pos, tintIndex) -> (level != null && pos != null)
                         ? net.minecraft.client.renderer.BiomeColors.getAverageGrassColor(level, pos)
                         : net.minecraft.world.level.GrassColor.getDefaultColor(),
-                ModBlocks.HYPERSPACE_FLOWERPOT);
+                ModBlocks.HYPERSPACE_FLOWERPOT, ModBlocks.HYPERSPACE_PLANTER, ModBlocks.KALOS_PLANTER);
         net.fabricmc.fabric.api.client.rendering.v1.ColorProviderRegistry.ITEM.register(
                 (stack, tintIndex) -> net.minecraft.world.level.GrassColor.get(0.5D, 1.0D),
-                ModBlocks.HYPERSPACE_FLOWERPOT);
+                ModBlocks.HYPERSPACE_FLOWERPOT, ModBlocks.HYPERSPACE_PLANTER, ModBlocks.KALOS_PLANTER);
+        // Fountain water (tintindex 0): the biome's water colour, like the vanilla fluid renderer.
+        net.fabricmc.fabric.api.client.rendering.v1.ColorProviderRegistry.BLOCK.register(
+                (state, level, pos, tintIndex) -> tintIndex != 0 ? -1
+                        : (level != null && pos != null)
+                                ? net.minecraft.client.renderer.BiomeColors.getAverageWaterColor(level, pos)
+                                : HS_DEFAULT_WATER_COLOR,
+                ModBlocks.HYPERSPACE_FOUNTAIN, ModBlocks.KALOS_FOUNTAIN);
+        net.fabricmc.fabric.api.client.rendering.v1.ColorProviderRegistry.ITEM.register(
+                (stack, tintIndex) -> tintIndex != 0 ? -1 : HS_DEFAULT_WATER_COLOR,
+                ModBlocks.HYPERSPACE_FOUNTAIN, ModBlocks.KALOS_FOUNTAIN);
         // Foliage-tinted nature blocks (tintindex 0 only): flowers (colored layer) and bushes.
         // The flower's untinted petal layer is tintindex 1, so leave any non-zero index untinted.
         net.fabricmc.fabric.api.client.rendering.v1.ColorProviderRegistry.BLOCK.register(
@@ -471,10 +494,12 @@ public class CobbleSafariClientFabric implements ClientModInitializer {
                         : (level != null && pos != null)
                                 ? net.minecraft.client.renderer.BiomeColors.getAverageFoliageColor(level, pos)
                                 : net.minecraft.world.level.FoliageColor.getDefaultColor(),
-                ModBlocks.HYPERSPACE_FLOWERS, ModBlocks.HYPERSPACE_BUSH, ModBlocks.HYPERSPACE_BUSH_FLOWERED);
+                ModBlocks.HYPERSPACE_FLOWERS, ModBlocks.HYPERSPACE_BUSH, ModBlocks.HYPERSPACE_BUSH_FLOWERED,
+                ModBlocks.HYPERSPACE_BUSH_CUBE, ModBlocks.HYPERSPACE_BUSH_CONE);
         net.fabricmc.fabric.api.client.rendering.v1.ColorProviderRegistry.ITEM.register(
                 (stack, tintIndex) -> tintIndex != 0 ? -1 : net.minecraft.world.level.FoliageColor.getDefaultColor(),
-                ModBlocks.HYPERSPACE_FLOWERS, ModBlocks.HYPERSPACE_BUSH, ModBlocks.HYPERSPACE_BUSH_FLOWERED);
+                ModBlocks.HYPERSPACE_FLOWERS, ModBlocks.HYPERSPACE_BUSH, ModBlocks.HYPERSPACE_BUSH_FLOWERED,
+                ModBlocks.HYPERSPACE_BUSH_CUBE, ModBlocks.HYPERSPACE_BUSH_CONE);
         // Dyeable Hyperspace flags: tint the colored layer (tintindex 0) to the applied DyeColor
         // (banner / leather / collar / beacon colour). The overlay layer and any undyed flag stay untinted.
         net.fabricmc.fabric.api.client.rendering.v1.ColorProviderRegistry.BLOCK.register(

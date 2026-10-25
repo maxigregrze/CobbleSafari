@@ -1,0 +1,18 @@
+{
+  "type": "cobblesafari:dungeon_paris_type",
+  "generator": {
+    "type": "minecraft:flat",
+    "settings": {
+      "biome": "cobblesafari:dungeon_paris_biome",
+      "lakes": false,
+      "features": false,
+      "layers": [
+        {
+          "height": 256,
+          "block": "minecraft:air"
+        }
+      ],
+      "structure_overrides": []
+    }
+  }
+}

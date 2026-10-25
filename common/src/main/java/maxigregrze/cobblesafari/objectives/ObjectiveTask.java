@@ -24,9 +24,9 @@ public final class ObjectiveTask {
     private boolean taskRewardGiven;
     private final LinkedHashSet<String> seenSpecies = new LinkedHashSet<>(); // *_unique only
 
-    // task_catch_shiny guaranteed-shiny state
-    private boolean shinyGuaranteePending;
-    private long shinyTriggerGameTime;
+    // Guaranteed-spawn state of task_catch_shiny / _alpha / _alphashiny (NBT keys kept from the shiny-only era)
+    private boolean spawnGuaranteePending;
+    private long spawnGuaranteeTriggerGameTime;
 
     public ObjectiveTask(String taskId, int targetCount, String speciesId, int typeIndex,
                          String taskRewardTable) {
@@ -77,21 +77,21 @@ public final class ObjectiveTask {
         this.taskRewardGiven = true;
     }
 
-    public boolean isShinyGuaranteePending() {
-        return shinyGuaranteePending;
+    public boolean isSpawnGuaranteePending() {
+        return spawnGuaranteePending;
     }
 
-    public long shinyTriggerGameTime() {
-        return shinyTriggerGameTime;
+    public long spawnGuaranteeTriggerGameTime() {
+        return spawnGuaranteeTriggerGameTime;
     }
 
-    public void armShinyGuarantee(long triggerGameTime) {
-        this.shinyGuaranteePending = true;
-        this.shinyTriggerGameTime = triggerGameTime;
+    public void armSpawnGuarantee(long triggerGameTime) {
+        this.spawnGuaranteePending = true;
+        this.spawnGuaranteeTriggerGameTime = triggerGameTime;
     }
 
-    public void consumeShinyGuarantee() {
-        this.shinyGuaranteePending = false;
+    public void consumeSpawnGuarantee() {
+        this.spawnGuaranteePending = false;
     }
 
     /**
@@ -143,8 +143,8 @@ public final class ObjectiveTask {
         tag.putInt("Progress", progress);
         tag.putBoolean("Complete", complete);
         tag.putBoolean("RewardGiven", taskRewardGiven);
-        tag.putBoolean("ShinyPending", shinyGuaranteePending);
-        tag.putLong("ShinyTrigger", shinyTriggerGameTime);
+        tag.putBoolean("ShinyPending", spawnGuaranteePending);
+        tag.putLong("ShinyTrigger", spawnGuaranteeTriggerGameTime);
         if (!seenSpecies.isEmpty()) {
             ListTag list = new ListTag();
             for (String s : seenSpecies) {
@@ -165,8 +165,8 @@ public final class ObjectiveTask {
         task.progress = tag.getInt("Progress");
         task.complete = tag.getBoolean("Complete");
         task.taskRewardGiven = tag.getBoolean("RewardGiven");
-        task.shinyGuaranteePending = tag.getBoolean("ShinyPending");
-        task.shinyTriggerGameTime = tag.getLong("ShinyTrigger");
+        task.spawnGuaranteePending = tag.getBoolean("ShinyPending");
+        task.spawnGuaranteeTriggerGameTime = tag.getLong("ShinyTrigger");
         if (tag.contains("Seen", Tag.TAG_LIST)) {
             ListTag list = tag.getList("Seen", Tag.TAG_STRING);
             for (int i = 0; i < list.size(); i++) {

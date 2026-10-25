@@ -1,0 +1,144 @@
+{
+  "star": 3,
+  "type": "normal",
+  "clusters": [
+    {
+      "id": "pidgey",
+      "weight": 6,
+      "members": [
+        {
+          "pokemon": "pidgeotto",
+          "rarity": 20,
+          "level": "24-26",
+          "alphaLevel": "33-35"
+        },
+        {
+          "pokemon": "pidgey",
+          "rarity": 80,
+          "level": "20-22",
+          "alphaLevel": "29-31"
+        }
+      ]
+    },
+    {
+      "id": "buneary",
+      "weight": 6,
+      "members": [
+        {
+          "pokemon": "lopunny",
+          "rarity": 20,
+          "level": "26-28",
+          "alphaLevel": "35-37"
+        },
+        {
+          "pokemon": "buneary",
+          "rarity": 80,
+          "level": "21-23",
+          "alphaLevel": "30-32"
+        }
+      ]
+    },
+    {
+      "id": "audino",
+      "weight": 6,
+      "members": [
+        {
+          "pokemon": "audino",
+          "rarity": 100,
+          "level": "33-35",
+          "alphaLevel": "42-44"
+        }
+      ]
+    },
+    {
+      "id": "bunnelby",
+      "weight": 4,
+      "members": [
+        {
+          "pokemon": "diggersby",
+          "rarity": 20,
+          "level": "24-26",
+          "alphaLevel": "33-35"
+        },
+        {
+          "pokemon": "bunnelby",
+          "rarity": 80,
+          "level": "21-23",
+          "alphaLevel": "30-32"
+        }
+      ]
+    },
+    {
+      "id": "meowth",
+      "weight": 2,
+      "members": [
+        {
+          "pokemon": "persian",
+          "rarity": 20,
+          "level": "28-30",
+          "alphaLevel": "37-39"
+        },
+        {
+          "pokemon": "meowth",
+          "rarity": 80,
+          "level": "22-24",
+          "alphaLevel": "31-33"
+        }
+      ]
+    },
+    {
+      "id": "shroodle",
+      "weight": 2,
+      "members": [
+        {
+          "pokemon": "grafaiai",
+          "rarity": 20,
+          "level": "28-30",
+          "alphaLevel": "37-39"
+        },
+        {
+          "pokemon": "shroodle",
+          "rarity": 80,
+          "level": "22-24",
+          "alphaLevel": "31-33"
+        }
+      ]
+    },
+    {
+      "id": "indeedee_gender_male",
+      "weight": 2,
+      "members": [
+        {
+          "pokemon": "indeedee gender=male",
+          "rarity": 100,
+          "level": "24-26",
+          "alphaLevel": "33-35"
+        }
+      ]
+    },
+    {
+      "id": "indeedee_gender_female",
+      "weight": 2,
+      "members": [
+        {
+          "pokemon": "indeedee gender=female",
+          "rarity": 100,
+          "level": "24-26",
+          "alphaLevel": "33-35"
+        }
+      ]
+    },
+    {
+      "id": "porygon",
+      "weight": 2,
+      "members": [
+        {
+          "pokemon": "porygon",
+          "rarity": 100,
+          "level": "21-23",
+          "alphaLevel": "30-32"
+        }
+      ]
+    }
+  ]
+}

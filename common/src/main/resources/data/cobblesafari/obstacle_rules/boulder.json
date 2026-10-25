@@ -1,0 +1,37 @@
+{
+  "obstacle": "cobblesafari:obstacle_boulder",
+  "types": [
+    "fighting",
+    "steel",
+    "ground"
+  ],
+  "moves": [
+    "bulletpunch",
+    "cometpunch",
+    "dizzypunch",
+    "doubleironbash",
+    "drainpunch",
+    "dynamicpunch",
+    "firepunch",
+    "focuspunch",
+    "hammerarm",
+    "headlongrush",
+    "icehammer",
+    "icepunch",
+    "jetpunch",
+    "machpunch",
+    "megapunch",
+    "meteormash",
+    "plasmafists",
+    "poweruppunch",
+    "ragefist",
+    "shadowpunch",
+    "skyuppercut",
+    "strength",
+    "surgingstrikes",
+    "thunderpunch",
+    "wickedblow"
+  ],
+  "message": "cobblesafari.obstacle.no_move.boulder",
+  "lootTable": "cobblesafari:obstacles/obstacle_boulder"
+}

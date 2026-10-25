@@ -57,7 +57,8 @@ public class HorizontalModelBlock extends HorizontalDirectionalBlock {
             Collision collision,
             boolean emptyOcclusion,
             @Nullable String descriptionId,
-            @Nullable Double seatHeight) {
+            @Nullable Double seatHeight,
+            @Nullable VoxelShape supportShape) {
 
         public static Builder builder() {
             return new Builder();
@@ -79,6 +80,7 @@ public class HorizontalModelBlock extends HorizontalDirectionalBlock {
             private boolean emptyOcclusion = false;
             private String descriptionId = null;
             private Double seatHeight = null;
+            private VoxelShape supportShape = null;
 
             public Builder shape(VoxelShape shape) { this.shape = shape; return this; }
             /** Collision box, when it must be narrower than the selection box (defaults to {@link #shape}). */
@@ -92,10 +94,12 @@ public class HorizontalModelBlock extends HorizontalDirectionalBlock {
             public Builder descriptionId(String id) { this.descriptionId = id; return this; }
             /** Makes the block a seat: an empty-handed right-click sits the player {@code heightPx} above its floor. */
             public Builder seat(double heightPx) { this.seatHeight = heightPx; return this; }
+            /** Shape used for "is this face solid" tests instead of the collision (see {@link BlockShapeUtils#CAPPED_SUPPORT}). */
+            public Builder supportShape(VoxelShape shape) { this.supportShape = shape; return this; }
 
             public Settings build() {
                 return new Settings(shape, collisionShape, authoredFacing, rotateShape, defaultFacing,
-                        support, collision, emptyOcclusion, descriptionId, seatHeight);
+                        support, collision, emptyOcclusion, descriptionId, seatHeight, supportShape);
             }
         }
     }
@@ -236,6 +240,11 @@ public class HorizontalModelBlock extends HorizontalDirectionalBlock {
             case NONE -> Shapes.empty();
             case FULL -> Shapes.block();
         };
+    }
+
+    @Override
+    protected VoxelShape getBlockSupportShape(BlockState state, BlockGetter level, BlockPos pos) {
+        return settings.supportShape() != null ? settings.supportShape() : super.getBlockSupportShape(state, level, pos);
     }
 
     @Override

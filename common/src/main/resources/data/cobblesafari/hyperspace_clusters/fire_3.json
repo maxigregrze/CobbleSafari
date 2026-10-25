@@ -1,0 +1,150 @@
+{
+  "star": 3,
+  "type": "fire",
+  "clusters": [
+    {
+      "id": "houndour",
+      "weight": 5,
+      "members": [
+        {
+          "pokemon": "houndoom",
+          "rarity": 20,
+          "level": "26-28",
+          "alphaLevel": "35-37"
+        },
+        {
+          "pokemon": "houndour",
+          "rarity": 80,
+          "level": "22-24",
+          "alphaLevel": "31-33"
+        }
+      ]
+    },
+    {
+      "id": "fletchling",
+      "weight": 6,
+      "members": [
+        {
+          "pokemon": "fletchinder",
+          "rarity": 20,
+          "level": "23-25",
+          "alphaLevel": "32-34"
+        },
+        {
+          "pokemon": "fletchling",
+          "rarity": 80,
+          "level": "20-22",
+          "alphaLevel": "29-31"
+        }
+      ]
+    },
+    {
+      "id": "litwick",
+      "weight": 6,
+      "members": [
+        {
+          "pokemon": "lampent",
+          "rarity": 20,
+          "level": "41-43",
+          "alphaLevel": "50-52"
+        },
+        {
+          "pokemon": "litwick",
+          "rarity": 80,
+          "level": "25-27",
+          "alphaLevel": "34-36"
+        }
+      ]
+    },
+    {
+      "id": "charmander",
+      "weight": 1,
+      "members": [
+        {
+          "pokemon": "charmeleon",
+          "rarity": 20,
+          "level": "23-25",
+          "alphaLevel": "32-34"
+        },
+        {
+          "pokemon": "charmander",
+          "rarity": 80,
+          "level": "20-22",
+          "alphaLevel": "29-31"
+        }
+      ]
+    },
+    {
+      "id": "tepig",
+      "weight": 1,
+      "members": [
+        {
+          "pokemon": "pignite",
+          "rarity": 20,
+          "level": "23-25",
+          "alphaLevel": "32-34"
+        },
+        {
+          "pokemon": "tepig",
+          "rarity": 80,
+          "level": "20-22",
+          "alphaLevel": "29-31"
+        }
+      ]
+    },
+    {
+      "id": "fennekin",
+      "weight": 1,
+      "members": [
+        {
+          "pokemon": "braixen",
+          "rarity": 20,
+          "level": "23-25",
+          "alphaLevel": "32-34"
+        },
+        {
+          "pokemon": "fennekin",
+          "rarity": 80,
+          "level": "20-22",
+          "alphaLevel": "29-31"
+        }
+      ]
+    },
+    {
+      "id": "capsakid",
+      "weight": 3,
+      "members": [
+        {
+          "pokemon": "scovillain",
+          "rarity": 20,
+          "level": "26-28",
+          "alphaLevel": "35-37"
+        },
+        {
+          "pokemon": "capsakid",
+          "rarity": 80,
+          "level": "21-23",
+          "alphaLevel": "30-32"
+        }
+      ]
+    },
+    {
+      "id": "torchic",
+      "weight": 1,
+      "members": [
+        {
+          "pokemon": "combusken",
+          "rarity": 20,
+          "level": "23-25",
+          "alphaLevel": "32-34"
+        },
+        {
+          "pokemon": "torchic",
+          "rarity": 80,
+          "level": "20-22",
+          "alphaLevel": "29-31"
+        }
+      ]
+    }
+  ]
+}

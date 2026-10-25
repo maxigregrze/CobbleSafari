@@ -1,0 +1,96 @@
+{
+  "star": 2,
+  "type": "electric",
+  "clusters": [
+    {
+      "id": "electrike",
+      "weight": 4,
+      "members": [
+        {
+          "pokemon": "electrike",
+          "rarity": 100,
+          "level": "18-20",
+          "alphaLevel": "27-29"
+        }
+      ]
+    },
+    {
+      "id": "pichu",
+      "weight": 5,
+      "members": [
+        {
+          "pokemon": "pikachu",
+          "rarity": 20,
+          "level": "20-22",
+          "alphaLevel": "29-31"
+        },
+        {
+          "pokemon": "pichu",
+          "rarity": 80,
+          "level": "16-18",
+          "alphaLevel": "25-27"
+        }
+      ]
+    },
+    {
+      "id": "mareep",
+      "weight": 4,
+      "members": [
+        {
+          "pokemon": "mareep",
+          "rarity": 100,
+          "level": "15-17",
+          "alphaLevel": "24-26"
+        }
+      ]
+    },
+    {
+      "id": "pichu_2",
+      "weight": 2,
+      "members": [
+        {
+          "pokemon": "pichu",
+          "rarity": 100,
+          "level": "16-18",
+          "alphaLevel": "25-27"
+        }
+      ]
+    },
+    {
+      "id": "tynamo",
+      "weight": 4,
+      "members": [
+        {
+          "pokemon": "tynamo",
+          "rarity": 100,
+          "level": "21-23",
+          "alphaLevel": "30-32"
+        }
+      ]
+    },
+    {
+      "id": "helioptile",
+      "weight": 4,
+      "members": [
+        {
+          "pokemon": "helioptile",
+          "rarity": 100,
+          "level": "19-21",
+          "alphaLevel": "28-30"
+        }
+      ]
+    },
+    {
+      "id": "toxel",
+      "weight": 7,
+      "members": [
+        {
+          "pokemon": "toxel",
+          "rarity": 100,
+          "level": "19-21",
+          "alphaLevel": "28-30"
+        }
+      ]
+    }
+  ]
+}

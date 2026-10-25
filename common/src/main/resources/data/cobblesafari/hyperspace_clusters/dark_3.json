@@ -1,0 +1,96 @@
+{
+  "star": 3,
+  "type": "dark",
+  "clusters": [
+    {
+      "id": "sandile",
+      "weight": 5,
+      "members": [
+        {
+          "pokemon": "krokorok",
+          "rarity": 20,
+          "level": "29-31",
+          "alphaLevel": "38-40"
+        },
+        {
+          "pokemon": "sandile",
+          "rarity": 80,
+          "level": "22-24",
+          "alphaLevel": "31-33"
+        }
+      ]
+    },
+    {
+      "id": "houndour",
+      "weight": 5,
+      "members": [
+        {
+          "pokemon": "houndoom",
+          "rarity": 20,
+          "level": "26-28",
+          "alphaLevel": "35-37"
+        },
+        {
+          "pokemon": "houndour",
+          "rarity": 80,
+          "level": "22-24",
+          "alphaLevel": "31-33"
+        }
+      ]
+    },
+    {
+      "id": "carvanha",
+      "weight": 5,
+      "members": [
+        {
+          "pokemon": "sharpedo",
+          "rarity": 20,
+          "level": "30-32",
+          "alphaLevel": "39-41"
+        },
+        {
+          "pokemon": "carvanha",
+          "rarity": 80,
+          "level": "23-25",
+          "alphaLevel": "32-34"
+        }
+      ]
+    },
+    {
+      "id": "purrloin",
+      "weight": 3,
+      "members": [
+        {
+          "pokemon": "liepard",
+          "rarity": 20,
+          "level": "24-26",
+          "alphaLevel": "33-35"
+        },
+        {
+          "pokemon": "purrloin",
+          "rarity": 80,
+          "level": "21-23",
+          "alphaLevel": "30-32"
+        }
+      ]
+    },
+    {
+      "id": "nickit",
+      "weight": 3,
+      "members": [
+        {
+          "pokemon": "thievul",
+          "rarity": 20,
+          "level": "24-26",
+          "alphaLevel": "33-35"
+        },
+        {
+          "pokemon": "nickit",
+          "rarity": 80,
+          "level": "20-22",
+          "alphaLevel": "29-31"
+        }
+      ]
+    }
+  ]
+}

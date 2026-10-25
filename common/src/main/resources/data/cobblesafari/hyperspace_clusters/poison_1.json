@@ -1,0 +1,114 @@
+{
+  "star": 1,
+  "type": "poison",
+  "clusters": [
+    {
+      "id": "shroodle",
+      "weight": 3,
+      "members": [
+        {
+          "pokemon": "shroodle",
+          "rarity": 100,
+          "level": "16-18",
+          "alphaLevel": "25-27"
+        }
+      ]
+    },
+    {
+      "id": "ekans",
+      "weight": 7,
+      "members": [
+        {
+          "pokemon": "ekans",
+          "rarity": 100,
+          "level": "15-17",
+          "alphaLevel": "24-26"
+        }
+      ]
+    },
+    {
+      "id": "venipede",
+      "weight": 5,
+      "members": [
+        {
+          "pokemon": "venipede",
+          "rarity": 100,
+          "level": "15-17",
+          "alphaLevel": "24-26"
+        }
+      ]
+    },
+    {
+      "id": "bulbasaur",
+      "weight": 1,
+      "members": [
+        {
+          "pokemon": "bulbasaur",
+          "rarity": 100,
+          "level": "13-15",
+          "alphaLevel": "22-24"
+        }
+      ]
+    },
+    {
+      "id": "trubbish",
+      "weight": 2,
+      "members": [
+        {
+          "pokemon": "trubbish",
+          "rarity": 100,
+          "level": "19-21",
+          "alphaLevel": "28-30"
+        }
+      ]
+    },
+    {
+      "id": "zubat",
+      "weight": 3,
+      "members": [
+        {
+          "pokemon": "zubat",
+          "rarity": 100,
+          "level": "15-17",
+          "alphaLevel": "24-26"
+        }
+      ]
+    },
+    {
+      "id": "bellsprout",
+      "weight": 3,
+      "members": [
+        {
+          "pokemon": "bellsprout",
+          "rarity": 100,
+          "level": "14-16",
+          "alphaLevel": "23-25"
+        }
+      ]
+    },
+    {
+      "id": "budew",
+      "weight": 2,
+      "members": [
+        {
+          "pokemon": "budew",
+          "rarity": 100,
+          "level": "13-15",
+          "alphaLevel": "22-24"
+        }
+      ]
+    },
+    {
+      "id": "gulpin",
+      "weight": 4,
+      "members": [
+        {
+          "pokemon": "gulpin",
+          "rarity": 100,
+          "level": "16-18",
+          "alphaLevel": "25-27"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,138 @@
+{
+  "star": 3,
+  "type": "fighting",
+  "clusters": [
+    {
+      "id": "falinks",
+      "weight": 5,
+      "members": [
+        {
+          "pokemon": "falinks",
+          "rarity": 100,
+          "level": "31-33",
+          "alphaLevel": "40-42"
+        }
+      ]
+    },
+    {
+      "id": "meditite",
+      "weight": 6,
+      "members": [
+        {
+          "pokemon": "medicham",
+          "rarity": 20,
+          "level": "37-39",
+          "alphaLevel": "46-48"
+        },
+        {
+          "pokemon": "meditite",
+          "rarity": 80,
+          "level": "24-26",
+          "alphaLevel": "33-35"
+        }
+      ]
+    },
+    {
+      "id": "hawlucha",
+      "weight": 4,
+      "members": [
+        {
+          "pokemon": "hawlucha",
+          "rarity": 100,
+          "level": "31-33",
+          "alphaLevel": "40-42"
+        }
+      ]
+    },
+    {
+      "id": "mankey",
+      "weight": 3,
+      "members": [
+        {
+          "pokemon": "primeape",
+          "rarity": 20,
+          "level": "28-30",
+          "alphaLevel": "37-39"
+        },
+        {
+          "pokemon": "mankey",
+          "rarity": 80,
+          "level": "22-24",
+          "alphaLevel": "31-33"
+        }
+      ]
+    },
+    {
+      "id": "machop",
+      "weight": 3,
+      "members": [
+        {
+          "pokemon": "machoke",
+          "rarity": 20,
+          "level": "28-30",
+          "alphaLevel": "37-39"
+        },
+        {
+          "pokemon": "machop",
+          "rarity": 80,
+          "level": "22-24",
+          "alphaLevel": "31-33"
+        }
+      ]
+    },
+    {
+      "id": "throh",
+      "weight": 3,
+      "members": [
+        {
+          "pokemon": "throh",
+          "rarity": 100,
+          "level": "26-28",
+          "alphaLevel": "35-37"
+        }
+      ]
+    },
+    {
+      "id": "sawk",
+      "weight": 3,
+      "members": [
+        {
+          "pokemon": "sawk",
+          "rarity": 100,
+          "level": "26-28",
+          "alphaLevel": "35-37"
+        }
+      ]
+    },
+    {
+      "id": "tepig",
+      "weight": 2,
+      "members": [
+        {
+          "pokemon": "pignite",
+          "rarity": 20,
+          "level": "23-25",
+          "alphaLevel": "32-34"
+        },
+        {
+          "pokemon": "tepig",
+          "rarity": 80,
+          "level": "20-22",
+          "alphaLevel": "29-31"
+        }
+      ]
+    },
+    {
+      "id": "farfetchd_galarian",
+      "weight": 1,
+      "members": [
+        {
+          "pokemon": "farfetchd galarian",
+          "rarity": 100,
+          "level": "22-24",
+          "alphaLevel": "31-33"
+        }
+      ]
+    }
+  ]
+}

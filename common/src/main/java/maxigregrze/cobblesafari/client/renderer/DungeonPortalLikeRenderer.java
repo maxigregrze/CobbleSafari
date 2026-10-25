@@ -44,7 +44,8 @@ public final class DungeonPortalLikeRenderer {
         poseStack.pushPose();
 
         if (ShaderCompatHelper.isIrisShaderActive()) {
-            renderPortalCircleShaderCompat(poseStack, bufferSource, facing, packedOverlay);
+            ShaderCompatHelper.renderAsEndPortal(
+                    () -> renderPortalCircleShaderCompat(poseStack, bufferSource, facing, packedOverlay));
         } else {
             renderPortalCircle(poseStack, bufferSource, facing);
         }

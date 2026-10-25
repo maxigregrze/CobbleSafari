@@ -1,0 +1,126 @@
+{
+  "star": 2,
+  "type": "grass",
+  "clusters": [
+    {
+      "id": "budew",
+      "weight": 5,
+      "members": [
+        {
+          "pokemon": "budew",
+          "rarity": 100,
+          "level": "15-17",
+          "alphaLevel": "24-26"
+        }
+      ]
+    },
+    {
+      "id": "pansage",
+      "weight": 6,
+      "members": [
+        {
+          "pokemon": "pansage",
+          "rarity": 100,
+          "level": "17-19",
+          "alphaLevel": "26-28"
+        }
+      ]
+    },
+    {
+      "id": "bulbasaur",
+      "weight": 1,
+      "members": [
+        {
+          "pokemon": "bulbasaur",
+          "rarity": 100,
+          "level": "16-18",
+          "alphaLevel": "25-27"
+        }
+      ]
+    },
+    {
+      "id": "bellsprout",
+      "weight": 4,
+      "members": [
+        {
+          "pokemon": "bellsprout",
+          "rarity": 100,
+          "level": "17-19",
+          "alphaLevel": "26-28"
+        }
+      ]
+    },
+    {
+      "id": "chikorita",
+      "weight": 1,
+      "members": [
+        {
+          "pokemon": "chikorita",
+          "rarity": 100,
+          "level": "16-18",
+          "alphaLevel": "25-27"
+        }
+      ]
+    },
+    {
+      "id": "skiddo",
+      "weight": 5,
+      "members": [
+        {
+          "pokemon": "skiddo",
+          "rarity": 100,
+          "level": "20-22",
+          "alphaLevel": "29-31"
+        }
+      ]
+    },
+    {
+      "id": "chespin",
+      "weight": 1,
+      "members": [
+        {
+          "pokemon": "chespin",
+          "rarity": 100,
+          "level": "16-18",
+          "alphaLevel": "25-27"
+        }
+      ]
+    },
+    {
+      "id": "capsakid",
+      "weight": 3,
+      "members": [
+        {
+          "pokemon": "capsakid",
+          "rarity": 100,
+          "level": "17-19",
+          "alphaLevel": "26-28"
+        }
+      ]
+    },
+    {
+      "id": "foongus",
+      "weight": 3,
+      "members": [
+        {
+          "pokemon": "foongus",
+          "rarity": 100,
+          "level": "21-23",
+          "alphaLevel": "30-32"
+        }
+      ]
+    },
+    {
+      "id": "treecko",
+      "weight": 1,
+      "members": [
+        {
+          "pokemon": "treecko",
+          "rarity": 100,
+          "level": "16-18",
+          "alphaLevel": "25-27"
+        }
+      ]
+    }
+  ]
+}

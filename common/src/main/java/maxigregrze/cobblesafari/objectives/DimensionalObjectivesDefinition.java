@@ -80,24 +80,28 @@ public final class DimensionalObjectivesDefinition {
      * its variables.
      */
     public static final class TaskPoolEntry {
+        public static final String INSTANCE_SENTINEL = "instance";
+
         private final TaskType type;
         private final int weight;
         private final int countMin;
         private final int countMax;
-        private final List<String> allowedSpecies; // may contain the "random" sentinel
+        private final List<String> allowedSpecies; // may contain the "random" / "instance" sentinels
         private final List<Integer> allowedTypes; // variant indices 0..17
+        private final boolean typesFromInstance;
         @Nullable
         private final ResourceLocation taskReward;
 
         public TaskPoolEntry(TaskType type, int weight, int countMin, int countMax,
                              List<String> allowedSpecies, List<Integer> allowedTypes,
-                             @Nullable ResourceLocation taskReward) {
+                             boolean typesFromInstance, @Nullable ResourceLocation taskReward) {
             this.type = type;
             this.weight = weight;
             this.countMin = countMin;
             this.countMax = countMax;
             this.allowedSpecies = List.copyOf(allowedSpecies);
             this.allowedTypes = List.copyOf(allowedTypes);
+            this.typesFromInstance = typesFromInstance;
             this.taskReward = taskReward;
         }
 
@@ -123,6 +127,17 @@ public final class DimensionalObjectivesDefinition {
 
         public List<Integer> allowedTypes() {
             return allowedTypes;
+        }
+
+        /** {@code allowedTypes: ["instance"]}: the type is drawn from the instance's roll (plan 196, § 7.4). */
+        public boolean typesFromInstance() {
+            return typesFromInstance;
+        }
+
+        /** True when rolling this entry needs an instance context; without one it is left out. */
+        public boolean needsInstanceContext() {
+            return (type.usesType() && typesFromInstance)
+                    || (type.usesSpecies() && allowedSpecies.contains(INSTANCE_SENTINEL));
         }
 
         @Nullable
