@@ -27,7 +27,7 @@ public class RockFieldAttack implements CsBossAttack {
     private static final int IMPACT_AT = METEOR_AT + FALL_TICKS; // 30
     private static final int END_DELAY = 90; // 120 + 30 + 90 = 240
     private static final double FALL_HEIGHT = 20.0;
-    private static final float METEOR_DAMAGE = 18.0F;
+    private static final float METEOR_DAMAGE = 7.0F; // base 7 (plan 199), × damageMultiplier du boss
     private static final double PERLIN_SCALE = 0.2;
     // Perlin (normalized) peaks around ~0.85; lower threshold ⇒ more coverage (~30 %).
     private static final double COVERAGE_THRESHOLD = 0.6;

@@ -5,7 +5,7 @@
   "spawns": [
     {
       "id": "sliggoo_hisui-dragon-safarispawn",
-      "pokemon": "sliggoo hisuan",
+      "pokemon": "sliggoo hisuian",
       "presets": [
         "cobblesafari"
       ],

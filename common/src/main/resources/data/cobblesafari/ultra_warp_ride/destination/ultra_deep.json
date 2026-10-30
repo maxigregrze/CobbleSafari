@@ -2,7 +2,7 @@
   "typeId": 1,
   "weight": 10,
   "structurePool": "cobblesafari:ultraspace/deep/start",
-  "tint": "#25408e",
+  "tint": "#000066",
   "biome": "cobblesafari:dungeon_ultra_deep_biome",
   "normalPool": {
     "pokemon": [

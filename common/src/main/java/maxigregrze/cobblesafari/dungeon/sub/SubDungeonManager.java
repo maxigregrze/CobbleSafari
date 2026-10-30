@@ -309,6 +309,11 @@ public final class SubDungeonManager {
         player.resetFallDistance();
         player.setDeltaMovement(net.minecraft.world.phys.Vec3.ZERO);
         TimerManager.startSession(player, subScope);
+        WarpRideDestination destination = WarpRideDestinationRegistry.byTypeId(request.typeId());
+        if (destination != null) {
+            maxigregrze.cobblesafari.advancement.ModCriteria.WARP_DESTINATION_REACHED.trigger(
+                    player, destination.destinationId());
+        }
 
         CobbleSafari.LOGGER.info("[SubDungeon] {} entered {} (instance {}, type={} tier={} distance={}, {} ticks)",
                 player.getName().getString(), config.getDimensionId(), record.instanceId(),

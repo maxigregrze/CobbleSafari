@@ -11,15 +11,6 @@
       }
     },
     {
-      "weight": 15,
-      "element": {
-        "location": "cobblesafari:underground/corridors/underground_corridor_lg_secret",
-        "processors": "cobblesafari:underground_digsite_scatter",
-        "projection": "rigid",
-        "element_type": "minecraft:single_pool_element"
-      }
-    },
-    {
       "weight": 6,
       "element": {
         "location": "cobblesafari:underground/corners/underground_corner_md_1",

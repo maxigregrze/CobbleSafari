@@ -10,6 +10,8 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.SimpleMenuProvider;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.Item;
 import maxigregrze.cobblesafari.item.NeoForgeReconChestplateItem;
 import maxigregrze.cobblesafari.item.NeoForgeStakatakaShieldItem;
@@ -88,5 +90,11 @@ public class NeoForgePlatformHelper implements IPlatformHelper {
     @Override
     public Item createReconChestplate(Holder<ArmorMaterial> material, Item.Properties properties) {
         return new NeoForgeReconChestplateItem(material, properties);
+    }
+
+    /** NeoForge routes every elytra - vanilla, Recon, any mod's - through {@code canElytraFly}. */
+    @Override
+    public boolean canWornElytraFly(LivingEntity entity) {
+        return entity.getItemBySlot(EquipmentSlot.CHEST).canElytraFly(entity);
     }
 }

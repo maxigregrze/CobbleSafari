@@ -10,7 +10,8 @@ import net.minecraft.resources.ResourceLocation;
 public record SaveCsBossMimicConfigPayload(
         BlockPos pos,
         String mimicBlockId,
-        boolean reverse
+        String battleMimicBlockId,
+        int mode
 ) implements CustomPacketPayload {
 
     public static final CustomPacketPayload.Type<SaveCsBossMimicConfigPayload> TYPE =
@@ -22,12 +23,14 @@ public record SaveCsBossMimicConfigPayload(
             (buf, p) -> {
                 buf.writeBlockPos(p.pos);
                 buf.writeUtf(p.mimicBlockId, MAX_STR);
-                buf.writeBoolean(p.reverse);
+                buf.writeUtf(p.battleMimicBlockId, MAX_STR);
+                buf.writeVarInt(p.mode);
             },
             buf -> new SaveCsBossMimicConfigPayload(
                     buf.readBlockPos(),
                     buf.readUtf(MAX_STR),
-                    buf.readBoolean()
+                    buf.readUtf(MAX_STR),
+                    buf.readVarInt()
             )
     );
 

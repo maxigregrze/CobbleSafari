@@ -6,7 +6,12 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import maxigregrze.cobblesafari.CobbleSafari;
+import net.minecraft.core.particles.ParticleType;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.core.particles.SimpleParticleType;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
+import org.jetbrains.annotations.Nullable;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
@@ -161,11 +166,46 @@ public final class CsBossDataLoader {
                 ? Math.max(0.0, json.get("portalSize").getAsDouble()) : CsBossDefinition.DEFAULT_PORTAL_SIZE;
         double portalDistance = json.has("portalDistance")
                 ? Math.max(0.0, json.get("portalDistance").getAsDouble()) : CsBossDefinition.DEFAULT_PORTAL_DISTANCE;
+        double damageMultiplier = json.has("damageMultiplier")
+                ? Math.max(0.0, json.get("damageMultiplier").getAsDouble())
+                : CsBossDefinition.DEFAULT_DAMAGE_MULTIPLIER;
+        SimpleParticleType returnParticle = parseReturnParticle(
+                json.has("returnParticle") ? json.get("returnParticle").getAsString() : null, source);
 
         return new CsBossDefinition(bossId, displayName, tags, maximumDuration, minimumDuration, specie, minion,
                 size, moveSet, cdMin, cdMax, isStatic, uniqueReward, rewards, music, overlay, color,
                 secondPhase, giveRewardsBeforeSecondPhase, allowSimultaneousAttacks, portalType,
-                portalSize, portalDistance);
+                portalSize, portalDistance, damageMultiplier, returnParticle, readWinRibbon(json, source));
+    }
+
+    /** Optional {@code winRibbon} block (plan 201, D8); invalid entries are ignored with a warning. */
+    @Nullable
+    private static CsBossDefinition.WinRibbon readWinRibbon(JsonObject json, String source) {
+        if (!json.has("winRibbon") || !json.get("winRibbon").isJsonObject()) {
+            return null;
+        }
+        JsonObject o = json.getAsJsonObject("winRibbon");
+        ResourceLocation mark = o.has("mark") ? ResourceLocation.tryParse(o.get("mark").getAsString()) : null;
+        if (mark == null) {
+            CobbleSafari.LOGGER.warn("[CSBoss] {} invalid winRibbon mark - ignored", source);
+            return null;
+        }
+        double chance = o.has("chance") ? Math.clamp(o.get("chance").getAsDouble(), 0.0, 1.0) : 0.0;
+        return new CsBossDefinition.WinRibbon(mark, chance);
+    }
+
+    /** Particule simple du porteur de retour (plan 199 § 3.1) ; inconnue ou non simple ⇒ end_rod. */
+    private static SimpleParticleType parseReturnParticle(String raw, String source) {
+        if (raw == null || raw.isBlank()) {
+            return ParticleTypes.END_ROD;
+        }
+        ResourceLocation id = ResourceLocation.tryParse(raw.trim());
+        ParticleType<?> type = id == null ? null : BuiltInRegistries.PARTICLE_TYPE.get(id);
+        if (type instanceof SimpleParticleType simple) {
+            return simple;
+        }
+        CobbleSafari.LOGGER.warn("[CSBoss] {} unknown returnParticle '{}' - default end_rod", source, raw);
+        return ParticleTypes.END_ROD;
     }
 
     /** Minion species (optional); validated as a PokemonProperties line, otherwise ignored. */

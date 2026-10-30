@@ -35,6 +35,10 @@ public class DungeonDimensionEntry {
         return spawnWeight;
     }
 
+    public void setSpawnWeight(int spawnWeight) {
+        this.spawnWeight = spawnWeight;
+    }
+
     public boolean isEntryFeeEnabled() {
         return enableEntryFee;
     }

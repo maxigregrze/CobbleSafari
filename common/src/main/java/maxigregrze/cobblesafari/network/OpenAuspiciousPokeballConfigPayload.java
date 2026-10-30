@@ -14,7 +14,8 @@ public record OpenAuspiciousPokeballConfigPayload(
         String poolBallsId,
         String poolTreasuresId,
         int minRoll,
-        int maxRoll
+        int maxRoll,
+        LootDefaults defaults
 ) implements CustomPacketPayload {
 
     public static final CustomPacketPayload.Type<OpenAuspiciousPokeballConfigPayload> TYPE =
@@ -31,6 +32,7 @@ public record OpenAuspiciousPokeballConfigPayload(
                 buf.writeUtf(p.poolTreasuresId, MAX_STR);
                 buf.writeInt(p.minRoll);
                 buf.writeInt(p.maxRoll);
+                LootDefaults.STREAM_CODEC.encode(buf, p.defaults);
             },
             buf -> new OpenAuspiciousPokeballConfigPayload(
                     buf.readBlockPos(),
@@ -39,7 +41,8 @@ public record OpenAuspiciousPokeballConfigPayload(
                     buf.readUtf(MAX_STR),
                     buf.readUtf(MAX_STR),
                     buf.readInt(),
-                    buf.readInt()
+                    buf.readInt(),
+                    LootDefaults.STREAM_CODEC.decode(buf)
             )
     );
 

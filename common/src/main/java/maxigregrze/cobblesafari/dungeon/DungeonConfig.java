@@ -319,10 +319,10 @@ public class DungeonConfig {
      * possible: without it the second instance in a slot would generate over a crater.</p>
      *
      * <p>Only safe where a chunk regenerates deterministically on its own, which is why it is
-     * opt-in. It holds for the five Ultra dimensions - {@code minecraft:flat} generators, one fixed
-     * biome, no carvers, and worldgen content that is entirely structure sets, which
-     * {@code applyBiomeDecoration} clips to the chunk's own column. It does <b>not</b> hold for
-     * {@code dungeon_jump}, whose trees are biome features writing across chunk borders.</p>
+     * opt-in: a {@code minecraft:flat} or {@code minecraft:noise} generator with per-column terrain
+     * (no carvers, aquifers or ore veins), one fixed biome, surface patterns from surface rules and
+     * scenery from structure sets only - biome features are never replayed. Used by Megalopolis, the
+     * Ultra dimensions and {@code dungeon_jump} (maple canopy built by surface rules, plan 199 § 17).</p>
      */
     public DungeonConfig withWorldgenRestoration() {
         return new DungeonConfig(id, dimensionKey, structureId,

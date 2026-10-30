@@ -79,7 +79,7 @@ public class DistortionRedChainAttack implements CsBossAttack {
     /** Red particle rings contracting toward the boss (implosion effect). */
     private void emitImplosion(ServerLevel level, BossBattleSession session, CsBossEntity boss) {
         double cx = boss.getX();
-        double cy = session.getTriggerPos().getY() + CENTER_HEIGHT;
+        double cy = session.getFloorY() + CENTER_HEIGHT;
         double cz = boss.getZ();
         for (int r = 0; r < RINGS; r++) {
             double phase = ((tick + (double) r * CYCLE / RINGS) % CYCLE) / CYCLE;
@@ -96,7 +96,7 @@ public class DistortionRedChainAttack implements CsBossAttack {
 
     private void fireChains(ServerLevel level, BossBattleSession session, CsBossEntity boss) {
         double base = rng.nextDouble() * Math.PI * 2.0;
-        double y = session.getTriggerPos().getY() + CHAIN_Y_OFFSET;
+        double y = session.getFloorY() + CHAIN_Y_OFFSET;
         for (int k = 0; k < CHAIN_COUNT; k++) {
             double theta = base + k * (Math.PI * 2.0 / CHAIN_COUNT);
             double dirX = Math.cos(theta);
@@ -110,7 +110,7 @@ public class DistortionRedChainAttack implements CsBossAttack {
         }
         boss.triggerAttackAnimation();
         CsBossAttackLib.sound(level, boss.getX(), y, boss.getZ(),
-                "cobblemon:move.spiritshackle.actor", SoundSource.HOSTILE, 1.3F, 0.7F);
+                "cobblemon:move.shadowball.actor", SoundSource.HOSTILE, 1.3F, 0.7F);
     }
 
     @Override

@@ -38,6 +38,6 @@
   "suggests": {
     "jade": "*",
     "wthit": "*",
-    "mega-showdown": "*"
+    "mega_showdown": "*"
   }
 }

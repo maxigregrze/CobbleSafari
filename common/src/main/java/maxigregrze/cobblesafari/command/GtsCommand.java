@@ -461,6 +461,10 @@ public final class GtsCommand {
                 ctx.getSource().sendFailure(Component.translatable("cobblesafari.command.gts.uniqueoffer.add_invalid_level"));
                 yield 0;
             }
+            case SPECIES_UNAVAILABLE -> {
+                ctx.getSource().sendFailure(Component.translatable("cobblesafari.command.gts.uniqueoffer.add_species_unavailable"));
+                yield 0;
+            }
             case ERROR -> {
                 ctx.getSource().sendFailure(Component.translatable("cobblesafari.command.gts.uniqueoffer.add_error"));
                 yield 0;
@@ -636,6 +640,10 @@ public final class GtsCommand {
             }
             case INVALID_LEVEL_BUCKET -> {
                 ctx.getSource().sendFailure(Component.translatable("cobblesafari.command.gts.uniqueoffer.personal.add_invalid_level"));
+                yield 0;
+            }
+            case SPECIES_UNAVAILABLE -> {
+                ctx.getSource().sendFailure(Component.translatable("cobblesafari.command.gts.uniqueoffer.personal.add_species_unavailable"));
                 yield 0;
             }
             case ERROR -> {

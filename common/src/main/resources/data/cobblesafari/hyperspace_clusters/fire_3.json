@@ -58,7 +58,8 @@
     },
     {
       "id": "charmander",
-      "weight": 1,
+      "weight": 0.1,
+      "rare": true,
       "members": [
         {
           "pokemon": "charmeleon",
@@ -76,7 +77,8 @@
     },
     {
       "id": "tepig",
-      "weight": 1,
+      "weight": 0.1,
+      "rare": true,
       "members": [
         {
           "pokemon": "pignite",
@@ -94,7 +96,8 @@
     },
     {
       "id": "fennekin",
-      "weight": 1,
+      "weight": 0.1,
+      "rare": true,
       "members": [
         {
           "pokemon": "braixen",
@@ -130,7 +133,8 @@
     },
     {
       "id": "torchic",
-      "weight": 1,
+      "weight": 0.1,
+      "rare": true,
       "members": [
         {
           "pokemon": "combusken",
@@ -140,6 +144,101 @@
         },
         {
           "pokemon": "torchic",
+          "rarity": 80,
+          "level": "20-22",
+          "alphaLevel": "29-31"
+        }
+      ]
+    },
+    {
+      "id": "cyndaquil",
+      "weight": 0.1,
+      "rare": true,
+      "members": [
+        {
+          "pokemon": "quilava",
+          "rarity": 20,
+          "level": "23-25",
+          "alphaLevel": "32-34"
+        },
+        {
+          "pokemon": "cyndaquil",
+          "rarity": 80,
+          "level": "20-22",
+          "alphaLevel": "29-31"
+        }
+      ]
+    },
+    {
+      "id": "chimchar",
+      "weight": 0.1,
+      "rare": true,
+      "members": [
+        {
+          "pokemon": "monferno",
+          "rarity": 20,
+          "level": "23-25",
+          "alphaLevel": "32-34"
+        },
+        {
+          "pokemon": "chimchar",
+          "rarity": 80,
+          "level": "20-22",
+          "alphaLevel": "29-31"
+        }
+      ]
+    },
+    {
+      "id": "litten",
+      "weight": 0.1,
+      "rare": true,
+      "members": [
+        {
+          "pokemon": "torracat",
+          "rarity": 20,
+          "level": "23-25",
+          "alphaLevel": "32-34"
+        },
+        {
+          "pokemon": "litten",
+          "rarity": 80,
+          "level": "20-22",
+          "alphaLevel": "29-31"
+        }
+      ]
+    },
+    {
+      "id": "scorbunny",
+      "weight": 0.1,
+      "rare": true,
+      "members": [
+        {
+          "pokemon": "raboot",
+          "rarity": 20,
+          "level": "23-25",
+          "alphaLevel": "32-34"
+        },
+        {
+          "pokemon": "scorbunny",
+          "rarity": 80,
+          "level": "20-22",
+          "alphaLevel": "29-31"
+        }
+      ]
+    },
+    {
+      "id": "fuecoco",
+      "weight": 0.1,
+      "rare": true,
+      "members": [
+        {
+          "pokemon": "crocalor",
+          "rarity": 20,
+          "level": "23-25",
+          "alphaLevel": "32-34"
+        },
+        {
+          "pokemon": "fuecoco",
           "rarity": 80,
           "level": "20-22",
           "alphaLevel": "29-31"

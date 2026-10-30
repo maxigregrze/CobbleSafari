@@ -1,0 +1,16 @@
+{
+  "parent": "cobblesafari:hyperspace_tourist",
+  "display": {
+    "icon": { "id": "cobblesafari:butter_supreme" },
+    "title": { "translate": "advancements.cobblesafari.lucky_five.title" },
+    "description": { "translate": "advancements.cobblesafari.lucky_five.description" },
+    "frame": "challenge",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "done": {"trigger": "cobblesafari:wild_zone_entered", "conditions": {"count": 5}}
+  },
+  "requirements": [["done"]]
+}

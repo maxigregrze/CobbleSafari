@@ -143,26 +143,40 @@ public class HyperspaceQuadBlock extends HorizontalDirectionalBlock {
 
     @Override
     public BlockState playerWillDestroy(Level level, BlockPos pos, BlockState state, Player player) {
-        breakStructure(level, pos, state);
+        // The loot table drops from CENTER only, and vanilla drops the mined cell only if it is
+        // still there after this call: never clear it, and break CENTER with its drop when
+        // another cell is mined in survival.
+        if (!level.isClientSide() && !player.isCreative()) {
+            BlockPos center = bottomOf(pos, state).above();
+            if (!center.equals(pos) && level.getBlockState(center).is(this)) {
+                breaking = true;
+                try {
+                    level.destroyBlock(center, true, player);
+                } finally {
+                    breaking = false;
+                }
+            }
+        }
+        breakStructure(level, pos, state, pos);
         return super.playerWillDestroy(level, pos, state, player);
     }
 
     @Override
     public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean movedByPiston) {
         if (!state.is(newState.getBlock())) {
-            breakStructure(level, pos, state);
+            breakStructure(level, pos, state, null);
         }
         super.onRemove(state, level, pos, newState, movedByPiston);
     }
 
-    private void breakStructure(Level level, BlockPos pos, BlockState state) {
+    private void breakStructure(Level level, BlockPos pos, BlockState state, @Nullable BlockPos keep) {
         if (breaking || level.isClientSide()) {
             return;
         }
         breaking = true;
         BlockPos bottom = bottomOf(pos, state);
         for (BlockPos p : new BlockPos[]{bottom, bottom.above(), bottom.above(2), bottom.above(3)}) {
-            if (level.getBlockState(p).is(this)) {
+            if (!p.equals(keep) && level.getBlockState(p).is(this)) {
                 level.setBlock(p, Blocks.AIR.defaultBlockState(), Block.UPDATE_ALL);
             }
         }

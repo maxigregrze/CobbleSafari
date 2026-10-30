@@ -36,6 +36,7 @@ public class CsBossSettings {
     private int balmDispenserRechargeSeconds = 30;
     private int balmDispenserBalmsPerDispense = 1; // balms granted each time the dispenser is used
     private int balmBossDamagePercent = 5; // % of boss bar/timer removed per balm hit
+    private double balmSplashRadius = 2.5; // blocks - a balm hitting a block splashes the nearest boss/bell (0 = off)
     private boolean showFightingPokemons = true; // show players' Pokémon around the boss (cosmetic)
 
     public static void load() {
@@ -83,6 +84,7 @@ public class CsBossSettings {
         balmDispenserRechargeSeconds = Math.max(1, balmDispenserRechargeSeconds);
         balmDispenserBalmsPerDispense = Math.max(1, balmDispenserBalmsPerDispense);
         balmBossDamagePercent = Math.max(0, Math.min(100, balmBossDamagePercent));
+        balmSplashRadius = Math.max(0.0, Math.min(8.0, balmSplashRadius));
     }
 
     public static void save() {
@@ -156,6 +158,10 @@ public class CsBossSettings {
 
     public int getBalmBossDamagePercent() {
         return balmBossDamagePercent;
+    }
+
+    public double getBalmSplashRadius() {
+        return balmSplashRadius;
     }
 
     public boolean isShowFightingPokemons() {

@@ -58,7 +58,8 @@
     },
     {
       "id": "bulbasaur",
-      "weight": 1,
+      "weight": 0.1,
+      "rare": true,
       "members": [
         {
           "pokemon": "ivysaur",

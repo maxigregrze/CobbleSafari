@@ -19,6 +19,9 @@ public final class WarpRideClientState {
     /** How fast an eased quantity closes on the server value, per second. */
     private static final double EASE_RATE = 12.0;
 
+    /** A hit bonus fades out at the plane over this long, as does the pickup flash (plan 200, 4.1). */
+    public static final long POSITIVE_FADE_NANOS = 250_000_000L;
+
     public static final int PHASE_AWAITING_READY = 0;
     public static final int PHASE_INTRO = 1;
     public static final int PHASE_RIDING = 2;
@@ -45,6 +48,8 @@ public final class WarpRideClientState {
         public boolean crossed;
         /** Lanes whose object was actually hit, so only *missed* ones fly past. */
         public final java.util.Set<Integer> consumedLanes = new java.util.HashSet<>();
+        /** Lane to the instant its bonus was hit, for the bonus's fade-out at the plane (plan 200, 4.1). */
+        public final Map<Integer, Long> positiveHitNanos = new HashMap<>();
 
         public final boolean hasPortal;
         /** Wall-clock instant the portal reached the plane, in nanoseconds; 0 until then. */
@@ -378,7 +383,10 @@ public final class WarpRideClientState {
             }
             // A portal wave lives on its own hover/fade timer, decoupled from the odometer.
             boolean keepForPortal = wave.hasPortal && wave.portalCrossNanos != 0 && wave.portalActive(now);
-            if (!keepForPortal && wave.depth(odometer) < fifthPlaneDepth) {
+            // At top speed a wave reaches the fifth plane before its bonus has finished fading.
+            boolean keepForFade = wave.positiveHitNanos.values().stream()
+                    .anyMatch(hit -> now - hit < POSITIVE_FADE_NANOS);
+            if (!keepForPortal && !keepForFade && wave.depth(odometer) < fifthPlaneDepth) {
                 it.remove();
             }
         }
@@ -390,6 +398,9 @@ public final class WarpRideClientState {
         for (ClientObject o : wave.objects) {
             if (!o.isPortal() && o.lane() == lane) {
                 wave.consumedLanes.add(o.lane());
+                if (o.kind() == 0) {
+                    wave.positiveHitNanos.putIfAbsent(o.lane(), now);
+                }
             }
         }
         if (wave.hasPortal && wave.portalCrossNanos == 0) {
@@ -421,6 +432,16 @@ public final class WarpRideClientState {
         for (ClientWave wave : waves) {
             if (wave.index == waveIndex) {
                 wave.consumedLanes.add(lane);
+                return;
+            }
+        }
+    }
+
+    /** The server confirmed a bonus: starts its fade unless the prediction already did. */
+    public void markPositiveConsumed(int waveIndex, int lane) {
+        for (ClientWave wave : waves) {
+            if (wave.index == waveIndex) {
+                wave.positiveHitNanos.putIfAbsent(lane, System.nanoTime());
                 return;
             }
         }
@@ -588,20 +609,14 @@ public final class WarpRideClientState {
         return phase == PHASE_PORTAL_TAKEN && now < warpStartNanos;
     }
 
-    /** 0..1 through the shrink, -1 before it starts (drift wait), &gt;1 once done. */
-    public double warpProgress(long now) {
-        if (phase != PHASE_PORTAL_TAKEN || now < warpStartNanos) {
+    /**
+     * Where the portal-entry sequence stands, in portal_wrap frames since it began (fractional);
+     * negative during a drift wait. One frame is warpAnimSeconds / 8 (action plan 200, revision 3).
+     */
+    public double warpSlot(long now) {
+        if (phase != PHASE_PORTAL_TAKEN) {
             return -1.0;
         }
-        return (double) (now - warpStartNanos) / Math.max(1L, warpAnimNanos());
-    }
-
-    /** 0..1 through the fade to black after the shrink, -1 before it starts, &gt;1 once black. */
-    public double fadeProgress(long now) {
-        long fadeStart = warpStartNanos + warpAnimNanos();
-        if (phase != PHASE_PORTAL_TAKEN || now < fadeStart) {
-            return -1.0;
-        }
-        return (double) (now - fadeStart) / Math.max(1L, fadeNanos());
+        return (now - warpStartNanos) / (double) Math.max(1L, warpAnimNanos() / 8);
     }
 }

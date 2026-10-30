@@ -111,7 +111,7 @@ public class DistortionWalkAttack implements CsBossAttack {
     private void sendShadow(ServerLevel level, BossBattleSession session, CsBossEntity boss) {
         double theta = rng.nextDouble() * Math.PI * 2.0;
         AttackShadowEntity shadow = AttackShadowEntity.spawn(level, boss.getX(),
-                session.getTriggerPos().getY(), boss.getZ(), session.getId());
+                session.getFloorY(), boss.getZ(), session.getId());
         double reach = CsBossAttackLib.areaReach(session);
         shadow.setMaxTravel(reach);
         session.trackAttackEntity(shadow);

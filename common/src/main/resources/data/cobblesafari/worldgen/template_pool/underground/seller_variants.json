@@ -99,6 +99,15 @@
         "projection": "rigid",
         "element_type": "minecraft:single_pool_element"
       }
+    },
+    {
+      "weight": 10,
+      "element": {
+        "location": "cobblesafari:underground/sellers/underground_seller_5a",
+        "processors": "cobblesafari:underground_digsite_scatter",
+        "projection": "rigid",
+        "element_type": "minecraft:single_pool_element"
+      }
     }
   ]
 }

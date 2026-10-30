@@ -1,8 +1,8 @@
 package maxigregrze.cobblesafari.client.screen;
 
-import maxigregrze.cobblesafari.config.MiscConfig;
 import maxigregrze.cobblesafari.init.ModBlocks;
 import maxigregrze.cobblesafari.network.AuspiciousPokeballResetClaimsPayload;
+import maxigregrze.cobblesafari.network.LootDefaults;
 import maxigregrze.cobblesafari.network.OpenAuspiciousPokeballConfigPayload;
 import maxigregrze.cobblesafari.network.SaveAuspiciousPokeballConfigPayload;
 import maxigregrze.cobblesafari.platform.Services;
@@ -52,7 +52,7 @@ public class AuspiciousPokeballConfigScreen extends CobbleSafariConfigScreen {
 
         int duoY = this.bottomRowY();
         this.addRenderableWidget(Button.builder(Component.translatable("gui.cobblesafari.auspicious_pokeball.reset"), b -> {
-            this.applyFieldsFromMiscConfig();
+            this.applyDefaults();
             this.relayoutEditBoxes();
             this.focusScroll(this.poolBerryBox);
         }).bounds(left, duoY, COLUMN_WIDTH, BUTTON_HEIGHT).build());
@@ -81,22 +81,15 @@ public class AuspiciousPokeballConfigScreen extends CobbleSafariConfigScreen {
                 && this.minecraft.level.getBlockState(this.initial.pos()).getBlock() == ModBlocks.AUSPICIOUS_POKEBALL_SMALL;
     }
 
-    private void applyFieldsFromMiscConfig() {
-        if (isSmallVariant()) {
-            this.poolBerryBox.setValue(MiscConfig.getAuspiciousPokeballSmallPoolBerryId());
-            this.poolCandyBox.setValue(MiscConfig.getAuspiciousPokeballSmallPoolCandyId());
-            this.poolBallsBox.setValue(MiscConfig.getAuspiciousPokeballSmallPoolBallsId());
-            this.poolTreasuresBox.setValue(MiscConfig.getAuspiciousPokeballSmallPoolTreasuresId());
-            this.minRollBox.setValue(Integer.toString(MiscConfig.getAuspiciousPokeballSmallMinRoll()));
-            this.maxRollBox.setValue(Integer.toString(MiscConfig.getAuspiciousPokeballSmallMaxRoll()));
-        } else {
-            this.poolBerryBox.setValue(MiscConfig.getAuspiciousPokeballPoolBerryId());
-            this.poolCandyBox.setValue(MiscConfig.getAuspiciousPokeballPoolCandyId());
-            this.poolBallsBox.setValue(MiscConfig.getAuspiciousPokeballPoolBallsId());
-            this.poolTreasuresBox.setValue(MiscConfig.getAuspiciousPokeballPoolTreasuresId());
-            this.minRollBox.setValue(Integer.toString(MiscConfig.getAuspiciousPokeballMinRoll()));
-            this.maxRollBox.setValue(Integer.toString(MiscConfig.getAuspiciousPokeballMaxRoll()));
-        }
+    /** Reset: the server's defaults from the open payload, never the local config (action plan 198, F6). */
+    private void applyDefaults() {
+        LootDefaults defaults = this.initial.defaults();
+        this.poolBerryBox.setValue(defaults.poolBerryId());
+        this.poolCandyBox.setValue(defaults.poolCandyId());
+        this.poolBallsBox.setValue(defaults.poolBallsId());
+        this.poolTreasuresBox.setValue(defaults.poolTreasuresId());
+        this.minRollBox.setValue(Integer.toString(defaults.minRoll()));
+        this.maxRollBox.setValue(Integer.toString(defaults.maxRoll()));
     }
 
     private void relayoutEditBoxes() {

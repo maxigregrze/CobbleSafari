@@ -1,0 +1,570 @@
+{
+  "variants": {
+    "cleared=false,face=floor,facing=north,lowered=false": [
+      {
+        "model": "cobblesafari:block/obstacle_shardcluster"
+      },
+      {
+        "model": "cobblesafari:block/obstacle_shardcluster",
+        "y": 90
+      },
+      {
+        "model": "cobblesafari:block/obstacle_shardcluster",
+        "y": 180
+      },
+      {
+        "model": "cobblesafari:block/obstacle_shardcluster",
+        "y": 270
+      }
+    ],
+    "cleared=false,face=floor,facing=north,lowered=true": [
+      {
+        "model": "cobblesafari:block/obstacle_shardcluster_lowered"
+      },
+      {
+        "model": "cobblesafari:block/obstacle_shardcluster_lowered",
+        "y": 90
+      },
+      {
+        "model": "cobblesafari:block/obstacle_shardcluster_lowered",
+        "y": 180
+      },
+      {
+        "model": "cobblesafari:block/obstacle_shardcluster_lowered",
+        "y": 270
+      }
+    ],
+    "cleared=false,face=floor,facing=east,lowered=false": [
+      {
+        "model": "cobblesafari:block/obstacle_shardcluster"
+      },
+      {
+        "model": "cobblesafari:block/obstacle_shardcluster",
+        "y": 90
+      },
+      {
+        "model": "cobblesafari:block/obstacle_shardcluster",
+        "y": 180
+      },
+      {
+        "model": "cobblesafari:block/obstacle_shardcluster",
+        "y": 270
+      }
+    ],
+    "cleared=false,face=floor,facing=east,lowered=true": [
+      {
+        "model": "cobblesafari:block/obstacle_shardcluster_lowered"
+      },
+      {
+        "model": "cobblesafari:block/obstacle_shardcluster_lowered",
+        "y": 90
+      },
+      {
+        "model": "cobblesafari:block/obstacle_shardcluster_lowered",
+        "y": 180
+      },
+      {
+        "model": "cobblesafari:block/obstacle_shardcluster_lowered",
+        "y": 270
+      }
+    ],
+    "cleared=false,face=floor,facing=south,lowered=false": [
+      {
+        "model": "cobblesafari:block/obstacle_shardcluster"
+      },
+      {
+        "model": "cobblesafari:block/obstacle_shardcluster",
+        "y": 90
+      },
+      {
+        "model": "cobblesafari:block/obstacle_shardcluster",
+        "y": 180
+      },
+      {
+        "model": "cobblesafari:block/obstacle_shardcluster",
+        "y": 270
+      }
+    ],
+    "cleared=false,face=floor,facing=south,lowered=true": [
+      {
+        "model": "cobblesafari:block/obstacle_shardcluster_lowered"
+      },
+      {
+        "model": "cobblesafari:block/obstacle_shardcluster_lowered",
+        "y": 90
+      },
+      {
+        "model": "cobblesafari:block/obstacle_shardcluster_lowered",
+        "y": 180
+      },
+      {
+        "model": "cobblesafari:block/obstacle_shardcluster_lowered",
+        "y": 270
+      }
+    ],
+    "cleared=false,face=floor,facing=west,lowered=false": [
+      {
+        "model": "cobblesafari:block/obstacle_shardcluster"
+      },
+      {
+        "model": "cobblesafari:block/obstacle_shardcluster",
+        "y": 90
+      },
+      {
+        "model": "cobblesafari:block/obstacle_shardcluster",
+        "y": 180
+      },
+      {
+        "model": "cobblesafari:block/obstacle_shardcluster",
+        "y": 270
+      }
+    ],
+    "cleared=false,face=floor,facing=west,lowered=true": [
+      {
+        "model": "cobblesafari:block/obstacle_shardcluster_lowered"
+      },
+      {
+        "model": "cobblesafari:block/obstacle_shardcluster_lowered",
+        "y": 90
+      },
+      {
+        "model": "cobblesafari:block/obstacle_shardcluster_lowered",
+        "y": 180
+      },
+      {
+        "model": "cobblesafari:block/obstacle_shardcluster_lowered",
+        "y": 270
+      }
+    ],
+    "cleared=false,face=ceiling,facing=north,lowered=false": [
+      {
+        "model": "cobblesafari:block/obstacle_shardcluster",
+        "x": 180
+      },
+      {
+        "model": "cobblesafari:block/obstacle_shardcluster",
+        "x": 180,
+        "y": 90
+      },
+      {
+        "model": "cobblesafari:block/obstacle_shardcluster",
+        "x": 180,
+        "y": 180
+      },
+      {
+        "model": "cobblesafari:block/obstacle_shardcluster",
+        "x": 180,
+        "y": 270
+      }
+    ],
+    "cleared=false,face=ceiling,facing=north,lowered=true": [
+      {
+        "model": "cobblesafari:block/obstacle_shardcluster",
+        "x": 180
+      },
+      {
+        "model": "cobblesafari:block/obstacle_shardcluster",
+        "x": 180,
+        "y": 90
+      },
+      {
+        "model": "cobblesafari:block/obstacle_shardcluster",
+        "x": 180,
+        "y": 180
+      },
+      {
+        "model": "cobblesafari:block/obstacle_shardcluster",
+        "x": 180,
+        "y": 270
+      }
+    ],
+    "cleared=false,face=ceiling,facing=east,lowered=false": [
+      {
+        "model": "cobblesafari:block/obstacle_shardcluster",
+        "x": 180
+      },
+      {
+        "model": "cobblesafari:block/obstacle_shardcluster",
+        "x": 180,
+        "y": 90
+      },
+      {
+        "model": "cobblesafari:block/obstacle_shardcluster",
+        "x": 180,
+        "y": 180
+      },
+      {
+        "model": "cobblesafari:block/obstacle_shardcluster",
+        "x": 180,
+        "y": 270
+      }
+    ],
+    "cleared=false,face=ceiling,facing=east,lowered=true": [
+      {
+        "model": "cobblesafari:block/obstacle_shardcluster",
+        "x": 180
+      },
+      {
+        "model": "cobblesafari:block/obstacle_shardcluster",
+        "x": 180,
+        "y": 90
+      },
+      {
+        "model": "cobblesafari:block/obstacle_shardcluster",
+        "x": 180,
+        "y": 180
+      },
+      {
+        "model": "cobblesafari:block/obstacle_shardcluster",
+        "x": 180,
+        "y": 270
+      }
+    ],
+    "cleared=false,face=ceiling,facing=south,lowered=false": [
+      {
+        "model": "cobblesafari:block/obstacle_shardcluster",
+        "x": 180
+      },
+      {
+        "model": "cobblesafari:block/obstacle_shardcluster",
+        "x": 180,
+        "y": 90
+      },
+      {
+        "model": "cobblesafari:block/obstacle_shardcluster",
+        "x": 180,
+        "y": 180
+      },
+      {
+        "model": "cobblesafari:block/obstacle_shardcluster",
+        "x": 180,
+        "y": 270
+      }
+    ],
+    "cleared=false,face=ceiling,facing=south,lowered=true": [
+      {
+        "model": "cobblesafari:block/obstacle_shardcluster",
+        "x": 180
+      },
+      {
+        "model": "cobblesafari:block/obstacle_shardcluster",
+        "x": 180,
+        "y": 90
+      },
+      {
+        "model": "cobblesafari:block/obstacle_shardcluster",
+        "x": 180,
+        "y": 180
+      },
+      {
+        "model": "cobblesafari:block/obstacle_shardcluster",
+        "x": 180,
+        "y": 270
+      }
+    ],
+    "cleared=false,face=ceiling,facing=west,lowered=false": [
+      {
+        "model": "cobblesafari:block/obstacle_shardcluster",
+        "x": 180
+      },
+      {
+        "model": "cobblesafari:block/obstacle_shardcluster",
+        "x": 180,
+        "y": 90
+      },
+      {
+        "model": "cobblesafari:block/obstacle_shardcluster",
+        "x": 180,
+        "y": 180
+      },
+      {
+        "model": "cobblesafari:block/obstacle_shardcluster",
+        "x": 180,
+        "y": 270
+      }
+    ],
+    "cleared=false,face=ceiling,facing=west,lowered=true": [
+      {
+        "model": "cobblesafari:block/obstacle_shardcluster",
+        "x": 180
+      },
+      {
+        "model": "cobblesafari:block/obstacle_shardcluster",
+        "x": 180,
+        "y": 90
+      },
+      {
+        "model": "cobblesafari:block/obstacle_shardcluster",
+        "x": 180,
+        "y": 180
+      },
+      {
+        "model": "cobblesafari:block/obstacle_shardcluster",
+        "x": 180,
+        "y": 270
+      }
+    ],
+    "cleared=false,face=wall,facing=north,lowered=false": [
+      {
+        "model": "cobblesafari:block/obstacle_shardcluster",
+        "x": 90
+      },
+      {
+        "model": "cobblesafari:block/obstacle_shardcluster_r90",
+        "x": 90
+      },
+      {
+        "model": "cobblesafari:block/obstacle_shardcluster_r180",
+        "x": 90
+      },
+      {
+        "model": "cobblesafari:block/obstacle_shardcluster_r270",
+        "x": 90
+      }
+    ],
+    "cleared=false,face=wall,facing=north,lowered=true": [
+      {
+        "model": "cobblesafari:block/obstacle_shardcluster",
+        "x": 90
+      },
+      {
+        "model": "cobblesafari:block/obstacle_shardcluster_r90",
+        "x": 90
+      },
+      {
+        "model": "cobblesafari:block/obstacle_shardcluster_r180",
+        "x": 90
+      },
+      {
+        "model": "cobblesafari:block/obstacle_shardcluster_r270",
+        "x": 90
+      }
+    ],
+    "cleared=false,face=wall,facing=east,lowered=false": [
+      {
+        "model": "cobblesafari:block/obstacle_shardcluster",
+        "x": 90,
+        "y": 90
+      },
+      {
+        "model": "cobblesafari:block/obstacle_shardcluster_r90",
+        "x": 90,
+        "y": 90
+      },
+      {
+        "model": "cobblesafari:block/obstacle_shardcluster_r180",
+        "x": 90,
+        "y": 90
+      },
+      {
+        "model": "cobblesafari:block/obstacle_shardcluster_r270",
+        "x": 90,
+        "y": 90
+      }
+    ],
+    "cleared=false,face=wall,facing=east,lowered=true": [
+      {
+        "model": "cobblesafari:block/obstacle_shardcluster",
+        "x": 90,
+        "y": 90
+      },
+      {
+        "model": "cobblesafari:block/obstacle_shardcluster_r90",
+        "x": 90,
+        "y": 90
+      },
+      {
+        "model": "cobblesafari:block/obstacle_shardcluster_r180",
+        "x": 90,
+        "y": 90
+      },
+      {
+        "model": "cobblesafari:block/obstacle_shardcluster_r270",
+        "x": 90,
+        "y": 90
+      }
+    ],
+    "cleared=false,face=wall,facing=south,lowered=false": [
+      {
+        "model": "cobblesafari:block/obstacle_shardcluster",
+        "x": 90,
+        "y": 180
+      },
+      {
+        "model": "cobblesafari:block/obstacle_shardcluster_r90",
+        "x": 90,
+        "y": 180
+      },
+      {
+        "model": "cobblesafari:block/obstacle_shardcluster_r180",
+        "x": 90,
+        "y": 180
+      },
+      {
+        "model": "cobblesafari:block/obstacle_shardcluster_r270",
+        "x": 90,
+        "y": 180
+      }
+    ],
+    "cleared=false,face=wall,facing=south,lowered=true": [
+      {
+        "model": "cobblesafari:block/obstacle_shardcluster",
+        "x": 90,
+        "y": 180
+      },
+      {
+        "model": "cobblesafari:block/obstacle_shardcluster_r90",
+        "x": 90,
+        "y": 180
+      },
+      {
+        "model": "cobblesafari:block/obstacle_shardcluster_r180",
+        "x": 90,
+        "y": 180
+      },
+      {
+        "model": "cobblesafari:block/obstacle_shardcluster_r270",
+        "x": 90,
+        "y": 180
+      }
+    ],
+    "cleared=false,face=wall,facing=west,lowered=false": [
+      {
+        "model": "cobblesafari:block/obstacle_shardcluster",
+        "x": 90,
+        "y": 270
+      },
+      {
+        "model": "cobblesafari:block/obstacle_shardcluster_r90",
+        "x": 90,
+        "y": 270
+      },
+      {
+        "model": "cobblesafari:block/obstacle_shardcluster_r180",
+        "x": 90,
+        "y": 270
+      },
+      {
+        "model": "cobblesafari:block/obstacle_shardcluster_r270",
+        "x": 90,
+        "y": 270
+      }
+    ],
+    "cleared=false,face=wall,facing=west,lowered=true": [
+      {
+        "model": "cobblesafari:block/obstacle_shardcluster",
+        "x": 90,
+        "y": 270
+      },
+      {
+        "model": "cobblesafari:block/obstacle_shardcluster_r90",
+        "x": 90,
+        "y": 270
+      },
+      {
+        "model": "cobblesafari:block/obstacle_shardcluster_r180",
+        "x": 90,
+        "y": 270
+      },
+      {
+        "model": "cobblesafari:block/obstacle_shardcluster_r270",
+        "x": 90,
+        "y": 270
+      }
+    ],
+    "cleared=true,face=floor,facing=north,lowered=false": {
+      "model": "cobblesafari:block/obstacle_shardcluster"
+    },
+    "cleared=true,face=floor,facing=north,lowered=true": {
+      "model": "cobblesafari:block/obstacle_shardcluster_lowered"
+    },
+    "cleared=true,face=floor,facing=east,lowered=false": {
+      "model": "cobblesafari:block/obstacle_shardcluster"
+    },
+    "cleared=true,face=floor,facing=east,lowered=true": {
+      "model": "cobblesafari:block/obstacle_shardcluster_lowered"
+    },
+    "cleared=true,face=floor,facing=south,lowered=false": {
+      "model": "cobblesafari:block/obstacle_shardcluster"
+    },
+    "cleared=true,face=floor,facing=south,lowered=true": {
+      "model": "cobblesafari:block/obstacle_shardcluster_lowered"
+    },
+    "cleared=true,face=floor,facing=west,lowered=false": {
+      "model": "cobblesafari:block/obstacle_shardcluster"
+    },
+    "cleared=true,face=floor,facing=west,lowered=true": {
+      "model": "cobblesafari:block/obstacle_shardcluster_lowered"
+    },
+    "cleared=true,face=ceiling,facing=north,lowered=false": {
+      "model": "cobblesafari:block/obstacle_shardcluster",
+      "x": 180
+    },
+    "cleared=true,face=ceiling,facing=north,lowered=true": {
+      "model": "cobblesafari:block/obstacle_shardcluster",
+      "x": 180
+    },
+    "cleared=true,face=ceiling,facing=east,lowered=false": {
+      "model": "cobblesafari:block/obstacle_shardcluster",
+      "x": 180
+    },
+    "cleared=true,face=ceiling,facing=east,lowered=true": {
+      "model": "cobblesafari:block/obstacle_shardcluster",
+      "x": 180
+    },
+    "cleared=true,face=ceiling,facing=south,lowered=false": {
+      "model": "cobblesafari:block/obstacle_shardcluster",
+      "x": 180
+    },
+    "cleared=true,face=ceiling,facing=south,lowered=true": {
+      "model": "cobblesafari:block/obstacle_shardcluster",
+      "x": 180
+    },
+    "cleared=true,face=ceiling,facing=west,lowered=false": {
+      "model": "cobblesafari:block/obstacle_shardcluster",
+      "x": 180
+    },
+    "cleared=true,face=ceiling,facing=west,lowered=true": {
+      "model": "cobblesafari:block/obstacle_shardcluster",
+      "x": 180
+    },
+    "cleared=true,face=wall,facing=north,lowered=false": {
+      "model": "cobblesafari:block/obstacle_shardcluster",
+      "x": 90
+    },
+    "cleared=true,face=wall,facing=north,lowered=true": {
+      "model": "cobblesafari:block/obstacle_shardcluster",
+      "x": 90
+    },
+    "cleared=true,face=wall,facing=east,lowered=false": {
+      "model": "cobblesafari:block/obstacle_shardcluster",
+      "x": 90,
+      "y": 90
+    },
+    "cleared=true,face=wall,facing=east,lowered=true": {
+      "model": "cobblesafari:block/obstacle_shardcluster",
+      "x": 90,
+      "y": 90
+    },
+    "cleared=true,face=wall,facing=south,lowered=false": {
+      "model": "cobblesafari:block/obstacle_shardcluster",
+      "x": 90,
+      "y": 180
+    },
+    "cleared=true,face=wall,facing=south,lowered=true": {
+      "model": "cobblesafari:block/obstacle_shardcluster",
+      "x": 90,
+      "y": 180
+    },
+    "cleared=true,face=wall,facing=west,lowered=false": {
+      "model": "cobblesafari:block/obstacle_shardcluster",
+      "x": 90,
+      "y": 270
+    },
+    "cleared=true,face=wall,facing=west,lowered=true": {
+      "model": "cobblesafari:block/obstacle_shardcluster",
+      "x": 90,
+      "y": 270
+    }
+  }
+}

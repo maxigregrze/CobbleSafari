@@ -61,7 +61,7 @@ public class ElectricRingAttack implements CsBossAttack {
     }
 
     private void placeRings(ServerLevel level, BossBattleSession session, CsBossEntity boss) {
-        int triggerY = session.getTriggerPos().getY();
+        int triggerY = session.getFloorY();
         BlockState field = ModBlocks.CSBOSS_ELECTRICITY.defaultBlockState();
         for (ServerPlayer p : session.aliveParticipants(level)) {
             BlockPos pc = p.blockPosition();

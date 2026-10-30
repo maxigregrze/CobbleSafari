@@ -36,7 +36,10 @@ public class UltraWarpRideScreen extends Screen {
     private static final java.util.random.RandomGenerator RANDOM =
             java.util.concurrent.ThreadLocalRandom.current();
 
-    private boolean showTutorial = true;
+    /** The slideshow and the fades around the ride's start (action plan 200, section 5). */
+    private WarpRideTutorial tutorial;
+    /** The Ultra Recon trail, drawn only when the rider wears the full set (plan 200, section 4.2). */
+    private final WarpRideReconTrail reconTrail = new WarpRideReconTrail();
     private boolean readySent;
     /** When the last ready went out, for the resend below. */
     private long readySentNanos;
@@ -50,7 +53,8 @@ public class UltraWarpRideScreen extends Screen {
     public static void open(WarpRidePayloads.OpenPayload payload) {
         UltraWarpRideScreen screen = new UltraWarpRideScreen();
         screen.state.applyOpen(payload);
-        screen.showTutorial = payload.showTutorial();
+        // Already read: the ready goes out now, and the ride fades in from black on its own.
+        screen.tutorial = new WarpRideTutorial(payload.showTutorial(), screen::sendReady);
         Minecraft.getInstance().setScreen(screen);
     }
 
@@ -66,6 +70,10 @@ public class UltraWarpRideScreen extends Screen {
 
     /** True once the server says a sub-dungeon is generating: hold black, never show a result. */
     private boolean handoffPending;
+    /** The portal-entry sequence has reached black (action plan 200, revision 3). */
+    private boolean warpSequenceDone;
+    /** The server finished the hand-off before the sequence did: close once it reaches black. */
+    private boolean closeAfterWarp;
 
     public static void acceptTints(java.util.List<WarpRidePayloads.TintData> tints) {
         pendingTints = tints;
@@ -89,6 +97,7 @@ public class UltraWarpRideScreen extends Screen {
         switch (payload.event()) {
             case WarpRidePayloads.EVENT_POSITIVE -> {
                 hud.onPositive();
+                state.markPositiveConsumed(payload.waveIndex(), payload.a());
                 state.consumeObject(payload.waveIndex(), payload.a());
                 // b = 1: this bonus raised the energy ceiling, the source's "maxup" aura.
                 if (riderEffects != null) {
@@ -128,7 +137,13 @@ public class UltraWarpRideScreen extends Screen {
                 // while the screen held on black: close outright rather than showing a result the
                 // player is no longer anywhere near (W6 - the server, never the client, decides).
                 if (payload.a() == WarpRidePayloads.END_REASON_HANDOFF) {
-                    onClose();
+                    // A fast generation would otherwise cut the entry sequence: the player is already
+                    // in the sub-dungeon behind the screen, so letting it reach black costs nothing.
+                    if (state.phase == WarpRideClientState.PHASE_PORTAL_TAKEN && !warpSequenceDone) {
+                        closeAfterWarp = true;
+                    } else {
+                        onClose();
+                    }
                 } else {
                     state.phase = WarpRideClientState.PHASE_ENDED;
                 }
@@ -149,7 +164,7 @@ public class UltraWarpRideScreen extends Screen {
         super.init();
         WarpRideRenderer.applyFilters();
         WarpRideRenderer.cacheModels();
-        // Built here, behind the tutorial page, rather than as a hitch on the first riding frame.
+        // Built here, behind the tutorial pages, rather than as a hitch on the first riding frame.
         WarpRideCloudTextures.ensure();
         state.applyTints(pendingTints);
         background.init(state);
@@ -185,6 +200,7 @@ public class UltraWarpRideScreen extends Screen {
             riderEffects = null;
         }
         WarpRideScene3D.setView(null);
+        reconTrail.clear();
         super.removed();
     }
 
@@ -203,9 +219,7 @@ public class UltraWarpRideScreen extends Screen {
             return true;
         }
 
-        if (showTutorial) {
-            // Any key but Esc dismisses the placeholder tutorial page.
-            dismissTutorial();
+        if (tutorial != null && tutorial.onKeyPressed(keyCode)) {
             return true;
         }
 
@@ -241,8 +255,7 @@ public class UltraWarpRideScreen extends Screen {
 
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        if (showTutorial) {
-            dismissTutorial();
+        if (tutorial != null && tutorial.onMouseClicked(button)) {
             return true;
         }
         // A movement key can be bound to a mouse button; the ride has to honour that too.
@@ -277,11 +290,11 @@ public class UltraWarpRideScreen extends Screen {
         return mapping.matchesMouse(button);
     }
 
-    private void dismissTutorial() {
+    /** Called by the tutorial once the screen is black: the intro starts on the server's next tick. */
+    private void sendReady() {
         if (readySent || state.sessionId == null) {
             return;
         }
-        showTutorial = false;
         readySent = true;
         readySentNanos = System.nanoTime();
         Services.PLATFORM.sendPayloadToServer(new WarpRidePayloads.ReadyPayload(state.sessionId));
@@ -301,6 +314,11 @@ public class UltraWarpRideScreen extends Screen {
     @Override
     public void tick() {
         super.tick();
+        if (closeAfterWarp && warpSequenceDone) {
+            closeAfterWarp = false;
+            onClose();
+            return;
+        }
         if (readySent && state.sessionId != null
                 && state.phase == WarpRideClientState.PHASE_AWAITING_READY
                 && System.nanoTime() - readySentNanos >= READY_RESEND_NANOS) {
@@ -362,6 +380,9 @@ public class UltraWarpRideScreen extends Screen {
         if (riderEffects != null) {
             riderEffects.update(now, state);
         }
+        if (!warping) {
+            reconTrail.advance(state, rider, delta);
+        }
         // The intro's orbit until it hands over, then the chase view with its feedback (plan 191, C1).
         org.joml.Matrix4f introView = WarpRideCamera.introView(state.introFrame(now),
                 WarpRideRenderer.riderCenter(state));
@@ -409,40 +430,46 @@ public class UltraWarpRideScreen extends Screen {
         if (warping) {
             renderWarp(graphics, now, partialTick);
         } else {
-            WarpRideRenderer.renderScene(graphics, state, rider, partialTick, camera, riderEffects);
+            WarpRideRenderer.renderScene(graphics, state, rider, partialTick, camera, riderEffects, reconTrail);
             hud.render(graphics, state, camera, now);                          // aura, hit effect
             renderPanicWarning(graphics);
-            if (showTutorial) {
-                renderTutorial(graphics);
-            }
+        }
+        if (tutorial != null) {
+            tutorial.render(graphics, this.font, now);                         // pages, then the fades
         }
         exitPrompt.render(graphics, this.font, state.canvasWidth, now);
 
         graphics.pose().popPose();
     }
 
-    /** The portal-entry warp, world frozen: drift to the axis, shrink, fade to black, then recap. */
+    /**
+     * The portal entry, world frozen (action plan 200, revision 3): the drift to the axis if any,
+     * then portal_wrap's eight frames with portal_blip and the one-frame white flash, then a frame
+     * of white that fades to black, where the screen holds until the server is done.
+     */
     private void renderWarp(GuiGraphics graphics, long now, float partialTick) {
         if (state.warpInDriftWait(now)) {
             // Full-size portal; the rider is still drifting to the axis.
-            WarpRideRenderer.renderWarpScene(graphics, state, rider, 1.0,
+            WarpRideRenderer.renderWarpScene(graphics, state, rider,
                     WarpRideRenderer.riderRadius(state), partialTick, riderEffects);
             return;
         }
 
-        double warpP = state.warpProgress(now);
-        if (warpP <= 1.0) {
-            double shrink = 1.0 - warpP;
-            WarpRideRenderer.renderWarpScene(graphics, state, rider, shrink, 0.0, partialTick, riderEffects);
-            WarpRideRenderer.renderWarpOverlay(graphics, warpP);
+        double slot = state.warpSlot(now);
+        if (slot < WarpRideRenderer.WARP_ANIMATION_SLOTS) {
+            WarpRideRenderer.renderWarpSequence(graphics, state, rider, slot, partialTick, riderEffects);
             return;
         }
-
-        double fadeP = state.fadeProgress(now);
-        int alpha = (int) Math.round(Math.max(0.0, Math.min(1.0, fadeP)) * 255.0);
-        WarpRideRenderer.fillViewport(graphics, alpha << 24);
-        if (fadeP >= 1.0 && !handoffPending) {
-            renderResult(graphics);
+        // One frame of white after the last one, then white fades to black.
+        double fadeP = (slot - WarpRideRenderer.WARP_ANIMATION_SLOTS - 1.0)
+                * (state.warpAnimNanos() / 8.0) / Math.max(1L, state.fadeNanos());
+        int shade = (int) Math.round((1.0 - Math.max(0.0, Math.min(1.0, fadeP))) * 255.0);
+        WarpRideRenderer.fillViewport(graphics, 0xFF000000 | (shade << 16) | (shade << 8) | shade);
+        if (fadeP >= 1.0) {
+            warpSequenceDone = true;
+            if (!handoffPending) {
+                renderResult(graphics);
+            }
         }
         // handoffPending: stay on black. A black screen is the one frame that can be held for an
         // unknown duration without anyone noticing, which is exactly why the generation is allowed
@@ -456,15 +483,6 @@ public class UltraWarpRideScreen extends Screen {
         }
         centered(graphics, Component.translatable("cobblesafari.wormhole.panic_warning").getString(),
                 240, 3.0f, 0xFFFF5555);
-    }
-
-    /** Placeholder page. The phase, its payload and the once-only guard are the real deliverable. */
-    private void renderTutorial(GuiGraphics graphics) {
-        WarpRideRenderer.fillViewport(graphics, 0xD8060412);
-        centered(graphics, Component.translatable("gui.cobblesafari.warpride.tutorial.title").getString(),
-                420, 4.0f, 0xFFBFA8FF);
-        centered(graphics, Component.translatable("gui.cobblesafari.warpride.tutorial.start").getString(),
-                600, 2.5f, 0xFFFFFFFF);
     }
 
     private void renderResult(GuiGraphics graphics) {

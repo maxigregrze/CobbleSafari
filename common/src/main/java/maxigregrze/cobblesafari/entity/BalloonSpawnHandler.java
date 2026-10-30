@@ -9,6 +9,8 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.phys.AABB;
@@ -42,37 +44,52 @@ public class BalloonSpawnHandler {
         if (player.tickCount % checkInterval != 0) return;
         if (!canSeeSky(player)) return;
 
-        double spawnChance;
         if (isSafari) {
-            if (!SafariConfig.isBalloonSafariEnabled()) return;
-            spawnChance = BASE_SPAWN_CHANCE * SafariConfig.getBalloonSafariSpawnMultiplier();
-        } else {
-            if (!MiscConfig.isBalloonEnabled()) return;
-            spawnChance = BASE_SPAWN_CHANCE * MiscConfig.getBalloonSpawnMultiplier();
+            if (SafariConfig.isBalloonSafariEnabled()
+                    && rollSpawn(player, BASE_SPAWN_CHANCE * SafariConfig.getBalloonSafariSpawnMultiplier(), countNearbyBalloons(player))) {
+                trySpawnFromSky(player, ModEntities.BALLOON_SAFARI);
+            }
+            // The Safari exit drone rolls on its own, with the balloon's rules (action plan 198, part G).
+            if (SafariConfig.isSafariDroneEnabled()
+                    && rollSpawn(player, BASE_SPAWN_CHANCE * SafariConfig.getSafariDroneSpawnMultiplier(), countNearbyDrones(player))) {
+                trySpawnFromSky(player, ModEntities.SAFARI_DRONE);
+            }
+        } else if (MiscConfig.isBalloonEnabled()
+                && rollSpawn(player, BASE_SPAWN_CHANCE * MiscConfig.getBalloonSpawnMultiplier(), countNearbyBalloons(player))) {
+            trySpawnFromSky(player, ModEntities.BALLOON);
         }
+    }
 
-        if (RANDOM.nextDouble() > spawnChance) return;
+    /** The chance roll, then the nearby cap shared by balloons and drones (each counted on its own). */
+    private static boolean rollSpawn(ServerPlayer player, double spawnChance, int nearby) {
+        if (RANDOM.nextDouble() > spawnChance) return false;
         int maxNearby = MiscConfig.getBalloonMaxNearby();
-        if (maxNearby > 0 && countNearbyBalloons(player) >= maxNearby) return;
-
-        trySpawnBalloon(player, isSafari);
+        return maxNearby <= 0 || nearby < maxNearby;
     }
 
     /** Balloons still holding loot around the player; the Safari variant is a subclass, so it is counted too. */
     private static int countNearbyBalloons(ServerPlayer player) {
+        return player.serverLevel().getEntitiesOfClass(BalloonEntity.class, nearbyArea(player), balloon -> !balloon.hasDroppedLoot()).size();
+    }
+
+    private static int countNearbyDrones(ServerPlayer player) {
+        return player.serverLevel().getEntitiesOfClass(SafariDroneEntity.class, nearbyArea(player), drone -> true).size();
+    }
+
+    private static AABB nearbyArea(ServerPlayer player) {
         ServerLevel level = player.serverLevel();
         int range = MiscConfig.getBalloonSpawnRadius() * NEARBY_RANGE_MULTIPLIER;
-        AABB area = new AABB(
+        return new AABB(
                 player.getX() - range, level.getMinBuildHeight(), player.getZ() - range,
                 player.getX() + range, level.getMaxBuildHeight() + 10.0, player.getZ() + range);
-        return level.getEntitiesOfClass(BalloonEntity.class, area, balloon -> !balloon.hasDroppedLoot()).size();
     }
 
     private static boolean canSeeSky(ServerPlayer player) {
         return player.serverLevel().canSeeSky(player.blockPosition());
     }
 
-    private static void trySpawnBalloon(ServerPlayer player, boolean isSafariDimension) {
+    /** Places {@code type} above a random spot around the player, from where it comes down on its own. */
+    private static void trySpawnFromSky(ServerPlayer player, EntityType<?> type) {
         ServerLevel level = player.serverLevel();
         BlockPos playerPos = player.blockPosition();
 
@@ -95,20 +112,11 @@ public class BalloonSpawnHandler {
         BlockPos spawnPos = new BlockPos(spawnX, spawnY, spawnZ);
         if (!level.getBlockState(spawnPos).isAir()) return;
 
-        if (isSafariDimension) {
-            BalloonSafariEntity balloon = ModEntities.BALLOON_SAFARI.create(level);
-            if (balloon != null) {
-                balloon.moveTo(spawnX + 0.5, spawnY, spawnZ + 0.5,
-                        RANDOM.nextFloat() * 360.0F, 0.0F);
-                level.addFreshEntityWithPassengers(balloon);
-            }
-        } else {
-            BalloonEntity balloon = ModEntities.BALLOON.create(level);
-            if (balloon != null) {
-                balloon.moveTo(spawnX + 0.5, spawnY, spawnZ + 0.5,
-                        RANDOM.nextFloat() * 360.0F, 0.0F);
-                level.addFreshEntityWithPassengers(balloon);
-            }
+        Entity entity = type.create(level);
+        if (entity != null) {
+            entity.moveTo(spawnX + 0.5, spawnY, spawnZ + 0.5,
+                    RANDOM.nextFloat() * 360.0F, 0.0F);
+            level.addFreshEntityWithPassengers(entity);
         }
     }
 }

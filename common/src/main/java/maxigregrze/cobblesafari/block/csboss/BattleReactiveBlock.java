@@ -18,4 +18,13 @@ public interface BattleReactiveBlock {
     default boolean isReactive(BlockState state) {
         return true;
     }
+
+    /**
+     * The state this block takes once the fight is on. The arena wave flips blocks ring by ring, so
+     * anything that reads the arena mid-flip (floor detection, floor hazards) asks this instead of
+     * trusting the current state.
+     */
+    default BlockState battleState(BlockState state) {
+        return state;
+    }
 }

@@ -70,7 +70,8 @@
     },
     {
       "id": "charmeleon",
-      "weight": 1,
+      "weight": 0.1,
+      "rare": true,
       "members": [
         {
           "pokemon": "charizard",
@@ -110,6 +111,44 @@
         },
         {
           "pokemon": "corvisquire",
+          "rarity": 80,
+          "level": "36-38",
+          "alphaLevel": "45-47"
+        }
+      ]
+    },
+    {
+      "id": "dartrix",
+      "weight": 0.1,
+      "rare": true,
+      "members": [
+        {
+          "pokemon": "decidueye",
+          "rarity": 20,
+          "level": "41-43",
+          "alphaLevel": "50-52"
+        },
+        {
+          "pokemon": "dartrix",
+          "rarity": 80,
+          "level": "36-38",
+          "alphaLevel": "45-47"
+        }
+      ]
+    },
+    {
+      "id": "dartrix_2",
+      "weight": 0.1,
+      "rare": true,
+      "members": [
+        {
+          "pokemon": "decidueye hisuian",
+          "rarity": 20,
+          "level": "41-43",
+          "alphaLevel": "50-52"
+        },
+        {
+          "pokemon": "dartrix",
           "rarity": 80,
           "level": "36-38",
           "alphaLevel": "45-47"

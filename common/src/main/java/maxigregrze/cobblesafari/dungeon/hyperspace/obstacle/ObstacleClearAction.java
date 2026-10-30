@@ -12,6 +12,8 @@ import com.cobblemon.mod.common.net.messages.client.effect.SpawnSnowstormParticl
 import com.cobblemon.mod.common.pokemon.Pokemon;
 import kotlin.Unit;
 import maxigregrze.cobblesafari.block.hyperspace.ObstacleBlock;
+import maxigregrze.cobblesafari.advancement.ModCriteria;
+import maxigregrze.cobblesafari.init.ModStats;
 import maxigregrze.cobblesafari.objectives.ObjectivesManager;
 import net.minecraft.commands.arguments.EntityAnchorArgument;
 import net.minecraft.core.BlockPos;
@@ -181,7 +183,7 @@ public final class ObstacleClearAction {
                 impact(level, p, effect, originState, typeId);
             }
             SchedulingFunctionsKt.afterOnServer(CLEAR_AFTER_TARGET_TICKS, level, () -> {
-                clear(level, origin, kind, rule, player, targets);
+                clear(level, kind, rule, player, targets);
                 return Unit.INSTANCE;
             });
             return Unit.INSTANCE;
@@ -224,28 +226,35 @@ public final class ObstacleClearAction {
         level.playSound(null, pos, state.getSoundType().getBreakSound(), SoundSource.BLOCKS, 1.0F, 1.0F);
     }
 
-    private static void clear(ServerLevel level, BlockPos origin, ObstacleKind kind, ObstacleRule rule,
+    private static void clear(ServerLevel level, ObstacleKind kind, ObstacleRule rule,
                               ServerPlayer player, List<BlockPos> targets) {
         try {
-            boolean any = false;
+            // The clear lands after the move's animation; the onboarding may have switched clusters
+            // off in between (action plan 198, F4).
+            if (kind == ObstacleKind.SHARDCLUSTER && !ShardClusterSettings.enabled(level)) {
+                return;
+            }
+            int cleared = 0;
             for (BlockPos p : targets) {
                 BlockState state = level.getBlockState(p);
                 if (isObstacle(state, kind)) {
                     ((ObstacleBlock) state.getBlock()).clear(level, p, state);
-                    any = true;
+                    dropLoot(level, p, rule, player);
+                    cleared++;
                 }
             }
-            if (!any) {
-                return;
+            if (cleared > 0 && kind.task() != null) {
+                ObjectivesManager.onObstacleCleared(player, kind.task(), cleared);
+                // Boulders, brambles and sludge only: shard clusters are resource nodes, not obstacles.
+                int total = ModStats.addAndGet(player, ModStats.OBSTACLES_CLEARED, cleared);
+                ModCriteria.OBSTACLE_CLEARED.trigger(player, total);
             }
-            dropLoot(level, origin, rule, player);
-            ObjectivesManager.onObstacleCleared(player, kind.task());
         } finally {
             targets.forEach(p -> LOCKED.remove(lockKey(level, p)));
         }
     }
 
-    /** One roll per use, however many obstacles went (decision § 8.6). */
+    /** One roll per obstacle cleared, dropped where it stood (decision § 8.6). */
     private static void dropLoot(ServerLevel level, BlockPos pos, ObstacleRule rule, ServerPlayer player) {
         if (rule.lootTable() == null) {
             return;

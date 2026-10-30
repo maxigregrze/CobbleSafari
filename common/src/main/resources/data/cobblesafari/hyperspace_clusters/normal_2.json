@@ -88,7 +88,8 @@
     },
     {
       "id": "eevee",
-      "weight": 3,
+      "weight": 0.3,
+      "rare": true,
       "members": [
         {
           "pokemon": "eevee",

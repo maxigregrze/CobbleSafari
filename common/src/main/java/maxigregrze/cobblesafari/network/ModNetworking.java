@@ -4,6 +4,7 @@ import maxigregrze.cobblesafari.config.SafariTimerConfig;
 import maxigregrze.cobblesafari.platform.Services;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.ItemStack;
 
 public class ModNetworking {
 
@@ -66,5 +67,10 @@ public class ModNetworking {
         if (entity instanceof ServerPlayer player) {
             Services.PLATFORM.sendPayloadToPlayer(player, payload);
         }
+    }
+
+    /** Flashes the player's Rotom device on their screen (action plan 198, part H). */
+    public static void sendRotomPhoneActivation(ServerPlayer player, ItemStack device) {
+        Services.PLATFORM.sendPayloadToPlayer(player, new RotomPhoneActivationPayload(device));
     }
 }

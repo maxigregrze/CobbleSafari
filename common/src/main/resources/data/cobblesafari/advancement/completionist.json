@@ -1,0 +1,16 @@
+{
+  "parent": "cobblesafari:hyperspace_tourist",
+  "display": {
+    "icon": { "id": "cobblesafari:auspiciouspokeball_gold" },
+    "title": { "translate": "advancements.cobblesafari.completionist.title" },
+    "description": { "translate": "advancements.cobblesafari.completionist.description" },
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "done": {"trigger": "cobblesafari:objectives_completed", "conditions": {}}
+  },
+  "requirements": [["done"]]
+}

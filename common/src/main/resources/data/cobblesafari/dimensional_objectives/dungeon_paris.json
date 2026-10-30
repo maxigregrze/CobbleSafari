@@ -2,14 +2,14 @@
   "schemaVersion": 1,
   "dimensionId": "cobblesafari:dungeon_paris",
   "isInstanciated": true,
-  "enableFinalCompletionAuspiciousReward": false,
+  "enableFinalCompletionAuspiciousReward": true,
   "auspiciousPokeballRewardDisplayName": "cobblesafari.dimensional_objectives.auspicious_pokeball_reward_display_name",
-  "fallbackCompletionReward": "cobblesafari:dimensional_objectives/fallback",
-  "enableFinalCompletionReward": true,
+  "fallbackCompletionReward": "cobblesafari:dimensional_objectives/paris_final",
+  "enableFinalCompletionReward": false,
   "finalCompletionReward": "cobblesafari:dimensional_objectives/paris_final",
   "tasks": [
     {
-      "taskId": "task_loot",
+      "taskId": "task_loot_floating",
       "weight": 12,
       "countRange": [
         2,
@@ -18,7 +18,7 @@
       "taskReward": "cobblesafari:dimensional_objectives/paris_task"
     },
     {
-      "taskId": "task_loot_floating",
+      "taskId": "task_loot_shining_item",
       "weight": 12,
       "countRange": [
         2,
@@ -61,7 +61,7 @@
     },
     {
       "taskId": "task_catch_unique",
-      "weight": 8,
+      "weight": 5,
       "countRange": [
         3,
         3
@@ -70,19 +70,10 @@
     },
     {
       "taskId": "task_catch_unique",
-      "weight": 5,
+      "weight": 10,
       "countRange": [
-        6,
-        6
-      ],
-      "taskReward": "cobblesafari:dimensional_objectives/paris_task"
-    },
-    {
-      "taskId": "task_catch_unique",
-      "weight": 2,
-      "countRange": [
-        9,
-        9
+        2,
+        2
       ],
       "taskReward": "cobblesafari:dimensional_objectives/paris_task"
     },

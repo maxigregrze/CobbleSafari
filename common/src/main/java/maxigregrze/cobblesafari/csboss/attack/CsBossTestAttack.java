@@ -61,7 +61,7 @@ public class CsBossTestAttack implements CsBossAttack {
         boss.triggerAttackAnimation();
         double baseRad = Math.toRadians(volleyIndex * ROTATION_STEP_DEG);
         // Vertical anchor on the trigger block: the bullet (5 tall) covers blockY.. blockY+5.
-        double anchorY = session.getTriggerPos().getY();
+        double anchorY = session.getFloorY();
         Vec3 origin = new Vec3(boss.getX(), anchorY, boss.getZ());
         for (int i = 0; i < BULLETS_PER_VOLLEY; i++) {
             double angle = baseRad + Math.toRadians(i * (360.0 / BULLETS_PER_VOLLEY));

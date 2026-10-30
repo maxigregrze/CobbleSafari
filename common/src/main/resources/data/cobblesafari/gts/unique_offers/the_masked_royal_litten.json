@@ -3,7 +3,7 @@
   "tags": [
     "trainerspokemon"
   ],
-  "given": "litten level=1 originaltrainertype=npc originaltrainer=The Masked Royal",
+  "given": "litten level=1 originaltrainertype=npc originaltrainer=\"The Masked Royal\"",
   "givenMarks": [
     "cobblemon:ribbon_partner"
   ],

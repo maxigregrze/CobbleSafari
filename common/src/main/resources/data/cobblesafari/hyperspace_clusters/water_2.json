@@ -28,7 +28,8 @@
     },
     {
       "id": "squirtle",
-      "weight": 1,
+      "weight": 0.1,
+      "rare": true,
       "members": [
         {
           "pokemon": "squirtle",
@@ -64,7 +65,8 @@
     },
     {
       "id": "totodile",
-      "weight": 1,
+      "weight": 0.1,
+      "rare": true,
       "members": [
         {
           "pokemon": "totodile",
@@ -76,7 +78,8 @@
     },
     {
       "id": "froakie",
-      "weight": 1,
+      "weight": 0.1,
+      "rare": true,
       "members": [
         {
           "pokemon": "froakie",
@@ -88,7 +91,8 @@
     },
     {
       "id": "mudkip",
-      "weight": 1,
+      "weight": 0.1,
+      "rare": true,
       "members": [
         {
           "pokemon": "mudkip",
@@ -143,6 +147,71 @@
           "rarity": 100,
           "level": "17-19",
           "alphaLevel": "26-28"
+        }
+      ]
+    },
+    {
+      "id": "piplup",
+      "weight": 0.1,
+      "rare": true,
+      "members": [
+        {
+          "pokemon": "piplup",
+          "rarity": 100,
+          "level": "16-18",
+          "alphaLevel": "25-27"
+        }
+      ]
+    },
+    {
+      "id": "oshawott",
+      "weight": 0.1,
+      "rare": true,
+      "members": [
+        {
+          "pokemon": "oshawott",
+          "rarity": 100,
+          "level": "16-18",
+          "alphaLevel": "25-27"
+        }
+      ]
+    },
+    {
+      "id": "popplio",
+      "weight": 0.1,
+      "rare": true,
+      "members": [
+        {
+          "pokemon": "popplio",
+          "rarity": 100,
+          "level": "16-18",
+          "alphaLevel": "25-27"
+        }
+      ]
+    },
+    {
+      "id": "sobble",
+      "weight": 0.1,
+      "rare": true,
+      "members": [
+        {
+          "pokemon": "sobble",
+          "rarity": 100,
+          "level": "16-18",
+          "alphaLevel": "25-27"
+        }
+      ]
+    },
+    {
+      "id": "quaxly",
+      "weight": 0.1,
+      "rare": true,
+      "members": [
+        {
+          "pokemon": "quaxly",
+          "rarity": 100,
+          "level": "16-18",
+          "alphaLevel": "25-27"
         }
       ]
     }

@@ -1,7 +1,6 @@
 package maxigregrze.cobblesafari;
 
 import maxigregrze.cobblesafari.command.CobbleSafariCommand;
-import maxigregrze.cobblesafari.command.SafariExitCommand;
 import maxigregrze.cobblesafari.item.LuckyMiningHelmetItem;
 import maxigregrze.cobblesafari.dungeon.DungeonTeleportCountdown;
 import maxigregrze.cobblesafari.entity.BalloonSpawnHandler;
@@ -141,13 +140,13 @@ public class CobbleSafariNeoForge {
         event.put(ModEntities.CSTRADER_NPC, ModEntities.getCsTraderAttributes().build());
         event.put(ModEntities.BALLOON, ModEntities.getBalloonAttributes().build());
         event.put(ModEntities.BALLOON_SAFARI, ModEntities.getBalloonSafariAttributes().build());
+        event.put(ModEntities.SAFARI_DRONE, ModEntities.getSafariDroneAttributes().build());
         event.put(ModEntities.CSBOSS, ModEntities.getCsBossAttributes().build());
         event.put(ModEntities.CSBOSS_MINION, ModEntities.getCsBossMinionAttributes().build());
     }
 
     private void onRegisterCommands(RegisterCommandsEvent event) {
         CobbleSafariCommand.registerCommands(event.getDispatcher(), event.getBuildContext());
-        SafariExitCommand.registerCommands(event.getDispatcher(), event.getBuildContext());
     }
 
     private void onRegisterPayloads(RegisterPayloadHandlersEvent event) {
@@ -204,20 +203,38 @@ public class CobbleSafariNeoForge {
             registrar.playToClient(maxigregrze.cobblesafari.network.ObjectivesHudSyncPayload.TYPE,
                     maxigregrze.cobblesafari.network.ObjectivesHudSyncPayload.STREAM_CODEC,
                     CobbleSafariClientNeoForge::handleObjectivesHudSync);
+            registrar.playToClient(maxigregrze.cobblesafari.network.HyperspaceSkyMapPayload.TYPE,
+                    maxigregrze.cobblesafari.network.HyperspaceSkyMapPayload.STREAM_CODEC,
+                    CobbleSafariClientNeoForge::handleHyperspaceSkyMap);
             registrar.playToClient(maxigregrze.cobblesafari.network.HudConfigRefreshPayload.TYPE,
                     maxigregrze.cobblesafari.network.HudConfigRefreshPayload.STREAM_CODEC,
                     CobbleSafariClientNeoForge::handleHudConfigRefresh);
             registrar.playToClient(maxigregrze.cobblesafari.network.UltraLootConfigSyncPayload.TYPE,
                     maxigregrze.cobblesafari.network.UltraLootConfigSyncPayload.STREAM_CODEC,
                     (payload, context) -> context.enqueueWork(payload::apply));
+            registrar.playToClient(maxigregrze.cobblesafari.network.ObstacleConfigSyncPayload.TYPE,
+                    maxigregrze.cobblesafari.network.ObstacleConfigSyncPayload.STREAM_CODEC,
+                    (payload, context) -> context.enqueueWork(payload::apply));
+            registrar.playToClient(maxigregrze.cobblesafari.network.SecretBasePCConfigSyncPayload.TYPE,
+                    maxigregrze.cobblesafari.network.SecretBasePCConfigSyncPayload.STREAM_CODEC,
+                    (payload, context) -> context.enqueueWork(payload::apply));
+            registrar.playToClient(maxigregrze.cobblesafari.network.OpenOnboardingPayload.TYPE,
+                    maxigregrze.cobblesafari.network.OpenOnboardingPayload.STREAM_CODEC,
+                    CobbleSafariClientNeoForge::handleOpenOnboarding);
             registrar.playToClient(maxigregrze.cobblesafari.network.RainbowFeatherUsedPayload.TYPE,
                     maxigregrze.cobblesafari.network.RainbowFeatherUsedPayload.STREAM_CODEC,
                     CobbleSafariClientNeoForge::handleRainbowFeatherUsed);
+            registrar.playToClient(maxigregrze.cobblesafari.network.RotomPhoneActivationPayload.TYPE,
+                    maxigregrze.cobblesafari.network.RotomPhoneActivationPayload.STREAM_CODEC,
+                    CobbleSafariClientNeoForge::handleRotomPhoneActivation);
         } else {
             registrar.playToClient(ShackleSyncPayload.TYPE, ShackleSyncPayload.STREAM_CODEC,
                     (payload, context) -> {});
             registrar.playToClient(maxigregrze.cobblesafari.network.RainbowFeatherUsedPayload.TYPE,
                     maxigregrze.cobblesafari.network.RainbowFeatherUsedPayload.STREAM_CODEC,
+                    (payload, context) -> {});
+            registrar.playToClient(maxigregrze.cobblesafari.network.RotomPhoneActivationPayload.TYPE,
+                    maxigregrze.cobblesafari.network.RotomPhoneActivationPayload.STREAM_CODEC,
                     (payload, context) -> {});
             registrar.playToClient(OpenTpAcceptPayload.TYPE, OpenTpAcceptPayload.STREAM_CODEC,
                     (payload, context) -> {});
@@ -256,11 +273,23 @@ public class CobbleSafariNeoForge {
             registrar.playToClient(maxigregrze.cobblesafari.network.ObjectivesHudSyncPayload.TYPE,
                     maxigregrze.cobblesafari.network.ObjectivesHudSyncPayload.STREAM_CODEC,
                     (payload, context) -> {});
+            registrar.playToClient(maxigregrze.cobblesafari.network.HyperspaceSkyMapPayload.TYPE,
+                    maxigregrze.cobblesafari.network.HyperspaceSkyMapPayload.STREAM_CODEC,
+                    (payload, context) -> {});
             registrar.playToClient(maxigregrze.cobblesafari.network.HudConfigRefreshPayload.TYPE,
                     maxigregrze.cobblesafari.network.HudConfigRefreshPayload.STREAM_CODEC,
                     (payload, context) -> {});
             registrar.playToClient(maxigregrze.cobblesafari.network.UltraLootConfigSyncPayload.TYPE,
                     maxigregrze.cobblesafari.network.UltraLootConfigSyncPayload.STREAM_CODEC,
+                    (payload, context) -> {});
+            registrar.playToClient(maxigregrze.cobblesafari.network.ObstacleConfigSyncPayload.TYPE,
+                    maxigregrze.cobblesafari.network.ObstacleConfigSyncPayload.STREAM_CODEC,
+                    (payload, context) -> {});
+            registrar.playToClient(maxigregrze.cobblesafari.network.SecretBasePCConfigSyncPayload.TYPE,
+                    maxigregrze.cobblesafari.network.SecretBasePCConfigSyncPayload.STREAM_CODEC,
+                    (payload, context) -> {});
+            registrar.playToClient(maxigregrze.cobblesafari.network.OpenOnboardingPayload.TYPE,
+                    maxigregrze.cobblesafari.network.OpenOnboardingPayload.STREAM_CODEC,
                     (payload, context) -> {});
         }
 
@@ -270,6 +299,8 @@ public class CobbleSafariNeoForge {
                         if (context.player() instanceof ServerPlayer sp) {
                             if ("dungeon".equals(payload.source())) {
                                 DungeonTpAcceptHandler.handleAcceptResponse(sp, payload.accepted());
+                            } else if (maxigregrze.cobblesafari.safari.SafariDroneExitHandler.SOURCE.equals(payload.source())) {
+                                maxigregrze.cobblesafari.safari.SafariDroneExitHandler.handleAcceptResponse(sp, payload.accepted());
                             } else {
                                 TeleporterTickHandler.handleAcceptResponse(sp, payload.accepted());
                             }
@@ -299,6 +330,14 @@ public class CobbleSafariNeoForge {
                         }
                     });
                 });
+
+        registrar.playToServer(maxigregrze.cobblesafari.network.SaveOnboardingPayload.TYPE,
+                maxigregrze.cobblesafari.network.SaveOnboardingPayload.STREAM_CODEC,
+                (payload, context) -> context.enqueueWork(() -> {
+                    if (context.player() instanceof ServerPlayer sp) {
+                        maxigregrze.cobblesafari.onboarding.OnboardingService.handleSave(sp, payload);
+                    }
+                }));
 
         registrar.playToServer(SavePortalSpawnerConfigPayload.TYPE, SavePortalSpawnerConfigPayload.STREAM_CODEC,
                 (payload, context) -> context.enqueueWork(() -> {

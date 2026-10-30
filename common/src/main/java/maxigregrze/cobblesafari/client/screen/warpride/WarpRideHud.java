@@ -43,8 +43,56 @@ public final class WarpRideHud {
     private long positiveFlourishUntil;
     private long negativeFlourishUntil;
 
+    /** The pickup burst (action plan 200, section 4.1): a yellow half-transparent flash, 0.25 s. */
+    private static final int PICKUP_FLASH_COLOR = 0xFFED0B;
+    private static final double PICKUP_FLASH_PEAK_ALPHA = 0.5;
+    private static final double PICKUP_FLASH_SECONDS = 0.25;
+    /** 100 % of the burst sizes: the aura at full energy, the largest the ring ever gets. */
+    private static final double PICKUP_FULL_PX = WarpRideRenderer.RIDER_SCREEN_PX * AURA_MAX_FACTOR;
+    /** positive_get_short: one full turn while it fades out, at full size. */
+    private static final double SHORT_SECONDS = 0.5;
+    /**
+     * The long rings' own animation (rise, hold, fade) is 30 % shorter than first specified; each
+     * still appears at its own offset from the flash (revision 2 of section 4.1).
+     */
+    private static final double LONG_RING_TIME_SCALE = 0.7;
+    private static final int MAX_PICKUPS = 6;
+
+    /**
+     * One positive_get_long ring, times in seconds from the flash: fades in while growing from
+     * {@code startScale} to {@code fullScale}, holds, then grows to {@code endScale} while fading out.
+     */
+    private record Ring(double appear, double full, double fadeStart, double end,
+                        double startScale, double fullScale, double endScale) {}
+
+    private static final Ring[] LONG_RINGS = {
+            ring(0.2, 0.4, 0.1, 0.2, 0.80, 1.00, 1.20),
+            ring(0.4, 0.4, 0.1, 0.2, 0.85, 1.05, 1.25)
+    };
+
+    /** The whole burst is over once the last long ring has faded. */
+    private static final double PICKUP_SECONDS = LONG_RINGS[LONG_RINGS.length - 1].end();
+
+    /** A ring from its appearance offset and its three phase lengths, the latter time-scaled. */
+    @SuppressWarnings("java:S107")
+    private static Ring ring(double appear, double rise, double hold, double fade,
+                             double startScale, double fullScale, double endScale) {
+        double full = appear + rise * LONG_RING_TIME_SCALE;
+        double fadeStart = full + hold * LONG_RING_TIME_SCALE;
+        return new Ring(appear, full, fadeStart, fadeStart + fade * LONG_RING_TIME_SCALE,
+                startScale, fullScale, endScale);
+    }
+
+    /** Start of every burst still playing: a quick run of bonuses overlaps them instead of cutting. */
+    private final java.util.ArrayDeque<Long> pickups = new java.util.ArrayDeque<>();
+
     public void onPositive() {
-        positiveFlourishUntil = System.nanoTime() + FLOURISH_NANOS;
+        long now = System.nanoTime();
+        positiveFlourishUntil = now + FLOURISH_NANOS;
+        if (pickups.size() >= MAX_PICKUPS) {
+            pickups.pollFirst();
+        }
+        pickups.addLast(now);
     }
 
     public void onNegative() {
@@ -73,7 +121,89 @@ public final class WarpRideHud {
             renderEnergyAura(graphics, state, growth);
             graphics.pose().popPose();
         }
+        renderPickup(graphics, state, camera, now);
         renderHitEffect(graphics);
+    }
+
+    /**
+     * The pickup burst, centred on the rider like the aura so it follows jumps, the drift and the
+     * camera feedback: the flash, then positive_get_short turning once as it fades, then two
+     * positive_get_long rings swelling in and out, the second 0.2 s behind the first.
+     */
+    private void renderPickup(GuiGraphics graphics, WarpRideClientState state, WarpRideCamera camera, long now) {
+        while (!pickups.isEmpty() && seconds(now, pickups.peekFirst()) >= PICKUP_SECONDS) {
+            pickups.pollFirst();
+        }
+        if (pickups.isEmpty()) {
+            return;
+        }
+        // One flash, from the latest pickup: stacked flashes would strobe.
+        double latest = seconds(now, pickups.peekLast());
+        if (latest < PICKUP_FLASH_SECONDS) {
+            int flashA = (int) Math.round(PICKUP_FLASH_PEAK_ALPHA * (1.0 - latest / PICKUP_FLASH_SECONDS) * 255.0);
+            if (flashA > 0) {
+                WarpRideRenderer.fillViewport(graphics, (flashA << 24) | PICKUP_FLASH_COLOR);
+            }
+        }
+        int centerY = WarpRideRenderer.CENTER_Y + (int) Math.round(WarpRideRenderer.riderRadius(state));
+        graphics.pose().pushPose();
+        camera.apply2D(graphics.pose(), now);
+        for (long start : pickups) {
+            double t = seconds(now, start);
+            if (t < SHORT_SECONDS) {
+                double p = t / SHORT_SECONDS;
+                drawBurst(graphics, WarpRideRenderer.POSITIVE_GET_SHORT, centerY, 1.0, 360.0 * p, 1.0 - p);
+            }
+            for (Ring ring : LONG_RINGS) {
+                drawRing(graphics, ring, t, centerY);
+            }
+        }
+        graphics.pose().popPose();
+        graphics.setColor(1.0f, 1.0f, 1.0f, 1.0f);
+        RenderSystem.disableBlend();
+    }
+
+    private static void drawRing(GuiGraphics graphics, Ring ring, double t, int centerY) {
+        if (t < ring.appear() || t >= ring.end()) {
+            return;
+        }
+        double scale;
+        double alpha;
+        if (t < ring.full()) {
+            double p = (t - ring.appear()) / (ring.full() - ring.appear());
+            scale = ring.startScale() + (ring.fullScale() - ring.startScale()) * p;
+            alpha = p;
+        } else if (t < ring.fadeStart()) {
+            scale = ring.fullScale();
+            alpha = 1.0;
+        } else {
+            double p = (t - ring.fadeStart()) / (ring.end() - ring.fadeStart());
+            scale = ring.fullScale() + (ring.endScale() - ring.fullScale()) * p;
+            alpha = 1.0 - p;
+        }
+        drawBurst(graphics, WarpRideRenderer.POSITIVE_GET_LONG, centerY, scale, 0.0, alpha);
+    }
+
+    /** One square image centred on the rider, {@code scale} times the full aura, turned and faded. */
+    private static void drawBurst(GuiGraphics graphics, ResourceLocation texture, int centerY,
+                                  double scale, double degrees, double alpha) {
+        int size = (int) Math.round(PICKUP_FULL_PX * scale);
+        if (size <= 0 || alpha <= 0.0) {
+            return;
+        }
+        WarpRideRenderer.beginAlphaBlit();
+        graphics.pose().pushPose();
+        graphics.pose().translate(WarpRideRenderer.CENTER_X, centerY, 0.0f);
+        if (degrees != 0.0) {
+            graphics.pose().mulPose(Axis.ZP.rotationDegrees((float) degrees));
+        }
+        graphics.setColor(1.0f, 1.0f, 1.0f, (float) Math.min(1.0, alpha));
+        graphics.blit(texture, -size / 2, -size / 2, 0.0f, 0.0f, size, size, size, size);
+        graphics.pose().popPose();
+    }
+
+    private static double seconds(long now, long start) {
+        return (now - start) / 1_000_000_000.0;
     }
 
     /**

@@ -30,7 +30,7 @@ public class WaterShadowAttack implements CsBossAttack {
     private static final int WAVES = 3; // deterministic (2*60+110+10 = 240)
     private static final double COLUMN_RADIUS = 1.0;
     private static final double COLUMN_HEIGHT = 4.0;
-    private static final float WATER_DAMAGE = 8.0F;
+    private static final float WATER_DAMAGE = 3.0F; // base 3 (plan 199)
 
     private final String id;
     private final List<Shadow> shadows = new ArrayList<>();

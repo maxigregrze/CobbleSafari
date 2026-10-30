@@ -1,0 +1,7 @@
+{
+    "type": "minecraft:crafting_shaped",
+    "category": "misc",
+    "pattern": [ "###", "###", "###" ],
+    "key": { "#": { "item": "cobblesafari:megashard" } },
+    "result": { "id": "cobblesafari:mega_shard_block", "count": 1 }
+}

@@ -52,7 +52,8 @@
     },
     {
       "id": "squirtle",
-      "weight": 1,
+      "weight": 0.1,
+      "rare": true,
       "members": [
         {
           "pokemon": "wartortle",
@@ -70,7 +71,8 @@
     },
     {
       "id": "totodile",
-      "weight": 1,
+      "weight": 0.1,
+      "rare": true,
       "members": [
         {
           "pokemon": "croconaw",
@@ -88,7 +90,8 @@
     },
     {
       "id": "froakie",
-      "weight": 1,
+      "weight": 0.1,
+      "rare": true,
       "members": [
         {
           "pokemon": "frogadier",
@@ -106,7 +109,8 @@
     },
     {
       "id": "mudkip",
-      "weight": 1,
+      "weight": 0.1,
+      "rare": true,
       "members": [
         {
           "pokemon": "marshtomp",
@@ -137,6 +141,101 @@
           "rarity": 80,
           "level": "23-25",
           "alphaLevel": "32-34"
+        }
+      ]
+    },
+    {
+      "id": "piplup",
+      "weight": 0.1,
+      "rare": true,
+      "members": [
+        {
+          "pokemon": "prinplup",
+          "rarity": 20,
+          "level": "23-25",
+          "alphaLevel": "32-34"
+        },
+        {
+          "pokemon": "piplup",
+          "rarity": 80,
+          "level": "20-22",
+          "alphaLevel": "29-31"
+        }
+      ]
+    },
+    {
+      "id": "oshawott",
+      "weight": 0.1,
+      "rare": true,
+      "members": [
+        {
+          "pokemon": "dewott",
+          "rarity": 20,
+          "level": "23-25",
+          "alphaLevel": "32-34"
+        },
+        {
+          "pokemon": "oshawott",
+          "rarity": 80,
+          "level": "20-22",
+          "alphaLevel": "29-31"
+        }
+      ]
+    },
+    {
+      "id": "popplio",
+      "weight": 0.1,
+      "rare": true,
+      "members": [
+        {
+          "pokemon": "brionne",
+          "rarity": 20,
+          "level": "23-25",
+          "alphaLevel": "32-34"
+        },
+        {
+          "pokemon": "popplio",
+          "rarity": 80,
+          "level": "20-22",
+          "alphaLevel": "29-31"
+        }
+      ]
+    },
+    {
+      "id": "sobble",
+      "weight": 0.1,
+      "rare": true,
+      "members": [
+        {
+          "pokemon": "drizzile",
+          "rarity": 20,
+          "level": "23-25",
+          "alphaLevel": "32-34"
+        },
+        {
+          "pokemon": "sobble",
+          "rarity": 80,
+          "level": "20-22",
+          "alphaLevel": "29-31"
+        }
+      ]
+    },
+    {
+      "id": "quaxly",
+      "weight": 0.1,
+      "rare": true,
+      "members": [
+        {
+          "pokemon": "quaxwell",
+          "rarity": 20,
+          "level": "23-25",
+          "alphaLevel": "32-34"
+        },
+        {
+          "pokemon": "quaxly",
+          "rarity": 80,
+          "level": "20-22",
+          "alphaLevel": "29-31"
         }
       ]
     }

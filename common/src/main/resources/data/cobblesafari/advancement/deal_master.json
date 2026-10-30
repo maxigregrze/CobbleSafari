@@ -1,7 +1,7 @@
 {
   "parent": "cobblesafari:deal_sniffer",
   "display": {
-    "icon": { "id": "minecraft:emerald" },
+    "icon": { "id": "cobblesafari:online_feature_pc_gts" },
     "title": { "translate": "advancements.cobblesafari.deal_master.title" },
     "description": { "translate": "advancements.cobblesafari.deal_master.description" },
     "frame": "goal",

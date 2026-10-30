@@ -106,6 +106,13 @@ public class ClientNetworking {
         );
 
         ClientPlayNetworking.registerGlobalReceiver(
+                maxigregrze.cobblesafari.network.OpenOnboardingPayload.TYPE,
+                (payload, context) -> context.client().execute(() ->
+                        Minecraft.getInstance().setScreen(
+                                new maxigregrze.cobblesafari.client.screen.OnboardingScreen(payload.initial())))
+        );
+
+        ClientPlayNetworking.registerGlobalReceiver(
                 OpenPortalSpawnerConfigPayload.TYPE,
                 (payload, context) -> context.client().execute(() ->
                         Minecraft.getInstance().setScreen(new PortalSpawnerConfigScreen(payload)))

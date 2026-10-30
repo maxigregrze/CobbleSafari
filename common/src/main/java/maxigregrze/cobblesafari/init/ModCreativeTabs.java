@@ -1,6 +1,7 @@
 package maxigregrze.cobblesafari.init;
 
 import maxigregrze.cobblesafari.CobbleSafari;
+import maxigregrze.cobblesafari.dungeon.hyperspace.obstacle.ShardClusterSettings;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
@@ -52,9 +53,11 @@ public class ModCreativeTabs {
                 output.accept(ModBlocks.LOST_ITEM_CLASSIC_ITEM);
                 output.accept(ModBlocks.LOST_ITEM_BURIED_ITEM);
                 output.accept(ModBlocks.LOST_ITEM_FLOATING_ITEM);
+                output.accept(ModBlocks.LOST_ITEM_SHINE_ITEM);
                 output.accept(ModBlocks.OBSTACLE_BOULDER);
                 output.accept(ModBlocks.OBSTACLE_BRAMBLES);
                 output.accept(ModBlocks.OBSTACLE_SLUDGE);
+                output.accept(ModBlocks.OBSTACLE_SHARDCLUSTER);
                 output.accept(ModItems.LOST_ITEM_TEMPLATE);
                 output.accept(ModItems.EGG_CREATIVE);
                 output.accept(ModBlocks.AUSPICIOUS_POKEBALL);
@@ -76,6 +79,9 @@ public class ModCreativeTabs {
                 output.accept(ModBlocks.UNDERGROUND_PC);
                 output.accept(ModBlocks.UNDERGROUND_DIGSITE);
                 output.accept(ModBlocks.UNION_ROOM_EXIT_TELEPORTER);
+                output.accept(ModBlocks.LIGHTNINGSPOT);
+                output.accept(ModItems.ROTOM_APP_UNLOCK_ALL);
+                output.accept(ModItems.ROTOM_SKIN_UNLOCK_ALL);
             })
             .build();
 
@@ -83,6 +89,52 @@ public class ModCreativeTabs {
             .title(Component.translatable("itemGroup.cobblesafari.items"))
             .icon(() -> new ItemStack(ModItems.ROTOM_PHONE))
             .displayItems((params, output) -> {
+                // Rotom
+                output.accept(ModItems.ROTOM_PHONE);
+                // Rotie Earpiece variant only makes sense (and is only craftable) with Accessories.
+                boolean accessories = maxigregrze.cobblesafari.platform.Services.PLATFORM.isModLoaded("accessories");
+                if (accessories) {
+                    output.accept(ModItems.ROTOM_EARPIECE);
+                }
+                output.accept(ModBlocks.EMPTYPHONE);
+                if (accessories) {
+                    output.accept(ModItems.EMPTY_EARPIECE);
+                }
+                output.accept(ModItems.ROTOM_APP_UNLOCK_GTS);
+                output.accept(ModItems.ROTOM_APP_UNLOCK_WONDER);
+                output.accept(ModItems.ROTOM_APP_UNLOCK_UNION);
+                output.accept(ModItems.ROTOM_APP_UNLOCK_SKIN);
+                output.accept(ModItems.ROTOM_APP_UNLOCK_SETTINGS);
+                // One dynamic skin disc per disc-obtainable bundled skin (blank disc never shown).
+                for (String skinId : ModItems.SKIN_UNLOCK_TARGETS) {
+                    ItemStack disc = new ItemStack(ModItems.ROTOM_SKIN_UNLOCK);
+                    disc.set(ModComponents.SKIN_UNLOCK_TARGET, skinId);
+                    output.accept(disc);
+                }
+                output.accept(ModItems.TICKET_WONDERTRADE);
+                output.accept(ModItems.TICKET_GTS);
+                // Safari
+                output.accept(ModItems.TINKAGEAR);
+                output.accept(ModItems.MUD_BALL);
+                output.accept(ModItems.BAIT);
+                output.accept(ModItems.WILD_EGG_BASE);
+                ModItems.WILD_EGGS.values().forEach(output::accept);
+                output.accept(ModItems.SHINY_INCENSE);
+                output.accept(ModItems.SUPER_SHINY_INCENSE);
+                output.accept(ModItems.ULTRA_SHINY_INCENSE);
+                output.accept(ModItems.REPEL);
+                output.accept(ModItems.PERFUME_UNCOMMON);
+                output.accept(ModItems.PERFUME_RARE);
+                output.accept(ModItems.PERFUME_ULTRARARE);
+                // Boss balms
+                output.accept(ModItems.BALM);
+                output.accept(ModItems.BALM_DISTORTION);
+                // Hoopa portal (no dungeon of its own)
+                output.accept(ModItems.INGREDIENT_DUNGEON_PORTAL);
+                output.accept(ModItems.DONUT_DUNGEON_PORTAL);
+                // Underground
+                output.accept(ModItems.INGREDIENT_DUNGEON_UNDERGROUND);
+                output.accept(ModItems.DONUT_DUNGEON_UNDERGROUND);
                 output.accept(ModItems.HEART_SCALE);
                 output.accept(ModItems.STAR_PIECE);
                 output.accept(ModItems.SPHERE_BLUE_S);
@@ -106,11 +158,9 @@ public class ModCreativeTabs {
                 output.accept(ModItems.FOSSIL_HIDDEN_ABILITY);
                 output.accept(ModItems.FOSSIL_SHINY);
                 output.accept(ModItems.LUCKY_MINING_HELMET);
-                output.accept(ModItems.MUD_BALL);
-                output.accept(ModItems.TINKAGEAR);
-                output.accept(ModItems.BAIT);
-                output.accept(ModItems.BALM);
-                output.accept(ModItems.BALM_DISTORTION);
+                // Distortion
+                output.accept(ModItems.INGREDIENT_DUNGEON_DISTORTION);
+                output.accept(ModItems.DONUT_DUNGEON_DISTORTION);
                 output.accept(ModItems.REDCHAIN_RANDOM_BALL);
                 output.accept(ModItems.REDCHAIN_RANDOM_EV);
                 output.accept(ModItems.REDCHAIN_RANDOM_GENDER);
@@ -120,6 +170,48 @@ public class ModCreativeTabs {
                 output.accept(ModItems.REDCHAIN_FRAGMENT);
                 output.accept(ModItems.RED_CHAIN_CORE);
                 output.accept(ModItems.RED_CHAIN);
+                // Belltower
+                output.accept(ModItems.INGREDIENT_DUNGEON_JUMP);
+                output.accept(ModItems.DONUT_DUNGEON_JUMP);
+                output.accept(ModItems.RAINBOW_FEATHER);
+                output.accept(ModItems.HOOH_ASHES);
+                // Hyperspace
+                output.accept(ModItems.INGREDIENT_DUNGEON_PARIS);
+                output.accept(ModItems.DONUT_DUNGEON_PARIS);
+                output.accept(ModItems.HYPERBERRY_ENIGMA);
+                output.accept(ModItems.HYPERBERRY_TAMATO);
+                output.accept(ModItems.HYPERBERRY_GREPA);
+                output.accept(ModItems.HYPERBERRY_HONDEW);
+                output.accept(ModItems.HYPERBERRY_QUALOT);
+                output.accept(ModItems.HYPERBERRY_KELPSY);
+                output.accept(ModItems.HYPERBERRY_POMEG);
+                output.accept(ModItems.HYPERBERRY_SALAC);
+                output.accept(ModItems.HYPERBERRY_APICOT);
+                output.accept(ModItems.HYPERBERRY_PETAYA);
+                output.accept(ModItems.HYPERBERRY_GANLON);
+                output.accept(ModItems.HYPERBERRY_LIECHI);
+                output.accept(ModItems.HYPERBERRY_STARF);
+                output.accept(ModItems.HYPERBERRY_LANSAT);
+                output.accept(ModItems.DONUT_MIX);
+                output.accept(ModItems.BUTTER_LUMINOSIAN);
+                output.accept(ModItems.BUTTER_GREAT);
+                output.accept(ModItems.BUTTER_AMAZING);
+                output.accept(ModItems.BUTTER_SUPREME);
+                output.accept(ModItems.BUTTER_HYPERSPACE);
+                output.accept(ModItems.DONUT);
+                output.accept(ModItems.DONUT_RANDOM);
+                for (Item item : ModItems.DONUT_RANDOMS.values()) {
+                    output.accept(item);
+                }
+                // Mega shards only drop from shard clusters: hidden when the server disables them.
+                if (ShardClusterSettings.clientEnabled()) {
+                    output.accept(ModItems.MEGASHARD);
+                }
+                output.accept(ModItems.HYPERSPACE_BOAT);
+                output.accept(ModItems.HYPERSPACE_CHEST_BOAT);
+                // Ultra Space
+                output.accept(ModItems.INGREDIENT_DUNGEON_ULTRASPACE);
+                output.accept(ModItems.DONUT_DUNGEON_ULTRASPACE);
                 output.accept(ModItems.POIPOLE_ARROW);
                 output.accept(ModItems.BLACEPHALON_BOMB);
                 output.accept(ModItems.XURKITREE_BOMB);
@@ -141,73 +233,6 @@ public class ModCreativeTabs {
                 output.accept(ModItems.PHEROMOSA_SEEDS);
                 output.accept(ModItems.PHEROMOSA_FRUIT);
                 output.accept(ModBlocks.PHEROMOSA_PLANT_GROWN);
-                output.accept(ModItems.RAINBOW_FEATHER);
-                output.accept(ModItems.HOOH_ASHES);
-                output.accept(ModItems.HYPERBERRY_ENIGMA);
-                output.accept(ModItems.HYPERBERRY_TAMATO);
-                output.accept(ModItems.HYPERBERRY_GREPA);
-                output.accept(ModItems.HYPERBERRY_HONDEW);
-                output.accept(ModItems.HYPERBERRY_QUALOT);
-                output.accept(ModItems.HYPERBERRY_KELPSY);
-                output.accept(ModItems.HYPERBERRY_POMEG);
-                output.accept(ModItems.HYPERBERRY_SALAC);
-                output.accept(ModItems.HYPERBERRY_APICOT);
-                output.accept(ModItems.HYPERBERRY_PETAYA);
-                output.accept(ModItems.HYPERBERRY_GANLON);
-                output.accept(ModItems.HYPERBERRY_LIECHI);
-                output.accept(ModItems.HYPERBERRY_STARF);
-                output.accept(ModItems.HYPERBERRY_LANSAT);
-                output.accept(ModItems.DONUT_MIX);
-                output.accept(ModItems.BUTTER_LUMINOSIAN);
-                output.accept(ModItems.BUTTER_GREAT);
-                output.accept(ModItems.BUTTER_AMAZING);
-                output.accept(ModItems.BUTTER_SUPREME);
-                output.accept(ModItems.BUTTER_HYPERSPACE);
-                output.accept(ModItems.INGREDIENT_DUNGEON_PORTAL);
-                output.accept(ModItems.INGREDIENT_DUNGEON_UNDERGROUND);
-                output.accept(ModItems.INGREDIENT_DUNGEON_DISTORTION);
-                output.accept(ModItems.INGREDIENT_DUNGEON_PARIS);
-                output.accept(ModItems.INGREDIENT_DUNGEON_JUMP);
-                output.accept(ModItems.INGREDIENT_DUNGEON_ULTRASPACE);
-                output.accept(ModItems.DONUT_DUNGEON_PORTAL);
-                output.accept(ModItems.DONUT_DUNGEON_UNDERGROUND);
-                output.accept(ModItems.DONUT_DUNGEON_DISTORTION);
-                output.accept(ModItems.DONUT_DUNGEON_PARIS);
-                output.accept(ModItems.DONUT);
-                output.accept(ModItems.DONUT_RANDOM);
-                for (Item item : ModItems.DONUT_RANDOMS.values()) {
-                    output.accept(item);
-                }
-                output.accept(ModItems.SHINY_INCENSE);
-                output.accept(ModItems.SUPER_SHINY_INCENSE);
-                output.accept(ModItems.ULTRA_SHINY_INCENSE);
-                output.accept(ModItems.REPEL);
-                output.accept(ModItems.PERFUME_UNCOMMON);
-                output.accept(ModItems.PERFUME_RARE);
-                output.accept(ModItems.PERFUME_ULTRARARE);
-                output.accept(ModItems.ROTOM_PHONE);
-                // Rotie Earpiece variant only makes sense (and is only craftable) with Accessories.
-                if (maxigregrze.cobblesafari.platform.Services.PLATFORM.isModLoaded("accessories")) {
-                    output.accept(ModItems.EMPTY_EARPIECE);
-                    output.accept(ModItems.ROTOM_EARPIECE);
-                }
-                output.accept(ModItems.ROTOM_APP_UNLOCK_GTS);
-                output.accept(ModItems.ROTOM_APP_UNLOCK_WONDER);
-                output.accept(ModItems.ROTOM_APP_UNLOCK_UNION);
-                output.accept(ModItems.ROTOM_APP_UNLOCK_SKIN);
-                output.accept(ModItems.ROTOM_APP_UNLOCK_SETTINGS);
-                output.accept(ModItems.ROTOM_APP_UNLOCK_ALL);
-                // One dynamic skin disc per disc-obtainable bundled skin (blank disc never shown).
-                for (String skinId : ModItems.SKIN_UNLOCK_TARGETS) {
-                    ItemStack disc = new ItemStack(ModItems.ROTOM_SKIN_UNLOCK);
-                    disc.set(ModComponents.SKIN_UNLOCK_TARGET, skinId);
-                    output.accept(disc);
-                }
-                output.accept(ModItems.ROTOM_SKIN_UNLOCK_ALL);
-                output.accept(ModItems.TICKET_WONDERTRADE);
-                output.accept(ModItems.TICKET_GTS);
-                output.accept(ModItems.WILD_EGG_BASE);
-                ModItems.WILD_EGGS.values().forEach(output::accept);
             })
             .build();
 
@@ -216,7 +241,6 @@ public class ModCreativeTabs {
             .icon(() -> new ItemStack(ModBlocks.SAFARI_EGG_NEST))
             .displayItems((params, output) -> {
                 output.accept(ModBlocks.SAFARI_TELEPORTER);
-                output.accept(ModBlocks.EMPTYPHONE);
                 output.accept(ModBlocks.ONLINE_FEATURE_PC_UNION);
                 output.accept(ModBlocks.ONLINE_FEATURE_PC_GTS);
                 output.accept(ModBlocks.ONLINE_FEATURE_PC_WONDER);
@@ -260,6 +284,29 @@ public class ModCreativeTabs {
             .title(Component.translatable("itemGroup.cobblesafari.decorative_blocks"))
             .icon(() -> new ItemStack(ModBlocks.PIKACHU_STATUE))
             .displayItems((params, output) -> {
+                // Safari decor
+                output.accept(ModBlocks.MAGNETIC_CRYSTAL);
+                output.accept(ModBlocks.MAGNETIC_CLUSTER);
+                output.accept(ModBlocks.RUSTED_IRON_BLOCK);
+                output.accept(ModBlocks.COMPACTED_TRASH_BLOCK);
+                output.accept(ModBlocks.RUST_CLUMP);
+                output.accept(ModBlocks.ICICLE);
+                output.accept(ModBlocks.AIR_KELP);
+                output.accept(ModBlocks.AIR_TUBE_CORAL_FAN);
+                output.accept(ModBlocks.AIR_BRAIN_CORAL_FAN);
+                output.accept(ModBlocks.AIR_BUBBLE_CORAL_FAN);
+                output.accept(ModBlocks.AIR_FIRE_CORAL_FAN);
+                output.accept(ModBlocks.AIR_HORN_CORAL_FAN);
+                output.accept(ModBlocks.AIR_TUBE_CORAL);
+                output.accept(ModBlocks.AIR_BRAIN_CORAL);
+                output.accept(ModBlocks.AIR_BUBBLE_CORAL);
+                output.accept(ModBlocks.AIR_FIRE_CORAL);
+                output.accept(ModBlocks.AIR_HORN_CORAL);
+                output.accept(ModBlocks.TINKAGEAR_BLOCK);
+                output.accept(ModBlocks.PUNCHINGBAG);
+                output.accept(ModBlocks.KARATE_MANNEQUIN);
+                output.accept(ModBlocks.TOMBSTONE);
+                output.accept(ModBlocks.TOMBSTONE_SMALL);
                 // Underground building
                 output.accept(ModBlocks.UNDERGROUND_SMOOTH_STONE);
                 output.accept(ModBlocks.UNDERGROUND_STONE);
@@ -283,24 +330,6 @@ public class ModCreativeTabs {
                     output.accept(ModBlocks.SPHERE_SLABS.get(type));
                     output.accept(ModBlocks.SPHERE_STAIRS.get(type));
                 }
-                // Safari decor
-                output.accept(ModBlocks.MAGNETIC_CRYSTAL);
-                output.accept(ModBlocks.MAGNETIC_CLUSTER);
-                output.accept(ModBlocks.RUSTED_IRON_BLOCK);
-                output.accept(ModBlocks.COMPACTED_TRASH_BLOCK);
-                output.accept(ModBlocks.RUST_CLUMP);
-                output.accept(ModBlocks.ICICLE);
-                output.accept(ModBlocks.AIR_KELP);
-                output.accept(ModBlocks.AIR_TUBE_CORAL_FAN);
-                output.accept(ModBlocks.AIR_BRAIN_CORAL_FAN);
-                output.accept(ModBlocks.AIR_BUBBLE_CORAL_FAN);
-                output.accept(ModBlocks.AIR_FIRE_CORAL_FAN);
-                output.accept(ModBlocks.AIR_HORN_CORAL_FAN);
-                output.accept(ModBlocks.AIR_TUBE_CORAL);
-                output.accept(ModBlocks.AIR_BRAIN_CORAL);
-                output.accept(ModBlocks.AIR_BUBBLE_CORAL);
-                output.accept(ModBlocks.AIR_FIRE_CORAL);
-                output.accept(ModBlocks.AIR_HORN_CORAL);
                 // Distortion rock-block family
                 output.accept(ModBlocks.DISTORTION_ROCK_BLOCK);
                 output.accept(ModBlocks.DISTORTION_ROCK_BLOCK_STONEBRICKS);
@@ -308,7 +337,6 @@ public class ModCreativeTabs {
                 output.accept(ModBlocks.DISTORTION_ROCK_BLOCK_STONEBRICKS_SLAB);
                 output.accept(ModBlocks.DISTORTION_ROCK_BLOCK_CHISELED);
                 output.accept(ModBlocks.DISTORTION_ROCK_BLOCK_CRACKED);
-                output.accept(ModBlocks.TINKAGEAR_BLOCK);
                 // Distortion terrain
                 output.accept(ModBlocks.DISTORTION_ROCK);
                 output.accept(ModBlocks.DISTORTION_STONE);
@@ -333,36 +361,24 @@ public class ModCreativeTabs {
                 output.accept(ModBlocks.DISTORTION_WEED_SPAWN);
                 output.accept(ModBlocks.DISTORTION_FLOWER);
                 output.accept(ModBlocks.DISTORTION_FLOWER_CARPET);
-                // Union room decor + statues
-                output.accept(ModBlocks.UNION_ROOM_WALL);
-                output.accept(ModBlocks.UNION_ROOM_FLOOR);
-                output.accept(ModBlocks.UNION_ROOM_LIGHT);
-                output.accept(ModBlocks.UNION_ROOM_LIGHT_LINE);
-                output.accept(ModBlocks.UNION_ROOM_PILLAR);
-                output.accept(ModBlocks.UNION_ROOM_SCREEN);
-                output.accept(ModBlocks.UNION_ROOM_SCREEN_LEFT);
-                output.accept(ModBlocks.UNION_ROOM_SCREEN_RIGHT);
-                output.accept(ModBlocks.UNION_ROOM_CROWD);
-                output.accept(ModBlocks.UNION_ROOM_POKEBALL);
-                output.accept(ModBlocks.UNION_ROOM_SPOT);
-                output.accept(ModBlocks.UNION_ROOM_GLOBE);
-                output.accept(ModBlocks.ONLINE_FEATURE_PC);
-                output.accept(ModBlocks.BULBASAUR_STATUE);
-                output.accept(ModBlocks.CHARMANDER_STATUE);
-                output.accept(ModBlocks.PIKACHU_STATUE);
-                output.accept(ModBlocks.SQUIRTLE_STATUE);
-                output.accept(ModBlocks.PUNCHINGBAG);
-                output.accept(ModBlocks.KARATE_MANNEQUIN);
-                output.accept(ModBlocks.TOMBSTONE);
-                output.accept(ModBlocks.TOMBSTONE_SMALL);
-                output.accept(ModBlocks.UNION_ROOM_BRICKS_GREEN);
-                output.accept(ModBlocks.UNION_ROOM_BRICKS_YELLOW);
-                output.accept(ModBlocks.UNION_ROOM_BRICKS_BLUE);
-                output.accept(ModBlocks.UNION_ROOM_BRICKS_RED);
-                output.accept(ModBlocks.UNION_ROOM_SPOTLIGHT_GREEN);
-                output.accept(ModBlocks.UNION_ROOM_SPOTLIGHT_YELLOW);
-                output.accept(ModBlocks.UNION_ROOM_SPOTLIGHT_BLUE);
-                output.accept(ModBlocks.UNION_ROOM_SPOTLIGHT_RED);
+                // Belltower construction set (plan 170), in build order
+                output.accept(ModBlocks.BELLTOWER_BEAM);
+                output.accept(ModBlocks.BELLTOWER_ROD);
+                output.accept(ModBlocks.BELLTOWER_ROOFTILES);
+                output.accept(ModBlocks.BELLTOWER_TOPPER);
+                output.accept(ModBlocks.BELLTOWER_BELL);
+                output.accept(ModBlocks.BELLTOWER_LADDER);
+                output.accept(ModBlocks.BELLTOWER_BRIDGE);
+                // Maple trees (Belltower entrance)
+                output.accept(ModBlocks.RED_MAPLE_LEAVES);
+                output.accept(ModBlocks.RED_MAPLE_SAPLING);
+                output.accept(ModBlocks.RED_MAPLE_LEAVES_PILE);
+                output.accept(ModBlocks.ORANGE_MAPLE_LEAVES);
+                output.accept(ModBlocks.ORANGE_MAPLE_SAPLING);
+                output.accept(ModBlocks.ORANGE_MAPLE_LEAVES_PILE);
+                output.accept(ModBlocks.YELLOW_MAPLE_LEAVES);
+                output.accept(ModBlocks.YELLOW_MAPLE_SAPLING);
+                output.accept(ModBlocks.YELLOW_MAPLE_LEAVES_PILE);
                 // Hyperspace Lumiose
                 output.accept(ModBlocks.HYPERSPACE_PILLAR_1);
                 output.accept(ModBlocks.HYPERSPACE_PILLAR_2);
@@ -506,15 +522,6 @@ public class ModCreativeTabs {
                 output.accept(ModBlocks.HYPERSPACE_LEAVES);
                 output.accept(ModBlocks.HYPERSPACE_SAPLING);
                 output.accept(ModBlocks.HYPERSPACE_SAPLING_FLOWERED);
-                output.accept(ModBlocks.RED_MAPLE_LEAVES);
-                output.accept(ModBlocks.RED_MAPLE_SAPLING);
-                output.accept(ModBlocks.RED_MAPLE_LEAVES_PILE);
-                output.accept(ModBlocks.ORANGE_MAPLE_LEAVES);
-                output.accept(ModBlocks.ORANGE_MAPLE_SAPLING);
-                output.accept(ModBlocks.ORANGE_MAPLE_LEAVES_PILE);
-                output.accept(ModBlocks.YELLOW_MAPLE_LEAVES);
-                output.accept(ModBlocks.YELLOW_MAPLE_SAPLING);
-                output.accept(ModBlocks.YELLOW_MAPLE_LEAVES_PILE);
                 output.accept(ModBlocks.HYPERSPACE_BUSH);
                 output.accept(ModBlocks.HYPERSPACE_BUSH_FLOWERED);
                 output.accept(ModBlocks.HYPERSPACE_BUSH_CUBE);
@@ -536,16 +543,18 @@ public class ModCreativeTabs {
                 output.accept(ModBlocks.HYPERSPACE_WOOD_PRESSURE_PLATE);
                 output.accept(ModBlocks.HYPERSPACE_SIGN_ITEM);
                 output.accept(ModBlocks.HYPERSPACE_HANGING_SIGN_ITEM);
-                output.accept(ModItems.HYPERSPACE_BOAT);
-                output.accept(ModItems.HYPERSPACE_CHEST_BOAT);
-                // Belltower construction set (plan 170), in build order
-                output.accept(ModBlocks.BELLTOWER_BEAM);
-                output.accept(ModBlocks.BELLTOWER_ROD);
-                output.accept(ModBlocks.BELLTOWER_ROOFTILES);
-                output.accept(ModBlocks.BELLTOWER_TOPPER);
-                output.accept(ModBlocks.BELLTOWER_BELL);
-                output.accept(ModBlocks.BELLTOWER_LADDER);
-                output.accept(ModBlocks.BELLTOWER_BRIDGE);
+                output.accept(ModBlocks.MEGA_SHARD_BLOCK);
+                // Megapolis
+                output.accept(ModBlocks.MEGAPOLIS_LIGHT);
+                output.accept(ModBlocks.MEGAPOLIS_STAIRS);
+                output.accept(ModBlocks.MEGAPOLIS_BARRICADE);
+                output.accept(ModBlocks.MEGAPOLIS_WALL);
+                output.accept(ModBlocks.MEGAPOLIS_ORNED_WALL);
+                output.accept(ModBlocks.MEGAPOLIS_BLOCK);
+                output.accept(ModBlocks.MEGAPOLIS_ROAD);
+                output.accept(ModBlocks.MEGAPOLIS_ROAD_PATTERN);
+                output.accept(ModBlocks.MEGAPOLIS_DOOR);
+                output.accept(ModBlocks.MEGAPOLIS_DOOR_ALT);
                 // Ultra Space set (plan 185)
                 output.accept(ModBlocks.ULTRASPACE_SAND);
                 output.accept(ModBlocks.ULTRASPACE_SAND_PATH);
@@ -570,21 +579,36 @@ public class ModCreativeTabs {
                 output.accept(ModBlocks.ULTRASPACE_CABLE_STAIRS);
                 output.accept(ModBlocks.ULTRASPACE_VINES);
                 output.accept(ModBlocks.ULTRASPACE_VINES_BLOCK);
-                output.accept(ModBlocks.MEGAPOLIS_LIGHT);
-                output.accept(ModBlocks.MEGAPOLIS_STAIRS);
-                output.accept(ModBlocks.MEGAPOLIS_BARRICADE);
-                output.accept(ModBlocks.MEGAPOLIS_WALL);
-                output.accept(ModBlocks.MEGAPOLIS_ORNED_WALL);
-                output.accept(ModBlocks.MEGAPOLIS_BLOCK);
-                output.accept(ModBlocks.MEGAPOLIS_ROAD);
-                output.accept(ModBlocks.MEGAPOLIS_ROAD_PATTERN);
-                output.accept(ModBlocks.MEGAPOLIS_DOOR);
-                output.accept(ModBlocks.MEGAPOLIS_DOOR_ALT);
-                output.accept(ModBlocks.LIGHTNINGSPOT);
                 // Ultra Warp Dive props (plan 189)
                 output.accept(ModBlocks.ULTRAWARPDIVE_POSITIVE);
                 output.accept(ModBlocks.ULTRAWARPDIVE_NEGATIVE);
                 output.accept(ModBlocks.ULTRAWARPDIVE_ROCKS);
+                // Union room decor + statues
+                output.accept(ModBlocks.UNION_ROOM_WALL);
+                output.accept(ModBlocks.UNION_ROOM_FLOOR);
+                output.accept(ModBlocks.UNION_ROOM_LIGHT);
+                output.accept(ModBlocks.UNION_ROOM_LIGHT_LINE);
+                output.accept(ModBlocks.UNION_ROOM_PILLAR);
+                output.accept(ModBlocks.UNION_ROOM_SCREEN);
+                output.accept(ModBlocks.UNION_ROOM_SCREEN_LEFT);
+                output.accept(ModBlocks.UNION_ROOM_SCREEN_RIGHT);
+                output.accept(ModBlocks.UNION_ROOM_CROWD);
+                output.accept(ModBlocks.UNION_ROOM_POKEBALL);
+                output.accept(ModBlocks.UNION_ROOM_SPOT);
+                output.accept(ModBlocks.UNION_ROOM_GLOBE);
+                output.accept(ModBlocks.ONLINE_FEATURE_PC);
+                output.accept(ModBlocks.BULBASAUR_STATUE);
+                output.accept(ModBlocks.CHARMANDER_STATUE);
+                output.accept(ModBlocks.PIKACHU_STATUE);
+                output.accept(ModBlocks.SQUIRTLE_STATUE);
+                output.accept(ModBlocks.UNION_ROOM_BRICKS_GREEN);
+                output.accept(ModBlocks.UNION_ROOM_BRICKS_YELLOW);
+                output.accept(ModBlocks.UNION_ROOM_BRICKS_BLUE);
+                output.accept(ModBlocks.UNION_ROOM_BRICKS_RED);
+                output.accept(ModBlocks.UNION_ROOM_SPOTLIGHT_GREEN);
+                output.accept(ModBlocks.UNION_ROOM_SPOTLIGHT_YELLOW);
+                output.accept(ModBlocks.UNION_ROOM_SPOTLIGHT_BLUE);
+                output.accept(ModBlocks.UNION_ROOM_SPOTLIGHT_RED);
             })
             .build();
 

@@ -23,7 +23,7 @@ public class DragonBeamAttack implements CsBossAttack {
 
     private static final int BEAMS = 8;
     private static final double BEAM_HALF_WIDTH = 1.0;
-    private static final float BEAM_DAMAGE = 8.0F; // sweeping beams fill space (i-frame gated)
+    private static final float BEAM_DAMAGE = 3.0F; // base 3 - sweeping beams fill space (i-frame gated)
     private static final double SWING_DEG = 45.0;
     private static final int SWING_PERIOD = 100; // ticks for a full up→down→up cycle
     private static final int DURATION = 240; // ≈12 s
@@ -62,7 +62,7 @@ public class DragonBeamAttack implements CsBossAttack {
         this.done = false;
         // Centered on the boss (frozen during the attack), like distortion_1; 1 block over the arena floor.
         this.originX = boss.getX();
-        this.originY = session.getTriggerPos().getY() + 1.0;
+        this.originY = session.getFloorY() + 1.0;
         this.originZ = boss.getZ();
         this.beamLength = (int) Math.ceil(CsBossAttackLib.areaReach(session));
         for (int i = 0; i < BEAMS; i++) {
@@ -74,7 +74,7 @@ public class DragonBeamAttack implements CsBossAttack {
         }
         boss.triggerAttackAnimation();
         CsBossAttackLib.sound(level, originX, originY, originZ,
-                "cobblemon:move.dragonpulse.actor", SoundSource.HOSTILE, 1.6F, 0.7F);
+                "cobblemon:move.dracometeor.actor_1", SoundSource.HOSTILE, 1.6F, 0.7F);
     }
 
     @Override
@@ -141,7 +141,7 @@ public class DragonBeamAttack implements CsBossAttack {
             double dy = wy - dir.y * t;
             double dz = wz - dir.z * t;
             if (dx * dx + dy * dy + dz * dz <= BEAM_HALF_WIDTH * BEAM_HALF_WIDTH) {
-                p.hurt(CsBossDamage.bullet(level), BEAM_DAMAGE);
+                CsBossDamage.hurt(p, session, BEAM_DAMAGE);
             }
         }
     }

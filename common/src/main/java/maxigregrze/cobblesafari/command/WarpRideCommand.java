@@ -1,6 +1,7 @@
 package maxigregrze.cobblesafari.command;
 
 import com.mojang.brigadier.context.CommandContext;
+import maxigregrze.cobblesafari.data.WarpRideTutorialSavedData;
 import maxigregrze.cobblesafari.warpride.WarpRideManager;
 import maxigregrze.cobblesafari.warpride.WarpRideSession;
 import maxigregrze.cobblesafari.warpride.network.WarpRidePayloads;
@@ -11,59 +12,14 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 
 /**
- * The Ultra Warp Ride debug launcher, operator-gated.
+ * Operator tools for the Ultra Warp Ride: stop a ride, list the live ones, reset the tutorial.
  *
- * <p>It opens a <b>parentless</b> ride: no once-per-run entry is spent - there is no parent
- * instance to carry one - no parent clock applies, and the outcome hands off to nothing. That is a
- * first-class state of {@code WarpRideManager}, not a stopgap.
- *
- * <p>An earlier revision promised this command would be deleted once the wormhole device shipped.
- * That promise is withdrawn (action plan 183, Decision section 12): {@code noBonusDistance} and the
- * difficulty columns can only be chosen by playing, that tuning is not finished, and making each
- * pass cost a full dungeon run would be a poor trade.
+ * <p>The debug launcher that opened parentless rides is gone (action plan 200, section 11): the
+ * mini-game is only reached through a wormhole device now, and nothing here can start a ride.
  */
 public final class WarpRideCommand {
 
     private WarpRideCommand() {}
-
-    static int executeStart(CommandContext<CommandSourceStack> context, ServerPlayer target) {
-        if (target == null) {
-            context.getSource().sendFailure(Component.translatable("cobblesafari.command.player_only"));
-            return 0;
-        }
-
-        WarpRideManager.OpenResult result = WarpRideManager.openDebugSession(target);
-        switch (result) {
-            case ALREADY_RIDING -> {
-                context.getSource().sendFailure(Component.translatable(
-                        "cobblesafari.command.warpride.already_riding", target.getName().getString()));
-                return 0;
-            }
-            case NO_DESTINATION -> {
-                context.getSource().sendFailure(
-                        Component.translatable("cobblesafari.command.warpride.bad_difficulty"));
-                return 0;
-            }
-            default -> {
-                context.getSource().sendSuccess(() -> Component.translatable(
-                        "cobblesafari.command.warpride.started", target.getName().getString()), true);
-                return 1;
-            }
-        }
-    }
-
-    static int executeStartSelf(CommandContext<CommandSourceStack> context) {
-        return executeStart(context, context.getSource().getPlayer());
-    }
-
-    static int executeStartOther(CommandContext<CommandSourceStack> context) {
-        try {
-            return executeStart(context, EntityArgument.getPlayer(context, "player"));
-        } catch (Exception e) {
-            context.getSource().sendFailure(Component.translatable("cobblesafari.command.player_only"));
-            return 0;
-        }
-    }
 
     static int executeStop(CommandContext<CommandSourceStack> context, ServerPlayer target) {
         if (target == null) {
@@ -89,6 +45,30 @@ public final class WarpRideCommand {
     static int executeStopOther(CommandContext<CommandSourceStack> context) {
         try {
             return executeStop(context, EntityArgument.getPlayer(context, "player"));
+        } catch (Exception e) {
+            context.getSource().sendFailure(Component.translatable("cobblesafari.command.player_only"));
+            return 0;
+        }
+    }
+
+    static int executeTutorialReset(CommandContext<CommandSourceStack> context, ServerPlayer target) {
+        if (target == null) {
+            context.getSource().sendFailure(Component.translatable("cobblesafari.command.player_only"));
+            return 0;
+        }
+        WarpRideTutorialSavedData.get(context.getSource().getServer()).reset(target.getUUID());
+        context.getSource().sendSuccess(() -> Component.translatable(
+                "cobblesafari.command.warpride.tutorial_reset", target.getName().getString()), true);
+        return 1;
+    }
+
+    static int executeTutorialResetSelf(CommandContext<CommandSourceStack> context) {
+        return executeTutorialReset(context, context.getSource().getPlayer());
+    }
+
+    static int executeTutorialResetOther(CommandContext<CommandSourceStack> context) {
+        try {
+            return executeTutorialReset(context, EntityArgument.getPlayer(context, "player"));
         } catch (Exception e) {
             context.getSource().sendFailure(Component.translatable("cobblesafari.command.player_only"));
             return 0;

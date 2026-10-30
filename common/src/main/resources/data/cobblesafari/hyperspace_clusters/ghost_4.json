@@ -109,6 +109,63 @@
           "alphaLevel": "45-47"
         }
       ]
+    },
+    {
+      "id": "quilava",
+      "weight": 0.1,
+      "rare": true,
+      "members": [
+        {
+          "pokemon": "typhlosion hisuian",
+          "rarity": 20,
+          "level": "41-43",
+          "alphaLevel": "50-52"
+        },
+        {
+          "pokemon": "quilava",
+          "rarity": 80,
+          "level": "36-38",
+          "alphaLevel": "45-47"
+        }
+      ]
+    },
+    {
+      "id": "dartrix",
+      "weight": 0.1,
+      "rare": true,
+      "members": [
+        {
+          "pokemon": "decidueye",
+          "rarity": 20,
+          "level": "41-43",
+          "alphaLevel": "50-52"
+        },
+        {
+          "pokemon": "dartrix",
+          "rarity": 80,
+          "level": "36-38",
+          "alphaLevel": "45-47"
+        }
+      ]
+    },
+    {
+      "id": "crocalor",
+      "weight": 0.1,
+      "rare": true,
+      "members": [
+        {
+          "pokemon": "skeledirge",
+          "rarity": 20,
+          "level": "41-43",
+          "alphaLevel": "50-52"
+        },
+        {
+          "pokemon": "crocalor",
+          "rarity": 80,
+          "level": "36-38",
+          "alphaLevel": "45-47"
+        }
+      ]
     }
   ]
 }

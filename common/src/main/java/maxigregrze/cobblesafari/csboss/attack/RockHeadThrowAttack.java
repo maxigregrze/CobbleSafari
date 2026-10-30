@@ -32,7 +32,7 @@ public class RockHeadThrowAttack implements CsBossAttack {
     private static final double SPAWN_HEIGHT = 3.0; // above the trigger floor, over the arena center
     private static final double CENTER_OFFSET = 1.5; // slight off-center toward one world axis
     private static final double ARC = 2.5;
-    private static final float METEOR_DAMAGE = 18.0F;
+    private static final float METEOR_DAMAGE = 7.0F; // base 7 (plan 199), × damageMultiplier du boss
 
     private final String id;
     private final RandomSource rng = RandomSource.create();
@@ -122,7 +122,7 @@ public class RockHeadThrowAttack implements CsBossAttack {
     private void spawnWave(ServerLevel level, BossBattleSession session, CsBossEntity boss) {
         List<ServerPlayer> alive = session.aliveParticipants(level);
         net.minecraft.world.phys.Vec3 center = session.getArenaCenter();
-        double headY = session.getTriggerPos().getY() + SPAWN_HEIGHT;
+        double headY = session.getFloorY() + SPAWN_HEIGHT;
         // Slight off-center offsets toward the four world axes (+X, -X, +Z, -Z).
         double[][] axes = {{CENTER_OFFSET, 0}, {-CENTER_OFFSET, 0}, {0, CENTER_OFFSET}, {0, -CENTER_OFFSET}};
         for (int i = 0; i < alive.size(); i++) {
@@ -140,7 +140,7 @@ public class RockHeadThrowAttack implements CsBossAttack {
     }
 
     private void driveRock(ServerLevel level, BossBattleSession session, Rock r, int age) {
-        double headY = session.getTriggerPos().getY() + SPAWN_HEIGHT;
+        double headY = session.getFloorY() + SPAWN_HEIGHT;
         if (age < SPIN_TICKS) {
             // Growth + tumble in place above the arena center.
             float scale = Math.min(1.0F, age / (float) GROW_TICKS);
@@ -160,7 +160,7 @@ public class RockHeadThrowAttack implements CsBossAttack {
                 r.tz = p.getZ();
             } else {
                 r.tx = r.startX;
-                r.ty = session.getTriggerPos().getY();
+                r.ty = session.getFloorY();
                 r.tz = r.startZ;
             }
             r.thrown = true;

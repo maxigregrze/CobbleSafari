@@ -24,7 +24,7 @@ public class AttackShadowballEntity extends AbstractAttackEntity {
     private static final String KEY_VX = "Vx";
     private static final String KEY_VY = "Vy";
     private static final String KEY_VZ = "Vz";
-    private static final float DAMAGE = 14.0F; // slow ball, individually dodgeable
+    private static final float DAMAGE = 6.0F; // base 6 - slow ball, individually dodgeable
 
     private Vec3 velocity = Vec3.ZERO;
     private final Set<UUID> alreadyHit = new HashSet<>();
@@ -55,7 +55,7 @@ public class AttackShadowballEntity extends AbstractAttackEntity {
                 continue;
             }
             alreadyHit.add(p.getUUID());
-            p.hurt(CsBossDamage.bullet(level), DAMAGE);
+            CsBossDamage.hurt(p, session, DAMAGE);
         }
     }
 

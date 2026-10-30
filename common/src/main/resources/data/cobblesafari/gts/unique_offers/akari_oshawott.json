@@ -3,7 +3,7 @@
   "tags": [
     "trainerspokemon"
   ],
-  "given": "oshawott level=1 form=hisui originaltrainertype=npc originaltrainer=Akari",
+  "given": "oshawott level=1 region_bias=hisui originaltrainertype=npc originaltrainer=Akari",
   "givenMarks": [
     "cobblemon:ribbon_partner"
   ],

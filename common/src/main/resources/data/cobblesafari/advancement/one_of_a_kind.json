@@ -1,7 +1,7 @@
 {
   "parent": "cobblesafari:deal_sniffer",
   "display": {
-    "icon": { "id": "minecraft:nether_star" },
+    "icon": { "id": "cobblemon:cherish_ball" },
     "title": { "translate": "advancements.cobblesafari.one_of_a_kind.title" },
     "description": { "translate": "advancements.cobblesafari.one_of_a_kind.description" },
     "frame": "goal",

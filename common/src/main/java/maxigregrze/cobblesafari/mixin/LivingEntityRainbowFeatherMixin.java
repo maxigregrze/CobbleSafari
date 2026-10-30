@@ -25,6 +25,13 @@ public abstract class LivingEntityRainbowFeatherMixin {
         if (self.level().isClientSide()) {
             return;
         }
+        // In a timed dimension the timer rescue evacuates the player instead: neither the feather
+        // nor a vanilla totem is spent (NeoForge reaches this check before its LivingDeathEvent).
+        if (self instanceof net.minecraft.server.level.ServerPlayer player
+                && maxigregrze.cobblesafari.event.DimensionTimerDeathHandler.wouldRescue(player)) {
+            cir.setReturnValue(false);
+            return;
+        }
         if (RainbowFeatherRevive.tryConsume(self, source)) {
             cir.setReturnValue(true);
         }

@@ -1,9 +1,7 @@
 {
   "parent": "cobblesafari:gambling_addiction",
   "display": {
-    "icon": {
-      "id": "minecraft:gold_ingot"
-    },
+    "icon": { "id": "cobblesafari:online_feature_pc_wonder" },
     "title": {
       "translate": "advancements.cobblesafari.most_quits_before_big.title"
     },

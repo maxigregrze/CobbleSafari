@@ -2,7 +2,6 @@ package maxigregrze.cobblesafari;
 
 import com.cobblemon.mod.common.api.spawning.spawner.PlayerSpawnerFactory;
 import maxigregrze.cobblesafari.command.CobbleSafariCommand;
-import maxigregrze.cobblesafari.command.SafariExitCommand;
 import maxigregrze.cobblesafari.config.DimensionalBanConfig;
 import maxigregrze.cobblesafari.config.IncubatorConfig;
 import maxigregrze.cobblesafari.config.MiscConfig;
@@ -101,7 +100,6 @@ public class CobbleSafari {
         DungeonDimensions.register();
         SafariTimerConfig.syncDungeonDimensionTimersFromRegistry();
         CobbleSafariCommand.register();
-        SafariExitCommand.register();
         UndergroundMinigame.registerCommon();
         ShinyBoostEvent.register();
         DimensionalBanEventHandler.registerCobblemonEvents();
@@ -123,6 +121,8 @@ public class CobbleSafari {
         PowerCaptureCatchRateHandler.register();
         PowerSalvageLootHandler.register();
         PowerFriendshipCatchHandler.register();
+        maxigregrze.cobblesafari.event.MarkCatchHandler.register();
+        maxigregrze.cobblesafari.event.UltraBeastCatchHandler.register();
         PartyBattlePowerEffects.register();
         // Ultra Space loot projectiles fire from dispensers like their vanilla counterparts (plan 192).
         net.minecraft.world.level.block.DispenserBlock.registerProjectileBehavior(ModItems.POIPOLE_ARROW);

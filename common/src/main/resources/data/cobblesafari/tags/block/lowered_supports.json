@@ -1,0 +1,17 @@
+{
+  "replace": false,
+  "values": [
+    "minecraft:dirt_path",
+    "cobblesafari:hyperspace_road",
+    "cobblesafari:hyperspace_road_plain",
+    "cobblesafari:hyperspace_road_slab",
+    "cobblesafari:hyperspace_road_plain_slab",
+    "cobblesafari:kalos_road",
+    "cobblesafari:kalos_road_plain",
+    "cobblesafari:kalos_road_slab",
+    "cobblesafari:kalos_road_plain_slab",
+    "cobblesafari:megapolis_road",
+    "cobblesafari:megapolis_road_pattern",
+    "cobblesafari:ultraspace_sand_path"
+  ]
+}

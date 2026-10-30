@@ -3,6 +3,7 @@ package maxigregrze.cobblesafari.client.renderer;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import maxigregrze.cobblesafari.CobbleSafari;
+import maxigregrze.cobblesafari.client.screen.warpride.WarpRideRiderProxy;
 import maxigregrze.cobblesafari.item.ultraloot.ReconArmorLogic;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.ElytraModel;
@@ -45,7 +46,12 @@ public class ReconElytraLayer<T extends LivingEntity, M extends EntityModel<T>> 
     @Override
     public void render(PoseStack pose, MultiBufferSource buffers, int packedLight, T entity, float limbSwing,
                        float limbSwingAmount, float partialTick, float ageInTicks, float netHeadYaw, float headPitch) {
-        if (!entity.isFallFlying() || !ReconArmorLogic.canGlide(entity)) {
+        // The warp ride's rider shows the wings whenever the set is complete, gliding allowed or not
+        // (action plan 200, decision 2.5): it is a pose, not a flight.
+        boolean show = entity instanceof WarpRideRiderProxy
+                ? ReconArmorLogic.isFullSet(entity)
+                : ReconArmorLogic.canGlide(entity);
+        if (!entity.isFallFlying() || !show) {
             return;
         }
         pose.pushPose();

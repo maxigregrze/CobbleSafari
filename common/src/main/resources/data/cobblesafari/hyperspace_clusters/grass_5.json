@@ -4,7 +4,8 @@
   "clusters": [
     {
       "id": "treecko",
-      "weight": 1,
+      "weight": 0.1,
+      "rare": true,
       "members": [
         {
           "pokemon": "sceptile",
@@ -22,7 +23,8 @@
     },
     {
       "id": "bulbasaur",
-      "weight": 1,
+      "weight": 0.1,
+      "rare": true,
       "members": [
         {
           "pokemon": "venusaur",
@@ -40,7 +42,8 @@
     },
     {
       "id": "chespin",
-      "weight": 1,
+      "weight": 0.1,
+      "rare": true,
       "members": [
         {
           "pokemon": "chesnaught",
@@ -50,6 +53,139 @@
         },
         {
           "pokemon": "chespin",
+          "rarity": 80,
+          "level": "50-52",
+          "alphaLevel": "59-61"
+        }
+      ]
+    },
+    {
+      "id": "chikorita",
+      "weight": 0.1,
+      "rare": true,
+      "members": [
+        {
+          "pokemon": "meganium",
+          "rarity": 20,
+          "level": "54-56",
+          "alphaLevel": "63-65"
+        },
+        {
+          "pokemon": "chikorita",
+          "rarity": 80,
+          "level": "50-52",
+          "alphaLevel": "59-61"
+        }
+      ]
+    },
+    {
+      "id": "turtwig",
+      "weight": 0.1,
+      "rare": true,
+      "members": [
+        {
+          "pokemon": "torterra",
+          "rarity": 20,
+          "level": "54-56",
+          "alphaLevel": "63-65"
+        },
+        {
+          "pokemon": "turtwig",
+          "rarity": 80,
+          "level": "50-52",
+          "alphaLevel": "59-61"
+        }
+      ]
+    },
+    {
+      "id": "snivy",
+      "weight": 0.1,
+      "rare": true,
+      "members": [
+        {
+          "pokemon": "serperior",
+          "rarity": 20,
+          "level": "54-56",
+          "alphaLevel": "63-65"
+        },
+        {
+          "pokemon": "snivy",
+          "rarity": 80,
+          "level": "50-52",
+          "alphaLevel": "59-61"
+        }
+      ]
+    },
+    {
+      "id": "rowlet",
+      "weight": 0.1,
+      "rare": true,
+      "members": [
+        {
+          "pokemon": "decidueye",
+          "rarity": 20,
+          "level": "54-56",
+          "alphaLevel": "63-65"
+        },
+        {
+          "pokemon": "rowlet",
+          "rarity": 80,
+          "level": "50-52",
+          "alphaLevel": "59-61"
+        }
+      ]
+    },
+    {
+      "id": "rowlet_2",
+      "weight": 0.1,
+      "rare": true,
+      "members": [
+        {
+          "pokemon": "decidueye hisuian",
+          "rarity": 20,
+          "level": "54-56",
+          "alphaLevel": "63-65"
+        },
+        {
+          "pokemon": "rowlet",
+          "rarity": 80,
+          "level": "50-52",
+          "alphaLevel": "59-61"
+        }
+      ]
+    },
+    {
+      "id": "grookey",
+      "weight": 0.1,
+      "rare": true,
+      "members": [
+        {
+          "pokemon": "rillaboom",
+          "rarity": 20,
+          "level": "54-56",
+          "alphaLevel": "63-65"
+        },
+        {
+          "pokemon": "grookey",
+          "rarity": 80,
+          "level": "50-52",
+          "alphaLevel": "59-61"
+        }
+      ]
+    },
+    {
+      "id": "sprigatito",
+      "weight": 0.1,
+      "rare": true,
+      "members": [
+        {
+          "pokemon": "meowscarada",
+          "rarity": 20,
+          "level": "54-56",
+          "alphaLevel": "63-65"
+        },
+        {
+          "pokemon": "sprigatito",
           "rarity": 80,
           "level": "50-52",
           "alphaLevel": "59-61"

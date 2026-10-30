@@ -21,7 +21,11 @@ public record OpenLostItemConfigPayload(
         String skin,
         String pokeball,
         int lootItemCount,
-        String lootItemComponents
+        String lootItemComponents,
+        LootDefaults defaults,
+        String defaultLootTableId,
+        String defaultLootItemId,
+        int defaultMode
 ) implements CustomPacketPayload {
 
     public static final CustomPacketPayload.Type<OpenLostItemConfigPayload> TYPE =
@@ -48,6 +52,10 @@ public record OpenLostItemConfigPayload(
                 buf.writeUtf(p.pokeball, MAX_STR);
                 buf.writeInt(p.lootItemCount);
                 buf.writeUtf(p.lootItemComponents, MAX_DATA);
+                LootDefaults.STREAM_CODEC.encode(buf, p.defaults);
+                buf.writeUtf(p.defaultLootTableId, MAX_STR);
+                buf.writeUtf(p.defaultLootItemId, MAX_STR);
+                buf.writeInt(p.defaultMode);
             },
             buf -> new OpenLostItemConfigPayload(
                     buf.readBlockPos(),
@@ -63,7 +71,11 @@ public record OpenLostItemConfigPayload(
                     buf.readUtf(MAX_SKIN),
                     buf.readUtf(MAX_STR),
                     buf.readInt(),
-                    buf.readUtf(MAX_DATA)
+                    buf.readUtf(MAX_DATA),
+                    LootDefaults.STREAM_CODEC.decode(buf),
+                    buf.readUtf(MAX_STR),
+                    buf.readUtf(MAX_STR),
+                    buf.readInt()
             )
     );
 

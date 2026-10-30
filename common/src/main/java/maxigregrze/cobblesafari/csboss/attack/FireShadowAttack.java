@@ -7,7 +7,9 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 /**
@@ -27,7 +29,7 @@ public class FireShadowAttack implements CsBossAttack {
     private static final int CYCLES = 2; // deterministic (2*112+16 = 240)
     private static final double COLUMN_RADIUS = 1.0;
     private static final double COLUMN_HEIGHT = 4.0;
-    private static final float FIRE_DAMAGE = 1.0F;
+    private static final float FIRE_DAMAGE = 3.0F; // base 3, une fois par colonne et par joueur (plan 199)
     private static final int FIRE_TICKS = 60;
 
     private final String id;
@@ -36,7 +38,7 @@ public class FireShadowAttack implements CsBossAttack {
     private int tick;
     private boolean done;
 
-    private record Shadow(AttackShadowEntity entity, UUID target) {}
+    private record Shadow(AttackShadowEntity entity, UUID target, Set<UUID> hit) {}
 
     public FireShadowAttack(String id) {
         this.id = id;
@@ -80,7 +82,7 @@ public class FireShadowAttack implements CsBossAttack {
         for (ServerPlayer p : session.aliveParticipants(level)) {
             AttackShadowEntity e = AttackShadowEntity.spawn(level, p.getX(), p.getY(), p.getZ(), session.getId());
             session.trackAttackEntity(e);
-            shadows.add(new Shadow(e, p.getUUID()));
+            shadows.add(new Shadow(e, p.getUUID(), new HashSet<>()));
             CsBossAttackLib.sound(level, p.getX(), p.getY(), p.getZ(),
                     "minecraft:block.fire.ambient", net.minecraft.sounds.SoundSource.HOSTILE, 0.8F, 1.2F);
         }
@@ -119,10 +121,10 @@ public class FireShadowAttack implements CsBossAttack {
                             "cobblemon:move.eruption.actor", net.minecraft.sounds.SoundSource.HOSTILE, 1.3F, 1.0F);
                 }
                 CsBossAttackLib.flameColumn(level, x, y, z, COLUMN_HEIGHT);
-                if (cycleTick % 5 == 0) {
-                    CsBossAttackLib.damagePlayersInColumn(level, session, x, y, z,
-                            COLUMN_RADIUS, COLUMN_HEIGHT, FIRE_DAMAGE, FIRE_TICKS);
-                }
+                // Une fois par colonne et par joueur (plan 199 § 2.5) : la brûlure fait le reste.
+                CsBossAttackLib.damagePlayersInColumnOnce(level, session, x, y, z,
+                        COLUMN_RADIUS, COLUMN_HEIGHT, level.damageSources().inFire(),
+                        FIRE_DAMAGE, FIRE_TICKS, s.hit());
             }
         } else if (cycleTick == DISCARD_AT) {
             for (Shadow s : shadows) {

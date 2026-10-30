@@ -1,0 +1,16 @@
+{
+  "parent": "cobblesafari:dungeons",
+  "display": {
+    "icon": { "id": "cobblesafari:hyperspace_bench" },
+    "title": { "translate": "advancements.cobblesafari.master_sitter.title" },
+    "description": { "translate": "advancements.cobblesafari.master_sitter.description" },
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "done": {"trigger": "cobblesafari:time_sitting", "conditions": {"count": 72000}}
+  },
+  "requirements": [["done"]]
+}

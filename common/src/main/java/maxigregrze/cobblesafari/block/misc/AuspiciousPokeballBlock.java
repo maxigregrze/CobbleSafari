@@ -137,7 +137,9 @@ public class AuspiciousPokeballBlock extends BaseEntityBlock {
 
         blockEntity.tryClaim(playerId);
         givePoolLoot(serverLevel, pos, serverPlayer, blockEntity);
+        ClaimSounds.playPickup(serverPlayer);
         maxigregrze.cobblesafari.objectives.ObjectivesManager.onPokeballOpened(serverPlayer);
+        maxigregrze.cobblesafari.objectives.ObjectivesManager.onAuspiciousPokeballOpened(serverPlayer);
         return InteractionResult.CONSUME;
     }
 

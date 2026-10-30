@@ -37,7 +37,7 @@ public class GhostCrossAttack implements CsBossAttack {
     private static final double MINION_HEIGHT = 1.2;
     private static final double HALF_THICK = 0.5; // 1 block thin along the travel axis
     private static final double HIT_RADIUS = 2.5;
-    private static final float DAMAGE = 8.0F;
+    private static final float DAMAGE = 3.0F; // base 3 (plan 199)
     private static final int PARTICLES_PER_TICK = 14;
     private static final double STEP_DEG = 10.0; // each volley rotates 10° from the previous (wave)
     /** Purple. */
@@ -134,7 +134,7 @@ public class GhostCrossAttack implements CsBossAttack {
         double theta = baseAngle + stepRad * sent;
         double dirX = Math.cos(theta);
         double dirZ = Math.sin(theta);
-        double baseY = session.getTriggerPos().getY() + CENTER_HEIGHT;
+        double baseY = session.getFloorY() + CENTER_HEIGHT;
         Vec3 spawn = new Vec3(boss.getX(), baseY, boss.getZ());
         CsBossMinionEntity[] minions = new CsBossMinionEntity[5];
         for (int i = 0; i < minions.length; i++) {
@@ -209,7 +209,7 @@ public class GhostCrossAttack implements CsBossAttack {
             double dx = p.getX() - cx;
             double dy = (p.getY() + p.getBbHeight() * 0.5) - cy;
             double dz = p.getZ() - cz;
-            if (dx * dx + dy * dy + dz * dz <= r2 && p.hurt(CsBossDamage.bullet(level), DAMAGE)) {
+            if (dx * dx + dy * dy + dz * dz <= r2 && CsBossDamage.hurt(p, session, DAMAGE)) {
                 f.hit.add(p.getUUID());
             }
         }

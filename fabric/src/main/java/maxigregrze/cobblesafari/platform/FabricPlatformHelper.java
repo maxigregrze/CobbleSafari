@@ -6,6 +6,7 @@ import maxigregrze.cobblesafari.underground.MiningSession;
 import maxigregrze.cobblesafari.underground.screen.UndergroundOpenData;
 import maxigregrze.cobblesafari.underground.screen.UndergroundScreenHandler;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
+import net.fabricmc.fabric.api.entity.event.v1.EntityElytraEvents;
 import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
@@ -14,6 +15,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -87,5 +89,15 @@ public class FabricPlatformHelper implements IPlatformHelper {
                         data.currentStability(), data.maxStability());
             }
         });
+    }
+
+    /**
+     * Vanilla elytra, or anything Fabric's {@code EntityElytraEvents.CUSTOM} accepts: the Recon set
+     * and {@code FabricElytraItem}s. Called with {@code tickElytra = false}, which has no side effect.
+     */
+    @Override
+    public boolean canWornElytraFly(LivingEntity entity) {
+        return IPlatformHelper.super.canWornElytraFly(entity)
+                || EntityElytraEvents.CUSTOM.invoker().useCustomElytra(entity, false);
     }
 }

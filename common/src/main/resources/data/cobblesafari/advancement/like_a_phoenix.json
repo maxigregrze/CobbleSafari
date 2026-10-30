@@ -1,0 +1,16 @@
+{
+  "parent": "cobblesafari:rise_up",
+  "display": {
+    "icon": { "id": "cobblesafari:hooh_ashes" },
+    "title": { "translate": "advancements.cobblesafari.like_a_phoenix.title" },
+    "description": { "translate": "advancements.cobblesafari.like_a_phoenix.description" },
+    "frame": "challenge",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "won": {"trigger": "cobblesafari:csboss_win", "conditions": {"dimension": "cobblesafari:dungeon_jump", "boss": "hooh"}}
+  },
+  "requirements": [["won"]]
+}

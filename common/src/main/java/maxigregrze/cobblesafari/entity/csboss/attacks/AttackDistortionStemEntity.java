@@ -24,7 +24,7 @@ public class AttackDistortionStemEntity extends AbstractAttackEntity {
             SynchedEntityData.defineId(AttackDistortionStemEntity.class, EntityDataSerializers.BOOLEAN);
 
     private static final int VERTICAL_TTL = 100; // wall: disappears faster (5 s)
-    private static final float VERTICAL_DAMAGE = 8.0F;
+    private static final float VERTICAL_DAMAGE = 3.0F; // unique : 8 / 2.5, × damageMultiplier
 
     private static final String KEY_ANGLE = "Angle";
     private static final String KEY_RADIUS = "Radius";
@@ -94,7 +94,8 @@ public class AttackDistortionStemEntity extends AbstractAttackEntity {
             if (session != null) {
                 for (net.minecraft.server.level.ServerPlayer p : session.aliveParticipants(level)) {
                     if (p.getBoundingBox().intersects(getBoundingBox())
-                            && p.hurt(maxigregrze.cobblesafari.csboss.CsBossDamage.bullet(level), VERTICAL_DAMAGE)) {
+                            && maxigregrze.cobblesafari.csboss.CsBossDamage.hurt(p, session, VERTICAL_DAMAGE)
+                            && maxigregrze.cobblesafari.csboss.CsBossDamage.stillInFight(p, level())) {
                         p.knockback(0.6, getX() - p.getX(), getZ() - p.getZ());
                     }
                 }

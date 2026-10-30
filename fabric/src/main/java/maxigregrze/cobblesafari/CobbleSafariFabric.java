@@ -1,7 +1,6 @@
 package maxigregrze.cobblesafari;
 
 import maxigregrze.cobblesafari.command.CobbleSafariCommand;
-import maxigregrze.cobblesafari.command.SafariExitCommand;
 import maxigregrze.cobblesafari.item.LuckyMiningHelmetItem;
 import maxigregrze.cobblesafari.dungeon.DungeonTeleportCountdown;
 import maxigregrze.cobblesafari.entity.BalloonSpawnHandler;
@@ -107,6 +106,7 @@ public class CobbleSafariFabric implements ModInitializer {
         FabricDefaultAttributeRegistry.register(ModEntities.CSTRADER_NPC, ModEntities.getCsTraderAttributes());
         FabricDefaultAttributeRegistry.register(ModEntities.BALLOON, ModEntities.getBalloonAttributes());
         FabricDefaultAttributeRegistry.register(ModEntities.BALLOON_SAFARI, ModEntities.getBalloonSafariAttributes());
+        FabricDefaultAttributeRegistry.register(ModEntities.SAFARI_DRONE, ModEntities.getSafariDroneAttributes());
         FabricDefaultAttributeRegistry.register(ModEntities.CSBOSS, ModEntities.getCsBossAttributes());
         FabricDefaultAttributeRegistry.register(ModEntities.CSBOSS_MINION, ModEntities.getCsBossMinionAttributes());
     }
@@ -116,6 +116,8 @@ public class CobbleSafariFabric implements ModInitializer {
         PayloadTypeRegistry.playS2C().register(ShackleSyncPayload.TYPE, ShackleSyncPayload.STREAM_CODEC);
         PayloadTypeRegistry.playS2C().register(maxigregrze.cobblesafari.network.RainbowFeatherUsedPayload.TYPE,
                 maxigregrze.cobblesafari.network.RainbowFeatherUsedPayload.STREAM_CODEC);
+        PayloadTypeRegistry.playS2C().register(maxigregrze.cobblesafari.network.RotomPhoneActivationPayload.TYPE,
+                maxigregrze.cobblesafari.network.RotomPhoneActivationPayload.STREAM_CODEC);
         PayloadTypeRegistry.playS2C().register(OpenTpAcceptPayload.TYPE, OpenTpAcceptPayload.STREAM_CODEC);
         PayloadTypeRegistry.playS2C().register(CloseTpAcceptPayload.TYPE, CloseTpAcceptPayload.STREAM_CODEC);
         PayloadTypeRegistry.playS2C().register(OpenRuneEditorPayload.TYPE, OpenRuneEditorPayload.STREAM_CODEC);
@@ -144,6 +146,10 @@ public class CobbleSafariFabric implements ModInitializer {
         PayloadTypeRegistry.playS2C().register(maxigregrze.cobblesafari.network.ObjectivesHudSyncPayload.TYPE, maxigregrze.cobblesafari.network.ObjectivesHudSyncPayload.STREAM_CODEC);
         PayloadTypeRegistry.playS2C().register(maxigregrze.cobblesafari.network.HudConfigRefreshPayload.TYPE, maxigregrze.cobblesafari.network.HudConfigRefreshPayload.STREAM_CODEC);
         PayloadTypeRegistry.playS2C().register(maxigregrze.cobblesafari.network.UltraLootConfigSyncPayload.TYPE, maxigregrze.cobblesafari.network.UltraLootConfigSyncPayload.STREAM_CODEC);
+        PayloadTypeRegistry.playS2C().register(maxigregrze.cobblesafari.network.ObstacleConfigSyncPayload.TYPE, maxigregrze.cobblesafari.network.ObstacleConfigSyncPayload.STREAM_CODEC);
+        PayloadTypeRegistry.playS2C().register(maxigregrze.cobblesafari.network.SecretBasePCConfigSyncPayload.TYPE, maxigregrze.cobblesafari.network.SecretBasePCConfigSyncPayload.STREAM_CODEC);
+        PayloadTypeRegistry.playS2C().register(maxigregrze.cobblesafari.network.OpenOnboardingPayload.TYPE, maxigregrze.cobblesafari.network.OpenOnboardingPayload.STREAM_CODEC);
+        PayloadTypeRegistry.playS2C().register(maxigregrze.cobblesafari.network.HyperspaceSkyMapPayload.TYPE, maxigregrze.cobblesafari.network.HyperspaceSkyMapPayload.STREAM_CODEC);
 
         PayloadTypeRegistry.playC2S().register(maxigregrze.cobblesafari.network.RotomPhoneActionPayload.TYPE, maxigregrze.cobblesafari.network.RotomPhoneActionPayload.STREAM_CODEC);
         PayloadTypeRegistry.playC2S().register(maxigregrze.cobblesafari.network.UnionAppPayload.TYPE, maxigregrze.cobblesafari.network.UnionAppPayload.STREAM_CODEC);
@@ -164,6 +170,7 @@ public class CobbleSafariFabric implements ModInitializer {
         );
         PayloadTypeRegistry.playC2S().register(SaveLostItemConfigPayload.TYPE, SaveLostItemConfigPayload.STREAM_CODEC);
         PayloadTypeRegistry.playC2S().register(SavePortalSpawnerConfigPayload.TYPE, SavePortalSpawnerConfigPayload.STREAM_CODEC);
+        PayloadTypeRegistry.playC2S().register(maxigregrze.cobblesafari.network.SaveOnboardingPayload.TYPE, maxigregrze.cobblesafari.network.SaveOnboardingPayload.STREAM_CODEC);
         PayloadTypeRegistry.playC2S().register(SaveAuspiciousPokeballConfigPayload.TYPE, SaveAuspiciousPokeballConfigPayload.STREAM_CODEC);
         PayloadTypeRegistry.playC2S().register(maxigregrze.cobblesafari.network.SaveCsBossTriggerConfigPayload.TYPE, maxigregrze.cobblesafari.network.SaveCsBossTriggerConfigPayload.STREAM_CODEC);
         PayloadTypeRegistry.playC2S().register(maxigregrze.cobblesafari.network.SaveCsBossMimicConfigPayload.TYPE, maxigregrze.cobblesafari.network.SaveCsBossMimicConfigPayload.STREAM_CODEC);
@@ -254,6 +261,8 @@ public class CobbleSafariFabric implements ModInitializer {
                     context.server().execute(() -> {
                         if ("dungeon".equals(payload.source())) {
                             DungeonTpAcceptHandler.handleAcceptResponse(context.player(), payload.accepted());
+                        } else if (maxigregrze.cobblesafari.safari.SafariDroneExitHandler.SOURCE.equals(payload.source())) {
+                            maxigregrze.cobblesafari.safari.SafariDroneExitHandler.handleAcceptResponse(context.player(), payload.accepted());
                         } else {
                             TeleporterTickHandler.handleAcceptResponse(context.player(), payload.accepted());
                         }
@@ -292,6 +301,15 @@ public class CobbleSafariFabric implements ModInitializer {
                         }
                     });
                 }
+        );
+
+        ServerPlayNetworking.registerGlobalReceiver(
+                maxigregrze.cobblesafari.network.SaveOnboardingPayload.TYPE,
+                (payload, context) -> context.server().execute(() -> {
+                    if (context.player() instanceof ServerPlayer sp) {
+                        maxigregrze.cobblesafari.onboarding.OnboardingService.handleSave(sp, payload);
+                    }
+                })
         );
 
         ServerPlayNetworking.registerGlobalReceiver(
@@ -521,7 +539,6 @@ public class CobbleSafariFabric implements ModInitializer {
     private void registerCommands() {
         CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
             CobbleSafariCommand.registerCommands(dispatcher, registryAccess);
-            SafariExitCommand.registerCommands(dispatcher, registryAccess);
         });
     }
 
@@ -593,6 +610,11 @@ public class CobbleSafariFabric implements ModInitializer {
             }
             return true;
         });
+        // forbidElytra (action plan 198, § 15). The common mixin already refuses the start; this
+        // also covers Fabric's own per-tick check, whatever order the injections land in.
+        net.fabricmc.fabric.api.entity.event.v1.EntityElytraEvents.ALLOW.register(entity ->
+                !(entity instanceof net.minecraft.world.entity.player.Player)
+                        || maxigregrze.cobblesafari.manager.BannedItemsManager.isElytraAllowed(entity.level().dimension()));
         ServerLivingEntityEvents.ALLOW_DAMAGE.register((entity, source, amount) ->
                 DimensionalBanEventHandler.onLivingHurt(entity, source)
                         && maxigregrze.cobblesafari.event.UltraLootDamageHandler.onLivingHurt(entity, source));

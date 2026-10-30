@@ -2,7 +2,7 @@
   "typeId": 2,
   "weight": 10,
   "structurePool": "cobblesafari:ultraspace/jungle/start",
-  "tint": "#3d732c",
+  "tint": "#339933",
   "dimension": "cobblesafari:dungeon_ultra_jungle",
   "normalPool": {
     "pokemon": [

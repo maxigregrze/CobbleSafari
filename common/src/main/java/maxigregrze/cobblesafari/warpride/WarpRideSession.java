@@ -99,18 +99,26 @@ public final class WarpRideSession {
     private final Vec3 anchor;
     private boolean bodyRestored;
 
+    /** The rider wore the full Ultra Recon set when the ride opened (action plan 200, section 6). */
+    private final boolean reconBoost;
+    /** The tutorial slideshow was shown, so the ready that ends it marks it as seen. */
+    private final boolean tutorialShown;
+
     private int outcomeRank = -1;
     private int outcomeTypeId = -1;
     private int outcomeDistance = -1;
 
+    @SuppressWarnings("java:S107")
     public WarpRideSession(UUID sessionId, UUID ownerId, long seed, UltraWarpRideConfig cfg,
-                           Vec3 anchor, long nowTick) {
+                           Vec3 anchor, long nowTick, boolean reconBoost, boolean tutorialShown) {
         this.sessionId = sessionId;
         this.ownerId = ownerId;
         this.random = RandomSource.create(seed);
         this.cfg = cfg;
         this.generator = new WaveGenerator(random, cfg);
         this.anchor = anchor;
+        this.reconBoost = reconBoost;
+        this.tutorialShown = tutorialShown;
         this.energy = cfg.startEnergy;
         this.energyCeiling = Math.max(cfg.startEnergy, cfg.startCeiling);
         this.speed = speedFromEnergy(cfg.startEnergy);
@@ -175,6 +183,14 @@ public final class WarpRideSession {
 
     public void markBodyRestored() {
         this.bodyRestored = true;
+    }
+
+    public boolean hasReconBoost() {
+        return reconBoost;
+    }
+
+    public boolean isTutorialShown() {
+        return tutorialShown;
     }
 
     public int getOutcomeRank() {
@@ -512,7 +528,7 @@ public final class WarpRideSession {
      * past the start ceiling is slow, and a long run can still reach the top (section 3.1).
      */
     private void applyPositive(long now, int waveIndex, int lane) {
-        energy += cfg.bonusEnergy;
+        energy += cfg.bonusEnergy * (reconBoost ? cfg.reconBonusFactor : 1.0);
         boolean ceilingRaised = false;
         if (energy > energyCeiling) {
             double raised = Math.min(cfg.maxCeiling, energyCeiling + cfg.ceilingStep);
@@ -525,7 +541,7 @@ public final class WarpRideSession {
     }
 
     private void applyNegative(long now, int waveIndex, int lane) {
-        energy = Math.max(0.0, energy + cfg.malusEnergy);
+        energy = Math.max(0.0, energy + cfg.malusEnergy * (reconBoost ? cfg.reconMalusFactor : 1.0));
         freezeDecay(now);
         pendingImpacts.add(new ImpactEvent(waveIndex, lane, false, energy, false));
     }

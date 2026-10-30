@@ -1,6 +1,7 @@
 package maxigregrze.cobblesafari.rotomphone;
 
 import maxigregrze.cobblesafari.block.misc.OnlineFeaturePcBlock;
+import maxigregrze.cobblesafari.config.RotomPhoneConfig;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerPlayer;
@@ -63,10 +64,33 @@ public final class OnlinePcAccess {
     }
 
     /**
-     * Shared entry gate for the phone apps: either the player owns a phone, or they are using the
-     * matching Online Feature PC block.
+     * Shared entry gate for the phone apps: either the player owns a phone on which the app is
+     * unlocked and allowed in the current dimension, or they are using the matching Online Feature
+     * PC block. The phone conditions mirror the client menu, which a modified client can skip.
      */
     public static boolean canUseApp(ServerPlayer player, OnlineFeaturePcBlock.Kind kind) {
-        return RotomPhoneServerHandler.hasPhone(player) || isUsingOnlinePc(player, kind);
+        return canUseFromPhone(player, kind) || isUsingOnlinePc(player, kind);
+    }
+
+    private static boolean canUseFromPhone(ServerPlayer player, OnlineFeaturePcBlock.Kind kind) {
+        if (!RotomPhoneServerHandler.hasPhone(player)) {
+            return false;
+        }
+        String appId = appIdOf(kind);
+        if (appId == null || !RotomPhoneConfigSync.isAppUnlockedByPlayer(player, appId)) {
+            return false;
+        }
+        RotomPhoneConfig.PhoneAppConfig cfg = RotomPhoneConfig.getPhoneApps().get(appId);
+        String dimKey = player.level().dimension().location().toString();
+        return cfg == null || !cfg.getBannedDimensions().contains(dimKey);
+    }
+
+    private static String appIdOf(OnlineFeaturePcBlock.Kind kind) {
+        return switch (kind) {
+            case GTS -> "gtsApp";
+            case WONDER -> "wonderApp";
+            case UNION -> "unionApp";
+            case LEGACY -> null;
+        };
     }
 }

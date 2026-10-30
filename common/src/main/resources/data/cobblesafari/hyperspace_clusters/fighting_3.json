@@ -106,7 +106,8 @@
     },
     {
       "id": "tepig",
-      "weight": 2,
+      "weight": 0.2,
+      "rare": true,
       "members": [
         {
           "pokemon": "pignite",
@@ -131,6 +132,44 @@
           "rarity": 100,
           "level": "22-24",
           "alphaLevel": "31-33"
+        }
+      ]
+    },
+    {
+      "id": "torchic",
+      "weight": 0.1,
+      "rare": true,
+      "members": [
+        {
+          "pokemon": "combusken",
+          "rarity": 20,
+          "level": "23-25",
+          "alphaLevel": "32-34"
+        },
+        {
+          "pokemon": "torchic",
+          "rarity": 80,
+          "level": "20-22",
+          "alphaLevel": "29-31"
+        }
+      ]
+    },
+    {
+      "id": "chimchar",
+      "weight": 0.1,
+      "rare": true,
+      "members": [
+        {
+          "pokemon": "monferno",
+          "rarity": 20,
+          "level": "23-25",
+          "alphaLevel": "32-34"
+        },
+        {
+          "pokemon": "chimchar",
+          "rarity": 80,
+          "level": "20-22",
+          "alphaLevel": "29-31"
         }
       ]
     }

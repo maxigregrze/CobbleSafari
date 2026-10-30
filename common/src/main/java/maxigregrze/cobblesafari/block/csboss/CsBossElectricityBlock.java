@@ -14,6 +14,8 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.EntityBlock;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
@@ -29,9 +31,10 @@ import java.util.UUID;
  * Trap electric field placed by {@code base_electric_2}. Cycle managed by the block
  * itself (scheduled tick), independent of the attack: charge 3 s ({@code ACTIVE=false}, animated
  * texture) → active 3 s ({@code ACTIVE=true}) → removal. When active, strikes any player on
- * contact, with a 2 s cooldown per player.
+ * contact, with a 2 s cooldown per player. On removal, the decoration it replaced comes back
+ * ({@link CsBossTileBlockEntity}).
  */
-public class CsBossElectricityBlock extends Block {
+public class CsBossElectricityBlock extends Block implements EntityBlock {
 
     public static final BooleanProperty ACTIVE = BooleanProperty.create("active");
 
@@ -52,6 +55,11 @@ public class CsBossElectricityBlock extends Block {
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
         builder.add(ACTIVE);
+    }
+
+    @Override
+    public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
+        return new CsBossTileBlockEntity(pos, state);
     }
 
     @Override
@@ -77,7 +85,7 @@ public class CsBossElectricityBlock extends Block {
             level.scheduleTick(pos, this, ACTIVE_TICKS);
         } else {
             level.levelEvent(2001, pos, Block.getId(state));
-            level.removeBlock(pos, false);
+            CsBossTileBlockEntity.restore(level, pos);
         }
     }
 

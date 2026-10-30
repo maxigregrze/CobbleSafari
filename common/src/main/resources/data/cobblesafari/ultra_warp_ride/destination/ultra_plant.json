@@ -2,7 +2,7 @@
   "typeId": 4,
   "weight": 10,
   "structurePool": "cobblesafari:ultraspace/plant/start",
-  "tint": "#fdeb26",
+  "tint": "#ffff00",
   "dimension": "cobblesafari:dungeon_ultra_plant",
   "normalPool": {
     "pokemon": [

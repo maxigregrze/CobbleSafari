@@ -1,0 +1,10 @@
+{
+	"variants": {
+		"active=false": {
+			"model": "cobblesafari:block/attack_scorched_charging"
+		},
+		"active=true": {
+			"model": "cobblesafari:block/attack_scorched"
+		}
+	}
+}

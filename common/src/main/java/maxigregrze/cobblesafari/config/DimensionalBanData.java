@@ -58,6 +58,7 @@ public class DimensionalBanData {
         // Bell Tower is a jumping dungeon: the Roto-Fall guard cancels every fall and Roto-Glide hands
         // out a free second storey, which is precisely what the tower is meant to charge for.
         dungeonJumpRestrictions.allowRotomSafety = false;
+        dungeonJumpRestrictions.forbidElytra = true;
         dimensions.put("cobblesafari:dungeon_jump", dungeonJumpRestrictions);
 
         
@@ -81,6 +82,7 @@ public class DimensionalBanData {
         dungeonDistortionRestrictions.allowBlockPlacing = false;
         dungeonDistortionRestrictions.bannedItems.add("minecraft:firework_rocket");
         dungeonDistortionRestrictions.forbidMounting = true;
+        dungeonDistortionRestrictions.forbidElytra = true;
         dimensions.put("cobblesafari:dungeon_distortion", dungeonDistortionRestrictions);
 
         // Action plan 183, S20 - "the lawless pocket". A dimension shipped without its own entry
@@ -92,6 +94,7 @@ public class DimensionalBanData {
         dungeonMegalopolisRestrictions.allowBlockBreaking = false;
         dungeonMegalopolisRestrictions.allowBlockPlacing = false;
         dungeonMegalopolisRestrictions.forbidMounting = true;
+        dungeonMegalopolisRestrictions.forbidElytra = true;
         dimensions.put("cobblesafari:dungeon_megalopolis", dungeonMegalopolisRestrictions);
 
         dimensions.put("cobblesafari:dungeon_ultraspace", defaultDungeonRestrictions());
@@ -110,9 +113,10 @@ public class DimensionalBanData {
     }
 
     /**
-     * The strict dungeon profile: battles allowed, nothing built or broken, no mounting. It is the
-     * {@code dungeon_jump} profile of plan 183 S20, and the default handed to any dimension
-     * registered through {@code DungeonRegistrationAPI} that does not already have an entry.
+     * The strict dungeon profile: battles allowed, nothing built or broken, no mounting and no
+     * elytra (action plan 198, § 15). It is the {@code dungeon_jump} profile of plan 183 S20, and
+     * the default handed to any dimension registered through {@code DungeonRegistrationAPI} that
+     * does not already have an entry.
      *
      * <p>Returns a fresh instance every call on purpose: the restrictions object is mutable and
      * server owners edit it per dimension, so sharing one between entries would make an edit to any
@@ -124,6 +128,7 @@ public class DimensionalBanData {
         restrictions.allowBlockBreaking = false;
         restrictions.allowBlockPlacing = false;
         restrictions.forbidMounting = true;
+        restrictions.forbidElytra = true;
         return restrictions;
     }
 
@@ -140,6 +145,12 @@ public class DimensionalBanData {
          * is suppressed. Permissive by default, like the three allow* flags above.
          */
         public boolean allowRotomSafety = true;
+        /**
+         * Elytra flight of any kind - vanilla elytra, the full Ultra Recon set, another mod's
+         * chestplate elytra - and with it firework propulsion, which only works while gliding
+         * (action plan 198, § 15). Permissive by default, like {@code forbidMounting}.
+         */
+        public boolean forbidElytra = false;
 
         public DimensionRestrictions() {
             // Required no-arg constructor for GSON deserialization.

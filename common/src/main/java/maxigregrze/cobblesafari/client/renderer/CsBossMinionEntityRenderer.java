@@ -60,6 +60,9 @@ public class CsBossMinionEntityRenderer extends EntityRenderer<CsBossMinionEntit
     public void render(CsBossMinionEntity minion, float yaw, float partialTicks, PoseStack ps,
                        MultiBufferSource buffer, int packedLight) {
         purgeStaleStates();
+        if (minion.isInvisible()) {
+            return; // clignotement de fuite / réapparition (CsBossVanish)
+        }
         String specie = minion.getSpecie();
         if (specie != null && !specie.isBlank()) {
             try {
@@ -85,6 +88,16 @@ public class CsBossMinionEntityRenderer extends EntityRenderer<CsBossMinionEntit
 
         float limbSwing = minion.walkAnimation.position(partialTicks);
         float limbSwingAmount = Math.min(1.0f, minion.walkAnimation.speed(partialTicks));
+        com.cobblemon.mod.common.entity.PoseType forcedPose = switch (minion.getForcedPose()) {
+            case CsBossMinionEntity.POSE_WALK -> com.cobblemon.mod.common.entity.PoseType.WALK;
+            case CsBossMinionEntity.POSE_FLY -> com.cobblemon.mod.common.entity.PoseType.FLY;
+            default -> null;
+        };
+        if (forcedPose != null) {
+            // Déplacé par code (setPos) : on anime les membres à pleine allure plutôt que via la vitesse mesurée.
+            limbSwing = (minion.tickCount + partialTicks) * 0.8f;
+            limbSwingAmount = 1.0f;
+        }
         float scale = info.baseScale() * minion.getRenderScale();
         float bodyYaw = Mth.rotLerp(partialTicks, minion.yBodyRotO, minion.yBodyRot);
 
@@ -112,7 +125,7 @@ public class CsBossMinionEntityRenderer extends EntityRenderer<CsBossMinionEntit
                 : net.minecraft.client.renderer.texture.OverlayTexture.NO_OVERLAY;
         CsBossModelRenderer.render(ps, buffer, packedLight, overlay, minion, info, state,
                 scale, minion.getAlpha(), bodyYaw, limbSwing, limbSwingAmount,
-                minion.tickCount + partialTicks, partialTicks, afterPose);
+                minion.tickCount + partialTicks, partialTicks, afterPose, forcedPose);
     }
 
     /** Battle-animation priority: first existing wins; if none exist, no animation plays. */

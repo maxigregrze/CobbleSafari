@@ -1,0 +1,15 @@
+{
+  "vertex": "cobblesafari:hyperspace_sky",
+  "fragment": "cobblesafari:hyperspace_sky",
+  "samplers": [
+    { "name": "Sampler0" },
+    { "name": "Sampler1" },
+    { "name": "Sampler2" }
+  ],
+  "uniforms": [
+    { "name": "InvViewProj", "type": "matrix4x4", "count": 16, "values": [ 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0 ] },
+    { "name": "CsTime", "type": "float", "count": 1, "values": [ 0.0 ] },
+    { "name": "MapMode", "type": "int", "count": 1, "values": [ 0 ] },
+    { "name": "OverlayMode", "type": "int", "count": 1, "values": [ 0 ] }
+  ]
+}

@@ -24,7 +24,7 @@ public class AttackWaveEntity extends AbstractAttackEntity {
     private static final String KEY_VX = "Vx";
     private static final String KEY_VY = "Vy";
     private static final String KEY_VZ = "Vz";
-    private static final float DAMAGE = 12.0F; // slow, telegraphed wave; dodgeable
+    private static final float DAMAGE = 5.0F; // base 5 - slow, telegraphed wave; dodgeable
     private static final double KNOCKBACK = 1.2;
 
     private Vec3 velocity = Vec3.ZERO;
@@ -56,7 +56,10 @@ public class AttackWaveEntity extends AbstractAttackEntity {
                 continue;
             }
             alreadyHit.add(p.getUUID());
-            p.hurt(CsBossDamage.bullet(level), DAMAGE);
+            CsBossDamage.hurt(p, session, DAMAGE);
+            if (!CsBossDamage.stillInFight(p, level())) {
+                continue;
+            }
             // Knocks the player in the wave's direction of travel (they cannot pass through it).
             p.knockback(KNOCKBACK, -velocity.x, -velocity.z);
         }

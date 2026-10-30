@@ -109,6 +109,25 @@
           "alphaLevel": "33-35"
         }
       ]
+    },
+    {
+      "id": "mudkip",
+      "weight": 0.1,
+      "rare": true,
+      "members": [
+        {
+          "pokemon": "marshtomp",
+          "rarity": 20,
+          "level": "23-25",
+          "alphaLevel": "32-34"
+        },
+        {
+          "pokemon": "mudkip",
+          "rarity": 80,
+          "level": "20-22",
+          "alphaLevel": "29-31"
+        }
+      ]
     }
   ]
 }

@@ -7,6 +7,7 @@ import maxigregrze.cobblesafari.entity.CsTraderEntity;
 import maxigregrze.cobblesafari.entity.HikerEntity;
 import maxigregrze.cobblesafari.entity.HyperspaceBoatEntity;
 import maxigregrze.cobblesafari.entity.HyperspaceChestBoatEntity;
+import maxigregrze.cobblesafari.entity.SafariDroneEntity;
 import maxigregrze.cobblesafari.entity.SeatEntity;
 import maxigregrze.cobblesafari.entity.csboss.CsBossBulletEntity;
 import maxigregrze.cobblesafari.entity.csboss.CsBossEntity;
@@ -88,6 +89,17 @@ public class ModEntities {
                     .build(CobbleSafari.MOD_ID + ":balloon_safari")
     );
 
+    public static final EntityType<SafariDroneEntity> SAFARI_DRONE = Registry.register(
+            BuiltInRegistries.ENTITY_TYPE,
+            ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, "safari_drone"),
+            EntityType.Builder.<SafariDroneEntity>of(SafariDroneEntity::new, MobCategory.MISC)
+                    .sized(1.0f, 1.2f)
+                    .clientTrackingRange(10)
+                    .updateInterval(3)
+                    .fireImmune()
+                    .build(CobbleSafari.MOD_ID + ":safari_drone")
+    );
+
     public static final EntityType<HyperspaceBoatEntity> HYPERSPACE_BOAT = Registry.register(
             BuiltInRegistries.ENTITY_TYPE,
             ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, "hyperspace_boat"),
@@ -122,6 +134,10 @@ public class ModEntities {
 
     public static AttributeSupplier.Builder getBalloonSafariAttributes() {
         return BalloonSafariEntity.createAttributes();
+    }
+
+    public static AttributeSupplier.Builder getSafariDroneAttributes() {
+        return SafariDroneEntity.createAttributes();
     }
 
     public static final EntityType<ThrownMudBallEntity> THROWN_MUD_BALL = Registry.register(
@@ -461,6 +477,86 @@ public class ModEntities {
                     .noSummon()
                     .noSave()
                     .build(CobbleSafari.MOD_ID + ":seat")
+    );
+
+    // Ho-Oh (plan 199 § 10)
+    public static final EntityType<maxigregrze.cobblesafari.entity.csboss.attacks.AttackBellEntity> ATTACK_BELL = Registry.register(
+            BuiltInRegistries.ENTITY_TYPE,
+            ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, "attack_bell"),
+            EntityType.Builder.<maxigregrze.cobblesafari.entity.csboss.attacks.AttackBellEntity>of(
+                            maxigregrze.cobblesafari.entity.csboss.attacks.AttackBellEntity::new, MobCategory.MISC)
+                    .sized(2.0f, 2.5f)
+                    .clientTrackingRange(12)
+                    .updateInterval(1)
+                    .fireImmune()
+                    .noSave()
+                    .build(CobbleSafari.MOD_ID + ":attack_bell")
+    );
+
+    public static final EntityType<maxigregrze.cobblesafari.entity.csboss.attacks.AttackTornadoEntity> ATTACK_TORNADO = Registry.register(
+            BuiltInRegistries.ENTITY_TYPE,
+            ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, "attack_tornado"),
+            EntityType.Builder.<maxigregrze.cobblesafari.entity.csboss.attacks.AttackTornadoEntity>of(
+                            maxigregrze.cobblesafari.entity.csboss.attacks.AttackTornadoEntity::new, MobCategory.MISC)
+                    .sized(1.5f, 3.0f)
+                    .clientTrackingRange(12)
+                    .updateInterval(1)
+                    .fireImmune()
+                    .noSave()
+                    .build(CobbleSafari.MOD_ID + ":attack_tornado")
+    );
+
+    public static final EntityType<maxigregrze.cobblesafari.entity.csboss.attacks.AttackAirSlashEntity> ATTACK_AIR_SLASH = Registry.register(
+            BuiltInRegistries.ENTITY_TYPE,
+            ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, "attack_air_slash"),
+            EntityType.Builder.<maxigregrze.cobblesafari.entity.csboss.attacks.AttackAirSlashEntity>of(
+                            maxigregrze.cobblesafari.entity.csboss.attacks.AttackAirSlashEntity::new, MobCategory.MISC)
+                    .sized(1.6f, 0.5f)
+                    .clientTrackingRange(12)
+                    .updateInterval(1)
+                    .fireImmune()
+                    .noSave()
+                    .build(CobbleSafari.MOD_ID + ":attack_air_slash")
+    );
+
+    public static final EntityType<maxigregrze.cobblesafari.entity.csboss.attacks.AttackZoneRingEntity> ATTACK_ZONE_RING = Registry.register(
+            BuiltInRegistries.ENTITY_TYPE,
+            ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, "attack_zone_ring"),
+            EntityType.Builder.<maxigregrze.cobblesafari.entity.csboss.attacks.AttackZoneRingEntity>of(
+                            maxigregrze.cobblesafari.entity.csboss.attacks.AttackZoneRingEntity::new, MobCategory.MISC)
+                    .sized(0.5f, 0.1f)
+                    .clientTrackingRange(16)
+                    .updateInterval(1)
+                    .fireImmune()
+                    .noSave()
+                    .build(CobbleSafari.MOD_ID + ":attack_zone_ring")
+    );
+
+    public static final EntityType<maxigregrze.cobblesafari.entity.csboss.attacks.AttackLaneShadowEntity> ATTACK_LANE_SHADOW = Registry.register(
+            BuiltInRegistries.ENTITY_TYPE,
+            ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, "attack_lane_shadow"),
+            EntityType.Builder.<maxigregrze.cobblesafari.entity.csboss.attacks.AttackLaneShadowEntity>of(
+                            maxigregrze.cobblesafari.entity.csboss.attacks.AttackLaneShadowEntity::new, MobCategory.MISC)
+                    .sized(0.5f, 0.1f)
+                    .clientTrackingRange(16)
+                    .updateInterval(1)
+                    .fireImmune()
+                    .noSave()
+                    .build(CobbleSafari.MOD_ID + ":attack_lane_shadow")
+    );
+
+    /** Porteur générique (plan 199 § 6) : sauvegardé (reprise du trajet via RootVehicle), mise à jour chaque tick. */
+    public static final EntityType<maxigregrze.cobblesafari.entity.carrier.CarrierEntity> CARRIER = Registry.register(
+            BuiltInRegistries.ENTITY_TYPE,
+            ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, "carrier"),
+            EntityType.Builder.<maxigregrze.cobblesafari.entity.carrier.CarrierEntity>of(
+                            maxigregrze.cobblesafari.entity.carrier.CarrierEntity::new, MobCategory.MISC)
+                    .sized(0.2f, 0.2f)
+                    .clientTrackingRange(10)
+                    .updateInterval(1)
+                    .noSummon()
+                    .fireImmune()
+                    .build(CobbleSafari.MOD_ID + ":carrier")
     );
 
     public static AttributeSupplier.Builder getCsBossAttributes() {

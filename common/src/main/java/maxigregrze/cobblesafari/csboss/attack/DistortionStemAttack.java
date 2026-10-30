@@ -26,7 +26,7 @@ public class DistortionStemAttack implements CsBossAttack {
     private static final double FORWARD = 1.5;
     private static final int DURATION = 240; // ≈12 s
     private static final float SPIN_DEG_PER_TICK = 1.0F; // slow boss rotation
-    private static final float STEM_DAMAGE = 10.0F; // 5 hearts
+    private static final float STEM_DAMAGE = 4.0F; // unique : 10 / 2.5 (Giratina inchangé), × damageMultiplier
     private static final double KNOCKBACK = 0.7;
 
     private final String id;
@@ -116,7 +116,7 @@ public class DistortionStemAttack implements CsBossAttack {
                 if (!p.getBoundingBox().intersects(stem.getBoundingBox())) {
                     continue;
                 }
-                if (p.hurt(CsBossDamage.bullet(level), STEM_DAMAGE)) {
+                if (CsBossDamage.hurt(p, session, STEM_DAMAGE) && CsBossDamage.stillInFight(p, level)) {
                     p.knockback(KNOCKBACK, boss.getX() - p.getX(), boss.getZ() - p.getZ());
                 }
             }

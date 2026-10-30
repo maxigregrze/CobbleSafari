@@ -1,0 +1,8 @@
+{
+    "name": "cobblemon.mark.cobblesafari.ribbon_dungeon_ultraspace",
+    "title": "cobblemon.mark.cobblesafari.ribbon_dungeon_ultraspace.title",
+	"titleColor": "8a5cf6",
+	"description": "cobblemon.mark.cobblesafari.ribbon_dungeon_ultraspace.desc",
+	"texture": "cobblesafari:textures/gui/mark/ribbon_dungeon_ultraspace.png",
+	"indexNumber": 68
+}

@@ -140,7 +140,8 @@ public class AuspiciousPokeballGoldBlockEntity extends AuspiciousPokeballBlockEn
                 this.getMinRoll(),
                 this.getMaxRoll(),
                 this.earnable,
-                this.getEarnersCopy()
+                this.getEarnersCopy(),
+                this.configDefaults()
         );
     }
 

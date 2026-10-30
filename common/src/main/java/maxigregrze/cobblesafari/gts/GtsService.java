@@ -13,6 +13,7 @@ import com.cobblemon.mod.common.pokemon.Pokemon;
 import maxigregrze.cobblesafari.CobbleSafari;
 import maxigregrze.cobblesafari.config.GtsSettings;
 import maxigregrze.cobblesafari.data.GtsSavedData;
+import maxigregrze.cobblesafari.onboarding.SpeciesAvailability;
 import maxigregrze.cobblesafari.security.TradeNbtSanitizer;
 import maxigregrze.cobblesafari.security.WishLineValidator;
 import net.minecraft.nbt.CompoundTag;
@@ -479,6 +480,8 @@ public final class GtsService {
         BANNED_WISH,
         INCOMPATIBLE_GENDER,
         INVALID_LEVEL_BUCKET,
+        /** Not implemented by Cobblemon and its category not enabled in the onboarding (plan 198, section 9). */
+        SPECIES_UNAVAILABLE,
         ERROR
     }
 
@@ -502,9 +505,23 @@ public final class GtsService {
         if (matches.isEmpty()) {
             return AddUniqueOfferOutcome.fail(AddUniqueOfferResult.NO_TAG_MATCH);
         }
+        List<GtsUniqueOfferDefinition> available = matches.stream().filter(GtsService::isOfferAvailable).toList();
+        if (available.isEmpty()) {
+            return AddUniqueOfferOutcome.fail(AddUniqueOfferResult.SPECIES_UNAVAILABLE);
+        }
         RandomSource rng = server.overworld().getRandom();
-        GtsUniqueOfferDefinition chosen = matches.get(rng.nextInt(matches.size()));
+        GtsUniqueOfferDefinition chosen = available.get(rng.nextInt(available.size()));
         return publishUniqueOffer(server, chosen.getOfferId(), null);
+    }
+
+    /**
+     * Whether both the given and the wished species may be handed out (action plan 198, section 9.2).
+     * Tested when an offer is published rather than when templates load, so an onboarding change
+     * applies at once.
+     */
+    private static boolean isOfferAvailable(GtsUniqueOfferDefinition def) {
+        return SpeciesAvailability.isAllowed(def.getGivenLine())
+                && SpeciesAvailability.isAllowed(def.getWishSpeciesLine());
     }
 
     /**
@@ -520,6 +537,9 @@ public final class GtsService {
             return AddUniqueOfferOutcome.fail(AddUniqueOfferResult.UNKNOWN_OFFER_ID);
         }
         GtsUniqueOfferDefinition def = defOpt.get();
+        if (!isOfferAvailable(def)) {
+            return AddUniqueOfferOutcome.fail(AddUniqueOfferResult.SPECIES_UNAVAILABLE);
+        }
         GtsSettings cfg = GtsSettings.get();
         GtsSavedData data = GtsSavedData.get(server);
 
@@ -578,6 +598,7 @@ public final class GtsService {
         INCOMPATIBLE_GENDER,
         INVALID_LEVEL_BUCKET,
         ALREADY_HAS_PERSONAL,
+        SPECIES_UNAVAILABLE,
         ERROR
     }
 
@@ -612,6 +633,10 @@ public final class GtsService {
         if (matches.isEmpty()) {
             return AddPersonalOfferOutcome.fail(AddPersonalOfferResult.NO_TAG_MATCH);
         }
+        List<GtsUniqueOfferDefinition> available = matches.stream().filter(GtsService::isOfferAvailable).toList();
+        if (available.isEmpty()) {
+            return AddPersonalOfferOutcome.fail(AddPersonalOfferResult.SPECIES_UNAVAILABLE);
+        }
         GtsSavedData data = GtsSavedData.get(server);
         Set<String> owned =
                 data.getOffers().stream()
@@ -619,7 +644,7 @@ public final class GtsService {
                         .map(GtsOffer::getUniqueOfferTemplateId)
                         .collect(Collectors.toSet());
         List<GtsUniqueOfferDefinition> avail =
-                matches.stream().filter(d -> !owned.contains(d.getOfferId())).toList();
+                available.stream().filter(d -> !owned.contains(d.getOfferId())).toList();
         if (avail.isEmpty()) {
             return AddPersonalOfferOutcome.fail(AddPersonalOfferResult.ALREADY_HAS_PERSONAL);
         }
@@ -660,6 +685,7 @@ public final class GtsService {
                     case BANNED_WISH -> AddPersonalOfferResult.BANNED_WISH;
                     case INCOMPATIBLE_GENDER -> AddPersonalOfferResult.INCOMPATIBLE_GENDER;
                     case INVALID_LEVEL_BUCKET -> AddPersonalOfferResult.INVALID_LEVEL_BUCKET;
+                    case SPECIES_UNAVAILABLE -> AddPersonalOfferResult.SPECIES_UNAVAILABLE;
                     case ERROR -> AddPersonalOfferResult.ERROR;
                 };
         if (mapped == AddPersonalOfferResult.SUCCESS) {

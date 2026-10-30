@@ -11,7 +11,7 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.world.level.block.state.BlockState;
 
 /**
- * Mimic renderer: when the block is "solid" (active == reverse), draws the model of the configured
+ * Mimic renderer: when the block is "solid" ({@link CsBossMimicBlock#isSolid}), draws the model of the configured
  * target block in the state the server resolved for this position - so a run of mimics shows the
  * same connected models a run of real blocks would. Renders nothing when invisible: survival
  * invisibility relies on this, the creative outline coming from {@code getShape}.
@@ -33,17 +33,13 @@ public class CsBossMimicBlockEntityRenderer implements BlockEntityRenderer<CsBos
     public void render(CsBossMimicBlockEntity blockEntity, float partialTick, PoseStack poseStack,
                        MultiBufferSource bufferSource, int packedLight, int packedOverlay) {
         BlockState state = blockEntity.getBlockState();
-        if (!state.hasProperty(CsBossMimicBlock.ACTIVE) || !state.hasProperty(CsBossMimicBlock.REVERSE)) {
-            return;
-        }
-        boolean solid = state.getValue(CsBossMimicBlock.ACTIVE) == state.getValue(CsBossMimicBlock.REVERSE);
-        if (!solid) {
+        if (!(state.getBlock() instanceof CsBossMimicBlock) || !CsBossMimicBlock.isSolid(state)) {
             return;
         }
 
         BlockState resolved = blockEntity.getResolvedMimicState();
         if (resolved == null) {
-            resolved = CsBossMimicBlock.targetBlock(blockEntity.getMimicBlockId()).defaultBlockState();
+            resolved = CsBossMimicBlock.targetBlock(blockEntity.getTargetId(state)).defaultBlockState();
         }
         // The Ultra Warp Dive rocks have no baked render at all (their block entity renderer draws
         // them, glint included), so renderSingleBlock would show nothing; every other target keeps

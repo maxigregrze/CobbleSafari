@@ -1,6 +1,5 @@
 package maxigregrze.cobblesafari.block.hyperspace;
 
-import maxigregrze.cobblesafari.config.MiscConfig;
 import maxigregrze.cobblesafari.dungeon.hyperspace.obstacle.ObstacleClearAction;
 import maxigregrze.cobblesafari.dungeon.hyperspace.obstacle.ObstacleKind;
 import net.minecraft.core.BlockPos;
@@ -60,6 +59,14 @@ public class ObstacleBlock extends Block {
             Block.box(1, 0, 1, 15, 8, 15),
             Block.box(2, 8, 2, 14, 14, 14),
             Block.box(4, 14, 4, 12, 20, 12));
+    /** Floor shape of the shard cluster; {@link ShardClusterBlock} turns it to walls and ceilings. */
+    static final VoxelShape SHAPE_SHARDCLUSTER = Shapes.or(
+            Block.box(0, 0, 0, 16, 5, 16),
+            Block.box(1, 5, 1, 15, 10, 15),
+            Block.box(-1, 5, 5, 17, 13, 11),
+            Block.box(5, 5, -1, 11, 13, 17),
+            Block.box(5, 5, 5, 11, 15, 11),
+            Block.box(6.5, 15, 6.5, 9.5, 17, 9.5));
 
     private final ObstacleKind kind;
     private final VoxelShape shape;
@@ -71,6 +78,7 @@ public class ObstacleBlock extends Block {
             case BOULDER -> SHAPE_BOULDER;
             case BRAMBLES -> SHAPE_BRAMBLES;
             case SLUDGE -> SHAPE_SLUDGE;
+            case SHARDCLUSTER -> SHAPE_SHARDCLUSTER;
         };
         registerDefaultState(stateDefinition.any().setValue(CLEARED, false));
     }
@@ -88,7 +96,7 @@ public class ObstacleBlock extends Block {
     public void clear(ServerLevel level, BlockPos pos, BlockState state) {
         level.levelEvent(LevelEvent.PARTICLES_DESTROY_BLOCK, pos, Block.getId(state));
         level.setBlock(pos, state.setValue(CLEARED, true), Block.UPDATE_ALL);
-        level.scheduleTick(pos, this, MiscConfig.getObstacleRespawnSeconds() * 20);
+        level.scheduleTick(pos, this, kind.respawnSeconds() * 20);
     }
 
     @Override
@@ -96,7 +104,7 @@ public class ObstacleBlock extends Block {
         if (!state.getValue(CLEARED)) {
             return;
         }
-        if (!level.getEntitiesOfClass(LivingEntity.class, COLLISION.bounds().move(pos)).isEmpty()) {
+        if (!level.getEntitiesOfClass(LivingEntity.class, standingCollision(state).bounds().move(pos)).isEmpty()) {
             level.scheduleTick(pos, this, OCCUPIED_RETRY_TICKS);
             return;
         }
@@ -115,16 +123,26 @@ public class ObstacleBlock extends Block {
         if (state.getValue(CLEARED) && !isCreative(context)) {
             return Shapes.empty();
         }
-        return shape;
+        return standingShape(state);
     }
 
     @Override
     protected VoxelShape getCollisionShape(BlockState state, BlockGetter level, BlockPos pos,
                                            CollisionContext context) {
-        return state.getValue(CLEARED) ? Shapes.empty() : COLLISION;
+        return state.getValue(CLEARED) ? Shapes.empty() : standingCollision(state);
     }
 
-    private static boolean isCreative(CollisionContext context) {
+    /** Selection box of the standing obstacle. */
+    protected VoxelShape standingShape(BlockState state) {
+        return shape;
+    }
+
+    /** Collision of the standing obstacle: a fence-high cell. */
+    protected VoxelShape standingCollision(BlockState state) {
+        return COLLISION;
+    }
+
+    protected static boolean isCreative(CollisionContext context) {
         return context instanceof EntityCollisionContext entityContext
                 && entityContext.getEntity() instanceof Player player && player.isCreative();
     }

@@ -5,10 +5,5 @@
 	"description": "cobblemon.mark.cobblesafari.safari.desc",
 	"texture": "cobblesafari:textures/gui/mark/mark_safari.png",
 	"indexNumber": 5,
-    "chance": 1,
-    "spawnConditions": [
-        {
-            "dimensions": ["coblesafari:domedimension"]
-        }
-    ]
+    "chance": 0
 }

@@ -1,0 +1,16 @@
+{
+  "parent": "cobblesafari:ultra_megalopolis",
+  "display": {
+    "icon": { "id": "cobblesafari:recon_armor_helmet" },
+    "title": { "translate": "advancements.cobblesafari.ultra_recon_squad.title" },
+    "description": { "translate": "advancements.cobblesafari.ultra_recon_squad.description" },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "gliding": {"trigger": "minecraft:tick", "conditions": {"player": {"flags": {"is_flying": true}, "equipment": {"chest": {"items": "cobblesafari:recon_armor_chestplate"}}, "type_specific": {"type": "minecraft:player", "gamemode": ["survival", "adventure"]}}}}
+  },
+  "requirements": [["gliding"]]
+}

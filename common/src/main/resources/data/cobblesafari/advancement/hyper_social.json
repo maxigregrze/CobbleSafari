@@ -1,7 +1,7 @@
 {
   "parent": "cobblesafari:sociable",
   "display": {
-    "icon": { "id": "minecraft:cake" },
+    "icon": { "id": "cobblesafari:online_feature_pc_union" },
     "title": { "translate": "advancements.cobblesafari.hyper_social.title" },
     "description": { "translate": "advancements.cobblesafari.hyper_social.description" },
     "frame": "goal",

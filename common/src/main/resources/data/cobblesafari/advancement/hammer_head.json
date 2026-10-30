@@ -1,9 +1,7 @@
 {
   "parent": "cobblesafari:spheres_in_my_cube_game",
   "display": {
-    "icon": {
-      "id": "minecraft:anvil"
-    },
+    "icon": { "id": "cobblesafari:lucky_mining_helmet" },
     "title": {
       "translate": "advancements.cobblesafari.hammer_head.title"
     },

@@ -49,11 +49,22 @@ public class CsBossMinionEntity extends Mob {
     private static final EntityDataAccessor<Float> DATA_SCALE =
             SynchedEntityData.defineId(CsBossMinionEntity.class, EntityDataSerializers.FLOAT);
 
+    /** Pose imposée au rendu ({@link #POSE_AUTO} = idle/marche selon le déplacement). */
+    private static final EntityDataAccessor<Integer> DATA_FORCED_POSE =
+            SynchedEntityData.defineId(CsBossMinionEntity.class, EntityDataSerializers.INT);
+
+    /** Poses imposables (plan 199, retours) : un minion déplacé par code n'a pas de vitesse de marche fiable. */
+    public static final int POSE_AUTO = 0;
+    public static final int POSE_WALK = 1;
+    public static final int POSE_FLY = 2;
+
     private static final String KEY_SPECIE = "Specie";
     private static final String KEY_SIZE = "Size";
     private static final String KEY_SESSION = "SessionId";
 
     private int sessionId;
+    /** Relais de baume : reçoit les baumes à la place du boss caché (CsBossVanish). Serveur seul. */
+    private boolean balmProxy;
     @Nullable
     private EntityDimensions cachedDims;
 
@@ -92,6 +103,7 @@ public class CsBossMinionEntity extends Mob {
         builder.define(DATA_FLASH, false);
         builder.define(DATA_ALPHA, 1.0F);
         builder.define(DATA_SCALE, 0.0F);
+        builder.define(DATA_FORCED_POSE, POSE_AUTO);
     }
 
     /** Effective scale: {@code DATA_SCALE} if &gt; 0, otherwise the integer {@code size}. */
@@ -139,6 +151,23 @@ public class CsBossMinionEntity extends Mob {
 
     public float getAlpha() {
         return this.entityData.get(DATA_ALPHA);
+    }
+
+    public boolean isBalmProxy() {
+        return balmProxy;
+    }
+
+    public void setBalmProxy(boolean balmProxy) {
+        this.balmProxy = balmProxy;
+    }
+
+    public int getForcedPose() {
+        return this.entityData.get(DATA_FORCED_POSE);
+    }
+
+    /** {@link #POSE_WALK} (course animée) ou {@link #POSE_FLY} (vol + battements d'ailes), {@link #POSE_AUTO} sinon. */
+    public void setForcedPose(int pose) {
+        this.entityData.set(DATA_FORCED_POSE, pose);
     }
 
     public void setAlpha(float alpha) {

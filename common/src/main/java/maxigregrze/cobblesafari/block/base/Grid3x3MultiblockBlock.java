@@ -129,7 +129,7 @@ public abstract class Grid3x3MultiblockBlock extends Block {
     @Override
     public BlockState playerWillDestroy(Level level, BlockPos pos, BlockState state, Player player) {
         if (!level.isClientSide() && breaksOnPlayerDestroy(player)) {
-            breakStructure(level, centerOf(state, pos));
+            breakStructure(level, centerOf(state, pos), pos);
         }
         return super.playerWillDestroy(level, pos, state, player);
     }
@@ -137,7 +137,7 @@ public abstract class Grid3x3MultiblockBlock extends Block {
     @Override
     public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean movedByPiston) {
         if (!state.is(newState.getBlock()) && !level.isClientSide() && !breaking) {
-            breakStructure(level, centerOf(state, pos));
+            breakStructure(level, centerOf(state, pos), null);
         }
         super.onRemove(state, level, pos, newState, movedByPiston);
     }
@@ -147,15 +147,15 @@ public abstract class Grid3x3MultiblockBlock extends Block {
      * <strong>no drop</strong>; only the cell the player actually mined runs its loot table, so
      * exactly one item is returned whichever cell was broken.
      */
-    protected void breakStructure(Level level, BlockPos center) {
+    protected void breakStructure(Level level, BlockPos center, @Nullable BlockPos keep) {
         if (breaking) {
             return;
         }
         breaking = true;
         try {
-            clearIfPart(level, center);
+            clearIfPart(level, center, keep);
             for (int[] offset : SIDE_OFFSETS) {
-                clearIfPart(level, center.offset(offset[0], 0, offset[1]));
+                clearIfPart(level, center.offset(offset[0], 0, offset[1]), keep);
             }
         } finally {
             breaking = false;
@@ -168,7 +168,10 @@ public abstract class Grid3x3MultiblockBlock extends Block {
      * fluid, {@code createLegacyBlock} is air, which is what every non-waterlogged multiblock got
      * before.
      */
-    private void clearIfPart(Level level, BlockPos pos) {
+    private void clearIfPart(Level level, BlockPos pos, @Nullable BlockPos keep) {
+        if (pos.equals(keep)) {
+            return; // the mined cell: vanilla removes it and runs its loot table
+        }
         BlockState state = level.getBlockState(pos);
         if (isPartOfSame(state)) {
             level.setBlock(pos, state.getFluidState().createLegacyBlock(), removalFlags());

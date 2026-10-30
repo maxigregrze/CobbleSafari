@@ -726,9 +726,13 @@ public class DungeonTeleportHandler {
         return true;
     }
 
-    /** Action plan 196, § 3.5: the instance record exists now, and its chunks are still loaded. */
+    /**
+     * Action plan 196, § 3.5: the instance record exists now, and its chunks are still loaded. Also
+     * starts the sky map (action plan 197, § 5.1) while the player still stands at the Hoopa portal,
+     * in {@code portalLevel}, where the chunks around it are loaded too.
+     */
     private static void resolveHyperspaceZone(MinecraftServer server, GenerationState state,
-                                              DungeonPortalBlockEntity portalEntity) {
+                                              DungeonPortalBlockEntity portalEntity, ServerLevel portalLevel) {
         try {
             DungeonInstanceRecord record = DungeonPositionSavedData
                     .get(server).findInstance(portalEntity.getPortalId(), state.structurePos, state.config.getDimensionId());
@@ -743,6 +747,16 @@ public class DungeonTeleportHandler {
                     portalEntity.getDungeonChunkMaxX(), portalEntity.getDungeonChunkMaxZ());
         } catch (Exception e) {
             CobbleSafari.LOGGER.error("[Hyperspace] zone resolution failed for portal {}", portalEntity.getPortalId(), e);
+        }
+        try {
+            DungeonInstanceRecord record = DungeonPositionSavedData
+                    .get(server).findInstance(portalEntity.getPortalId(), state.structurePos, state.config.getDimensionId());
+            if (record != null) {
+                maxigregrze.cobblesafari.dungeon.hyperspace.HyperspaceSkyMapService.startForInstance(
+                        server, record.instanceId(), portalLevel, portalEntity.getBlockPos());
+            }
+        } catch (Exception e) {
+            CobbleSafari.LOGGER.error("[Hyperspace] sky map could not start for portal {}", portalEntity.getPortalId(), e);
         }
     }
 
@@ -831,7 +845,7 @@ public class DungeonTeleportHandler {
             );
 
             if (state.config.getDimensionKey().equals(DungeonDimensions.DUNGEON_PARIS)) {
-                resolveHyperspaceZone(server, state, portalEntity);
+                resolveHyperspaceZone(server, state, portalEntity, player.serverLevel());
             }
         }
 

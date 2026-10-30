@@ -40,6 +40,14 @@ public final class ModStats {
     public static final ResourceLocation CSBOSS_BATTLES_ATTEMPTED = id("csboss_battles_attempted");
     public static final ResourceLocation CSBOSS_BATTLES_WON = id("csboss_battles_won");
     public static final ResourceLocation DISTORTION_POKEMON_DEFEATED = id("distortion_pokemon_defeated");
+    public static final ResourceLocation TIME_IN_ULTRA_SPACE = id("time_in_ultra_space");
+    public static final ResourceLocation TIME_IN_BELL_TOWER = id("time_in_bell_tower");
+    public static final ResourceLocation TIME_IN_HYPERSPACE = id("time_in_hyperspace");
+    public static final ResourceLocation WARP_RIDE_DISTANCE = id("warp_ride_distance");
+    public static final ResourceLocation DIMENSIONAL_TASKS_COMPLETED = id("dimensional_tasks_completed");
+    public static final ResourceLocation OBSTACLES_CLEARED = id("obstacles_cleared");
+    public static final ResourceLocation LOST_ITEMS_CLAIMED = id("lost_items_claimed");
+    public static final ResourceLocation TIME_SITTING = id("time_sitting");
 
     public static void register() {
         timeStat(TIME_IN_SAFARI);
@@ -66,6 +74,14 @@ public final class ModStats {
         countStat(CSBOSS_BATTLES_ATTEMPTED);
         countStat(CSBOSS_BATTLES_WON);
         countStat(DISTORTION_POKEMON_DEFEATED);
+        timeStat(TIME_IN_ULTRA_SPACE);
+        timeStat(TIME_IN_BELL_TOWER);
+        timeStat(TIME_IN_HYPERSPACE);
+        countStat(WARP_RIDE_DISTANCE);
+        countStat(DIMENSIONAL_TASKS_COMPLETED);
+        countStat(OBSTACLES_CLEARED);
+        countStat(LOST_ITEMS_CLAIMED);
+        timeStat(TIME_SITTING);
 
         CobbleSafari.LOGGER.info("CobbleSafari >> Custom statistics registered!");
     }

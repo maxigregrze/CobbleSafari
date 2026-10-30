@@ -276,6 +276,8 @@ public class ModItems {
             }
         }
     }
+    /** Drop of the shard cluster obstacle (action plan 196, § 8.8). */
+    public static final Item MEGASHARD = new Item(new Item.Properties().rarity(Rarity.RARE));
     public static final Item INGREDIENT_DUNGEON_PORTAL = new DungeonIngredientItem(new Item.Properties().stacksTo(1).rarity(Rarity.RARE));
     public static final Item INGREDIENT_DUNGEON_PARIS = new DungeonIngredientItem(new Item.Properties().stacksTo(1).rarity(Rarity.RARE));
     public static final Item INGREDIENT_DUNGEON_DISTORTION = new DungeonIngredientItem(new Item.Properties().stacksTo(1).rarity(Rarity.RARE));
@@ -289,6 +291,10 @@ public class ModItems {
             new Item.Properties().stacksTo(1).rarity(Rarity.EPIC), "cobblesafari:dungeon_distortion");
     public static final Item DONUT_DUNGEON_UNDERGROUND = new DungeonDonutItem(
             new Item.Properties().stacksTo(1).rarity(Rarity.EPIC), "cobblesafari:dungeon_underground");
+    public static final Item DONUT_DUNGEON_JUMP = new DungeonDonutItem(
+            new Item.Properties().stacksTo(1).rarity(Rarity.EPIC), "cobblesafari:dungeon_jump");
+    public static final Item DONUT_DUNGEON_ULTRASPACE = new DungeonDonutItem(
+            new Item.Properties().stacksTo(1).rarity(Rarity.EPIC), "cobblesafari:dungeon_megalopolis");
 
     public static Item LUCKY_MINING_HELMET;
 
@@ -556,6 +562,7 @@ public class ModItems {
         for (Map.Entry<String, Item> entry : DONUT_RANDOMS.entrySet()) {
             registerItem("donut_random_" + entry.getKey(), entry.getValue());
         }
+        registerItem("megashard", MEGASHARD);
         registerItem("ingredient_dungeon_portal", INGREDIENT_DUNGEON_PORTAL);
         registerItem("ingredient_dungeon_paris", INGREDIENT_DUNGEON_PARIS);
         registerItem("ingredient_dungeon_distortion", INGREDIENT_DUNGEON_DISTORTION);
@@ -566,6 +573,8 @@ public class ModItems {
         registerItem("donut_dungeon_paris", DONUT_DUNGEON_PARIS);
         registerItem("donut_dungeon_distortion", DONUT_DUNGEON_DISTORTION);
         registerItem("donut_dungeon_underground", DONUT_DUNGEON_UNDERGROUND);
+        registerItem("donut_dungeon_jump", DONUT_DUNGEON_JUMP);
+        registerItem("donut_dungeon_ultraspace", DONUT_DUNGEON_ULTRASPACE);
 
         Holder<ArmorMaterial> luckyHelmetMaterial = Registry.registerForHolder(
                 BuiltInRegistries.ARMOR_MATERIAL,
@@ -663,5 +672,7 @@ public class ModItems {
         BATCH_ITEMS.add(DONUT_DUNGEON_PARIS);
         BATCH_ITEMS.add(DONUT_DUNGEON_DISTORTION);
         BATCH_ITEMS.add(DONUT_DUNGEON_UNDERGROUND);
+        BATCH_ITEMS.add(DONUT_DUNGEON_JUMP);
+        BATCH_ITEMS.add(DONUT_DUNGEON_ULTRASPACE);
     }
 }

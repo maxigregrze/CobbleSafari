@@ -76,7 +76,8 @@
     },
     {
       "id": "marshtomp",
-      "weight": 1,
+      "weight": 0.1,
+      "rare": true,
       "members": [
         {
           "pokemon": "swampert",
@@ -161,6 +162,25 @@
           "rarity": 80,
           "level": "37-39",
           "alphaLevel": "46-48"
+        }
+      ]
+    },
+    {
+      "id": "grotle",
+      "weight": 0.1,
+      "rare": true,
+      "members": [
+        {
+          "pokemon": "torterra",
+          "rarity": 20,
+          "level": "41-43",
+          "alphaLevel": "50-52"
+        },
+        {
+          "pokemon": "grotle",
+          "rarity": 80,
+          "level": "36-38",
+          "alphaLevel": "45-47"
         }
       ]
     }

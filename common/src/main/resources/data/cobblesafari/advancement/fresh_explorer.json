@@ -1,7 +1,7 @@
 {
   "parent": "cobblesafari:dungeons",
   "display": {
-    "icon": { "id": "minecraft:ender_pearl" },
+    "icon": { "id": "cobblesafari:ticket_dungeon" },
     "title": { "translate": "advancements.cobblesafari.fresh_explorer.title" },
     "description": { "translate": "advancements.cobblesafari.fresh_explorer.description" },
     "frame": "task",

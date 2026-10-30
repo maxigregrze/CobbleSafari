@@ -117,6 +117,7 @@ public final class RotoGlideServerLogic {
         int jumps = maxigregrze.cobblesafari.init.ModStats.awardAndGet(
                 player, maxigregrze.cobblesafari.init.ModStats.ROTO_GLIDE_JUMPS);
         maxigregrze.cobblesafari.advancement.ModCriteria.ROTO_GLIDE.trigger(player, jumps);
+        RotomPhoneActivationFx.trigger(player);
     }
 
     private static double pickStrongerHorizontal(double fromClient, double fromServer) {

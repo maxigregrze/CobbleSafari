@@ -9,17 +9,23 @@ public final class DimensionTimerDeathHandler {
 
     private DimensionTimerDeathHandler() {}
 
-    public static boolean allowVanillaDeath(ServerPlayer player) {
-        if (player.level().isClientSide()) {
-            return true;
+    /**
+     * Whether a death of {@code player} right now would be cancelled by the timer rescue. Side
+     * effect free: the totem / Rainbow Feather check uses it so the rescue wins on both loaders
+     * (Fabric asks before the totem check, NeoForge after it).
+     */
+    public static boolean wouldRescue(ServerPlayer player) {
+        if (player.level().isClientSide() || player.isCreative() || player.isSpectator()) {
+            return false;
         }
-        if (player.isCreative() || player.isSpectator()) {
+        return SafariTimerConfig.hasDimensionTimer(player.level().dimension().location().toString());
+    }
+
+    public static boolean allowVanillaDeath(ServerPlayer player) {
+        if (!wouldRescue(player)) {
             return true;
         }
         String dimId = player.level().dimension().location().toString();
-        if (!SafariTimerConfig.hasDimensionTimer(dimId)) {
-            return true;
-        }
         // Resolve the scope before draining it: on an instanced dimension the rescue must drain the
         // session of the instance the player died in, and leave that session alive at zero credit so
         // an operator can credit it and the player can walk back in (plan 181 § 9.1).

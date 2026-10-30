@@ -1,0 +1,8 @@
+{
+    "name": "cobblemon.mark.cobblesafari.ribbon_dungeon_jump",
+    "title": "cobblemon.mark.cobblesafari.ribbon_dungeon_jump.title",
+	"titleColor": "e85d3a",
+	"description": "cobblemon.mark.cobblesafari.ribbon_dungeon_jump.desc",
+	"texture": "cobblesafari:textures/gui/mark/ribbon_dungeon_jump.png",
+	"indexNumber": 68
+}

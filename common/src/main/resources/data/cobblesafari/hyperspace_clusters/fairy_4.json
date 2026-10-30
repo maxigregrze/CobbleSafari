@@ -40,7 +40,8 @@
     },
     {
       "id": "eevee",
-      "weight": 2,
+      "weight": 0.2,
+      "rare": true,
       "members": [
         {
           "pokemon": "sylveon",
@@ -197,6 +198,25 @@
           "rarity": 80,
           "level": "38-40",
           "alphaLevel": "47-49"
+        }
+      ]
+    },
+    {
+      "id": "brionne",
+      "weight": 0.1,
+      "rare": true,
+      "members": [
+        {
+          "pokemon": "primarina",
+          "rarity": 20,
+          "level": "41-43",
+          "alphaLevel": "50-52"
+        },
+        {
+          "pokemon": "brionne",
+          "rarity": 80,
+          "level": "36-38",
+          "alphaLevel": "45-47"
         }
       ]
     }

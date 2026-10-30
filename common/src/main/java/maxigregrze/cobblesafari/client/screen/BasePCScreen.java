@@ -2,8 +2,8 @@ package maxigregrze.cobblesafari.client.screen;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import maxigregrze.cobblesafari.CobbleSafari;
-import maxigregrze.cobblesafari.block.basepc.BasePCBlockEntity;
 import maxigregrze.cobblesafari.block.basepc.BasePCMenu;
+import maxigregrze.cobblesafari.config.SecretBasePCConfig;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
@@ -89,7 +89,7 @@ public class BasePCScreen extends AbstractContainerScreen<BasePCMenu> {
         int effect = getCurrentEffect();
         boolean active = isActive();
         int battery = getBattery();
-        int maxBattery = BasePCBlockEntity.getMaxBattery(rank);
+        int maxBattery = SecretBasePCConfig.getClientMaxBattery(rank);
 
         Component statusText = active
                 ? Component.translatable("gui.cobblesafari.basepc.status_active")
@@ -108,7 +108,7 @@ public class BasePCScreen extends AbstractContainerScreen<BasePCMenu> {
         int effectWidth = font.width(effectName);
         graphics.drawString(font, effectName, 136 - effectWidth / 2, 40, 0x3A96B6, false);
 
-        int cost = BasePCBlockEntity.getEffectCost(rank, effect);
+        int cost = SecretBasePCConfig.getClientEffectCost(rank, effect);
         Component costText;
         if (cost == -1) {
             costText = Component.translatable("gui.cobblesafari.basepc.locked");
@@ -145,7 +145,7 @@ public class BasePCScreen extends AbstractContainerScreen<BasePCMenu> {
     private void drawChargeBar(GuiGraphics graphics, int x, int y) {
         int rank = getRank();
         int battery = getBattery();
-        int maxBattery = BasePCBlockEntity.getMaxBattery(rank);
+        int maxBattery = SecretBasePCConfig.getClientMaxBattery(rank);
         int barWidth;
         if (rank >= 5) {
             barWidth = 264;
@@ -163,7 +163,7 @@ public class BasePCScreen extends AbstractContainerScreen<BasePCMenu> {
         int rank = getRank();
         int effect = getCurrentEffect();
         boolean active = isActive();
-        boolean locked = BasePCBlockEntity.isEffectLocked(rank, effect);
+        boolean locked = SecretBasePCConfig.isClientEffectLocked(rank, effect);
         boolean hover = isInBounds(mouseX, mouseY, x, y + 141, 126, 24);
 
         int btnV;
@@ -189,7 +189,7 @@ public class BasePCScreen extends AbstractContainerScreen<BasePCMenu> {
     private void drawFlagButton(GuiGraphics graphics, int x, int y, int mouseX, int mouseY) {
         int rank = getRank();
         int battery = getBattery();
-        int maxBattery = BasePCBlockEntity.getMaxBattery(rank);
+        int maxBattery = SecretBasePCConfig.getClientMaxBattery(rank);
         net.minecraft.world.item.Item flagItem = menu.slots.get(0).getItem().getItem();
         boolean canUpgrade = BasePCMenu.wouldUpgrade(rank, flagItem);
         boolean isFull = rank >= 5 || (battery >= maxBattery && !canUpgrade);
@@ -232,7 +232,7 @@ public class BasePCScreen extends AbstractContainerScreen<BasePCMenu> {
         if (isInBounds(mouseX, mouseY, x, y + 141, 126, 24)) {
             int rank = getRank();
             int effect = getCurrentEffect();
-            if (!BasePCBlockEntity.isEffectLocked(rank, effect)) {
+            if (!SecretBasePCConfig.isClientEffectLocked(rank, effect)) {
                 clickButton(2);
             }
             return true;
@@ -241,7 +241,7 @@ public class BasePCScreen extends AbstractContainerScreen<BasePCMenu> {
         if (isInBounds(mouseX, mouseY, x + 146, y + 141, 126, 24)) {
             int rank = getRank();
             int battery = getBattery();
-            int maxBattery = BasePCBlockEntity.getMaxBattery(rank);
+            int maxBattery = SecretBasePCConfig.getClientMaxBattery(rank);
             net.minecraft.world.item.Item flagItem = menu.slots.get(0).getItem().getItem();
             boolean canUpgrade = BasePCMenu.wouldUpgrade(rank, flagItem);
             if (rank < 5 && (battery < maxBattery || canUpgrade)) {

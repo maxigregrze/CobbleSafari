@@ -4,7 +4,6 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import maxigregrze.cobblesafari.entity.csboss.attacks.AttackShockwaveEntity;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.texture.OverlayTexture;
@@ -63,10 +62,10 @@ public class AttackShockwaveEntityRenderer extends EntityRenderer<AttackShockwav
         PoseStack.Pose pose = ps.last();
 
         // No backface cull (like the shadow) so it stays visible from above and below.
-        VertexConsumer fill = buffer.getBuffer(RenderType.entityTranslucent(WHITE));
+        VertexConsumer fill = buffer.getBuffer(CsBossRenderTypes.decal(WHITE));
         drawAnnulus(fill, pose, packedLight, FILL_Y, inner, outer, r, g, b, FILL_ALPHA);
 
-        VertexConsumer border = buffer.getBuffer(RenderType.entityTranslucent(WHITE));
+        VertexConsumer border = buffer.getBuffer(CsBossRenderTypes.decal(WHITE));
         drawAnnulus(border, pose, packedLight, BORDER_Y, outer - BORDER_WIDTH, outer, r, g, b, 1.0F);
 
         ps.popPose();
@@ -92,6 +91,11 @@ public class AttackShockwaveEntityRenderer extends EntityRenderer<AttackShockwav
             colorVertex(vc, pose, outer * c0, y, outer * s0, r, g, b, alpha, light);
             colorVertex(vc, pose, outer * c1, y, outer * s1, r, g, b, alpha, light);
             colorVertex(vc, pose, inner * c1, y, inner * s1, r, g, b, alpha, light);
+            // sens inverse : le type « decal » cull les faces arrière
+            colorVertex(vc, pose, inner * c1, y, inner * s1, r, g, b, alpha, light);
+            colorVertex(vc, pose, outer * c1, y, outer * s1, r, g, b, alpha, light);
+            colorVertex(vc, pose, outer * c0, y, outer * s0, r, g, b, alpha, light);
+            colorVertex(vc, pose, inner * c0, y, inner * s0, r, g, b, alpha, light);
         }
     }
 

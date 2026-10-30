@@ -77,7 +77,7 @@ public class WaterWaveAttack implements CsBossAttack {
             sendTrio(level, session, boss, base + k * (Math.PI / 2.0));
         }
         boss.triggerAttackAnimation();
-        CsBossAttackLib.sound(level, boss.getX(), session.getTriggerPos().getY() + SPAWN_Y_OFFSET, boss.getZ(),
+        CsBossAttackLib.sound(level, boss.getX(), session.getFloorY() + SPAWN_Y_OFFSET, boss.getZ(),
                 "cobblemon:move.waterpulse.actor", SoundSource.HOSTILE, 1.4F, 0.9F);
     }
 
@@ -90,7 +90,7 @@ public class WaterWaveAttack implements CsBossAttack {
         double offLat = HALF_WIDTH + HALF_WIDTH * cos; // inner side edge flush with center edge
         double offFwd = HALF_WIDTH * sin;
 
-        Vec3 origin = new Vec3(boss.getX(), session.getTriggerPos().getY() + SPAWN_Y_OFFSET, boss.getZ());
+        Vec3 origin = new Vec3(boss.getX(), session.getFloorY() + SPAWN_Y_OFFSET, boss.getZ());
         Vec3 velocity = f.scale(SPEED);
 
         // Center: facing F, advanced 1 block + 5/16 forward relative to side waves.

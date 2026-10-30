@@ -154,7 +154,10 @@ public class AttackShockwaveEntity extends AbstractAttackEntity {
                 continue;
             }
             alreadyHit.add(p.getUUID());
-            p.hurt(CsBossDamage.bullet(level), this.damage);
+            CsBossDamage.hurt(p, session, this.damage);
+            if (!CsBossDamage.stillInFight(p, level())) {
+                continue;
+            }
             if (this.applyKnockback) {
                 p.knockback(KNOCKBACK_STRENGTH, cx - p.getX(), cz - p.getZ());
             }

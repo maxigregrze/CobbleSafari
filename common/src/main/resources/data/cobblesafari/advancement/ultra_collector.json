@@ -1,0 +1,32 @@
+{
+  "parent": "cobblesafari:ultra_megalopolis",
+  "display": {
+    "icon": { "id": "cobblesafari:stakataka_shield" },
+    "title": { "translate": "advancements.cobblesafari.ultra_collector.title" },
+    "description": { "translate": "advancements.cobblesafari.ultra_collector.description" },
+    "frame": "challenge",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "poipole_arrow": {"trigger": "minecraft:inventory_changed", "conditions": {"items": [{"items": "cobblesafari:poipole_arrow"}]}},
+    "blacephalon_bomb": {"trigger": "minecraft:inventory_changed", "conditions": {"items": [{"items": "cobblesafari:blacephalon_bomb"}]}},
+    "xurkitree_bomb": {"trigger": "minecraft:inventory_changed", "conditions": {"items": [{"items": "cobblesafari:xurkitree_bomb"}]}},
+    "celesteela_canon": {"trigger": "minecraft:inventory_changed", "conditions": {"items": [{"items": "cobblesafari:celesteela_canon"}]}},
+    "kartana_canon": {"trigger": "minecraft:inventory_changed", "conditions": {"items": [{"items": "cobblesafari:kartana_canon"}]}},
+    "stakataka_shield": {"trigger": "minecraft:inventory_changed", "conditions": {"items": [{"items": "cobblesafari:stakataka_shield"}]}},
+    "nihilego_hat": {"trigger": "minecraft:inventory_changed", "conditions": {"items": [{"items": "cobblesafari:nihilego_hat"}]}},
+    "recon_armor_helmet": {"trigger": "minecraft:inventory_changed", "conditions": {"items": [{"items": "cobblesafari:recon_armor_helmet"}]}},
+    "recon_armor_chestplate": {"trigger": "minecraft:inventory_changed", "conditions": {"items": [{"items": "cobblesafari:recon_armor_chestplate"}]}},
+    "recon_armor_leggings": {"trigger": "minecraft:inventory_changed", "conditions": {"items": [{"items": "cobblesafari:recon_armor_leggings"}]}},
+    "recon_armor_boots": {"trigger": "minecraft:inventory_changed", "conditions": {"items": [{"items": "cobblesafari:recon_armor_boots"}]}},
+    "gluton_armor_helmet": {"trigger": "minecraft:inventory_changed", "conditions": {"items": [{"items": "cobblesafari:gluton_armor_helmet"}]}},
+    "gluton_armor_chestplate": {"trigger": "minecraft:inventory_changed", "conditions": {"items": [{"items": "cobblesafari:gluton_armor_chestplate"}]}},
+    "gluton_armor_leggings": {"trigger": "minecraft:inventory_changed", "conditions": {"items": [{"items": "cobblesafari:gluton_armor_leggings"}]}},
+    "gluton_armor_boots": {"trigger": "minecraft:inventory_changed", "conditions": {"items": [{"items": "cobblesafari:gluton_armor_boots"}]}},
+    "buzzwole_seeds": {"trigger": "minecraft:inventory_changed", "conditions": {"items": [{"items": "cobblesafari:buzzwole_seeds"}]}},
+    "pheromosa_seeds": {"trigger": "minecraft:inventory_changed", "conditions": {"items": [{"items": "cobblesafari:pheromosa_seeds"}]}}
+  },
+  "requirements": [["poipole_arrow"], ["blacephalon_bomb"], ["xurkitree_bomb"], ["celesteela_canon"], ["kartana_canon"], ["stakataka_shield"], ["nihilego_hat"], ["recon_armor_helmet"], ["recon_armor_chestplate"], ["recon_armor_leggings"], ["recon_armor_boots"], ["gluton_armor_helmet"], ["gluton_armor_chestplate"], ["gluton_armor_leggings"], ["gluton_armor_boots"], ["buzzwole_seeds"], ["pheromosa_seeds"]]
+}

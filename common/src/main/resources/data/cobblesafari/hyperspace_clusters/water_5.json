@@ -4,7 +4,8 @@
   "clusters": [
     {
       "id": "mudkip",
-      "weight": 1,
+      "weight": 0.1,
+      "rare": true,
       "members": [
         {
           "pokemon": "swampert",
@@ -22,7 +23,8 @@
     },
     {
       "id": "squirtle",
-      "weight": 1,
+      "weight": 0.1,
+      "rare": true,
       "members": [
         {
           "pokemon": "blastoise",
@@ -40,7 +42,8 @@
     },
     {
       "id": "froakie",
-      "weight": 1,
+      "weight": 0.1,
+      "rare": true,
       "members": [
         {
           "pokemon": "greninja",
@@ -50,6 +53,139 @@
         },
         {
           "pokemon": "froakie",
+          "rarity": 80,
+          "level": "50-52",
+          "alphaLevel": "59-61"
+        }
+      ]
+    },
+    {
+      "id": "totodile",
+      "weight": 0.1,
+      "rare": true,
+      "members": [
+        {
+          "pokemon": "feraligatr",
+          "rarity": 20,
+          "level": "54-56",
+          "alphaLevel": "63-65"
+        },
+        {
+          "pokemon": "totodile",
+          "rarity": 80,
+          "level": "50-52",
+          "alphaLevel": "59-61"
+        }
+      ]
+    },
+    {
+      "id": "piplup",
+      "weight": 0.1,
+      "rare": true,
+      "members": [
+        {
+          "pokemon": "empoleon",
+          "rarity": 20,
+          "level": "54-56",
+          "alphaLevel": "63-65"
+        },
+        {
+          "pokemon": "piplup",
+          "rarity": 80,
+          "level": "50-52",
+          "alphaLevel": "59-61"
+        }
+      ]
+    },
+    {
+      "id": "oshawott",
+      "weight": 0.1,
+      "rare": true,
+      "members": [
+        {
+          "pokemon": "samurott",
+          "rarity": 20,
+          "level": "54-56",
+          "alphaLevel": "63-65"
+        },
+        {
+          "pokemon": "oshawott",
+          "rarity": 80,
+          "level": "50-52",
+          "alphaLevel": "59-61"
+        }
+      ]
+    },
+    {
+      "id": "oshawott_2",
+      "weight": 0.1,
+      "rare": true,
+      "members": [
+        {
+          "pokemon": "samurott hisuian",
+          "rarity": 20,
+          "level": "54-56",
+          "alphaLevel": "63-65"
+        },
+        {
+          "pokemon": "oshawott",
+          "rarity": 80,
+          "level": "50-52",
+          "alphaLevel": "59-61"
+        }
+      ]
+    },
+    {
+      "id": "popplio",
+      "weight": 0.1,
+      "rare": true,
+      "members": [
+        {
+          "pokemon": "primarina",
+          "rarity": 20,
+          "level": "54-56",
+          "alphaLevel": "63-65"
+        },
+        {
+          "pokemon": "popplio",
+          "rarity": 80,
+          "level": "50-52",
+          "alphaLevel": "59-61"
+        }
+      ]
+    },
+    {
+      "id": "sobble",
+      "weight": 0.1,
+      "rare": true,
+      "members": [
+        {
+          "pokemon": "inteleon",
+          "rarity": 20,
+          "level": "54-56",
+          "alphaLevel": "63-65"
+        },
+        {
+          "pokemon": "sobble",
+          "rarity": 80,
+          "level": "50-52",
+          "alphaLevel": "59-61"
+        }
+      ]
+    },
+    {
+      "id": "quaxly",
+      "weight": 0.1,
+      "rare": true,
+      "members": [
+        {
+          "pokemon": "quaquaval",
+          "rarity": 20,
+          "level": "54-56",
+          "alphaLevel": "63-65"
+        },
+        {
+          "pokemon": "quaxly",
           "rarity": 80,
           "level": "50-52",
           "alphaLevel": "59-61"

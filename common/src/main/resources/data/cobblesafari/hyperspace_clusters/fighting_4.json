@@ -88,7 +88,8 @@
     },
     {
       "id": "pignite",
-      "weight": 1,
+      "weight": 0.1,
+      "rare": true,
       "members": [
         {
           "pokemon": "emboar",
@@ -106,7 +107,8 @@
     },
     {
       "id": "quilladin",
-      "weight": 1,
+      "weight": 0.1,
+      "rare": true,
       "members": [
         {
           "pokemon": "chesnaught",
@@ -124,7 +126,8 @@
     },
     {
       "id": "combusken",
-      "weight": 1,
+      "weight": 0.1,
+      "rare": true,
       "members": [
         {
           "pokemon": "blaziken",
@@ -191,6 +194,63 @@
           "rarity": 80,
           "level": "37-39",
           "alphaLevel": "46-48"
+        }
+      ]
+    },
+    {
+      "id": "monferno",
+      "weight": 0.1,
+      "rare": true,
+      "members": [
+        {
+          "pokemon": "infernape",
+          "rarity": 20,
+          "level": "41-43",
+          "alphaLevel": "50-52"
+        },
+        {
+          "pokemon": "monferno",
+          "rarity": 80,
+          "level": "36-38",
+          "alphaLevel": "45-47"
+        }
+      ]
+    },
+    {
+      "id": "dartrix",
+      "weight": 0.1,
+      "rare": true,
+      "members": [
+        {
+          "pokemon": "decidueye hisuian",
+          "rarity": 20,
+          "level": "41-43",
+          "alphaLevel": "50-52"
+        },
+        {
+          "pokemon": "dartrix",
+          "rarity": 80,
+          "level": "36-38",
+          "alphaLevel": "45-47"
+        }
+      ]
+    },
+    {
+      "id": "quaxwell",
+      "weight": 0.1,
+      "rare": true,
+      "members": [
+        {
+          "pokemon": "quaquaval",
+          "rarity": 20,
+          "level": "41-43",
+          "alphaLevel": "50-52"
+        },
+        {
+          "pokemon": "quaxwell",
+          "rarity": 80,
+          "level": "36-38",
+          "alphaLevel": "45-47"
         }
       ]
     }

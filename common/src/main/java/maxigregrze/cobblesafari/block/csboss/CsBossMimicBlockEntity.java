@@ -32,11 +32,15 @@ import org.jetbrains.annotations.Nullable;
 public class CsBossMimicBlockEntity extends BlockEntity {
 
     private static final String KEY_MIMIC = "MimicBlock";
+    private static final String KEY_BATTLE_MIMIC = "BattleMimicBlock";
 
     /** Update-tag only. Absent from {@code saveAdditional} on purpose - see the class javadoc. */
     private static final String KEY_RESOLVED = "Resolved";
 
     private String mimicBlockId = "";
+
+    /** Block copied during a fight in swap mode ({@link CsBossMimicBlock.Mode#SWAP}); unused otherwise. */
+    private String battleMimicBlockId = "";
 
     @Nullable
     private BlockState resolvedMimicState;
@@ -56,6 +60,25 @@ public class CsBossMimicBlockEntity extends BlockEntity {
     public void setMimicBlockId(String id) {
         this.mimicBlockId = id == null ? "" : id.trim();
         setChanged();
+    }
+
+    public String getBattleMimicBlockId() {
+        return battleMimicBlockId;
+    }
+
+    public void setBattleMimicBlockId(String id) {
+        this.battleMimicBlockId = id == null ? "" : id.trim();
+        setChanged();
+    }
+
+    /**
+     * The id copied in {@code state}: the battle block while a swap-mode mimic is active (falling back
+     * to the idle block when none is set), the idle block in every other case.
+     */
+    public String getTargetId(BlockState state) {
+        boolean battle = state.hasProperty(CsBossMimicBlock.SWAP) && state.getValue(CsBossMimicBlock.SWAP)
+                && state.getValue(CsBossMimicBlock.ACTIVE);
+        return battle && !battleMimicBlockId.isBlank() ? battleMimicBlockId : mimicBlockId;
     }
 
     /** The mimicked block's full state, or {@code null} until the server has resolved it once. */
@@ -86,9 +109,11 @@ public class CsBossMimicBlockEntity extends BlockEntity {
     }
 
     public OpenCsBossMimicConfigPayload createOpenPayload() {
-        boolean reverse = this.getBlockState().hasProperty(CsBossMimicBlock.REVERSE)
-                && this.getBlockState().getValue(CsBossMimicBlock.REVERSE);
-        return new OpenCsBossMimicConfigPayload(this.worldPosition, this.mimicBlockId, reverse);
+        BlockState state = this.getBlockState();
+        CsBossMimicBlock.Mode mode = state.getBlock() instanceof CsBossMimicBlock
+                ? CsBossMimicBlock.Mode.of(state) : CsBossMimicBlock.Mode.HIDE_IN_BATTLE;
+        return new OpenCsBossMimicConfigPayload(this.worldPosition, this.mimicBlockId, this.battleMimicBlockId,
+                mode.ordinal());
     }
 
     public void syncToClients() {
@@ -104,12 +129,16 @@ public class CsBossMimicBlockEntity extends BlockEntity {
     protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.saveAdditional(tag, registries);
         tag.putString(KEY_MIMIC, mimicBlockId);
+        if (!battleMimicBlockId.isEmpty()) {
+            tag.putString(KEY_BATTLE_MIMIC, battleMimicBlockId);
+        }
     }
 
     @Override
     protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
         this.mimicBlockId = tag.getString(KEY_MIMIC);
+        this.battleMimicBlockId = tag.getString(KEY_BATTLE_MIMIC);
         // Present only on the client, which receives it through this same method (block entity
         // update packets are applied by loadWithComponents). On disk the key never exists.
         this.resolvedMimicState = tag.contains(KEY_RESOLVED, Tag.TAG_COMPOUND)

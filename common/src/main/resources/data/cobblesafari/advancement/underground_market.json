@@ -1,9 +1,7 @@
 {
   "parent": "cobblesafari:dig_deeper",
   "display": {
-    "icon": {
-      "id": "minecraft:emerald"
-    },
+    "icon": { "id": "cobblesafari:sphere_pale_l" },
     "title": {
       "translate": "advancements.cobblesafari.underground_market.title"
     },

@@ -7,7 +7,6 @@ import maxigregrze.cobblesafari.CobbleSafari;
 import maxigregrze.cobblesafari.entity.csboss.attacks.AttackShadowballEntity;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.texture.OverlayTexture;
@@ -44,7 +43,7 @@ public class AttackShadowballEntityRenderer extends EntityRenderer<AttackShadowb
         float spin = (entity.tickCount + partialTicks) * SPIN_DEGREES_PER_TICK;
         ps.mulPose(Axis.ZP.rotationDegrees(spin));
 
-        VertexConsumer vc = buffer.getBuffer(RenderType.entityTranslucent(TEXTURE));
+        VertexConsumer vc = buffer.getBuffer(CsBossRenderTypes.decal(TEXTURE));
         PoseStack.Pose pose = ps.last();
         quad(vc, pose, LightTexture.FULL_BRIGHT);
         ps.popPose();

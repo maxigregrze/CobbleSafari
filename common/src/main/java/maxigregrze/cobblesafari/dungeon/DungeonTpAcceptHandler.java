@@ -27,19 +27,34 @@ public class DungeonTpAcceptHandler {
 
     private static final Map<UUID, PendingDungeonEntry> pendingConfirmations = new ConcurrentHashMap<>();
 
+    // A prompt closed without a reply (screen lost, packet dropped, modified client) must not lock the
+    // player out of every portal: past this age it is replaced by the next portal click and refused on accept.
+    private static final long PENDING_TIMEOUT_MS = 60_000L;
+    // Accepting is only valid while still standing near the portal that opened the prompt.
+    private static final double MAX_ACCEPT_DISTANCE_SQ = 16.0 * 16.0;
+
     private DungeonTpAcceptHandler() {}
 
     private record PendingDungeonEntry(
             BlockPos portalPos,
             ResourceKey<Level> portalDimension,
-            String dungeonDimensionId
-    ) {}
+            String dungeonDimensionId,
+            long createdAtMs
+    ) {
+        boolean isExpired() {
+            return System.currentTimeMillis() - createdAtMs > PENDING_TIMEOUT_MS;
+        }
+    }
 
     public static void openTpAcceptForDungeon(ServerPlayer player, DungeonPortalBlockEntity portalEntity) {
         UUID playerId = player.getUUID();
 
-        if (pendingConfirmations.containsKey(playerId)) {
-            return;
+        PendingDungeonEntry existing = pendingConfirmations.get(playerId);
+        if (existing != null) {
+            if (!existing.isExpired()) {
+                return;
+            }
+            pendingConfirmations.remove(playerId);
         }
 
         if (DungeonTeleportCountdown.isTeleporting(playerId)) {
@@ -61,7 +76,8 @@ public class DungeonTpAcceptHandler {
 
         if (validation.config().shouldSkipTeleportScreen()) {
             processDungeonTeleport(player, portalEntity,
-                    new PendingDungeonEntry(portalEntity.getBlockPos(), player.level().dimension(), dungeonId));
+                    new PendingDungeonEntry(portalEntity.getBlockPos(), player.level().dimension(), dungeonId,
+                            System.currentTimeMillis()));
             return;
         }
 
@@ -91,7 +107,8 @@ public class DungeonTpAcceptHandler {
         pendingConfirmations.put(playerId, new PendingDungeonEntry(
                 portalEntity.getBlockPos(),
                 player.level().dimension(),
-                dungeonId
+                dungeonId,
+                System.currentTimeMillis()
         ));
 
         CobbleSafari.LOGGER.debug("Opened TpAccept for player {} (dungeon: {})",
@@ -113,6 +130,13 @@ public class DungeonTpAcceptHandler {
 
         if (!accepted) {
             CobbleSafari.LOGGER.debug("Player {} declined dungeon teleport", player.getName().getString());
+            return;
+        }
+
+        if (pending.isExpired()
+                || player.level().dimension() != pending.portalDimension()
+                || player.blockPosition().distSqr(pending.portalPos()) > MAX_ACCEPT_DISTANCE_SQ) {
+            ModNetworking.sendCloseTpAccept(player);
             return;
         }
 

@@ -3,7 +3,7 @@
   "tags": [
     "trainerspokemon"
   ],
-  "given": "pikachu level=1 form=alola originaltrainertype=npc originaltrainer=Hau",
+  "given": "pikachu level=1 region_bias=alola originaltrainertype=npc originaltrainer=Hau",
   "givenMarks": [
     "cobblemon:ribbon_partner"
   ],

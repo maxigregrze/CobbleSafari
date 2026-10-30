@@ -2,7 +2,7 @@
   "typeId": 6,
   "weight": 10,
   "structurePool": "cobblesafari:ultraspace/forest/start",
-  "tint": "#afbb56",
+  "tint": "#99cc00",
   "biome": "cobblesafari:dungeon_ultra_forest_biome",
   "normalPool": {
     "pokemon": [

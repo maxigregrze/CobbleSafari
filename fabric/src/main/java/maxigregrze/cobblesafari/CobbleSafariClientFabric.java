@@ -22,6 +22,10 @@ import maxigregrze.cobblesafari.client.renderer.AuspiciousPokeballBlockEntityRen
 import maxigregrze.cobblesafari.client.renderer.DistortionPortalBlockEntityRenderer;
 import maxigregrze.cobblesafari.client.DungeonDistortionDimensionEffects;
 import maxigregrze.cobblesafari.client.UltraCraterDimensionEffects;
+import maxigregrze.cobblesafari.client.HyperspaceDimensionEffects;
+import maxigregrze.cobblesafari.client.renderer.HyperspaceSkyRenderer;
+import com.mojang.blaze3d.vertex.DefaultVertexFormat;
+import net.fabricmc.fabric.api.client.rendering.v1.CoreShaderRegistrationCallback;
 import maxigregrze.cobblesafari.mixin.client.DimensionSpecialEffectsAccessor;
 import maxigregrze.cobblesafari.client.renderer.LightningSpotBlockEntityRenderer;
 import maxigregrze.cobblesafari.client.renderer.LostItemBlockEntityRenderer;
@@ -104,6 +108,12 @@ public class CobbleSafariClientFabric implements ClientModInitializer {
                 ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, "dungeon_ultra_crater"),
                 new UltraCraterDimensionEffects()
         );
+        DimensionSpecialEffectsAccessor.getEffects().put(
+                ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, "dungeon_paris"),
+                new HyperspaceDimensionEffects()
+        );
+        CoreShaderRegistrationCallback.EVENT.register(context -> context.register(
+                HyperspaceSkyRenderer.SHADER_ID, DefaultVertexFormat.POSITION, HyperspaceSkyRenderer::setShader));
         registerTooltips();
         DonutItemClientSetup.registerItemProperties();
         net.minecraft.client.renderer.item.ItemProperties.register(maxigregrze.cobblesafari.init.ModItems.STAKATAKA_SHIELD,
@@ -148,6 +158,7 @@ public class CobbleSafariClientFabric implements ClientModInitializer {
             maxigregrze.cobblesafari.client.screen.rotomphone.RotomPhonePcSession.tickCleanup(client);
             maxigregrze.cobblesafari.client.rotomphone.RotoGlideClient.tick(client);
             maxigregrze.cobblesafari.client.teleporter.TeleportPadClient.tick(client);
+            maxigregrze.cobblesafari.client.obstacle.ShardClusterClient.tick(client);
             maxigregrze.cobblesafari.client.rotomphone.RotomPhoneKeybind.clientTick(client);
             maxigregrze.cobblesafari.client.objectives.ObjectivesKeybind.clientTick(client);
             maxigregrze.cobblesafari.client.objectives.ObjectivesHudController.clientTick(client);
@@ -186,6 +197,12 @@ public class CobbleSafariClientFabric implements ClientModInitializer {
                             maxigregrze.cobblesafari.client.effect.ClientRainbowFeatherFx.accept(payload.entityId()));
                 });
 
+        ClientPlayNetworking.registerGlobalReceiver(
+                maxigregrze.cobblesafari.network.RotomPhoneActivationPayload.TYPE, (payload, context) -> {
+                    context.client().execute(() ->
+                            maxigregrze.cobblesafari.client.effect.ClientRotomPhoneFx.accept(payload.device()));
+                });
+
         ClientPlayNetworking.registerGlobalReceiver(DimensionalBanSyncPayload.TYPE, (payload, context) -> {
             context.client().execute(() -> {
                 DimensionalBanConfig.applyClientSync(payload.dimensions());
@@ -203,7 +220,19 @@ public class CobbleSafariClientFabric implements ClientModInitializer {
                 });
 
         ClientPlayNetworking.registerGlobalReceiver(
+                maxigregrze.cobblesafari.network.HyperspaceSkyMapPayload.TYPE, (payload, context) ->
+                        context.client().execute(() -> maxigregrze.cobblesafari.client.renderer.HyperspaceSkyMapTexture.accept(payload)));
+
+        ClientPlayNetworking.registerGlobalReceiver(
                 maxigregrze.cobblesafari.network.UltraLootConfigSyncPayload.TYPE,
+                (payload, context) -> context.client().execute(payload::apply));
+
+        ClientPlayNetworking.registerGlobalReceiver(
+                maxigregrze.cobblesafari.network.ObstacleConfigSyncPayload.TYPE,
+                (payload, context) -> context.client().execute(payload::apply));
+
+        ClientPlayNetworking.registerGlobalReceiver(
+                maxigregrze.cobblesafari.network.SecretBasePCConfigSyncPayload.TYPE,
                 (payload, context) -> context.client().execute(payload::apply));
 
         ClientPlayNetworking.registerGlobalReceiver(
@@ -288,6 +317,7 @@ public class CobbleSafariClientFabric implements ClientModInitializer {
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.AIR_FIRE_CORAL, RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.AIR_HORN_CORAL, RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.ICICLE, RenderType.cutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.HAUNTED_MONITOR, RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.RUSTED_IRON_BLOCK, RenderType.cutoutMipped());
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.UNDERGROUND_PC, RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.SECRETBASE_PC, RenderType.cutout());
@@ -321,6 +351,9 @@ public class CobbleSafariClientFabric implements ClientModInitializer {
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.WHIRLWIND, RenderType.translucent());
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.WHIRLWIND_DISPLAY, RenderType.translucent());
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.CSBOSS_ELECTRICITY, RenderType.cutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.CSBOSS_SCORCHED, RenderType.cutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.CSBOSS_UPDRAFT, RenderType.cutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.CSBOSS_PUDDLE, RenderType.translucent());
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.MUD_PILE, RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.SLUDGE_PILE, RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.KARATE_MANNEQUIN, RenderType.cutout());
@@ -404,6 +437,7 @@ public class CobbleSafariClientFabric implements ClientModInitializer {
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.OBSTACLE_BOULDER, RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.OBSTACLE_BRAMBLES, RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.OBSTACLE_SLUDGE, RenderType.cutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.OBSTACLE_SHARDCLUSTER, RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.KALOS_FOUNTAIN, RenderType.translucent());
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.HYPERSPACE_CANOPY_RIDGE, RenderType.translucent());
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.KALOS_CANOPY_RIDGE, RenderType.translucent());
@@ -483,7 +517,7 @@ public class CobbleSafariClientFabric implements ClientModInitializer {
                         : (level != null && pos != null)
                                 ? net.minecraft.client.renderer.BiomeColors.getAverageWaterColor(level, pos)
                                 : HS_DEFAULT_WATER_COLOR,
-                ModBlocks.HYPERSPACE_FOUNTAIN, ModBlocks.KALOS_FOUNTAIN);
+                ModBlocks.HYPERSPACE_FOUNTAIN, ModBlocks.KALOS_FOUNTAIN, ModBlocks.CSBOSS_PUDDLE);
         net.fabricmc.fabric.api.client.rendering.v1.ColorProviderRegistry.ITEM.register(
                 (stack, tintIndex) -> tintIndex != 0 ? -1 : HS_DEFAULT_WATER_COLOR,
                 ModBlocks.HYPERSPACE_FOUNTAIN, ModBlocks.KALOS_FOUNTAIN);
@@ -531,6 +565,8 @@ public class CobbleSafariClientFabric implements ClientModInitializer {
         BlockEntityRenderers.register(ModBlockEntities.HOOPA_RING_PORTAL, HoopaRingPortalBlockEntityRenderer::new);
         BlockEntityRenderers.register(ModBlockEntities.ULTRA_WORMHOLE,
                 maxigregrze.cobblesafari.client.renderer.UltraWormholeBlockEntityRenderer::new);
+        BlockEntityRenderers.register(ModBlockEntities.ULTRA_ENTRANCE_PORTAL,
+                maxigregrze.cobblesafari.client.renderer.UltraEntrancePortalBlockEntityRenderer::new);
         BlockEntityRenderers.register(ModBlockEntities.DUNGEON_PORTAL, DungeonPortalBlockEntityRenderer::new);
         BlockEntityRenderers.register(ModBlockEntities.VOID_BLOCK, VoidBlockRenderer::new);
         BlockEntityRenderers.register(ModBlockEntities.GIRATINA_CORE, GiratinaCoreBlockEntityRenderer::new);
@@ -543,6 +579,7 @@ public class CobbleSafariClientFabric implements ClientModInitializer {
         BlockEntityRenderers.register(ModBlockEntities.AUSPICIOUS_POKEBALL_GOLD, AuspiciousPokeballBlockEntityRenderer::new);
         BlockEntityRenderers.register(ModBlockEntities.UNION_ROOM_DECOR, maxigregrze.cobblesafari.client.renderer.UnionRoomDecorBlockEntityRenderer::new);
         BlockEntityRenderers.register(ModBlockEntities.WHIRLWIND, maxigregrze.cobblesafari.client.renderer.WhirlwindBlockEntityRenderer::new);
+        BlockEntityRenderers.register(ModBlockEntities.CSBOSS_UPDRAFT, maxigregrze.cobblesafari.client.renderer.CsBossUpdraftTileRenderer::new);
         BlockEntityRenderers.register(ModBlockEntities.TRAP, maxigregrze.cobblesafari.client.renderer.TrapBlockEntityRenderer::new);
         BlockEntityRenderers.register(ModBlockEntities.UNION_ROOM_GLOBE_UPPER, maxigregrze.cobblesafari.client.renderer.UnionRoomGlobeUpperBlockEntityRenderer::new);
         BlockEntityRenderers.register(ModBlockEntities.POKEMON_STATUE, maxigregrze.cobblesafari.client.renderer.PokeStatueBlockEntityRenderer::new);
@@ -561,8 +598,10 @@ public class CobbleSafariClientFabric implements ClientModInitializer {
         EntityRendererRegistry.register(ModEntities.CSTRADER_NPC, CsTraderEntityRenderer::new);
         EntityRendererRegistry.register(ModEntities.BALLOON, BalloonEntityRenderer::new);
         EntityRendererRegistry.register(ModEntities.BALLOON_SAFARI, BalloonSafariRenderer::new);
+        EntityRendererRegistry.register(ModEntities.SAFARI_DRONE, maxigregrze.cobblesafari.client.renderer.SafariDroneRenderer::new);
         EntityRendererRegistry.register(ModEntities.THROWN_MUD_BALL, net.minecraft.client.renderer.entity.ThrownItemRenderer::new);
         EntityRendererRegistry.register(ModEntities.SEAT, net.minecraft.client.renderer.entity.NoopRenderer::new);
+        EntityRendererRegistry.register(ModEntities.CARRIER, net.minecraft.client.renderer.entity.NoopRenderer::new);
         EntityRendererRegistry.register(ModEntities.THROWN_BAIT, net.minecraft.client.renderer.entity.ThrownItemRenderer::new);
         EntityRendererRegistry.register(ModEntities.THROWN_BALM, net.minecraft.client.renderer.entity.ThrownItemRenderer::new);
         EntityRendererRegistry.register(ModEntities.THROWN_RED_CHAIN, maxigregrze.cobblesafari.client.renderer.ThrownRedChainEntityRenderer::new);
@@ -582,6 +621,11 @@ public class CobbleSafariClientFabric implements ClientModInitializer {
         EntityRendererRegistry.register(ModEntities.ATTACK_DISTORTION_STEM_CORE, maxigregrze.cobblesafari.client.renderer.AttackDistortionStemCoreEntityRenderer::new);
         EntityRendererRegistry.register(ModEntities.ATTACK_WAVE, maxigregrze.cobblesafari.client.renderer.AttackWaveEntityRenderer::new);
         EntityRendererRegistry.register(ModEntities.ATTACK_SHOCKWAVE, maxigregrze.cobblesafari.client.renderer.AttackShockwaveEntityRenderer::new);
+        EntityRendererRegistry.register(ModEntities.ATTACK_BELL, maxigregrze.cobblesafari.client.renderer.AttackBellEntityRenderer::new);
+        EntityRendererRegistry.register(ModEntities.ATTACK_TORNADO, maxigregrze.cobblesafari.client.renderer.AttackTornadoEntityRenderer::new);
+        EntityRendererRegistry.register(ModEntities.ATTACK_AIR_SLASH, maxigregrze.cobblesafari.client.renderer.AttackAirSlashEntityRenderer::new);
+        EntityRendererRegistry.register(ModEntities.ATTACK_ZONE_RING, maxigregrze.cobblesafari.client.renderer.AttackZoneRingEntityRenderer::new);
+        EntityRendererRegistry.register(ModEntities.ATTACK_LANE_SHADOW, maxigregrze.cobblesafari.client.renderer.AttackLaneShadowEntityRenderer::new);
         EntityRendererRegistry.register(ModEntities.ATTACK_DISTORTION_FLOWER, maxigregrze.cobblesafari.client.renderer.AttackDistortionFlowerEntityRenderer::new);
         EntityRendererRegistry.register(ModEntities.ATTACK_GIRATINA_ORB, maxigregrze.cobblesafari.client.renderer.AttackGiratinaOrbEntityRenderer::new);
         EntityRendererRegistry.register(ModEntities.ATTACK_BEAM, maxigregrze.cobblesafari.client.renderer.AttackBeamEntityRenderer::new);
@@ -598,6 +642,7 @@ public class CobbleSafariClientFabric implements ClientModInitializer {
         EntityRendererRegistry.register(ModEntities.HYPERSPACE_CHEST_BOAT,
                 ctx -> new maxigregrze.cobblesafari.client.renderer.HyperspaceBoatRenderer(ctx, true));
         EntityModelLayerRegistry.registerModelLayer(BalloonEntityModel.LAYER_LOCATION, BalloonEntityModel::createBodyLayer);
+        EntityModelLayerRegistry.registerModelLayer(maxigregrze.cobblesafari.client.model.AttackBellModel.LAYER_LOCATION, maxigregrze.cobblesafari.client.model.AttackBellModel::createBodyLayer);
         EntityModelLayerRegistry.registerModelLayer(CsTraderEntityRenderer.LAYER_LOCATION, CsTraderEntityRenderer::createBodyLayer);
     }
 

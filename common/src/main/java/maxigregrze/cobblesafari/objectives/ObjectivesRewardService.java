@@ -4,10 +4,10 @@ import maxigregrze.cobblesafari.CobbleSafari;
 import maxigregrze.cobblesafari.block.misc.AuspiciousPokeballGoldBlockEntity;
 import maxigregrze.cobblesafari.block.misc.AuspiciousPokeballGoldIndex;
 import maxigregrze.cobblesafari.config.MiscConfig;
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.protocol.game.ClientboundSetTitleTextPacket;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
@@ -41,8 +41,9 @@ public final class ObjectivesRewardService {
         task.markTaskRewardGiven();
     }
 
-    /** Gives the all-objectives-complete rewards. */
+    /** Gives the all-objectives-complete rewards, announced by a "TASKS COMPLETE" title (plan 196, § 7.7). */
     public static void giveFinalRewards(ServerPlayer player, DimensionalObjectivesDefinition def) {
+        ObjectiveTitles.show(player, Component.translatable("cobblesafari.dimensional_objectives.tasks_complete"));
         if (def.enableFinalCompletionReward() && def.finalCompletionReward() != null) {
             rollAndGive(player, def.finalCompletionReward());
         }
@@ -82,10 +83,8 @@ public final class ObjectivesRewardService {
         AuspiciousPokeballGoldBlockEntity chosen = found.get(level.getRandom().nextInt(found.size()));
         chosen.addEarner(player.getGameProfile().getName());
 
-        Component title = Component.translatable(
-                "cobblesafari.dimensional_objectives.auspicious_pokeball_appeared",
-                Component.translatable(def.auspiciousPokeballRewardDisplayName()));
-        player.connection.send(new ClientboundSetTitleTextPacket(title));
+        ObjectiveTitles.showNext(player, Component.translatable("cobblesafari.dimensional_objectives.bonus_ball_appeared")
+                .withStyle(ChatFormatting.YELLOW));
     }
 
     private static void rollAndGive(ServerPlayer player, ResourceLocation tableId) {

@@ -72,6 +72,9 @@ public class CsBossEntityRenderer extends EntityRenderer<CsBossEntity> {
     public void render(CsBossEntity boss, float yaw, float partialTicks, PoseStack ps,
                        MultiBufferSource buffer, int packedLight) {
         purgeStaleStates();
+        if (boss.isInvisible()) {
+            return; // clignotement de fuite / réapparition (CsBossVanish)
+        }
         String specie = boss.getSpecie();
         if (specie != null && !specie.isBlank()) {
             try {

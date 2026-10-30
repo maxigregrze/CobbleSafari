@@ -1,7 +1,7 @@
 {
   "parent": "cobblesafari:ring_a_ding",
   "display": {
-    "icon": { "id": "minecraft:painting" },
+    "icon": { "id": "cobblesafari:rotom_skin_unlock" },
     "title": { "translate": "advancements.cobblesafari.fresh_makeover.title" },
     "description": { "translate": "advancements.cobblesafari.fresh_makeover.description" },
     "frame": "task",

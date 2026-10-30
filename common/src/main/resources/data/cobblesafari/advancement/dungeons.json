@@ -1,6 +1,6 @@
 {
   "display": {
-    "icon": { "id": "cobblesafari:redchain_fragment" },
+    "icon": { "id": "cobblesafari:dungeon_portal" },
     "title": { "translate": "advancements.cobblesafari.dungeons.title" },
     "description": { "translate": "advancements.cobblesafari.dungeons.description" },
     "background": "minecraft:textures/gui/advancements/backgrounds/stone.png",

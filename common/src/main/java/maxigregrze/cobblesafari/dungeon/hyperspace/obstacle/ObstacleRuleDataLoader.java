@@ -76,7 +76,8 @@ public final class ObstacleRuleDataLoader {
                 : "cobblesafari.obstacle.no_move." + kind.id();
         ResourceLocation loot = json.has("lootTable")
                 ? ResourceLocation.tryParse(json.get("lootTable").getAsString().trim()) : null;
-        return new ObstacleRule(kind, readIds(json, "types"), readIds(json, "moves"), message, loot);
+        boolean anyMove = json.has("anyMove") && json.get("anyMove").getAsBoolean();
+        return new ObstacleRule(kind, readIds(json, "types"), readIds(json, "moves"), anyMove, message, loot);
     }
 
     private static Set<String> readIds(JsonObject json, String key) {

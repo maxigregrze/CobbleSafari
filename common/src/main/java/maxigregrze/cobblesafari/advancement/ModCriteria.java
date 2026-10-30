@@ -35,9 +35,18 @@ public final class ModCriteria {
     public static CountTrigger MUD_BALL_USED;
     public static CountTrigger HYPER_SOCIAL;
     public static CountTrigger DISTORTION_DEFEAT;
+    public static CountTrigger WARP_RIDE_DISTANCE;
+    public static CountTrigger OBSTACLE_CLEARED;
+    public static CountTrigger WILD_ZONE_ENTERED;
+    public static CountTrigger LOST_ITEM_CLAIMED;
+    public static CountTrigger TIME_SITTING;
 
-    // Boss battle
+    // Boss battle (same conditions: dimension + root boss id)
     public static CsBossWinTrigger CSBOSS_WIN;
+    public static CsBossWinTrigger CSBOSS_JOIN;
+
+    // Id-carrying events (optional "id" condition)
+    public static IdEventTrigger WARP_DESTINATION_REACHED;
 
     // One-shot events
     public static SimpleEventTrigger ROTOM_PHONE_MADE;
@@ -46,6 +55,9 @@ public final class ModCriteria {
     public static SimpleEventTrigger UNION_PARTY_POPPER;
     public static SimpleEventTrigger GTS_PERSONAL_CONFIRMED;
     public static SimpleEventTrigger GTS_UNIQUE_CONFIRMED;
+    public static SimpleEventTrigger ULTRA_BEAST_CAUGHT;
+    public static SimpleEventTrigger OBJECTIVES_COMPLETED;
+    public static SimpleEventTrigger HAUNTED_MONITOR_FREED;
 
     public static void register() {
         SAFARI_DAY = reg("safari_day", new CountTrigger());
@@ -68,8 +80,16 @@ public final class ModCriteria {
         MUD_BALL_USED = reg("mud_ball_used", new CountTrigger());
         HYPER_SOCIAL = reg("hyper_social", new CountTrigger());
         DISTORTION_DEFEAT = reg("distortion_defeat", new CountTrigger());
+        WARP_RIDE_DISTANCE = reg("warp_ride_distance", new CountTrigger());
+        OBSTACLE_CLEARED = reg("obstacle_cleared", new CountTrigger());
+        WILD_ZONE_ENTERED = reg("wild_zone_entered", new CountTrigger());
+        LOST_ITEM_CLAIMED = reg("lost_item_claimed", new CountTrigger());
+        TIME_SITTING = reg("time_sitting", new CountTrigger());
 
         CSBOSS_WIN = reg("csboss_win", new CsBossWinTrigger());
+        CSBOSS_JOIN = reg("csboss_join", new CsBossWinTrigger());
+
+        WARP_DESTINATION_REACHED = reg("warp_destination_reached", new IdEventTrigger());
 
         ROTOM_PHONE_MADE = reg("rotom_phone_made", new SimpleEventTrigger());
         ROTOM_PHONE_SHINY = reg("rotom_phone_shiny", new SimpleEventTrigger());
@@ -77,6 +97,9 @@ public final class ModCriteria {
         UNION_PARTY_POPPER = reg("union_party_popper", new SimpleEventTrigger());
         GTS_PERSONAL_CONFIRMED = reg("gts_personal_confirmed", new SimpleEventTrigger());
         GTS_UNIQUE_CONFIRMED = reg("gts_unique_confirmed", new SimpleEventTrigger());
+        ULTRA_BEAST_CAUGHT = reg("ultra_beast_caught", new SimpleEventTrigger());
+        OBJECTIVES_COMPLETED = reg("objectives_completed", new SimpleEventTrigger());
+        HAUNTED_MONITOR_FREED = reg("haunted_monitor_freed", new SimpleEventTrigger());
 
         CobbleSafari.LOGGER.info("CobbleSafari >> Advancement criteria registered!");
     }

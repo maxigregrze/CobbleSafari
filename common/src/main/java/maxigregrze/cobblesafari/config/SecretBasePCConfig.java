@@ -23,6 +23,12 @@ public class SecretBasePCConfig {
 
     private static SecretBasePCConfig INSTANCE;
 
+    /** Effects a tier can hold: the indices of {@code BasePCBlockEntity.getEffectForIndex}. */
+    private static final int EFFECT_COUNT = 5;
+    private static final List<TierSnapshot> DEFAULT_SNAPSHOT = snapshot(defaultTiers());
+    /** Client only: the server's tiers, synced at login and on refresh (action plan 198, F5). */
+    private static volatile List<TierSnapshot> clientTiers;
+
     private List<TierEntry> tiers = defaultTiers();
     private Map<String, Integer> flagBattery = defaultFlagBattery();
 
@@ -146,15 +152,27 @@ public class SecretBasePCConfig {
 
     public static int getMaxBattery(int rank) {
         if (INSTANCE == null) return 100;
-        int idx = Math.max(0, Math.min(rank, INSTANCE.tiers.size() - 1));
-        TierEntry tier = INSTANCE.tiers.get(idx);
-        return Math.max(0, tier.maxBattery);
+        return maxBattery(INSTANCE.tiers, rank);
     }
 
     public static int getEffectCost(int rank, int effect) {
         if (INSTANCE == null) return -1;
-        int r = Math.max(0, Math.min(rank, INSTANCE.tiers.size() - 1));
-        TierEntry tier = INSTANCE.tiers.get(r);
+        return effectCost(INSTANCE.tiers, rank, effect);
+    }
+
+    public static boolean isEffectLocked(int rank, int effect) {
+        return getEffectCost(rank, effect) == -1;
+    }
+
+    private static int maxBattery(List<TierEntry> tiers, int rank) {
+        int idx = Math.max(0, Math.min(rank, tiers.size() - 1));
+        TierEntry tier = tiers.get(idx);
+        return Math.max(0, tier.maxBattery);
+    }
+
+    private static int effectCost(List<TierEntry> tiers, int rank, int effect) {
+        int r = Math.max(0, Math.min(rank, tiers.size() - 1));
+        TierEntry tier = tiers.get(r);
         if (tier.effects == null) return -1;
         for (EffectEntry e : tier.effects) {
             if (e != null && e.effectId == effect) {
@@ -165,8 +183,54 @@ public class SecretBasePCConfig {
         return -1;
     }
 
-    public static boolean isEffectLocked(int rank, int effect) {
-        return getEffectCost(rank, effect) == -1;
+    // -- client copy (action plan 198, F5) ------------------------------------
+
+    /** One tier as the client needs it: its battery cap and each effect's cost (-1 = locked). */
+    public record TierSnapshot(int maxBattery, int[] effectCosts) {}
+
+    /** The server's tiers, resolved the same way {@link #getMaxBattery} / {@link #getEffectCost} read them. */
+    public static List<TierSnapshot> snapshotTiers() {
+        return snapshot(INSTANCE == null || INSTANCE.tiers.isEmpty() ? defaultTiers() : INSTANCE.tiers);
+    }
+
+    private static List<TierSnapshot> snapshot(List<TierEntry> tiers) {
+        List<TierSnapshot> out = new ArrayList<>(tiers.size());
+        for (int rank = 0; rank < tiers.size(); rank++) {
+            int[] costs = new int[EFFECT_COUNT];
+            for (int effect = 0; effect < EFFECT_COUNT; effect++) {
+                costs[effect] = effectCost(tiers, rank, effect);
+            }
+            out.add(new TierSnapshot(maxBattery(tiers, rank), costs));
+        }
+        return out;
+    }
+
+    /** Called on the client when receiving the server's tiers. */
+    public static void applyClientSync(List<TierSnapshot> tiers) {
+        clientTiers = List.copyOf(tiers);
+    }
+
+    /** Client: the server's battery cap for {@code rank}, never the local file. */
+    public static int getClientMaxBattery(int rank) {
+        List<TierSnapshot> tiers = clientTiers();
+        return tiers.get(Math.max(0, Math.min(rank, tiers.size() - 1))).maxBattery();
+    }
+
+    /** Client: the server's cost of {@code effect} at {@code rank}, or -1 when locked. */
+    public static int getClientEffectCost(int rank, int effect) {
+        List<TierSnapshot> tiers = clientTiers();
+        int[] costs = tiers.get(Math.max(0, Math.min(rank, tiers.size() - 1))).effectCosts();
+        return effect >= 0 && effect < costs.length ? costs[effect] : -1;
+    }
+
+    public static boolean isClientEffectLocked(int rank, int effect) {
+        return getClientEffectCost(rank, effect) == -1;
+    }
+
+    /** The synced tiers, or the built-in defaults before the first sync. */
+    private static List<TierSnapshot> clientTiers() {
+        List<TierSnapshot> tiers = clientTiers;
+        return tiers == null || tiers.isEmpty() ? DEFAULT_SNAPSHOT : tiers;
     }
 
     public static int getFlagBatteryValue(String flagKey) {

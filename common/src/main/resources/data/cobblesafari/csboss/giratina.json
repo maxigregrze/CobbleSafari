@@ -1,5 +1,6 @@
 {
     "bossId": "giratina",
+    "winRibbon": { "mark": "cobblesafari:ribbon_distortion", "chance": 0.1 },
     "displayName": "Distorted Shadow",
     "tags": ["giratinaBoss"],
     "maximumDuration": 300,
@@ -14,6 +15,7 @@
     "moveCooldownMin": 2,
     "moveCooldownMax": 3,
     "isStatic": true,
+    "damageMultiplier": 2.5,
     "music": "cobblesafari:giratina1",
     "healthStyle": "notched_10",
     "healthColor": "red",

@@ -306,7 +306,11 @@ public final class DungeonInstanceCleanup {
      */
     public static void sweepDetachedInstances(MinecraftServer server) {
         for (DungeonInstanceRecord record : DungeonPositionSavedData.get(server).getInstancesSnapshot()) {
-            if (record.entranceClosed() && !record.pendingDeletion()) {
+            // Sub-instances too (action plan 200): they have no entrance to close, so the filter on
+            // entranceClosed() left them to the single release attempted on departure. When that one
+            // was refused - the player not yet resolved back into the parent - nothing ever tried
+            // again: the region, and the uncaught encounter Pokemon in it, stayed until a restart.
+            if ((record.entranceClosed() || record.isSubInstance()) && !record.pendingDeletion()) {
                 maybeReleaseInstance(server, record.instanceId());
             }
         }
@@ -359,6 +363,22 @@ public final class DungeonInstanceCleanup {
             // (a) standing in it. Covers bypassed staff, who hold no session at all.
             if (scope != null && key.equals(scope.key())) {
                 occupants.add(player);
+                continue;
+            }
+
+            if (record.isSubInstance()) {
+                // A sub-instance is left for good: there is no way back in, and no nested visit
+                // below it. So (b) and (c) cannot apply - (c) in particular used to pin it through
+                // the closed session leave() leaves behind, whenever the player stood somewhere
+                // their parent's instance did not resolve. What it needs instead, now that the
+                // sweep can release it at any time, is (d): a player still in its dimension who
+                // holds a running session for it, even where the footprint does not resolve.
+                PlayerTimerData own = dim.equals(record.dimensionId())
+                        ? TimerManager.session(player, TimerScope.parse(key))
+                        : null;
+                if (own != null && own.isActive() && own.getRemainingTicks() > 0) {
+                    occupants.add(player);
+                }
                 continue;
             }
 
@@ -440,6 +460,7 @@ public final class DungeonInstanceCleanup {
         maxigregrze.cobblesafari.objectives.ObjectivesManager.purgeInstance(
                 server, record.dimensionId(), record.instanceId());
         maxigregrze.cobblesafari.data.HyperspaceZoneSavedData.get(server).remove(record.instanceId());
+        maxigregrze.cobblesafari.dungeon.hyperspace.HyperspaceSkyMapService.purgeInstance(server, record.instanceId());
 
         // Order matters (plan 181 § 7): evacuate FIRST, purge the timer sessions after. The
         // evacuation reads each player's session to send them back to their own entry point, so

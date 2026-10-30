@@ -28,5 +28,12 @@ public final class ModBlockTags {
     public static final TagKey<Block> TELEPORT_PAD_LOW_SUPPORTS = TagKey.create(Registries.BLOCK,
             ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, "teleport_pad_low_supports"));
 
+    /**
+     * Road-like floors (15 px top) a shard cluster or a lost item may stand on, drawn 1 px lower
+     * (plan 196, sections 7.9 and 8.8). See {@code LoweredSupport} for the 15 px check.
+     */
+    public static final TagKey<Block> LOWERED_SUPPORTS = TagKey.create(Registries.BLOCK,
+            ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, "lowered_supports"));
+
     private ModBlockTags() {}
 }

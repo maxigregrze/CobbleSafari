@@ -163,6 +163,25 @@
           "alphaLevel": "45-47"
         }
       ]
+    },
+    {
+      "id": "prinplup",
+      "weight": 0.1,
+      "rare": true,
+      "members": [
+        {
+          "pokemon": "empoleon",
+          "rarity": 20,
+          "level": "41-43",
+          "alphaLevel": "50-52"
+        },
+        {
+          "pokemon": "prinplup",
+          "rarity": 80,
+          "level": "36-38",
+          "alphaLevel": "45-47"
+        }
+      ]
     }
   ]
 }

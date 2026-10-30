@@ -1,0 +1,876 @@
+{
+  "schemaVersion": 1,
+  "name": "quasartico_executive",
+  "displayName": "Quasartico Executive",
+  "textureFile": "vinnie",
+  "isKilleable": false,
+  "variants": [
+    {
+      "id": "shards",
+      "tradeGroups": [
+        {
+          "minTrades": 6,
+          "maxTrades": 6,
+          "trades": [
+            {
+              "sourceItem1": "cobblesafari:mega_shard_block",
+              "sourceQty1": 20,
+              "resultItems": [
+                "mega_showdown:absolite"
+              ],
+              "resultQty": 1,
+              "maxUses": 1
+            },
+            {
+              "sourceItem1": "cobblesafari:mega_shard_block",
+              "sourceQty1": 20,
+              "resultItems": [
+                "mega_showdown:audinite"
+              ],
+              "resultQty": 1,
+              "maxUses": 1
+            },
+            {
+              "sourceItem1": "cobblesafari:mega_shard_block",
+              "sourceQty1": 20,
+              "resultItems": [
+                "mega_showdown:banettite"
+              ],
+              "resultQty": 1,
+              "maxUses": 1
+            },
+            {
+              "sourceItem1": "cobblesafari:mega_shard_block",
+              "sourceQty1": 20,
+              "resultItems": [
+                "mega_showdown:beedrillite"
+              ],
+              "resultQty": 1,
+              "maxUses": 1
+            },
+            {
+              "sourceItem1": "cobblesafari:mega_shard_block",
+              "sourceQty1": 20,
+              "resultItems": [
+                "mega_showdown:cameruptite"
+              ],
+              "resultQty": 1,
+              "maxUses": 1
+            },
+            {
+              "sourceItem1": "cobblesafari:mega_shard_block",
+              "sourceQty1": 20,
+              "resultItems": [
+                "mega_showdown:chimechite"
+              ],
+              "resultQty": 1,
+              "maxUses": 1
+            },
+            {
+              "sourceItem1": "cobblesafari:mega_shard_block",
+              "sourceQty1": 20,
+              "resultItems": [
+                "mega_showdown:houndoominite"
+              ],
+              "resultQty": 1,
+              "maxUses": 1
+            },
+            {
+              "sourceItem1": "cobblesafari:mega_shard_block",
+              "sourceQty1": 20,
+              "resultItems": [
+                "mega_showdown:lopunnite"
+              ],
+              "resultQty": 1,
+              "maxUses": 1
+            },
+            {
+              "sourceItem1": "cobblesafari:mega_shard_block",
+              "sourceQty1": 20,
+              "resultItems": [
+                "mega_showdown:manectite"
+              ],
+              "resultQty": 1,
+              "maxUses": 1
+            },
+            {
+              "sourceItem1": "cobblesafari:mega_shard_block",
+              "sourceQty1": 20,
+              "resultItems": [
+                "mega_showdown:mawilite"
+              ],
+              "resultQty": 1,
+              "maxUses": 1
+            },
+            {
+              "sourceItem1": "cobblesafari:mega_shard_block",
+              "sourceQty1": 20,
+              "resultItems": [
+                "mega_showdown:medichamite"
+              ],
+              "resultQty": 1,
+              "maxUses": 1
+            },
+            {
+              "sourceItem1": "cobblesafari:mega_shard_block",
+              "sourceQty1": 20,
+              "resultItems": [
+                "mega_showdown:meowsticite"
+              ],
+              "resultQty": 1,
+              "maxUses": 1
+            },
+            {
+              "sourceItem1": "cobblesafari:mega_shard_block",
+              "sourceQty1": 20,
+              "resultItems": [
+                "mega_showdown:pidgeotite"
+              ],
+              "resultQty": 1,
+              "maxUses": 1
+            },
+            {
+              "sourceItem1": "cobblesafari:mega_shard_block",
+              "sourceQty1": 20,
+              "resultItems": [
+                "mega_showdown:sablenite"
+              ],
+              "resultQty": 1,
+              "maxUses": 1
+            },
+            {
+              "sourceItem1": "cobblesafari:mega_shard_block",
+              "sourceQty1": 20,
+              "resultItems": [
+                "mega_showdown:sharpedonite"
+              ],
+              "resultQty": 1,
+              "maxUses": 1
+            },
+            {
+              "sourceItem1": "cobblesafari:mega_shard_block",
+              "sourceQty1": 20,
+              "resultItems": [
+                "mega_showdown:staraptite"
+              ],
+              "resultQty": 1,
+              "maxUses": 1
+            },
+            {
+              "sourceItem1": "cobblesafari:mega_shard_block",
+              "sourceQty1": 26,
+              "sourceItem2": "cobblesafari:megashard",
+              "sourceQty2": 6,
+              "resultItems": [
+                "mega_showdown:abomasite"
+              ],
+              "resultQty": 1,
+              "maxUses": 1
+            },
+            {
+              "sourceItem1": "cobblesafari:mega_shard_block",
+              "sourceQty1": 26,
+              "sourceItem2": "cobblesafari:megashard",
+              "sourceQty2": 6,
+              "resultItems": [
+                "mega_showdown:aerodactylite"
+              ],
+              "resultQty": 1,
+              "maxUses": 1
+            },
+            {
+              "sourceItem1": "cobblesafari:mega_shard_block",
+              "sourceQty1": 26,
+              "sourceItem2": "cobblesafari:megashard",
+              "sourceQty2": 6,
+              "resultItems": [
+                "mega_showdown:altarianite"
+              ],
+              "resultQty": 1,
+              "maxUses": 1
+            },
+            {
+              "sourceItem1": "cobblesafari:mega_shard_block",
+              "sourceQty1": 26,
+              "sourceItem2": "cobblesafari:megashard",
+              "sourceQty2": 6,
+              "resultItems": [
+                "mega_showdown:ampharosite"
+              ],
+              "resultQty": 1,
+              "maxUses": 1
+            },
+            {
+              "sourceItem1": "cobblesafari:mega_shard_block",
+              "sourceQty1": 26,
+              "sourceItem2": "cobblesafari:megashard",
+              "sourceQty2": 6,
+              "resultItems": [
+                "mega_showdown:barbaracite"
+              ],
+              "resultQty": 1,
+              "maxUses": 1
+            },
+            {
+              "sourceItem1": "cobblesafari:mega_shard_block",
+              "sourceQty1": 26,
+              "sourceItem2": "cobblesafari:megashard",
+              "sourceQty2": 6,
+              "resultItems": [
+                "mega_showdown:clefablite"
+              ],
+              "resultQty": 1,
+              "maxUses": 1
+            },
+            {
+              "sourceItem1": "cobblesafari:mega_shard_block",
+              "sourceQty1": 26,
+              "sourceItem2": "cobblesafari:megashard",
+              "sourceQty2": 6,
+              "resultItems": [
+                "mega_showdown:crabominite"
+              ],
+              "resultQty": 1,
+              "maxUses": 1
+            },
+            {
+              "sourceItem1": "cobblesafari:mega_shard_block",
+              "sourceQty1": 26,
+              "sourceItem2": "cobblesafari:megashard",
+              "sourceQty2": 6,
+              "resultItems": [
+                "mega_showdown:dragalgite"
+              ],
+              "resultQty": 1,
+              "maxUses": 1
+            },
+            {
+              "sourceItem1": "cobblesafari:mega_shard_block",
+              "sourceQty1": 26,
+              "sourceItem2": "cobblesafari:megashard",
+              "sourceQty2": 6,
+              "resultItems": [
+                "mega_showdown:eelektrossite"
+              ],
+              "resultQty": 1,
+              "maxUses": 1
+            },
+            {
+              "sourceItem1": "cobblesafari:mega_shard_block",
+              "sourceQty1": 26,
+              "sourceItem2": "cobblesafari:megashard",
+              "sourceQty2": 6,
+              "resultItems": [
+                "mega_showdown:falinksite"
+              ],
+              "resultQty": 1,
+              "maxUses": 1
+            },
+            {
+              "sourceItem1": "cobblesafari:mega_shard_block",
+              "sourceQty1": 26,
+              "sourceItem2": "cobblesafari:megashard",
+              "sourceQty2": 6,
+              "resultItems": [
+                "mega_showdown:froslassite"
+              ],
+              "resultQty": 1,
+              "maxUses": 1
+            },
+            {
+              "sourceItem1": "cobblesafari:mega_shard_block",
+              "sourceQty1": 26,
+              "sourceItem2": "cobblesafari:megashard",
+              "sourceQty2": 6,
+              "resultItems": [
+                "mega_showdown:galladite"
+              ],
+              "resultQty": 1,
+              "maxUses": 1
+            },
+            {
+              "sourceItem1": "cobblesafari:mega_shard_block",
+              "sourceQty1": 26,
+              "sourceItem2": "cobblesafari:megashard",
+              "sourceQty2": 6,
+              "resultItems": [
+                "mega_showdown:gardevoirite"
+              ],
+              "resultQty": 1,
+              "maxUses": 1
+            },
+            {
+              "sourceItem1": "cobblesafari:mega_shard_block",
+              "sourceQty1": 26,
+              "sourceItem2": "cobblesafari:megashard",
+              "sourceQty2": 6,
+              "resultItems": [
+                "mega_showdown:glalitite"
+              ],
+              "resultQty": 1,
+              "maxUses": 1
+            },
+            {
+              "sourceItem1": "cobblesafari:mega_shard_block",
+              "sourceQty1": 26,
+              "sourceItem2": "cobblesafari:megashard",
+              "sourceQty2": 6,
+              "resultItems": [
+                "mega_showdown:glimmoranite"
+              ],
+              "resultQty": 1,
+              "maxUses": 1
+            },
+            {
+              "sourceItem1": "cobblesafari:mega_shard_block",
+              "sourceQty1": 26,
+              "sourceItem2": "cobblesafari:megashard",
+              "sourceQty2": 6,
+              "resultItems": [
+                "mega_showdown:golisopite"
+              ],
+              "resultQty": 1,
+              "maxUses": 1
+            },
+            {
+              "sourceItem1": "cobblesafari:mega_shard_block",
+              "sourceQty1": 26,
+              "sourceItem2": "cobblesafari:megashard",
+              "sourceQty2": 6,
+              "resultItems": [
+                "mega_showdown:golurkite"
+              ],
+              "resultQty": 1,
+              "maxUses": 1
+            },
+            {
+              "sourceItem1": "cobblesafari:mega_shard_block",
+              "sourceQty1": 26,
+              "sourceItem2": "cobblesafari:megashard",
+              "sourceQty2": 6,
+              "resultItems": [
+                "mega_showdown:gyaradosite"
+              ],
+              "resultQty": 1,
+              "maxUses": 1
+            },
+            {
+              "sourceItem1": "cobblesafari:mega_shard_block",
+              "sourceQty1": 26,
+              "sourceItem2": "cobblesafari:megashard",
+              "sourceQty2": 6,
+              "resultItems": [
+                "mega_showdown:hawluchanite"
+              ],
+              "resultQty": 1,
+              "maxUses": 1
+            },
+            {
+              "sourceItem1": "cobblesafari:mega_shard_block",
+              "sourceQty1": 26,
+              "sourceItem2": "cobblesafari:megashard",
+              "sourceQty2": 6,
+              "resultItems": [
+                "mega_showdown:heracronite"
+              ],
+              "resultQty": 1,
+              "maxUses": 1
+            },
+            {
+              "sourceItem1": "cobblesafari:mega_shard_block",
+              "sourceQty1": 26,
+              "sourceItem2": "cobblesafari:megashard",
+              "sourceQty2": 6,
+              "resultItems": [
+                "mega_showdown:kangaskhanite"
+              ],
+              "resultQty": 1,
+              "maxUses": 1
+            },
+            {
+              "sourceItem1": "cobblesafari:mega_shard_block",
+              "sourceQty1": 26,
+              "sourceItem2": "cobblesafari:megashard",
+              "sourceQty2": 6,
+              "resultItems": [
+                "mega_showdown:lucarionite"
+              ],
+              "resultQty": 1,
+              "maxUses": 1
+            },
+            {
+              "sourceItem1": "cobblesafari:mega_shard_block",
+              "sourceQty1": 26,
+              "sourceItem2": "cobblesafari:megashard",
+              "sourceQty2": 6,
+              "resultItems": [
+                "mega_showdown:malamarite"
+              ],
+              "resultQty": 1,
+              "maxUses": 1
+            },
+            {
+              "sourceItem1": "cobblesafari:mega_shard_block",
+              "sourceQty1": 26,
+              "sourceItem2": "cobblesafari:megashard",
+              "sourceQty2": 6,
+              "resultItems": [
+                "mega_showdown:pinsirite"
+              ],
+              "resultQty": 1,
+              "maxUses": 1
+            },
+            {
+              "sourceItem1": "cobblesafari:mega_shard_block",
+              "sourceQty1": 26,
+              "sourceItem2": "cobblesafari:megashard",
+              "sourceQty2": 6,
+              "resultItems": [
+                "mega_showdown:pyroarite"
+              ],
+              "resultQty": 1,
+              "maxUses": 1
+            },
+            {
+              "sourceItem1": "cobblesafari:mega_shard_block",
+              "sourceQty1": 26,
+              "sourceItem2": "cobblesafari:megashard",
+              "sourceQty2": 6,
+              "resultItems": [
+                "mega_showdown:raichunite_x"
+              ],
+              "resultQty": 1,
+              "maxUses": 1
+            },
+            {
+              "sourceItem1": "cobblesafari:mega_shard_block",
+              "sourceQty1": 26,
+              "sourceItem2": "cobblesafari:megashard",
+              "sourceQty2": 6,
+              "resultItems": [
+                "mega_showdown:raichunite_y"
+              ],
+              "resultQty": 1,
+              "maxUses": 1
+            },
+            {
+              "sourceItem1": "cobblesafari:mega_shard_block",
+              "sourceQty1": 26,
+              "sourceItem2": "cobblesafari:megashard",
+              "sourceQty2": 6,
+              "resultItems": [
+                "mega_showdown:scizorite"
+              ],
+              "resultQty": 1,
+              "maxUses": 1
+            },
+            {
+              "sourceItem1": "cobblesafari:mega_shard_block",
+              "sourceQty1": 26,
+              "sourceItem2": "cobblesafari:megashard",
+              "sourceQty2": 6,
+              "resultItems": [
+                "mega_showdown:scolipite"
+              ],
+              "resultQty": 1,
+              "maxUses": 1
+            },
+            {
+              "sourceItem1": "cobblesafari:mega_shard_block",
+              "sourceQty1": 26,
+              "sourceItem2": "cobblesafari:megashard",
+              "sourceQty2": 6,
+              "resultItems": [
+                "mega_showdown:scovillainite"
+              ],
+              "resultQty": 1,
+              "maxUses": 1
+            },
+            {
+              "sourceItem1": "cobblesafari:mega_shard_block",
+              "sourceQty1": 26,
+              "sourceItem2": "cobblesafari:megashard",
+              "sourceQty2": 6,
+              "resultItems": [
+                "mega_showdown:scraftinite"
+              ],
+              "resultQty": 1,
+              "maxUses": 1
+            },
+            {
+              "sourceItem1": "cobblesafari:mega_shard_block",
+              "sourceQty1": 26,
+              "sourceItem2": "cobblesafari:megashard",
+              "sourceQty2": 6,
+              "resultItems": [
+                "mega_showdown:skarmorite"
+              ],
+              "resultQty": 1,
+              "maxUses": 1
+            },
+            {
+              "sourceItem1": "cobblesafari:mega_shard_block",
+              "sourceQty1": 26,
+              "sourceItem2": "cobblesafari:megashard",
+              "sourceQty2": 6,
+              "resultItems": [
+                "mega_showdown:slowbronite"
+              ],
+              "resultQty": 1,
+              "maxUses": 1
+            },
+            {
+              "sourceItem1": "cobblesafari:mega_shard_block",
+              "sourceQty1": 26,
+              "sourceItem2": "cobblesafari:megashard",
+              "sourceQty2": 6,
+              "resultItems": [
+                "mega_showdown:starminite"
+              ],
+              "resultQty": 1,
+              "maxUses": 1
+            },
+            {
+              "sourceItem1": "cobblesafari:mega_shard_block",
+              "sourceQty1": 26,
+              "sourceItem2": "cobblesafari:megashard",
+              "sourceQty2": 6,
+              "resultItems": [
+                "mega_showdown:steelixite"
+              ],
+              "resultQty": 1,
+              "maxUses": 1
+            },
+            {
+              "sourceItem1": "cobblesafari:mega_shard_block",
+              "sourceQty1": 26,
+              "sourceItem2": "cobblesafari:megashard",
+              "sourceQty2": 6,
+              "resultItems": [
+                "mega_showdown:victreebelite"
+              ],
+              "resultQty": 1,
+              "maxUses": 1
+            },
+            {
+              "sourceItem1": "cobblesafari:mega_shard_block",
+              "sourceQty1": 40,
+              "resultItems": [
+                "mega_showdown:aggronite"
+              ],
+              "resultQty": 1,
+              "maxUses": 1
+            },
+            {
+              "sourceItem1": "cobblesafari:mega_shard_block",
+              "sourceQty1": 40,
+              "resultItems": [
+                "mega_showdown:alakazite"
+              ],
+              "resultQty": 1,
+              "maxUses": 1
+            },
+            {
+              "sourceItem1": "cobblesafari:mega_shard_block",
+              "sourceQty1": 40,
+              "resultItems": [
+                "mega_showdown:baxcalibrite"
+              ],
+              "resultQty": 1,
+              "maxUses": 1
+            },
+            {
+              "sourceItem1": "cobblesafari:mega_shard_block",
+              "sourceQty1": 40,
+              "resultItems": [
+                "mega_showdown:blastoisinite"
+              ],
+              "resultQty": 1,
+              "maxUses": 1
+            },
+            {
+              "sourceItem1": "cobblesafari:mega_shard_block",
+              "sourceQty1": 40,
+              "resultItems": [
+                "mega_showdown:blazikenite"
+              ],
+              "resultQty": 1,
+              "maxUses": 1
+            },
+            {
+              "sourceItem1": "cobblesafari:mega_shard_block",
+              "sourceQty1": 40,
+              "resultItems": [
+                "mega_showdown:chandelurite"
+              ],
+              "resultQty": 1,
+              "maxUses": 1
+            },
+            {
+              "sourceItem1": "cobblesafari:mega_shard_block",
+              "sourceQty1": 40,
+              "resultItems": [
+                "mega_showdown:charizardite_x"
+              ],
+              "resultQty": 1,
+              "maxUses": 1
+            },
+            {
+              "sourceItem1": "cobblesafari:mega_shard_block",
+              "sourceQty1": 40,
+              "resultItems": [
+                "mega_showdown:charizardite_y"
+              ],
+              "resultQty": 1,
+              "maxUses": 1
+            },
+            {
+              "sourceItem1": "cobblesafari:mega_shard_block",
+              "sourceQty1": 40,
+              "resultItems": [
+                "mega_showdown:chesnaughtite"
+              ],
+              "resultQty": 1,
+              "maxUses": 1
+            },
+            {
+              "sourceItem1": "cobblesafari:mega_shard_block",
+              "sourceQty1": 40,
+              "resultItems": [
+                "mega_showdown:delphoxite"
+              ],
+              "resultQty": 1,
+              "maxUses": 1
+            },
+            {
+              "sourceItem1": "cobblesafari:mega_shard_block",
+              "sourceQty1": 40,
+              "resultItems": [
+                "mega_showdown:dragoninite"
+              ],
+              "resultQty": 1,
+              "maxUses": 1
+            },
+            {
+              "sourceItem1": "cobblesafari:mega_shard_block",
+              "sourceQty1": 40,
+              "resultItems": [
+                "mega_showdown:drampanite"
+              ],
+              "resultQty": 1,
+              "maxUses": 1
+            },
+            {
+              "sourceItem1": "cobblesafari:mega_shard_block",
+              "sourceQty1": 40,
+              "resultItems": [
+                "mega_showdown:emboarite"
+              ],
+              "resultQty": 1,
+              "maxUses": 1
+            },
+            {
+              "sourceItem1": "cobblesafari:mega_shard_block",
+              "sourceQty1": 40,
+              "resultItems": [
+                "mega_showdown:excadrite"
+              ],
+              "resultQty": 1,
+              "maxUses": 1
+            },
+            {
+              "sourceItem1": "cobblesafari:mega_shard_block",
+              "sourceQty1": 40,
+              "resultItems": [
+                "mega_showdown:feraligite"
+              ],
+              "resultQty": 1,
+              "maxUses": 1
+            },
+            {
+              "sourceItem1": "cobblesafari:mega_shard_block",
+              "sourceQty1": 40,
+              "resultItems": [
+                "mega_showdown:floettite"
+              ],
+              "resultQty": 1,
+              "maxUses": 1
+            },
+            {
+              "sourceItem1": "cobblesafari:mega_shard_block",
+              "sourceQty1": 40,
+              "resultItems": [
+                "mega_showdown:garchompite"
+              ],
+              "resultQty": 1,
+              "maxUses": 1
+            },
+            {
+              "sourceItem1": "cobblesafari:mega_shard_block",
+              "sourceQty1": 40,
+              "resultItems": [
+                "mega_showdown:gengarite"
+              ],
+              "resultQty": 1,
+              "maxUses": 1
+            },
+            {
+              "sourceItem1": "cobblesafari:mega_shard_block",
+              "sourceQty1": 40,
+              "resultItems": [
+                "mega_showdown:greninjite"
+              ],
+              "resultQty": 1,
+              "maxUses": 1
+            },
+            {
+              "sourceItem1": "cobblesafari:mega_shard_block",
+              "sourceQty1": 40,
+              "resultItems": [
+                "mega_showdown:meganiumite"
+              ],
+              "resultQty": 1,
+              "maxUses": 1
+            },
+            {
+              "sourceItem1": "cobblesafari:mega_shard_block",
+              "sourceQty1": 40,
+              "resultItems": [
+                "mega_showdown:metagrossite"
+              ],
+              "resultQty": 1,
+              "maxUses": 1
+            },
+            {
+              "sourceItem1": "cobblesafari:mega_shard_block",
+              "sourceQty1": 40,
+              "resultItems": [
+                "mega_showdown:salamencite"
+              ],
+              "resultQty": 1,
+              "maxUses": 1
+            },
+            {
+              "sourceItem1": "cobblesafari:mega_shard_block",
+              "sourceQty1": 40,
+              "resultItems": [
+                "mega_showdown:sceptilite"
+              ],
+              "resultQty": 1,
+              "maxUses": 1
+            },
+            {
+              "sourceItem1": "cobblesafari:mega_shard_block",
+              "sourceQty1": 40,
+              "resultItems": [
+                "mega_showdown:swampertite"
+              ],
+              "resultQty": 1,
+              "maxUses": 1
+            },
+            {
+              "sourceItem1": "cobblesafari:mega_shard_block",
+              "sourceQty1": 40,
+              "resultItems": [
+                "mega_showdown:tyranitarite"
+              ],
+              "resultQty": 1,
+              "maxUses": 1
+            },
+            {
+              "sourceItem1": "cobblesafari:mega_shard_block",
+              "sourceQty1": 40,
+              "resultItems": [
+                "mega_showdown:venusaurite"
+              ],
+              "resultQty": 1,
+              "maxUses": 1
+            },
+            {
+              "sourceItem1": "cobblesafari:mega_shard_block",
+              "sourceQty1": 40,
+              "resultItems": [
+                "mega_showdown:absolite_z"
+              ],
+              "resultQty": 1,
+              "maxUses": 1
+            },
+            {
+              "sourceItem1": "cobblesafari:mega_shard_block",
+              "sourceQty1": 53,
+              "sourceItem2": "cobblesafari:megashard",
+              "sourceQty2": 3,
+              "resultItems": [
+                "mega_showdown:diancite"
+              ],
+              "resultQty": 1,
+              "maxUses": 1
+            },
+            {
+              "sourceItem1": "cobblesafari:mega_shard_block",
+              "sourceQty1": 40,
+              "resultItems": [
+                "mega_showdown:garchompite_z"
+              ],
+              "resultQty": 1,
+              "maxUses": 1
+            },
+            {
+              "sourceItem1": "cobblesafari:mega_shard_block",
+              "sourceQty1": 53,
+              "sourceItem2": "cobblesafari:megashard",
+              "sourceQty2": 3,
+              "resultItems": [
+                "mega_showdown:latiasite"
+              ],
+              "resultQty": 1,
+              "maxUses": 1
+            },
+            {
+              "sourceItem1": "cobblesafari:mega_shard_block",
+              "sourceQty1": 53,
+              "sourceItem2": "cobblesafari:megashard",
+              "sourceQty2": 3,
+              "resultItems": [
+                "mega_showdown:latiosite"
+              ],
+              "resultQty": 1,
+              "maxUses": 1
+            },
+            {
+              "sourceItem1": "cobblesafari:mega_shard_block",
+              "sourceQty1": 40,
+              "resultItems": [
+                "mega_showdown:lucarionite_z"
+              ],
+              "resultQty": 1,
+              "maxUses": 1
+            },
+            {
+              "sourceItem1": "cobblesafari:mega_shard_block",
+              "sourceQty1": 53,
+              "sourceItem2": "cobblesafari:megashard",
+              "sourceQty2": 3,
+              "resultItems": [
+                "mega_showdown:mewtwonite_x"
+              ],
+              "resultQty": 1,
+              "maxUses": 1
+            },
+            {
+              "sourceItem1": "cobblesafari:mega_shard_block",
+              "sourceQty1": 53,
+              "sourceItem2": "cobblesafari:megashard",
+              "sourceQty2": 3,
+              "resultItems": [
+                "mega_showdown:mewtwonite_y"
+              ],
+              "resultQty": 1,
+              "maxUses": 1
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

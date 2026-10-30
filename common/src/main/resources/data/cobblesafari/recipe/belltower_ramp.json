@@ -1,0 +1,11 @@
+{
+    "type": "minecraft:crafting_shaped",
+    "category": "building",
+    "pattern": [ " O ", "S#S" ],
+    "key": {
+        "O": { "item": "minecraft:oak_slab" },
+        "S": { "item": "minecraft:spruce_slab" },
+        "#": { "item": "minecraft:slime_ball" }
+    },
+    "result": { "id": "cobblesafari:belltower_ramp", "count": 1 }
+}

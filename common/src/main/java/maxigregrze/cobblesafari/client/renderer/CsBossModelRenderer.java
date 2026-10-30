@@ -36,6 +36,42 @@ public final class CsBossModelRenderer {
 
     private CsBossModelRenderer() {}
 
+    /**
+     * Bascule immédiate vers {@code pose}, sans transition. {@code moveToPose} enveloppe la transition
+     * dans une {@code PrimaryAnimation} qui ne pose la nouvelle pose qu'à sa fin, et ce pipeline
+     * emprunté ne la fait jamais avancer : un minion rendu une image en pose debout avant que sa pose
+     * imposée n'arrive restait bloqué entre les deux (bêtes sans course, Ho-Oh sans ses ailes ouvertes,
+     * les poses portant la visibilité des parties). Les transitions déjà coincées sont retirées.
+     */
+    private static void switchPoseDirectly(PosableState state, Pose pose) {
+        com.cobblemon.mod.common.client.render.models.blockbench.animation.PrimaryAnimation primary =
+                state.getPrimaryAnimation();
+        if (primary != null && primary.isTransition()) {
+            state.setPrimaryAnimation(null);
+        }
+        state.getActiveAnimations().removeIf(
+                com.cobblemon.mod.common.client.render.models.blockbench.animation.ActiveAnimation::isTransition);
+        state.setPose(pose.getPoseName());
+    }
+
+    /** Première pose du type voulu, sinon la suivante de la chaîne de repli. */
+    @Nullable
+    private static Pose firstPose(PosableModel model, PosableState state, PoseType wanted) {
+        PoseType[] chain = switch (wanted) {
+            case FLY -> new PoseType[]{PoseType.FLY, PoseType.HOVER, PoseType.WALK, PoseType.STAND};
+            case HOVER -> new PoseType[]{PoseType.HOVER, PoseType.FLY, PoseType.STAND};
+            case WALK -> new PoseType[]{PoseType.WALK, PoseType.STAND};
+            default -> new PoseType[]{wanted, PoseType.STAND};
+        };
+        for (PoseType type : chain) {
+            Pose pose = model.getFirstSuitablePose(state, type);
+            if (pose != null) {
+                return pose;
+            }
+        }
+        return null;
+    }
+
     /** Resolved species + aspects + baseScale, cached by {@code specie} string. */
     public record SpeciesInfo(ResourceLocation species, Set<String> aspects, float baseScale) {}
 
@@ -119,6 +155,20 @@ public final class CsBossModelRenderer {
             float scale, float alpha, float bodyYaw,
             float limbSwing, float limbSwingAmount, float ageInTicks, float partialTicks,
             @Nullable Runnable afterPose) {
+        render(ps, buffer, packedLight, packedOverlay, entity, info, state, scale, alpha, bodyYaw,
+                limbSwing, limbSwingAmount, ageInTicks, partialTicks, afterPose, null);
+    }
+
+    /**
+     * Variante avec pose imposée ({@code forcedPose} non null) : la première pose du modèle qui la
+     * porte est utilisée, avec repli {@code FLY → HOVER → WALK → STAND} si l'espèce ne la définit pas.
+     */
+    public static void render(
+            PoseStack ps, MultiBufferSource buffer, int packedLight, int packedOverlay,
+            @Nullable Entity entity, SpeciesInfo info, PosableState state,
+            float scale, float alpha, float bodyYaw,
+            float limbSwing, float limbSwingAmount, float ageInTicks, float partialTicks,
+            @Nullable Runnable afterPose, @Nullable PoseType forcedPose) {
 
         ResourceLocation species = info.species();
         state.setCurrentAspects(info.aspects());
@@ -147,9 +197,15 @@ public final class CsBossModelRenderer {
         model.setAlpha(1.0f);
 
         boolean moving = limbSwingAmount > MOVE_THRESHOLD;
-        Pose desired = model.getFirstSuitablePose(state, moving ? PoseType.WALK : PoseType.STAND);
+        Pose desired = forcedPose != null
+                ? firstPose(model, state, forcedPose)
+                : model.getFirstSuitablePose(state, moving ? PoseType.WALK : PoseType.STAND);
         if (desired != null && !desired.getPoseName().equals(state.getCurrentPose())) {
-            model.moveToPose(state, desired);
+            if (forcedPose != null) {
+                switchPoseDirectly(state, desired);
+            } else {
+                model.moveToPose(state, desired);
+            }
         }
         if (afterPose != null) {
             afterPose.run();

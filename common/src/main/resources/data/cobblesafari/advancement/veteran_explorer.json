@@ -1,9 +1,7 @@
 {
   "parent": "cobblesafari:fresh_explorer",
   "display": {
-    "icon": {
-      "id": "minecraft:ender_eye"
-    },
+    "icon": { "id": "cobblesafari:dungeon_portal" },
     "title": {
       "translate": "advancements.cobblesafari.veteran_explorer.title"
     },

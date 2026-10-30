@@ -14,6 +14,8 @@ import com.cobblemon.mod.common.pokemon.Pokemon;
 import com.cobblemon.mod.common.pokemon.Species;
 import kotlin.Unit;
 import maxigregrze.cobblesafari.CobbleSafari;
+import maxigregrze.cobblesafari.advancement.ModCriteria;
+import maxigregrze.cobblesafari.init.ModStats;
 import maxigregrze.cobblesafari.compat.CobblemonFishingInterop;
 import maxigregrze.cobblesafari.config.MiscConfig;
 import maxigregrze.cobblesafari.data.DungeonInstanceRecord;
@@ -123,6 +125,7 @@ public final class ObjectivesManager {
                 logOnce("tickContext", e);
             }
         }
+        ObjectiveTitles.tick(server);
     }
 
     public static void onPlayerDisconnect(UUID uuid) {
@@ -380,6 +383,7 @@ public final class ObjectivesManager {
         }
         player.sendSystemMessage(Component.translatable("cobblesafari.hyperspace.zone_info",
                 STAR.repeat(zone.star()), types));
+        ModCriteria.WILD_ZONE_ENTERED.trigger(player, zone.star());
     }
 
     private static String normalizeSpeciesId(String raw) {
@@ -619,13 +623,18 @@ public final class ObjectivesManager {
         simpleEvent(player, TaskType.TASK_LOOT, 1, false);
     }
 
-    public static void onFloatingBallOpened(ServerPlayer player) {
+    /** Any Auspicious Pokeball opened, golden one included (plan 196, § 7.2). */
+    public static void onAuspiciousPokeballOpened(ServerPlayer player) {
         simpleEvent(player, TaskType.TASK_LOOT_FLOATING, 1, false);
     }
 
-    /** One progress per use, however many obstacles the diamond cleared (plan 196, § 8.6). */
-    public static void onObstacleCleared(ServerPlayer player, TaskType task) {
-        simpleEvent(player, task, 1, false);
+    public static void onShiningItemGet(ServerPlayer player) {
+        simpleEvent(player, TaskType.TASK_LOOT_SHINING_ITEM, 1, false);
+    }
+
+    /** One progress per obstacle the diamond cleared (plan 196, § 8.6). */
+    public static void onObstacleCleared(ServerPlayer player, TaskType task, int blocks) {
+        simpleEvent(player, task, blocks, false);
     }
 
     public static void onBossStart(ServerPlayer player) {
@@ -699,6 +708,10 @@ public final class ObjectivesManager {
         ObjectivesSavedData data = ObjectivesSavedData.get(player.getServer());
         for (ObjectiveTask task : justCompleted) {
             ObjectivesRewardService.giveTaskReward(player, task);
+            ModStats.award(player, ModStats.DIMENSIONAL_TASKS_COMPLETED);
+        }
+        if (!justCompleted.isEmpty()) {
+            maxigregrze.cobblesafari.block.misc.ClaimSounds.playPickup(player);
         }
         maybeFinalize(player, assignment);
         data.setDirty();
@@ -715,6 +728,7 @@ public final class ObjectivesManager {
             ObjectivesRewardService.giveFinalRewards(player, def);
         }
         assignment.markFinalRewardGiven();
+        ModCriteria.OBJECTIVES_COMPLETED.trigger(player);
     }
 
     // --- HUD sync -------------------------------------------------------------

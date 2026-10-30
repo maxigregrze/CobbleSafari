@@ -7,9 +7,14 @@ import net.minecraft.core.Holder;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ArmorMaterial;
+import net.minecraft.world.item.ElytraItem;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 
 import java.nio.file.Path;
 
@@ -57,6 +62,16 @@ public interface IPlatformHelper {
      */
     default Item createReconChestplate(Holder<ArmorMaterial> material, Item.Properties properties) {
         return new ReconArmorItem(material, ArmorItem.Type.CHESTPLATE, properties);
+    }
+
+    /**
+     * Whether what the entity wears would let it glide right now, whichever item provides it.
+     * Only decides whether the elytra ban explains itself (action plan 198, § 15) - the ban holds
+     * either way. Vanilla here; each loader widens it to the items its own elytra hook accepts.
+     */
+    default boolean canWornElytraFly(LivingEntity entity) {
+        ItemStack chest = entity.getItemBySlot(EquipmentSlot.CHEST);
+        return chest.is(Items.ELYTRA) && ElytraItem.isFlyEnabled(chest);
     }
 
     default String getEnvironmentName() {

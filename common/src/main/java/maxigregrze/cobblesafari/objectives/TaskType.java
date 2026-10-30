@@ -30,6 +30,7 @@ public enum TaskType {
     TASK_FIGHT_ALPHA("task_fight_alpha", false, false, false, false, false),
     // Hyperspace Lumiose wild zone tasks (action plan 196, § 7.2).
     TASK_LOOT_FLOATING("task_loot_floating", true, false, false, false, false),
+    TASK_LOOT_SHINING_ITEM("task_loot_shining_item", true, false, false, false, false),
     TASK_CATCH_UNAWARE("task_catch_unaware", true, false, false, false, false),
     TASK_CATCH_BATTLE("task_catch_battle", true, false, false, false, false),
     TASK_DESTROY_BOULDER("task_destroy_boulder", true, false, false, false, false),

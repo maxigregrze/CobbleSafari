@@ -1,0 +1,16 @@
+{
+  "parent": "cobblesafari:welcome_to_safari",
+  "display": {
+    "icon": { "id": "cobblesafari:compacted_trash_block" },
+    "title": { "translate": "advancements.cobblesafari.seek_a_way_out.title" },
+    "description": { "translate": "advancements.cobblesafari.seek_a_way_out.description" },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "destroyed": {"trigger": "minecraft:player_killed_entity", "conditions": {"entity": {"type": "cobblesafari:safari_drone"}}}
+  },
+  "requirements": [["destroyed"]]
+}

@@ -28,7 +28,8 @@
     },
     {
       "id": "charmander",
-      "weight": 1,
+      "weight": 0.1,
+      "rare": true,
       "members": [
         {
           "pokemon": "charmander",
@@ -52,7 +53,8 @@
     },
     {
       "id": "tepig",
-      "weight": 1,
+      "weight": 0.1,
+      "rare": true,
       "members": [
         {
           "pokemon": "tepig",
@@ -76,7 +78,8 @@
     },
     {
       "id": "fennekin",
-      "weight": 1,
+      "weight": 0.1,
+      "rare": true,
       "members": [
         {
           "pokemon": "fennekin",
@@ -88,7 +91,8 @@
     },
     {
       "id": "torchic",
-      "weight": 1,
+      "weight": 0.1,
+      "rare": true,
       "members": [
         {
           "pokemon": "torchic",
@@ -119,6 +123,71 @@
           "rarity": 100,
           "level": "22-24",
           "alphaLevel": "31-33"
+        }
+      ]
+    },
+    {
+      "id": "cyndaquil",
+      "weight": 0.1,
+      "rare": true,
+      "members": [
+        {
+          "pokemon": "cyndaquil",
+          "rarity": 100,
+          "level": "16-18",
+          "alphaLevel": "25-27"
+        }
+      ]
+    },
+    {
+      "id": "chimchar",
+      "weight": 0.1,
+      "rare": true,
+      "members": [
+        {
+          "pokemon": "chimchar",
+          "rarity": 100,
+          "level": "16-18",
+          "alphaLevel": "25-27"
+        }
+      ]
+    },
+    {
+      "id": "litten",
+      "weight": 0.1,
+      "rare": true,
+      "members": [
+        {
+          "pokemon": "litten",
+          "rarity": 100,
+          "level": "16-18",
+          "alphaLevel": "25-27"
+        }
+      ]
+    },
+    {
+      "id": "scorbunny",
+      "weight": 0.1,
+      "rare": true,
+      "members": [
+        {
+          "pokemon": "scorbunny",
+          "rarity": 100,
+          "level": "16-18",
+          "alphaLevel": "25-27"
+        }
+      ]
+    },
+    {
+      "id": "fuecoco",
+      "weight": 0.1,
+      "rare": true,
+      "members": [
+        {
+          "pokemon": "fuecoco",
+          "rarity": 100,
+          "level": "16-18",
+          "alphaLevel": "25-27"
         }
       ]
     }

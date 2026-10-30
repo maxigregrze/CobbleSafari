@@ -10,6 +10,9 @@ import maxigregrze.cobblesafari.init.ModStats;
 import maxigregrze.cobblesafari.block.csboss.CsBossTriggerBlockEntity;
 import maxigregrze.cobblesafari.config.CsBossSettings;
 import maxigregrze.cobblesafari.data.CsBossSavedData;
+import maxigregrze.cobblesafari.entity.carrier.ArcCarrierMotion;
+import maxigregrze.cobblesafari.entity.carrier.CarrierEntity;
+import maxigregrze.cobblesafari.entity.carrier.CarrierOptions;
 import maxigregrze.cobblesafari.entity.csboss.CsBossBulletEntity;
 import maxigregrze.cobblesafari.entity.csboss.CsBossEntity;
 import maxigregrze.cobblesafari.entity.csboss.CsBossMinionEntity;
@@ -110,14 +113,15 @@ public final class BossBattleManager {
         int yTol = CsBossSettings.get().getArenaYTolerance();
         Vec3 center = Vec3.atCenterOf(pos);
         List<ServerPlayer> participants = level.getPlayers(p ->
-                p.isAlive() && withinArena(p.position(), center, radius, yTol));
+                p.isAlive() && withinArena(p.position(), center, radius, yTol)
+                        && isAboveArenaFloor(level, p, pos.getY()));
         if (participants.isEmpty()) {
             feedback(sp, "no_players");
             return InteractionResult.CONSUME;
         }
         // 6/7. scan + toggle reactive blocks
         List<BlockPos> reactive = ArenaBlockScanner.scan(level, pos, be.effectiveBlockRadius());
-        ArenaBlockScanner.setBattleState(level, reactive, true);
+        // Bascule en vague (centre -> bord, un anneau par tick) lancée avec la session (plan 199 § 8).
         // purge Cobblemon entities in the block-detection square
         double blockHalf = be.effectiveBlockRadius() * 16.0;
         int purgeMinY = Math.max(level.getMinBuildHeight(), pos.getY() - 8);
@@ -138,15 +142,20 @@ public final class BossBattleManager {
         // 9. duration
         int duration = DifficultyScaling.computeDuration(def, participants);
         // 10. session
-        List<UUID> uuids = new ArrayList<>();
+        // Positions de départ relevées avant le recul d'activation (plan 199 § 5.2).
+        Map<UUID, Vec3> starts = new java.util.LinkedHashMap<>();
         for (ServerPlayer p : participants) {
-            uuids.add(p.getUUID());
+            starts.put(p.getUUID(), safeStartPos(level, p.position(), pos));
         }
         double blockRadiusBlocks = be.effectiveBlockRadius() * 16.0;
         BossBattleSession session = new BossBattleSession(id, level.dimension(), pos, def, boss.getUUID(),
-                new java.util.HashSet<>(uuids), reactive, radius, duration,
+                starts, reactive, radius, duration,
                 def.portalDistance(), blockRadiusBlocks);
         SESSIONS.put(id, session);
+        // Sol mesuré dès l'activation (blocs d'arène lus dans leur état de combat, donc sans attendre la
+        // vague) : l'entrée du boss et les Pokémon décoratifs se posent dessus, pas au niveau du trigger.
+        session.detectFloorY(level);
+        session.startArenaWave(level, true);
         be.setActiveSessionId(id);
         if (state.hasProperty(CsBossTriggerBlock.ACTIVE)) {
             level.setBlock(pos, state.setValue(CsBossTriggerBlock.ACTIVE, true), Block.UPDATE_ALL);
@@ -160,6 +169,8 @@ public final class BossBattleManager {
         for (ServerPlayer p : participants) {
             session.getBossBar().addPlayer(p);
             ModStats.award(p, ModStats.CSBOSS_BATTLES_ATTEMPTED);
+            maxigregrze.cobblesafari.advancement.ModCriteria.CSBOSS_JOIN.trigger(
+                    p, session.getDimension(), session.getRootBossId());
             maxigregrze.cobblesafari.objectives.ObjectivesManager.onBossStart(p);
         }
         data.putSnapshot(session.snapshot());
@@ -184,6 +195,7 @@ public final class BossBattleManager {
             if (level == null) {
                 continue;
             }
+            s.tickArenaWave(level);
             switch (s.getPhase()) {
                 case SUMMON_RISE -> {
                     tickSummonRise(server, level, s);
@@ -213,7 +225,12 @@ public final class BossBattleManager {
                 }
                 case DYING -> {
                     switch (tickDying(level, s)) {
-                        case FINALIZE_WIN -> s.setPhase(BossBattleSession.Phase.PORTAL_CLOSING);
+                        case FINALIZE_WIN -> {
+                            // Le portail ne se ferme qu'une fois tous les joueurs reposés (plan 199 § 7.1).
+                            if (awaitPlayerReturns(level, s)) {
+                                s.setPhase(BossBattleSession.Phase.PORTAL_CLOSING);
+                            }
+                        }
                         case NEXT_PHASE -> toNextPhase.add(s.getId());
                         case CONTINUE -> { /* in progress */ }
                     }
@@ -253,7 +270,7 @@ public final class BossBattleManager {
         s.getBossBar().setProgress(1.0f);
         Vec3 c = s.getArenaCenter();
         double startY = s.getTriggerPos().getY() + 1.0;
-        double targetY = s.getTriggerPos().getY() + CsBossEntity.STAND_Y_OFFSET + s.getEntranceHeight();
+        double targetY = s.getFloorY() + CsBossEntity.STAND_Y_OFFSET + s.getEntranceHeight();
         float p = Math.min(1.0f, t / (float) BossBattleSession.SUMMON_RISE_TICKS);
         double y = startY + (targetY - startY) * p;
         if (level.getEntity(s.getSummonProjectileUuid()) instanceof CsBossSpawnProjectileEntity proj) {
@@ -322,7 +339,7 @@ public final class BossBattleManager {
         s.getBossBar().setProgress(1.0f); // bar stays full during entrance
         if (level.getEntity(s.getBossUuid()) instanceof CsBossEntity boss) {
             boss.setAnim(p);
-            double standY = s.getTriggerPos().getY() + CsBossEntity.STAND_Y_OFFSET;
+            double standY = s.getFloorY() + CsBossEntity.STAND_Y_OFFSET;
             double y = standY + s.getEntranceHeight() * (1.0 - p);
             boss.setPos(s.getArenaCenter().x, y, s.getArenaCenter().z);
             boss.setDeltaMovement(Vec3.ZERO);
@@ -407,7 +424,7 @@ public final class BossBattleManager {
         // Distance = boss hitbox edge + 2.5 blocks; projected on diagonal (component / √2).
         double distance = boss.getBbWidth() / 2.0 + 2.5;
         double d = distance / Math.sqrt(2.0);
-        int triggerY = s.getTriggerPos().getY();
+        int triggerY = s.getFloorY();
         int idx = 0;
         for (ServerPlayer p : players) {
             if (idx >= FIGHTING_DIAGONALS.length) {
@@ -419,11 +436,11 @@ public final class BossBattleManager {
             }
             double x = boss.getX() + FIGHTING_DIAGONALS[idx][0] * d;
             double z = boss.getZ() + FIGHTING_DIAGONALS[idx][1] * d;
-            // On ground: surface from scan util (otherwise boss level).
+            // On ground: surface from scan util (otherwise the detected arena floor).
             net.minecraft.core.BlockPos surface = maxigregrze.cobblesafari.csboss.attack.CsBossSurfaceScanner
                     .findSurfaceColumn(level, (int) Math.floor(x), (int) Math.floor(z), triggerY,
                             maxigregrze.cobblesafari.csboss.attack.CsBossSurfaceScanner.DEFAULT_Y_TOLERANCE);
-            double y = surface != null ? surface.getY() + 1.0 : boss.getY();
+            double y = surface != null ? surface.getY() + 1.0 : triggerY;
             CsBossMinionEntity m = CsBossMinionEntity.spawn(level, x, y, z,
                     pokemonModelLine(first), 1, s.getId());
             m.faceTarget(boss.position());
@@ -560,11 +577,108 @@ public final class BossBattleManager {
             for (UUID u : new ArrayList<>(s.getActiveAttackEntities())) {
                 removeEntity(level, u);
             }
+            // forceStop : pas de cinématique, retour instantané des survivants (plan 199 § 7.2).
+            for (ServerPlayer p : s.aliveParticipants(level)) {
+                teleportToStart(p, level, s.getParticipants().get(p.getUUID()).startPos);
+            }
+            s.cancelArenaWave();
             ArenaBlockScanner.setBattleState(level, s.getChangedBlocks(), false);
             restoreTrigger(level, s.getTriggerPos());
         }
+        // Un joueur parti en plein combat (solo : quitter le monde) retrouve l'arène repliée : il doit
+        // être replacé à sa reconnexion, comme après une victoire, sinon il tombe.
+        queueOfflineReturns(server, s);
         s.getBossBar().removeAllPlayers();
         CsBossSavedData.get(server).removeSnapshot(s.getId());
+    }
+
+    // --- Player return (plan 199 § 7) ------------------------------------------
+
+    /** Hauteur de la bosse du trajet de retour, en blocs. */
+    private static final double RETURN_LIFT = 2.5;
+    /** Vitesse moyenne du retour (blocs/tick) et bornes de durée : 1,5 à 3 s, dans les 60 ticks de mort. */
+    private static final double RETURN_SPEED = 0.35;
+    private static final int RETURN_MIN_TICKS = 30;
+    private static final int RETURN_MAX_TICKS = 60;
+    /** Au-delà, les joueurs encore portés sont déposés et téléportés (dernier recours). */
+    private static final int RETURN_TIMEOUT = 100;
+
+    /** À la mort finale : chaque participant encore dans l'instance est porté jusqu'à sa position de départ. */
+    private static void startPlayerReturns(ServerLevel level, BossBattleSession s) {
+        s.getReturnCarriers().clear();
+        s.setReturnTicks(0);
+        for (ServerPlayer p : s.aliveParticipants(level)) {
+            Vec3 target = s.getParticipants().get(p.getUUID()).startPos;
+            double distance = p.position().distanceTo(target);
+            int ticks = Math.max(RETURN_MIN_TICKS,
+                    Math.min(RETURN_MAX_TICKS, (int) Math.round(distance / RETURN_SPEED)));
+            CarrierEntity carrier = CarrierEntity.grab(level, p,
+                    new ArcCarrierMotion(p.position(), target, RETURN_LIFT, ticks),
+                    new CarrierOptions(false, s.getDefinition().returnParticle(), Vec3.ZERO, true, null));
+            s.getReturnCarriers().put(carrier.getUUID(), p.getUUID());
+        }
+    }
+
+    /**
+     * {@code true} quand tous les porteurs du retour ont déposé leur passager. Au timeout, les
+     * joueurs encore portés sont déposés puis téléportés à leur position de départ.
+     */
+    private static boolean awaitPlayerReturns(ServerLevel level, BossBattleSession s) {
+        if (s.getReturnTicks() < 0) {
+            return true;
+        }
+        s.setReturnTicks(s.getReturnTicks() + 1);
+        boolean pending = false;
+        for (UUID carrierId : s.getReturnCarriers().keySet()) {
+            Entity e = level.getEntity(carrierId);
+            if (e != null && e.isAlive()) {
+                pending = true;
+                break;
+            }
+        }
+        if (!pending) {
+            return true;
+        }
+        if (s.getReturnTicks() < RETURN_TIMEOUT) {
+            return false;
+        }
+        for (Map.Entry<UUID, UUID> entry : s.getReturnCarriers().entrySet()) {
+            if (level.getEntity(entry.getKey()) instanceof CarrierEntity c && c.isAlive()) {
+                c.release();
+                ParticipantState st = s.getParticipants().get(entry.getValue());
+                if (level.getPlayerByUUID(entry.getValue()) instanceof ServerPlayer p && st != null) {
+                    teleportToStart(p, level, st.startPos);
+                }
+            }
+        }
+        return true;
+    }
+
+    private static void teleportToStart(ServerPlayer p, ServerLevel level, Vec3 pos) {
+        p.teleportTo(level, pos.x, pos.y, pos.z, p.getYRot(), p.getXRot());
+        p.resetFallDistance();
+    }
+
+    /** Participants hors ligne quand l'arène disparaît : replacés à leur reconnexion (plan 199 § 7.4). */
+    private static void queueOfflineReturns(MinecraftServer server, BossBattleSession s) {
+        CsBossSavedData data = CsBossSavedData.get(server);
+        for (Map.Entry<UUID, ParticipantState> e : s.getParticipants().entrySet()) {
+            if (server.getPlayerList().getPlayer(e.getKey()) == null) {
+                data.putPendingReturn(e.getKey(), s.getDimension(), e.getValue().startPos);
+            }
+        }
+    }
+
+    /**
+     * Connexion d'un joueur (file de relocalisations de {@code DimensionEvents}) : s'il a un retour en
+     * attente et se trouve dans la dimension du combat, il est replacé à sa position de départ.
+     */
+    public static void handleReturnOnJoin(ServerPlayer player) {
+        CsBossSavedData.PendingReturn pending =
+                CsBossSavedData.get(player.server).takePendingReturn(player.getUUID());
+        if (pending != null && player.level().dimension().equals(pending.dimension())) {
+            teleportToStart(player, player.serverLevel(), pending.pos());
+        }
     }
 
     /**
@@ -594,6 +708,7 @@ public final class BossBattleManager {
                 removeEntity(level, u);
             }
             if (level.getEntity(s.getBossUuid()) instanceof CsBossEntity boss) {
+                CsBossVanish.setBossHidden(boss, false); // une attaque a pu le laisser caché
                 boss.setPhase(CsBossEntity.PHASE_DYING);
                 boss.setAnim(0.0f);
                 boss.setDeltaMovement(Vec3.ZERO);
@@ -601,6 +716,8 @@ public final class BossBattleManager {
             }
             if (nextDef == null) {
                 // Final death.
+                startPlayerReturns(level, s);  // plan 199 § 7
+                s.startArenaWave(level, false); // fermeture bord -> centre (plan 199 § 8)
                 RewardService.grant(level, s);
                 triggerWinAdvancements(level, s);
                 maxigregrze.cobblesafari.csmusic.DimensionalMusicManager.onBossWin(s.aliveParticipants(level));
@@ -645,7 +762,7 @@ public final class BossBattleManager {
             boss.setStaticBoss(nextDef.isStatic());
             boss.setPhase(CsBossEntity.PHASE_ENTERING);
             boss.setAnim(0.0f);
-            double standY = s.getTriggerPos().getY() + CsBossEntity.STAND_Y_OFFSET;
+            double standY = s.getFloorY() + CsBossEntity.STAND_Y_OFFSET;
             boss.setPos(s.getArenaCenter().x, standY + s.getEntranceHeight(), s.getArenaCenter().z);
             boss.setDeltaMovement(Vec3.ZERO);
         }
@@ -655,6 +772,14 @@ public final class BossBattleManager {
         }
     }
 
+    /** The ribbon of the boss the fight started with: phase 2 of Giratina does not carry its own. */
+    @Nullable
+    private static CsBossDefinition.WinRibbon rootWinRibbon(BossBattleSession session) {
+        return CsBossRegistry.get(session.getRootBossId())
+                .map(CsBossDefinition::winRibbon)
+                .orElse(session.getDefinition().winRibbon());
+    }
+
     private static void triggerWinAdvancements(ServerLevel level, BossBattleSession session) {
         int yTol = CsBossSettings.get().getArenaYTolerance();
         for (ServerPlayer player : session.aliveParticipants(level)) {
@@ -662,6 +787,10 @@ public final class BossBattleManager {
                 ModCriteria.CSBOSS_WIN.trigger(player, session.getDimension(), session.getRootBossId());
                 ModStats.award(player, ModStats.CSBOSS_BATTLES_WON);
                 maxigregrze.cobblesafari.objectives.ObjectivesManager.onBossWin(player);
+                CsBossDefinition.WinRibbon ribbon = rootWinRibbon(session);
+                if (ribbon != null) {
+                    maxigregrze.cobblesafari.mark.RibbonAwards.rollRibbon(player, ribbon.mark(), ribbon.chance());
+                }
             }
         }
     }
@@ -691,8 +820,16 @@ public final class BossBattleManager {
             for (UUID u : new ArrayList<>(s.getActiveAttackEntities())) {
                 removeEntity(level, u);
             }
+            if (s.getReturnTicks() < 0) {
+                // Fin sans retour lancé (repli « no usable next phase ») : retour instantané.
+                for (ServerPlayer p : s.aliveParticipants(level)) {
+                    teleportToStart(p, level, s.getParticipants().get(p.getUUID()).startPos);
+                }
+            }
+            s.cancelArenaWave();
             ArenaBlockScanner.setBattleState(level, s.getChangedBlocks(), false);
             restoreTrigger(level, s.getTriggerPos());
+            queueOfflineReturns(server, s);
         }
         s.getBossBar().removeAllPlayers();
         CsBossSavedData.get(server).removeSnapshot(s.getId());
@@ -756,6 +893,9 @@ public final class BossBattleManager {
                 ArenaBlockScanner.setBattleState(level, snap.changedBlocks(), false);
                 restoreTrigger(level, snap.triggerPos());
                 removeEntity(level, snap.bossUuid());
+                for (Map.Entry<UUID, Vec3> start : snap.startPositions().entrySet()) {
+                    data.putPendingReturn(start.getKey(), snap.dimension(), start.getValue());
+                }
                 removeStrayBullets(level);
             }
         }
@@ -797,11 +937,33 @@ public final class BossBattleManager {
      * ({@code balmBossDamagePercent}). Ignored outside the active phase.
      */
     public static void onBalmHit(CsBossEntity boss) {
-        BossBattleSession s = SESSIONS.get(boss.getSessionId());
+        if (boss.isVanished()) {
+            return; // boss caché : seuls ses minions relais reçoivent les baumes
+        }
+        onBalmHit(SESSIONS.get(boss.getSessionId()));
+    }
+
+    /** Baume reçu par un minion relais du boss caché : même effet que sur le boss (CsBossVanish). */
+    public static void onBalmProxyHit(CsBossMinionEntity minion) {
+        if (minion.isBalmProxy()) {
+            onBalmHit(SESSIONS.get(minion.getSessionId()));
+        }
+    }
+
+    private static void onBalmHit(BossBattleSession s) {
         if (s == null || s.getPhase() != BossBattleSession.Phase.ACTIVE) {
             return;
         }
         s.reduceRemainingByPercent(CsBossSettings.get().getBalmBossDamagePercent());
+        s.getBossBar().setProgress(s.progress());
+    }
+
+    /** Soin du boss (cloches de Ho-Oh, plan 199 § 4) : seulement en phase ACTIVE, barre resynchronisée. */
+    public static void healBoss(BossBattleSession s, int percent) {
+        if (s == null || s.getPhase() != BossBattleSession.Phase.ACTIVE) {
+            return;
+        }
+        s.increaseRemainingByPercent(percent);
         s.getBossBar().setProgress(s.progress());
     }
 
@@ -953,6 +1115,37 @@ public final class BossBattleManager {
             p.knockback(ACTIVATION_KNOCKBACK_STRENGTH, dirX, dirZ);
             p.hurtMarked = true; // force velocity sync to the client
         }
+    }
+
+    /**
+     * Pieds au plus 1 bloc sous le sol détecté de la colonne du joueur (même détection que les
+     * attaques AREA). Sans surface détectée (vide, bord), le sol de référence est le Y du trigger.
+     * Un joueur debout ou accroupi sous l'arène n'est donc pas capturé (plan 199 § 5.1).
+     */
+    private static boolean isAboveArenaFloor(ServerLevel level, ServerPlayer p, int triggerY) {
+        BlockPos surface = maxigregrze.cobblesafari.csboss.attack.CsBossSurfaceScanner.findSurfaceColumn(
+                level, p.getBlockX(), p.getBlockZ(), triggerY,
+                maxigregrze.cobblesafari.csboss.attack.CsBossSurfaceScanner.DEFAULT_Y_TOLERANCE);
+        double minFeetY = surface != null ? surface.getY() : triggerY;
+        return p.getY() >= minFeetY;
+    }
+
+    /**
+     * Position de départ sûre : la position du joueur s'il y a, dans les 4 blocs dessous, un bloc
+     * solide qui n'est pas réactif (un bloc réactif peut disparaître en fin de combat) ; sinon le
+     * dessus du trigger.
+     */
+    private static Vec3 safeStartPos(ServerLevel level, Vec3 pos, BlockPos trigger) {
+        BlockPos feet = BlockPos.containing(pos);
+        for (int dy = 1; dy <= 4; dy++) {
+            BlockPos below = feet.below(dy);
+            BlockState state = level.getBlockState(below);
+            if (!state.getCollisionShape(level, below).isEmpty()
+                    && !(state.getBlock() instanceof maxigregrze.cobblesafari.block.csboss.BattleReactiveBlock)) {
+                return pos;
+            }
+        }
+        return new Vec3(trigger.getX() + 0.5, trigger.getY() + 1.0, trigger.getZ() + 0.5);
     }
 
     private static boolean withinArena(Vec3 pos, Vec3 center, int radius, int yTol) {

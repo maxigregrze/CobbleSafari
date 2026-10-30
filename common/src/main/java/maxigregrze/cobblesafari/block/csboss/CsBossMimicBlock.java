@@ -76,6 +76,8 @@ public class CsBossMimicBlock extends BaseEntityBlock implements BattleReactiveB
 
     public static final BooleanProperty ACTIVE = BooleanProperty.create("active");
     public static final BooleanProperty REVERSE = BooleanProperty.create("reverse");
+    /** Swap mode (plan 199, iteration 5): always solid, copies one block outside a fight, another during it. */
+    public static final BooleanProperty SWAP = BooleanProperty.create("swap");
     public static final MapCodec<CsBossMimicBlock> CODEC = simpleCodec(CsBossMimicBlock::new);
 
     private static final VoxelShape FULL = Block.box(0.0, 0.0, 0.0, 16.0, 16.0, 16.0);
@@ -87,12 +89,42 @@ public class CsBossMimicBlock extends BaseEntityBlock implements BattleReactiveB
         super(properties);
         this.registerDefaultState(this.stateDefinition.any()
                 .setValue(ACTIVE, false)
-                .setValue(REVERSE, false));
+                .setValue(REVERSE, false)
+                .setValue(SWAP, false));
     }
 
-    /** Visible + hitbox when active and reverse agree. */
-    private static boolean isSolid(BlockState state) {
-        return state.getValue(ACTIVE) == state.getValue(REVERSE);
+    /**
+     * The three behaviours offered by the config screen, stored as the {@code reverse} and {@code swap}
+     * properties (a structure saved before {@code swap} existed loads it as {@code false}).
+     */
+    public enum Mode {
+        /** Visible outside a fight, gone during it. */
+        HIDE_IN_BATTLE,
+        /** Gone outside a fight, visible during it. */
+        SHOW_IN_BATTLE,
+        /** Always there: the idle block outside a fight, the battle block during it. */
+        SWAP;
+
+        public static Mode of(BlockState state) {
+            if (state.getValue(CsBossMimicBlock.SWAP)) {
+                return SWAP;
+            }
+            return state.getValue(REVERSE) ? SHOW_IN_BATTLE : HIDE_IN_BATTLE;
+        }
+
+        public BlockState apply(BlockState state) {
+            return state.setValue(CsBossMimicBlock.SWAP, this == SWAP).setValue(REVERSE, this == SHOW_IN_BATTLE);
+        }
+
+        public static Mode byIndex(int index) {
+            Mode[] all = values();
+            return all[Math.floorMod(index, all.length)];
+        }
+    }
+
+    /** Visible + hitbox when active and reverse agree, or always in swap mode. */
+    public static boolean isSolid(BlockState state) {
+        return state.getValue(SWAP) || state.getValue(ACTIVE) == state.getValue(REVERSE);
     }
 
     @Override
@@ -102,7 +134,7 @@ public class CsBossMimicBlock extends BaseEntityBlock implements BattleReactiveB
 
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
-        builder.add(ACTIVE, REVERSE);
+        builder.add(ACTIVE, REVERSE, SWAP);
     }
 
     @Nullable
@@ -208,7 +240,7 @@ public class CsBossMimicBlock extends BaseEntityBlock implements BattleReactiveB
         BlockState resolved = be.getResolvedMimicState();
         // Before the first server tick - and on a client not yet told - the identity is still known
         // from the id alone, which is all connection matching ever reads.
-        return resolved != null ? resolved : targetBlock(be.getMimicBlockId()).defaultBlockState();
+        return resolved != null ? resolved : targetBlock(be.getTargetId(self)).defaultBlockState();
     }
 
     /**
@@ -232,7 +264,7 @@ public class CsBossMimicBlock extends BaseEntityBlock implements BattleReactiveB
         if (!(level instanceof ServerLevel) || !(level.getBlockEntity(pos) instanceof CsBossMimicBlockEntity be)) {
             return;
         }
-        BlockState resolved = resolve(be.getMimicBlockId(), level, pos);
+        BlockState resolved = resolve(be.getTargetId(state), level, pos);
         boolean changed = be.setResolvedMimicState(resolved);
         if (!changed && !force) {
             return;
@@ -294,6 +326,11 @@ public class CsBossMimicBlock extends BaseEntityBlock implements BattleReactiveB
         refresh(level, pos, state, false);
         tellNeighbour(level, pos, state, direction, neighborPos);
         return super.updateShape(state, direction, neighborState, level, pos, neighborPos);
+    }
+
+    @Override
+    public BlockState battleState(BlockState state) {
+        return state.setValue(ACTIVE, true);
     }
 
     @Override

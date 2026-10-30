@@ -40,7 +40,8 @@
     },
     {
       "id": "ivysaur",
-      "weight": 1,
+      "weight": 0.1,
+      "rare": true,
       "members": [
         {
           "pokemon": "venusaur",
@@ -76,7 +77,8 @@
     },
     {
       "id": "bayleef",
-      "weight": 1,
+      "weight": 0.1,
+      "rare": true,
       "members": [
         {
           "pokemon": "meganium",
@@ -94,7 +96,8 @@
     },
     {
       "id": "quilladin",
-      "weight": 1,
+      "weight": 0.1,
+      "rare": true,
       "members": [
         {
           "pokemon": "chesnaught",
@@ -148,7 +151,8 @@
     },
     {
       "id": "eevee",
-      "weight": 2,
+      "weight": 0.2,
+      "rare": true,
       "members": [
         {
           "pokemon": "leafeon",
@@ -202,7 +206,8 @@
     },
     {
       "id": "grovyle",
-      "weight": 1,
+      "weight": 0.1,
+      "rare": true,
       "members": [
         {
           "pokemon": "sceptile",
@@ -212,6 +217,120 @@
         },
         {
           "pokemon": "grovyle",
+          "rarity": 80,
+          "level": "36-38",
+          "alphaLevel": "45-47"
+        }
+      ]
+    },
+    {
+      "id": "grotle",
+      "weight": 0.1,
+      "rare": true,
+      "members": [
+        {
+          "pokemon": "torterra",
+          "rarity": 20,
+          "level": "41-43",
+          "alphaLevel": "50-52"
+        },
+        {
+          "pokemon": "grotle",
+          "rarity": 80,
+          "level": "36-38",
+          "alphaLevel": "45-47"
+        }
+      ]
+    },
+    {
+      "id": "servine",
+      "weight": 0.1,
+      "rare": true,
+      "members": [
+        {
+          "pokemon": "serperior",
+          "rarity": 20,
+          "level": "41-43",
+          "alphaLevel": "50-52"
+        },
+        {
+          "pokemon": "servine",
+          "rarity": 80,
+          "level": "36-38",
+          "alphaLevel": "45-47"
+        }
+      ]
+    },
+    {
+      "id": "dartrix",
+      "weight": 0.1,
+      "rare": true,
+      "members": [
+        {
+          "pokemon": "decidueye",
+          "rarity": 20,
+          "level": "41-43",
+          "alphaLevel": "50-52"
+        },
+        {
+          "pokemon": "dartrix",
+          "rarity": 80,
+          "level": "36-38",
+          "alphaLevel": "45-47"
+        }
+      ]
+    },
+    {
+      "id": "dartrix_2",
+      "weight": 0.1,
+      "rare": true,
+      "members": [
+        {
+          "pokemon": "decidueye hisuian",
+          "rarity": 20,
+          "level": "41-43",
+          "alphaLevel": "50-52"
+        },
+        {
+          "pokemon": "dartrix",
+          "rarity": 80,
+          "level": "36-38",
+          "alphaLevel": "45-47"
+        }
+      ]
+    },
+    {
+      "id": "thwackey",
+      "weight": 0.1,
+      "rare": true,
+      "members": [
+        {
+          "pokemon": "rillaboom",
+          "rarity": 20,
+          "level": "41-43",
+          "alphaLevel": "50-52"
+        },
+        {
+          "pokemon": "thwackey",
+          "rarity": 80,
+          "level": "36-38",
+          "alphaLevel": "45-47"
+        }
+      ]
+    },
+    {
+      "id": "floragato",
+      "weight": 0.1,
+      "rare": true,
+      "members": [
+        {
+          "pokemon": "meowscarada",
+          "rarity": 20,
+          "level": "41-43",
+          "alphaLevel": "50-52"
+        },
+        {
+          "pokemon": "floragato",
           "rarity": 80,
           "level": "36-38",
           "alphaLevel": "45-47"

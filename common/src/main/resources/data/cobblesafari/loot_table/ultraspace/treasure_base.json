@@ -35,6 +35,19 @@
                   },
                   {
                     "type": "minecraft:item",
+                    "name": "cobblesafari:rotom_skin_unlock",
+                    "weight": 1,
+                    "functions": [
+                      {
+                        "function": "minecraft:set_components",
+                        "components": {
+                          "cobblesafari:skin_unlock_target": "beast"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "type": "minecraft:item",
                     "name": "cobblesafari:recon_armor_helmet",
                     "weight": 1
                   },

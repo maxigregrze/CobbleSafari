@@ -58,7 +58,8 @@
     },
     {
       "id": "bulbasaur",
-      "weight": 1,
+      "weight": 0.1,
+      "rare": true,
       "members": [
         {
           "pokemon": "ivysaur",
@@ -76,7 +77,8 @@
     },
     {
       "id": "chikorita",
-      "weight": 1,
+      "weight": 0.1,
+      "rare": true,
       "members": [
         {
           "pokemon": "bayleef",
@@ -94,7 +96,8 @@
     },
     {
       "id": "chespin",
-      "weight": 1,
+      "weight": 0.1,
+      "rare": true,
       "members": [
         {
           "pokemon": "quilladin",
@@ -130,7 +133,8 @@
     },
     {
       "id": "treecko",
-      "weight": 1,
+      "weight": 0.1,
+      "rare": true,
       "members": [
         {
           "pokemon": "grovyle",
@@ -140,6 +144,101 @@
         },
         {
           "pokemon": "treecko",
+          "rarity": 80,
+          "level": "20-22",
+          "alphaLevel": "29-31"
+        }
+      ]
+    },
+    {
+      "id": "turtwig",
+      "weight": 0.1,
+      "rare": true,
+      "members": [
+        {
+          "pokemon": "grotle",
+          "rarity": 20,
+          "level": "23-25",
+          "alphaLevel": "32-34"
+        },
+        {
+          "pokemon": "turtwig",
+          "rarity": 80,
+          "level": "20-22",
+          "alphaLevel": "29-31"
+        }
+      ]
+    },
+    {
+      "id": "snivy",
+      "weight": 0.1,
+      "rare": true,
+      "members": [
+        {
+          "pokemon": "servine",
+          "rarity": 20,
+          "level": "23-25",
+          "alphaLevel": "32-34"
+        },
+        {
+          "pokemon": "snivy",
+          "rarity": 80,
+          "level": "20-22",
+          "alphaLevel": "29-31"
+        }
+      ]
+    },
+    {
+      "id": "rowlet",
+      "weight": 0.1,
+      "rare": true,
+      "members": [
+        {
+          "pokemon": "dartrix",
+          "rarity": 20,
+          "level": "23-25",
+          "alphaLevel": "32-34"
+        },
+        {
+          "pokemon": "rowlet",
+          "rarity": 80,
+          "level": "20-22",
+          "alphaLevel": "29-31"
+        }
+      ]
+    },
+    {
+      "id": "grookey",
+      "weight": 0.1,
+      "rare": true,
+      "members": [
+        {
+          "pokemon": "thwackey",
+          "rarity": 20,
+          "level": "23-25",
+          "alphaLevel": "32-34"
+        },
+        {
+          "pokemon": "grookey",
+          "rarity": 80,
+          "level": "20-22",
+          "alphaLevel": "29-31"
+        }
+      ]
+    },
+    {
+      "id": "sprigatito",
+      "weight": 0.1,
+      "rare": true,
+      "members": [
+        {
+          "pokemon": "floragato",
+          "rarity": 20,
+          "level": "23-25",
+          "alphaLevel": "32-34"
+        },
+        {
+          "pokemon": "sprigatito",
           "rarity": 80,
           "level": "20-22",
           "alphaLevel": "29-31"

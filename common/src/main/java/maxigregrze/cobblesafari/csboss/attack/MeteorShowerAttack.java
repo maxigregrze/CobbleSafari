@@ -32,7 +32,7 @@ public class MeteorShowerAttack implements CsBossAttack {
     private static final int SPAWN_AT = IMPACT_AT - FALL_TICKS; // 70: meteor appears earlier
     private static final double FALL_HEIGHT = 20.0;
 
-    private static final float METEOR_DAMAGE = 18.0F; // damage from a meteor falling on a player
+    private static final float METEOR_DAMAGE = 7.0F; // base 7 (plan 199), × damageMultiplier du boss - meteor falling on a player
 
     private final String id;
     private final int spawnInterval;

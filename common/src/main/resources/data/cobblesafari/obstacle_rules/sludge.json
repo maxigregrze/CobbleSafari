@@ -3,7 +3,23 @@
   "types": [
     "water"
   ],
-  "moves": [],
+  "moves": [
+    "blastburn",
+    "boomburst",
+    "confusion",
+    "firespin",
+    "fissure",
+    "frenzyplant",
+    "hurricane",
+    "lusterpurge",
+    "magmastorm",
+    "mistball",
+    "mortalspin",
+    "precipiceblades",
+    "psychic",
+    "sandtomb",
+    "sheercold"
+  ],
   "message": "cobblesafari.obstacle.no_move.sludge",
   "lootTable": "cobblesafari:obstacles/obstacle_sludge"
 }

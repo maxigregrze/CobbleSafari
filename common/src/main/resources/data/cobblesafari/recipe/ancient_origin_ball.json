@@ -1,0 +1,17 @@
+{
+    "type": "minecraft:crafting_shaped",
+    "pattern": [
+        " F ",
+        "TCT",
+        " F "
+    ],
+    "key": {
+        "F": { "item": "cobblesafari:redchain_fragment" },
+        "C": { "item": "cobblesafari:red_chain" },
+        "T": { "item": "cobblemon:tumblestone" }
+    },
+    "result": {
+        "id": "cobblemon:ancient_origin_ball",
+        "count": 1
+    }
+}

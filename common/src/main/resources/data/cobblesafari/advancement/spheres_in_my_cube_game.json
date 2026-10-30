@@ -1,7 +1,7 @@
 {
   "parent": "cobblesafari:dig_deeper",
   "display": {
-    "icon": { "id": "minecraft:diamond" },
+    "icon": { "id": "cobblesafari:sphere_prism_s" },
     "title": { "translate": "advancements.cobblesafari.spheres_in_my_cube_game.title" },
     "description": { "translate": "advancements.cobblesafari.spheres_in_my_cube_game.description" },
     "frame": "task",

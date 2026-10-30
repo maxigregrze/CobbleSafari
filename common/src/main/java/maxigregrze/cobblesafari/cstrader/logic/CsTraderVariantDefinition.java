@@ -8,12 +8,9 @@ import java.util.Set;
 public class CsTraderVariantDefinition {
     private final String id;
     private final Set<String> aliases;
-    private final int minTrades;
-    private final int maxTrades;
-    private final List<CsTraderTradeDefinition> trades;
+    private final List<CsTraderTradeGroup> tradeGroups;
 
-    public CsTraderVariantDefinition(String id, List<String> aliases, int minTrades, int maxTrades,
-                                     List<CsTraderTradeDefinition> trades) {
+    public CsTraderVariantDefinition(String id, List<String> aliases, List<CsTraderTradeGroup> tradeGroups) {
         this.id = id;
         this.aliases = new HashSet<>();
         this.aliases.add(id.toLowerCase(Locale.ROOT));
@@ -24,25 +21,16 @@ public class CsTraderVariantDefinition {
                 }
             }
         }
-        this.minTrades = minTrades;
-        this.maxTrades = maxTrades;
-        this.trades = trades;
+        this.tradeGroups = tradeGroups;
     }
 
     public String getId() {
         return id;
     }
 
-    public int getMinTrades() {
-        return minTrades;
-    }
-
-    public int getMaxTrades() {
-        return maxTrades;
-    }
-
-    public List<CsTraderTradeDefinition> getTrades() {
-        return trades;
+    /** Each group is drawn independently; a legacy variant has a single group. */
+    public List<CsTraderTradeGroup> getTradeGroups() {
+        return tradeGroups;
     }
 
     public boolean matches(String variantIdOrAlias) {

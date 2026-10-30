@@ -3,7 +3,7 @@
   "tags": [
     "trainerspokemon"
   ],
-  "given": "rowlet level=1 form=hisui originaltrainertype=npc originaltrainer=Rei",
+  "given": "rowlet level=1 region_bias=hisui originaltrainertype=npc originaltrainer=Rei",
   "givenMarks": [
     "cobblemon:ribbon_partner"
   ],

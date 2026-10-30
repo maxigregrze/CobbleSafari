@@ -2,7 +2,7 @@
   "typeId": 5,
   "weight": 10,
   "structurePool": "cobblesafari:ultraspace/crater/start",
-  "tint": "#8a1d12",
+  "tint": "#cc0000",
   "dimension": "cobblesafari:dungeon_ultra_crater",
   "normalPool": {
     "pokemon": [

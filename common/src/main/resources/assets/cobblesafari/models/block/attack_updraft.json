@@ -1,0 +1,6 @@
+{
+	"parent": "cobblesafari:block/hot_geyser",
+	"textures": {
+		"1": "minecraft:block/black_concrete"
+	}
+}

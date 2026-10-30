@@ -40,7 +40,8 @@
     },
     {
       "id": "vaporeon",
-      "weight": 1,
+      "weight": 0.1,
+      "rare": true,
       "members": [
         {
           "pokemon": "eevee",
@@ -58,7 +59,8 @@
     },
     {
       "id": "jolteon",
-      "weight": 1,
+      "weight": 0.1,
+      "rare": true,
       "members": [
         {
           "pokemon": "eevee",
@@ -76,7 +78,8 @@
     },
     {
       "id": "espeon",
-      "weight": 1,
+      "weight": 0.1,
+      "rare": true,
       "members": [
         {
           "pokemon": "espeon",
@@ -94,7 +97,8 @@
     },
     {
       "id": "flareon",
-      "weight": 1,
+      "weight": 0.1,
+      "rare": true,
       "members": [
         {
           "pokemon": "eevee",
@@ -112,7 +116,8 @@
     },
     {
       "id": "sylveon",
-      "weight": 1,
+      "weight": 0.1,
+      "rare": true,
       "members": [
         {
           "pokemon": "eevee",
@@ -130,7 +135,8 @@
     },
     {
       "id": "leafeon",
-      "weight": 1,
+      "weight": 0.1,
+      "rare": true,
       "members": [
         {
           "pokemon": "leafeon",

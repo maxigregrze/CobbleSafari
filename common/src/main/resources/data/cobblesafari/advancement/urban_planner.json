@@ -1,0 +1,16 @@
+{
+  "parent": "cobblesafari:hyperspace_tourist",
+  "display": {
+    "icon": { "id": "cobblesafari:obstacle_sludge" },
+    "title": { "translate": "advancements.cobblesafari.urban_planner.title" },
+    "description": { "translate": "advancements.cobblesafari.urban_planner.description" },
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "done": {"trigger": "cobblesafari:obstacle_cleared", "conditions": {"count": 100}}
+  },
+  "requirements": [["done"]]
+}

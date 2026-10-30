@@ -1,9 +1,7 @@
 {
   "parent": "cobblesafari:welcome_to_safari",
   "display": {
-    "icon": {
-      "id": "minecraft:clock"
-    },
+    "icon": { "id": "cobblesafari:mooncalendar" },
     "title": {
       "translate": "advancements.cobblesafari.safari_addict.title"
     },

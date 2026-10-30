@@ -337,7 +337,9 @@ public abstract class CobbleSafariConfigScreen extends Screen {
         g.enableScissor(0, top, this.width, bottom);
         g.pose().pushPose();
         g.pose().translate(0, -this.scrollY, 0);
-        int localMouseY = (int) (mouseY + this.scrollY);
+        // Outside the viewport the pointer is over the title or the footer: a widget clipped under it
+        // must not look hovered or raise its tooltip (action plan 198, section 7.3).
+        int localMouseY = this.inViewport(mouseY) ? (int) (mouseY + this.scrollY) : Integer.MIN_VALUE / 2;
         for (AbstractWidget w : this.scrollWidgets) {
             w.render(g, mouseX, localMouseY, partialTick);
         }

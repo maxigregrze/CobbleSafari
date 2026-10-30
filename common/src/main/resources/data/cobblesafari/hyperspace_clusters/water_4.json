@@ -4,7 +4,8 @@
   "clusters": [
     {
       "id": "wartortle",
-      "weight": 1,
+      "weight": 0.1,
+      "rare": true,
       "members": [
         {
           "pokemon": "blastoise",
@@ -58,7 +59,8 @@
     },
     {
       "id": "croconaw",
-      "weight": 1,
+      "weight": 0.1,
+      "rare": true,
       "members": [
         {
           "pokemon": "feraligatr",
@@ -94,7 +96,8 @@
     },
     {
       "id": "frogadier",
-      "weight": 1,
+      "weight": 0.1,
+      "rare": true,
       "members": [
         {
           "pokemon": "greninja",
@@ -148,7 +151,8 @@
     },
     {
       "id": "eevee",
-      "weight": 2,
+      "weight": 0.2,
+      "rare": true,
       "members": [
         {
           "pokemon": "vaporeon",
@@ -184,7 +188,8 @@
     },
     {
       "id": "marshtomp",
-      "weight": 1,
+      "weight": 0.1,
+      "rare": true,
       "members": [
         {
           "pokemon": "swampert",
@@ -227,6 +232,120 @@
           "rarity": 23,
           "level": "38-40",
           "alphaLevel": "47-49"
+        }
+      ]
+    },
+    {
+      "id": "prinplup",
+      "weight": 0.1,
+      "rare": true,
+      "members": [
+        {
+          "pokemon": "empoleon",
+          "rarity": 20,
+          "level": "41-43",
+          "alphaLevel": "50-52"
+        },
+        {
+          "pokemon": "prinplup",
+          "rarity": 80,
+          "level": "36-38",
+          "alphaLevel": "45-47"
+        }
+      ]
+    },
+    {
+      "id": "dewott",
+      "weight": 0.1,
+      "rare": true,
+      "members": [
+        {
+          "pokemon": "samurott",
+          "rarity": 20,
+          "level": "41-43",
+          "alphaLevel": "50-52"
+        },
+        {
+          "pokemon": "dewott",
+          "rarity": 80,
+          "level": "36-38",
+          "alphaLevel": "45-47"
+        }
+      ]
+    },
+    {
+      "id": "dewott_2",
+      "weight": 0.1,
+      "rare": true,
+      "members": [
+        {
+          "pokemon": "samurott hisuian",
+          "rarity": 20,
+          "level": "41-43",
+          "alphaLevel": "50-52"
+        },
+        {
+          "pokemon": "dewott",
+          "rarity": 80,
+          "level": "36-38",
+          "alphaLevel": "45-47"
+        }
+      ]
+    },
+    {
+      "id": "brionne",
+      "weight": 0.1,
+      "rare": true,
+      "members": [
+        {
+          "pokemon": "primarina",
+          "rarity": 20,
+          "level": "41-43",
+          "alphaLevel": "50-52"
+        },
+        {
+          "pokemon": "brionne",
+          "rarity": 80,
+          "level": "36-38",
+          "alphaLevel": "45-47"
+        }
+      ]
+    },
+    {
+      "id": "drizzile",
+      "weight": 0.1,
+      "rare": true,
+      "members": [
+        {
+          "pokemon": "inteleon",
+          "rarity": 20,
+          "level": "41-43",
+          "alphaLevel": "50-52"
+        },
+        {
+          "pokemon": "drizzile",
+          "rarity": 80,
+          "level": "36-38",
+          "alphaLevel": "45-47"
+        }
+      ]
+    },
+    {
+      "id": "quaxwell",
+      "weight": 0.1,
+      "rare": true,
+      "members": [
+        {
+          "pokemon": "quaquaval",
+          "rarity": 20,
+          "level": "41-43",
+          "alphaLevel": "50-52"
+        },
+        {
+          "pokemon": "quaxwell",
+          "rarity": 80,
+          "level": "36-38",
+          "alphaLevel": "45-47"
         }
       ]
     }

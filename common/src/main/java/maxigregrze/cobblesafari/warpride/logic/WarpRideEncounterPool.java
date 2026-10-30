@@ -1,15 +1,12 @@
 package maxigregrze.cobblesafari.warpride.logic;
 
-import com.cobblemon.mod.common.api.pokemon.PokemonProperties;
-import com.cobblemon.mod.common.api.pokemon.PokemonSpecies;
 import com.cobblemon.mod.common.pokemon.Species;
-import net.minecraft.resources.ResourceLocation;
+import maxigregrze.cobblesafari.onboarding.SpeciesAvailability;
 import net.minecraft.util.RandomSource;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 /**
  * One encounter pool of a destination: weighted Cobblemon property strings plus an optional
@@ -88,28 +85,10 @@ public record WarpRideEncounterPool(List<Entry> entries, @Nullable String fallba
      * the flag (decision 4 bis.6 a).
      */
     public static Availability availability(String spec) {
-        Species species = resolveSpecies(spec);
+        Species species = SpeciesAvailability.resolveSpecies(spec);
         if (species == null) {
             return Availability.NOT_FOUND;
         }
         return species.getImplemented() ? Availability.USABLE : Availability.NOT_IMPLEMENTED;
-    }
-
-    @Nullable
-    private static Species resolveSpecies(String spec) {
-        try {
-            String name = PokemonProperties.Companion.parse(spec).getSpecies();
-            if (name == null || name.isBlank()) {
-                return null;
-            }
-            String id = name.toLowerCase(Locale.ROOT);
-            if (id.indexOf(':') >= 0) {
-                ResourceLocation location = ResourceLocation.tryParse(id);
-                return location == null ? null : PokemonSpecies.INSTANCE.getByIdentifier(location);
-            }
-            return PokemonSpecies.INSTANCE.getByName(id);
-        } catch (Exception e) {
-            return null;
-        }
     }
 }

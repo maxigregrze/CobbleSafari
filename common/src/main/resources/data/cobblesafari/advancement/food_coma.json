@@ -1,0 +1,16 @@
+{
+  "parent": "cobblesafari:ultra_megalopolis",
+  "display": {
+    "icon": { "id": "cobblesafari:gluton_armor_chestplate" },
+    "title": { "translate": "advancements.cobblesafari.food_coma.title" },
+    "description": { "translate": "advancements.cobblesafari.food_coma.description" },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "done": {"trigger": "minecraft:effects_changed", "conditions": {"effects": {"cobblesafari:gluttonous": {}}}}
+  },
+  "requirements": [["done"]]
+}

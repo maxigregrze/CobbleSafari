@@ -3,6 +3,7 @@ package maxigregrze.cobblesafari.client.screen;
 import maxigregrze.cobblesafari.CobbleSafari;
 import maxigregrze.cobblesafari.network.TpAcceptResponsePayload;
 import maxigregrze.cobblesafari.platform.Services;
+import maxigregrze.cobblesafari.safari.SafariDroneExitHandler;
 import net.minecraft.Util;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
@@ -110,7 +111,9 @@ public class TpAcceptScreen extends Screen {
 
         graphics.blit(TOP_TEXTURE, guiLeft, guiTop, 0, 0, GUI_WIDTH, TOP_HEIGHT, GUI_WIDTH, TOP_HEIGHT);
 
-        Component titleText = Component.translatable("gui.cobblesafari.tpaccept.teleporting_to", dimensionName);
+        Component titleText = this.isSafariExit()
+                ? Component.translatable("gui.cobblesafari.tpaccept.exit_safari")
+                : Component.translatable("gui.cobblesafari.tpaccept.teleporting_to", dimensionName);
         int titleWidth = this.font.width(titleText);
         graphics.drawString(this.font, titleText, guiLeft + 136 - titleWidth / 2, guiTop + 8, 0xFFFFFF, true);
 
@@ -151,20 +154,27 @@ public class TpAcceptScreen extends Screen {
             int denyV = denyHovered ? BUTTON_HEIGHT : 0;
             graphics.blit(DENY_TEXTURE, guiLeft + BUTTON_WIDTH, buttonsY, 0, denyV, BUTTON_WIDTH, BUTTON_HEIGHT, BUTTON_WIDTH, BUTTON_HEIGHT * 2);
 
-            Component acceptText = Component.translatable("gui.cobblesafari.tpaccept.accept");
+            Component acceptText = Component.translatable(this.isSafariExit()
+                    ? "gui.cobblesafari.tpaccept.yes" : "gui.cobblesafari.tpaccept.accept");
             int acceptWidth = this.font.width(acceptText);
             graphics.drawString(this.font, acceptText,
                     guiLeft + BUTTON_WIDTH / 2 - acceptWidth / 2,
                     buttonsY + (BUTTON_HEIGHT - 8) / 2,
                     0xFFFFFF, true);
 
-            Component denyText = Component.translatable("gui.cobblesafari.tpaccept.cancel");
+            Component denyText = Component.translatable(this.isSafariExit()
+                    ? "gui.cobblesafari.tpaccept.no" : "gui.cobblesafari.tpaccept.cancel");
             int denyWidth = this.font.width(denyText);
             graphics.drawString(this.font, denyText,
                     guiLeft + BUTTON_WIDTH + BUTTON_WIDTH / 2 - denyWidth / 2,
                     buttonsY + (BUTTON_HEIGHT - 8) / 2,
                     0xFFFFFF, true);
         }
+    }
+
+    /** The Safari drone's "exit the Safari?" question rather than an entry (action plan 198, part G). */
+    private boolean isSafariExit() {
+        return SafariDroneExitHandler.SOURCE.equals(this.source);
     }
 
     @Override

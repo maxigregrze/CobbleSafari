@@ -7,8 +7,5 @@
   "unlockedFromStart": false,
   "hasShinyVariant": false,
   "unlockingAdvancement": "",
-  "addUnlockItem": true,
-  "tags": [
-    "questunlock"
-  ]
+  "addUnlockItem": true
 }

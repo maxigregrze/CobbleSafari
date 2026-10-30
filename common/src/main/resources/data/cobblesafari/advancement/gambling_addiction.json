@@ -1,9 +1,7 @@
 {
   "parent": "cobblesafari:ring_a_ding",
   "display": {
-    "icon": {
-      "id": "minecraft:emerald"
-    },
+    "icon": { "id": "cobblesafari:ticket_wondertrade" },
     "title": {
       "translate": "advancements.cobblesafari.gambling_addiction.title"
     },

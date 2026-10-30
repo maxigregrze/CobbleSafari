@@ -22,6 +22,11 @@ import java.util.Map;
  * Manual edits are respected after first load.
  */
 public class DimensionalBanConfig {
+    /**
+     * Paliers 2 to 5 only ever reached debug builds - 0.3.4 still writes 1 - so a field added since
+     * does not get a palier of its own: {@code forbidElytra} (action plan 198, § 15) is upgraded on
+     * the presence of its key, see {@link #migrateForbidElytra}.
+     */
     public static final int CONFIG_VERSION = 5;
 
     /**
@@ -115,7 +120,11 @@ public class DimensionalBanConfig {
         }
     }
 
+    /** Same guard as {@code MiscConfig}: no save after a failed read, so a typo is never overwritten. */
+    private static boolean loadFailed = false;
+
     public static void load() {
+        loadFailed = false;
         migrateOldConfigPath();
 
         if (!Files.exists(CONFIG_PATH)) {
@@ -137,6 +146,7 @@ public class DimensionalBanConfig {
             ensureDataDefaults(data);
             int loadedVersion = readStoredVersion(root);
             boolean mountingMigrated = migrateForbidMounting(root, data);
+            boolean elytraMigrated = migrateForbidElytra(root, data);
             boolean jumpMigrated = migrateDungeonJumpRestrictions(loadedVersion, data);
             boolean ultraMigrated = seedMissingDimensions(
                     loadedVersion, VERSION_ULTRA_DIMENSIONS, ULTRA_DIMENSION_IDS, data);
@@ -146,8 +156,12 @@ public class DimensionalBanConfig {
                     loadedVersion, VERSION_PARIS, PARIS_DIMENSION_IDS, data);
             ultraMigrated = ultraMigrated || ultraSubMigrated || parisMigrated;
             CobbleSafari.LOGGER.info("CobbleSafari >> dimensional_restrictions_config.json loaded successfully from {}", CONFIG_PATH);
-            if (mountingMigrated || jumpMigrated || ultraMigrated) {
+            if (mountingMigrated || elytraMigrated || jumpMigrated || ultraMigrated) {
                 save();
+                if (elytraMigrated) {
+                    CobbleSafari.LOGGER.info(
+                            "CobbleSafari >> dimensional_restrictions_config.json migrated: forbidElytra defaults written");
+                }
                 if (ultraMigrated) {
                     CobbleSafari.LOGGER.info(
                             "CobbleSafari >> dimensional_restrictions_config.json migrated from v{} to v{}: entries created for the new dungeon dimensions",
@@ -165,10 +179,17 @@ public class DimensionalBanConfig {
             }
         } catch (Exception e) {
             CobbleSafari.LOGGER.error(
-                    "CobbleSafari >> Failed to read or parse dimensional_restrictions_config.json at {} (invalid JSON or unexpected structure). Using in-memory defaults; the file on disk was not overwritten.",
+                    "CobbleSafari >> Failed to read or parse dimensional_restrictions_config.json at {} (invalid JSON or unexpected structure). Using in-memory defaults; a copy was saved as dimensional_restrictions_config.json.broken and the file will not be rewritten until it is fixed.",
                     CONFIG_PATH,
                     e);
             data = new DimensionalBanData();
+            loadFailed = true;
+            try {
+                Files.copy(CONFIG_PATH, CONFIG_PATH.resolveSibling("dimensional_restrictions_config.json.broken"),
+                        java.nio.file.StandardCopyOption.REPLACE_EXISTING);
+            } catch (Exception copyError) {
+                CobbleSafari.LOGGER.error("CobbleSafari >> Could not back up the invalid dimensional_restrictions_config.json", copyError);
+            }
         }
     }
 
@@ -192,6 +213,33 @@ public class DimensionalBanConfig {
                 if ("cobblesafari:dungeon_distortion".equals(dimensionId)) {
                     loaded.dimensions.get(dimensionId).forbidMounting = true;
                 }
+            }
+        }
+        return migrationNeeded;
+    }
+
+    /**
+     * File predating the forbidElytra field (action plan 198, § 15): every entry that does not
+     * declare the key takes the built-in default of its dimension, {@code false} for a dimension
+     * the mod does not ship. Keyed on the presence of the key and never on the version, so it
+     * upgrades a published v1 file and a debug v5 file alike; an entry that declares the key keeps
+     * its value untouched, so manual edits stay respected.
+     */
+    private static boolean migrateForbidElytra(JsonObject root, DimensionalBanData loaded) {
+        JsonObject dims = root.has(KEY_DIMENSIONS) && root.get(KEY_DIMENSIONS).isJsonObject()
+                ? root.getAsJsonObject(KEY_DIMENSIONS) : null;
+        if (dims == null) {
+            return false;
+        }
+        DimensionalBanData defaults = new DimensionalBanData();
+        boolean migrationNeeded = false;
+        for (Map.Entry<String, DimensionalBanData.DimensionRestrictions> entry : loaded.dimensions.entrySet()) {
+            String dimensionId = entry.getKey();
+            if (dims.has(dimensionId) && dims.get(dimensionId).isJsonObject()
+                    && !dims.getAsJsonObject(dimensionId).has("forbidElytra")) {
+                migrationNeeded = true;
+                DimensionalBanData.DimensionRestrictions preset = defaults.dimensions.get(dimensionId);
+                entry.getValue().forbidElytra = preset != null && preset.forbidElytra;
             }
         }
         return migrationNeeded;
@@ -252,7 +300,8 @@ public class DimensionalBanConfig {
      * <p>Keyed on the file version and never on the values themselves: once the file is stamped, a
      * server owner who loosens the dungeon again keeps that choice across every later start.
      *
-     * <p>Only the five flags are rewritten. {@code bannedItems} and {@code bannedBlocks} are left
+     * <p>Only the six flags are rewritten ({@code forbidElytra} joined them with action plan 198,
+     * § 15). {@code bannedItems} and {@code bannedBlocks} are left
      * untouched, since anything in them was necessarily put there by hand.
      *
      * <p>{@code allowRotomSafety} (action plan 176) rides along on this same step rather than getting a
@@ -278,6 +327,7 @@ public class DimensionalBanConfig {
         current.allowBlockPlacing = defaults.allowBlockPlacing;
         current.forbidMounting = defaults.forbidMounting;
         current.allowRotomSafety = defaults.allowRotomSafety;
+        current.forbidElytra = defaults.forbidElytra;
         return true;
     }
 
@@ -296,6 +346,10 @@ public class DimensionalBanConfig {
     }
 
     public static void save() {
+        if (loadFailed) {
+            CobbleSafari.LOGGER.warn("CobbleSafari >> dimensional_restrictions_config.json is invalid on disk: change not saved (fix the file, then /cobblesafari reset)");
+            return;
+        }
         try {
             Files.createDirectories(CONFIG_DIR);
         } catch (Exception e) {

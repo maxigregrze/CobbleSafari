@@ -34,7 +34,7 @@ public class CsBossBulletEntity extends Entity {
     private static final String KEY_SESSION = "SessionId";
 
     private static final int MAX_AGE = 60;
-    private static final float DEFAULT_DAMAGE = 12.0F; // 6 hearts (fast spread, easy gaps)
+    public static final float DEFAULT_DAMAGE = 6.0F; // base 6 (plan 199), × damageMultiplier - fast spread, easy gaps
 
     private int age;
     private int sessionId;
@@ -93,7 +93,7 @@ public class CsBossBulletEntity extends Entity {
         for (UUID uuid : this.participants) {
             if (this.level().getPlayerByUUID(uuid) instanceof ServerPlayer p
                     && p.isAlive() && p.getBoundingBox().intersects(box)) {
-                p.hurt(CsBossDamage.bullet(this.level()), this.damage);
+                CsBossDamage.hurt(p, maxigregrze.cobblesafari.csboss.BossBattleManager.getSession(this.sessionId), this.damage);
             }
         }
     }

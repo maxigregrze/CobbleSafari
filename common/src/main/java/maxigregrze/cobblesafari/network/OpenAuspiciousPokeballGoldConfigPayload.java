@@ -20,7 +20,8 @@ public record OpenAuspiciousPokeballGoldConfigPayload(
         int minRoll,
         int maxRoll,
         boolean earnable,
-        List<String> earners
+        List<String> earners,
+        LootDefaults defaults
 ) implements CustomPacketPayload {
 
     public static final CustomPacketPayload.Type<OpenAuspiciousPokeballGoldConfigPayload> TYPE =
@@ -39,6 +40,7 @@ public record OpenAuspiciousPokeballGoldConfigPayload(
                 buf.writeInt(p.maxRoll);
                 buf.writeBoolean(p.earnable);
                 writeEarners(buf, p.earners);
+                LootDefaults.STREAM_CODEC.encode(buf, p.defaults);
             },
             buf -> new OpenAuspiciousPokeballGoldConfigPayload(
                     buf.readBlockPos(),
@@ -49,7 +51,8 @@ public record OpenAuspiciousPokeballGoldConfigPayload(
                     buf.readInt(),
                     buf.readInt(),
                     buf.readBoolean(),
-                    readEarners(buf)
+                    readEarners(buf),
+                    LootDefaults.STREAM_CODEC.decode(buf)
             )
     );
 

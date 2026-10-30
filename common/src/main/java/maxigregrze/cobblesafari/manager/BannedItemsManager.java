@@ -96,6 +96,21 @@ public class BannedItemsManager {
         return restrictions.allowRotomSafety;
     }
 
+    /**
+     * Whether elytra flight - and so firework propulsion - is possible in this dimension
+     * (action plan 198, § 15). Read on both sides: the client copy keeps the glide from starting.
+     */
+    public static boolean isElytraAllowed(ResourceKey<Level> dimension) {
+        String dimensionId = dimension.location().toString();
+        DimensionalBanData.DimensionRestrictions restrictions = DimensionalBanConfig.getEffectiveData().dimensions.get(dimensionId);
+
+        if (restrictions == null) {
+            return true;
+        }
+
+        return !restrictions.forbidElytra;
+    }
+
     public static boolean hasDimensionRestrictions(ResourceKey<Level> dimension) {
         String dimensionId = dimension.location().toString();
         return DimensionalBanConfig.getEffectiveData().dimensions.containsKey(dimensionId);

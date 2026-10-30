@@ -1,0 +1,16 @@
+{
+  "parent": "cobblesafari:ultra_megalopolis",
+  "display": {
+    "icon": { "id": "cobblesafari:ultrawarpdive_positive" },
+    "title": { "translate": "advancements.cobblesafari.further_than_the_universe.title" },
+    "description": { "translate": "advancements.cobblesafari.further_than_the_universe.description" },
+    "frame": "challenge",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "done": {"trigger": "cobblesafari:warp_ride_distance", "conditions": {"count": 138000}}
+  },
+  "requirements": [["done"]]
+}

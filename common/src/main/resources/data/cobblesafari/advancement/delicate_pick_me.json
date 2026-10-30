@@ -1,9 +1,7 @@
 {
   "parent": "cobblesafari:spheres_in_my_cube_game",
   "display": {
-    "icon": {
-      "id": "minecraft:diamond_pickaxe"
-    },
+    "icon": { "id": "cobblesafari:fossil_random" },
     "title": {
       "translate": "advancements.cobblesafari.delicate_pick_me.title"
     },

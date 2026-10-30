@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=south": {
+      "model": "cobblesafari:block/haunted_monitor"
+    },
+    "facing=west": {
+      "model": "cobblesafari:block/haunted_monitor",
+      "y": 90
+    },
+    "facing=north": {
+      "model": "cobblesafari:block/haunted_monitor",
+      "y": 180
+    },
+    "facing=east": {
+      "model": "cobblesafari:block/haunted_monitor",
+      "y": 270
+    }
+  }
+}

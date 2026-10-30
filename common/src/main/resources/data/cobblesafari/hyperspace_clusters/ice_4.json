@@ -76,7 +76,8 @@
     },
     {
       "id": "eevee",
-      "weight": 2,
+      "weight": 0.2,
+      "rare": true,
       "members": [
         {
           "pokemon": "glaceon",

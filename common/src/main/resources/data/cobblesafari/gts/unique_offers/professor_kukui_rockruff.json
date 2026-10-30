@@ -3,7 +3,7 @@
   "tags": [
     "trainerspokemon"
   ],
-  "given": "rockruff level=1 originaltrainertype=npc originaltrainer=Professor Kukui",
+  "given": "rockruff level=1 originaltrainertype=npc originaltrainer=\"Professor Kukui\"",
   "givenMarks": [
     "cobblemon:ribbon_partner"
   ],

@@ -1,7 +1,7 @@
 {
   "parent": "cobblesafari:safari",
   "display": {
-    "icon": { "id": "cobblemon:safari_ball" },
+    "icon": { "id": "cobblesafari:ticket_safari" },
     "title": { "translate": "advancements.cobblesafari.welcome_to_safari.title" },
     "description": { "translate": "advancements.cobblesafari.welcome_to_safari.description" },
     "frame": "task",

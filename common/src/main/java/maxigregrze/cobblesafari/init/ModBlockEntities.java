@@ -47,6 +47,7 @@ public class ModBlockEntities {
     public static BlockEntityType<DungeonPortalBlockEntity> DUNGEON_PORTAL;
     public static BlockEntityType<maxigregrze.cobblesafari.block.dungeon.PortalSpawnerBlockEntity> PORTAL_SPAWNER;
     public static BlockEntityType<maxigregrze.cobblesafari.block.dungeon.UltraWormholeBlockEntity> ULTRA_WORMHOLE;
+    public static BlockEntityType<maxigregrze.cobblesafari.block.dungeon.UltraEntrancePortalBlockEntity> ULTRA_ENTRANCE_PORTAL;
     public static BlockEntityType<VoidBlockEntity> VOID_BLOCK;
     public static BlockEntityType<LightningSpotBlockEntity> LIGHTNINGSPOT;
     public static BlockEntityType<GiratinaCoreBlockEntity> GIRATINA_CORE;
@@ -66,6 +67,8 @@ public class ModBlockEntities {
     public static BlockEntityType<CreativeStatueBlockEntity> CREATIVE_STATUE;
     public static BlockEntityType<UnionRoomExitTeleporterBlockEntity> UNION_ROOM_EXIT_TELEPORTER;
     public static BlockEntityType<WhirlwindBlockEntity> WHIRLWIND;
+    public static BlockEntityType<maxigregrze.cobblesafari.block.csboss.CsBossUpdraftTileBlockEntity> CSBOSS_UPDRAFT;
+    public static BlockEntityType<maxigregrze.cobblesafari.block.csboss.CsBossTileBlockEntity> CSBOSS_TILE;
     public static BlockEntityType<UnionRoomSpotlightBlockEntity> UNION_ROOM_SPOTLIGHT;
     public static BlockEntityType<PunchingBagBlockEntity> PUNCHINGBAG;
     public static BlockEntityType<BelltowerBellBlockEntity> BELLTOWER_BELL;
@@ -99,6 +102,14 @@ public class ModBlockEntities {
                 BlockEntityType.Builder.of(
                         maxigregrze.cobblesafari.block.dungeon.UltraWormholeBlockEntity::new,
                         ModBlocks.ULTRA_WORMHOLE).build(null)
+        );
+
+        ULTRA_ENTRANCE_PORTAL = Registry.register(
+                BuiltInRegistries.BLOCK_ENTITY_TYPE,
+                ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, "ultra_entrance_portal"),
+                BlockEntityType.Builder.of(
+                        maxigregrze.cobblesafari.block.dungeon.UltraEntrancePortalBlockEntity::new,
+                        ModBlocks.ULTRA_ENTRANCE_PORTAL).build(null)
         );
 
         DUNGEON_PORTAL = Registry.register(
@@ -226,6 +237,20 @@ public class ModBlockEntities {
                 BuiltInRegistries.BLOCK_ENTITY_TYPE,
                 ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, "whirlwind"),
                 BlockEntityType.Builder.of(WhirlwindBlockEntity::new, ModBlocks.WHIRLWIND).build(null)
+        );
+
+        CSBOSS_UPDRAFT = Registry.register(
+                BuiltInRegistries.BLOCK_ENTITY_TYPE,
+                ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, "csboss_updraft"),
+                BlockEntityType.Builder.of(maxigregrze.cobblesafari.block.csboss.CsBossUpdraftTileBlockEntity::new,
+                        ModBlocks.CSBOSS_UPDRAFT).build(null)
+        );
+
+        CSBOSS_TILE = Registry.register(
+                BuiltInRegistries.BLOCK_ENTITY_TYPE,
+                ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, "csboss_tile"),
+                BlockEntityType.Builder.of(maxigregrze.cobblesafari.block.csboss.CsBossTileBlockEntity::new,
+                        ModBlocks.CSBOSS_SCORCHED, ModBlocks.CSBOSS_PUDDLE, ModBlocks.CSBOSS_ELECTRICITY).build(null)
         );
 
         UNION_ROOM_SPOTLIGHT = Registry.register(

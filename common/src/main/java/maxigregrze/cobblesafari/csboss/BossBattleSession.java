@@ -91,8 +91,23 @@ public class BossBattleSession {
     @Nullable
     private UUID portalUuid;
 
+    /**
+     * Y des pieds sur le sol de l'arène, détecté au début du combat (retours plan 199) : le trigger
+     * peut être posé sur un pilier au-dessus du sol. {@code null} = pas encore détecté (Y du trigger).
+     */
+    @Nullable
+    private Integer floorY;
+
+    /** Vague d'ouverture/fermeture en cours (plan 199 § 8), ou {@code null}. */
+    @Nullable
+    private ArenaWave arenaWave;
+    /** Porteurs du retour de fin de combat (plan 199 § 7) : porteur → joueur porté. */
+    private final Map<UUID, UUID> returnCarriers = new LinkedHashMap<>();
+    /** Ticks écoulés depuis le début du retour, -1 = pas de retour lancé. */
+    private int returnTicks = -1;
+
     public BossBattleSession(int id, ResourceKey<Level> dimension, BlockPos triggerPos,
-                             CsBossDefinition def, UUID bossUuid, Set<UUID> participantUuids,
+                             CsBossDefinition def, UUID bossUuid, Map<UUID, Vec3> participantStarts,
                              List<BlockPos> changedBlocks, int playerRadius, int totalDuration,
                              double entranceHeight, double blockRadius) {
         this.id = id;
@@ -110,8 +125,10 @@ public class BossBattleSession {
         this.remaining = this.totalDuration;
         this.maxBullets = CsBossSettings.get().getMaxConcurrentBulletsPerSession();
         this.scheduler = new AttackScheduler(def);
-        for (UUID uuid : participantUuids) {
-            this.participants.put(uuid, new ParticipantState());
+        for (Map.Entry<UUID, Vec3> e : participantStarts.entrySet()) {
+            ParticipantState st = new ParticipantState();
+            st.startPos = e.getValue();
+            this.participants.put(e.getKey(), st);
         }
         this.bossBar = new ServerBossEvent(
                 Component.literal(def.effectiveDisplayName()),
@@ -280,6 +297,13 @@ public class BossBattleSession {
         remaining = Math.max(0, remaining - reduction);
     }
 
+    /** Rend du temps au compte à rebours (soin du boss, plan 199 § 4), borné à la durée totale. */
+    public void increaseRemainingByPercent(int percent) {
+        int pct = Math.max(0, Math.min(100, percent));
+        int gain = Math.round(totalDuration * (pct / 100.0F));
+        remaining = Math.min(totalDuration, remaining + gain);
+    }
+
     public float progress() {
         return Math.max(0.0F, remaining / (float) totalDuration);
     }
@@ -304,7 +328,7 @@ public class BossBattleSession {
         }
         CsBossBulletEntity bullet = new CsBossBulletEntity(ModEntities.CSBOSS_BULLET, level);
         bullet.moveTo(origin.x, origin.y, origin.z, 0.0F, 0.0F);
-        bullet.configure(id, participants.keySet(), velocity, 16.0F);
+        bullet.configure(id, participants.keySet(), velocity, CsBossBulletEntity.DEFAULT_DAMAGE);
         level.addFreshEntity(bullet);
         activeBullets.add(bullet.getUUID());
         return true;
@@ -336,12 +360,23 @@ public class BossBattleSession {
      * Spawns a minion pre-scaled to {@code targetHeight} blocks tall (applied before entity sync).
      */
     public CsBossMinionEntity spawnMinion(ServerLevel level, Vec3 pos, double targetHeight) {
+        return spawnMinion(level, pos, targetHeight, m -> { });
+    }
+
+    /**
+     * Comme {@link #spawnMinion(ServerLevel, Vec3, double)}, avec {@code setup} appliqué <b>avant</b>
+     * l'ajout au monde : {@code addFreshEntity} envoie l'entité aux clients sur-le-champ, si bien qu'une
+     * pose, une invisibilité ou une orientation réglée après pouvait arriver une image trop tard.
+     */
+    public CsBossMinionEntity spawnMinion(ServerLevel level, Vec3 pos, double targetHeight,
+                                          java.util.function.Consumer<CsBossMinionEntity> setup) {
         CsBossMinionEntity minion = new CsBossMinionEntity(ModEntities.CSBOSS_MINION, level);
         minion.setSpecie(def.effectiveMinionSpecie());
         minion.setSize((int) def.size());
         minion.applyTargetHeight(targetHeight);
         minion.setSessionId(id);
         minion.moveTo(pos.x, pos.y, pos.z, 0.0F, 0.0F);
+        setup.accept(minion);
         level.addFreshEntity(minion);
         activeMinions.add(minion.getUUID());
         return minion;
@@ -398,6 +433,26 @@ public class BossBattleSession {
      * Spawns a minion at an explicit species (e.g. forced Voltorb for {@code base_electric_1}),
      * independent of the data model {@code minion} field. Tracked for cleanup at fight end.
      */
+    /** Minion d'espèce forcée, pré-dimensionné à {@code targetHeight} blocs avant la synchro (pas de flash). */
+    public CsBossMinionEntity spawnFixedMinion(ServerLevel level, Vec3 pos, String specie, double targetHeight) {
+        return spawnFixedMinion(level, pos, specie, targetHeight, m -> { });
+    }
+
+    /** Variante avec {@code setup} appliqué avant l'ajout au monde (voir {@code spawnMinion}). */
+    public CsBossMinionEntity spawnFixedMinion(ServerLevel level, Vec3 pos, String specie, double targetHeight,
+                                               java.util.function.Consumer<CsBossMinionEntity> setup) {
+        CsBossMinionEntity minion = new CsBossMinionEntity(ModEntities.CSBOSS_MINION, level);
+        minion.setSpecie(specie);
+        minion.setSize((int) def.size());
+        minion.applyTargetHeight(targetHeight);
+        minion.setSessionId(id);
+        minion.moveTo(pos.x, pos.y, pos.z, 0.0F, 0.0F);
+        setup.accept(minion);
+        level.addFreshEntity(minion);
+        activeMinions.add(minion.getUUID());
+        return minion;
+    }
+
     public CsBossMinionEntity spawnFixedMinion(ServerLevel level, Vec3 pos, String specie, int size) {
         CsBossMinionEntity minion = CsBossMinionEntity.spawn(level, pos.x, pos.y, pos.z, specie, size, id);
         activeMinions.add(minion.getUUID());
@@ -419,11 +474,78 @@ public class BossBattleSession {
         return out;
     }
 
+    // --- Arena floor (retours plan 199) ------------------------------------------
+
+    /** Y des pieds sur le sol de l'arène (repli : Y du trigger tant que la détection n'a pas tourné). */
+    public int getFloorY() {
+        return floorY != null ? floorY : triggerPos.getY();
+    }
+
+    /**
+     * Détecte le sol : niveau de surface le plus fréquent du carré d'arène (même scan que les
+     * attaques AREA), colonnes du trigger et de ses voisines exclues (pilier). Appelé à l'activation :
+     * le scan lit les blocs d'arène dans leur état de combat, la vague d'ouverture n'a pas à être finie.
+     */
+    public void detectFloorY(ServerLevel level) {
+        int half = Math.min(playerRadius, 32);
+        Map<Integer, Integer> counts = new java.util.HashMap<>();
+        for (BlockPos surface : maxigregrze.cobblesafari.csboss.attack.CsBossSurfaceScanner.scanSurfaceSquare(
+                level, arenaCenter, half, triggerPos.getY(),
+                maxigregrze.cobblesafari.csboss.attack.CsBossSurfaceScanner.DEFAULT_Y_TOLERANCE)) {
+            if (Math.abs(surface.getX() - triggerPos.getX()) <= 1 && Math.abs(surface.getZ() - triggerPos.getZ()) <= 1) {
+                continue;
+            }
+            counts.merge(surface.getY(), 1, Integer::sum);
+        }
+        floorY = counts.entrySet().stream()
+                .max(Map.Entry.comparingByValue())
+                .map(e -> e.getKey() + 1)
+                .orElse(triggerPos.getY());
+    }
+
+    // --- Arena wave / player return (plan 199 § 7-8) ----------------------------
+
+    /** Lance la vague de bascule des blocs réactifs ; une vague en cours est d'abord terminée. */
+    public void startArenaWave(ServerLevel level, boolean battle) {
+        if (arenaWave != null) {
+            arenaWave.flush(level);
+        }
+        arenaWave = new ArenaWave(changedBlocks, triggerPos, battle);
+    }
+
+    /** Un anneau par tick, quelle que soit la phase. */
+    public void tickArenaWave(ServerLevel level) {
+        if (arenaWave != null && arenaWave.tick(level)) {
+            arenaWave = null;
+        }
+    }
+
+    /** Abandonne la vague en cours sans basculer le reste (l'appelant bascule tout lui-même). */
+    public void cancelArenaWave() {
+        arenaWave = null;
+    }
+
+    public Map<UUID, UUID> getReturnCarriers() {
+        return returnCarriers;
+    }
+
+    public int getReturnTicks() {
+        return returnTicks;
+    }
+
+    public void setReturnTicks(int returnTicks) {
+        this.returnTicks = returnTicks;
+    }
+
     // --- Persistent snapshot -------------------------------------------------
 
     public CsBossSavedData.Snapshot snapshot() {
+        Map<UUID, Vec3> starts = new LinkedHashMap<>();
+        for (Map.Entry<UUID, ParticipantState> e : participants.entrySet()) {
+            starts.put(e.getKey(), e.getValue().startPos);
+        }
         return new CsBossSavedData.Snapshot(id, dimension, triggerPos, bossUuid,
-                new ArrayList<>(participants.keySet()), new ArrayList<>(changedBlocks));
+                new ArrayList<>(participants.keySet()), new ArrayList<>(changedBlocks), starts);
     }
 
     public BossEvent.BossBarColor color() {

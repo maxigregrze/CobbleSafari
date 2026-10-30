@@ -5,7 +5,6 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import maxigregrze.cobblesafari.CobbleSafari;
 import maxigregrze.cobblesafari.entity.csboss.attacks.AttackShadowEntity;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.texture.OverlayTexture;
@@ -40,7 +39,7 @@ public class AttackShadowEntityRenderer extends EntityRenderer<AttackShadowEntit
         float half = entity.isLarge() ? 1.5f: 0.5f; // 3×3 or 1×1
         float a = entity.getAlpha();
         if (a > 0.001f) {
-            VertexConsumer vc = buffer.getBuffer(RenderType.entityTranslucent(tex));
+            VertexConsumer vc = buffer.getBuffer(CsBossRenderTypes.decal(tex));
             PoseStack.Pose pose = ps.last();
             int overlay = OverlayTexture.NO_OVERLAY;
             quad(vc, pose, packedLight, overlay, a, half);

@@ -92,14 +92,12 @@ public final class CsTraderDataLoader {
     }
 
     private static CsTraderVariantDefinition parseVariant(ResourceLocation fileId, String traderName, JsonObject variantJson, int variantIndex) {
-        if (!variantJson.has("id") || !variantJson.has("trades")) {
-            CobbleSafari.LOGGER.warn("[CSTrader] {} trader={} variant #{} missing id/trades, skipped",
+        if (!variantJson.has("id") || (!variantJson.has("trades") && !variantJson.has("tradeGroups"))) {
+            CobbleSafari.LOGGER.warn("[CSTrader] {} trader={} variant #{} missing id/trades/tradeGroups, skipped",
                     fileId, traderName, variantIndex);
             return null;
         }
         String id = variantJson.get("id").getAsString();
-        int minTrades = variantJson.has("minTrades") ? variantJson.get("minTrades").getAsInt() : 1;
-        int maxTrades = variantJson.has("maxTrades") ? variantJson.get("maxTrades").getAsInt() : minTrades;
         List<String> aliases = new ArrayList<>();
         if (variantJson.has("aliases") && variantJson.get("aliases").isJsonArray()) {
             for (JsonElement aliasElement : variantJson.getAsJsonArray("aliases")) {
@@ -107,31 +105,63 @@ public final class CsTraderDataLoader {
             }
         }
 
-        JsonArray tradesArray = variantJson.getAsJsonArray("trades");
+        // Groups are drawn in file order; a top-level "trades" list acts as one more, last group.
+        List<CsTraderTradeGroup> groups = new ArrayList<>();
+        if (variantJson.has("tradeGroups") && variantJson.get("tradeGroups").isJsonArray()) {
+            for (JsonElement groupElement : variantJson.getAsJsonArray("tradeGroups")) {
+                if (!groupElement.isJsonObject() || !groupElement.getAsJsonObject().has("trades")) {
+                    CobbleSafari.LOGGER.warn("[CSTrader] {} trader={} variant={} has an invalid trade group, skipped",
+                            fileId, traderName, id);
+                    continue;
+                }
+                CsTraderTradeGroup group = parseTradeGroup(fileId, traderName, id, groupElement.getAsJsonObject());
+                if (group != null) {
+                    groups.add(group);
+                }
+            }
+        }
+        if (variantJson.has("trades")) {
+            CsTraderTradeGroup group = parseTradeGroup(fileId, traderName, id, variantJson);
+            if (group != null) {
+                groups.add(group);
+            }
+        }
+
+        if (groups.isEmpty()) {
+            CobbleSafari.LOGGER.warn("[CSTrader] {} trader={} variant={} has no valid trades, skipped",
+                    fileId, traderName, id);
+            return null;
+        }
+        return new CsTraderVariantDefinition(id, aliases, groups);
+    }
+
+    /** Reads {@code trades} + {@code minTrades}/{@code maxTrades} from a variant or a trade group object. */
+    private static CsTraderTradeGroup parseTradeGroup(ResourceLocation fileId, String traderName, String variantId,
+                                                      JsonObject groupJson) {
+        int minTrades = groupJson.has("minTrades") ? groupJson.get("minTrades").getAsInt() : 1;
+        int maxTrades = groupJson.has("maxTrades") ? groupJson.get("maxTrades").getAsInt() : minTrades;
+
         List<CsTraderTradeDefinition> trades = new ArrayList<>();
         int tradeIndex = 0;
-        for (JsonElement tradeElement : tradesArray) {
+        for (JsonElement tradeElement : groupJson.getAsJsonArray("trades")) {
             tradeIndex++;
             if (!tradeElement.isJsonObject()) {
                 CobbleSafari.LOGGER.warn("[CSTrader] {} trader={} variant={} trade #{} invalid object, skipped",
-                        fileId, traderName, id, tradeIndex);
+                        fileId, traderName, variantId, tradeIndex);
                 continue;
             }
-            CsTraderTradeDefinition trade = parseTrade(fileId, traderName, id, tradeIndex, tradeElement.getAsJsonObject());
+            CsTraderTradeDefinition trade = parseTrade(fileId, traderName, variantId, tradeIndex, tradeElement.getAsJsonObject());
             if (trade != null) {
                 trades.add(trade);
             }
         }
-
         if (trades.isEmpty()) {
-            CobbleSafari.LOGGER.warn("[CSTrader] {} trader={} variant={} has no valid trades, skipped",
-                    fileId, traderName, id);
             return null;
         }
 
         int clampedMax = Math.max(1, Math.min(maxTrades, trades.size()));
         int clampedMin = Math.max(1, Math.min(minTrades, clampedMax));
-        return new CsTraderVariantDefinition(id, aliases, clampedMin, clampedMax, trades);
+        return new CsTraderTradeGroup(clampedMin, clampedMax, trades);
     }
 
     private static CsTraderTradeDefinition parseTrade(ResourceLocation fileId, String traderName, String variantId, int tradeIndex, JsonObject tradeJson) {

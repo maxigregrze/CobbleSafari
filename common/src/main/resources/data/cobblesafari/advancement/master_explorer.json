@@ -1,9 +1,7 @@
 {
   "parent": "cobblesafari:veteran_explorer",
   "display": {
-    "icon": {
-      "id": "minecraft:nether_star"
-    },
+    "icon": { "id": "cobblesafari:dungeon_portal" },
     "title": {
       "translate": "advancements.cobblesafari.master_explorer.title"
     },

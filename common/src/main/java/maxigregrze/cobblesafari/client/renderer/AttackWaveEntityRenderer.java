@@ -6,7 +6,6 @@ import com.mojang.math.Axis;
 import maxigregrze.cobblesafari.CobbleSafari;
 import maxigregrze.cobblesafari.entity.csboss.attacks.AttackWaveEntity;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.texture.OverlayTexture;
@@ -41,7 +40,7 @@ public class AttackWaveEntityRenderer extends EntityRenderer<AttackWaveEntity> {
     @Override
     public void render(AttackWaveEntity entity, float yaw, float partialTicks, PoseStack ps,
                        MultiBufferSource buffer, int packedLight) {
-        VertexConsumer vc = buffer.getBuffer(RenderType.entityTranslucent(TEXTURE));
+        VertexConsumer vc = buffer.getBuffer(CsBossRenderTypes.decal(TEXTURE));
         ps.pushPose();
         // Orient the wall along the entity heading (yRot = atan2(dirX, dirZ), cf. WaterWaveAttack),
         // +180° to face the model front in the movement direction.

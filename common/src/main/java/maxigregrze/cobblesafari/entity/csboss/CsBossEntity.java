@@ -62,6 +62,8 @@ public class CsBossEntity extends Mob {
     private static final String KEY_STATIC = "IsStatic";
 
     private int sessionId;
+    /** Boss caché par une attaque (CsBossVanish) : ni ciblable ni touché par les baumes. Serveur seul. */
+    private boolean vanished;
     private boolean staticBoss = true;
     /**
      * Base hitbox = species hitbox × baseScale × size, <i>before</i> the entrance/death animation
@@ -180,6 +182,20 @@ public class CsBossEntity extends Mob {
 
     public void setSize(float size) {
         this.entityData.set(DATA_SIZE, Math.max(1.0f, size));
+    }
+
+    public boolean isVanished() {
+        return vanished;
+    }
+
+    public void setVanished(boolean vanished) {
+        this.vanished = vanished;
+    }
+
+    /** Caché (ou invisible côté client) : les projectiles, dont les baumes, le traversent. */
+    @Override
+    public boolean isPickable() {
+        return !vanished && !isInvisible() && super.isPickable();
     }
 
     public int getSessionId() {

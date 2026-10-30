@@ -36,7 +36,7 @@ public class AttackPileProjectileEntity extends AbstractAttackEntity {
     private int flightTicks = 30;
     private double arcHeight = 6.0;
     private int extent = 1;
-    private float damage = 8.0F;
+    private float damage = 3.0F; // base 3 (plan 199)
     private int flightAge;
     private final Set<UUID> alreadyHit = new HashSet<>();
 
@@ -112,17 +112,24 @@ public class AttackPileProjectileEntity extends AbstractAttackEntity {
 
     private void applyHitEffects(ServerLevel level, ServerPlayer player) {
         PileKind kind = getKind();
-        player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 60, 0));
+        if (kind == PileKind.FIRE) {
+            player.setRemainingFireTicks(Math.max(player.getRemainingFireTicks(), 60));
+        } else {
+            player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 60, 0));
+        }
         if (kind.appliesPoison()) {
             player.addEffect(new MobEffectInstance(MobEffects.POISON, 60, 0));
         }
         if (kind.appliesDamage()) {
-            player.hurt(CsBossDamage.bullet(level), damage);
+            CsBossDamage.hurt(player, session(), damage);
         }
     }
 
     private void impact(ServerLevel level) {
         PileKind kind = getKind();
+        if (kind.ephemeralBlock() == null) {
+            return; // FIRE : l'attaque gère l'impact (étoile de tuiles + son)
+        }
         BlockPos center = BlockPos.containing(target);
         int half = extent / 2;
         for (int dx = -half; dx <= half; dx++) {

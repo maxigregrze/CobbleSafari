@@ -1,0 +1,8 @@
+{
+  "obstacle": "cobblesafari:obstacle_shardcluster",
+  "types": [],
+  "moves": [],
+  "anyMove": true,
+  "message": "cobblesafari.obstacle.no_move.shardcluster",
+  "lootTable": "cobblesafari:obstacles/obstacle_shardcluster"
+}

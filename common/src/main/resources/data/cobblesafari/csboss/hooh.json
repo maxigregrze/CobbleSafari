@@ -1,5 +1,6 @@
 {
     "bossId": "hooh",
+    "winRibbon": { "mark": "cobblesafari:ribbon_dungeon_jump", "chance": 0.1 },
     "displayName": "Ho-Oh",
     "tags": ["belltowerBoss"],
     "maximumDuration": 600,
@@ -7,12 +8,20 @@
     "specie": "hooh",
     "minion": "hooh",
     "size": 2,
+    "portalType": 2,
     "portalSize": 8.0,
     "portalDistance": 22.0,
-    "allowSimultaneousAttacks": true,
+    "allowSimultaneousAttacks": false,
     "moveCooldownMin": 2,
     "moveCooldownMax": 3,
     "isStatic": true,
+    "damageMultiplier": 2.0,
+    "returnParticle": "minecraft:flame",
+    "moveSet": [
+      "base_fire_1", "base_fire_2", "base_fire_3", "base_fire_4",
+      "base_flying_1", "base_flying_2", "base_flying_3", "base_flying_4",
+      "jump_1", "jump_2", "jump_3", "jump_4", "jump_5"
+    ],
     "uniqueReward": "cobblesafari:csboss/hooh_unique",
     "rewards": "cobblesafari:csboss/hooh_common",
     "music": "cobblesafari:hooh",

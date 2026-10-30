@@ -46,6 +46,14 @@ public class DimensionEvents {
             ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, "dungeon_underground");
     private static final ResourceLocation UNION_DIM =
             ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, "unionroom");
+    private static final ResourceLocation MEGALOPOLIS_DIM =
+            ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, "dungeon_megalopolis");
+    private static final ResourceLocation BELL_TOWER_DIM =
+            ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, "dungeon_jump");
+    private static final ResourceLocation HYPERSPACE_DIM =
+            ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, "dungeon_paris");
+    /** Every Ultra Space destination dimension (shared and own) starts with this path. */
+    private static final String ULTRA_SPACE_DIM_PREFIX = "dungeon_ultra";
 
     /** Player's dimension on the previous tick, to detect a front-edge entry into the Safari. */
     private static final Map<UUID, ResourceLocation> LAST_DIMENSION = new ConcurrentHashMap<>();
@@ -150,12 +158,22 @@ public class DimensionEvents {
         maxigregrze.cobblesafari.dungeon.sub.SubDungeonGeneration.onServerStopping();
         PENDING_JOIN_RELOCATIONS.clear();
         maxigregrze.cobblesafari.dungeon.sub.SubDungeonManager.onServerStoppingExits();
+        // The shutdown disconnects come after clearServer(), when recordPendingReturn is a no-op:
+        // record where everyone inside a dungeon goes back now, or a restart drops them at world
+        // spawn once their instance is released on the next boot (plan 201, D6).
+        for (ServerPlayer player : server.getPlayerList().getPlayers()) {
+            maxigregrze.cobblesafari.data.TimerScope scope = TimerManager.scopeOnDisconnect(player);
+            if (scope != null) {
+                TimerManager.recordPendingReturn(player, scope);
+            }
+        }
         TimerManager.saveAllData();
         TimerManager.clearServer();
         maxigregrze.cobblesafari.csmusic.DimensionalMusicManager.clearAll();
         maxigregrze.cobblesafari.csmusic.CsMusicStructureTracker.clear();
         PortalSpawnManager.clearServer();
         maxigregrze.cobblesafari.dungeon.DungeonTeleportHandler.clearGenerationStates();
+        maxigregrze.cobblesafari.dungeon.hyperspace.HyperspaceSkyMapService.clear();
     }
 
     public static void onServerTick(MinecraftServer server) {
@@ -174,6 +192,7 @@ public class DimensionEvents {
         // the server thread (plan 138, V1).
         maxigregrze.cobblesafari.dungeon.sub.SubDungeonGeneration.tick(server);
         SafariResetManager.tick(server);
+        maxigregrze.cobblesafari.safari.SafariDroneExitHandler.onServerTick(server);
         maxigregrze.cobblesafari.csboss.BossBattleManager.onServerTick(server);
         maxigregrze.cobblesafari.csmusic.DimensionalMusicManager.tick(server);
         maxigregrze.cobblesafari.csmusic.CsMusicStructureTracker.purge(server);
@@ -205,15 +224,17 @@ public class DimensionEvents {
             maxigregrze.cobblesafari.dungeon.sub.SubDungeonGeneration.sweepStaleSubGenerations(server);
         }
         DimensionalBanEventHandler.tickMountEnforcement(server);
+        DimensionalBanEventHandler.tickElytraEnforcement(server);
         maxigregrze.cobblesafari.safari.SafariStateManager.onServerTick(server);
         maxigregrze.cobblesafari.unionroom.UnionRoomManager.tickSessionCheck(server);
         maxigregrze.cobblesafari.unionroom.UnionRoomManager.tickPendingExitSetups(server);
         tickPlaytimeStats(server);
         maxigregrze.cobblesafari.objectives.ObjectivesManager.tickContext(server);
+        maxigregrze.cobblesafari.dungeon.hyperspace.HyperspaceSkyMapService.tick(server);
     }
 
     /**
-     * Per-tick play-time accounting for the four mod dimensions and front-edge
+     * Per-tick play-time accounting for the mod dimensions (plus time spent on a mod seat) and front-edge
      * Safari-entry day tracking (). Counts presence regardless of timer/bypass state.
      */
     private static void tickPlaytimeStats(MinecraftServer server) {
@@ -234,6 +255,17 @@ public class DimensionEvents {
                     int unionTicks = ModStats.addAndGet(player, ModStats.TIME_IN_UNION_ROOM, STAT_FLUSH_INTERVAL);
                     // "Hyper-social" unlocks at 60 min (72000 ticks, a multiple of the interval).
                     ModCriteria.HYPER_SOCIAL.trigger(player, unionTicks);
+                } else if (dim.equals(BELL_TOWER_DIM)) {
+                    ModStats.add(player, ModStats.TIME_IN_BELL_TOWER, STAT_FLUSH_INTERVAL);
+                } else if (dim.equals(HYPERSPACE_DIM)) {
+                    ModStats.add(player, ModStats.TIME_IN_HYPERSPACE, STAT_FLUSH_INTERVAL);
+                } else if (isUltraSpace(dim)) {
+                    ModStats.add(player, ModStats.TIME_IN_ULTRA_SPACE, STAT_FLUSH_INTERVAL);
+                }
+                if (player.getVehicle() instanceof maxigregrze.cobblesafari.entity.SeatEntity) {
+                    int sitTicks = ModStats.addAndGet(player, ModStats.TIME_SITTING, STAT_FLUSH_INTERVAL);
+                    // "Master Sitter" unlocks at 60 min (72000 ticks).
+                    ModCriteria.TIME_SITTING.trigger(player, sitTicks);
                 }
             }
 
@@ -245,6 +277,12 @@ public class DimensionEvents {
                 }
             }
         }
+    }
+
+    /** The Megalopolis and every Ultra Space destination share one play-time stat. */
+    private static boolean isUltraSpace(ResourceLocation dim) {
+        return dim.equals(MEGALOPOLIS_DIM)
+                || (dim.getNamespace().equals(CobbleSafari.MOD_ID) && dim.getPath().startsWith(ULTRA_SPACE_DIM_PREFIX));
     }
 
     /**
@@ -290,6 +328,8 @@ public class DimensionEvents {
         maxigregrze.cobblesafari.underground.UndergroundMinigame.syncRegistryToPlayer(player);
         maxigregrze.cobblesafari.rotomphone.RotomPhoneConfigSync.syncToPlayer(player);
         maxigregrze.cobblesafari.network.UltraLootConfigSyncPayload.syncToPlayer(player);
+        maxigregrze.cobblesafari.network.ObstacleConfigSyncPayload.syncToPlayer(player);
+        maxigregrze.cobblesafari.network.SecretBasePCConfigSyncPayload.syncToPlayer(player);
         maxigregrze.cobblesafari.rotomphone.ChatConversationSync.syncToPlayer(player);
         GtsService.onPlayerJoin(player);
         // A server killed mid-ride leaves the rider's protection in their saved NBT; this is the net.
@@ -330,8 +370,12 @@ public class DimensionEvents {
             // If the instance they logged out of was cleared while they were away, put them back where
             // they came in rather than leaving them inside erased blocks (plan 182, A3).
             TimerManager.handleDungeonReturnOnJoin(player);
+            // Arène CSBoss disparue en son absence : retour à sa position de départ (plan 199 § 7.4).
+            maxigregrze.cobblesafari.csboss.BossBattleManager.handleReturnOnJoin(player);
             UnionRoomDisconnectHandler.onPlayerLogin(player);
             SafariResetManager.handleReconnectEvacuation(player);
+            // After vanilla's join messages, not lost among them (action plan 198, decision 4.2).
+            maxigregrze.cobblesafari.onboarding.OnboardingService.onLoginComplete(player);
         }
     }
 
@@ -342,6 +386,7 @@ public class DimensionEvents {
         maxigregrze.cobblesafari.network.WonderAppServerHandler.clear(player.getUUID());
         maxigregrze.cobblesafari.network.ChatAppServerHandler.clear(player.getUUID());
         GtsService.releasePendingFor(player);
+        maxigregrze.cobblesafari.safari.SafariDroneExitHandler.clear(player.getUUID());
         UnionRoomDisconnectHandler.onPlayerDisconnect(player);
         // Read the scope BEFORE onPlayerDisconnect tears the player's timer state down: logging out
         // is a departure, so the instance may now be empty (plan 182, A3).
@@ -364,11 +409,13 @@ public class DimensionEvents {
         maxigregrze.cobblesafari.csboss.BossBattleManager.onPlayerDisconnect(player);
         maxigregrze.cobblesafari.csmusic.DimensionalMusicManager.onPlayerDisconnect(player.getUUID());
         DungeonTeleportHandler.clearPlayerData(player.getUUID());
+        maxigregrze.cobblesafari.dungeon.DungeonTpAcceptHandler.cancelPending(player.getUUID());
         RotoGlideServerLogic.removeState(player.getUUID());
         maxigregrze.cobblesafari.rotomphone.EmptyPhoneServerHandler.clear(player.getUUID());
         maxigregrze.cobblesafari.rotomphone.OnlinePcAccess.clear(player.getUUID());
         LAST_DIMENSION.remove(player.getUUID());
         maxigregrze.cobblesafari.objectives.ObjectivesManager.onPlayerDisconnect(player.getUUID());
+        maxigregrze.cobblesafari.dungeon.hyperspace.HyperspaceSkyMapService.onPlayerDisconnect(player.getUUID());
         maxigregrze.cobblesafari.warpride.WarpRideManager.onPlayerDisconnect(player);
     }
 }

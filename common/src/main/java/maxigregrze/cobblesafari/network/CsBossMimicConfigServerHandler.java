@@ -11,7 +11,7 @@ import net.minecraft.world.level.block.state.BlockState;
 
 /**
  * Server validation for the mimic GUI: creative + proximity, never trust the
- * client. Validates the mimic block id and stores the {@code reverse} option on the blockstate.
+ * client. Validates both block ids and stores the mode on the blockstate.
  */
 public final class CsBossMimicConfigServerHandler {
 
@@ -30,28 +30,34 @@ public final class CsBossMimicConfigServerHandler {
             return;
         }
 
-        String id = payload.mimicBlockId().trim();
-        if (id.isEmpty()) {
-            be.setMimicBlockId("");
-        } else {
-            ResourceLocation loc = ResourceLocation.tryParse(id);
-            if (loc != null && BuiltInRegistries.BLOCK.containsKey(loc)) {
-                be.setMimicBlockId(id);
-            } else {
-                be.setMimicBlockId("");
-                player.sendSystemMessage(Component.translatable("cobblesafari.csboss.mimic.bad_block"));
+        be.setMimicBlockId(validId(player, payload.mimicBlockId()));
+        be.setBattleMimicBlockId(validId(player, payload.battleMimicBlockId()));
+
+        BlockState state = player.level().getBlockState(payload.pos());
+        if (state.getBlock() instanceof CsBossMimicBlock) {
+            BlockState next = CsBossMimicBlock.Mode.byIndex(payload.mode()).apply(state);
+            if (next != state) {
+                state = next;
+                player.level().setBlock(payload.pos(), state, Block.UPDATE_ALL);
             }
         }
 
-        BlockState state = player.level().getBlockState(payload.pos());
-        if (state.getBlock() instanceof CsBossMimicBlock
-                && state.getValue(CsBossMimicBlock.REVERSE) != payload.reverse()) {
-            state = state.setValue(CsBossMimicBlock.REVERSE, payload.reverse());
-            player.level().setBlock(payload.pos(), state, Block.UPDATE_ALL);
-        }
-
-        // Forced: both the target id and the reverse flag change what the neighbourhood sees us as,
-        // so the disguise has to be re-broadcast even when the resolved state lands on the same value.
+        // Forced: the target ids and the mode change what the neighbourhood sees us as, so the
+        // disguise has to be re-broadcast even when the resolved state lands on the same value.
         CsBossMimicBlock.refresh(player.level(), payload.pos(), state, true);
+    }
+
+    /** The trimmed id if it names a registered block, {@code ""} otherwise (with a message if non-blank). */
+    private static String validId(ServerPlayer player, String raw) {
+        String id = raw.trim();
+        if (id.isEmpty()) {
+            return "";
+        }
+        ResourceLocation loc = ResourceLocation.tryParse(id);
+        if (loc != null && BuiltInRegistries.BLOCK.containsKey(loc)) {
+            return id;
+        }
+        player.sendSystemMessage(Component.translatable("cobblesafari.csboss.mimic.bad_block"));
+        return "";
     }
 }

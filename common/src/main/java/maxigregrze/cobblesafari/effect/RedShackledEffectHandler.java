@@ -16,6 +16,13 @@ public final class RedShackledEffectHandler {
     private static final Map<UUID, FrozenAnchor> ANCHORS = new HashMap<>();
     private static final double DRIFT_EPSILON_SQR = 0.0001;
 
+    // The shackle flips NoGravity / NoAI on the entity itself, and both are saved with it. Which
+    // flag the shackle turned on is therefore saved with it too, as a vanilla entity tag: after a
+    // restart the in-memory anchor is gone, and the tag is what says the flag must go back to false.
+    // A flag that was already true (set by an admin) never gets a tag and is never touched.
+    private static final String TAG_NO_GRAVITY = "cobblesafari.shackle_nogravity";
+    private static final String TAG_NO_AI = "cobblesafari.shackle_noai";
+
     private RedShackledEffectHandler() {}
 
     public static void tick(LivingEntity entity) {
@@ -36,14 +43,10 @@ public final class RedShackledEffectHandler {
         }
 
         entity.setDeltaMovement(Vec3.ZERO);
-        entity.setNoGravity(true);
-
-        if (entity instanceof Mob mob) {
-            if (!anchor.noAiApplied) {
-                anchor.hadNoAi = mob.isNoAi();
-                mob.setNoAi(true);
-                anchor.noAiApplied = true;
-            }
+        applyNoGravity(entity);
+        if (entity instanceof Mob mob && !mob.isNoAi()) {
+            mob.addTag(TAG_NO_AI);
+            mob.setNoAi(true);
         }
 
         entity.setYRot(anchor.yRot);
@@ -65,20 +68,31 @@ public final class RedShackledEffectHandler {
         anchor.z = entity.getZ();
         anchor.yRot = entity.getYRot();
         anchor.xRot = entity.getXRot();
-        anchor.hadNoGravity = entity.isNoGravity();
-        entity.setNoGravity(true);
+        applyNoGravity(entity);
         return anchor;
     }
 
+    private static void applyNoGravity(LivingEntity entity) {
+        if (!entity.isNoGravity()) {
+            entity.addTag(TAG_NO_GRAVITY);
+            entity.setNoGravity(true);
+        }
+    }
+
+    // Also reached with no anchor: an entity saved while shackled whose effect ran out before it
+    // was loaded again still carries the tags, and is restored on its first tick.
     private static void clearAnchor(LivingEntity entity) {
         FrozenAnchor anchor = ANCHORS.remove(entity.getUUID());
-        if (anchor == null || entity.isRemoved()) {
+        boolean tagged = entity.getTags().contains(TAG_NO_GRAVITY) || entity.getTags().contains(TAG_NO_AI);
+        if ((anchor == null && !tagged) || entity.isRemoved()) {
             return;
         }
 
-        entity.setNoGravity(anchor.hadNoGravity);
-        if (entity instanceof Mob mob && anchor.noAiApplied) {
-            mob.setNoAi(anchor.hadNoAi);
+        if (entity.removeTag(TAG_NO_GRAVITY)) {
+            entity.setNoGravity(false);
+        }
+        if (entity instanceof Mob mob && mob.removeTag(TAG_NO_AI)) {
+            mob.setNoAi(false);
         }
         onShackleEnded(entity);
     }
@@ -107,8 +121,5 @@ public final class RedShackledEffectHandler {
         double z;
         float yRot;
         float xRot;
-        boolean hadNoGravity;
-        boolean hadNoAi;
-        boolean noAiApplied;
     }
 }

@@ -1,26 +1,11 @@
 {
   "type": "cobblesafari:dungeon_jump_type",
   "generator": {
-    "type": "minecraft:flat",
-    "settings": {
-      "biome": "cobblesafari:dungeon_jump_biome",
-      "lakes": false,
-      "features": true,
-      "layers": [
-        {
-          "height": 8,
-          "block": "minecraft:air"
-        },
-        {
-          "height": 1,
-          "block": "minecraft:mangrove_log"
-        },
-        {
-          "height": 247,
-          "block": "minecraft:air"
-        }
-      ],
-      "structure_overrides": []
+    "type": "minecraft:noise",
+    "settings": "cobblesafari:dungeon_jump",
+    "biome_source": {
+      "type": "minecraft:fixed",
+      "biome": "cobblesafari:dungeon_jump_biome"
     }
   }
 }

@@ -1,6 +1,7 @@
 package maxigregrze.cobblesafari.csboss;
 
 import maxigregrze.cobblesafari.block.csboss.BattleReactiveBlock;
+import maxigregrze.cobblesafari.block.csboss.CsBossTileBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.block.Block;
@@ -66,6 +67,10 @@ public final class ArenaBlockScanner {
 
     public static void setBattleState(ServerLevel level, List<BlockPos> positions, boolean battle) {
         for (BlockPos pos : positions) {
+            if (level.getBlockEntity(pos) instanceof CsBossTileBlockEntity) {
+                // Une tuile d'attaque occupe la place d'un bloc mimic caché : on le rend d'abord.
+                CsBossTileBlockEntity.restore(level, pos);
+            }
             BlockState state = level.getBlockState(pos);
             if (state.getBlock() instanceof BattleReactiveBlock reactive) {
                 reactive.setBattleState(level, pos, state, battle);

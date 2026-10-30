@@ -95,7 +95,7 @@ public final class HyperspaceClusterDataLoader {
             return null;
         }
         String id = json.get("id").getAsString().trim().toLowerCase(Locale.ROOT);
-        int weight = json.has("weight") ? json.get("weight").getAsInt() : 1;
+        double weight = json.has("weight") ? json.get("weight").getAsDouble() : 1.0;
         if (id.isEmpty() || !ResourceLocation.isValidPath(id) || weight <= 0) {
             CobbleSafari.LOGGER.warn("[Hyperspace] {} cluster '{}' has an invalid id or weight - ignored", source, id);
             return null;

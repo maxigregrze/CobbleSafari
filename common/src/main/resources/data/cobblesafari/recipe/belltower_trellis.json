@@ -1,0 +1,10 @@
+{
+    "type": "minecraft:crafting_shaped",
+    "category": "building",
+    "pattern": [ "OS", "SO" ],
+    "key": {
+        "O": { "item": "minecraft:oak_slab" },
+        "S": { "item": "minecraft:spruce_slab" }
+    },
+    "result": { "id": "cobblesafari:belltower_trellis", "count": 1 }
+}

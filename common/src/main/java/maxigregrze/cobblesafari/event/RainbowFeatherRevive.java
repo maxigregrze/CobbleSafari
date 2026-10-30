@@ -2,6 +2,7 @@ package maxigregrze.cobblesafari.event;
 
 import maxigregrze.cobblesafari.init.ModItems;
 import maxigregrze.cobblesafari.network.ModNetworking;
+import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.stats.Stats;
 import net.minecraft.tags.DamageTypeTags;
@@ -40,21 +41,23 @@ public final class RainbowFeatherRevive {
             return false;
         }
 
-        boolean consumed = false;
+        ItemStack consumed = ItemStack.EMPTY;
         for (InteractionHand hand : InteractionHand.values()) {
             ItemStack held = entity.getItemInHand(hand);
             if (held.is(ModItems.RAINBOW_FEATHER)) {
+                consumed = held.copyWithCount(1);
                 held.shrink(1);
-                consumed = true;
                 break;
             }
         }
-        if (!consumed) {
+        if (consumed.isEmpty()) {
             return false;
         }
 
         if (entity instanceof ServerPlayer player) {
             player.awardStat(Stats.ITEM_USED.get(ModItems.RAINBOW_FEATHER));
+            // Same criterion as the vanilla totem, so a used_totem advancement can target the feather.
+            CriteriaTriggers.USED_TOTEM.trigger(player, consumed);
             entity.gameEvent(GameEvent.ITEM_INTERACT_FINISH);
         }
 

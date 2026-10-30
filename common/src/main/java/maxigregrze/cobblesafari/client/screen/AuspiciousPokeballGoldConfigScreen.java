@@ -1,7 +1,7 @@
 package maxigregrze.cobblesafari.client.screen;
 
-import maxigregrze.cobblesafari.config.MiscConfig;
 import maxigregrze.cobblesafari.network.AuspiciousPokeballResetClaimsPayload;
+import maxigregrze.cobblesafari.network.LootDefaults;
 import maxigregrze.cobblesafari.network.OpenAuspiciousPokeballGoldConfigPayload;
 import maxigregrze.cobblesafari.network.SaveAuspiciousPokeballGoldConfigPayload;
 import maxigregrze.cobblesafari.platform.Services;
@@ -81,7 +81,7 @@ public class AuspiciousPokeballGoldConfigScreen extends CobbleSafariConfigScreen
 
         int duoY = this.bottomRowY();
         this.addRenderableWidget(Button.builder(Component.translatable("gui.cobblesafari.auspicious_pokeball.reset"), b -> {
-            this.applyFieldsFromMiscConfig();
+            this.applyDefaults();
             this.earnableEditing = false;
             this.refreshEarnableButtonText();
             this.relayoutEditBoxes();
@@ -106,13 +106,15 @@ public class AuspiciousPokeballGoldConfigScreen extends CobbleSafariConfigScreen
         this.focusScroll(this.poolBerryBox);
     }
 
-    private void applyFieldsFromMiscConfig() {
-        this.poolBerryBox.setValue(MiscConfig.getAuspiciousPokeballGoldPoolBerryId());
-        this.poolCandyBox.setValue(MiscConfig.getAuspiciousPokeballGoldPoolCandyId());
-        this.poolBallsBox.setValue(MiscConfig.getAuspiciousPokeballGoldPoolBallsId());
-        this.poolTreasuresBox.setValue(MiscConfig.getAuspiciousPokeballGoldPoolTreasuresId());
-        this.minRollBox.setValue(Integer.toString(MiscConfig.getAuspiciousPokeballGoldMinRoll()));
-        this.maxRollBox.setValue(Integer.toString(MiscConfig.getAuspiciousPokeballGoldMaxRoll()));
+    /** Reset: the server's defaults from the open payload, never the local config (action plan 198, F6). */
+    private void applyDefaults() {
+        LootDefaults defaults = this.initial.defaults();
+        this.poolBerryBox.setValue(defaults.poolBerryId());
+        this.poolCandyBox.setValue(defaults.poolCandyId());
+        this.poolBallsBox.setValue(defaults.poolBallsId());
+        this.poolTreasuresBox.setValue(defaults.poolTreasuresId());
+        this.minRollBox.setValue(Integer.toString(defaults.minRoll()));
+        this.maxRollBox.setValue(Integer.toString(defaults.maxRoll()));
     }
 
     private void relayoutEditBoxes() {

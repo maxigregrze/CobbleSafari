@@ -1,0 +1,16 @@
+{
+  "parent": "cobblesafari:fresh_explorer",
+  "display": {
+    "icon": { "id": "cobblesafari:ultra_entrance_portal" },
+    "title": { "translate": "advancements.cobblesafari.ultra_megalopolis.title" },
+    "description": { "translate": "advancements.cobblesafari.ultra_megalopolis.description" },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "entered": {"trigger": "minecraft:changed_dimension", "conditions": {"to": "cobblesafari:dungeon_megalopolis"}}
+  },
+  "requirements": [["entered"]]
+}

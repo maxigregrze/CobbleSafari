@@ -30,7 +30,7 @@ public class GroundEruptionAttack implements CsBossAttack {
     private static final int CYCLES = 2;
     private static final double RUN_SPEED = 0.30;
     private static final double MINION_DROP = 2.0;
-    private static final float MINION_DAMAGE = 8.0F;
+    private static final float MINION_DAMAGE = 3.0F; // base 3 (plan 199)
     private static final float DIGDIRT_SCALE = 3.0F;
 
     private final String id;
@@ -90,7 +90,7 @@ public class GroundEruptionAttack implements CsBossAttack {
 
     private void spawnCycle(ServerLevel level, BossBattleSession session, CsBossEntity boss) {
         mounds.clear();
-        double floorY = session.getTriggerPos().getY();
+        double floorY = session.getFloorY();
         for (ServerPlayer p : session.aliveParticipants(level)) {
             AttackDigdirtEntity digdirt = AttackDigdirtEntity.spawn(level,
                     boss.getX(), floorY, boss.getZ(), session.getId());
@@ -156,7 +156,7 @@ public class GroundEruptionAttack implements CsBossAttack {
                 }
                 for (ServerPlayer p : session.aliveParticipants(level)) {
                     if (p.getBoundingBox().intersects(m.minion.getBoundingBox())) {
-                        p.hurt(CsBossDamage.bullet(level), MINION_DAMAGE);
+                        CsBossDamage.hurt(p, session, MINION_DAMAGE);
                     }
                 }
             }

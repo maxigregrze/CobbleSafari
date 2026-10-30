@@ -1,0 +1,22 @@
+{
+  "parent": "cobblesafari:ultra_megalopolis",
+  "display": {
+    "icon": { "id": "cobblesafari:ultra_wormhole" },
+    "title": { "translate": "advancements.cobblesafari.ultra_space_tourist.title" },
+    "description": { "translate": "advancements.cobblesafari.ultra_space_tourist.description" },
+    "frame": "challenge",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "ultra_deep": {"trigger": "cobblesafari:warp_destination_reached", "conditions": {"id": "ultra_deep"}},
+    "ultra_jungle": {"trigger": "cobblesafari:warp_destination_reached", "conditions": {"id": "ultra_jungle"}},
+    "ultra_desert": {"trigger": "cobblesafari:warp_destination_reached", "conditions": {"id": "ultra_desert"}},
+    "ultra_plant": {"trigger": "cobblesafari:warp_destination_reached", "conditions": {"id": "ultra_plant"}},
+    "ultra_crater": {"trigger": "cobblesafari:warp_destination_reached", "conditions": {"id": "ultra_crater"}},
+    "ultra_forest": {"trigger": "cobblesafari:warp_destination_reached", "conditions": {"id": "ultra_forest"}},
+    "ultra_ruins": {"trigger": "cobblesafari:warp_destination_reached", "conditions": {"id": "ultra_ruins"}}
+  },
+  "requirements": [["ultra_deep"], ["ultra_jungle"], ["ultra_desert"], ["ultra_plant"], ["ultra_crater"], ["ultra_forest"], ["ultra_ruins"]]
+}

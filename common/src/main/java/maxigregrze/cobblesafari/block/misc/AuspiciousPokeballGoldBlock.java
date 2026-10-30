@@ -56,6 +56,13 @@ public class AuspiciousPokeballGoldBlock extends AuspiciousPokeballBlock {
 
         blockEntity.tryClaim(serverPlayer.getUUID());
         givePoolLoot(serverLevel, pos, serverPlayer, blockEntity);
+        ClaimSounds.playPickup(serverPlayer);
+        maxigregrze.cobblesafari.objectives.ObjectivesManager.onAuspiciousPokeballOpened(serverPlayer);
+        // The Hyperspace ribbon only counts for the ball that appears in Hyperspace Lumiose (plan 201 § 8.3).
+        if ("cobblesafari:dungeon_paris".equals(serverLevel.dimension().location().toString())) {
+            maxigregrze.cobblesafari.mark.RibbonAwards.rollRibbon(
+                    serverPlayer, maxigregrze.cobblesafari.mark.RibbonAwards.RIBBON_PARIS, 0.10);
+        }
         return InteractionResult.CONSUME;
     }
 

@@ -44,14 +44,24 @@ public record CsBossDefinition(
         /** Multiplicateur de taille du portail (défaut = échelle de rendu actuelle). */
         double portalSize,
         /** Hauteur d'apparition du portail au-dessus de l'ancre, en blocs (défaut = ENTRANCE_HEIGHT). */
-        double portalDistance
+        double portalDistance,
+        /** Multiplicateur appliqué à tous les coups directs des attaques de ce boss (défaut 1.0). */
+        double damageMultiplier,
+        /** Particule de traînée du porteur de retour en fin de combat (défaut minecraft:end_rod). */
+        net.minecraft.core.particles.SimpleParticleType returnParticle,
+        /** Ruban tenté pour chaque gagnant à la victoire finale (lu sur le boss racine), ou {@code null}. */
+        @Nullable WinRibbon winRibbon
 ) {
+    /** {@code "winRibbon": {"mark": "cobblesafari:ribbon_distortion", "chance": 0.1}} (plan 201, D8). */
+    public record WinRibbon(ResourceLocation mark, double chance) {}
+
     public static final int DEFAULT_SIZE = 5;
     public static final int DEFAULT_COOLDOWN_MIN = 4;
     public static final int DEFAULT_COOLDOWN_MAX = 8;
     public static final int DEFAULT_PORTAL_TYPE = 1;
     public static final double DEFAULT_PORTAL_SIZE = 2.0;
     public static final double DEFAULT_PORTAL_DISTANCE = CsBossEntity.ENTRANCE_HEIGHT;
+    public static final double DEFAULT_DAMAGE_MULTIPLIER = 1.0;
 
     /** moveSet keyword granting all registered attacks. */
     public static final String ALL_MOVES = "ALLMOVES";

@@ -4,7 +4,8 @@
   "clusters": [
     {
       "id": "torchic",
-      "weight": 1,
+      "weight": 0.1,
+      "rare": true,
       "members": [
         {
           "pokemon": "blaziken",
@@ -22,7 +23,8 @@
     },
     {
       "id": "charmander",
-      "weight": 1,
+      "weight": 0.1,
+      "rare": true,
       "members": [
         {
           "pokemon": "charizard",
@@ -40,7 +42,8 @@
     },
     {
       "id": "fennekin",
-      "weight": 1,
+      "weight": 0.1,
+      "rare": true,
       "members": [
         {
           "pokemon": "delphox",
@@ -50,6 +53,139 @@
         },
         {
           "pokemon": "fennekin",
+          "rarity": 80,
+          "level": "50-52",
+          "alphaLevel": "59-61"
+        }
+      ]
+    },
+    {
+      "id": "cyndaquil",
+      "weight": 0.1,
+      "rare": true,
+      "members": [
+        {
+          "pokemon": "typhlosion",
+          "rarity": 20,
+          "level": "54-56",
+          "alphaLevel": "63-65"
+        },
+        {
+          "pokemon": "cyndaquil",
+          "rarity": 80,
+          "level": "50-52",
+          "alphaLevel": "59-61"
+        }
+      ]
+    },
+    {
+      "id": "cyndaquil_2",
+      "weight": 0.1,
+      "rare": true,
+      "members": [
+        {
+          "pokemon": "typhlosion hisuian",
+          "rarity": 20,
+          "level": "54-56",
+          "alphaLevel": "63-65"
+        },
+        {
+          "pokemon": "cyndaquil",
+          "rarity": 80,
+          "level": "50-52",
+          "alphaLevel": "59-61"
+        }
+      ]
+    },
+    {
+      "id": "chimchar",
+      "weight": 0.1,
+      "rare": true,
+      "members": [
+        {
+          "pokemon": "infernape",
+          "rarity": 20,
+          "level": "54-56",
+          "alphaLevel": "63-65"
+        },
+        {
+          "pokemon": "chimchar",
+          "rarity": 80,
+          "level": "50-52",
+          "alphaLevel": "59-61"
+        }
+      ]
+    },
+    {
+      "id": "tepig",
+      "weight": 0.1,
+      "rare": true,
+      "members": [
+        {
+          "pokemon": "emboar",
+          "rarity": 20,
+          "level": "54-56",
+          "alphaLevel": "63-65"
+        },
+        {
+          "pokemon": "tepig",
+          "rarity": 80,
+          "level": "50-52",
+          "alphaLevel": "59-61"
+        }
+      ]
+    },
+    {
+      "id": "litten",
+      "weight": 0.1,
+      "rare": true,
+      "members": [
+        {
+          "pokemon": "incineroar",
+          "rarity": 20,
+          "level": "54-56",
+          "alphaLevel": "63-65"
+        },
+        {
+          "pokemon": "litten",
+          "rarity": 80,
+          "level": "50-52",
+          "alphaLevel": "59-61"
+        }
+      ]
+    },
+    {
+      "id": "scorbunny",
+      "weight": 0.1,
+      "rare": true,
+      "members": [
+        {
+          "pokemon": "cinderace",
+          "rarity": 20,
+          "level": "54-56",
+          "alphaLevel": "63-65"
+        },
+        {
+          "pokemon": "scorbunny",
+          "rarity": 80,
+          "level": "50-52",
+          "alphaLevel": "59-61"
+        }
+      ]
+    },
+    {
+      "id": "fuecoco",
+      "weight": 0.1,
+      "rare": true,
+      "members": [
+        {
+          "pokemon": "skeledirge",
+          "rarity": 20,
+          "level": "54-56",
+          "alphaLevel": "63-65"
+        },
+        {
+          "pokemon": "fuecoco",
           "rarity": 80,
           "level": "50-52",
           "alphaLevel": "59-61"

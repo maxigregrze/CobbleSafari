@@ -12,6 +12,7 @@
     "moveCooldownMin": 0,
     "moveCooldownMax": 1,
     "isStatic": true,
+    "damageMultiplier": 2.5,
     "uniqueReward": "cobblesafari:csboss/giratina_unique",
     "rewards": "cobblesafari:csboss/giratina_common",
     "music": "cobblesafari:giratina2",

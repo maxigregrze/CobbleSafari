@@ -16,7 +16,8 @@
     },
     {
       "id": "pichu",
-      "weight": 5,
+      "weight": 0.5,
+      "rare": true,
       "members": [
         {
           "pokemon": "pikachu",
@@ -46,7 +47,8 @@
     },
     {
       "id": "pichu_2",
-      "weight": 2,
+      "weight": 0.2,
+      "rare": true,
       "members": [
         {
           "pokemon": "pichu",

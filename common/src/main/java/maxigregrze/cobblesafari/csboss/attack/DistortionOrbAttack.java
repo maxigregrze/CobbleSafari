@@ -26,7 +26,7 @@ public class DistortionOrbAttack implements CsBossAttack {
     private static final double WALK_SPEED = 0.16; // slightly slower follow
     private static final double FLOAT_HEIGHT = 1.0;
     private static final double HIT_RADIUS = 1.2; // horizontal contact with the followed player
-    private static final float HIT_DAMAGE = 18.0F; // hard to avoid ⇒ high damage
+    private static final float HIT_DAMAGE = 7.0F; // unique : 18 / 2.5 (Giratina inchangé), × damageMultiplier
 
     private final String id;
     private final List<Orb> orbs = new ArrayList<>();
@@ -91,7 +91,7 @@ public class DistortionOrbAttack implements CsBossAttack {
                 double dx = o.entity.getX() - p.getX();
                 double dz = o.entity.getZ() - p.getZ();
                 if (dx * dx + dz * dz <= HIT_RADIUS * HIT_RADIUS) {
-                    p.hurt(CsBossDamage.bullet(level), HIT_DAMAGE);
+                    CsBossDamage.hurt(p, session, HIT_DAMAGE);
                     o.entity.discard();
                     it.remove();
                 }

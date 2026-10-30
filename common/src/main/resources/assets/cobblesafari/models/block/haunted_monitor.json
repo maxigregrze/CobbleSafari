@@ -1,0 +1,6 @@
+{
+  "parent": "cobblemon:block/monitor_damaged",
+  "textures": {
+    "screen": "cobblesafari:block/monitor_screen_rotom"
+  }
+}

@@ -19,9 +19,14 @@
     "SinglePoolElementAccessor",
     "PokemonMixin",
     "PokemonEntityMixin",
-    "LivingEntityGluttonousEatMixin"
+    "LivingEntityGluttonousEatMixin",
+    "MonitorBlockHauntMixin",
+    "PlayerElytraRestrictionMixin",
+    "PlayerCarrierDismountMixin"
   ],
   "client": [
+    "client.ClientPacketListenerCarrierMountMixin",
+    "client.LivingEntityRendererCarrierPoseMixin",
     "client.GuiMixin",
     "client.GameRendererRedShackledMixin",
     "client.LivingEntityRendererRedShackledMixin",
@@ -33,7 +38,14 @@
     "client.MusicManagerAccessor",
     "client.MusicManagerConstantMusicMixin",
     "client.ElytraLayerWarpRideMixin",
-    "client.CapeLayerWarpRideMixin"
+    "client.CapeLayerWarpRideMixin",
+    "client.GameRendererHyperspaceOverlayMixin",
+    "client.LevelRendererHyperspaceDepthMixin",
+    "client.LevelRendererHyperspaceSkyMixin",
+    "client.IrisCurrentDimensionMixin",
+    "client.GameRendererRotomPhoneActivationMixin",
+    "client.RenderBuffersCsBossDecalMixin",
+    "client.LevelRendererCsBossDecalMixin"
   ],
   "injectors": {
     "defaultRequire": 1

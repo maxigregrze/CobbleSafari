@@ -53,7 +53,7 @@ public final class WarpRideRenderer {
     /** The rider's on-screen reference size (the old sprite), which the energy aura scales from. */
     public static final int RIDER_SCREEN_PX = 192;
     /** Presentation constants: tune so the elytra span reads ~RIDER_SCREEN_PX wide. */
-    private static final float RIDER_PX_PER_BLOCK = 128.0f;
+    static final float RIDER_PX_PER_BLOCK = 128.0f;
     private static final float RIDER_CENTER_Y = 0.0f;
     /** The vanilla pivot is the feet; the flying body extends 1.8 blocks into the screen from it. */
     private static final float RIDER_CENTER_Z = 0.9f;
@@ -66,9 +66,14 @@ public final class WarpRideRenderer {
 
     // The energy aura reuses the positive's flat 4-frame strip (plan 189, section 9.2).
     public static final ResourceLocation POSITIVE = tex("positive");
+    /** The pickup burst over the aura when a bonus is hit (plan 200, section 4.1): single images. */
+    public static final ResourceLocation POSITIVE_GET_SHORT = tex("positive_get_short");
+    public static final ResourceLocation POSITIVE_GET_LONG = tex("positive_get_long");
 
     // The rank strip still sits over the 3D portal; portal_wrap is played once over the warp.
     private static final ResourceLocation PORTAL_WRAP = tex("portal_wrap");
+    /** Six frames over portal_wrap's last six, once the portal and the rider are gone. */
+    private static final ResourceLocation PORTAL_BLIP = tex("portal_blip");
     private static final ResourceLocation[] PORTAL_RANKS = {
             null, tex("portal_rank1"), tex("portal_rank2"), tex("portal_rank3")
     };
@@ -115,8 +120,12 @@ public final class WarpRideRenderer {
         // The HUD textures are in the list too: the canvas fit scale is fractional on most window
         // sizes, so they are never blitted at exactly 1:1 either.
         setFilter(WarpRideHud.BUZZ, true);
+        // The pickup rings are scaled every frame: a real mipmap chain, not just a filter flag.
+        var textures = Minecraft.getInstance().getTextureManager();
+        textures.register(POSITIVE_GET_SHORT, new WarpRideMipmappedTexture(POSITIVE_GET_SHORT));
+        textures.register(POSITIVE_GET_LONG, new WarpRideMipmappedTexture(POSITIVE_GET_LONG));
         // Strips get linear only: mipmapping a vertical strip averages adjacent frames together.
-        List<ResourceLocation> strips = new ArrayList<>(List.of(POSITIVE, PORTAL_WRAP));
+        List<ResourceLocation> strips = new ArrayList<>(List.of(POSITIVE, PORTAL_WRAP, PORTAL_BLIP));
         for (ResourceLocation id : PORTAL_RANKS) {
             if (id != null) {
                 strips.add(id);
@@ -355,10 +364,22 @@ public final class WarpRideRenderer {
 
     /** Reused every frame; only the ride's render thread touches it. */
     private static final List<AheadItem> AHEAD = new ArrayList<>();
+    /** Lane objects close enough to wrap around the rider, held back until it is drawn. */
+    private static final List<AheadItem> NEAR_RIDER = new ArrayList<>();
+
+    /**
+     * How close, in light-years, a lane object is drawn after the rider instead of before it. A
+     * bonus ring is a few hundred canvas px deep and the rider ~230: within about 3 ly they
+     * interpenetrate. Drawn first, the translucent ring stamps depth and hides the rider behind
+     * its see-through pixels; drawn after, it blends over the rider and the depth test still hides
+     * whatever part of it is behind (action plan 200, section 4.1).
+     */
+    private static final double NEAR_RIDER_LY = 4.0;
 
     /**
      * The main perspective walk, strictly far to near: lane objects still ahead and portals sorted
-     * together by depth, then the rider, then the missed objects flying past.
+     * together by depth, then the rider, then the lane objects around it, then the missed objects
+     * flying past.
      *
      * <p>A portal is a vortex (3D) topped by a flat rank strip (2D), and 2D cannot sit inside a
      * depth-tested pass. So the pass is closed after each portal, its strip blitted, and a fresh
@@ -369,16 +390,22 @@ public final class WarpRideRenderer {
      * <p>A portal never comes in front of the rider: while it hovers it shares the rider's plane,
      * and as it fades out past the plane it keeps that place - as the 2D ride always drew it.</p>
      */
+    @SuppressWarnings("java:S107")
     public static void renderScene(GuiGraphics graphics, WarpRideClientState state,
                                    WarpRideRiderProxy rider, float partialTick,
-                                   WarpRideCamera camera, WarpRideRiderEffects effects) {
+                                   WarpRideCamera camera, WarpRideRiderEffects effects,
+                                   WarpRideReconTrail trail) {
         long now = System.nanoTime();
         collectAhead(state, now);
         MultiBufferSource.BufferSource buffers = beginScene(graphics);
         PoseStack pose = new PoseStack();
         for (AheadItem item : AHEAD) {
             if (!item.object().isPortal()) {
-                drawLaneObject(pose, buffers, state, item.wave(), item.object(), item.depth());
+                if (item.depth() < NEAR_RIDER_LY) {
+                    NEAR_RIDER.add(item);
+                } else {
+                    drawLaneObject(pose, buffers, state, item.wave(), item.object(), item.depth(), 1.0f);
+                }
                 continue;
             }
             double alpha = opacity(state, item.depth());
@@ -398,8 +425,40 @@ public final class WarpRideRenderer {
         if (rider != null) {
             drawRider(pose, buffers, rider, riderRadius(state), 1.0, state.bankDegrees(), partialTick, effects);
         }
+        // Still far to near: AHEAD was sorted, and the bonuses being hit sit on the plane itself.
+        for (AheadItem item : NEAR_RIDER) {
+            drawLaneObject(pose, buffers, state, item.wave(), item.object(), item.depth(), 1.0f);
+        }
+        NEAR_RIDER.clear();
+        renderFadingBonuses(pose, buffers, state, now);
+        // Between the rider and the eye: drawn after it, like the objects flying past.
+        trail.render(pose, buffers, state);
         renderPastObjects(pose, buffers, state);
         endScene(buffers);
+    }
+
+    /**
+     * The bonuses just hit, pinned to the rider's plane and fading out (action plan 200, section
+     * 4.1), instead of vanishing on the frame they cross it. Drawn after the rider, which then shows
+     * through their transparent pixels.
+     */
+    private static void renderFadingBonuses(PoseStack pose, MultiBufferSource buffers,
+                                            WarpRideClientState state, long now) {
+        for (WarpRideClientState.ClientWave wave : state.waves()) {
+            if (wave.positiveHitNanos.isEmpty()) {
+                continue;
+            }
+            for (WarpRideClientState.ClientObject object : wave.objects) {
+                Long hit = object.kind() == 0 ? wave.positiveHitNanos.get(object.lane()) : null;
+                if (hit == null) {
+                    continue;
+                }
+                double t = (now - hit) / (double) WarpRideClientState.POSITIVE_FADE_NANOS;
+                if (t < 1.0) {
+                    drawLaneObject(pose, buffers, state, wave, object, 0.0, (float) (1.0 - t));
+                }
+            }
+        }
     }
 
     /** Fills {@link #AHEAD} with the visible portals and not-yet-crossed lane objects, far first. */
@@ -449,15 +508,16 @@ public final class WarpRideRenderer {
                 if (object.isPortal() || wave.consumedLanes.contains(object.lane())) {
                     continue;
                 }
-                drawLaneObject(pose, buffers, state, wave, object, depth);
+                drawLaneObject(pose, buffers, state, wave, object, depth, 1.0f);
             }
         }
     }
 
+    @SuppressWarnings("java:S107")
     private static void drawLaneObject(PoseStack pose, MultiBufferSource buffers, WarpRideClientState state,
                                        WarpRideClientState.ClientWave wave,
-                                       WarpRideClientState.ClientObject object, double depth) {
-        float alpha = (float) opacity(state, depth);
+                                       WarpRideClientState.ClientObject object, double depth, float fade) {
+        float alpha = (float) opacity(state, depth) * fade;
         if (alpha <= 0.01f) {
             return;
         }
@@ -555,42 +615,133 @@ public final class WarpRideRenderer {
     // --- portal-entry warp --------------------------------------------------------------------------
 
     /**
-     * The world-frozen warp: missed objects still flying past, the taken portal shrinking to
-     * {@code shrink} at the axis with its rank strip, then the rider at {@code riderRadius}, scaled
-     * by {@code shrink} as well.
+     * The drift wait before the warp: full-size portal on the axis, the rider still drifting to it,
+     * then the objects flying past.
      */
     @SuppressWarnings("java:S107")
     public static void renderWarpScene(GuiGraphics graphics, WarpRideClientState state, WarpRideRiderProxy rider,
-                                       double shrink, double riderRadius, float partialTick,
-                                       WarpRideRiderEffects effects) {
+                                       double riderRadius, float partialTick, WarpRideRiderEffects effects) {
         MultiBufferSource.BufferSource buffers = beginScene(graphics);
         PoseStack pose = new PoseStack();
-        drawVortex(pose, buffers, state, state.resultTypeId, 1.0, shrink, 1.0f);
+        drawVortex(pose, buffers, state, state.resultTypeId, 1.0, 1.0, 1.0f);
         endScene(buffers);
 
         beginAlphaBlit();
-        drawPortalRank(graphics, state.resultRank, (int) Math.round(PORTAL_SPRITE_SIZE * shrink), 1.0);
+        drawPortalRank(graphics, state.resultRank, PORTAL_SPRITE_SIZE, 1.0);
         RenderSystem.disableBlend();
 
         // The rider and the objects flying past are both nearer than the portal and its strip.
         buffers = beginScene(graphics);
-        if (rider != null && shrink > 0.0) {
-            drawRider(pose, buffers, rider, riderRadius, shrink, state.bankDegrees(), partialTick, effects);
+        if (rider != null) {
+            drawRider(pose, buffers, rider, riderRadius, 1.0, state.bankDegrees(), partialTick, effects);
         }
         renderPastObjects(pose, buffers, state);
         endScene(buffers);
     }
 
-    /** One frame of portal_wrap, played once over the shrink; {@code warpProgress} runs 0..1. */
-    public static void renderWarpOverlay(GuiGraphics graphics, double warpProgress) {
-        int frame = (int) Math.floor(Math.max(0.0, Math.min(1.0, warpProgress)) * PORTAL_WRAP_FRAMES);
-        if (frame >= PORTAL_WRAP_FRAMES) {
-            frame = PORTAL_WRAP_FRAMES - 1;
+    // --- portal-entry sequence (action plan 200, revision 3) -------------------------------------
+
+    /**
+     * Slots of the sequence, one wrap frame long each: the 8 frames of portal_wrap with a white
+     * flash inserted after the 6th (slot 6), which delays the 7th and 8th by one frame.
+     */
+    public static final int WARP_ANIMATION_SLOTS = 9;
+    /** The flash slot: full white, between wrap frames 6 and 7. */
+    private static final int WARP_FLASH_SLOT = 6;
+    /** From this slot the portal and the rider are gone and portal_blip plays over the wrap. */
+    private static final int WARP_BLIP_FROM_SLOT = 2;
+    private static final int PORTAL_BLIP_FRAMES = 6;
+    /** The portal loses this much of its size over the first frame. */
+    private static final double WARP_PORTAL_SHRINK = 0.10;
+
+    /**
+     * The world-frozen portal entry, at {@code slot} (fractional, in wrap frames since the take):
+     *
+     * <ul>
+     *   <li>slot 0: the portal shrinks by 10 % while the rider pushes into it - the part of its
+     *       body past the portal's plane is hidden, from nothing to its front half;</li>
+     *   <li>slot 1: held, the rider halfway through (no head, no upper torso);</li>
+     *   <li>slots 2-5, 7-8: portal and rider gone, portal_blip over portal_wrap;</li>
+     *   <li>slot 6: one frame of white.</li>
+     * </ul>
+     *
+     * portal_wrap sits between the portal and the rider and turns with the portal, the other way.
+     */
+    @SuppressWarnings("java:S107")
+    public static void renderWarpSequence(GuiGraphics graphics, WarpRideClientState state, WarpRideRiderProxy rider,
+                                          double slot, float partialTick, WarpRideRiderEffects effects) {
+        int index = (int) Math.floor(slot);
+        if (index == WARP_FLASH_SLOT) {
+            fillViewport(graphics, 0xFFFFFFFF);
+            return;
+        }
+        int wrapFrame = index < WARP_FLASH_SLOT ? index : index - 1;
+        PoseStack pose = new PoseStack();
+        MultiBufferSource.BufferSource buffers;
+        if (index < WARP_BLIP_FROM_SLOT) {
+            double entry = index == 0 ? Math.max(0.0, slot) : 1.0;
+            double portalScale = 1.0 - WARP_PORTAL_SHRINK * entry;
+            buffers = beginScene(graphics);
+            drawVortex(pose, buffers, state, state.resultTypeId, 1.0, portalScale, 1.0f);
+            endScene(buffers);
+            beginAlphaBlit();
+            drawPortalRank(graphics, state.resultRank, (int) Math.round(PORTAL_SPRITE_SIZE * portalScale), 1.0);
+            beginAlphaBlit();
+            drawPortalWrap(graphics, wrapFrame);
+            RenderSystem.disableBlend();
+
+            buffers = beginScene(graphics);
+            if (rider != null) {
+                drawPortalPlane(pose, buffers, entry);
+                drawRider(pose, buffers, rider, 0.0, 1.0, state.bankDegrees(), partialTick, effects);
+            }
+            renderPastObjects(pose, buffers, state);
+            endScene(buffers);
+            return;
         }
         beginAlphaBlit();
-        drawSpriteFrame(graphics, PORTAL_WRAP, CENTER_X, CENTER_Y, PORTAL_SPRITE_SIZE, 1.0, frame,
-                PORTAL_WRAP_FRAMES);
+        drawPortalWrap(graphics, wrapFrame);
+        drawSpriteFrame(graphics, PORTAL_BLIP, CENTER_X, CENTER_Y, PORTAL_SPRITE_SIZE, 1.0,
+                Math.min(PORTAL_BLIP_FRAMES - 1, wrapFrame - WARP_BLIP_FROM_SLOT), PORTAL_BLIP_FRAMES);
         RenderSystem.disableBlend();
+        buffers = beginScene(graphics);
+        renderPastObjects(pose, buffers, state);
+        endScene(buffers);
+    }
+
+    /** portal_wrap, turning clockwise at the portal's own rate (the portal turns the other way). */
+    private static void drawPortalWrap(GuiGraphics graphics, int frame) {
+        float spin = (animationTicks() * UltraWormholeBlockEntity.SPIN_Z_DEGREES_PER_TICK) % 360.0f;
+        graphics.pose().pushPose();
+        graphics.pose().translate(CENTER_X, CENTER_Y, 0.0f);
+        // In the GUI's Y-down space a positive Z rotation reads clockwise.
+        graphics.pose().mulPose(Axis.ZP.rotationDegrees(Math.abs(spin)));
+        drawSpriteFrame(graphics, PORTAL_WRAP, 0, 0, PORTAL_SPRITE_SIZE, 1.0,
+                Math.min(PORTAL_WRAP_FRAMES - 1, frame), PORTAL_WRAP_FRAMES);
+        graphics.pose().popPose();
+    }
+
+    /**
+     * The portal's surface as an invisible depth wall: what of the rider lies beyond it fails the
+     * depth test, so the rider reads as passing <em>into</em> the portal. {@code entry} 0 puts the
+     * wall just behind the rider's head (nothing hidden), 1 through its middle (front half hidden).
+     */
+    private static void drawPortalPlane(PoseStack pose, MultiBufferSource.BufferSource buffers, double entry) {
+        // The rider is centred on the plane at depth scale 1, its body 2 x RIDER_CENTER_Z blocks long.
+        float halfBody = RIDER_CENTER_Z * RIDER_PX_PER_BLOCK;
+        float z = WarpRideScene3D.zFor(1.0) - (float) (halfBody * (1.0 - entry));
+        float extent = 8_000.0f;
+        RenderType type = RenderType.debugQuads();
+        com.mojang.blaze3d.vertex.VertexConsumer consumer = buffers.getBuffer(type);
+        org.joml.Matrix4f matrix = pose.last().pose();
+        consumer.addVertex(matrix, -extent, -extent, z).setColor(0, 0, 0, 255);
+        consumer.addVertex(matrix, extent, -extent, z).setColor(0, 0, 0, 255);
+        consumer.addVertex(matrix, extent, extent, z).setColor(0, 0, 0, 255);
+        consumer.addVertex(matrix, -extent, extent, z).setColor(0, 0, 0, 255);
+        // Depth only: the colour write is masked for this one draw.
+        RenderSystem.colorMask(false, false, false, false);
+        buffers.endBatch(type);
+        RenderSystem.colorMask(true, true, true, true);
     }
 
     // --- energy aura ------------------------------------------------------------------------------

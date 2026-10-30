@@ -1,0 +1,16 @@
+{
+  "parent": "cobblesafari:fresh_explorer",
+  "display": {
+    "icon": { "id": "cobblesafari:belltower_bell" },
+    "title": { "translate": "advancements.cobblesafari.tolling_heights.title" },
+    "description": { "translate": "advancements.cobblesafari.tolling_heights.description" },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "entered": {"trigger": "minecraft:changed_dimension", "conditions": {"to": "cobblesafari:dungeon_jump"}}
+  },
+  "requirements": [["entered"]]
+}

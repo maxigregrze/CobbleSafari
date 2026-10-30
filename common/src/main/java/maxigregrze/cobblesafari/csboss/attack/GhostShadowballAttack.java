@@ -70,7 +70,7 @@ public class GhostShadowballAttack implements CsBossAttack {
     private void throwBall(ServerLevel level, BossBattleSession session, CsBossEntity boss) {
         double theta = baseAngle + stepRad * thrown;
         Vec3 velocity = new Vec3(Math.cos(theta), 0, Math.sin(theta)).scale(SPEED);
-        double y = session.getTriggerPos().getY() + SPAWN_Y_OFFSET;
+        double y = session.getFloorY() + SPAWN_Y_OFFSET;
         AttackShadowballEntity ball = AttackShadowballEntity.spawn(level,
                 boss.getX(), y, boss.getZ(), session.getId(), velocity);
         ball.setMaxTravel(CsBossAttackLib.areaReach(session));

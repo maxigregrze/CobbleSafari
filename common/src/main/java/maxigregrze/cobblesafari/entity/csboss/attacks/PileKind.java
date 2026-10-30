@@ -23,9 +23,18 @@ public enum PileKind {
             new DustParticleOptions(new Vector3f(0.545f, 0.416f, 0.310f), 1.2f),
             false,
             true
+    ),
+    /** Boule de feu de base_fire_2 : aucun dépôt (l'étoile de tuiles est posée par l'attaque). */
+    FIRE(
+            ModBlocks.ATTACK_FIRE_CUBE_DISPLAY,
+            null,
+            new DustParticleOptions(new Vector3f(1.0f, 0.45f, 0.1f), 1.2f),
+            false,
+            true
     );
 
     private final Block displayBlock;
+    @org.jetbrains.annotations.Nullable
     private final Block ephemeralBlock;
     private final DustParticleOptions trailDust;
     private final boolean appliesPoison;
@@ -44,6 +53,7 @@ public enum PileKind {
         return displayBlock;
     }
 
+    @org.jetbrains.annotations.Nullable
     public Block ephemeralBlock() {
         return ephemeralBlock;
     }

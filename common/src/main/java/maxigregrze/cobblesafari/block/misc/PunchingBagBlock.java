@@ -95,12 +95,7 @@ public class PunchingBagBlock extends HorizontalDirectionalBlock implements Enti
 
     @Override
     public BlockState playerWillDestroy(Level level, BlockPos pos, BlockState state, Player player) {
-        DoubleBlockHalf half = state.getValue(BlockStateProperties.DOUBLE_BLOCK_HALF);
-        BlockPos other = half == DoubleBlockHalf.LOWER ? pos.above() : pos.below();
-        BlockState otherState = level.getBlockState(other);
-        if (otherState.is(this)) {
-            level.setBlock(other, Blocks.AIR.defaultBlockState(), Block.UPDATE_ALL);
-        }
+        maxigregrze.cobblesafari.block.base.MultiCellBreak.breakOtherHalf(level, pos, state, player, this);
         return super.playerWillDestroy(level, pos, state, player);
     }
 

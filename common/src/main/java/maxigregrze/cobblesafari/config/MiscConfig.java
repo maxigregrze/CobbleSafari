@@ -60,6 +60,33 @@ public class MiscConfig {
     /** Seconds before a cleared Z-A obstacle comes back (action plan 196, section 8.7). Min 1. */
     private int obstacleRespawnSeconds = 300;
 
+    /** Seconds before a cleared resource obstacle (the Mega Shard cluster) comes back (plan 196, section 8.8). Min 1. */
+    private int obstacleResourceRespawnSeconds = 900;
+
+    /**
+     * Mega Shard clusters work only when true (plan 196, section 8.9). Off by default: a cluster is then
+     * invisible, shapeless and inert for everyone but creative players.
+     */
+    private boolean enableShardsClusters = false;
+
+    /**
+     * Server-side: the next player with permission 2 or more who logs in is invited to run
+     * /cobblesafari onboarding, then this flips to false and is saved (action plan 198, section 4).
+     */
+    private boolean askForOnboarding = true;
+
+    /**
+     * What the last onboarding save declared (plan 198, section 7). Null until the first save: the
+     * screen then pre-ticks from the installed mods, and every flag reads as false.
+     */
+    private OnboardingState onboarding = null;
+
+    /**
+     * Chance, per random tick, that a data monitor with a lit candle on it is struck and haunted
+     * during the night (action plan 198, section 14.1). 0 turns the haunting off, clamped to 0-1.
+     */
+    private double hauntedMonitorStrikeChance = 0.1;
+
     /**
      * Ultra Wormhole parent-clock rules (action plan 183, section 13.1). The ride's <i>physics</i>
      * stay in {@code UltraWarpRideConfig}'s Java fields - they only make sense tuned together, by
@@ -68,7 +95,7 @@ public class MiscConfig {
      * <p>No migration: a file written before this update simply lacks the keys and reads the
      * defaults below, exactly like every other nullable-by-absence field here.</p>
      */
-    private int ultraWormholeMinParentSeconds = 180;
+    private int ultraWormholeMinParentSeconds = 120;
 
     /** Parent credit at which the ride's energy decay jumps from 1/s to {@link #ultraWormholePanicDecayPerSecond}. */
     private int ultraWormholePanicTriggerSeconds = 90;
@@ -164,6 +191,30 @@ public class MiscConfig {
         }
     }
 
+    /** The species addons an admin declared in the onboarding screen (plan 198, section 3.2). */
+    public static final class OnboardingState {
+        public boolean legendariesAndMythicals;
+        public boolean ultraBeasts;
+        public boolean paradox;
+        public boolean missingRegular;
+
+        public OnboardingState() {
+            // Required no-arg constructor for GSON deserialization.
+        }
+
+        public OnboardingState(boolean legendariesAndMythicals, boolean ultraBeasts, boolean paradox,
+                               boolean missingRegular) {
+            this.legendariesAndMythicals = legendariesAndMythicals;
+            this.ultraBeasts = ultraBeasts;
+            this.paradox = paradox;
+            this.missingRegular = missingRegular;
+        }
+
+        OnboardingState copy() {
+            return new OnboardingState(legendariesAndMythicals, ultraBeasts, paradox, missingRegular);
+        }
+    }
+
     public static final class RoomTypeConfig {
         public int maxInstances;
         public int maxGuestsPerSession;
@@ -176,7 +227,15 @@ public class MiscConfig {
         }
     }
 
+    /**
+     * Set when the file on disk could not be read: every {@link #save()} is then skipped until a
+     * later load succeeds, so a hand-edit typo is never overwritten by the in-memory defaults (the
+     * reset-hour migration and the onboarding flag both save during the same boot).
+     */
+    private static boolean loadFailed = false;
+
     public static void load() {
+        loadFailed = false;
         if (Files.exists(CONFIG_PATH)) {
             try (Reader reader = Files.newBufferedReader(CONFIG_PATH)) {
                 INSTANCE = GSON.fromJson(reader, MiscConfig.class);
@@ -196,18 +255,21 @@ public class MiscConfig {
                 save();
             } catch (IOException e) {
                 CobbleSafari.LOGGER.error(
-                        "CobbleSafari >> Failed to read misc_config.json at {} (I/O error). Using in-memory defaults; the file on disk was not modified.",
+                        "CobbleSafari >> Failed to read misc_config.json at {} (I/O error). Using in-memory defaults; the file will not be rewritten until it loads again.",
                         CONFIG_PATH,
                         e);
                 INSTANCE = new MiscConfig();
                 INSTANCE.ensureUnionRoomDefaults();
+                loadFailed = true;
             } catch (Exception e) {
                 CobbleSafari.LOGGER.error(
-                        "CobbleSafari >> Failed to parse misc_config.json at {} (invalid JSON). Using in-memory defaults; the file on disk was not modified.",
+                        "CobbleSafari >> Failed to parse misc_config.json at {} (invalid JSON). Using in-memory defaults; a copy was saved as misc_config.json.broken and the file will not be rewritten until it is fixed.",
                         CONFIG_PATH,
                         e);
                 INSTANCE = new MiscConfig();
                 INSTANCE.ensureUnionRoomDefaults();
+                loadFailed = true;
+                backupBrokenFile();
             }
         } else {
             CobbleSafari.LOGGER.info(
@@ -219,7 +281,20 @@ public class MiscConfig {
         }
     }
 
+    private static void backupBrokenFile() {
+        try {
+            Files.copy(CONFIG_PATH, CONFIG_PATH.resolveSibling("misc_config.json.broken"),
+                    java.nio.file.StandardCopyOption.REPLACE_EXISTING);
+        } catch (IOException e) {
+            CobbleSafari.LOGGER.error("CobbleSafari >> Could not back up the invalid misc_config.json", e);
+        }
+    }
+
     public static void save() {
+        if (loadFailed) {
+            CobbleSafari.LOGGER.warn("CobbleSafari >> misc_config.json is invalid on disk: change not saved (fix the file, then /cobblesafari reset)");
+            return;
+        }
         if (INSTANCE == null) {
             INSTANCE = new MiscConfig();
         }
@@ -324,7 +399,7 @@ public class MiscConfig {
     /** Opening floor: the device refuses to open below this much parent credit (section 8.2). */
     public static int getUltraWormholeMinParentSeconds() {
         if (INSTANCE == null) {
-            return 180;
+            return 120;
         }
         return Math.max(0, INSTANCE.ultraWormholeMinParentSeconds);
     }
@@ -380,6 +455,71 @@ public class MiscConfig {
             return 300;
         }
         return Math.max(1, INSTANCE.obstacleRespawnSeconds);
+    }
+
+    public static boolean isShardsClustersEnabled() {
+        return INSTANCE != null && INSTANCE.enableShardsClusters;
+    }
+
+    public static double getHauntedMonitorStrikeChance() {
+        if (INSTANCE == null) {
+            return 0.1;
+        }
+        return Math.clamp(INSTANCE.hauntedMonitorStrikeChance, 0.0, 1.0);
+    }
+
+    /** Callers save once after all their changes (plan 198, section 3.3). */
+    public static void setShardsClustersEnabled(boolean enabled) {
+        ensureInstance().enableShardsClusters = enabled;
+    }
+
+    public static void setBalloonEnabled(boolean enabled) {
+        ensureInstance().balloonEnabled = enabled;
+    }
+
+    /**
+     * Returns true once: clears the flag and persists it. The caller sends the invitation, so the
+     * flag is spent whether or not the player clicks (plan 198, section 4).
+     */
+    public static synchronized boolean consumeAskForOnboarding() {
+        if (INSTANCE == null || !INSTANCE.askForOnboarding) {
+            return false;
+        }
+        INSTANCE.askForOnboarding = false;
+        save();
+        return true;
+    }
+
+    /** Whether the onboarding screen was ever saved. */
+    public static boolean hasSavedOnboarding() {
+        return INSTANCE != null && INSTANCE.onboarding != null;
+    }
+
+    /** A copy of the declared species addons; all false until the onboarding is saved. */
+    public static OnboardingState getOnboardingState() {
+        if (INSTANCE == null || INSTANCE.onboarding == null) {
+            return new OnboardingState();
+        }
+        return INSTANCE.onboarding.copy();
+    }
+
+    public static void setOnboardingState(OnboardingState state) {
+        ensureInstance().onboarding = state.copy();
+    }
+
+    private static MiscConfig ensureInstance() {
+        if (INSTANCE == null) {
+            INSTANCE = new MiscConfig();
+        }
+        return INSTANCE;
+    }
+
+    /** Respawn delay of a cleared resource obstacle, in seconds. Clamped to at least 1. */
+    public static int getObstacleResourceRespawnSeconds() {
+        if (INSTANCE == null) {
+            return 900;
+        }
+        return Math.max(1, INSTANCE.obstacleResourceRespawnSeconds);
     }
 
     public void ensureLostItemDefaults() {

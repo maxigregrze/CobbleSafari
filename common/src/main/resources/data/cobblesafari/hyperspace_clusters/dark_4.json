@@ -4,7 +4,8 @@
   "clusters": [
     {
       "id": "eevee",
-      "weight": 2,
+      "weight": 0.2,
+      "rare": true,
       "members": [
         {
           "pokemon": "umbreon",
@@ -124,7 +125,8 @@
     },
     {
       "id": "frogadier",
-      "weight": 1,
+      "weight": 0.1,
+      "rare": true,
       "members": [
         {
           "pokemon": "greninja",
@@ -170,6 +172,63 @@
         },
         {
           "pokemon": "meowth alolan",
+          "rarity": 80,
+          "level": "36-38",
+          "alphaLevel": "45-47"
+        }
+      ]
+    },
+    {
+      "id": "dewott",
+      "weight": 0.1,
+      "rare": true,
+      "members": [
+        {
+          "pokemon": "samurott hisuian",
+          "rarity": 20,
+          "level": "41-43",
+          "alphaLevel": "50-52"
+        },
+        {
+          "pokemon": "dewott",
+          "rarity": 80,
+          "level": "36-38",
+          "alphaLevel": "45-47"
+        }
+      ]
+    },
+    {
+      "id": "torracat",
+      "weight": 0.1,
+      "rare": true,
+      "members": [
+        {
+          "pokemon": "incineroar",
+          "rarity": 20,
+          "level": "41-43",
+          "alphaLevel": "50-52"
+        },
+        {
+          "pokemon": "torracat",
+          "rarity": 80,
+          "level": "36-38",
+          "alphaLevel": "45-47"
+        }
+      ]
+    },
+    {
+      "id": "floragato",
+      "weight": 0.1,
+      "rare": true,
+      "members": [
+        {
+          "pokemon": "meowscarada",
+          "rarity": 20,
+          "level": "41-43",
+          "alphaLevel": "50-52"
+        },
+        {
+          "pokemon": "floragato",
           "rarity": 80,
           "level": "36-38",
           "alphaLevel": "45-47"

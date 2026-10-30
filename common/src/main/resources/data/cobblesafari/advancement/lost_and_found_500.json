@@ -1,0 +1,16 @@
+{
+  "parent": "cobblesafari:lost_and_found_100",
+  "display": {
+    "icon": { "id": "cobblesafari:auspicious_pokeball" },
+    "title": { "translate": "advancements.cobblesafari.lost_and_found_500.title" },
+    "description": { "translate": "advancements.cobblesafari.lost_and_found_500.description" },
+    "frame": "challenge",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "done": {"trigger": "cobblesafari:lost_item_claimed", "conditions": {"count": 500}}
+  },
+  "requirements": [["done"]]
+}

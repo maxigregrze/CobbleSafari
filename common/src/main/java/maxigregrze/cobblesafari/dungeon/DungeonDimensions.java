@@ -89,7 +89,7 @@ public class DungeonDimensions {
                 "cobblesafari:underground/start",
                 9, 3, 3,
                 900,
-                1,
+                PortalSpawnConfig.DUNGEON_UNDERGROUND_WEIGHT,
                 DungeonConfig.StructureType.JIGSAW,
                 5,
                 512,   
@@ -103,13 +103,16 @@ public class DungeonDimensions {
                 "cobblesafari:jump/entrance",
                 0, 0, 0,   // spawn offsets unused for a JIGSAW dungeon
                 900,
-                1,
+                PortalSpawnConfig.DUNGEON_JUMP_WEIGHT,
                 DungeonConfig.StructureType.JIGSAW,
-                12,        // jigsaw depth: entrance -> 3f..10f -> roof is 9 deep
+                12,       // jigsaw depth: entrance -> 3f..10f -> roof is 9 deep
                 1024,      // zoneSize, same spacing as the distortion world
-                0,         // clearSectionsBelow: clearing starts at Y 0, sparing the scenery floor at -8/-7
-                10         // clearSectionsAbove: up to Y 175, the 155-block tower tops out at 154
-        ).withFixedStructureY(8));
+                0,         // clearSectionsBelow: overridden by restoration, which clears down to the world floor
+                10         // clearSectionsAbove: up to Y 175, the roof tops out at 173
+        // Endless maple canopy (noise generator, slab Y 6-16, top aligned with the entrance's
+        // second-to-top leaf layer): rebuilt under each cleared instance so the next one fits again.
+        // Falls land on the canopy; the void guard only catches what gets below the slab.
+        ).withFixedStructureY(8).withVoidGuardY(-12).withWorldgenRestoration());
 
         REGISTERED_DUNGEONS.add(new DungeonConfig(
                 "dungeon_distortion",
@@ -117,7 +120,7 @@ public class DungeonDimensions {
                 "cobblesafari:distortion/entrance",
                 9, 3, 3,
                 900,
-                1,
+                PortalSpawnConfig.DUNGEON_DISTORTION_WEIGHT,
                 DungeonConfig.StructureType.JIGSAW,
                 20,
                 1024,    
@@ -128,38 +131,35 @@ public class DungeonDimensions {
         // The wormhole's host (action plan 183, section 3.3). An ordinary dungeon in every
         // respect; the only thing that distinguishes it is that its pool carries wormhole rooms.
         //
-        // Action plan 187 § 4.1 turns it into the top of the tallest tower of a generated city.
+        // Since action plan 200 (section 9) it is a walled city block standing on the ground of the
+        // generated city, its own floor in the same course as the decoration buildings' floors.
         // The structure is a single NBT, expressed as a one-element pool at depth 1 rather than as
         // StructureType.SIMPLE: the SIMPLE path places the exit portal at a blind offset facing
         // NORTH, while the jigsaw path reads the hoopa_ring_portal marker and its facing. Keeping
         // the marker costs nothing and is worth more than the depth.
-        //
-        // The two altitudes are PROVISIONAL, like the four below (decision § 5.1): the city floor
-        // tops out at Y 3, its buildings are 32-48 tall, so the guard clears the rooftops and the
-        // anchor sits just above them.
         REGISTERED_DUNGEONS.add(new DungeonConfig(
                 "dungeon_megalopolis",
                 DUNGEON_MEGALOPOLIS,
                 "cobblesafari:megalopolis/entrance",
                 0, 0, 0,   // spawn offsets unused for a JIGSAW dungeon
                 900,
-                1,
+                PortalSpawnConfig.DUNGEON_MEGALOPOLIS_WEIGHT,
                 DungeonConfig.StructureType.JIGSAW,
                 1,         // jigsaw depth: a single piece
                 512,       // zoneSize - the slot grid pitch
                 1,         // clearSectionsBelow
                 10         // clearSectionsAbove
-        // Anchor 92, guard 58 - the same shape as the four sub-dungeons, one storey higher.
+        // Anchor 2, default guard (0).
         //
-        // The city floor is a single course of black concrete at Y 0 and its buildings reach about
-        // Y 48, so a guard at 58 clears the rooftops: a player who steps off the tower is pulled
-        // out above the skyline instead of landing on a roof they cannot leave. The anchor sits far
-        // enough above that the whole occupied structure - including the wormhole devices the rider
-        // returns to - stays above the line. That last point is the one that matters: a device
-        // below the guard evacuates every return from Ultra Space on arrival, which reads as a
-        // timer bug and is not one, so SubDungeonManager.leave logs an ERROR naming both numbers if
-        // the structure ever ends up shaped otherwise.
-        ).withFixedStructureY(92).withVoidGuardY(58).withWorldgenRestoration());
+        // The city floor is a single course of black concrete at Y 0; the decoration buildings put
+        // their own floor course on it, at Y 1. megalopolis.nbt has its start jigsaw in its floor
+        // (y 0), so by the formula below (anchor = floor 1 + 1 + jigsaw 0) its floor lands at Y 1 too.
+        // The concrete covers the whole dimension and the structure's walls and barriers keep the
+        // player inside, so there is nothing to fall from: the guard only catches a player below
+        // the world. The wormhole devices the rider returns to (Y 2-3) are above it, as
+        // SubDungeonManager.leave requires. Clearing the instance erases section 0 with it, the
+        // concrete and the cut buildings included; worldgen restoration puts the city back.
+        ).withFixedStructureY(2).withWorldgenRestoration());
 
         // Hyperspace Lumiose (action plan 196, section 5.2). Anchor and depth are PROVISIONAL until
         // the six structures are delivered: measure them on the .nbt like plan 190 did.
@@ -169,7 +169,7 @@ public class DungeonDimensions {
                 "cobblesafari:hyperspace/start",
                 0, 0, 0,   // spawn offsets unused for a JIGSAW dungeon
                 900,
-                1,
+                PortalSpawnConfig.DUNGEON_PARIS_WEIGHT,
                 DungeonConfig.StructureType.JIGSAW,
                 7,         // jigsaw depth
                 512,       // zoneSize - the slot grid pitch

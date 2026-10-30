@@ -8,9 +8,10 @@ import java.util.List;
  * One Hyperspace Wild Zone cluster (action plan 196, § 2.2): a family whose members' rarities
  * share one habitat, e.g. Starly 80 / Staravia 20.
  *
- * @param weight how many Serebii zones of this star and type contain the cluster
+ * @param weight how many Serebii zones of this star and type contain the cluster; decimal, so the
+ *               starter, Pikachu and Eevee herds can be made rarer than one zone (plan 196, § 2.4)
  */
-public record HyperspaceCluster(String id, int star, String type, int weight, List<Member> members) {
+public record HyperspaceCluster(String id, int star, String type, double weight, List<Member> members) {
 
     public HyperspaceCluster {
         members = List.copyOf(members);

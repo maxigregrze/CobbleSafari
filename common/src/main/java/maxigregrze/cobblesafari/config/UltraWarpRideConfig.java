@@ -79,8 +79,16 @@ public class UltraWarpRideConfig {
     public double flyPastMaxScale = 2.5;
     public int starCount = 200;
 
+    // --- Ultra Recon set (action plan 200, section 6) ---
+    /** Full set: an obstacle takes 20 % less energy. */
+    public double reconMalusFactor = 0.8;
+    /** Full set: a bonus gives 5 % more energy; the ceiling rules are unchanged. */
+    public double reconBonusFactor = 1.05;
+
     // --- lifecycle ---
     public int sessionWatchdogSeconds = 60;
+    /** The watchdog while the tutorial slideshow is open: thirteen pages take longer than a minute. */
+    public int tutorialWatchdogSeconds = 600;
 
     private static final UltraWarpRideConfig INSTANCE = new UltraWarpRideConfig();
 

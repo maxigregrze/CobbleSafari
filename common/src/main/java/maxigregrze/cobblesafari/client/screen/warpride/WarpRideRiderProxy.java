@@ -1,5 +1,6 @@
 package maxigregrze.cobblesafari.client.screen.warpride;
 
+import maxigregrze.cobblesafari.item.ultraloot.ReconArmorLogic;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.player.RemotePlayer;
@@ -65,8 +66,15 @@ public final class WarpRideRiderProxy extends RemotePlayer {
         zo = getZ();
     }
 
-    /** What the elytra layer draws: the worn elytra (keeping its glint), else a plain one. */
+    /**
+     * What the elytra layer draws: nothing in the full Ultra Recon set, whose own wings come from
+     * {@code ReconElytraLayer} (action plan 200, section 4.2); else the worn elytra (keeping its
+     * glint), else a plain one.
+     */
     public ItemStack elytraStack() {
+        if (ReconArmorLogic.isFullSet(this)) {
+            return ItemStack.EMPTY;
+        }
         ItemStack chest = getItemBySlot(EquipmentSlot.CHEST);
         return chest.is(Items.ELYTRA) ? chest : PLAIN_ELYTRA;
     }

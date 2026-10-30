@@ -3,7 +3,7 @@
   "tags": [
     "trainerspokemon"
   ],
-  "given": "pikachu level=1 originaltrainertype=npc originaltrainer=Lt. Surge",
+  "given": "pikachu level=1 originaltrainertype=npc originaltrainer=\"Lt. Surge\"",
   "givenMarks": [
     "cobblemon:ribbon_partner"
   ],

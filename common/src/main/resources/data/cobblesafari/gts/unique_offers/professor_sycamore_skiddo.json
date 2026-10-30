@@ -3,7 +3,7 @@
   "tags": [
     "trainerspokemon"
   ],
-  "given": "skiddo level=1 originaltrainertype=npc originaltrainer=Professor Sycamore",
+  "given": "skiddo level=1 originaltrainertype=npc originaltrainer=\"Professor Sycamore\"",
   "givenMarks": [
     "cobblemon:ribbon_partner"
   ],

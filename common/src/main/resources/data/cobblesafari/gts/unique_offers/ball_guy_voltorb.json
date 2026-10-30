@@ -3,7 +3,7 @@
   "tags": [
     "trainerspokemon"
   ],
-  "given": "voltorb level=1 originaltrainertype=npc originaltrainer=Ball Guy",
+  "given": "voltorb level=1 originaltrainertype=npc originaltrainer=\"Ball Guy\"",
   "givenMarks": [
     "cobblemon:ribbon_partner"
   ],

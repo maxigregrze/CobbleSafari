@@ -1,7 +1,7 @@
 {
   "parent": "cobblesafari:dungeons",
   "display": {
-    "icon": { "id": "cobblesafari:redchain_fragment" },
+    "icon": { "id": "cobblesafari:distortion_portal" },
     "title": { "translate": "advancements.cobblesafari.upside_down.title" },
     "description": { "translate": "advancements.cobblesafari.upside_down.description" },
     "frame": "task",

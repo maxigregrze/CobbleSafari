@@ -56,6 +56,8 @@
     "cobblesafari:distortion_stonebricks_door",
     "cobblesafari:distortion_stonebricks_rubble",
     "cobblesafari:underground_polished_hardstone",
+    "cobblesafari:underground_hardstone",
+    "cobblesafari:underground_hardstone_stairs",
     "cobblesafari:underground_stonebricks",
     "cobblesafari:underground_cracked_stonebricks",
     "cobblesafari:volcanic_crater",
@@ -175,6 +177,8 @@
     "cobblesafari:hyperspace_wall_bottom_wall",
     "cobblesafari:kalos_wall_bricks_wall",
     "cobblesafari:kalos_wall_bottom_wall",
-    "cobblesafari:megapolis_door_alt"
+    "cobblesafari:megapolis_door_alt",
+    "cobblesafari:haunted_monitor",
+    "cobblesafari:mega_shard_block"
   ]
 }

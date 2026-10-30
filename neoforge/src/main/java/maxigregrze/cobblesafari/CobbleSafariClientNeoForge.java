@@ -44,6 +44,13 @@ import maxigregrze.cobblesafari.underground.UndergroundScreen;
 import maxigregrze.cobblesafari.underground.network.UndergroundPayloads;
 import maxigregrze.cobblesafari.client.DungeonDistortionDimensionEffects;
 import maxigregrze.cobblesafari.client.UltraCraterDimensionEffects;
+import maxigregrze.cobblesafari.client.renderer.HyperspaceSkyRenderer;
+import maxigregrze.cobblesafari.client.renderer.HyperspaceSkyMapTexture;
+import maxigregrze.cobblesafari.client.HyperspaceDimensionEffects;
+import com.mojang.blaze3d.vertex.DefaultVertexFormat;
+import net.minecraft.client.renderer.ShaderInstance;
+import net.neoforged.neoforge.client.event.RegisterShadersEvent;
+import java.io.IOException;
 import maxigregrze.cobblesafari.client.audio.CsMusicPlayer;
 import maxigregrze.cobblesafari.client.particle.MapleLeafParticle;
 import maxigregrze.cobblesafari.init.ModParticles;
@@ -122,6 +129,18 @@ public class CobbleSafariClientNeoForge {
         event.register(
                 ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, "dungeon_ultra_crater"),
                 new UltraCraterDimensionEffects()
+        );
+        event.register(
+                ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, "dungeon_paris"),
+                new HyperspaceDimensionEffects()
+        );
+    }
+
+    @SubscribeEvent
+    public static void onRegisterShaders(RegisterShadersEvent event) throws IOException {
+        event.registerShader(
+                new ShaderInstance(event.getResourceProvider(), HyperspaceSkyRenderer.SHADER_ID, DefaultVertexFormat.POSITION),
+                HyperspaceSkyRenderer::setShader
         );
     }
 
@@ -212,6 +231,7 @@ public class CobbleSafariClientNeoForge {
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.AIR_FIRE_CORAL, RenderType.cutout());
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.AIR_HORN_CORAL, RenderType.cutout());
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.ICICLE, RenderType.cutout());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.HAUNTED_MONITOR, RenderType.cutout());
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.RUSTED_IRON_BLOCK, RenderType.cutoutMipped());
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.UNDERGROUND_PC, RenderType.cutout());
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.SECRETBASE_PC, RenderType.cutout());
@@ -245,6 +265,9 @@ public class CobbleSafariClientNeoForge {
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.WHIRLWIND, RenderType.translucent());
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.WHIRLWIND_DISPLAY, RenderType.translucent());
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.CSBOSS_ELECTRICITY, RenderType.cutout());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.CSBOSS_SCORCHED, RenderType.cutout());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.CSBOSS_UPDRAFT, RenderType.cutout());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.CSBOSS_PUDDLE, RenderType.translucent());
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.MUD_PILE, RenderType.cutout());
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.SLUDGE_PILE, RenderType.cutout());
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.KARATE_MANNEQUIN, RenderType.cutout());
@@ -328,6 +351,7 @@ public class CobbleSafariClientNeoForge {
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.OBSTACLE_BOULDER, RenderType.cutout());
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.OBSTACLE_BRAMBLES, RenderType.cutout());
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.OBSTACLE_SLUDGE, RenderType.cutout());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.OBSTACLE_SHARDCLUSTER, RenderType.cutout());
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.KALOS_FOUNTAIN, RenderType.translucent());
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.HYPERSPACE_CANOPY_RIDGE, RenderType.translucent());
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.KALOS_CANOPY_RIDGE, RenderType.translucent());
@@ -384,6 +408,8 @@ public class CobbleSafariClientNeoForge {
             BlockEntityRenderers.register(ModBlockEntities.HOOPA_RING_PORTAL, HoopaRingPortalBlockEntityRenderer::new);
             BlockEntityRenderers.register(ModBlockEntities.ULTRA_WORMHOLE,
                     maxigregrze.cobblesafari.client.renderer.UltraWormholeBlockEntityRenderer::new);
+            BlockEntityRenderers.register(ModBlockEntities.ULTRA_ENTRANCE_PORTAL,
+                    maxigregrze.cobblesafari.client.renderer.UltraEntrancePortalBlockEntityRenderer::new);
             BlockEntityRenderers.register(ModBlockEntities.DUNGEON_PORTAL, DungeonPortalBlockEntityRenderer::new);
             BlockEntityRenderers.register(ModBlockEntities.VOID_BLOCK, VoidBlockRenderer::new);
             BlockEntityRenderers.register(ModBlockEntities.GIRATINA_CORE, GiratinaCoreBlockEntityRenderer::new);
@@ -396,6 +422,7 @@ public class CobbleSafariClientNeoForge {
             BlockEntityRenderers.register(ModBlockEntities.AUSPICIOUS_POKEBALL_GOLD, AuspiciousPokeballBlockEntityRenderer::new);
             BlockEntityRenderers.register(ModBlockEntities.UNION_ROOM_DECOR, maxigregrze.cobblesafari.client.renderer.UnionRoomDecorBlockEntityRenderer::new);
             BlockEntityRenderers.register(ModBlockEntities.WHIRLWIND, maxigregrze.cobblesafari.client.renderer.WhirlwindBlockEntityRenderer::new);
+            BlockEntityRenderers.register(ModBlockEntities.CSBOSS_UPDRAFT, maxigregrze.cobblesafari.client.renderer.CsBossUpdraftTileRenderer::new);
             BlockEntityRenderers.register(ModBlockEntities.TRAP, maxigregrze.cobblesafari.client.renderer.TrapBlockEntityRenderer::new);
             BlockEntityRenderers.register(ModBlockEntities.UNION_ROOM_GLOBE_UPPER, maxigregrze.cobblesafari.client.renderer.UnionRoomGlobeUpperBlockEntityRenderer::new);
             BlockEntityRenderers.register(ModBlockEntities.POKEMON_STATUE, maxigregrze.cobblesafari.client.renderer.PokeStatueBlockEntityRenderer::new);
@@ -464,7 +491,7 @@ public class CobbleSafariClientNeoForge {
                         : (level != null && pos != null)
                                 ? net.minecraft.client.renderer.BiomeColors.getAverageWaterColor(level, pos)
                                 : HS_DEFAULT_WATER_COLOR,
-                ModBlocks.HYPERSPACE_FOUNTAIN, ModBlocks.KALOS_FOUNTAIN);
+                ModBlocks.HYPERSPACE_FOUNTAIN, ModBlocks.KALOS_FOUNTAIN, ModBlocks.CSBOSS_PUDDLE);
         // Foliage-tinted nature blocks (tintindex 0 only): flowers (colored layer) and bushes.
         // The flower's untinted petal layer is tintindex 1, so leave any non-zero index untinted.
         event.register(
@@ -525,8 +552,10 @@ public class CobbleSafariClientNeoForge {
         event.registerEntityRenderer(ModEntities.CSTRADER_NPC, CsTraderEntityRenderer::new);
         event.registerEntityRenderer(ModEntities.BALLOON, BalloonEntityRenderer::new);
         event.registerEntityRenderer(ModEntities.BALLOON_SAFARI, BalloonSafariRenderer::new);
+        event.registerEntityRenderer(ModEntities.SAFARI_DRONE, maxigregrze.cobblesafari.client.renderer.SafariDroneRenderer::new);
         event.registerEntityRenderer(ModEntities.THROWN_MUD_BALL, net.minecraft.client.renderer.entity.ThrownItemRenderer::new);
         event.registerEntityRenderer(ModEntities.SEAT, net.minecraft.client.renderer.entity.NoopRenderer::new);
+        event.registerEntityRenderer(ModEntities.CARRIER, net.minecraft.client.renderer.entity.NoopRenderer::new);
         event.registerEntityRenderer(ModEntities.THROWN_BAIT, net.minecraft.client.renderer.entity.ThrownItemRenderer::new);
         event.registerEntityRenderer(ModEntities.THROWN_BALM, net.minecraft.client.renderer.entity.ThrownItemRenderer::new);
         event.registerEntityRenderer(ModEntities.THROWN_RED_CHAIN, maxigregrze.cobblesafari.client.renderer.ThrownRedChainEntityRenderer::new);
@@ -546,6 +575,11 @@ public class CobbleSafariClientNeoForge {
         event.registerEntityRenderer(ModEntities.ATTACK_DISTORTION_STEM_CORE, maxigregrze.cobblesafari.client.renderer.AttackDistortionStemCoreEntityRenderer::new);
         event.registerEntityRenderer(ModEntities.ATTACK_WAVE, maxigregrze.cobblesafari.client.renderer.AttackWaveEntityRenderer::new);
         event.registerEntityRenderer(ModEntities.ATTACK_SHOCKWAVE, maxigregrze.cobblesafari.client.renderer.AttackShockwaveEntityRenderer::new);
+        event.registerEntityRenderer(ModEntities.ATTACK_BELL, maxigregrze.cobblesafari.client.renderer.AttackBellEntityRenderer::new);
+        event.registerEntityRenderer(ModEntities.ATTACK_TORNADO, maxigregrze.cobblesafari.client.renderer.AttackTornadoEntityRenderer::new);
+        event.registerEntityRenderer(ModEntities.ATTACK_AIR_SLASH, maxigregrze.cobblesafari.client.renderer.AttackAirSlashEntityRenderer::new);
+        event.registerEntityRenderer(ModEntities.ATTACK_ZONE_RING, maxigregrze.cobblesafari.client.renderer.AttackZoneRingEntityRenderer::new);
+        event.registerEntityRenderer(ModEntities.ATTACK_LANE_SHADOW, maxigregrze.cobblesafari.client.renderer.AttackLaneShadowEntityRenderer::new);
         event.registerEntityRenderer(ModEntities.ATTACK_DISTORTION_FLOWER, maxigregrze.cobblesafari.client.renderer.AttackDistortionFlowerEntityRenderer::new);
         event.registerEntityRenderer(ModEntities.ATTACK_GIRATINA_ORB, maxigregrze.cobblesafari.client.renderer.AttackGiratinaOrbEntityRenderer::new);
         event.registerEntityRenderer(ModEntities.ATTACK_BEAM, maxigregrze.cobblesafari.client.renderer.AttackBeamEntityRenderer::new);
@@ -562,6 +596,7 @@ public class CobbleSafariClientNeoForge {
     @SubscribeEvent
     public static void onRegisterLayerDefinitions(EntityRenderersEvent.RegisterLayerDefinitions event) {
         event.registerLayerDefinition(BalloonEntityModel.LAYER_LOCATION, BalloonEntityModel::createBodyLayer);
+        event.registerLayerDefinition(maxigregrze.cobblesafari.client.model.AttackBellModel.LAYER_LOCATION, maxigregrze.cobblesafari.client.model.AttackBellModel::createBodyLayer);
         event.registerLayerDefinition(CsTraderEntityRenderer.LAYER_LOCATION, CsTraderEntityRenderer::createBodyLayer);
     }
 
@@ -580,6 +615,7 @@ public class CobbleSafariClientNeoForge {
         maxigregrze.cobblesafari.client.screen.rotomphone.RotomPhonePcSession.tickCleanup(mc);
         maxigregrze.cobblesafari.client.rotomphone.RotoGlideClient.tick(mc);
         maxigregrze.cobblesafari.client.teleporter.TeleportPadClient.tick(mc);
+        maxigregrze.cobblesafari.client.obstacle.ShardClusterClient.tick(mc);
         maxigregrze.cobblesafari.client.rotomphone.RotomPhoneKeybind.clientTick(mc);
         maxigregrze.cobblesafari.client.objectives.ObjectivesKeybind.clientTick(mc);
         maxigregrze.cobblesafari.client.objectives.ObjectivesHudController.clientTick(mc);
@@ -597,6 +633,11 @@ public class CobbleSafariClientNeoForge {
             maxigregrze.cobblesafari.network.ObjectivesHudSyncPayload payload, IPayloadContext context) {
         context.enqueueWork(() ->
                 maxigregrze.cobblesafari.client.objectives.ObjectivesHudController.accept(payload));
+    }
+
+    public static void handleHyperspaceSkyMap(
+            maxigregrze.cobblesafari.network.HyperspaceSkyMapPayload payload, IPayloadContext context) {
+        context.enqueueWork(() -> HyperspaceSkyMapTexture.accept(payload));
     }
 
     public static void handleHudConfigRefresh(
@@ -630,6 +671,13 @@ public class CobbleSafariClientNeoForge {
             maxigregrze.cobblesafari.network.RainbowFeatherUsedPayload payload, IPayloadContext context) {
         context.enqueueWork(() -> {
             maxigregrze.cobblesafari.client.effect.ClientRainbowFeatherFx.accept(payload.entityId());
+        });
+    }
+
+    public static void handleRotomPhoneActivation(
+            maxigregrze.cobblesafari.network.RotomPhoneActivationPayload payload, IPayloadContext context) {
+        context.enqueueWork(() -> {
+            maxigregrze.cobblesafari.client.effect.ClientRotomPhoneFx.accept(payload.device());
         });
     }
 
@@ -676,6 +724,12 @@ public class CobbleSafariClientNeoForge {
 
     public static void handleOpenPortalSpawnerConfig(OpenPortalSpawnerConfigPayload payload, IPayloadContext context) {
         context.enqueueWork(() -> Minecraft.getInstance().setScreen(new PortalSpawnerConfigScreen(payload)));
+    }
+
+    public static void handleOpenOnboarding(maxigregrze.cobblesafari.network.OpenOnboardingPayload payload,
+                                            IPayloadContext context) {
+        context.enqueueWork(() -> Minecraft.getInstance().setScreen(
+                new maxigregrze.cobblesafari.client.screen.OnboardingScreen(payload.initial())));
     }
 
     public static void handleOpenAuspiciousPokeballConfig(OpenAuspiciousPokeballConfigPayload payload, IPayloadContext context) {

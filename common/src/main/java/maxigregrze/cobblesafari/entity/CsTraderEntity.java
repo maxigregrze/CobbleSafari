@@ -14,10 +14,13 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.AgeableMob;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.SpawnGroupData;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.npc.AbstractVillager;
@@ -26,6 +29,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.trading.MerchantOffer;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.ServerLevelAccessor;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -37,6 +41,7 @@ public class CsTraderEntity extends AbstractVillager {
     protected static final String INITIALIZED_KEY = "TradesInitialized";
     protected static final String TRADER_NAME_KEY = "TraderName";
     protected static final String TRADER_VARIANT_KEY = "TraderVariantId";
+    protected static final String PENDING_DISCARD_KEY = "PendingStructureDiscard";
 
     private static final EntityDataAccessor<String> DATA_VARIANT_ID =
             SynchedEntityData.defineId(CsTraderEntity.class, EntityDataSerializers.STRING);
@@ -55,6 +60,7 @@ public class CsTraderEntity extends AbstractVillager {
     protected static final String LEGACY_TREASURE = "treasure";
 
     private boolean tradesInitialized = false;
+    private boolean pendingStructureDiscard = false;
 
     public CsTraderEntity(EntityType<? extends AbstractVillager> entityType, Level level) {
         super(entityType, level);
@@ -161,6 +167,39 @@ public class CsTraderEntity extends AbstractVillager {
         applyDisplayName();
     }
 
+    /**
+     * Template entities placed by a structure (jigsaw / {@code /place}) carry baked offers whose item
+     * ids may not exist in this pack; those are dropped on load. A trader left with nothing to sell
+     * is flagged here and removed on its first tick - discarding during placement would make
+     * worldgen store an empty entity tag in the proto-chunk.
+     */
+    @Nullable
+    @Override
+    public SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty,
+                                        MobSpawnType spawnType, @Nullable SpawnGroupData spawnGroupData) {
+        SpawnGroupData data = super.finalizeSpawn(level, difficulty, spawnType, spawnGroupData);
+        if (spawnType == MobSpawnType.STRUCTURE) {
+            if (!tradesInitialized) {
+                initTradesForType(getTradeType());
+            }
+            this.getOffers().removeIf(CsTraderEntity::isOfferInvalid);
+            if (this.getOffers().isEmpty()) {
+                pendingStructureDiscard = true;
+                CobbleSafari.LOGGER.debug("[CSTrader] Structure trader '{}' has no valid trade, removing it", getTraderName());
+            }
+        }
+        return data;
+    }
+
+    @Override
+    public void tick() {
+        if (pendingStructureDiscard && !this.level().isClientSide) {
+            this.discard();
+            return;
+        }
+        super.tick();
+    }
+
     @Override
     protected void updateTrades() {
         // No-op: this trader uses a fixed offer list configured elsewhere, not the vanilla trade system.
@@ -249,6 +288,9 @@ public class CsTraderEntity extends AbstractVillager {
         tag.putString(TRADER_NAME_KEY, getTraderName());
         tag.putString(TRADER_VARIANT_KEY, getTradeType());
         tag.putBoolean(INITIALIZED_KEY, tradesInitialized);
+        if (pendingStructureDiscard) {
+            tag.putBoolean(PENDING_DISCARD_KEY, true);
+        }
     }
 
     @Override
@@ -268,6 +310,7 @@ public class CsTraderEntity extends AbstractVillager {
         if (tag.contains(INITIALIZED_KEY)) {
             tradesInitialized = tag.getBoolean(INITIALIZED_KEY);
         }
+        pendingStructureDiscard = tag.getBoolean(PENDING_DISCARD_KEY);
         refreshDefinitionData();
 
         this.getOffers().removeIf(CsTraderEntity::isOfferInvalid);

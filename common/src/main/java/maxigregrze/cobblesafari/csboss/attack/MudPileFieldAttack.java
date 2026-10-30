@@ -27,7 +27,7 @@ public class MudPileFieldAttack implements CsBossAttack {
     private static final int TELEGRAPH = 40;
     private static final int FLIGHT_TICKS = 36;
     private static final double ARC_HEIGHT = 9.0;
-    private static final float PROJECTILE_DAMAGE = 8.0F;
+    private static final float PROJECTILE_DAMAGE = 3.0F; // base 3 (plan 199)
     private static final int DURATION = 240;
 
     private final String id;
@@ -102,7 +102,7 @@ public class MudPileFieldAttack implements CsBossAttack {
 
     private void spawnWave(ServerLevel level, BossBattleSession session) {
         FieldWave w = new FieldWave(tick);
-        double floorY = session.getTriggerPos().getY();
+        double floorY = session.getFloorY();
         Vec3 center = new Vec3(session.getArenaCenter().x, floorY, session.getArenaCenter().z);
         List<Vec3> points = CsBossAttackLib.scatterPoints(center, session.getBlockRadius(),
                 POINTS, MIN_DIST, rng);
@@ -118,7 +118,7 @@ public class MudPileFieldAttack implements CsBossAttack {
 
     private void fireWave(ServerLevel level, BossBattleSession session, CsBossEntity boss, FieldWave w) {
         boss.triggerAttackAnimation();
-        Vec3 origin = new Vec3(boss.getX(), session.getTriggerPos().getY() + 1.5, boss.getZ());
+        Vec3 origin = new Vec3(boss.getX(), session.getFloorY() + 1.5, boss.getZ());
         for (int i = 0; i < w.targets.size(); i++) {
             Vec3 target = w.targets.get(i);
             AttackPileProjectileEntity projectile = AttackPileProjectileEntity.spawn(
@@ -127,7 +127,7 @@ public class MudPileFieldAttack implements CsBossAttack {
             session.trackAttackEntity(projectile);
             if (i == 0) {
                 CsBossAttackLib.sound(level, origin.x, origin.y, origin.z,
-                        "cobblemon:move.earthquake.actor", SoundSource.HOSTILE, 1.3F, 1.0F);
+                        "cobblemon:move.bulldoze.actor", SoundSource.HOSTILE, 1.3F, 1.0F);
             }
         }
     }

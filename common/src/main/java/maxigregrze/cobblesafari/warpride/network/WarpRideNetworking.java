@@ -36,6 +36,10 @@ public final class WarpRideNetworking {
         // the music only once.
         if (session.onReady(server.getTickCount())) {
             WarpRideManager.onRideStarted(player);
+            // The ready ends the slideshow, so it was read to the end (action plan 200, section 5.5).
+            if (session.isTutorialShown()) {
+                maxigregrze.cobblesafari.data.WarpRideTutorialSavedData.get(server).markSeen(player.getUUID());
+            }
         }
     }
 

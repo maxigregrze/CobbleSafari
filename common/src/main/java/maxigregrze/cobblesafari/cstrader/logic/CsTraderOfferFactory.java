@@ -24,22 +24,28 @@ public final class CsTraderOfferFactory {
         CsTraderVariantDefinition variant = trader.resolveVariant(variantId);
         if (variant == null) return List.of();
 
-        List<CsTraderTradeDefinition> pool = new ArrayList<>(variant.getTrades());
-        if (pool.isEmpty()) return List.of();
+        List<MerchantOffer> offers = new ArrayList<>();
+        for (CsTraderTradeGroup group : variant.getTradeGroups()) {
+            drawGroup(group, random, offers);
+        }
+        return offers;
+    }
+
+    private static void drawGroup(CsTraderTradeGroup group, RandomSource random, List<MerchantOffer> offers) {
+        List<CsTraderTradeDefinition> pool = new ArrayList<>(group.trades());
+        if (pool.isEmpty()) return;
 
         Collections.shuffle(pool, new Random(random.nextLong()));
-        int maxPick = Math.min(variant.getMaxTrades(), pool.size());
-        int minPick = Math.max(1, Math.min(variant.getMinTrades(), maxPick));
+        int maxPick = Math.min(group.maxTrades(), pool.size());
+        int minPick = Math.max(1, Math.min(group.minTrades(), maxPick));
         int count = minPick + (maxPick > minPick ? random.nextInt(maxPick - minPick + 1) : 0);
 
-        List<MerchantOffer> offers = new ArrayList<>();
         for (int i = 0; i < count; i++) {
             MerchantOffer offer = buildOffer(pool.get(i), random);
             if (offer != null) {
                 offers.add(offer);
             }
         }
-        return offers;
     }
 
     private static MerchantOffer buildOffer(CsTraderTradeDefinition trade, RandomSource random) {

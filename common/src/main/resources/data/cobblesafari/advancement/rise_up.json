@@ -1,0 +1,16 @@
+{
+  "parent": "cobblesafari:tolling_heights",
+  "display": {
+    "icon": { "id": "cobblesafari:belltower_rod" },
+    "title": { "translate": "advancements.cobblesafari.rise_up.title" },
+    "description": { "translate": "advancements.cobblesafari.rise_up.description" },
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "joined": {"trigger": "cobblesafari:csboss_join", "conditions": {"dimension": "cobblesafari:dungeon_jump", "boss": "hooh"}}
+  },
+  "requirements": [["joined"]]
+}

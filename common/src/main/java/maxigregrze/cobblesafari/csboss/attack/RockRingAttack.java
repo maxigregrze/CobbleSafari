@@ -29,7 +29,7 @@ public class RockRingAttack implements CsBossAttack {
     private static final int WAVES = 5; // deterministic
     private static final int RING_STAGGER = 4; // fall stagger ticks per ring (center → outer)
     private static final double FALL_HEIGHT = 20.0;
-    private static final float METEOR_DAMAGE = 18.0F;
+    private static final float METEOR_DAMAGE = 7.0F; // base 7 (plan 199), × damageMultiplier du boss
     private static final List<BlockPos> RING = CsBossGridShapes.filledCircle(RING_RADIUS);
 
     private final String id;
@@ -99,7 +99,7 @@ public class RockRingAttack implements CsBossAttack {
     }
 
     private void spawnWave(ServerLevel level, BossBattleSession session) {
-        int triggerY = session.getTriggerPos().getY();
+        int triggerY = session.getFloorY();
         for (ServerPlayer p : session.aliveParticipants(level)) {
             BlockPos pc = p.blockPosition();
             for (BlockPos off : RING) {

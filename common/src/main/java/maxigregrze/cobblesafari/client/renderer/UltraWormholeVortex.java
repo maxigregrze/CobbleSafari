@@ -43,6 +43,18 @@ public final class UltraWormholeVortex {
             layer(4), layer(3), layer(2), layer(1), layer(0)
     };
 
+    /** The fourteen layer images, by number: frame {@code i} of the strip is {@code layer(i)}. */
+    private static final ResourceLocation[] STRIP_FRAMES = new ResourceLocation[14];
+
+    static {
+        for (int i = 0; i < STRIP_FRAMES.length; i++) {
+            STRIP_FRAMES[i] = layer(i);
+        }
+    }
+
+    /** Layer to strip frame, front to back: the same ramp as {@link #LAYER_TEXTURE}. */
+    private static final int[] LAYER_FRAME = {13, 12, 11, 10, 9, 8, 7, 6, 5, 5, 4, 3, 2, 1, 0};
+
     /** Authored extent: 3 x 3 blocks, i.e. -16..32 in model units, centred on (0.5, 0.5). */
     private static final float MIN = -1.0f;
     private static final float MAX = 2.0f;
@@ -75,13 +87,28 @@ public final class UltraWormholeVortex {
         int count = LAYER_TEXTURE.length;
         boolean ascending = farToNear(pose, (count - 1) * layerSpacing);
         float normalZ = normalTowardFront ? -1.0f : 1.0f;
+        // One texture, one render type, sorted by distance on upload (action plan 200, section 8).
+        // The per-layer path below only remains as the fallback if the strip cannot be built.
+        ResourceLocation strip = UltraWormholeTintCache.stack(STRIP_FRAMES, tint);
+        if (strip != null) {
+            VertexConsumer consumer = buffers.getBuffer(DEPTH_SORTED
+                    ? RenderType.entityTranslucent(strip)
+                    : RenderType.entityTranslucentEmissive(strip));
+            float frameV = 1.0f / STRIP_FRAMES.length;
+            for (int i = 0; i < count; i++) {
+                int layer = ascending ? i : count - 1 - i;
+                float v0 = LAYER_FRAME[layer] * frameV;
+                emitLayer(consumer, pose, layer * layerSpacing, alpha, packedLight, normalZ, v0, v0 + frameV);
+            }
+            return;
+        }
         for (int i = 0; i < count; i++) {
             int layer = ascending ? i : count - 1 - i;
             ResourceLocation texture = UltraWormholeTintCache.tinted(LAYER_TEXTURE[layer], tint);
             VertexConsumer consumer = buffers.getBuffer(DEPTH_SORTED
                     ? RenderType.entityTranslucent(texture)
                     : RenderType.entityTranslucentEmissive(texture));
-            emitLayer(consumer, pose, layer * layerSpacing, alpha, packedLight, normalZ);
+            emitLayer(consumer, pose, layer * layerSpacing, alpha, packedLight, normalZ, 0.0f, 1.0f);
         }
     }
 
@@ -110,13 +137,14 @@ public final class UltraWormholeVortex {
      * free. A second, mirrored quad blended every texel twice, which on a fifteen-layer stack is
      * thirty passes and a visibly denser vortex than the art intends.</p>
      */
+    @SuppressWarnings("java:S107")
     private static void emitLayer(VertexConsumer consumer, PoseStack.Pose pose, float z, float alpha,
-                                  int packedLight, float normalZ) {
-        // u runs 0 -> 1 across x, v runs 1 -> 0 up y (texture v grows downward).
-        vertex(consumer, pose, MIN, MIN, z, 0.0f, 1.0f, alpha, packedLight, normalZ);
-        vertex(consumer, pose, MAX, MIN, z, 1.0f, 1.0f, alpha, packedLight, normalZ);
-        vertex(consumer, pose, MAX, MAX, z, 1.0f, 0.0f, alpha, packedLight, normalZ);
-        vertex(consumer, pose, MIN, MAX, z, 0.0f, 0.0f, alpha, packedLight, normalZ);
+                                  int packedLight, float normalZ, float vTop, float vBottom) {
+        // u runs 0 -> 1 across x, v runs bottom -> top up y (texture v grows downward).
+        vertex(consumer, pose, MIN, MIN, z, 0.0f, vBottom, alpha, packedLight, normalZ);
+        vertex(consumer, pose, MAX, MIN, z, 1.0f, vBottom, alpha, packedLight, normalZ);
+        vertex(consumer, pose, MAX, MAX, z, 1.0f, vTop, alpha, packedLight, normalZ);
+        vertex(consumer, pose, MIN, MAX, z, 0.0f, vTop, alpha, packedLight, normalZ);
     }
 
     private static void vertex(VertexConsumer consumer, PoseStack.Pose pose, float x, float y, float z,

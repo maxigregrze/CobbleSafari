@@ -2,6 +2,7 @@ package maxigregrze.cobblesafari.block.misc;
 
 import com.mojang.logging.LogUtils;
 import com.mojang.serialization.MapCodec;
+import maxigregrze.cobblesafari.block.base.LoweredSupport;
 import maxigregrze.cobblesafari.network.LostItemConfigServerHandler;
 import maxigregrze.cobblesafari.platform.Services;
 import maxigregrze.cobblesafari.power.PowerItemRewardEffects;
@@ -15,6 +16,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import maxigregrze.cobblesafari.init.ModBlocks;
 import net.minecraft.world.item.Item;
@@ -49,7 +51,9 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 
+import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class LostItemBlock extends BaseEntityBlock {
     private static final Logger LOGGER = LogUtils.getLogger();
@@ -65,6 +69,9 @@ public class LostItemBlock extends BaseEntityBlock {
     public static final EnumProperty<Direction> FACING = HorizontalDirectionalBlock.FACING;
     public static final BooleanProperty HAS_ITEM = BooleanProperty.create("has_item");
     public static final EnumProperty<LostItemSkin> SKIN = EnumProperty.create("skin", LostItemSkin.class);
+    /** On the floor of a road-like block (plan 196, section 7.9): every shape and the model sit 1 px lower. */
+    public static final BooleanProperty LOWERED = BooleanProperty.create("lowered");
+    public static final float LOWERED_OFFSET = 1.0f / 16.0f;
 
     private static final VoxelShape FLOOR_SHAPE = Block.box(2, 0, 2, 14, 4, 14);
     private static final VoxelShape CEILING_SHAPE = Block.box(2, 12, 2, 14, 16, 14);
@@ -76,6 +83,15 @@ public class LostItemBlock extends BaseEntityBlock {
     private static final VoxelShape FLOATING_VERTICAL_SHAPE = Block.box(4, 0, 4, 12, 16, 12);
     private static final VoxelShape FLOATING_WALL_NS_SHAPE = Block.box(4, 4, 0, 12, 12, 16);
     private static final VoxelShape FLOATING_WALL_EW_SHAPE = Block.box(0, 4, 4, 16, 12, 12);
+    /** The shine is a flat decal: a thin plate, only there for creative targeting (plan 196, section 7.9). */
+    private static final VoxelShape SHINE_FLOOR_SHAPE = Block.box(1, 0, 1, 15, 1, 15);
+    private static final VoxelShape SHINE_CEILING_SHAPE = Block.box(1, 15, 1, 15, 16, 15);
+    private static final VoxelShape SHINE_WALL_NORTH_SHAPE = Block.box(1, 1, 15, 15, 15, 16);
+    private static final VoxelShape SHINE_WALL_SOUTH_SHAPE = Block.box(1, 1, 0, 15, 15, 1);
+    private static final VoxelShape SHINE_WALL_EAST_SHAPE = Block.box(0, 1, 1, 1, 15, 15);
+    private static final VoxelShape SHINE_WALL_WEST_SHAPE = Block.box(15, 1, 1, 16, 15, 15);
+    /** Lowered copy of each shape constant above, made on first use. */
+    private static final Map<VoxelShape, VoxelShape> LOWERED_SHAPES = new ConcurrentHashMap<>();
 
     public LostItemBlock(Properties properties) {
         super(properties);
@@ -83,7 +99,8 @@ public class LostItemBlock extends BaseEntityBlock {
                 .setValue(FACE, AttachFace.FLOOR)
                 .setValue(FACING, Direction.NORTH)
                 .setValue(HAS_ITEM, true)
-                .setValue(SKIN, LostItemSkin.RUBBLES));
+                .setValue(SKIN, LostItemSkin.RUBBLES)
+                .setValue(LOWERED, false));
     }
 
     @Override
@@ -93,7 +110,7 @@ public class LostItemBlock extends BaseEntityBlock {
 
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
-        builder.add(FACE, FACING, HAS_ITEM, SKIN);
+        builder.add(FACE, FACING, HAS_ITEM, SKIN, LOWERED);
     }
 
     @Override
@@ -107,7 +124,8 @@ public class LostItemBlock extends BaseEntityBlock {
         BlockState candidate = this.defaultBlockState()
                 .setValue(FACE, face)
                 .setValue(FACING, horizontalFacing)
-                .setValue(HAS_ITEM, true);
+                .setValue(HAS_ITEM, true)
+                .setValue(LOWERED, face == AttachFace.FLOOR && onRoad(context.getLevel(), pos));
         if (this.canSurvive(candidate, context.getLevel(), pos)) {
             return candidate;
         }
@@ -121,8 +139,18 @@ public class LostItemBlock extends BaseEntityBlock {
 
     @Override
     public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+        VoxelShape shape = standingShape(state);
+        return state.getValue(LOWERED)
+                ? LOWERED_SHAPES.computeIfAbsent(shape, s -> s.move(0, -LOWERED_OFFSET, 0))
+                : shape;
+    }
+
+    private static VoxelShape standingShape(BlockState state) {
         if (state.getValue(SKIN) == LostItemSkin.FLOATING) {
             return floatingShape(state);
+        }
+        if (state.getValue(SKIN) == LostItemSkin.SHINE) {
+            return shineShape(state);
         }
         return switch (state.getValue(FACE)) {
             case FLOOR -> FLOOR_SHAPE;
@@ -133,6 +161,19 @@ public class LostItemBlock extends BaseEntityBlock {
                 case EAST -> WALL_EAST_SHAPE;
                 case WEST -> WALL_WEST_SHAPE;
                 default -> WALL_NORTH_SHAPE;
+            };
+        };
+    }
+
+    private static VoxelShape shineShape(BlockState state) {
+        return switch (state.getValue(FACE)) {
+            case FLOOR -> SHINE_FLOOR_SHAPE;
+            case CEILING -> SHINE_CEILING_SHAPE;
+            case WALL -> switch (state.getValue(FACING)) {
+                case SOUTH -> SHINE_WALL_SOUTH_SHAPE;
+                case EAST -> SHINE_WALL_EAST_SHAPE;
+                case WEST -> SHINE_WALL_WEST_SHAPE;
+                default -> SHINE_WALL_NORTH_SHAPE;
             };
         };
     }
@@ -149,14 +190,27 @@ public class LostItemBlock extends BaseEntityBlock {
         Direction supportDirection = supportDirection(state);
         BlockPos supportPos = pos.relative(supportDirection.getOpposite());
         BlockState supportState = level.getBlockState(supportPos);
-        return supportState.isFaceSturdy(level, supportPos, supportDirection);
+        return supportState.isFaceSturdy(level, supportPos, supportDirection)
+                || state.getValue(FACE) == AttachFace.FLOOR && onRoad(level, pos);
+    }
+
+    /** Whether the block below is a road-like floor, one pixel short of a full block. */
+    private static boolean onRoad(BlockGetter level, BlockPos pos) {
+        BlockPos below = pos.below();
+        return LoweredSupport.test(level.getBlockState(below), level, below);
     }
 
     @Override
     public BlockState updateShape(BlockState state, Direction direction, BlockState neighborState, LevelAccessor level, BlockPos pos, BlockPos neighborPos) {
         Direction supportDirection = supportDirection(state);
-        if (direction == supportDirection.getOpposite() && !this.canSurvive(state, level, pos)) {
-            return Blocks.AIR.defaultBlockState();
+        if (direction == supportDirection.getOpposite()) {
+            if (!this.canSurvive(state, level, pos)) {
+                return Blocks.AIR.defaultBlockState();
+            }
+            // Follows the floor below, so a road laid or removed under it moves it accordingly.
+            if (state.getValue(FACE) == AttachFace.FLOOR) {
+                return state.setValue(LOWERED, onRoad(level, pos));
+            }
         }
         return super.updateShape(state, direction, neighborState, level, pos, neighborPos);
     }
@@ -186,22 +240,50 @@ public class LostItemBlock extends BaseEntityBlock {
             return InteractionResult.CONSUME;
         }
 
-        UUID playerId = serverPlayer.getUUID();
-        boolean alreadyClaimed = blockEntity.hasClaimed(playerId);
+        // A skin claimed by stepping ignores the right-click (the creative GUI above still opens).
+        if (state.getValue(SKIN).claimedByStepping()) {
+            return InteractionResult.PASS;
+        }
 
-        if (alreadyClaimed) {
-            return InteractionResult.CONSUME;
+        claim(serverLevel, pos, state, serverPlayer, blockEntity);
+        return InteractionResult.CONSUME;
+    }
+
+    /**
+     * Step-claimed skins: anywhere in the block counts, whatever the shape. Creative and spectator players
+     * walk through without claiming, so builders do not empty the blocks they place.
+     */
+    @Override
+    protected void entityInside(BlockState state, Level level, BlockPos pos, Entity entity) {
+        if (!state.getValue(SKIN).claimedByStepping()
+                || !(level instanceof ServerLevel serverLevel)
+                || !(entity instanceof ServerPlayer serverPlayer)
+                || serverPlayer.isCreative() || serverPlayer.isSpectator()
+                || !(level.getBlockEntity(pos) instanceof LostItemBlockEntity blockEntity)) {
+            return;
+        }
+        claim(serverLevel, pos, state, serverPlayer, blockEntity);
+    }
+
+    private static void claim(ServerLevel level, BlockPos pos, BlockState state, ServerPlayer player,
+                              LostItemBlockEntity blockEntity) {
+        UUID playerId = player.getUUID();
+        if (blockEntity.hasClaimed(playerId)) {
+            return;
         }
 
         blockEntity.tryClaim(playerId);
-        giveOrDropFromLootTable(serverLevel, pos, serverPlayer, blockEntity);
-        // A floating ball and a sparkling item on the ground are two distinct Z-A tasks (plan 196, § 7.3).
-        if (state.getValue(SKIN) == LostItemSkin.FLOATING) {
-            maxigregrze.cobblesafari.objectives.ObjectivesManager.onFloatingBallOpened(serverPlayer);
+        giveOrDropFromLootTable(level, pos, player, blockEntity);
+        ClaimSounds.playPickup(player);
+        int claimed = maxigregrze.cobblesafari.init.ModStats.awardAndGet(player,
+                maxigregrze.cobblesafari.init.ModStats.LOST_ITEMS_CLAIMED);
+        maxigregrze.cobblesafari.advancement.ModCriteria.LOST_ITEM_CLAIMED.trigger(player, claimed);
+        // Sparkling items are their own Z-A task; floating balls are the Auspicious Pokeballs (plan 196, § 7.3).
+        if (state.getValue(SKIN) == LostItemSkin.SHINE) {
+            maxigregrze.cobblesafari.objectives.ObjectivesManager.onShiningItemGet(player);
         } else {
-            maxigregrze.cobblesafari.objectives.ObjectivesManager.onPokeballOpened(serverPlayer);
+            maxigregrze.cobblesafari.objectives.ObjectivesManager.onPokeballOpened(player);
         }
-        return InteractionResult.CONSUME;
     }
 
     private static void giveOrDropFromLootTable(ServerLevel level, BlockPos pos, ServerPlayer player, LostItemBlockEntity be) {
@@ -364,6 +446,7 @@ public class LostItemBlock extends BaseEntityBlock {
             case BURIED -> ModBlocks.LOST_ITEM_BURIED_ITEM;
             case RUBBLES -> ModBlocks.LOST_ITEM_RUBBLES_ITEM;
             case FLOATING -> ModBlocks.LOST_ITEM_FLOATING_ITEM;
+            case SHINE -> ModBlocks.LOST_ITEM_SHINE_ITEM;
         };
     }
 

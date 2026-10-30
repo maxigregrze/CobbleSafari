@@ -55,6 +55,25 @@
           "alphaLevel": "60-62"
         }
       ]
+    },
+    {
+      "id": "bulbasaur",
+      "weight": 0.1,
+      "rare": true,
+      "members": [
+        {
+          "pokemon": "venusaur",
+          "rarity": 20,
+          "level": "54-56",
+          "alphaLevel": "63-65"
+        },
+        {
+          "pokemon": "bulbasaur",
+          "rarity": 80,
+          "level": "50-52",
+          "alphaLevel": "59-61"
+        }
+      ]
     }
   ]
 }

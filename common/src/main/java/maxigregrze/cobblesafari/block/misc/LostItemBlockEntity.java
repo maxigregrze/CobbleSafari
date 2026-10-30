@@ -2,6 +2,7 @@ package maxigregrze.cobblesafari.block.misc;
 
 import maxigregrze.cobblesafari.config.MiscConfig;
 import maxigregrze.cobblesafari.init.ModBlockEntities;
+import maxigregrze.cobblesafari.network.LootDefaults;
 import maxigregrze.cobblesafari.network.OpenLostItemConfigPayload;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
@@ -228,7 +229,18 @@ public class LostItemBlockEntity extends BlockEntity {
                 this.getSkin().getSerializedName(),
                 this.pokeballId,
                 Math.max(1, this.lootItemStack.getCount()),
-                LostItemStackText.writeComponents(this.lootItemStack, registries)
+                LostItemStackText.writeComponents(this.lootItemStack, registries),
+                // The server's misc_config.json defaults, for the screen's Reset (action plan 198, F6).
+                new LootDefaults(
+                        MiscConfig.getLostItemPoolBerryId(),
+                        MiscConfig.getLostItemPoolCandyId(),
+                        MiscConfig.getLostItemPoolBallsId(),
+                        MiscConfig.getLostItemPoolTreasuresId(),
+                        MiscConfig.getLostItemMinRoll(),
+                        MiscConfig.getLostItemMaxRoll()),
+                MiscConfig.getLostItemLootTableId(),
+                MiscConfig.getLostItemLootItemId(),
+                MiscConfig.getLostItemMode()
         );
     }
 

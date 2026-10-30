@@ -4,8 +4,8 @@ import com.cobblemon.mod.common.CobblemonItems;
 import com.cobblemon.mod.common.item.PokeBallItem;
 import maxigregrze.cobblesafari.block.misc.LostItemBlockEntity;
 import maxigregrze.cobblesafari.block.misc.LostItemSkin;
-import maxigregrze.cobblesafari.config.MiscConfig;
 import maxigregrze.cobblesafari.network.LostItemResetClaimsPayload;
+import maxigregrze.cobblesafari.network.LootDefaults;
 import maxigregrze.cobblesafari.network.OpenLostItemConfigPayload;
 import maxigregrze.cobblesafari.network.SaveLostItemConfigPayload;
 import maxigregrze.cobblesafari.platform.Services;
@@ -112,7 +112,7 @@ public class LostItemConfigScreen extends CobbleSafariConfigScreen {
 
         int duoY = this.bottomRowY();
         this.addRenderableWidget(Button.builder(Component.translatable("gui.cobblesafari.lost_item.reset"), b -> {
-            this.applyFieldsFromMiscConfig();
+            this.applyDefaults();
             this.modeButton.setMessage(modeLabel());
             this.relayoutEditBoxes();
             this.focusFirstFieldForMode();
@@ -185,19 +185,21 @@ public class LostItemConfigScreen extends CobbleSafariConfigScreen {
         box.setVisible(true);
     }
 
-    private void applyFieldsFromMiscConfig() {
-        this.poolBerryBox.setValue(MiscConfig.getLostItemPoolBerryId());
-        this.poolCandyBox.setValue(MiscConfig.getLostItemPoolCandyId());
-        this.poolBallsBox.setValue(MiscConfig.getLostItemPoolBallsId());
-        this.poolTreasuresBox.setValue(MiscConfig.getLostItemPoolTreasuresId());
-        this.minRollBox.setValue(Integer.toString(MiscConfig.getLostItemMinRoll()));
-        this.maxRollBox.setValue(Integer.toString(MiscConfig.getLostItemMaxRoll()));
-        this.lostLootTableBox.setValue(MiscConfig.getLostItemLootTableId());
-        this.lootItemBox.setValue(MiscConfig.getLostItemLootItemId());
+    /** Reset: the server's defaults from the open payload, never the local config (action plan 198, F6). */
+    private void applyDefaults() {
+        LootDefaults defaults = this.initial.defaults();
+        this.poolBerryBox.setValue(defaults.poolBerryId());
+        this.poolCandyBox.setValue(defaults.poolCandyId());
+        this.poolBallsBox.setValue(defaults.poolBallsId());
+        this.poolTreasuresBox.setValue(defaults.poolTreasuresId());
+        this.minRollBox.setValue(Integer.toString(defaults.minRoll()));
+        this.maxRollBox.setValue(Integer.toString(defaults.maxRoll()));
+        this.lostLootTableBox.setValue(this.initial.defaultLootTableId());
+        this.lootItemBox.setValue(this.initial.defaultLootItemId());
         this.lootItemCountBox.setValue("1");
         this.lootItemDataBox.setValue("");
         this.ballIndex = this.indexOfBall(LostItemBlockEntity.DEFAULT_POKEBALL);
-        int m = MiscConfig.getLostItemMode();
+        int m = this.initial.defaultMode();
         this.displayMode = (m >= 0 && m <= 2) ? m : 0;
     }
 

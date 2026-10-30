@@ -13,6 +13,63 @@
           "alphaLevel": "71-73"
         }
       ]
+    },
+    {
+      "id": "cyndaquil",
+      "weight": 0.1,
+      "rare": true,
+      "members": [
+        {
+          "pokemon": "typhlosion hisuian",
+          "rarity": 20,
+          "level": "54-56",
+          "alphaLevel": "63-65"
+        },
+        {
+          "pokemon": "cyndaquil",
+          "rarity": 80,
+          "level": "50-52",
+          "alphaLevel": "59-61"
+        }
+      ]
+    },
+    {
+      "id": "rowlet",
+      "weight": 0.1,
+      "rare": true,
+      "members": [
+        {
+          "pokemon": "decidueye",
+          "rarity": 20,
+          "level": "54-56",
+          "alphaLevel": "63-65"
+        },
+        {
+          "pokemon": "rowlet",
+          "rarity": 80,
+          "level": "50-52",
+          "alphaLevel": "59-61"
+        }
+      ]
+    },
+    {
+      "id": "fuecoco",
+      "weight": 0.1,
+      "rare": true,
+      "members": [
+        {
+          "pokemon": "skeledirge",
+          "rarity": 20,
+          "level": "54-56",
+          "alphaLevel": "63-65"
+        },
+        {
+          "pokemon": "fuecoco",
+          "rarity": 80,
+          "level": "50-52",
+          "alphaLevel": "59-61"
+        }
+      ]
     }
   ]
 }

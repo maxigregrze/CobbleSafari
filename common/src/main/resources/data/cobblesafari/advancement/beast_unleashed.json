@@ -1,0 +1,16 @@
+{
+  "parent": "cobblesafari:ultra_megalopolis",
+  "display": {
+    "icon": { "id": "cobblemon:beast_ball" },
+    "title": { "translate": "advancements.cobblesafari.beast_unleashed.title" },
+    "description": { "translate": "advancements.cobblesafari.beast_unleashed.description" },
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "done": {"trigger": "cobblesafari:ultra_beast_caught", "conditions": {}}
+  },
+  "requirements": [["done"]]
+}

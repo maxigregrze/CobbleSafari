@@ -30,8 +30,8 @@ public final class WarpRideManager {
     private static final Map<UUID, WarpRideSession> SESSIONS = new ConcurrentHashMap<>();
 
     /**
-     * The parent run a ride is nested inside, or absent for the debug launcher. Parentless is a
-     * first-class state, not a stopgap: the ride runs, shows its outcome, and hands off to nothing.
+     * The parent run a ride is nested inside. The debug launcher that opened parentless rides is
+     * gone (action plan 200, section 11); a missing parent is still handled, and hands off to nothing.
      */
     public record ParentContext(String parentScopeKey, java.util.UUID parentInstanceId,
                                 net.minecraft.core.BlockPos devicePos,
@@ -66,12 +66,11 @@ public final class WarpRideManager {
         NO_DESTINATION
     }
 
-    /** The debug launcher's door: a ride with no parent, which hands off to nothing. */
-    public static OpenResult open(ServerPlayer player) {
-        return open(player, null);
-    }
-
-    /** The single entry point a caller uses to start a ride, with or without a parent context. */
+    /**
+     * The single entry point a caller uses to start a ride. Since action plan 200 (section 11) the
+     * only caller is the wormhole device, so a ride always has a parent; a null one is still
+     * tolerated and simply hands off to nothing.
+     */
     public static OpenResult open(ServerPlayer player, ParentContext parent) {
         MinecraftServer server = player.getServer();
         if (server == null) {
@@ -89,8 +88,12 @@ public final class WarpRideManager {
         UUID sessionId = UUID.randomUUID();
         long seed = player.level().getRandom().nextLong();
 
+        // Read before the body guard touches anything; the armour cannot change once the ride runs.
+        boolean recon = maxigregrze.cobblesafari.item.ultraloot.ReconArmorLogic.isFullSet(player);
+        boolean tutorial = !maxigregrze.cobblesafari.data.WarpRideTutorialSavedData.get(server)
+                .hasSeen(player.getUUID());
         WarpRideSession session = new WarpRideSession(
-                sessionId, player.getUUID(), seed, cfg, RiderBodyGuard.apply(player), now);
+                sessionId, player.getUUID(), seed, cfg, RiderBodyGuard.apply(player), now, recon, tutorial);
         SESSIONS.put(player.getUUID(), session);
         if (parent != null) {
             PARENTS.put(player.getUUID(), parent);
@@ -100,7 +103,7 @@ public final class WarpRideManager {
 
         Services.PLATFORM.sendPayloadToPlayer(player, new WarpRidePayloads.OpenPayload(
                 sessionId,
-                true,
+                tutorial,
                 cfg.minSpeed,
                 cfg.maxSpeed,
                 cfg.waveSpacingLy,
@@ -129,20 +132,9 @@ public final class WarpRideManager {
 
         syncDestinations(player);
         // No music yet: it starts with the intro, never over the tutorial page (see onRideStarted).
-        CobbleSafari.LOGGER.info("[WarpRide] Opened a ride for {} (session {})",
-                player.getName().getString(), sessionId);
+        CobbleSafari.LOGGER.info("[WarpRide] Opened a ride for {} (session {}, recon={}, tutorial={})",
+                player.getName().getString(), sessionId, recon, tutorial);
         return OpenResult.OK;
-    }
-
-    /**
-     * The debug command's door. It opens a <b>parentless</b> ride: no once-per-run entry is spent
-     * (there is no parent instance to carry one), no parent clock applies, and the outcome hands
-     * off to nothing. That mode is kept deliberately - {@code noBonusDistance} and the difficulty
-     * columns can only be chosen by playing, and making each tuning pass cost a full dungeon run
-     * would be a poor trade.
-     */
-    public static OpenResult openDebugSession(ServerPlayer player) {
-        return open(player, null);
     }
 
     public static ParentContext parentOf(UUID playerId) {
@@ -203,7 +195,7 @@ public final class WarpRideManager {
             return;
         }
         long now = server.getTickCount();
-        long watchdogTicks = UltraWarpRideConfig.get().sessionWatchdogSeconds * 20L;
+        UltraWarpRideConfig cfg = UltraWarpRideConfig.get();
 
         for (Map.Entry<UUID, WarpRideSession> entry : SESSIONS.entrySet()) {
             UUID playerId = entry.getKey();
@@ -219,6 +211,15 @@ public final class WarpRideManager {
             WarpRidePhase before = session.getPhase();
             if (pushParentClock(server, player, session)) {
                 sendEvent(player, session, WarpRidePayloads.EVENT_PANIC, -1, 0, 0, 0.0);
+            }
+            if (tutorialOutOfTime(player, session)) {
+                // The panic decay only covers the ride itself: a rider still reading the tutorial
+                // with too little parent time left is sent back. The device stays spent, and the
+                // tutorial is only marked seen on Ready, so it shows again next time (plan 201, D7).
+                player.sendSystemMessage(net.minecraft.network.chat.Component.translatable(
+                        "message.cobblesafari.warpride.tutorial_time_out"));
+                endSession(server, playerId, WarpRidePayloads.END_REASON_ABORTED);
+                continue;
             }
             session.tick(now);
             RiderBodyGuard.pin(player, session.getAnchor());
@@ -241,6 +242,15 @@ public final class WarpRideManager {
                 CobbleSafari.LOGGER.info("[WarpRide] {} took a portal: distance={} type={} tier={}",
                         player.getName().getString(), session.getOutcomeDistance(),
                         session.getOutcomeTypeId(), session.getOutcomeRank());
+                // Ultra Space ribbon: 1 % per portal tier (tier 0 never, tier 3 = 3 %).
+                maxigregrze.cobblesafari.mark.RibbonAwards.rollRibbon(player,
+                        maxigregrze.cobblesafari.mark.RibbonAwards.RIBBON_ULTRASPACE,
+                        Math.max(0, session.getOutcomeRank()) * 0.01);
+                if (session.getOutcomeDistance() > 0) {
+                    int totalLy = maxigregrze.cobblesafari.init.ModStats.addAndGet(player,
+                            maxigregrze.cobblesafari.init.ModStats.WARP_RIDE_DISTANCE, session.getOutcomeDistance());
+                    maxigregrze.cobblesafari.advancement.ModCriteria.WARP_RIDE_DISTANCE.trigger(player, totalLy);
+                }
                 startHandoff(server, player, session);
             }
 
@@ -254,13 +264,34 @@ public final class WarpRideManager {
                 sendState(player, session, now);
             }
 
-            if (now - session.getLastActivityTick() > watchdogTicks) {
+            // Reading the tutorial sends nothing, and thirteen pages outlast the ride's own watchdog.
+            int watchdogSeconds = session.getPhase() == WarpRidePhase.AWAITING_READY
+                    ? cfg.tutorialWatchdogSeconds
+                    : cfg.sessionWatchdogSeconds;
+            if (now - session.getLastActivityTick() > watchdogSeconds * 20L) {
                 CobbleSafari.LOGGER.warn("[WarpRide] Reaping session {} of {}: no activity for {}s",
-                        session.getSessionId(), player.getName().getString(),
-                        UltraWarpRideConfig.get().sessionWatchdogSeconds);
+                        session.getSessionId(), player.getName().getString(), watchdogSeconds);
                 endSession(server, playerId, WarpRidePayloads.END_REASON_ABORTED);
             }
         }
+    }
+
+    /**
+     * {@code true} while the tutorial is up and the parent session is at or below
+     * {@code ultraWormholeMinParentSeconds}, the credit needed to open a device.
+     */
+    private static boolean tutorialOutOfTime(ServerPlayer player, WarpRideSession session) {
+        if (session.getPhase() != WarpRidePhase.AWAITING_READY || !session.isTutorialShown()) {
+            return false;
+        }
+        ParentContext parent = PARENTS.get(player.getUUID());
+        if (parent == null) {
+            return false;
+        }
+        maxigregrze.cobblesafari.data.PlayerTimerData data = maxigregrze.cobblesafari.manager.TimerManager.session(
+                player, maxigregrze.cobblesafari.data.TimerScope.parse(parent.parentScopeKey()));
+        int remaining = data == null ? 0 : data.getRemainingTicks();
+        return remaining <= maxigregrze.cobblesafari.config.MiscConfig.getUltraWormholeMinParentSeconds() * 20;
     }
 
     /**

@@ -3,7 +3,7 @@
   "tags": [
     "trainerspokemon"
   ],
-  "given": "petilil level=1 form=hisui originaltrainertype=npc originaltrainer=Arezu",
+  "given": "petilil level=1 region_bias=hisui originaltrainertype=npc originaltrainer=Arezu",
   "givenMarks": [
     "cobblemon:ribbon_partner"
   ],

@@ -3,13 +3,13 @@
   "tags": [
     "trainerspokemon"
   ],
-  "given": "rockruff level=1 form=midnight originaltrainertype=npc originaltrainer=Olivia",
+  "given": "rockruff level=1 originaltrainertype=npc originaltrainer=Olivia",
   "givenMarks": [
     "cobblemon:ribbon_partner"
   ],
   "givenActiveMark": "cobblemon:ribbon_partner",
   "wish": {
-    "species": "lycanroc form=midnight",
+    "species": "lycanroc",
     "levelBucket": 9,
     "gender": "any",
     "shiny": "any"

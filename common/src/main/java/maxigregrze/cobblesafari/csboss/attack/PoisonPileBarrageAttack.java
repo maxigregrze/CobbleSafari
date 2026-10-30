@@ -25,7 +25,7 @@ public class PoisonPileBarrageAttack implements CsBossAttack {
     private static final int FIRE_DELAY = 16;
     private static final int FLIGHT_TICKS = 30;
     private static final double ARC_HEIGHT = 6.0;
-    private static final float PROJECTILE_DAMAGE = 8.0F;
+    private static final float PROJECTILE_DAMAGE = 3.0F; // base 3 (plan 199)
     private static final int DURATION = 240;
 
     private final String id;
@@ -99,7 +99,7 @@ public class PoisonPileBarrageAttack implements CsBossAttack {
 
     private void spawnWave(ServerLevel level, BossBattleSession session) {
         Wave w = new Wave(tick);
-        double floorY = session.getTriggerPos().getY();
+        double floorY = session.getFloorY();
         for (ServerPlayer p : session.aliveParticipants(level)) {
             Vec3 target = new Vec3(p.getX(), floorY, p.getZ());
             AttackShadowEntity shadow = AttackShadowEntity.spawn(level,
@@ -113,7 +113,7 @@ public class PoisonPileBarrageAttack implements CsBossAttack {
 
     private void fireWave(ServerLevel level, BossBattleSession session, CsBossEntity boss, Wave w) {
         boss.triggerAttackAnimation();
-        Vec3 origin = new Vec3(boss.getX(), session.getTriggerPos().getY() + 1.5, boss.getZ());
+        Vec3 origin = new Vec3(boss.getX(), session.getFloorY() + 1.5, boss.getZ());
         for (int i = 0; i < w.targets.size(); i++) {
             Vec3 target = w.targets.get(i);
             AttackPileProjectileEntity projectile = AttackPileProjectileEntity.spawn(

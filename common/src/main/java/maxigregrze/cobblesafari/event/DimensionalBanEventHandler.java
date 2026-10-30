@@ -219,6 +219,22 @@ public class DimensionalBanEventHandler {
         }
     }
 
+    /**
+     * Ends any glide inside a dimension where forbidElytra is active (action plan 198, § 15). The
+     * start is already refused by {@code PlayerElytraRestrictionMixin}; this catches a player who
+     * arrives mid-glide and any mod that opens wings another way. Every tick, unlike the mount
+     * check: a glide gains distance fast, and {@code isFallFlying} is a flag read.
+     * {@code stopFallFlying} toggles the shared flag, which forces it back to the client.
+     */
+    public static void tickElytraEnforcement(MinecraftServer server) {
+        for (ServerPlayer player : server.getPlayerList().getPlayers()) {
+            if (player.isFallFlying() && !BannedItemsManager.isElytraAllowed(player.level().dimension())) {
+                player.stopFallFlying();
+                player.displayClientMessage(Component.translatable("cobblesafari.ban.elytra_banned"), true);
+            }
+        }
+    }
+
     public static void registerCobblemonEvents() {
         registerBattleStartBan();
         registerSendOutBan();

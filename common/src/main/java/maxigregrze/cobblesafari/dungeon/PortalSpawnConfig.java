@@ -36,6 +36,12 @@ public class PortalSpawnConfig {
     private static final String DUNGEON_DISTORTION_ID = "dungeon_distortion";
     private static final String DUNGEON_MEGALOPOLIS_ID = "dungeon_megalopolis";
     private static final String DUNGEON_PARIS_ID = "dungeon_paris";
+    /** Default spawn weights of the portal wheel, also the fallback of {@link DungeonDimensions}. */
+    static final int DUNGEON_UNDERGROUND_WEIGHT = 3;
+    static final int DUNGEON_JUMP_WEIGHT = 2;
+    static final int DUNGEON_DISTORTION_WEIGHT = 1;
+    static final int DUNGEON_MEGALOPOLIS_WEIGHT = 2;
+    static final int DUNGEON_PARIS_WEIGHT = 3;
     private static final String DEFAULT_ALLOWED_DIMENSION = "minecraft:overworld";
     private static final List<String> DEFAULT_ALLOWED_DIMENSIONS = List.of(DEFAULT_ALLOWED_DIMENSION);
 
@@ -77,11 +83,22 @@ public class PortalSpawnConfig {
     private List<DungeonDimensionEntry> dimensions = new ArrayList<>();
 
     public PortalSpawnConfig() {
-        dimensions.add(new DungeonDimensionEntry(DUNGEON_UNDERGROUND_ID, true, 1));
-        dimensions.add(new DungeonDimensionEntry(DUNGEON_JUMP_ID, true, 1));
-        dimensions.add(new DungeonDimensionEntry(DUNGEON_DISTORTION_ID, true, 1));
-        dimensions.add(new DungeonDimensionEntry(DUNGEON_MEGALOPOLIS_ID, true, 1));
-        dimensions.add(new DungeonDimensionEntry(DUNGEON_PARIS_ID, true, 1));
+        dimensions.add(new DungeonDimensionEntry(DUNGEON_UNDERGROUND_ID, true, DUNGEON_UNDERGROUND_WEIGHT));
+        dimensions.add(new DungeonDimensionEntry(DUNGEON_JUMP_ID, true, DUNGEON_JUMP_WEIGHT));
+        dimensions.add(new DungeonDimensionEntry(DUNGEON_DISTORTION_ID, true, DUNGEON_DISTORTION_WEIGHT));
+        dimensions.add(new DungeonDimensionEntry(DUNGEON_MEGALOPOLIS_ID, true, DUNGEON_MEGALOPOLIS_WEIGHT));
+        dimensions.add(new DungeonDimensionEntry(DUNGEON_PARIS_ID, true, DUNGEON_PARIS_WEIGHT));
+    }
+
+    private static int defaultWeightOf(String dungeonId) {
+        return switch (dungeonId) {
+            case DUNGEON_UNDERGROUND_ID -> DUNGEON_UNDERGROUND_WEIGHT;
+            case DUNGEON_JUMP_ID -> DUNGEON_JUMP_WEIGHT;
+            case DUNGEON_DISTORTION_ID -> DUNGEON_DISTORTION_WEIGHT;
+            case DUNGEON_MEGALOPOLIS_ID -> DUNGEON_MEGALOPOLIS_WEIGHT;
+            case DUNGEON_PARIS_ID -> DUNGEON_PARIS_WEIGHT;
+            default -> -1;
+        };
     }
 
     /**
@@ -91,7 +108,8 @@ public class PortalSpawnConfig {
      *   <li>v1: configurations written before the Bell Tower dungeon existed carry
      *   {@code dungeon_jump: isEnabled = false}, a value that expressed the absence of the dungeon and
      *   not a server owner's choice. It is lifted once.</li>
-     *   <li>v2: the portal notification becomes opt-in (action plan 188, P1).</li>
+     *   <li>v2: the portal notification becomes opt-in (action plan 188, P1), and the built-in
+     *   dungeons' spawn weights are reset to the current defaults.</li>
      * </ul>
      */
     private static void migrateConfigVersion() {
@@ -109,6 +127,14 @@ public class PortalSpawnConfig {
         if (INSTANCE.configVersion < 2) {
             INSTANCE.enableNotification = false;
             CobbleSafari.LOGGER.info("dungeon_spawn_config.json migrated to v2: portal notification disabled by default");
+            for (DungeonDimensionEntry entry : INSTANCE.dimensions) {
+                int defaultWeight = defaultWeightOf(entry.getDimensionId());
+                if (defaultWeight >= 0 && entry.getSpawnWeight() != defaultWeight) {
+                    entry.setSpawnWeight(defaultWeight);
+                    CobbleSafari.LOGGER.info("dungeon_spawn_config.json migrated to v2: {} spawnWeight set to {}",
+                            entry.getDimensionId(), defaultWeight);
+                }
+            }
         }
         INSTANCE.configVersion = CURRENT_CONFIG_VERSION;
     }
@@ -213,13 +239,13 @@ public class PortalSpawnConfig {
         if (INSTANCE == null) return;
 
         boolean modified = false;
-        modified |= ensureDimensionConfig(DUNGEON_UNDERGROUND_ID, true, 1);
-        modified |= ensureDimensionConfig(DUNGEON_JUMP_ID, true, 1);
-        modified |= ensureDimensionConfig(DUNGEON_DISTORTION_ID, true, 1);
+        modified |= ensureDimensionConfig(DUNGEON_UNDERGROUND_ID, true, DUNGEON_UNDERGROUND_WEIGHT);
+        modified |= ensureDimensionConfig(DUNGEON_JUMP_ID, true, DUNGEON_JUMP_WEIGHT);
+        modified |= ensureDimensionConfig(DUNGEON_DISTORTION_ID, true, DUNGEON_DISTORTION_WEIGHT);
         // dungeon_ultraspace is deliberately absent: this file is the Hoopa portal wheel, and an
         // "enabled" entry for a sub-dungeon would be an invitation to turn it on (183, section 3.2).
-        modified |= ensureDimensionConfig(DUNGEON_MEGALOPOLIS_ID, true, 1);
-        modified |= ensureDimensionConfig(DUNGEON_PARIS_ID, true, 1);
+        modified |= ensureDimensionConfig(DUNGEON_MEGALOPOLIS_ID, true, DUNGEON_MEGALOPOLIS_WEIGHT);
+        modified |= ensureDimensionConfig(DUNGEON_PARIS_ID, true, DUNGEON_PARIS_WEIGHT);
 
         if (modified) {
             save();
@@ -355,16 +381,27 @@ public class PortalSpawnConfig {
         return v != null && v;
     }
 
+    // Clamped so a hand-edited config (negative min, max <= min) can never reach Random.nextInt(<= 0).
     public static int getSpawnRadiusMin() {
-        return getInstance().spawnRadiusMin;
+        return Math.max(0, getInstance().spawnRadiusMin);
     }
 
     public static int getSpawnRadiusMax() {
-        return getInstance().spawnRadiusMax;
+        return Math.max(getSpawnRadiusMin() + 1, getInstance().spawnRadiusMax);
     }
 
     public static boolean isEnabled() {
         return getInstance().enabled;
+    }
+
+    /** Natural portal spawning on or off; the caller saves (action plan 198, section 3.3). */
+    public static void setEnabled(boolean enabled) {
+        getInstance().enabled = enabled;
+    }
+
+    /** Chat notification of portal spawns on or off; the caller saves (plan 198, section 3.3). */
+    public static void setNotificationEnabled(boolean enabled) {
+        getInstance().enableNotification = enabled;
     }
 
     public static float getSpawnChance() {

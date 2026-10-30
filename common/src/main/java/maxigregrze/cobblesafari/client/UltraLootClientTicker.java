@@ -11,19 +11,20 @@ import net.minecraft.world.phys.Vec3;
 /** Client tick entry point of the Ultra Space loot (action plan 192), called by both loaders. */
 public final class UltraLootClientTicker {
 
+    // Public: the warp ride screen draws the same trail on its rider (action plan 200, section 4.2).
     /** Backpack nozzle, relative to a gliding player: behind along the flight, up on the back. */
-    private static final double NOZZLE_BACK = 0.35;
-    private static final double NOZZLE_UP = 0.4;
+    public static final double NOZZLE_BACK = 0.35;
+    public static final double NOZZLE_UP = 0.4;
     /**
      * Bottom edge of each spread wing: further back than the nozzle, out to the side. Tuned in game:
      * side distance doubled (0.6 → 1.2), raised by a third of the former side distance (0.3 → 0.5),
      * then moved 0.3 forward, towards the head (0.7 → 0.4).
      */
-    private static final double WING_TIP_BACK = 0.4;
-    private static final double WING_TIP_SIDE = 1.2;
-    private static final double WING_TIP_UP = 0.5;
+    public static final double WING_TIP_BACK = 0.4;
+    public static final double WING_TIP_SIDE = 1.2;
+    public static final double WING_TIP_UP = 0.5;
     private static final double TRAIL_SPEED = 0.08;
-    private static final float[] WING_TRAIL_RGB = {0.35f, 0.65f, 1.0f};
+    public static final float[] WING_TRAIL_RGB = {0.35f, 0.65f, 1.0f};
 
     private UltraLootClientTicker() {}
 

@@ -40,8 +40,17 @@ public class CobbleSafariMixinPlugin implements IMixinConfigPlugin {
     /** Pivot class of Constant Music, shared by its Fabric and NeoForge modules. */
     private static final String CONSTANT_MUSIC_CLASS = "com.odinokland.constantmusic.common.CommonClass";
 
+    /** Iris compat mixins: only applied when Iris is actually present (action plan 197, section 2.3). */
+    private static final Set<String> IRIS_MIXIN_CLASSES = Set.of(
+            "maxigregrze.cobblesafari.mixin.client.IrisCurrentDimensionMixin"
+    );
+
+    /** Iris's entry class file, shared by its Fabric and NeoForge builds. */
+    private static final String IRIS_CLASS_FILE = "net/irisshaders/iris/Iris.class";
+
     private boolean jigsawMixinsEnabled = true;
     private boolean constantMusicPresent = false;
+    private boolean irisPresent = false;
 
     @Override
     public void onLoad(String mixinPackage) {
@@ -59,6 +68,13 @@ public class CobbleSafariMixinPlugin implements IMixinConfigPlugin {
         constantMusicPresent = isClassPresent(CONSTANT_MUSIC_CLASS);
         if (constantMusicPresent) {
             LOGGER.info("Detected Constant Music, enabling CobbleSafari MusicManager suppression mixin (csmusic would otherwise fight its zero-delay music restart)");
+        }
+
+        // Looked up as a resource, never loaded: Iris is the target of IrisCurrentDimensionMixin, and
+        // loading it here would define it before that mixin could be applied.
+        irisPresent = CobbleSafariMixinPlugin.class.getClassLoader().getResource(IRIS_CLASS_FILE) != null;
+        if (irisPresent) {
+            LOGGER.info("Detected Iris, enabling CobbleSafari End-style dimension mixin for shader packs");
         }
     }
 
@@ -83,6 +99,9 @@ public class CobbleSafariMixinPlugin implements IMixinConfigPlugin {
         }
         if (CONSTANT_MUSIC_MIXIN_CLASSES.contains(mixinClassName)) {
             return constantMusicPresent;
+        }
+        if (IRIS_MIXIN_CLASSES.contains(mixinClassName)) {
+            return irisPresent;
         }
         return true;
     }

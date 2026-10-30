@@ -1,7 +1,7 @@
 {
   "parent": "cobblesafari:ring_a_ding",
   "display": {
-    "icon": { "id": "minecraft:feather" },
+    "icon": { "id": "cobblesafari:whirlwind" },
     "title": { "translate": "advancements.cobblesafari.up_and_downs.title" },
     "description": { "translate": "advancements.cobblesafari.up_and_downs.description" },
     "frame": "task",

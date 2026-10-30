@@ -3,6 +3,7 @@ package maxigregrze.cobblesafari.block.misc;
 import maxigregrze.cobblesafari.config.MiscConfig;
 import maxigregrze.cobblesafari.init.ModBlockEntities;
 import maxigregrze.cobblesafari.init.ModBlocks;
+import maxigregrze.cobblesafari.network.LootDefaults;
 import maxigregrze.cobblesafari.network.OpenAuspiciousPokeballConfigPayload;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
@@ -120,32 +121,43 @@ public class AuspiciousPokeballBlockEntity extends BlockEntity {
     }
 
     private void applyPlacementDefaults() {
-        switch (this.miscKindForDefaults()) {
-            case GOLD -> {
-                this.poolBerryId = MiscConfig.getAuspiciousPokeballGoldPoolBerryId();
-                this.poolCandyId = MiscConfig.getAuspiciousPokeballGoldPoolCandyId();
-                this.poolBallsId = MiscConfig.getAuspiciousPokeballGoldPoolBallsId();
-                this.poolTreasuresId = MiscConfig.getAuspiciousPokeballGoldPoolTreasuresId();
-                this.minRoll = MiscConfig.getAuspiciousPokeballGoldMinRoll();
-                this.maxRoll = MiscConfig.getAuspiciousPokeballGoldMaxRoll();
-            }
-            case SMALL -> {
-                this.poolBerryId = MiscConfig.getAuspiciousPokeballSmallPoolBerryId();
-                this.poolCandyId = MiscConfig.getAuspiciousPokeballSmallPoolCandyId();
-                this.poolBallsId = MiscConfig.getAuspiciousPokeballSmallPoolBallsId();
-                this.poolTreasuresId = MiscConfig.getAuspiciousPokeballSmallPoolTreasuresId();
-                this.minRoll = MiscConfig.getAuspiciousPokeballSmallMinRoll();
-                this.maxRoll = MiscConfig.getAuspiciousPokeballSmallMaxRoll();
-            }
-            case STANDARD -> {
-                this.poolBerryId = MiscConfig.getAuspiciousPokeballPoolBerryId();
-                this.poolCandyId = MiscConfig.getAuspiciousPokeballPoolCandyId();
-                this.poolBallsId = MiscConfig.getAuspiciousPokeballPoolBallsId();
-                this.poolTreasuresId = MiscConfig.getAuspiciousPokeballPoolTreasuresId();
-                this.minRoll = MiscConfig.getAuspiciousPokeballMinRoll();
-                this.maxRoll = MiscConfig.getAuspiciousPokeballMaxRoll();
-            }
-        }
+        LootDefaults defaults = this.configDefaults();
+        this.poolBerryId = defaults.poolBerryId();
+        this.poolCandyId = defaults.poolCandyId();
+        this.poolBallsId = defaults.poolBallsId();
+        this.poolTreasuresId = defaults.poolTreasuresId();
+        this.minRoll = defaults.minRoll();
+        this.maxRoll = defaults.maxRoll();
+    }
+
+    /**
+     * This variant's {@code misc_config.json} defaults. Read on the server: the config screen gets
+     * them in its open payload for Reset (action plan 198, F6).
+     */
+    protected LootDefaults configDefaults() {
+        return switch (this.miscKindForDefaults()) {
+            case GOLD -> new LootDefaults(
+                    MiscConfig.getAuspiciousPokeballGoldPoolBerryId(),
+                    MiscConfig.getAuspiciousPokeballGoldPoolCandyId(),
+                    MiscConfig.getAuspiciousPokeballGoldPoolBallsId(),
+                    MiscConfig.getAuspiciousPokeballGoldPoolTreasuresId(),
+                    MiscConfig.getAuspiciousPokeballGoldMinRoll(),
+                    MiscConfig.getAuspiciousPokeballGoldMaxRoll());
+            case SMALL -> new LootDefaults(
+                    MiscConfig.getAuspiciousPokeballSmallPoolBerryId(),
+                    MiscConfig.getAuspiciousPokeballSmallPoolCandyId(),
+                    MiscConfig.getAuspiciousPokeballSmallPoolBallsId(),
+                    MiscConfig.getAuspiciousPokeballSmallPoolTreasuresId(),
+                    MiscConfig.getAuspiciousPokeballSmallMinRoll(),
+                    MiscConfig.getAuspiciousPokeballSmallMaxRoll());
+            case STANDARD -> new LootDefaults(
+                    MiscConfig.getAuspiciousPokeballPoolBerryId(),
+                    MiscConfig.getAuspiciousPokeballPoolCandyId(),
+                    MiscConfig.getAuspiciousPokeballPoolBallsId(),
+                    MiscConfig.getAuspiciousPokeballPoolTreasuresId(),
+                    MiscConfig.getAuspiciousPokeballMinRoll(),
+                    MiscConfig.getAuspiciousPokeballMaxRoll());
+        };
     }
 
     public boolean hasClaimed(UUID playerId) {
@@ -244,7 +256,8 @@ public class AuspiciousPokeballBlockEntity extends BlockEntity {
                 this.poolBallsId,
                 this.poolTreasuresId,
                 this.minRoll,
-                this.maxRoll
+                this.maxRoll,
+                this.configDefaults()
         );
     }
 

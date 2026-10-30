@@ -41,6 +41,10 @@ public class SafariConfig {
     private int balloonSafariItemMinDrop = 4;
     private int balloonSafariItemMaxDrop = 8;
     private double balloonSafariSpawnMultiplier = 1.0;
+    /** Safari exit drones (action plan 198, part G): they replace the removed /safariexit command. */
+    private boolean safariDroneEnabled = true;
+    /** Times the balloon's base spawn chance; drones are the way out, so they come more often. */
+    private double safariDroneSpawnMultiplier = 10.0;
     private boolean kickOnReset = true;
     private boolean allowGracePeriod = true;
     private int gracePeriodDuration = 300;
@@ -209,6 +213,16 @@ public class SafariConfig {
     public static double getBalloonSafariSpawnMultiplier() {
         if (INSTANCE == null) return 1.0;
         return Math.max(0.0, INSTANCE.balloonSafariSpawnMultiplier);
+    }
+
+    public static boolean isSafariDroneEnabled() {
+        if (INSTANCE == null) return true;
+        return INSTANCE.safariDroneEnabled;
+    }
+
+    public static double getSafariDroneSpawnMultiplier() {
+        if (INSTANCE == null) return 10.0;
+        return Math.max(0.0, INSTANCE.safariDroneSpawnMultiplier);
     }
 
     public static boolean isKickOnReset() {

@@ -1,10 +1,15 @@
 package maxigregrze.cobblesafari.csboss.attack;
 
+import maxigregrze.cobblesafari.block.csboss.BattleReactiveBlock;
+import maxigregrze.cobblesafari.block.csboss.CsBossMimicBlock;
+import maxigregrze.cobblesafari.block.csboss.CsBossTileBlockEntity;
 import maxigregrze.cobblesafari.csboss.BossBattleSession;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.ArrayList;
@@ -21,16 +26,16 @@ public final class CsBossSurfaceScanner {
 
     private CsBossSurfaceScanner() {}
 
-    /** Surfaces of the arena block-detection square, anchored to trigger block Y ± {@link #DEFAULT_Y_TOLERANCE}. */
+    /** Surfaces of the arena block-detection square, anchored to the detected floor Y ± {@link #DEFAULT_Y_TOLERANCE}. */
     public static List<BlockPos> scanSurface(ServerLevel level, BossBattleSession session) {
         int half = (int) Math.ceil(session.getBlockRadius());
         return scanSurfaceSquare(level, session.getArenaCenter(), half,
-                session.getTriggerPos().getY(), DEFAULT_Y_TOLERANCE);
+                session.getFloorY(), DEFAULT_Y_TOLERANCE);
     }
 
     /**
-     * For each column of the square ({@code |dx| ≤ radius, |dz| ≤ radius}), the first solid block
-     * (from the top) whose block above is replaceable, with {@code y ∈ [triggerY−tol, triggerY+tol]}.
+     * For each column of the square ({@code |dx| ≤ radius, |dz| ≤ radius}), the first ground block
+     * (from the top, see {@link #isSurface}) whose cell above can hold a tile, with {@code y ∈ [triggerY−tol, triggerY+tol]}.
      */
     public static List<BlockPos> scanSurfaceSquare(ServerLevel level, Vec3 center, int radius,
                                                    int triggerY, int yTolerance) {
@@ -55,8 +60,8 @@ public final class CsBossSurfaceScanner {
     }
 
     /**
-     * For each column of the disk ({@code dx²+dz² ≤ radius²}), the first solid block (from the top)
-     * whose block above is replaceable, with {@code y ∈ [triggerY−tol, triggerY+tol]}.
+     * For each column of the disk ({@code dx²+dz² ≤ radius²}), the first ground block (from the top)
+     * whose cell above can hold a tile, with {@code y ∈ [triggerY−tol, triggerY+tol]}.
      */
     public static List<BlockPos> scanSurface(ServerLevel level, Vec3 center, int radius, int triggerY, int yTolerance) {
         List<BlockPos> out = new ArrayList<>();
@@ -84,8 +89,8 @@ public final class CsBossSurfaceScanner {
     }
 
     /**
-     * Surface of a column ({@code x},{@code z}): first solid block from the top, whose
-     * block above is replaceable, with {@code y ∈ [triggerY−tol, triggerY+tol]} ({@code null} otherwise).
+     * Surface of a column ({@code x},{@code z}): first ground block from the top, whose
+     * cell above can hold a tile, with {@code y ∈ [triggerY−tol, triggerY+tol]} ({@code null} otherwise).
      */
     @org.jetbrains.annotations.Nullable
     public static BlockPos findSurfaceColumn(ServerLevel level, int x, int z, int triggerY, int yTolerance) {
@@ -99,22 +104,69 @@ public final class CsBossSurfaceScanner {
         return null;
     }
 
+    /**
+     * Ground block whose cell above can hold a tile (retours plan 199). Any block with a collision
+     * counts as ground, sturdy top or not (leaves, slabs, stairs...). Arena blocks are read in their
+     * fight state, so a mimic the opening wave has not reached yet still counts as the floor it is
+     * about to become - otherwise the scan falls through it onto whatever lies underneath.
+     */
     private static boolean isSurface(ServerLevel level, BlockPos p) {
-        BlockState s = level.getBlockState(p);
-        if (s.isAir() || !s.getFluidState().isEmpty() || !s.isFaceSturdy(level, p, Direction.UP)) {
+        BlockState s = inBattle(level.getBlockState(p));
+        if (s.isAir() || !s.getFluidState().isEmpty() || s.getCollisionShape(level, p).isEmpty()) {
             return false;
         }
-        BlockState above = level.getBlockState(p.above());
-        return above.isAir() || above.canBeReplaced();
+        BlockPos up = p.above();
+        BlockState above = inBattle(level.getBlockState(up));
+        return above.isAir() || above.canBeReplaced() || isDecoration(level, up, above) || isHiddenMimic(above);
     }
 
-    /** Places {@code state} above a surface if the cell is replaceable. */
+    /**
+     * Mimic block that is gone during the fight: still a block, so it would refuse a tile. The tile
+     * takes its place and gives it back (state and block entity data) when it expires.
+     */
+    private static boolean isHiddenMimic(BlockState state) {
+        return state.getBlock() instanceof CsBossMimicBlock && !CsBossMimicBlock.isSolid(inBattle(state));
+    }
+
+    private static BlockState inBattle(BlockState state) {
+        return state.getBlock() instanceof BattleReactiveBlock reactive ? reactive.battleState(state) : state;
+    }
+
+    /**
+     * Collision-free decoration a floor hazard may stand in for a while (leaf pile, flowers, torch...):
+     * the tile keeps it and puts it back when it expires ({@link CsBossTileBlockEntity}). Never a block
+     * entity, an arena block, a fluid, or half of a two-block plant (the other half would pop off).
+     */
+    private static boolean isDecoration(ServerLevel level, BlockPos pos, BlockState s) {
+        return !s.hasBlockEntity()
+                && !(s.getBlock() instanceof BattleReactiveBlock)
+                && s.getFluidState().isEmpty()
+                && !s.hasProperty(BlockStateProperties.DOUBLE_BLOCK_HALF)
+                && s.getCollisionShape(level, pos).isEmpty();
+    }
+
+    /**
+     * Places {@code state} above a surface if the cell is replaceable or holds a decoration; a tile
+     * placed this way remembers what it covered and restores it when it is removed.
+     */
     public static boolean placeOnSurface(ServerLevel level, BlockPos surface, BlockState state) {
         BlockPos pos = surface.above();
-        if (!level.getBlockState(pos).canBeReplaced()) {
+        BlockState current = level.getBlockState(pos);
+        boolean mimic = isHiddenMimic(current);
+        if (current.hasProperty(BlockStateProperties.DOUBLE_BLOCK_HALF)
+                || !(mimic || current.isAir() || current.canBeReplaced() || isDecoration(level, pos, current))) {
             return false;
         }
+        // Le mimic revient dans son état de combat, données comprises (bloc imité, mode).
+        BlockState replaced = mimic ? inBattle(current) : current;
+        CompoundTag data = null;
+        if (mimic && level.getBlockEntity(pos) instanceof BlockEntity be) {
+            data = be.saveWithoutMetadata(level.registryAccess());
+        }
         level.setBlockAndUpdate(pos, state);
+        if (!replaced.isAir() && level.getBlockEntity(pos) instanceof CsBossTileBlockEntity tile) {
+            tile.setReplaced(replaced, data);
+        }
         return true;
     }
 }

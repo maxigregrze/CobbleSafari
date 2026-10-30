@@ -86,6 +86,19 @@ public final class CsBossAttackRegistry {
         register("base_ground_2", () -> new GroundEruptionAttack("base_ground_2"));
         register("base_poison_2", () -> new PoisonPileBarrageAttack("base_poison_2"));
         register("base_ground_3", () -> new MudPileFieldAttack("base_ground_3"));
+        // Ho-Oh (plan 199)
+        register("base_fire_2", () -> new FireBlastAttack("base_fire_2"));
+        register("base_fire_3", () -> new OverheatAttack("base_fire_3"));
+        register("base_fire_4", () -> new FlamethrowerAttack("base_fire_4"));
+        register("base_flying_1", () -> new SkyAttackDiveAttack("base_flying_1"));
+        register("base_flying_2", () -> new AirSlashAttack("base_flying_2"));
+        register("base_flying_3", () -> new HurricaneAttack("base_flying_3"));
+        register("base_flying_4", () -> new WhirlwindChaseAttack("base_flying_4"));
+        register("jump_1", () -> new JumpBellsAttack("jump_1"));
+        register("jump_2", () -> new JumpBeastsAttack("jump_2"));
+        register("jump_3", () -> new JumpSacredFireAttack("jump_3"));
+        register("jump_4", () -> new JumpRainbowArcAttack("jump_4"));
+        register("jump_5", () -> new JumpFutureSightAttack("jump_5"));
 
         TYPE_POOLS.put("ghost", List.of("base_ghost_1", "base_ghost_2", "base_ghost_3", "base_ghost_4"));
         TYPE_POOLS.put("rock", List.of("base_rock_1", "base_rock_2", "base_rock_3", "base_rock_4"));
@@ -96,6 +109,8 @@ public final class CsBossAttackRegistry {
         TYPE_POOLS.put("poison", List.of("base_poison_1", "base_poison_2"));
         TYPE_POOLS.put("steel", List.of("base_steel_1"));
         TYPE_POOLS.put("normal", List.of("base_normal_1"));
+        TYPE_POOLS.put("fire", List.of("base_fire_1", "base_fire_2", "base_fire_3", "base_fire_4"));
+        TYPE_POOLS.put("flying", List.of("base_flying_1", "base_flying_2", "base_flying_3", "base_flying_4"));
     }
 
     public static void register(String id, Supplier<CsBossAttack> factory) {

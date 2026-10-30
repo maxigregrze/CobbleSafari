@@ -35,7 +35,7 @@ public class GroundWaveAttack implements CsBossAttack {
 
     /**
      * @param colorRgb ring color
-     * @param damage contact damage (scale 8–18, skill)
+     * @param damage contact damage (base 3–7, × damageMultiplier du boss - plan 199)
      * @param jumpInterval ticks between jumps/waves (50 = nominal; 25 = twice as fast)
      * @param applyPoison applies Poison on contact
      * @param applyKnockback applies radial knockback on contact
@@ -53,20 +53,20 @@ public class GroundWaveAttack implements CsBossAttack {
     }
 
     public static GroundWaveAttack water(String id) {
-        return new GroundWaveAttack(id, 0x3A8EE6, 10.0F, 50, false, true, "cobblemon:move.waterpulse.actor");
+        return new GroundWaveAttack(id, 0x3A8EE6, 4.0F, 50, false, true, "cobblemon:move.waterpulse.actor");
     }
 
     public static GroundWaveAttack poison(String id) {
-        return new GroundWaveAttack(id, 0x4C2C7B, 8.0F, 50, true, false, "cobblemon:move.sludgebomb.actor");
+        return new GroundWaveAttack(id, 0x4C2C7B, 3.0F, 50, true, false, "cobblemon:move.sludgebomb.actor");
     }
 
     public static GroundWaveAttack steel(String id) {
         // Steel: twice as fast (interval 25 ⇒ 2× jumps and waves).
-        return new GroundWaveAttack(id, 0x929292, 10.0F, 25, false, false, "cobblemon:move.ironhead.actor");
+        return new GroundWaveAttack(id, 0x929292, 4.0F, 25, false, false, "cobblemon:move.bodyslam.actor_1");
     }
 
     public static GroundWaveAttack normal(String id) {
-        return new GroundWaveAttack(id, 0xECECEC, 10.0F, 50, false, true, "cobblemon:move.stomp.actor");
+        return new GroundWaveAttack(id, 0xECECEC, 4.0F, 50, false, true, "cobblemon:move.bulldoze.actor");
     }
 
     public String id() {
@@ -87,7 +87,7 @@ public class GroundWaveAttack implements CsBossAttack {
             return;
         }
 
-        double floorY = session.getTriggerPos().getY();
+        double floorY = session.getFloorY();
         double hop = CsBossAttackLib.hopOffset(tick % jumpInterval, jumpInterval, JUMP_HEIGHT);
         boss.setPos(cx, floorY + hop, cz);
         boss.setDeltaMovement(Vec3.ZERO);

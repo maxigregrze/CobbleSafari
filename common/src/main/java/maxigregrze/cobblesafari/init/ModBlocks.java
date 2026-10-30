@@ -16,6 +16,7 @@ import maxigregrze.cobblesafari.block.distortion.DistortionFlowerBlock;
 import maxigregrze.cobblesafari.block.distortion.DistortionDoorBlock;
 import maxigregrze.cobblesafari.block.distortion.DistortionPortalBlock;
 import maxigregrze.cobblesafari.block.distortion.DistortionWeedBlock;
+import maxigregrze.cobblesafari.block.misc.HauntedMonitorBlock;
 import maxigregrze.cobblesafari.block.misc.IcicleBlock;
 import maxigregrze.cobblesafari.block.distortion.DistortionBoulderBlock;
 import maxigregrze.cobblesafari.block.base.GroundedModelBlock;
@@ -92,6 +93,7 @@ import maxigregrze.cobblesafari.block.trap.WindTrapBlock;
 import maxigregrze.cobblesafari.block.underground.UndergroundTimberBlock;
 import maxigregrze.cobblesafari.block.hyperspace.HyperspaceBarrierBlock;
 import maxigregrze.cobblesafari.block.hyperspace.ObstacleBlock;
+import maxigregrze.cobblesafari.block.hyperspace.ShardClusterBlock;
 import maxigregrze.cobblesafari.dungeon.hyperspace.obstacle.ObstacleKind;
 import maxigregrze.cobblesafari.block.base.ModelBushBlock;
 import maxigregrze.cobblesafari.block.hyperspace.HyperspaceDirectionalBlock;
@@ -250,6 +252,14 @@ public class ModBlocks {
                     .strength(0.0F)));
 
     /** In-flight mud cube ({@code base_ground_3}). Model only, no item. */
+    /** Boule de feu de base_fire_2 (PileKind.FIRE, plan 199 § 10.5). */
+    public static final Block ATTACK_FIRE_CUBE_DISPLAY = registerBlockWithoutItem("attack_fire_cube_display",
+            new Block(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.COLOR_ORANGE)
+                    .noCollission()
+                    .noOcclusion()
+                    .strength(0.0F)));
+
     public static final Block ATTACK_MUD_CUBE_DISPLAY = registerBlockWithoutItem("attack_mud_cube_display",
             new Block(BlockBehaviour.Properties.of()
                     .mapColor(MapColor.DIRT)
@@ -276,6 +286,34 @@ public class ModBlocks {
                     .noCollission(), 400, false));
 
     /** Trap electric field placed by {@code base_electric_2}. No creative item. */
+    /** Tuile « sol brûlant » des attaques Feu de Ho-Oh (plan 199 § 10.1). */
+    public static final Block CSBOSS_SCORCHED = registerBlockWithoutItem("csboss_scorched",
+            new maxigregrze.cobblesafari.block.csboss.CsBossScorchedTileBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.COLOR_ORANGE)
+                    .noCollission()
+                    .noOcclusion()
+                    .noLootTable()
+                    .strength(0.0F)
+                    .lightLevel(s -> s.getValue(maxigregrze.cobblesafari.block.csboss.CsBossTileBlock.ACTIVE) ? 8 : 2)));
+
+    /** Tuile « courant ascendant » de base_flying_3 (plan 199 § 10.1). */
+    public static final Block CSBOSS_UPDRAFT = registerBlockWithoutItem("csboss_updraft",
+            new maxigregrze.cobblesafari.block.csboss.CsBossUpdraftTileBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.COLOR_BLACK)
+                    .noCollission()
+                    .noOcclusion()
+                    .noLootTable()
+                    .strength(0.0F)));
+
+    /** Tuile « flaque / geyser d'eau » de Suicune (jump_2, retours plan 199). */
+    public static final Block CSBOSS_PUDDLE = registerBlockWithoutItem("csboss_puddle",
+            new maxigregrze.cobblesafari.block.csboss.CsBossPuddleTileBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.WATER)
+                    .noCollission()
+                    .noOcclusion()
+                    .noLootTable()
+                    .strength(0.0F)));
+
     public static final Block CSBOSS_ELECTRICITY = registerBlockWithoutItem("csboss_electricity",
             new CsBossElectricityBlock(BlockBehaviour.Properties.of()
                     .mapColor(MapColor.COLOR_YELLOW)
@@ -925,6 +963,8 @@ public class ModBlocks {
                     .sound(SoundType.STONE)
                     .noOcclusion()
                     .noCollission()
+                    // The shine glows (plan 196, section 7.9); the block light is shared, so it stays after a claim.
+                    .lightLevel(state -> state.getValue(LostItemBlock.SKIN) == LostItemSkin.SHINE ? 10 : 0)
             ));
 
     /**
@@ -935,6 +975,7 @@ public class ModBlocks {
     public static Item LOST_ITEM_BURIED_ITEM;
     public static Item LOST_ITEM_RUBBLES_ITEM;
     public static Item LOST_ITEM_FLOATING_ITEM;
+    public static Item LOST_ITEM_SHINE_ITEM;
 
     public static final Block LOST_ITEM_VISUAL = registerBlockWithoutItem("lost_item_visual",
             new LostItemVisualBlock(BlockBehaviour.Properties.of()
@@ -2134,6 +2175,17 @@ public class ModBlocks {
             new ObstacleBlock(obstacleProperties(MapColor.PLANT, SoundType.SWEET_BERRY_BUSH), ObstacleKind.BRAMBLES));
     public static final Block OBSTACLE_SLUDGE = registerBlock("obstacle_sludge",
             new ObstacleBlock(obstacleProperties(MapColor.COLOR_PURPLE, SoundType.MUD), ObstacleKind.SLUDGE));
+    // Mega Shard node: floor, wall or ceiling; any attacking move clears it (plan 196, § 8.8).
+    public static final Block OBSTACLE_SHARDCLUSTER = registerBlock("obstacle_shardcluster",
+            new ShardClusterBlock(obstacleProperties(MapColor.COLOR_LIGHT_BLUE, SoundType.AMETHYST_CLUSTER)));
+    // Storage block for 9 Mega Shards; also the bulk currency of the Quasartico Executive trader.
+    public static final Block MEGA_SHARD_BLOCK = registerBlock("mega_shard_block",
+            new Block(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.COLOR_LIGHT_BLUE)
+                    .strength(1.5f, 6.0f)
+                    .sound(SoundType.AMETHYST)
+                    .requiresCorrectToolForDrops()
+            ));
     // Paper on a wall: one of four layouts, breaks at once, page-turn sounds.
     public static final Block HYPERSPACE_POSTERS = registerBlock("hyperspace_posters",
             new HyperspacePosterBlock(BlockBehaviour.Properties.of().mapColor(MapColor.WOOL)
@@ -2789,6 +2841,19 @@ public class ModBlocks {
                     .noTerrainParticles()
                     .pushReaction(PushReaction.DESTROY)));
 
+    // --- haunted data monitor (plan 198, part I) ------------------------------------------
+    // A Cobblemon data monitor struck by lightning. No item: it only comes from a strike, and it
+    // drops a data monitor. The properties are Cobblemon's damaged monitor's, lit like its
+    // glitching screen.
+    public static final Block HAUNTED_MONITOR = registerBlockWithoutItem("haunted_monitor",
+            new HauntedMonitorBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.METAL)
+                    .sound(SoundType.METAL)
+                    .pushReaction(PushReaction.BLOCK)
+                    .requiresCorrectToolForDrops()
+                    .strength(5.0f, 6.0f)
+                    .lightLevel(state -> 10)));
+
     // --- Ultra Warp Dive props (plan 189) ----------------------------------------------
     // The minigame's objects as decorative blocks, kept for future CSBoss attacks: creative-only
     // (no loot), solid, glowing, floating. Shapes are in model pixels and overflow the cell on
@@ -3052,6 +3117,9 @@ public class ModBlocks {
         LOST_ITEM_BURIED_ITEM = Registry.register(BuiltInRegistries.ITEM,
                 ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, "lost_item_buried"),
                 new LostItemBlockItem(LOST_ITEM, new Item.Properties(), LostItemSkin.BURIED));
+        LOST_ITEM_SHINE_ITEM = Registry.register(BuiltInRegistries.ITEM,
+                ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, "lost_item_shine"),
+                new LostItemBlockItem(LOST_ITEM, new Item.Properties(), LostItemSkin.SHINE));
         LOST_ITEM_RUBBLES_ITEM = Registry.register(BuiltInRegistries.ITEM,
                 ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID, "lost_item"),
                 new LostItemBlockItem(LOST_ITEM, new Item.Properties(), LostItemSkin.RUBBLES));

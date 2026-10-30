@@ -13,6 +13,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 /**
  * Server configuration for the Wonder Trade pool ({@code wondertrade_settings.json}).
@@ -23,6 +24,12 @@ public class WonderTradeSettings {
     private static final Path CONFIG_PATH = CONFIG_DIR.resolve("wondertrade_settings.json");
 
     private static WonderTradeSettings INSTANCE;
+
+    /** Default pools the onboarding owns; it rewrites only these (action plan 198, section 8.4). */
+    private static final Set<String> ONBOARDING_POOL_IDS = Set.of(
+            "common", "common_vanilla", "legendaries", "legendaries_vanilla", "mythical", "ultrabeast", "paradox");
+    /** The managed pools always weigh this much together. */
+    private static final int ONBOARDING_POOL_TOTAL = 100;
 
     /** @deprecated legacy field kept only to migrate the value to {@code misc_config.json}. */
     @Deprecated
@@ -104,16 +111,44 @@ public class WonderTradeSettings {
         if (autoFillFromPools.isEmpty()) {
             // Vanilla-only pools by design: a fresh install without a species sidemod must never
             // roll one of the 174 Pokemon Cobblemon ships data for but has no model for.
-            addPool("common_vanilla", 98);
-            addPool("legendaries_vanilla", 2);
+            autoFillFromPools.add(pool("common_vanilla", 98));
+            autoFillFromPools.add(pool("legendaries_vanilla", 2));
         }
     }
 
-    private void addPool(String id, int w) {
+    private static WeightedPoolEntry pool(String id, int w) {
         WeightedPoolEntry e = new WeightedPoolEntry();
         e.groupId = id;
         e.weight = w;
-        autoFillFromPools.add(e);
+        return e;
+    }
+
+    /**
+     * Rewrites the onboarding-managed default pools; any other entry is kept, after them, with its
+     * weight. Events and pool groups are never touched (action plan 198, section 8.4).
+     */
+    public void applyOnboardingPools(MiscConfig.OnboardingState state) {
+        List<WeightedPoolEntry> pools = new ArrayList<>();
+        if (state.legendariesAndMythicals) {
+            pools.add(pool("legendaries", 2));
+            pools.add(pool("mythical", 1));
+        } else {
+            pools.add(pool("legendaries_vanilla", 2));
+        }
+        if (state.ultraBeasts) {
+            pools.add(pool("ultrabeast", 1));
+        }
+        if (state.paradox) {
+            pools.add(pool("paradox", 1));
+        }
+        int others = pools.stream().mapToInt(e -> e.weight).sum();
+        pools.add(0, pool(state.missingRegular ? "common" : "common_vanilla", ONBOARDING_POOL_TOTAL - others));
+        for (WeightedPoolEntry e : autoFillFromPools) {
+            if (e != null && !ONBOARDING_POOL_IDS.contains(e.groupId)) {
+                pools.add(e);
+            }
+        }
+        autoFillFromPools = pools;
     }
 
     private void validateAndFix() {

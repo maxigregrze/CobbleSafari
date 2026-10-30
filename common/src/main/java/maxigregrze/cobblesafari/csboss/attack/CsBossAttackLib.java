@@ -207,8 +207,38 @@ public final class CsBossAttackLib {
             if (p.getY() + p.getBbHeight() < baseY || p.getY() > baseY + height) {
                 continue;
             }
-            p.hurt(source, damage);
-            if (fireTicks > 0 && p.getRemainingFireTicks() < fireTicks) {
+            CsBossDamage.hurt(p, session, source, damage);
+            if (fireTicks > 0 && CsBossDamage.stillInFight(p, level) && p.getRemainingFireTicks() < fireTicks) {
+                p.setRemainingFireTicks(fireTicks);
+            }
+        }
+    }
+
+    /**
+     * Variante « une fois par colonne » (plan 199 § 2.5) : {@code alreadyHit} est tenu par l'appelant,
+     * un joueur n'y est frappé (dégâts + feu) qu'une seule fois.
+     */
+    public static void damagePlayersInColumnOnce(ServerLevel level, BossBattleSession session,
+                                                 double cx, double baseY, double cz,
+                                                 double radius, double height,
+                                                 net.minecraft.world.damagesource.DamageSource source,
+                                                 float damage, int fireTicks, java.util.Set<java.util.UUID> alreadyHit) {
+        double r2 = radius * radius;
+        for (ServerPlayer p : session.aliveParticipants(level)) {
+            if (alreadyHit.contains(p.getUUID())) {
+                continue;
+            }
+            double dx = p.getX() - cx;
+            double dz = p.getZ() - cz;
+            if (dx * dx + dz * dz > r2) {
+                continue;
+            }
+            if (p.getY() + p.getBbHeight() < baseY || p.getY() > baseY + height) {
+                continue;
+            }
+            alreadyHit.add(p.getUUID());
+            CsBossDamage.hurt(p, session, source, damage);
+            if (fireTicks > 0 && CsBossDamage.stillInFight(p, level) && p.getRemainingFireTicks() < fireTicks) {
                 p.setRemainingFireTicks(fireTicks);
             }
         }
@@ -230,8 +260,8 @@ public final class CsBossAttackLib {
                 continue;
             }
             float factor = (float) (1.0 - Math.sqrt(d2) / radius);
-            float dmg = Math.max(1.0F, maxDamage * factor);
-            p.hurt(CsBossDamage.bullet(level), dmg);
+            float dmg = Math.max(1.0F, maxDamage * factor); // plancher avant multiplicateur
+            CsBossDamage.hurt(p, session, dmg);
         }
     }
 
@@ -306,7 +336,7 @@ public final class CsBossAttackLib {
         net.minecraft.world.phys.AABB swept = box.minmax(box.move(0.0, fromY - toY, 0.0));
         for (ServerPlayer p : session.aliveParticipants(level)) {
             if (p.getBoundingBox().intersects(swept)) {
-                p.hurt(CsBossDamage.bullet(level), damage);
+                CsBossDamage.hurt(p, session, damage);
                 return true;
             }
         }
@@ -325,6 +355,37 @@ public final class CsBossAttackLib {
         for (ServerPlayer p : session.aliveParticipants(level)) {
             p.addEffect(new net.minecraft.world.effect.MobEffectInstance(effect, durationTicks, amplifier));
         }
+    }
+
+    // --- Ho-Oh helpers (plan 199 § 10.6-10.7) ------------------------------------
+
+    /**
+     * Distance de {@code origin} au bord du carré d'arène (demi-côté {@code half}, centré sur
+     * {@code center}) le long de {@code dir} horizontal : un rayon atteint ainsi aussi les coins.
+     */
+    public static double distanceToSquareEdge(Vec3 origin, Vec3 dir, Vec3 center, double half) {
+        double best = Double.MAX_VALUE;
+        if (Math.abs(dir.x) > 1.0e-6) {
+            double edge = center.x + Math.signum(dir.x) * half;
+            best = Math.min(best, (edge - origin.x) / dir.x);
+        }
+        if (Math.abs(dir.z) > 1.0e-6) {
+            double edge = center.z + Math.signum(dir.z) * half;
+            best = Math.min(best, (edge - origin.z) / dir.z);
+        }
+        return best == Double.MAX_VALUE ? half : Math.max(0.0, best);
+    }
+
+    /** Espèce préférée si disponible (implémentée ou addon déclaré à l'onboarding), sinon le repli. */
+    public static String resolveSpecies(String preferred, String fallback) {
+        return maxigregrze.cobblesafari.onboarding.SpeciesAvailability.isAllowed(preferred) ? preferred : fallback;
+    }
+
+    /** Particule snowstorm Cobblemon (ex. {@code cobblemon:daimonji1}) jouée à une position. */
+    public static void snowstorm(ServerLevel level, String effect, Vec3 at) {
+        new com.cobblemon.mod.common.net.messages.client.effect.SpawnSnowstormParticlePacket(
+                ResourceLocation.parse(effect), at)
+                .sendToPlayersAround(at.x, at.y, at.z, 64.0, level.dimension(), p -> false);
     }
 
     // --- Sounds ----------------------------------------------------------------

@@ -32,7 +32,7 @@ public class ElectricVoltorbAttack implements CsBossAttack {
     private static final int FLASH_SEGMENT = 7;
     private static final int END_DELAY = 8; // ≈240 t total
     private static final double EXPLOSION_RADIUS = 3.0;
-    private static final float EXPLOSION_DAMAGE = 14.0F; // slow, telegraphed flash = escapable AOE
+    private static final float EXPLOSION_DAMAGE = 6.0F; // base 6 - slow, telegraphed flash = escapable AOE
 
     private final String id;
     private final List<Electrode> electrodes = new ArrayList<>();
@@ -95,7 +95,7 @@ public class ElectricVoltorbAttack implements CsBossAttack {
     }
 
     private void spawnWave(ServerLevel level, BossBattleSession session, CsBossEntity boss) {
-        double y = session.getTriggerPos().getY();
+        double y = session.getFloorY();
         List<ServerPlayer> alive = session.aliveParticipants(level);
         for (int i = 0; i < alive.size(); i++) {
             double angle = Math.toRadians(i * (360.0 / Math.max(1, alive.size())));

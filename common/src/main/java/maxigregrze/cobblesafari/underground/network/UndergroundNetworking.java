@@ -100,6 +100,8 @@ public class UndergroundNetworking {
                         player, maxigregrze.cobblesafari.init.ModStats.PERFECT_EXCAVATIONS);
                 maxigregrze.cobblesafari.advancement.ModCriteria.EXCAVATION_PERFECT.trigger(player, perfect);
                 maxigregrze.cobblesafari.objectives.ObjectivesManager.onExcavationPerfect(player);
+                maxigregrze.cobblesafari.mark.RibbonAwards.rollRibbon(
+                        player, maxigregrze.cobblesafari.mark.RibbonAwards.RIBBON_UNDERGROUND, 0.05);
 
                 Services.PLATFORM.sendPayloadToPlayer(player, new UndergroundPayloads.GameEndPayload(
                         payload.sessionId(),

@@ -1,0 +1,16 @@
+{
+  "parent": "cobblesafari:like_a_phoenix",
+  "display": {
+    "icon": { "id": "cobblesafari:rainbow_feather" },
+    "title": { "translate": "advancements.cobblesafari.rise_from_the_ashes.title" },
+    "description": { "translate": "advancements.cobblesafari.rise_from_the_ashes.description" },
+    "frame": "challenge",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "saved": {"trigger": "minecraft:used_totem", "conditions": {"item": {"items": "cobblesafari:rainbow_feather"}}}
+  },
+  "requirements": [["saved"]]
+}

@@ -3,7 +3,7 @@
   "tags": [
     "trainerspokemon"
   ],
-  "given": "nidoranm level=1 originaltrainertype=npc originaltrainer=Professor Oak",
+  "given": "nidoranm level=1 originaltrainertype=npc originaltrainer=\"Professor Oak\"",
   "givenMarks": [
     "cobblemon:ribbon_partner"
   ],

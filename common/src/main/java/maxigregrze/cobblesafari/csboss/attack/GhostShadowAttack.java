@@ -32,7 +32,7 @@ public class GhostShadowAttack implements CsBossAttack {
     private static final int CYCLES = 2; // deterministic (2*112+16 = 240)
     private static final double RUN_SPEED = 0.30;
     private static final double MINION_DROP = 2.0;
-    private static final float MINION_DAMAGE = 8.0F;
+    private static final float MINION_DAMAGE = 3.0F; // base 3 (plan 199)
 
     private final String id;
     private final List<Ghost> ghosts = new ArrayList<>();
@@ -93,7 +93,7 @@ public class GhostShadowAttack implements CsBossAttack {
         ghosts.clear();
         for (ServerPlayer p : session.aliveParticipants(level)) {
             AttackShadowEntity shadow = AttackShadowEntity.spawn(level,
-                    boss.getX(), session.getTriggerPos().getY(), boss.getZ(), session.getId(), true);
+                    boss.getX(), session.getFloorY(), boss.getZ(), session.getId(), true);
             session.trackAttackEntity(shadow);
             ghosts.add(new Ghost(shadow, p.getUUID()));
         }
@@ -151,7 +151,7 @@ public class GhostShadowAttack implements CsBossAttack {
                 }
                 for (ServerPlayer p : session.aliveParticipants(level)) {
                     if (p.getBoundingBox().intersects(g.minion.getBoundingBox())) {
-                        p.hurt(CsBossDamage.bullet(level), MINION_DAMAGE);
+                        CsBossDamage.hurt(p, session, MINION_DAMAGE);
                     }
                 }
             }

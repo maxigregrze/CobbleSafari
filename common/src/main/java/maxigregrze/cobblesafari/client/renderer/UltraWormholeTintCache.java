@@ -51,6 +51,12 @@ public final class UltraWormholeTintCache {
     /** Access-ordered so the eldest entry is the least recently used. */
     private static final Map<Long, ResourceLocation> CACHE = new LinkedHashMap<>(16, 0.75f, true);
 
+    /**
+     * One vertical strip of every layer per tint (action plan 200, section 8), so the whole vortex
+     * draws through a single render type. A handful of destinations, so no eviction.
+     */
+    private static final Map<Integer, ResourceLocation> STACKS = new java.util.HashMap<>();
+
     private UltraWormholeTintCache() {}
 
     /**
@@ -84,6 +90,71 @@ public final class UltraWormholeTintCache {
             manager.release(id);
         }
         CACHE.clear();
+        for (ResourceLocation id : STACKS.values()) {
+            manager.release(id);
+        }
+        STACKS.clear();
+    }
+
+    /**
+     * The layers stacked top to bottom in one texture, frame {@code i} being {@code frames[i]},
+     * tinted like {@link #tinted} (untinted for {@link WarpRideClientTints#NO_TINT}).
+     *
+     * <p>Fifteen layers with fifteen textures are fifteen render types, and their compositing then
+     * depends on the order those are flushed in - which a pipeline batching by render type (Iris) or
+     * two portals seen from opposite sides break, letting a near layer's faint pixels stamp depth
+     * over the layers behind it. One texture is one render type, whose quads the buffer sorts by
+     * distance on upload.</p>
+     *
+     * @return the strip, or null when a layer is missing or the build failed
+     */
+    public static ResourceLocation stack(ResourceLocation[] frames, int tintRgb) {
+        ResourceLocation cached = STACKS.get(tintRgb);
+        if (cached != null) {
+            return cached;
+        }
+        ResourceLocation built = buildStack(frames, tintRgb);
+        if (built != null) {
+            STACKS.put(tintRgb, built);
+        }
+        return built;
+    }
+
+    private static ResourceLocation buildStack(ResourceLocation[] frames, int tintRgb) {
+        Minecraft minecraft = Minecraft.getInstance();
+        NativeImage strip = null;
+        try {
+            for (int i = 0; i < frames.length; i++) {
+                Optional<Resource> resource = minecraft.getResourceManager().getResource(frames[i]);
+                if (resource.isEmpty()) {
+                    throw new java.io.FileNotFoundException(frames[i].toString());
+                }
+                try (InputStream stream = resource.get().open(); NativeImage layer = NativeImage.read(stream)) {
+                    int size = layer.getWidth();
+                    if (strip == null) {
+                        strip = new NativeImage(size, size * frames.length, true);
+                    }
+                    if (layer.getHeight() != size || size != strip.getWidth()) {
+                        throw new IllegalStateException("layer " + frames[i] + " is not " + size + "x" + size);
+                    }
+                    layer.copyRect(strip, 0, 0, 0, i * size, size, size, false, false);
+                }
+            }
+            if (tintRgb != WarpRideClientTints.NO_TINT) {
+                applyTint(strip, tintRgb);
+            }
+            ResourceLocation id = ResourceLocation.fromNamespaceAndPath(CobbleSafari.MOD_ID,
+                    String.format("warptint/stack/%08x", tintRgb));
+            // Ownership passes to the DynamicTexture, as in build().
+            minecraft.getTextureManager().register(id, new DynamicTexture(strip));
+            return id;
+        } catch (Exception e) {
+            if (strip != null) {
+                strip.close();
+            }
+            CobbleSafari.LOGGER.debug("[UltraWormhole] could not build the layer strip", e);
+            return null;
+        }
     }
 
     private static void evictWhileOversized() {
